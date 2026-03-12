@@ -1,0 +1,1027 @@
+import ts from 'typescript';
+import type { TransformContext, TransformResult, TransformDiagnostic } from '../common/index.js';
+import { tsTypeNodeToGdType } from '../common/index.js';
+import { GDScriptEmitter } from './emitter.js';
+
+export interface TransformerOptions {
+  sourceMap: boolean;
+}
+
+/**
+ * Transforms a TypeScript AST into GDScript code.
+ */
+export class TsToGdTransformer {
+  private ctx: TransformContext;
+  private emitter: GDScriptEmitter;
+  private opts: TransformerOptions;
+
+  constructor(ctx: TransformContext, opts: TransformerOptions) {
+    this.ctx = ctx;
+    this.opts = opts;
+    const gdFilePath = ctx.filePath.replace(/\.ts$/, '.gd');
+    this.emitter = new GDScriptEmitter(ctx.filePath, gdFilePath, opts.sourceMap);
+  }
+
+  transform(): TransformResult {
+    if (this.opts.sourceMap) {
+      this.emitter.setSourceContent(this.ctx.sourceFile.getFullText());
+    }
+
+    this.visitSourceFile(this.ctx.sourceFile);
+
+    return {
+      code: this.emitter.getOutput(),
+      sourceMap: this.emitter.getSourceMap(),
+      diagnostics: this.ctx.diagnostics,
+    };
+  }
+
+  // ─── Source File ─────────────────────────────────────────────
+
+  private visitSourceFile(sf: ts.SourceFile): void {
+    for (const statement of sf.statements) {
+      if (ts.isClassDeclaration(statement)) {
+        this.visitClassDeclaration(statement);
+      } else if (ts.isImportDeclaration(statement)) {
+        // Imports are type-only in this model; skip
+      } else if (ts.isTypeAliasDeclaration(statement) || ts.isInterfaceDeclaration(statement)) {
+        // Type declarations are TS-only; skip
+      } else if (ts.isExportDeclaration(statement) || ts.isExportAssignment(statement)) {
+        // Exports are TS-only; skip
+      } else {
+        this.addDiagnostic(statement, 'warning',
+          `Top-level statement outside class is not supported: ${ts.SyntaxKind[statement.kind]}`);
+      }
+    }
+  }
+
+  // ─── Class Declaration ───────────────────────────────────────
+
+  private visitClassDeclaration(node: ts.ClassDeclaration): void {
+    const pos = this.getLineAndCol(node);
+
+    // extends
+    if (node.heritageClauses) {
+      for (const clause of node.heritageClauses) {
+        if (clause.token === ts.SyntaxKind.ExtendsKeyword && clause.types.length > 0) {
+          const baseType = clause.types[0]!;
+          this.emitter.writeLine(
+            `extends ${baseType.expression.getText(this.ctx.sourceFile)}`,
+            pos.line, pos.col
+          );
+        }
+      }
+    }
+
+    // class_name
+    if (node.name) {
+      this.emitter.writeLine(
+        `class_name ${node.name.getText(this.ctx.sourceFile)}`,
+        pos.line, pos.col
+      );
+    }
+
+    this.emitter.writeEmptyLine();
+
+    // Emit members in declaration order, preserving comments
+    // But group signals and enums before regular properties
+    const signals: ts.PropertyDeclaration[] = [];
+    const enums: ts.PropertyDeclaration[] = [];
+    const properties: ts.PropertyDeclaration[] = [];
+    const methods: ts.MethodDeclaration[] = [];
+    const constructor_: ts.ConstructorDeclaration | undefined =
+      node.members.find(ts.isConstructorDeclaration) as ts.ConstructorDeclaration | undefined;
+
+    for (const member of node.members) {
+      if (ts.isPropertyDeclaration(member)) {
+        if (this.isSignalProperty(member)) {
+          signals.push(member);
+        } else if (this.isEnumProperty(member)) {
+          enums.push(member);
+        } else {
+          properties.push(member);
+        }
+      } else if (ts.isMethodDeclaration(member)) {
+        methods.push(member);
+      } else if (ts.isConstructorDeclaration(member)) {
+        // handled separately
+      } else if (ts.isGetAccessorDeclaration(member) || ts.isSetAccessorDeclaration(member)) {
+        this.addDiagnostic(member, 'warning', 'Get/set accessors not yet supported');
+      }
+    }
+
+    // Emit signals
+    for (const sig of signals) {
+      this.emitLeadingComments(sig);
+      this.visitSignalDeclaration(sig);
+    }
+
+    // Emit enums
+    for (const en of enums) {
+      this.emitLeadingComments(en);
+      this.visitEnumDeclaration(en);
+    }
+
+    // Blank line between enums/signals and properties
+    if ((signals.length > 0 || enums.length > 0) && properties.length > 0) {
+      this.emitter.writeEmptyLine();
+    }
+
+    // Emit properties
+    for (const prop of properties) {
+      this.emitLeadingComments(prop);
+      this.visitPropertyDeclaration(prop);
+    }
+
+    if (signals.length > 0 || enums.length > 0 || properties.length > 0) {
+      this.emitter.writeEmptyLine();
+    }
+
+    // Emit constructor as _init
+    if (constructor_) {
+      this.emitLeadingComments(constructor_);
+      this.visitConstructor(constructor_);
+      this.emitter.writeEmptyLine();
+    }
+
+    // Emit methods
+    for (let i = 0; i < methods.length; i++) {
+      this.emitLeadingComments(methods[i]!);
+      this.visitMethodDeclaration(methods[i]!);
+      if (i < methods.length - 1) {
+        this.emitter.writeEmptyLine();
+      }
+    }
+  }
+
+  // ─── Comments ───────────────────────────────────────────────
+
+  private emitLeadingComments(node: ts.Node): void {
+    const sourceText = this.ctx.sourceFile.getFullText();
+    const ranges = ts.getLeadingCommentRanges(sourceText, node.getFullStart());
+    if (!ranges) return;
+
+    for (const range of ranges) {
+      const commentText = sourceText.slice(range.pos, range.end);
+      const { line, character } = this.ctx.sourceFile.getLineAndCharacterOfPosition(range.pos);
+      const origLine = line + 1;
+      const origCol = character;
+
+      if (range.kind === ts.SyntaxKind.SingleLineCommentTrivia) {
+        // // comment -> # comment
+        const content = commentText.replace(/^\/\/\s?/, '');
+        this.emitter.writeLine(`# ${content}`, origLine, origCol);
+      } else if (range.kind === ts.SyntaxKind.MultiLineCommentTrivia) {
+        // /** comment */ -> ## comment
+        const content = commentText
+          .replace(/^\/\*\*\s*/, '')
+          .replace(/\s*\*\/$/, '')
+          .replace(/^\s*\*\s?/gm, '')
+          .trim();
+        this.emitter.writeLine(`## ${content}`, origLine, origCol);
+      }
+    }
+  }
+
+  private emitInlineComments(node: ts.Node): void {
+    const sourceText = this.ctx.sourceFile.getFullText();
+    const ranges = ts.getTrailingCommentRanges(sourceText, node.getEnd());
+    if (!ranges) return;
+
+    for (const range of ranges) {
+      const commentText = sourceText.slice(range.pos, range.end);
+      const { line, character } = this.ctx.sourceFile.getLineAndCharacterOfPosition(range.pos);
+      if (range.kind === ts.SyntaxKind.SingleLineCommentTrivia) {
+        const content = commentText.replace(/^\/\/\s?/, '');
+        this.emitter.writeLine(`# ${content}`, line + 1, character);
+      }
+    }
+  }
+
+  // ─── Signals ─────────────────────────────────────────────────
+
+  private isSignalProperty(node: ts.PropertyDeclaration): boolean {
+    if (!node.initializer) return false;
+    return this.isGdHelperCall(node.initializer, 'signal');
+  }
+
+  private visitSignalDeclaration(node: ts.PropertyDeclaration): void {
+    const pos = this.getLineAndCol(node);
+    const name = node.name.getText(this.ctx.sourceFile);
+    this.emitter.writeLine(`signal ${name}`, pos.line, pos.col);
+  }
+
+  // ─── Enums ───────────────────────────────────────────────────
+
+  private isEnumProperty(node: ts.PropertyDeclaration): boolean {
+    if (!node.initializer) return false;
+    return this.isGdHelperCall(node.initializer, 'enum');
+  }
+
+  private visitEnumDeclaration(node: ts.PropertyDeclaration): void {
+    const pos = this.getLineAndCol(node);
+    const name = node.name.getText(this.ctx.sourceFile);
+
+    if (!node.initializer || !ts.isCallExpression(node.initializer)) return;
+
+    const args = node.initializer.arguments;
+    const enumValues: string[] = [];
+
+    for (const arg of args) {
+      if (ts.isStringLiteral(arg)) {
+        enumValues.push(arg.text);
+      } else if (ts.isArrayLiteralExpression(arg)) {
+        const elements = arg.elements;
+        if (elements.length >= 2 && ts.isStringLiteral(elements[0]!)) {
+          enumValues.push(`${elements[0]!.text} = ${elements[1]!.getText(this.ctx.sourceFile)}`);
+        }
+      }
+    }
+
+    this.emitter.writeLine(
+      `enum ${this.toPascalCase(name)} {${enumValues.join(', ')}}`,
+      pos.line, pos.col
+    );
+  }
+
+  // ─── Properties ──────────────────────────────────────────────
+
+  private visitPropertyDeclaration(node: ts.PropertyDeclaration): void {
+    const pos = this.getLineAndCol(node);
+    const name = node.name.getText(this.ctx.sourceFile);
+
+    // Check for decorators (@gd.export, @gd.onready, etc.)
+    const decorators = this.getDecorators(node);
+    for (const dec of decorators) {
+      this.emitter.writeLine(dec, pos.line, pos.col);
+    }
+
+    // Static
+    const isStatic = node.modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword);
+    const staticPrefix = isStatic ? 'static ' : '';
+
+    // Type annotation
+    const gdType = tsTypeNodeToGdType(
+      node.type, this.ctx.checker, this.ctx.sourceFile
+    );
+
+    // Build declaration
+    let decl = `${staticPrefix}var ${name}`;
+    if (gdType) {
+      decl += `: ${gdType}`;
+    }
+
+    // Initializer
+    if (node.initializer && !this.isGdHelperCall(node.initializer, 'signal') && !this.isGdHelperCall(node.initializer, 'enum')) {
+      decl += ` = ${this.emitExpression(node.initializer)}`;
+    }
+
+    this.emitter.writeLine(decl, pos.line, pos.col);
+
+    // If the initializer was a block lambda, emit its body after the declaration line
+    if (node.initializer && this.isBlockLambda(node.initializer)) {
+      this.emitLambdaBody(node.initializer);
+    }
+  }
+
+  // ─── Constructor → _init ─────────────────────────────────────
+
+  private visitConstructor(node: ts.ConstructorDeclaration): void {
+    const pos = this.getLineAndCol(node);
+    const params = this.emitParameters(node.parameters);
+    this.emitter.writeLine(`func _init(${params}):`, pos.line, pos.col);
+
+    this.emitter.indent();
+    if (node.body) {
+      this.visitBlock(node.body);
+    } else {
+      this.emitter.writeLine('pass');
+    }
+    this.emitter.dedent();
+  }
+
+  // ─── Methods ─────────────────────────────────────────────────
+
+  private visitMethodDeclaration(node: ts.MethodDeclaration): void {
+    const pos = this.getLineAndCol(node);
+    const name = node.name.getText(this.ctx.sourceFile);
+    const params = this.emitParameters(node.parameters);
+
+    // Return type
+    const returnType = tsTypeNodeToGdType(
+      node.type, this.ctx.checker, this.ctx.sourceFile
+    );
+    const returnAnnotation = returnType ? ` -> ${returnType}` : '';
+
+    // Static (ignore async — GDScript doesn't have it)
+    const isStatic = node.modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword);
+    const staticPrefix = isStatic ? 'static ' : '';
+
+    this.emitter.writeLine(
+      `${staticPrefix}func ${name}(${params})${returnAnnotation}:`,
+      pos.line, pos.col
+    );
+
+    this.emitter.indent();
+    if (node.body) {
+      this.visitBlock(node.body);
+    } else {
+      this.emitter.writeLine('pass');
+    }
+    this.emitter.dedent();
+  }
+
+  // ─── Parameters ──────────────────────────────────────────────
+
+  private emitParameters(params: ts.NodeArray<ts.ParameterDeclaration>): string {
+    return params.map(p => {
+      const name = p.name.getText(this.ctx.sourceFile);
+      const gdType = tsTypeNodeToGdType(p.type, this.ctx.checker, this.ctx.sourceFile);
+      const typeAnnotation = gdType ? `: ${gdType}` : '';
+      const defaultValue = p.initializer
+        ? ` = ${this.emitExpression(p.initializer)}`
+        : '';
+      return `${name}${typeAnnotation}${defaultValue}`;
+    }).join(', ');
+  }
+
+  // ─── Statements ──────────────────────────────────────────────
+
+  private visitBlock(block: ts.Block): void {
+    if (block.statements.length === 0) {
+      this.emitter.writeLine('pass');
+      return;
+    }
+    for (const stmt of block.statements) {
+      this.emitLeadingComments(stmt);
+      this.visitStatement(stmt);
+    }
+  }
+
+  private visitStatement(node: ts.Statement): void {
+    const pos = this.getLineAndCol(node);
+
+    if (ts.isVariableStatement(node)) {
+      this.visitVariableStatement(node);
+    } else if (ts.isExpressionStatement(node)) {
+      this.emitter.writeLine(this.emitExpression(node.expression), pos.line, pos.col);
+    } else if (ts.isReturnStatement(node)) {
+      const expr = node.expression ? ` ${this.emitExpression(node.expression)}` : '';
+      this.emitter.writeLine(`return${expr}`, pos.line, pos.col);
+    } else if (ts.isIfStatement(node)) {
+      this.visitIfStatement(node);
+    } else if (ts.isForOfStatement(node)) {
+      this.visitForOfStatement(node);
+    } else if (ts.isForStatement(node)) {
+      this.visitForStatement(node);
+    } else if (ts.isWhileStatement(node)) {
+      this.visitWhileStatement(node);
+    } else if (ts.isBlock(node)) {
+      for (const s of node.statements) {
+        this.visitStatement(s);
+      }
+    } else if (ts.isBreakStatement(node)) {
+      this.emitter.writeLine('break', pos.line, pos.col);
+    } else if (ts.isContinueStatement(node)) {
+      this.emitter.writeLine('continue', pos.line, pos.col);
+    } else if (ts.isSwitchStatement(node)) {
+      this.visitSwitchStatement(node);
+    } else {
+      this.addDiagnostic(node, 'warning',
+        `Unsupported statement: ${ts.SyntaxKind[node.kind]}`);
+    }
+  }
+
+  // ─── Variable Statements ────────────────────────────────────
+
+  private visitVariableStatement(node: ts.VariableStatement): void {
+    for (const decl of node.declarationList.declarations) {
+      const pos = this.getLineAndCol(decl);
+      const name = decl.name.getText(this.ctx.sourceFile);
+
+      // Check for const/let restriction
+      const flags = node.declarationList.flags;
+      if (flags & ts.NodeFlags.Const) {
+        this.addDiagnostic(node, 'warning',
+          '`const` is restricted; use `var` instead. Converting to `var`.');
+      }
+      if (flags & ts.NodeFlags.Let) {
+        this.addDiagnostic(node, 'warning',
+          '`let` is restricted; use `var` instead. Converting to `var`.');
+      }
+
+      // Type
+      const typeNode = (decl as ts.VariableDeclaration).type;
+      const gdType = tsTypeNodeToGdType(typeNode, this.ctx.checker, this.ctx.sourceFile);
+      const typeAnnotation = gdType ? `: ${gdType}` : '';
+
+      // Initializer
+      const init = decl.initializer
+        ? ` = ${this.emitExpression(decl.initializer)}`
+        : '';
+
+      this.emitter.writeLine(`var ${name}${typeAnnotation}${init}`, pos.line, pos.col);
+
+      // If the initializer was a block lambda, emit its body after the declaration line
+      if (decl.initializer && this.isBlockLambda(decl.initializer)) {
+        this.emitLambdaBody(decl.initializer);
+      }
+    }
+  }
+
+  // ─── If Statement ────────────────────────────────────────────
+
+  private visitIfStatement(node: ts.IfStatement): void {
+    const pos = this.getLineAndCol(node);
+    this.emitter.writeLine(`if ${this.emitExpression(node.expression)}:`, pos.line, pos.col);
+
+    this.emitter.indent();
+    this.visitStatementBody(node.thenStatement);
+    this.emitter.dedent();
+
+    if (node.elseStatement) {
+      if (ts.isIfStatement(node.elseStatement)) {
+        const elsePos = this.getLineAndCol(node.elseStatement);
+        this.emitter.writeLine(
+          `elif ${this.emitExpression(node.elseStatement.expression)}:`,
+          elsePos.line, elsePos.col
+        );
+        this.emitter.indent();
+        this.visitStatementBody(node.elseStatement.thenStatement);
+        this.emitter.dedent();
+        if (node.elseStatement.elseStatement) {
+          this.visitElseChain(node.elseStatement.elseStatement);
+        }
+      } else {
+        this.emitter.writeLine('else:');
+        this.emitter.indent();
+        this.visitStatementBody(node.elseStatement);
+        this.emitter.dedent();
+      }
+    }
+  }
+
+  private visitElseChain(node: ts.Statement): void {
+    if (ts.isIfStatement(node)) {
+      const pos = this.getLineAndCol(node);
+      this.emitter.writeLine(
+        `elif ${this.emitExpression(node.expression)}:`,
+        pos.line, pos.col
+      );
+      this.emitter.indent();
+      this.visitStatementBody(node.thenStatement);
+      this.emitter.dedent();
+      if (node.elseStatement) {
+        this.visitElseChain(node.elseStatement);
+      }
+    } else {
+      this.emitter.writeLine('else:');
+      this.emitter.indent();
+      this.visitStatementBody(node);
+      this.emitter.dedent();
+    }
+  }
+
+  // ─── For Statements ─────────────────────────────────────────
+
+  private visitForOfStatement(node: ts.ForOfStatement): void {
+    const pos = this.getLineAndCol(node);
+    const varName = ts.isVariableDeclarationList(node.initializer)
+      ? node.initializer.declarations[0]?.name.getText(this.ctx.sourceFile) ?? '_'
+      : this.emitExpression(node.initializer as ts.Expression);
+    const iterable = this.emitExpression(node.expression);
+    this.emitter.writeLine(`for ${varName} in ${iterable}:`, pos.line, pos.col);
+    this.emitter.indent();
+    this.visitStatementBody(node.statement);
+    this.emitter.dedent();
+  }
+
+  private visitForStatement(node: ts.ForStatement): void {
+    const pos = this.getLineAndCol(node);
+    if (node.initializer) {
+      if (ts.isVariableDeclarationList(node.initializer)) {
+        this.visitVariableStatement(
+          ts.factory.createVariableStatement(undefined, node.initializer)
+        );
+      } else {
+        this.emitter.writeLine(this.emitExpression(node.initializer), pos.line, pos.col);
+      }
+    }
+    const condition = node.condition ? this.emitExpression(node.condition) : 'true';
+    this.emitter.writeLine(`while ${condition}:`, pos.line, pos.col);
+    this.emitter.indent();
+    this.visitStatementBody(node.statement);
+    if (node.incrementor) {
+      this.emitter.writeLine(this.emitExpression(node.incrementor));
+    }
+    this.emitter.dedent();
+  }
+
+  // ─── While Statement ────────────────────────────────────────
+
+  private visitWhileStatement(node: ts.WhileStatement): void {
+    const pos = this.getLineAndCol(node);
+    this.emitter.writeLine(`while ${this.emitExpression(node.expression)}:`, pos.line, pos.col);
+    this.emitter.indent();
+    this.visitStatementBody(node.statement);
+    this.emitter.dedent();
+  }
+
+  // ─── Switch → Match ─────────────────────────────────────────
+
+  private visitSwitchStatement(node: ts.SwitchStatement): void {
+    const pos = this.getLineAndCol(node);
+    this.emitter.writeLine(
+      `match ${this.emitExpression(node.expression)}:`,
+      pos.line, pos.col
+    );
+    this.emitter.indent();
+
+    for (const clause of node.caseBlock.clauses) {
+      if (ts.isCaseClause(clause)) {
+        this.emitter.writeLine(`${this.emitExpression(clause.expression)}:`);
+        this.emitter.indent();
+        const stmts = clause.statements.filter(s => !ts.isBreakStatement(s));
+        if (stmts.length === 0) {
+          this.emitter.writeLine('pass');
+        } else {
+          for (const stmt of stmts) {
+            this.visitStatement(stmt);
+          }
+        }
+        this.emitter.dedent();
+      } else {
+        this.emitter.writeLine('_:');
+        this.emitter.indent();
+        const stmts = clause.statements.filter(s => !ts.isBreakStatement(s));
+        if (stmts.length === 0) {
+          this.emitter.writeLine('pass');
+        } else {
+          for (const stmt of stmts) {
+            this.visitStatement(stmt);
+          }
+        }
+        this.emitter.dedent();
+      }
+    }
+
+    this.emitter.dedent();
+  }
+
+  // ─── Statement Body Helper ──────────────────────────────────
+
+  private visitStatementBody(node: ts.Statement): void {
+    if (ts.isBlock(node)) {
+      if (node.statements.length === 0) {
+        this.emitter.writeLine('pass');
+      } else {
+        for (const stmt of node.statements) {
+          this.emitLeadingComments(stmt);
+          this.visitStatement(stmt);
+        }
+      }
+    } else {
+      this.visitStatement(node);
+    }
+  }
+
+  // ─── Expressions ─────────────────────────────────────────────
+
+  private emitExpression(node: ts.Expression): string {
+    // Identifiers
+    if (ts.isIdentifier(node)) {
+      const text = node.text;
+      if (text === 'undefined') {
+        this.addDiagnostic(node, 'error', '`undefined` is restricted; use `null`');
+        return 'null';
+      }
+      if (text === 'null') return 'null';
+      if (text === 'true') return 'true';
+      if (text === 'false') return 'false';
+      return text;
+    }
+
+    // this -> self
+    if (node.kind === ts.SyntaxKind.ThisKeyword) {
+      return 'self';
+    }
+
+    // null keyword
+    if (node.kind === ts.SyntaxKind.NullKeyword) return 'null';
+    if (node.kind === ts.SyntaxKind.TrueKeyword) return 'true';
+    if (node.kind === ts.SyntaxKind.FalseKeyword) return 'false';
+
+    // Numeric literals — preserve original source text to keep 100.0 vs 100
+    if (ts.isNumericLiteral(node)) {
+      return node.getText(this.ctx.sourceFile);
+    }
+
+    // String literals — properly escape
+    if (ts.isStringLiteral(node)) {
+      return this.emitStringLiteral(node);
+    }
+
+    // Template literals
+    if (ts.isTemplateExpression(node)) {
+      return this.emitTemplateExpression(node);
+    }
+    if (ts.isNoSubstitutionTemplateLiteral(node)) {
+      return `"${this.escapeGdString(node.text)}"`;
+    }
+
+    // Property access
+    if (ts.isPropertyAccessExpression(node)) {
+      return this.emitPropertyAccess(node);
+    }
+
+    // Element access: a[b]
+    if (ts.isElementAccessExpression(node)) {
+      return `${this.emitExpression(node.expression)}[${this.emitExpression(node.argumentExpression)}]`;
+    }
+
+    // Call expression
+    if (ts.isCallExpression(node)) {
+      return this.emitCallExpression(node);
+    }
+
+    // New expression -> ClassName.new()
+    if (ts.isNewExpression(node)) {
+      const className = this.emitExpression(node.expression);
+      const args = node.arguments?.map(a => this.emitExpression(a)).join(', ') ?? '';
+      return `${className}.new(${args})`;
+    }
+
+    // Binary expression
+    if (ts.isBinaryExpression(node)) {
+      return this.emitBinaryExpression(node);
+    }
+
+    // Prefix unary
+    if (ts.isPrefixUnaryExpression(node)) {
+      const operand = this.emitExpression(node.operand);
+      const op = this.unaryOperator(node.operator);
+      return `${op}${operand}`;
+    }
+
+    // Postfix unary (i++ / i--)
+    if (ts.isPostfixUnaryExpression(node)) {
+      const operand = this.emitExpression(node.operand);
+      if (node.operator === ts.SyntaxKind.PlusPlusToken) {
+        return `${operand} += 1`;
+      }
+      if (node.operator === ts.SyntaxKind.MinusMinusToken) {
+        return `${operand} -= 1`;
+      }
+    }
+
+    // Parenthesized
+    if (ts.isParenthesizedExpression(node)) {
+      return `(${this.emitExpression(node.expression)})`;
+    }
+
+    // Array literal
+    if (ts.isArrayLiteralExpression(node)) {
+      const elements = node.elements.map(e => this.emitExpression(e)).join(', ');
+      return `[${elements}]`;
+    }
+
+    // Object literal -> Dictionary
+    if (ts.isObjectLiteralExpression(node)) {
+      const props = node.properties.map(p => {
+        if (ts.isPropertyAssignment(p)) {
+          const key = p.name.getText(this.ctx.sourceFile);
+          const value = this.emitExpression(p.initializer);
+          return `"${key}": ${value}`;
+        }
+        return '';
+      }).filter(Boolean).join(', ');
+      return `{${props}}`;
+    }
+
+    // Conditional (ternary) -> GDScript ternary
+    if (ts.isConditionalExpression(node)) {
+      const cond = this.emitExpression(node.condition);
+      const whenTrue = this.emitExpression(node.whenTrue);
+      const whenFalse = this.emitExpression(node.whenFalse);
+      return `${whenTrue} if ${cond} else ${whenFalse}`;
+    }
+
+    // Await
+    if (ts.isAwaitExpression(node)) {
+      return `await ${this.emitExpression(node.expression)}`;
+    }
+
+    // Type assertion (as) -> skip
+    if (ts.isAsExpression(node)) {
+      return this.emitExpression(node.expression);
+    }
+
+    // Non-null assertion (!) -> skip
+    if (ts.isNonNullExpression(node)) {
+      return this.emitExpression(node.expression);
+    }
+
+    // Arrow function / function expression -> lambda
+    if (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) {
+      return this.emitLambda(node);
+    }
+
+    // Spread -> not supported
+    if (ts.isSpreadElement(node)) {
+      this.addDiagnostic(node, 'error', 'Spread operator is not supported in GDScript');
+      return this.emitExpression(node.expression);
+    }
+
+    // Fallback
+    return node.getText(this.ctx.sourceFile);
+  }
+
+  // ─── String Literals ─────────────────────────────────────────
+
+  private emitStringLiteral(node: ts.StringLiteral): string {
+    // Get the raw source text which preserves escape sequences
+    const raw = node.getText(this.ctx.sourceFile);
+    // If already double-quoted, use as-is
+    if (raw.startsWith('"')) {
+      return raw;
+    }
+    // Single-quoted -> double-quoted with proper escaping
+    const inner = node.text.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    return `"${inner}"`;
+  }
+
+  private escapeGdString(text: string): string {
+    return text.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  }
+
+  // ─── Property Access ─────────────────────────────────────────
+
+  private emitPropertyAccess(node: ts.PropertyAccessExpression): string {
+    const obj = this.emitExpression(node.expression);
+    const prop = node.name.text;
+    return `${obj}.${prop}`;
+  }
+
+  // ─── Call Expressions ────────────────────────────────────────
+
+  private emitCallExpression(node: ts.CallExpression): string {
+    const args = node.arguments.map(a => this.emitExpression(a)).join(', ');
+
+    // Handle gd.* helper calls
+    if (ts.isPropertyAccessExpression(node.expression)) {
+      const obj = node.expression.expression;
+      const method = node.expression.name.text;
+
+      // gd.as(value, Type)
+      if (ts.isIdentifier(obj) && obj.text === 'gd' && method === 'as') {
+        if (node.arguments.length >= 2) {
+          const value = this.emitExpression(node.arguments[0]!);
+          const type = this.emitExpression(node.arguments[1]!);
+          return `${value} as ${type}`;
+        }
+      }
+
+      // gd.math.add/sub/mul/div -> operator
+      if (ts.isPropertyAccessExpression(obj)) {
+        const gdObj = obj.expression;
+        const mathNs = obj.name.text;
+        if (ts.isIdentifier(gdObj) && gdObj.text === 'gd' && mathNs === 'math') {
+          return this.emitMathHelper(method, node.arguments);
+        }
+      }
+
+      // Handle self.method() calls
+      if (this.isSelfExpression(obj)) {
+        // Check if it's a method call or function call via type checker
+        const symbol = this.ctx.checker.getSymbolAtLocation(node.expression);
+        if (symbol) {
+          const declarations = symbol.getDeclarations();
+          if (declarations && declarations.length > 0) {
+            const decl = declarations[0]!;
+            if (ts.isMethodDeclaration(decl)) {
+              return `${method}(${args})`;
+            }
+            if (ts.isPropertyDeclaration(decl)) {
+              return `${method}.call(${args})`;
+            }
+          }
+        }
+        // Default: treat as method call (no self prefix)
+        return `${method}(${args})`;
+      }
+    }
+
+    // StringName('...') -> &"..."
+    if (ts.isIdentifier(node.expression) && node.expression.text === 'StringName') {
+      if (node.arguments.length === 1 && ts.isStringLiteral(node.arguments[0]!)) {
+        return `&"${node.arguments[0]!.text}"`;
+      }
+    }
+
+    // NodePath('...') -> ^"..."
+    if (ts.isIdentifier(node.expression) && node.expression.text === 'NodePath') {
+      if (node.arguments.length === 1 && ts.isStringLiteral(node.arguments[0]!)) {
+        return `^"${node.arguments[0]!.text}"`;
+      }
+    }
+
+    const callee = this.emitExpression(node.expression);
+    return `${callee}(${args})`;
+  }
+
+  /** Check if an expression evaluates to `self` (i.e., is `this`) */
+  private isSelfExpression(node: ts.Expression): boolean {
+    return node.kind === ts.SyntaxKind.ThisKeyword;
+  }
+
+  // ─── Math Helpers ────────────────────────────────────────────
+
+  private emitMathHelper(method: string, args: ts.NodeArray<ts.Expression>): string {
+    const operands = args.map(a => this.emitExpression(a));
+    const opMap: Record<string, string> = {
+      add: ' + ',
+      sub: ' - ',
+      mul: ' * ',
+      div: ' / ',
+    };
+    const op = opMap[method];
+    if (op && operands.length >= 2) {
+      return `(${operands.join(op)})`;
+    }
+    return `${operands.join(', ')}`;
+  }
+
+  // ─── Binary Expressions ─────────────────────────────────────
+
+  private emitBinaryExpression(node: ts.BinaryExpression): string {
+    const left = this.emitExpression(node.left);
+    const right = this.emitExpression(node.right);
+    const op = this.binaryOperator(node.operatorToken.kind);
+    return `${left} ${op} ${right}`;
+  }
+
+  private binaryOperator(kind: ts.SyntaxKind): string {
+    switch (kind) {
+      case ts.SyntaxKind.PlusToken: return '+';
+      case ts.SyntaxKind.MinusToken: return '-';
+      case ts.SyntaxKind.AsteriskToken: return '*';
+      case ts.SyntaxKind.SlashToken: return '/';
+      case ts.SyntaxKind.PercentToken: return '%';
+      case ts.SyntaxKind.AsteriskAsteriskToken: return '**';
+      case ts.SyntaxKind.EqualsEqualsEqualsToken: return '==';
+      case ts.SyntaxKind.ExclamationEqualsEqualsToken: return '!=';
+      case ts.SyntaxKind.EqualsEqualsToken: return '==';
+      case ts.SyntaxKind.ExclamationEqualsToken: return '!=';
+      case ts.SyntaxKind.LessThanToken: return '<';
+      case ts.SyntaxKind.LessThanEqualsToken: return '<=';
+      case ts.SyntaxKind.GreaterThanToken: return '>';
+      case ts.SyntaxKind.GreaterThanEqualsToken: return '>=';
+      case ts.SyntaxKind.AmpersandAmpersandToken: return 'and';
+      case ts.SyntaxKind.BarBarToken: return 'or';
+      case ts.SyntaxKind.EqualsToken: return '=';
+      case ts.SyntaxKind.PlusEqualsToken: return '+=';
+      case ts.SyntaxKind.MinusEqualsToken: return '-=';
+      case ts.SyntaxKind.AsteriskEqualsToken: return '*=';
+      case ts.SyntaxKind.SlashEqualsToken: return '/=';
+      case ts.SyntaxKind.PercentEqualsToken: return '%=';
+      case ts.SyntaxKind.AmpersandToken: return '&';
+      case ts.SyntaxKind.BarToken: return '|';
+      case ts.SyntaxKind.CaretToken: return '^';
+      case ts.SyntaxKind.LessThanLessThanToken: return '<<';
+      case ts.SyntaxKind.GreaterThanGreaterThanToken: return '>>';
+      case ts.SyntaxKind.InKeyword: return 'in';
+      default: return '??';
+    }
+  }
+
+  private unaryOperator(op: ts.PrefixUnaryOperator): string {
+    switch (op) {
+      case ts.SyntaxKind.ExclamationToken: return 'not ';
+      case ts.SyntaxKind.MinusToken: return '-';
+      case ts.SyntaxKind.PlusToken: return '+';
+      case ts.SyntaxKind.TildeToken: return '~';
+      default: return '';
+    }
+  }
+
+  // ─── Template Literals ───────────────────────────────────────
+
+  private emitTemplateExpression(node: ts.TemplateExpression): string {
+    let result = `"${this.escapeGdString(node.head.text)}"`;
+    for (const span of node.templateSpans) {
+      const expr = this.emitExpression(span.expression);
+      result += ` + str(${expr})`;
+      if (span.literal.text) {
+        result += ` + "${this.escapeGdString(span.literal.text)}"`;
+      }
+    }
+    return result;
+  }
+
+  // ─── Lambda ──────────────────────────────────────────────────
+
+  private emitLambda(node: ts.ArrowFunction | ts.FunctionExpression): string {
+    const params = this.emitParameters(node.parameters);
+
+    // Return type
+    const returnType = tsTypeNodeToGdType(
+      node.type, this.ctx.checker, this.ctx.sourceFile
+    );
+    const returnAnnotation = returnType ? ` -> ${returnType}` : '';
+
+    if (ts.isBlock(node.body)) {
+      // Multi-line lambda: return header only. Body will be emitted by emitLambdaBody().
+      return `func(${params})${returnAnnotation}:`;
+    }
+
+    // Single expression lambda
+    const body = this.emitExpression(node.body);
+    return `func(${params})${returnAnnotation}: return ${body}`;
+  }
+
+  /**
+   * Check if an expression is a block-body lambda (arrow function or function expression with a block body).
+   */
+  private isBlockLambda(node: ts.Expression): node is (ts.ArrowFunction | ts.FunctionExpression) {
+    return (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) && ts.isBlock(node.body);
+  }
+
+  /**
+   * Emit the body of a block lambda. Call this after the line containing the lambda header.
+   */
+  private emitLambdaBody(node: ts.ArrowFunction | ts.FunctionExpression): void {
+    if (!ts.isBlock(node.body)) return;
+    this.emitter.indent();
+    if (node.body.statements.length === 0) {
+      this.emitter.writeLine('pass');
+    } else {
+      this.visitBlock(node.body);
+    }
+    this.emitter.dedent();
+  }
+
+  // ─── Decorators ──────────────────────────────────────────────
+
+  private getDecorators(node: ts.HasDecorators): string[] {
+    const result: string[] = [];
+    const decorators = ts.getDecorators(node);
+    if (!decorators) return result;
+
+    for (const dec of decorators) {
+      if (ts.isCallExpression(dec.expression)) {
+        const callExpr = dec.expression;
+        if (ts.isPropertyAccessExpression(callExpr.expression)) {
+          const obj = callExpr.expression.expression;
+          const method = callExpr.expression.name.text;
+          if (ts.isIdentifier(obj) && obj.text === 'gd') {
+            const args = callExpr.arguments.map(a => this.emitExpression(a)).join(', ');
+            if (args) {
+              result.push(`@${method}(${args})`);
+            } else {
+              result.push(`@${method}`);
+            }
+          }
+        }
+      } else if (ts.isPropertyAccessExpression(dec.expression)) {
+        const obj = dec.expression.expression;
+        const method = dec.expression.name.text;
+        if (ts.isIdentifier(obj) && obj.text === 'gd') {
+          result.push(`@${method}`);
+        }
+      }
+    }
+    return result;
+  }
+
+  // ─── Helpers ─────────────────────────────────────────────────
+
+  private isGdHelperCall(node: ts.Expression, methodName: string): boolean {
+    if (!ts.isCallExpression(node)) return false;
+    if (!ts.isPropertyAccessExpression(node.expression)) return false;
+    const obj = node.expression.expression;
+    return ts.isIdentifier(obj) && obj.text === 'gd' && node.expression.name.text === methodName;
+  }
+
+  private getLineAndCol(node: ts.Node): { line: number; col: number } {
+    const { line, character } = this.ctx.sourceFile.getLineAndCharacterOfPosition(node.getStart(this.ctx.sourceFile));
+    return { line: line + 1, col: character };
+  }
+
+  private addDiagnostic(node: ts.Node, severity: TransformDiagnostic['severity'], message: string): void {
+    const { line, col } = this.getLineAndCol(node);
+    this.ctx.diagnostics.push({
+      message,
+      severity,
+      file: this.ctx.filePath,
+      line,
+      column: col,
+    });
+  }
+
+  private toPascalCase(str: string): string {
+    return str
+      .replace(/^[A-Z]+/, m => m.charAt(0) + m.slice(1).toLowerCase())
+      .replace(/_([a-zA-Z])/g, (_, c: string) => c.toUpperCase())
+      .replace(/^[a-z]/, c => c.toUpperCase());
+  }
+}

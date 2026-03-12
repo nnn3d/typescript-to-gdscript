@@ -1,0 +1,12 @@
+export { convertTsToGd, type ConvertOptions } from './converter/ts-to-gd/index.js';
+export { convertGdToTs, type GdToTsOptions } from './converter/gd-to-ts/index.js';
+export { GDScriptParser } from './parser/gdscript/index.js';
+export { createTsProgram } from './parser/typescript/index.js';
+export { SourceMapper } from './sourcemap/index.js';
+export { lintFiles, type LintOptions, type LintResult } from './linter/index.js';
+export { generateClassTypings } from './typings/classes.js';
+export { generateSceneTypings } from './typings/scenes.js';
+export { generateGodotDocsTypings } from './typings/godot-docs.js';
+export { FileCache } from './cache/index.js';
+export { Watcher, type WatcherOptions } from './watcher/index.js';
+export type { TransformResult, TransformDiagnostic, TransformContext } from './converter/common/index.js';

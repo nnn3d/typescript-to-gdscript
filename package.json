@@ -1,0 +1,42 @@
+{
+  "name": "typescript-to-gdscript",
+  "version": "0.1.0",
+  "description": "Convert TypeScript to GDScript for Godot game engine",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "ts2gd": "dist/cli/index.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "lint": "tsc --noEmit",
+    "generate:ast-types": "ts-node src/parser/gdscript/generate-types.ts"
+  },
+  "keywords": [
+    "typescript",
+    "gdscript",
+    "godot",
+    "converter",
+    "transpiler"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.0",
+    "commander": "^13.0.0",
+    "source-map": "^0.7.4",
+    "tree-sitter": "^0.22.0",
+    "tree-sitter-gdscript": "^6.1.0",
+    "typescript": "^5.9.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "vitest": "^3.0.0"
+  }
+}
