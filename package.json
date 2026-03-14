@@ -8,7 +8,7 @@
   "typesVersions": {
     "*": {
       "typings": ["typings/index.d.ts"],
-      "typings/4.6": ["typings/4.6/index.d.ts"],
+      "typings/4.7": ["typings/4.7/index.d.ts"],
       "typings/latest": ["typings/latest/index.d.ts"]
     }
   },

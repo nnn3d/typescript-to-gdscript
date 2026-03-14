@@ -26,66 +26,142 @@ export interface GodotDocsTypingsOptions {
 /**
  * Maps a Godot type string to a TypeScript type string.
  */
+/** Set of known Godot classes, populated during generation */
+let knownClasses = new Set<string>();
+
 function godotTypeToTs(type: string): string {
-  switch (type) {
+  // Strip C++ pointer/reference markers (handle "type*", "type **", "const type*")
+  const cleaned = type.replace(/[\s*]*\*+\s*$/, '').replace(/^const\s+/, '').trim();
+
+  switch (cleaned) {
     case 'int': return 'int';
     case 'float': return 'float';
     case 'bool': return 'boolean';
     case 'String': return 'string';
     case 'void': return 'void';
     case 'Nil': return 'void';
-    case 'Variant': return 'any';
-    case 'Array': return 'Array<any>';
+    case 'Variant': return 'unknown';
+    case 'Array': return 'Array<unknown>';
     case 'Dictionary': return 'Dictionary';
     case 'NodePath': return 'string';
     case 'StringName': return 'string';
     case 'Object': return 'GodotObject';
+    case 'Signal': return 'GodotSignal';
+    case 'Error': return 'GodotError';
     case '': return 'void';
+    // C++ internal types that leak from Godot docs
+    case 'uint8_t': return 'int';
+    case 'int32_t': return 'int';
+    case 'int64_t': return 'int';
+    case 'uint32_t': return 'int';
+    case 'uint64_t': return 'int';
+    case 'AudioFrame': return 'unknown';
     default:
       // Typed arrays like Array[Node]
-      if (type.startsWith('Array[')) {
-        const inner = type.slice(6, -1);
+      if (cleaned.startsWith('Array[')) {
+        const inner = cleaned.slice(6, -1);
         return `Array<${godotTypeToTs(inner)}>`;
       }
-      // Enum references like Node.ProcessMode
-      if (type.includes('.')) {
-        return type.replace('.', '_');
+      // Dictionary[K, V]
+      if (cleaned.startsWith('Dictionary[')) {
+        return 'Dictionary';
       }
-      return type;
+      // Enum references like Node.ProcessMode
+      if (cleaned.includes('.')) {
+        return cleaned.replace('.', '_');
+      }
+      // Apply class name sanitization
+      const sanitized = CLASS_NAME_CONFLICTS.get(cleaned);
+      if (sanitized) return sanitized;
+      // Unknown types not in Godot class list → unknown
+      if (knownClasses.size > 0 && !knownClasses.has(cleaned)) {
+        return 'unknown';
+      }
+      return cleaned;
   }
 }
 
+/** TS reserved words and strict-mode identifiers that cannot be used as-is */
+const TS_RESERVED = new Set([
+  'break', 'case', 'catch', 'class', 'const', 'continue', 'debugger',
+  'default', 'delete', 'do', 'else', 'enum', 'export', 'extends', 'false',
+  'finally', 'for', 'function', 'if', 'import', 'in', 'instanceof', 'new',
+  'null', 'return', 'super', 'switch', 'this', 'throw', 'true', 'try',
+  'typeof', 'var', 'void', 'while', 'with', 'yield',
+  // Strict mode / TS contextual
+  'as', 'async', 'await', 'from', 'get', 'is', 'let', 'of', 'set',
+  'static', 'type',
+  // TS declaration keywords
+  'abstract', 'implements', 'interface', 'private', 'protected', 'public',
+]);
+
 function sanitizeParamName(name: string): string {
-  const reserved = new Set(['class', 'default', 'function', 'in', 'var', 'new', 'delete', 'typeof', 'void', 'null', 'true', 'false', 'this', 'super', 'import', 'export', 'return', 'switch', 'case', 'break', 'continue', 'if', 'else', 'while', 'for', 'do', 'try', 'catch', 'finally', 'throw', 'const', 'let', 'enum', 'interface', 'type', 'extends', 'implements', 'private', 'protected', 'public', 'static', 'abstract', 'async', 'await', 'yield', 'of', 'from', 'as', 'is']);
-  if (reserved.has(name)) return `${name}_`;
+  if (TS_RESERVED.has(name)) return `${name}_`;
+  return name;
+}
+
+/** Check if a property name needs quoting (contains non-identifier chars or starts with digit) */
+function needsQuoting(name: string): boolean {
+  return /[^a-zA-Z0-9_$]/.test(name) || /^\d/.test(name);
+}
+
+function sanitizeFunctionName(name: string): string {
+  if (TS_RESERVED.has(name)) return `${name}_`;
   return name;
 }
 
 function emitMethodSignature(method: GodotMethodXml): string {
+  // Once we see an optional param, all subsequent must be optional too
+  let seenOptional = false;
   const params = method.parameters.map(p => {
     const tsType = godotTypeToTs(p.type);
-    const optional = p.defaultValue !== undefined ? '?' : '';
+    if (p.defaultValue !== undefined) seenOptional = true;
+    const optional = seenOptional ? '?' : '';
     return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
   }).join(', ');
 
   const returnType = godotTypeToTs(method.returnType);
   const staticPrefix = method.isStatic ? 'static ' : '';
-  return `  ${staticPrefix}${method.name}(${params}): ${returnType};`;
+  const methodName = needsQuoting(method.name) ? `'${method.name}'` : method.name;
+  return `  ${staticPrefix}${methodName}(${params}): ${returnType};`;
 }
 
 /**
  * Generates a TypeScript declaration for a single Godot class.
  */
+/** Classes to skip entirely (handled by gd-helpers.d.ts or TS builtins) */
+const SKIP_CLASSES = new Set([
+  'int', 'float', 'bool', 'Nil',
+]);
+
+/** Names that conflict with TS/JS built-in globals and need prefixing */
+const CLASS_NAME_CONFLICTS = new Map<string, string>([
+  ['Object', 'GodotObject'],
+  ['Signal', 'GodotSignal'],
+  ['Error', 'GodotError'],
+  ['Array', 'GodotArray'],
+  ['String', 'GodotString'],
+  ['JSON', 'GodotJSON'],
+  ['WeakRef', 'GodotWeakRef'],
+]);
+
+function sanitizeClassName(name: string): string {
+  return CLASS_NAME_CONFLICTS.get(name) ?? name;
+}
+
 function generateClassDeclaration(cls: GodotClassXml): string {
   const lines: string[] = [];
-  const extendsClause = cls.inherits ? ` extends ${cls.inherits}` : '';
+  const className = sanitizeClassName(cls.name);
+  const extendsName = cls.inherits ? sanitizeClassName(cls.inherits) : '';
+  const extendsClause = extendsName ? ` extends ${extendsName}` : '';
 
-  lines.push(`declare class ${cls.name}${extendsClause} {`);
+  lines.push(`declare class ${className}${extendsClause} {`);
 
   // Properties
   for (const prop of cls.properties) {
     const tsType = godotTypeToTs(prop.type);
-    lines.push(`  ${prop.name}: ${tsType};`);
+    const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
+    lines.push(`  ${propName}: ${tsType};`);
   }
 
   if (cls.properties.length > 0 && cls.methods.length > 0) {
@@ -102,7 +178,8 @@ function generateClassDeclaration(cls: GodotClassXml): string {
     lines.push('');
     for (const sig of cls.signals) {
       const paramTypes = sig.parameters.map(p => godotTypeToTs(p.type));
-      lines.push(`  ${sig.name}: Signal<[${paramTypes.join(', ')}]>;`);
+      const sigName = needsQuoting(sig.name) ? `'${sig.name}'` : sig.name;
+      lines.push(`  ${sigName}: Signal<[${paramTypes.join(', ')}]>;`);
     }
   }
 
@@ -141,23 +218,28 @@ function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
 
   // Global functions
   for (const method of cls.methods) {
+    let seenOptional = false;
     const params = method.parameters.map(p => {
       const tsType = godotTypeToTs(p.type);
-      const optional = p.defaultValue !== undefined ? '?' : '';
+      if (p.defaultValue !== undefined) seenOptional = true;
+      const optional = seenOptional ? '?' : '';
       return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
     });
     if (method.isVararg) {
       params.push('...args: any[]');
     }
     const returnType = godotTypeToTs(method.returnType);
-    lines.push(`declare function ${method.name}(${params.join(', ')}): ${returnType};`);
+    lines.push(`declare function ${sanitizeFunctionName(method.name)}(${params.join(', ')}): ${returnType};`);
   }
 
   // Global enums
   if (cls.enums.length > 0) {
     lines.push('');
     for (const e of cls.enums) {
-      lines.push(`declare const enum ${e.name} {`);
+      let enumName = e.name.includes('.') ? e.name.replace(/\./g, '_') : e.name;
+      // Avoid conflicts with TS builtins
+      if (enumName === 'Error') enumName = 'GodotError';
+      lines.push(`declare const enum ${enumName} {`);
       for (const v of e.values) {
         lines.push(`  ${v.name} = ${v.value},`);
       }
@@ -186,6 +268,11 @@ function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
 export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): GodotClassRegistry | null {
   const classes = parseAllClassXmls(options.classDocsDir);
 
+  // Populate known class names for type resolution
+  knownClasses = new Set(
+    [...classes.keys()].filter(n => !n.startsWith('@'))
+  );
+
   const allDeclarations: string[] = [];
   allDeclarations.push('// AUTO-GENERATED from Godot class documentation.');
   allDeclarations.push('// Manual improvements can be applied via .patch files.');
@@ -205,6 +292,9 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
 
     // Skip other @-prefixed special docs
     if (name.startsWith('@')) continue;
+
+    // Skip primitive types handled by gd-helpers.d.ts or TS builtins
+    if (SKIP_CLASSES.has(name)) continue;
 
     allDeclarations.push(generateClassDeclaration(cls));
     allDeclarations.push('');

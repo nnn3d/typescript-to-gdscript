@@ -29,13 +29,19 @@ function normalize(code: string): string {
 }
 
 // Discover all fixture pairs: *.gd files that have a matching *.ts file
-const fixtureFiles = readdirSync(FIXTURES_DIR)
-  .filter(f => f.endsWith('.gd'))
+const allGdFiles = readdirSync(FIXTURES_DIR).filter(f => f.endsWith('.gd'));
+const fixtureFiles = allGdFiles
   .filter(f => {
     const tsFile = f.replace(/\.gd$/, '.ts');
     return readdirSync(FIXTURES_DIR).includes(tsFile);
   })
   .map(f => f.replace(/\.gd$/, ''));
+
+// Build project sources from all GD fixtures (for user class resolution)
+const projectSources = allGdFiles.map(f => ({
+  source: readFileSync(join(FIXTURES_DIR, f), 'utf-8'),
+  filePath: join(FIXTURES_DIR, f),
+}));
 
 describe('GD to TS: Fixture-based tests', () => {
   for (const fixtureName of fixtureFiles) {
@@ -50,6 +56,7 @@ describe('GD to TS: Fixture-based tests', () => {
         source: gdSource,
         filePath: gdFilePath,
         registry,
+        projectSources,
       });
 
       // Log diagnostics for debugging

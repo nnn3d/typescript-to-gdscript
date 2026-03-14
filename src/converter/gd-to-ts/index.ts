@@ -13,9 +13,105 @@ export interface GdToTsOptions {
   isAddon?: boolean;
   /** Godot class registry for inherited member resolution (required) */
   registry: GodotClassRegistry;
+  /** Additional GD source files in the project (for resolving user-defined class inheritance) */
+  projectSources?: Array<{ source: string; filePath: string }>;
+}
+
+/** Lightweight class info extracted from a GD source file */
+export interface UserClassInfo {
+  name: string;
+  extends: string;
+  members: Set<string>;
+}
+
+/**
+ * Extracts class info (class_name, extends, own members) from a GD source without full conversion.
+ */
+export function parseGdClassInfo(source: string): UserClassInfo | null {
+  const parser = new GDScriptParser();
+  const root = parser.parse(source);
+
+  let className = '';
+  let extendsClass = '';
+  const members = new Set<string>();
+
+  for (const child of root.namedChildren) {
+    if (isGDNodeType(child, 'extends_statement')) {
+      const typeNode = child.namedChildren[0];
+      if (typeNode) {
+        extendsClass = isGDNodeType(typeNode, 'type')
+          ? typeNode.namedChildren[0]?.text ?? typeNode.text
+          : typeNode.text;
+      }
+    } else if (isGDNodeType(child, 'class_name_statement')) {
+      className = child.childForFieldName('name')?.text ?? '';
+    } else if (isGDNodeType(child, 'function_definition') || isGDNodeType(child, 'constructor_definition')) {
+      const name = child.childForFieldName('name')?.text ?? '_init';
+      members.add(name === '_init' ? 'constructor' : name);
+    } else if (isGDNodeType(child, 'variable_statement') || isGDNodeType(child, 'export_variable_statement') || isGDNodeType(child, 'onready_variable_statement')) {
+      const name = child.childForFieldName('name')?.text;
+      if (name) members.add(name);
+    } else if (isGDNodeType(child, 'signal_statement')) {
+      const name = child.childForFieldName('name')?.text;
+      if (name) members.add(name);
+    } else if (isGDNodeType(child, 'const_statement')) {
+      const name = child.childForFieldName('name')?.text;
+      if (name) members.add(name);
+    }
+  }
+
+  if (!className) return null;
+  return { name: className, extends: extendsClass, members };
+}
+
+/**
+ * Resolves all inherited members for a class, walking through user classes and Godot registry.
+ */
+function resolveAllInheritedMembers(
+  extendsClass: string,
+  userClasses: Map<string, UserClassInfo>,
+  registry: GodotClassRegistry,
+): Set<string> {
+  const allMembers = new Set<string>();
+  let current: string | null = extendsClass;
+  const visited = new Set<string>();
+
+  while (current && !visited.has(current)) {
+    visited.add(current);
+
+    // Check Godot registry first
+    if (registry.hasClass(current)) {
+      const inherited = registry.getAllMembers(current);
+      for (const name of inherited) allMembers.add(name);
+      break; // Registry already walks the full Godot chain
+    }
+
+    // Check user classes
+    const userClass = userClasses.get(current);
+    if (userClass) {
+      for (const name of userClass.members) allMembers.add(name);
+      current = userClass.extends || null;
+    } else {
+      break;
+    }
+  }
+
+  return allMembers;
 }
 
 export function convertGdToTs(options: GdToTsOptions): TransformResult {
+  // Build user class index from project sources
+  const userClasses = new Map<string, UserClassInfo>();
+  if (options.projectSources) {
+    for (const ps of options.projectSources) {
+      const info = parseGdClassInfo(ps.source);
+      if (info) userClasses.set(info.name, info);
+    }
+  }
+  // Also parse the current file so it's available for inner class extends resolution
+  const selfInfo = parseGdClassInfo(options.source);
+  if (selfInfo) userClasses.set(selfInfo.name, selfInfo);
+
   const parser = new GDScriptParser();
   const root = parser.parse(options.source);
   const ctx: GdToTsContext = {
@@ -24,7 +120,10 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
     diagnostics: [],
     classMembers: new Set(),
     localVars: new Set(),
+    localVarTypes: new Map(),
+    classMemberTypes: new Map(),
     registry: options.registry,
+    userClasses,
   };
 
   const code = emitSourceFile(root, ctx);
@@ -43,8 +142,16 @@ interface GdToTsContext {
   classMembers: Set<string>;
   /** Local variables in current scope (params + local vars) — these shadow classMembers */
   localVars: Set<string>;
+  /** Tracked types of local variables (for gd.math detection) */
+  localVarTypes: Map<string, string>;
+  /** Tracked types of class member variables (for gd.math detection) */
+  classMemberTypes: Map<string, string>;
   /** Godot class registry for inherited member resolution */
   registry: GodotClassRegistry;
+  /** User-defined class info from project sources */
+  userClasses: Map<string, UserClassInfo>;
+  /** Current method name (for super() → super.method() resolution) */
+  currentMethodName?: string;
 }
 
 /**
@@ -79,7 +186,13 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       ctx.classMembers.add(name === '_init' ? 'constructor' : name);
     } else if (isGDNodeType(child, 'variable_statement') || isGDNodeType(child, 'export_variable_statement') || isGDNodeType(child, 'onready_variable_statement')) {
       const name = child.childForFieldName('name')?.text;
-      if (name) ctx.classMembers.add(name);
+      if (name) {
+        ctx.classMembers.add(name);
+        const typeNode = child.childForFieldName('type');
+        const valueNode = child.childForFieldName('value');
+        const inferredType = typeNode ? extractGdTypeName(typeNode) : (valueNode ? inferExprType(valueNode, ctx) : null);
+        if (inferredType) ctx.classMemberTypes.set(name, inferredType);
+      }
     } else if (isGDNodeType(child, 'signal_statement')) {
       const name = child.childForFieldName('name')?.text;
       if (name) ctx.classMembers.add(name);
@@ -89,9 +202,9 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
     }
   }
 
-  // Add inherited members from registry
-  if (ctx.registry && extendsClass) {
-    const inherited = ctx.registry.getAllMembers(extendsClass);
+  // Add inherited members from registry and user classes
+  if (extendsClass) {
+    const inherited = resolveAllInheritedMembers(extendsClass, ctx.userClasses, ctx.registry);
     for (const name of inherited) {
       ctx.classMembers.add(name);
     }
@@ -220,8 +333,12 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext): string {
   // Save outer context and create inner class context
   const savedMembers = ctx.classMembers;
   const savedLocals = ctx.localVars;
+  const savedLocalTypes = ctx.localVarTypes;
+  const savedMemberTypes = ctx.classMemberTypes;
   ctx.classMembers = new Set();
   ctx.localVars = new Set();
+  ctx.localVarTypes = new Map();
+  ctx.classMemberTypes = new Map();
 
   // First pass: collect member names from inner class body
   if (bodyNode) {
@@ -239,9 +356,9 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext): string {
     }
   }
 
-  // Add inherited members from registry for inner class
-  if (ctx.registry && extendsClass) {
-    const inherited = ctx.registry.getAllMembers(extendsClass);
+  // Add inherited members from registry and user classes for inner class
+  if (extendsClass) {
+    const inherited = resolveAllInheritedMembers(extendsClass, ctx.userClasses, ctx.registry);
     for (const name of inherited) {
       ctx.classMembers.add(name);
     }
@@ -269,6 +386,8 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext): string {
   // Restore outer context
   ctx.classMembers = savedMembers;
   ctx.localVars = savedLocals;
+  ctx.localVarTypes = savedLocalTypes;
+  ctx.classMemberTypes = savedMemberTypes;
 
   const extendsClause = extendsClass ? ` extends ${extendsClass}` : '';
 
@@ -407,6 +526,10 @@ function emitLocalVariable(node: GDNode, ctx: GdToTsContext, indent: string): st
   // Register as local variable before emitting value (to avoid this. prefix in self-reference)
   ctx.localVars.add(name);
 
+  // Track variable type from explicit annotation or inferred from initializer
+  const inferredType = typeNode ? extractGdTypeName(typeNode) : (valueNode ? inferExprType(valueNode, ctx) : null);
+  if (inferredType) ctx.localVarTypes.set(name, inferredType);
+
   const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode) : '';
   const init = valueNode ? ` = ${emitExpr(valueNode, ctx)}` : '';
 
@@ -485,13 +608,19 @@ function emitFunction(node: GDNode, ctx: GdToTsContext): string {
 
   // Create local scope for this function
   const savedLocals = ctx.localVars;
+  const savedLocalTypes = ctx.localVarTypes;
+  const savedMethodName = ctx.currentMethodName;
   ctx.localVars = new Set();
+  ctx.localVarTypes = new Map();
+  ctx.currentMethodName = name;
   collectParamNames(paramsNode, ctx);
 
   const params = paramsNode ? emitParams(paramsNode, ctx) : '';
   const returnType = returnTypeNode ? emitReturnType(returnTypeNode) : '';
   const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
   ctx.localVars = savedLocals;
+  ctx.localVarTypes = savedLocalTypes;
+  ctx.currentMethodName = savedMethodName;
 
   // Check if the body contains await -> mark as async
   const isAsync = bodyNode ? containsAwait(bodyNode) : false;
@@ -509,12 +638,15 @@ function emitConstructor(node: GDNode, ctx: GdToTsContext): string {
 
   // Create local scope for constructor
   const savedLocals = ctx.localVars;
+  const savedLocalTypes = ctx.localVarTypes;
   ctx.localVars = new Set();
+  ctx.localVarTypes = new Map();
   collectParamNames(paramsNode, ctx);
 
   const params = paramsNode ? emitParams(paramsNode, ctx) : '';
   const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
   ctx.localVars = savedLocals;
+  ctx.localVarTypes = savedLocalTypes;
 
   if (body) {
     return `  constructor(${params}) {\n${body}\n  }`;
@@ -903,6 +1035,14 @@ function emitCall(node: GDNode, ctx: GdToTsContext): string {
 
   if (!callee) return `(${args})`;
 
+  // GDScript super() → TS super.methodName() (or super() in constructors)
+  if (isGDNodeType(callee, 'identifier') && callee.text === 'super') {
+    if (ctx.currentMethodName && ctx.currentMethodName !== 'constructor') {
+      return `super.${ctx.currentMethodName}(${args})`;
+    }
+    return `super(${args})`;
+  }
+
   // For bare identifier calls: add this. prefix for known class members
   if (isGDNodeType(callee, 'identifier') && !ctx.localVars.has(callee.text) && !isGlobalName(callee.text, ctx)) {
     if (ctx.classMembers.has(callee.text)) {
@@ -985,6 +1125,17 @@ function emitBinaryOp(node: GDNode, ctx: GdToTsContext): string {
     return `${leftStr} instanceof ${rightStr}`;
   }
 
+  // Check if this is an arithmetic op on operator-overloaded types (Vector2, Color, etc.)
+  const mathFn = GD_MATH_OPS[opText];
+  if (mathFn && left) {
+    const leftType = inferExprType(left, ctx);
+    if (leftType && OPERATOR_OVERLOAD_TYPES.has(leftType)) {
+      const leftStr = emitExpr(left, ctx);
+      const rightStr = right ? emitExpr(right, ctx) : '';
+      return `gd.math.${mathFn}(${leftStr}, ${rightStr})`;
+    }
+  }
+
   const gdToTsOp: Record<string, string> = {
     'and': '&&',
     'or': '||',
@@ -1046,6 +1197,54 @@ function emitCommentInline(node: GDNode): string {
   const content = text.slice(1).trim();
   return `// ${content}`;
 }
+
+// ─── Type Inference (for gd.math detection) ──────────────────
+
+/** Types that require gd.math.* wrappers for arithmetic */
+const OPERATOR_OVERLOAD_TYPES = new Set([
+  'Vector2', 'Vector2i', 'Vector3', 'Vector3i', 'Vector4', 'Vector4i',
+  'Color', 'Quaternion', 'Basis', 'Transform2D', 'Transform3D', 'Projection',
+]);
+
+/** Extract raw GD type name from a type node */
+function extractGdTypeName(typeNode: GDNode): string | null {
+  if (isGDNodeType(typeNode, 'type')) {
+    return typeNode.namedChildren[0]?.text ?? typeNode.text;
+  }
+  if (isGDNodeType(typeNode, 'inferred_type')) {
+    return null;
+  }
+  return typeNode.text;
+}
+
+/** Infer the GD type of an expression (best-effort, for gd.math detection) */
+function inferExprType(node: GDNode, ctx: GdToTsContext): string | null {
+  // Constructor call: Vector2(...), Color(...), etc.
+  if (isGDNodeType(node, 'call')) {
+    const callee = node.namedChildren[0];
+    if (callee && isGDNodeType(callee, 'identifier') && OPERATOR_OVERLOAD_TYPES.has(callee.text)) {
+      return callee.text;
+    }
+  }
+  // Identifier: look up tracked type (local vars first, then class members)
+  if (isGDNodeType(node, 'identifier')) {
+    if (ctx.localVarTypes.has(node.text)) return ctx.localVarTypes.get(node.text)!;
+    if (ctx.classMemberTypes.has(node.text)) return ctx.classMemberTypes.get(node.text)!;
+  }
+  // Binary operator: inherit type from left operand
+  if (isGDNodeType(node, 'binary_operator')) {
+    const left = node.childForFieldName('left');
+    if (left) return inferExprType(left, ctx);
+  }
+  return null;
+}
+
+const GD_MATH_OPS: Record<string, string> = {
+  '+': 'add',
+  '-': 'sub',
+  '*': 'mul',
+  '/': 'div',
+};
 
 // ─── Helpers ──────────────────────────────────────────────────
 

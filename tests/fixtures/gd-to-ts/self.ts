@@ -12,7 +12,7 @@ class Self extends Node {
   Test = class extends Self {
     run() {
       print('test');
-      print_data();
+      this.print_data();
     }
   }
 }

@@ -3,7 +3,7 @@
 
 // @GlobalScope — global functions and constants
 
-declare function abs(x: any): any;
+declare function abs(x: unknown): unknown;
 declare function absf(x: float): float;
 declare function absi(x: int): int;
 declare function acos(x: float): float;
@@ -16,12 +16,12 @@ declare function atan2(y: float, x: float): float;
 declare function atanh(x: float): float;
 declare function bezier_derivative(start: float, control_1: float, control_2: float, end: float, t: float): float;
 declare function bezier_interpolate(start: float, control_1: float, control_2: float, end: float, t: float): float;
-declare function bytes_to_var(bytes: PackedByteArray): any;
-declare function bytes_to_var_with_objects(bytes: PackedByteArray): any;
-declare function ceil(x: any): any;
+declare function bytes_to_var(bytes: PackedByteArray): unknown;
+declare function bytes_to_var_with_objects(bytes: PackedByteArray): unknown;
+declare function ceil(x: unknown): unknown;
 declare function ceilf(x: float): float;
 declare function ceili(x: float): int;
-declare function clamp(value: any, min: any, max: any): any;
+declare function clamp(value: unknown, min: unknown, max: unknown): unknown;
 declare function clampf(value: float, min: float, max: float): float;
 declare function clampi(value: int, min: int, max: int): int;
 declare function cos(angle_rad: float): float;
@@ -35,31 +35,31 @@ declare function deg_to_rad(deg: float): float;
 declare function ease(x: float, curve: float): float;
 declare function error_string(error: int): string;
 declare function exp(x: float): float;
-declare function floor(x: any): any;
+declare function floor(x: unknown): unknown;
 declare function floorf(x: float): float;
 declare function floori(x: float): int;
 declare function fmod(x: float, y: float): float;
 declare function fposmod(x: float, y: float): float;
-declare function hash(variable: any): int;
+declare function hash(variable: unknown): int;
 declare function instance_from_id(instance_id: int): GodotObject;
 declare function inverse_lerp(from_: float, to: float, weight: float): float;
 declare function is_equal_approx(a: float, b: float): boolean;
 declare function is_finite(x: float): boolean;
 declare function is_inf(x: float): boolean;
 declare function is_instance_id_valid(id: int): boolean;
-declare function is_instance_valid(instance: any): boolean;
+declare function is_instance_valid(instance: unknown): boolean;
 declare function is_nan(x: float): boolean;
-declare function is_same(a: any, b: any): boolean;
+declare function is_same(a: unknown, b: unknown): boolean;
 declare function is_zero_approx(x: float): boolean;
-declare function lerp(from_: any, to: any, weight: any): any;
+declare function lerp(from_: unknown, to: unknown, weight: unknown): unknown;
 declare function lerp_angle(from_: float, to: float, weight: float): float;
 declare function lerpf(from_: float, to: float, weight: float): float;
 declare function linear_to_db(lin: float): float;
 declare function log(x: float): float;
-declare function max(...args: any[]): any;
+declare function max(...args: any[]): unknown;
 declare function maxf(a: float, b: float): float;
 declare function maxi(a: int, b: int): int;
-declare function min(...args: any[]): any;
+declare function min(...args: any[]): unknown;
 declare function minf(a: float, b: float): float;
 declare function mini(a: int, b: int): int;
 declare function move_toward(from_: float, to: float, delta: float): float;
@@ -88,33 +88,33 @@ declare function remap(value: float, istart: float, istop: float, ostart: float,
 declare function rid_allocate_id(): int;
 declare function rid_from_int64(base: int): RID;
 declare function rotate_toward(from_: float, to: float, delta: float): float;
-declare function round(x: any): any;
+declare function round(x: unknown): unknown;
 declare function roundf(x: float): float;
 declare function roundi(x: float): int;
 declare function seed(base: int): void;
-declare function sign(x: any): any;
+declare function sign(x: unknown): unknown;
 declare function signf(x: float): float;
 declare function signi(x: int): int;
 declare function sin(angle_rad: float): float;
 declare function sinh(x: float): float;
 declare function smoothstep(from_: float, to: float, x: float): float;
-declare function snapped(x: any, step: any): any;
+declare function snapped(x: unknown, step: unknown): unknown;
 declare function snappedf(x: float, step: float): float;
 declare function snappedi(x: float, step: int): int;
 declare function sqrt(x: float): float;
 declare function step_decimals(x: float): int;
 declare function str(...args: any[]): string;
-declare function str_to_var(string: string): any;
+declare function str_to_var(string: string): unknown;
 declare function tan(angle_rad: float): float;
 declare function tanh(x: float): float;
-declare function type_convert(variant: any, type_: int): any;
+declare function type_convert(variant: unknown, type_: int): unknown;
 declare function type_string(type_: int): string;
-declare function typeof(variable: any): int;
-declare function var_to_bytes(variable: any): PackedByteArray;
-declare function var_to_bytes_with_objects(variable: any): PackedByteArray;
-declare function var_to_str(variable: any): string;
-declare function weakref(obj: any): any;
-declare function wrap(value: any, min: any, max: any): any;
+declare function typeof_(variable: unknown): int;
+declare function var_to_bytes(variable: unknown): PackedByteArray;
+declare function var_to_bytes_with_objects(variable: unknown): PackedByteArray;
+declare function var_to_str(variable: unknown): string;
+declare function weakref(obj: unknown): unknown;
+declare function wrap(value: unknown, min: unknown, max: unknown): unknown;
 declare function wrapf(value: float, min: float, max: float): float;
 declare function wrapi(value: int, min: int, max: int): int;
 
@@ -482,7 +482,7 @@ declare const enum MIDIMessage {
   MIDI_MESSAGE_SYSTEM_RESET = 255,
 }
 
-declare const enum Error {
+declare const enum GodotError {
   OK = 0,
   FAILED = 1,
   ERR_UNAVAILABLE = 2,
@@ -629,7 +629,7 @@ declare const enum MethodFlags {
   METHOD_FLAGS_DEFAULT = 1,
 }
 
-declare const enum Variant.Type {
+declare const enum Variant_Type {
   TYPE_NIL = 0,
   TYPE_BOOL = 1,
   TYPE_INT = 2,
@@ -672,7 +672,7 @@ declare const enum Variant.Type {
   TYPE_MAX = 39,
 }
 
-declare const enum Variant.Operator {
+declare const enum Variant_Operator {
   OP_EQUAL = 0,
   OP_NOT_EQUAL = 1,
   OP_LESS = 2,
@@ -720,7 +720,7 @@ declare class AABB {
   size: Vector3;
 
   abs(): AABB;
-  encloses(with: AABB): boolean;
+  encloses(with_: AABB): boolean;
   expand(to_point: Vector3): AABB;
   get_center(): Vector3;
   get_endpoint(idx: int): Vector3;
@@ -736,14 +736,14 @@ declare class AABB {
   has_point(point: Vector3): boolean;
   has_surface(): boolean;
   has_volume(): boolean;
-  intersection(with: AABB): AABB;
-  intersects(with: AABB): boolean;
+  intersection(with_: AABB): AABB;
+  intersects(with_: AABB): boolean;
   intersects_plane(plane: Plane): boolean;
-  intersects_ray(from_: Vector3, dir: Vector3): any;
-  intersects_segment(from_: Vector3, to: Vector3): any;
+  intersects_ray(from_: Vector3, dir: Vector3): unknown;
+  intersects_segment(from_: Vector3, to: Vector3): unknown;
   is_equal_approx(aabb: AABB): boolean;
   is_finite(): boolean;
-  merge(with: AABB): AABB;
+  merge(with_: AABB): AABB;
 }
 
 declare class AESContext extends RefCounted {
@@ -838,8 +838,8 @@ declare class AStarGrid2D extends RefCounted {
   clear(): void;
   fill_solid_region(region: Rect2i, solid?: boolean): void;
   fill_weight_scale_region(region: Rect2i, weight_scale: float): void;
-  get_id_path(from_id: Vector2i, to_id: Vector2i, allow_partial_path?: boolean): Vector2i[];
-  get_point_data_in_region(region: Rect2i): Dictionary[];
+  get_id_path(from_id: Vector2i, to_id: Vector2i, allow_partial_path?: boolean): unknown;
+  get_point_data_in_region(region: Rect2i): Dictionary;
   get_point_path(from_id: Vector2i, to_id: Vector2i, allow_partial_path?: boolean): PackedVector2Array;
   get_point_position(id: Vector2i): Vector2;
   get_point_weight_scale(id: Vector2i): float;
@@ -897,12 +897,12 @@ declare class AcceptDialog extends Window {
   custom_action: Signal<[string]>;
 }
 
-declare class AccessibilityServer extends Object {
+declare class AccessibilityServer extends GodotObject {
   create_element(window_id: int, role: int): RID;
   create_sub_element(parent_rid: RID, role: int, insert_pos?: int): RID;
   create_sub_text_edit_elements(parent_rid: RID, shaped_text: RID, min_height: float, insert_pos?: int, is_last_line?: boolean): RID;
-  element_get_meta(id: RID): any;
-  element_set_meta(id: RID, meta: any): void;
+  element_get_meta(id: RID): unknown;
+  element_set_meta(id: RID, meta: unknown): void;
   free_element(id: RID): void;
   get_window_root(window_id: int): RID;
   has_element(id: RID): boolean;
@@ -1211,7 +1211,7 @@ declare class Animation extends Resource {
   get_track_count(): int;
   has_marker(name: string): boolean;
   method_track_get_name(track_idx: int, key_idx: int): string;
-  method_track_get_params(track_idx: int, key_idx: int): Array<any>;
+  method_track_get_params(track_idx: int, key_idx: int): Array<unknown>;
   optimize(allowed_velocity_err?: float, allowed_angular_err?: float, precision?: int): void;
   position_track_insert_key(track_idx: int, time: float, position: Vector3): int;
   position_track_interpolate(track_idx: int, time_sec: float, backward?: boolean): Vector3;
@@ -1228,10 +1228,10 @@ declare class Animation extends Resource {
   track_get_key_count(track_idx: int): int;
   track_get_key_time(track_idx: int, key_idx: int): float;
   track_get_key_transition(track_idx: int, key_idx: int): float;
-  track_get_key_value(track_idx: int, key_idx: int): any;
+  track_get_key_value(track_idx: int, key_idx: int): unknown;
   track_get_path(track_idx: int): string;
   track_get_type(track_idx: int): int;
-  track_insert_key(track_idx: int, time: float, key: any, transition?: float): int;
+  track_insert_key(track_idx: int, time: float, key: unknown, transition?: float): int;
   track_is_compressed(track_idx: int): boolean;
   track_is_enabled(track_idx: int): boolean;
   track_is_imported(track_idx: int): boolean;
@@ -1246,11 +1246,11 @@ declare class Animation extends Resource {
   track_set_interpolation_type(track_idx: int, interpolation: int): void;
   track_set_key_time(track_idx: int, key_idx: int, time: float): void;
   track_set_key_transition(track_idx: int, key_idx: int, transition: float): void;
-  track_set_key_value(track_idx: int, key: int, value: any): void;
+  track_set_key_value(track_idx: int, key: int, value: unknown): void;
   track_set_path(track_idx: int, path: string): void;
   track_swap(track_idx: int, with_idx: int): void;
   value_track_get_update_mode(track_idx: int): int;
-  value_track_interpolate(track_idx: int, time_sec: float, backward?: boolean): any;
+  value_track_interpolate(track_idx: int, time_sec: float, backward?: boolean): unknown;
   value_track_set_update_mode(track_idx: int, mode: int): void;
 
   // enum TrackType
@@ -1290,7 +1290,7 @@ declare class Animation extends Resource {
 declare class AnimationLibrary extends Resource {
   add_animation(name: string, animation: Animation): int;
   get_animation(name: string): Animation;
-  get_animation_list(): StringName[];
+  get_animation_list(): unknown;
   get_animation_list_size(): int;
   has_animation(name: string): boolean;
   remove_animation(name: string): void;
@@ -1314,7 +1314,7 @@ declare class AnimationMixer extends Node {
   root_motion_track: string;
   root_node: string;
 
-  _post_process_key_value(animation: Animation, track: int, value: any, object_id: int, object_sub_idx: int): any;
+  _post_process_key_value(animation: Animation, track: int, value: unknown, object_id: int, object_sub_idx: int): unknown;
   add_animation_library(name: string, library: AnimationLibrary): int;
   advance(delta: float): void;
   capture(name: string, duration: float, trans_type: int, ease_type: int): void;
@@ -1323,7 +1323,7 @@ declare class AnimationMixer extends Node {
   find_animation_library(animation: Animation): string;
   get_animation(name: string): Animation;
   get_animation_library(name: string): AnimationLibrary;
-  get_animation_library_list(): StringName[];
+  get_animation_library_list(): unknown;
   get_animation_list(): PackedStringArray;
   get_root_motion_position(): Vector3;
   get_root_motion_position_accumulator(): Vector3;
@@ -1363,8 +1363,8 @@ declare class AnimationNode extends Resource {
   _get_caption(): string;
   _get_child_by_name(name: string): AnimationNode;
   _get_child_nodes(): Dictionary;
-  _get_parameter_default_value(parameter: string): any;
-  _get_parameter_list(): Array<any>;
+  _get_parameter_default_value(parameter: string): unknown;
+  _get_parameter_list(): Array<unknown>;
   _has_filter(): boolean;
   _is_parameter_read_only(parameter: string): boolean;
   _process(time: float, seek: boolean, is_external_seeking: boolean, test_only: boolean): float;
@@ -1375,14 +1375,14 @@ declare class AnimationNode extends Resource {
   find_input(name: string): int;
   get_input_count(): int;
   get_input_name(input: int): string;
-  get_parameter(name: string): any;
+  get_parameter(name: string): unknown;
   get_processing_animation_tree_instance_id(): int;
   is_path_filtered(path: string): boolean;
   is_process_testing(): boolean;
   remove_input(index: int): void;
   set_filter_path(path: string, enable: boolean): void;
   set_input_name(input: int, name: string): boolean;
-  set_parameter(name: string, value: any): void;
+  set_parameter(name: string, value: unknown): void;
 
   animation_node_removed: Signal<[int, string]>;
   animation_node_renamed: Signal<[int, string, string]>;
@@ -1489,7 +1489,7 @@ declare class AnimationNodeBlendTree extends AnimationRootNode {
   connect_node(input_node: string, input_index: int, output_node: string): void;
   disconnect_node(input_node: string, input_index: int): void;
   get_node(name: string): AnimationNode;
-  get_node_list(): StringName[];
+  get_node_list(): unknown;
   get_node_position(name: string): Vector2;
   has_node(name: string): boolean;
   remove_node(name: string): void;
@@ -1546,7 +1546,7 @@ declare class AnimationNodeStateMachine extends AnimationRootNode {
   add_transition(from_: string, to: string, transition: AnimationNodeStateMachineTransition): void;
   get_graph_offset(): Vector2;
   get_node(name: string): AnimationNode;
-  get_node_list(): StringName[];
+  get_node_list(): unknown;
   get_node_name(node: AnimationNode): string;
   get_node_position(name: string): Vector2;
   get_transition(idx: int): AnimationNodeStateMachineTransition;
@@ -1580,7 +1580,7 @@ declare class AnimationNodeStateMachinePlayback extends Resource {
   get_fading_from_play_position(): float;
   get_fading_length(): float;
   get_fading_position(): float;
-  get_travel_path(): StringName[];
+  get_travel_path(): unknown;
   is_playing(): boolean;
   next(): void;
   start(node: string, reset?: boolean): void;
@@ -1663,7 +1663,7 @@ declare class AnimationPlayer extends AnimationMixer {
   get_method_call_mode(): int;
   get_playing_speed(): float;
   get_process_callback(): int;
-  get_queue(): StringName[];
+  get_queue(): unknown;
   get_root(): string;
   get_section_end_time(): float;
   get_section_start_time(): float;
@@ -1677,7 +1677,7 @@ declare class AnimationPlayer extends AnimationMixer {
   play_section_backwards(name?: string, start_time?: float, end_time?: float, custom_blend?: float): void;
   play_section_with_markers(name?: string, start_marker?: string, end_marker?: string, custom_blend?: float, custom_speed?: float, from_end?: boolean): void;
   play_section_with_markers_backwards(name?: string, start_marker?: string, end_marker?: string, custom_blend?: float): void;
-  play_with_capture(name?: string, duration?: float, custom_blend?: float, custom_speed?: float, from_end?: boolean, trans_type: int, ease_type: int): void;
+  play_with_capture(name?: string, duration?: float, custom_blend?: float, custom_speed?: float, from_end?: boolean, trans_type?: int, ease_type?: int): void;
   queue(name: string): void;
   reset_section(): void;
   seek(seconds: float, update?: boolean, update_only?: boolean): void;
@@ -1739,8 +1739,8 @@ declare class Area2D extends CollisionObject2D {
   monitoring: boolean;
   priority: int;
 
-  get_overlapping_areas(): Area2D[];
-  get_overlapping_bodies(): Node2D[];
+  get_overlapping_areas(): unknown;
+  get_overlapping_bodies(): unknown;
   has_overlapping_areas(): boolean;
   has_overlapping_bodies(): boolean;
   overlaps_area(area: Node): boolean;
@@ -1787,8 +1787,8 @@ declare class Area3D extends CollisionObject3D {
   wind_force_magnitude: float;
   wind_source_path: string;
 
-  get_overlapping_areas(): Area3D[];
-  get_overlapping_bodies(): Node3D[];
+  get_overlapping_areas(): unknown;
+  get_overlapping_bodies(): unknown;
   has_overlapping_areas(): boolean;
   has_overlapping_bodies(): boolean;
   overlaps_area(area: Node): boolean;
@@ -1811,56 +1811,56 @@ declare class Area3D extends CollisionObject3D {
   static readonly SPACE_OVERRIDE_REPLACE_COMBINE: int;
 }
 
-declare class Array {
+declare class GodotArray {
   all(method: Callable): boolean;
   any(method: Callable): boolean;
-  append(value: any): void;
-  append_array(array: Array<any>): void;
-  assign(array: Array<any>): void;
-  back(): any;
-  bsearch(value: any, before?: boolean): int;
-  bsearch_custom(value: any, func: Callable, before?: boolean): int;
+  append(value: unknown): void;
+  append_array(array: Array<unknown>): void;
+  assign(array: Array<unknown>): void;
+  back(): unknown;
+  bsearch(value: unknown, before?: boolean): int;
+  bsearch_custom(value: unknown, func: Callable, before?: boolean): int;
   clear(): void;
-  count(value: any): int;
-  duplicate(deep?: boolean): Array<any>;
-  duplicate_deep(deep_subresources_mode?: int): Array<any>;
-  erase(value: any): void;
-  fill(value: any): void;
-  filter(method: Callable): Array<any>;
-  find(what: any, from_?: int): int;
+  count(value: unknown): int;
+  duplicate(deep?: boolean): Array<unknown>;
+  duplicate_deep(deep_subresources_mode?: int): Array<unknown>;
+  erase(value: unknown): void;
+  fill(value: unknown): void;
+  filter(method: Callable): Array<unknown>;
+  find(what: unknown, from_?: int): int;
   find_custom(method: Callable, from_?: int): int;
-  front(): any;
-  get(index: int): any;
+  front(): unknown;
+  get(index: int): unknown;
   get_typed_builtin(): int;
   get_typed_class_name(): string;
-  get_typed_script(): any;
-  has(value: any): boolean;
+  get_typed_script(): unknown;
+  has(value: unknown): boolean;
   hash(): int;
-  insert(position: int, value: any): int;
+  insert(position: int, value: unknown): int;
   is_empty(): boolean;
   is_read_only(): boolean;
-  is_same_typed(array: Array<any>): boolean;
+  is_same_typed(array: Array<unknown>): boolean;
   is_typed(): boolean;
   make_read_only(): void;
-  map(method: Callable): Array<any>;
-  max(): any;
-  min(): any;
-  pick_random(): any;
-  pop_at(position: int): any;
-  pop_back(): any;
-  pop_front(): any;
-  push_back(value: any): void;
-  push_front(value: any): void;
-  reduce(method: Callable, accum?: any): any;
+  map(method: Callable): Array<unknown>;
+  max(): unknown;
+  min(): unknown;
+  pick_random(): unknown;
+  pop_at(position: int): unknown;
+  pop_back(): unknown;
+  pop_front(): unknown;
+  push_back(value: unknown): void;
+  push_front(value: unknown): void;
+  reduce(method: Callable, accum?: unknown): unknown;
   remove_at(position: int): void;
   resize(size: int): int;
   reverse(): void;
-  rfind(what: any, from_?: int): int;
+  rfind(what: unknown, from_?: int): int;
   rfind_custom(method: Callable, from_?: int): int;
-  set(index: int, value: any): void;
+  set(index: int, value: unknown): void;
   shuffle(): void;
   size(): int;
-  slice(begin: int, end?: int, step?: int, deep?: boolean): Array<any>;
+  slice(begin: int, end?: int, step?: int, deep?: boolean): Array<unknown>;
   sort(): void;
   sort_custom(func: Callable): void;
 }
@@ -1871,7 +1871,7 @@ declare class ArrayMesh extends Mesh {
   shadow_mesh: ArrayMesh;
 
   add_blend_shape(name: string): void;
-  add_surface_from_arrays(primitive: int, arrays: Array<any>, blend_shapes?: Array<void>, lods?: Dictionary, flags: int): void;
+  add_surface_from_arrays(primitive: int, arrays: Array<unknown>, blend_shapes?: Array<void>, lods?: Dictionary, flags?: int): void;
   clear_blend_shapes(): void;
   clear_surfaces(): void;
   get_blend_shape_count(): int;
@@ -1956,30 +1956,30 @@ declare class AudioEffectCapture extends AudioEffect {
 
 declare class AudioEffectChorus extends AudioEffect {
   dry: float;
-  voice/1/cutoff_hz: float;
-  voice/1/delay_ms: float;
-  voice/1/depth_ms: float;
-  voice/1/level_db: float;
-  voice/1/pan: float;
-  voice/1/rate_hz: float;
-  voice/2/cutoff_hz: float;
-  voice/2/delay_ms: float;
-  voice/2/depth_ms: float;
-  voice/2/level_db: float;
-  voice/2/pan: float;
-  voice/2/rate_hz: float;
-  voice/3/cutoff_hz: float;
-  voice/3/delay_ms: float;
-  voice/3/depth_ms: float;
-  voice/3/level_db: float;
-  voice/3/pan: float;
-  voice/3/rate_hz: float;
-  voice/4/cutoff_hz: float;
-  voice/4/delay_ms: float;
-  voice/4/depth_ms: float;
-  voice/4/level_db: float;
-  voice/4/pan: float;
-  voice/4/rate_hz: float;
+  'voice/1/cutoff_hz': float;
+  'voice/1/delay_ms': float;
+  'voice/1/depth_ms': float;
+  'voice/1/level_db': float;
+  'voice/1/pan': float;
+  'voice/1/rate_hz': float;
+  'voice/2/cutoff_hz': float;
+  'voice/2/delay_ms': float;
+  'voice/2/depth_ms': float;
+  'voice/2/level_db': float;
+  'voice/2/pan': float;
+  'voice/2/rate_hz': float;
+  'voice/3/cutoff_hz': float;
+  'voice/3/delay_ms': float;
+  'voice/3/depth_ms': float;
+  'voice/3/level_db': float;
+  'voice/3/pan': float;
+  'voice/3/rate_hz': float;
+  'voice/4/cutoff_hz': float;
+  'voice/4/delay_ms': float;
+  'voice/4/depth_ms': float;
+  'voice/4/level_db': float;
+  'voice/4/pan': float;
+  'voice/4/rate_hz': float;
   voice_count: int;
   wet: float;
 
@@ -2079,7 +2079,7 @@ declare class AudioEffectHighShelfFilter extends AudioEffectFilter {
 }
 
 declare class AudioEffectInstance extends RefCounted {
-  _process(src_buffer: const void*, dst_buffer: AudioFrame*, frame_count: int): void;
+  _process(src_buffer: void, dst_buffer: unknown, frame_count: int): void;
   _process_silence(): boolean;
 }
 
@@ -2197,7 +2197,7 @@ declare class AudioSample extends RefCounted {
 declare class AudioSamplePlayback extends RefCounted {
 }
 
-declare class AudioServer extends Object {
+declare class AudioServer extends GodotObject {
   bus_count: int;
   input_device: string;
   output_device: string;
@@ -2273,7 +2273,7 @@ declare class AudioStream extends Resource {
   _get_beat_count(): int;
   _get_bpm(): float;
   _get_length(): float;
-  _get_parameter_list(): Dictionary[];
+  _get_parameter_list(): Dictionary;
   _get_stream_name(): string;
   _get_tags(): Dictionary;
   _has_loop(): boolean;
@@ -2315,12 +2315,12 @@ declare class AudioStreamMicrophone extends AudioStream {
 
 declare class AudioStreamPlayback extends RefCounted {
   _get_loop_count(): int;
-  _get_parameter(name: string): any;
+  _get_parameter(name: string): unknown;
   _get_playback_position(): float;
   _is_playing(): boolean;
-  _mix(buffer: AudioFrame*, rate_scale: float, frames: int): int;
+  _mix(buffer: unknown, rate_scale: float, frames: int): int;
   _seek(position: float): void;
-  _set_parameter(name: string, value: any): void;
+  _set_parameter(name: string, value: unknown): void;
   _start(from_pos: float): void;
   _stop(): void;
   _tag_used_streams(): void;
@@ -2337,7 +2337,7 @@ declare class AudioStreamPlayback extends RefCounted {
 
 declare class AudioStreamPlaybackPolyphonic extends AudioStreamPlayback {
   is_stream_playing(stream: int): boolean;
-  play_stream(stream: AudioStream, from_offset?: float, volume_db?: float, pitch_scale?: float, playback_type: int, bus?: string): int;
+  play_stream(stream: AudioStream, from_offset?: float, volume_db?: float, pitch_scale?: float, playback_type?: int, bus?: string): int;
   set_stream_pitch_scale(stream: int, pitch_scale: float): void;
   set_stream_volume(stream: int, volume_db: float): void;
   stop_stream(stream: int): void;
@@ -2347,7 +2347,7 @@ declare class AudioStreamPlaybackPolyphonic extends AudioStreamPlayback {
 
 declare class AudioStreamPlaybackResampled extends AudioStreamPlayback {
   _get_stream_sampling_rate(): float;
-  _mix_resampled(dst_buffer: AudioFrame*, frame_count: int): int;
+  _mix_resampled(dst_buffer: unknown, frame_count: int): int;
   begin_resample(): void;
 }
 
@@ -2865,9 +2865,9 @@ declare class Basis {
   scaled(scale: Vector3): Basis;
   scaled_local(scale: Vector3): Basis;
   slerp(to: Basis, weight: float): Basis;
-  tdotx(with: Vector3): float;
-  tdoty(with: Vector3): float;
-  tdotz(with: Vector3): float;
+  tdotx(with_: Vector3): float;
+  tdoty(with_: Vector3): float;
+  tdotz(with_: Vector3): float;
   transposed(): Basis;
 
   static readonly IDENTITY: int;
@@ -2885,7 +2885,7 @@ declare class BitMap extends Resource {
   get_size(): Vector2i;
   get_true_bit_count(): int;
   grow_mask(pixels: int, rect: Rect2i): void;
-  opaque_to_polygons(rect: Rect2i, epsilon?: float): PackedVector2Array[];
+  opaque_to_polygons(rect: Rect2i, epsilon?: float): unknown;
   resize(new_size: Vector2i): void;
   set_bit(x: int, y: int, bit: boolean): void;
   set_bit_rect(rect: Rect2i, bit: boolean): void;
@@ -3052,7 +3052,7 @@ declare class ButtonGroup extends Resource {
   allow_unpress: boolean;
   resource_local_to_scene: boolean;
 
-  get_buttons(): BaseButton[];
+  get_buttons(): unknown;
   get_pressed_button(): BaseButton;
 
   pressed: Signal<[BaseButton]>;
@@ -3310,13 +3310,13 @@ declare class CPUParticles3D extends GeometryInstance3D {
 
 declare class Callable {
   bind(): Callable;
-  bindv(arguments: Array<any>): Callable;
-  call(): any;
+  bindv(arguments: Array<unknown>): Callable;
+  call(): unknown;
   call_deferred(): void;
-  callv(arguments: Array<any>): any;
-  static create(variant: any, method: string): Callable;
+  callv(arguments: Array<unknown>): unknown;
+  static create(variant: unknown, method: string): Callable;
   get_argument_count(): int;
-  get_bound_arguments(): Array<any>;
+  get_bound_arguments(): Array<unknown>;
   get_bound_arguments_count(): int;
   get_method(): string;
   get_object(): GodotObject;
@@ -3409,7 +3409,7 @@ declare class Camera3D extends Node3D {
   get_camera_rid(): RID;
   get_camera_transform(): Transform3D;
   get_cull_mask_value(layer_number: int): boolean;
-  get_frustum(): Plane[];
+  get_frustum(): unknown;
   get_pyramid_shape_rid(): RID;
   is_position_behind(world_point: Vector3): boolean;
   is_position_in_frustum(world_point: Vector3): boolean;
@@ -3473,11 +3473,11 @@ declare class CameraAttributesPractical extends CameraAttributes {
 declare class CameraFeed extends RefCounted {
   feed_is_active: boolean;
   feed_transform: Transform2D;
-  formats: Array<any>;
+  formats: Array<unknown>;
 
   _activate_feed(): boolean;
   _deactivate_feed(): void;
-  _get_formats(): Array<any>;
+  _get_formats(): Array<unknown>;
   _set_format(index: int, parameters: Dictionary): boolean;
   get_datatype(): int;
   get_id(): int;
@@ -3507,11 +3507,11 @@ declare class CameraFeed extends RefCounted {
   static readonly FEED_BACK: int;
 }
 
-declare class CameraServer extends Object {
+declare class CameraServer extends GodotObject {
   monitoring_feeds: boolean;
 
   add_feed(feed: CameraFeed): void;
-  feeds(): CameraFeed[];
+  feeds(): unknown;
   get_feed(index: int): CameraFeed;
   get_feed_count(): int;
   remove_feed(feed: CameraFeed): void;
@@ -3574,8 +3574,8 @@ declare class CanvasItem extends Node {
   draw_msdf_texture_rect_region(texture: Texture2D, rect: Rect2, src_rect: Rect2, modulate?: Color, outline?: float, pixel_range?: float, scale?: float): void;
   draw_multiline(points: PackedVector2Array, color: Color, width?: float, antialiased?: boolean): void;
   draw_multiline_colors(points: PackedVector2Array, colors: PackedColorArray, width?: float, antialiased?: boolean): void;
-  draw_multiline_string(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags: int, justification_flags: int, direction: int, orientation: int, oversampling?: float): void;
-  draw_multiline_string_outline(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags: int, justification_flags: int, direction: int, orientation: int, oversampling?: float): void;
+  draw_multiline_string(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_multiline_string_outline(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   draw_multimesh(multimesh: MultiMesh, texture: Texture2D): void;
   draw_polygon(points: PackedVector2Array, colors: PackedColorArray, uvs?: PackedVector2Array, texture?: Texture2D): void;
   draw_polyline(points: PackedVector2Array, color: Color, width?: float, antialiased?: boolean): void;
@@ -3584,8 +3584,8 @@ declare class CanvasItem extends Node {
   draw_rect(rect: Rect2, color: Color, filled?: boolean, width?: float, antialiased?: boolean): void;
   draw_set_transform(position: Vector2, rotation?: float, scale?: Vector2): void;
   draw_set_transform_matrix(xform: Transform2D): void;
-  draw_string(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags: int, direction: int, orientation: int, oversampling?: float): void;
-  draw_string_outline(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags: int, direction: int, orientation: int, oversampling?: float): void;
+  draw_string(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_string_outline(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   draw_style_box(style_box: StyleBox, rect: Rect2): void;
   draw_texture(texture: Texture2D, position: Vector2, modulate?: Color): void;
   draw_texture_rect(texture: Texture2D, rect: Rect2, tile: boolean, modulate?: Color, transpose?: boolean): void;
@@ -3598,7 +3598,7 @@ declare class CanvasItem extends Node {
   get_global_mouse_position(): Vector2;
   get_global_transform(): Transform2D;
   get_global_transform_with_canvas(): Transform2D;
-  get_instance_shader_parameter(name: string): any;
+  get_instance_shader_parameter(name: string): unknown;
   get_local_mouse_position(): Vector2;
   get_screen_transform(): Transform2D;
   get_transform(): Transform2D;
@@ -3614,7 +3614,7 @@ declare class CanvasItem extends Node {
   make_input_local(event: InputEvent): InputEvent;
   move_to_front(): void;
   queue_redraw(): void;
-  set_instance_shader_parameter(name: string, value: any): void;
+  set_instance_shader_parameter(name: string, value: unknown): void;
   set_notify_local_transform(enable: boolean): void;
   set_notify_transform(enable: boolean): void;
   set_visibility_layer_bit(layer: int, enabled: boolean): void;
@@ -3873,9 +3873,9 @@ declare class CircleShape2D extends Shape2D {
   radius: float;
 }
 
-declare class ClassDB extends Object {
+declare class ClassDB extends GodotObject {
   can_instantiate(class_: string): boolean;
-  class_call_static(class_: string, method: string): any;
+  class_call_static(class_: string, method: string): unknown;
   class_exists(class_: string): boolean;
   class_get_api_type(class_: string): int;
   class_get_enum_constants(class_: string, enum_: string, no_inheritance?: boolean): PackedStringArray;
@@ -3884,23 +3884,23 @@ declare class ClassDB extends Object {
   class_get_integer_constant_enum(class_: string, name: string, no_inheritance?: boolean): string;
   class_get_integer_constant_list(class_: string, no_inheritance?: boolean): PackedStringArray;
   class_get_method_argument_count(class_: string, method: string, no_inheritance?: boolean): int;
-  class_get_method_list(class_: string, no_inheritance?: boolean): Dictionary[];
-  class_get_property(object: GodotObject, property: string): any;
-  class_get_property_default_value(class_: string, property: string): any;
+  class_get_method_list(class_: string, no_inheritance?: boolean): Dictionary;
+  class_get_property(object: GodotObject, property: string): unknown;
+  class_get_property_default_value(class_: string, property: string): unknown;
   class_get_property_getter(class_: string, property: string): string;
-  class_get_property_list(class_: string, no_inheritance?: boolean): Dictionary[];
+  class_get_property_list(class_: string, no_inheritance?: boolean): Dictionary;
   class_get_property_setter(class_: string, property: string): string;
   class_get_signal(class_: string, signal: string): Dictionary;
-  class_get_signal_list(class_: string, no_inheritance?: boolean): Dictionary[];
+  class_get_signal_list(class_: string, no_inheritance?: boolean): Dictionary;
   class_has_enum(class_: string, name: string, no_inheritance?: boolean): boolean;
   class_has_integer_constant(class_: string, name: string): boolean;
   class_has_method(class_: string, method: string, no_inheritance?: boolean): boolean;
   class_has_signal(class_: string, signal: string): boolean;
-  class_set_property(object: GodotObject, property: string, value: any): int;
+  class_set_property(object: GodotObject, property: string, value: unknown): int;
   get_class_list(): PackedStringArray;
   get_inheriters_from_class(class_: string): PackedStringArray;
   get_parent_class(class_: string): string;
-  instantiate(class_: string): any;
+  instantiate(class_: string): unknown;
   is_class_enabled(class_: string): boolean;
   is_class_enum_bitfield(class_: string, enum_: string, no_inheritance?: boolean): boolean;
   is_parent_class(class_: string, inherits: string): boolean;
@@ -3918,9 +3918,9 @@ declare class CodeEdit extends TextEdit {
   auto_brace_completion_highlight_matching: boolean;
   auto_brace_completion_pairs: Dictionary;
   code_completion_enabled: boolean;
-  code_completion_prefixes: String[];
-  delimiter_comments: String[];
-  delimiter_strings: String[];
+  code_completion_prefixes: unknown;
+  delimiter_comments: unknown;
+  delimiter_strings: unknown;
   gutters_draw_bookmarks: boolean;
   gutters_draw_breakpoints_gutter: boolean;
   gutters_draw_executing_lines: boolean;
@@ -3929,21 +3929,21 @@ declare class CodeEdit extends TextEdit {
   gutters_line_numbers_min_digits: int;
   gutters_zero_pad_line_numbers: boolean;
   indent_automatic: boolean;
-  indent_automatic_prefixes: String[];
+  indent_automatic_prefixes: unknown;
   indent_size: int;
   indent_use_spaces: boolean;
   layout_direction: int;
   line_folding: boolean;
-  line_length_guidelines: int[];
+  line_length_guidelines: unknown;
   symbol_lookup_on_click: boolean;
   symbol_tooltip_on_hover: boolean;
   text_direction: int;
 
   _confirm_code_completion(replace: boolean): void;
-  _filter_code_completion_candidates(candidates: Dictionary[]): Dictionary[];
+  _filter_code_completion_candidates(candidates: Dictionary): Dictionary;
   _request_code_completion(force: boolean): void;
   add_auto_brace_completion_pair(start_key: string, end_key: string): void;
-  add_code_completion_option(type_: int, display_text: string, insert_text: string, text_color?: Color, icon?: Resource, value?: any, location?: int): void;
+  add_code_completion_option(type_: int, display_text: string, insert_text: string, text_color?: Color, icon?: Resource, value?: unknown, location?: int): void;
   add_comment_delimiter(start_key: string, end_key: string, line_only?: boolean): void;
   add_string_delimiter(start_key: string, end_key: string, line_only?: boolean): void;
   can_fold_line(line: int): boolean;
@@ -3966,7 +3966,7 @@ declare class CodeEdit extends TextEdit {
   get_bookmarked_lines(): PackedInt32Array;
   get_breakpointed_lines(): PackedInt32Array;
   get_code_completion_option(index: int): Dictionary;
-  get_code_completion_options(): Dictionary[];
+  get_code_completion_options(): Dictionary;
   get_code_completion_selected_index(): int;
   get_code_region_end_tag(): string;
   get_code_region_start_tag(): string;
@@ -3975,7 +3975,7 @@ declare class CodeEdit extends TextEdit {
   get_delimiter_start_key(delimiter_index: int): string;
   get_delimiter_start_position(line: int, column: int): Vector2;
   get_executing_lines(): PackedInt32Array;
-  get_folded_lines(): int[];
+  get_folded_lines(): unknown;
   get_text_for_code_completion(): string;
   get_text_for_symbol_lookup(): string;
   get_text_with_cursor_char(line: int, column: int): string;
@@ -4451,7 +4451,7 @@ declare class ColorRect extends Control {
 }
 
 declare class Compositor extends Resource {
-  compositor_effects: CompositorEffect[];
+  compositor_effects: unknown;
 }
 
 declare class CompositorEffect extends Resource {
@@ -4539,7 +4539,7 @@ declare class ConfigFile extends RefCounted {
   erase_section_key(section: string, key: string): void;
   get_section_keys(section: string): PackedStringArray;
   get_sections(): PackedStringArray;
-  get_value(section: string, key: string, default_?: any): any;
+  get_value(section: string, key: string, default_?: unknown): unknown;
   has_section(section: string): boolean;
   has_section_key(section: string, key: string): boolean;
   load(path: string): int;
@@ -4549,7 +4549,7 @@ declare class ConfigFile extends RefCounted {
   save(path: string): int;
   save_encrypted(path: string, key: PackedByteArray): int;
   save_encrypted_pass(path: string, password: string): int;
-  set_value(section: string, key: string, value: any): void;
+  set_value(section: string, key: string, value: unknown): void;
 }
 
 declare class ConfirmationDialog extends AcceptDialog {
@@ -4578,11 +4578,11 @@ declare class Container extends Control {
 }
 
 declare class Control extends CanvasItem {
-  accessibility_controls_nodes: NodePath[];
-  accessibility_described_by_nodes: NodePath[];
+  accessibility_controls_nodes: unknown;
+  accessibility_described_by_nodes: unknown;
   accessibility_description: string;
-  accessibility_flow_to_nodes: NodePath[];
-  accessibility_labeled_by_nodes: NodePath[];
+  accessibility_flow_to_nodes: unknown;
+  accessibility_labeled_by_nodes: unknown;
   accessibility_live: int;
   accessibility_name: string;
   anchor_bottom: float;
@@ -4639,16 +4639,16 @@ declare class Control extends CanvasItem {
   tooltip_text: string;
 
   _accessibility_get_contextual_info(): string;
-  _can_drop_data(at_position: Vector2, data: any): boolean;
-  _drop_data(at_position: Vector2, data: any): void;
+  _can_drop_data(at_position: Vector2, data: unknown): boolean;
+  _drop_data(at_position: Vector2, data: unknown): void;
   _get_accessibility_container_name(node: Node): string;
-  _get_drag_data(at_position: Vector2): any;
+  _get_drag_data(at_position: Vector2): unknown;
   _get_minimum_size(): Vector2;
   _get_tooltip(at_position: Vector2): string;
   _gui_input(event: InputEvent): void;
   _has_point(point: Vector2): boolean;
   _make_custom_tooltip(for_text: string): GodotObject;
-  _structured_text_parser(args: Array<any>, text: string): Vector3i[];
+  _structured_text_parser(args: Array<unknown>, text: string): unknown;
   accept_event(): void;
   accessibility_drag(): void;
   accessibility_drop(): void;
@@ -4663,7 +4663,7 @@ declare class Control extends CanvasItem {
   find_next_valid_focus(): Control;
   find_prev_valid_focus(): Control;
   find_valid_focus_neighbor(side: int): Control;
-  force_drag(data: any, preview: Control): void;
+  force_drag(data: unknown, preview: Control): void;
   get_anchor(side: int): float;
   get_begin(): Vector2;
   get_combined_minimum_size(): Vector2;
@@ -4960,7 +4960,7 @@ declare class Curve extends Resource {
   min_value: float;
   point_count: int;
 
-  add_point(position: Vector2, left_tangent?: float, right_tangent?: float, left_mode: int, right_mode: int): int;
+  add_point(position: Vector2, left_tangent?: float, right_tangent?: float, left_mode?: int, right_mode?: int): int;
   bake(): void;
   clean_dupes(): void;
   clear_points(): void;
@@ -5141,18 +5141,18 @@ declare class Dictionary {
   clear(): void;
   duplicate(deep?: boolean): Dictionary;
   duplicate_deep(deep_subresources_mode?: int): Dictionary;
-  erase(key: any): boolean;
-  find_key(value: any): any;
-  get(key: any, default_?: any): any;
-  get_or_add(key: any, default_?: any): any;
+  erase(key: unknown): boolean;
+  find_key(value: unknown): unknown;
+  get(key: unknown, default_?: unknown): unknown;
+  get_or_add(key: unknown, default_?: unknown): unknown;
   get_typed_key_builtin(): int;
   get_typed_key_class_name(): string;
-  get_typed_key_script(): any;
+  get_typed_key_script(): unknown;
   get_typed_value_builtin(): int;
   get_typed_value_class_name(): string;
-  get_typed_value_script(): any;
-  has(key: any): boolean;
-  has_all(keys: Array<any>): boolean;
+  get_typed_value_script(): unknown;
+  has(key: unknown): boolean;
+  has_all(keys: Array<unknown>): boolean;
   hash(): int;
   is_empty(): boolean;
   is_read_only(): boolean;
@@ -5162,15 +5162,15 @@ declare class Dictionary {
   is_typed(): boolean;
   is_typed_key(): boolean;
   is_typed_value(): boolean;
-  keys(): Array<any>;
+  keys(): Array<unknown>;
   make_read_only(): void;
   merge(dictionary: Dictionary, overwrite?: boolean): void;
   merged(dictionary: Dictionary, overwrite?: boolean): Dictionary;
   recursive_equal(dictionary: Dictionary, recursion_count: int): boolean;
-  set(key: any, value: any): boolean;
+  set(key: unknown, value: unknown): boolean;
   size(): int;
   sort(): void;
-  values(): Array<any>;
+  values(): Array<unknown>;
 }
 
 declare class DirAccess extends RefCounted {
@@ -5242,12 +5242,12 @@ declare class DirectionalLight3D extends Light3D {
   static readonly SKY_MODE_SKY_ONLY: int;
 }
 
-declare class DisplayServer extends Object {
+declare class DisplayServer extends GodotObject {
   accessibility_create_element(window_id: int, role: int): RID;
   accessibility_create_sub_element(parent_rid: RID, role: int, insert_pos?: int): RID;
   accessibility_create_sub_text_edit_elements(parent_rid: RID, shaped_text: RID, min_height: float, insert_pos?: int, is_last_line?: boolean): RID;
-  accessibility_element_get_meta(id: RID): any;
-  accessibility_element_set_meta(id: RID, meta: any): void;
+  accessibility_element_get_meta(id: RID): unknown;
+  accessibility_element_set_meta(id: RID, meta: unknown): void;
   accessibility_free_element(id: RID): void;
   accessibility_get_window_root(window_id: int): RID;
   accessibility_has_element(id: RID): boolean;
@@ -5337,11 +5337,11 @@ declare class DisplayServer extends Object {
   dialog_show(title: string, description: string, buttons: PackedStringArray, callback: Callable): int;
   enable_for_stealing_focus(process_id: int): void;
   file_dialog_show(title: string, current_directory: string, filename: string, show_hidden: boolean, mode: int, filters: PackedStringArray, callback: Callable, parent_window_id?: int): int;
-  file_dialog_with_options_show(title: string, current_directory: string, root: string, filename: string, show_hidden: boolean, mode: int, filters: PackedStringArray, options: Dictionary[], callback: Callable, parent_window_id?: int): int;
+  file_dialog_with_options_show(title: string, current_directory: string, root: string, filename: string, show_hidden: boolean, mode: int, filters: PackedStringArray, options: Dictionary, callback: Callable, parent_window_id?: int): int;
   force_process_and_drop_events(): void;
   get_accent_color(): Color;
   get_base_color(): Color;
-  get_display_cutouts(): Rect2[];
+  get_display_cutouts(): unknown;
   get_display_safe_area(): Rect2i;
   get_keyboard_focus_screen(): int;
   get_name(): string;
@@ -5351,13 +5351,13 @@ declare class DisplayServer extends Object {
   get_swap_cancel_ok(): boolean;
   get_window_at_screen_position(position: Vector2i): int;
   get_window_list(): PackedInt32Array;
-  global_menu_add_check_item(menu_root: string, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  global_menu_add_icon_check_item(menu_root: string, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  global_menu_add_icon_item(menu_root: string, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  global_menu_add_icon_radio_check_item(menu_root: string, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  global_menu_add_item(menu_root: string, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  global_menu_add_multistate_item(menu_root: string, label: string, max_states: int, default_state: int, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  global_menu_add_radio_check_item(menu_root: string, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
+  global_menu_add_check_item(menu_root: string, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  global_menu_add_icon_check_item(menu_root: string, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  global_menu_add_icon_item(menu_root: string, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  global_menu_add_icon_radio_check_item(menu_root: string, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  global_menu_add_item(menu_root: string, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  global_menu_add_multistate_item(menu_root: string, label: string, max_states: int, default_state: int, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  global_menu_add_radio_check_item(menu_root: string, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
   global_menu_add_separator(menu_root: string, index?: int): int;
   global_menu_add_submenu_item(menu_root: string, label: string, submenu: string, index?: int): int;
   global_menu_clear(menu_root: string): void;
@@ -5366,13 +5366,13 @@ declare class DisplayServer extends Object {
   global_menu_get_item_count(menu_root: string): int;
   global_menu_get_item_icon(menu_root: string, idx: int): Texture2D;
   global_menu_get_item_indentation_level(menu_root: string, idx: int): int;
-  global_menu_get_item_index_from_tag(menu_root: string, tag: any): int;
+  global_menu_get_item_index_from_tag(menu_root: string, tag: unknown): int;
   global_menu_get_item_index_from_text(menu_root: string, text: string): int;
   global_menu_get_item_key_callback(menu_root: string, idx: int): Callable;
   global_menu_get_item_max_states(menu_root: string, idx: int): int;
   global_menu_get_item_state(menu_root: string, idx: int): int;
   global_menu_get_item_submenu(menu_root: string, idx: int): string;
-  global_menu_get_item_tag(menu_root: string, idx: int): any;
+  global_menu_get_item_tag(menu_root: string, idx: int): unknown;
   global_menu_get_item_text(menu_root: string, idx: int): string;
   global_menu_get_item_tooltip(menu_root: string, idx: int): string;
   global_menu_get_system_menu_roots(): Dictionary;
@@ -5396,7 +5396,7 @@ declare class DisplayServer extends Object {
   global_menu_set_item_radio_checkable(menu_root: string, idx: int, checkable: boolean): void;
   global_menu_set_item_state(menu_root: string, idx: int, state: int): void;
   global_menu_set_item_submenu(menu_root: string, idx: int, submenu: string): void;
-  global_menu_set_item_tag(menu_root: string, idx: int, tag: any): void;
+  global_menu_set_item_tag(menu_root: string, idx: int, tag: unknown): void;
   global_menu_set_item_text(menu_root: string, idx: int, text: string): void;
   global_menu_set_item_tooltip(menu_root: string, idx: int, tooltip: string): void;
   global_menu_set_popup_callbacks(menu_root: string, open_callback: Callable, close_callback: Callable): void;
@@ -5455,7 +5455,7 @@ declare class DisplayServer extends Object {
   tablet_get_driver_count(): int;
   tablet_get_driver_name(idx: int): string;
   tablet_set_current_driver(name: string): void;
-  tts_get_voices(): Dictionary[];
+  tts_get_voices(): Dictionary;
   tts_get_voices_for_language(language: string): PackedStringArray;
   tts_is_paused(): boolean;
   tts_is_speaking(): boolean;
@@ -5467,7 +5467,7 @@ declare class DisplayServer extends Object {
   unregister_additional_output(object: GodotObject): void;
   virtual_keyboard_get_height(): int;
   virtual_keyboard_hide(): void;
-  virtual_keyboard_show(existing_text: string, position?: Rect2, type_: int, max_length?: int, cursor_start?: int, cursor_end?: int): void;
+  virtual_keyboard_show(existing_text: string, position?: Rect2, type_?: int, max_length?: int, cursor_start?: int, cursor_end?: int): void;
   warp_mouse(position: Vector2i): void;
   window_can_draw(window_id?: int): boolean;
   window_get_active_popup(): int;
@@ -5802,7 +5802,7 @@ declare class DrawableTexture2D extends Texture2D {
   resource_local_to_scene: boolean;
 
   blit_rect(rect: Rect2i, source: Texture2D, modulate?: Color, mipmap?: int, material?: Material): void;
-  blit_rect_multi(rect: Rect2i, sources: Texture2D[], extra_targets: DrawableTexture2D[], modulate?: Color, mipmap?: int, material?: Material): void;
+  blit_rect_multi(rect: Rect2i, sources: unknown, extra_targets: unknown, modulate?: Color, mipmap?: int, material?: Material): void;
   generate_mipmaps(): void;
   get_use_mipmaps(): boolean;
   set_format(format: int): void;
@@ -5845,12 +5845,12 @@ declare class EditorContextMenuPlugin extends RefCounted {
 declare class EditorDebuggerPlugin extends RefCounted {
   _breakpoint_set_in_tree(script: Script, line: int, enabled: boolean): void;
   _breakpoints_cleared_in_tree(): void;
-  _capture(message: string, data: Array<any>, session_id: int): boolean;
+  _capture(message: string, data: Array<unknown>, session_id: int): boolean;
   _goto_script_line(script: Script, line: int): void;
   _has_capture(capture: string): boolean;
   _setup_session(session_id: int): void;
   get_session(id: int): EditorDebuggerSession;
-  get_sessions(): Array<any>;
+  get_sessions(): Array<unknown>;
 }
 
 declare class EditorDebuggerSession extends RefCounted {
@@ -5859,9 +5859,9 @@ declare class EditorDebuggerSession extends RefCounted {
   is_breaked(): boolean;
   is_debuggable(): boolean;
   remove_session_tab(control: Control): void;
-  send_message(message: string, data?: Array<any>): void;
+  send_message(message: string, data?: Array<unknown>): void;
   set_breakpoint(path: string, line: int, enabled: boolean): void;
-  toggle_profiler(profiler: string, enable: boolean, data?: Array<any>): void;
+  toggle_profiler(profiler: string, enable: boolean, data?: Array<unknown>): void;
 
   breaked: Signal<[boolean]>;
   continued: Signal<[]>;
@@ -5919,14 +5919,14 @@ declare class EditorExportPlatform extends RefCounted {
   clear_messages(): void;
   create_preset(): EditorExportPreset;
   export_pack(preset: EditorExportPreset, debug: boolean, path: string, flags: int): int;
-  export_pack_patch(preset: EditorExportPreset, debug: boolean, path: string, patches?: PackedStringArray, flags: int): int;
+  export_pack_patch(preset: EditorExportPreset, debug: boolean, path: string, patches?: PackedStringArray, flags?: int): int;
   export_project(preset: EditorExportPreset, debug: boolean, path: string, flags: int): int;
   export_project_files(preset: EditorExportPreset, debug: boolean, save_cb: Callable, shared_cb?: Callable): int;
   export_zip(preset: EditorExportPreset, debug: boolean, path: string, flags: int): int;
-  export_zip_patch(preset: EditorExportPreset, debug: boolean, path: string, patches?: PackedStringArray, flags: int): int;
+  export_zip_patch(preset: EditorExportPreset, debug: boolean, path: string, patches?: PackedStringArray, flags?: int): int;
   find_export_template(template_file_name: string): Dictionary;
   gen_export_flags(flags: int): PackedStringArray;
-  get_current_presets(): Array<any>;
+  get_current_presets(): Array<unknown>;
   static get_forced_export_files(preset?: EditorExportPreset): PackedStringArray;
   get_internal_export_files(preset: EditorExportPreset, debug: boolean): Dictionary;
   get_message_category(index: int): string;
@@ -5940,7 +5940,7 @@ declare class EditorExportPlatform extends RefCounted {
   save_zip(preset: EditorExportPreset, debug: boolean, path: string): Dictionary;
   save_zip_patch(preset: EditorExportPreset, debug: boolean, path: string): Dictionary;
   ssh_push_to_remote(host: string, port: string, scp_args: PackedStringArray, src_file: string, dst_file: string): int;
-  ssh_run_on_remote(host: string, port: string, ssh_arg: PackedStringArray, cmd_args: string, output?: Array<any>, port_fwd?: int): int;
+  ssh_run_on_remote(host: string, port: string, ssh_arg: PackedStringArray, cmd_args: string, output?: Array<unknown>, port_fwd?: int): int;
   ssh_run_on_remote_no_wait(host: string, port: string, ssh_args: PackedStringArray, cmd_args: string, port_fwd?: int): int;
 
   // enum ExportMessageType
@@ -5972,7 +5972,7 @@ declare class EditorExportPlatformExtension extends EditorExportPlatform {
   _get_device_architecture(device: int): string;
   _get_export_option_visibility(preset: EditorExportPreset, option: string): boolean;
   _get_export_option_warning(preset: EditorExportPreset, option: string): string;
-  _get_export_options(): Dictionary[];
+  _get_export_options(): Dictionary;
   _get_logo(): Texture2D;
   _get_name(): string;
   _get_option_icon(device: int): Texture2D;
@@ -6021,7 +6021,7 @@ declare class EditorExportPlugin extends RefCounted {
   _get_export_features(platform: EditorExportPlatform, debug: boolean): PackedStringArray;
   _get_export_option_visibility(platform: EditorExportPlatform, option: string): boolean;
   _get_export_option_warning(platform: EditorExportPlatform, option: string): string;
-  _get_export_options(platform: EditorExportPlatform): Dictionary[];
+  _get_export_options(platform: EditorExportPlatform): Dictionary;
   _get_export_options_overrides(platform: EditorExportPlatform): Dictionary;
   _get_name(): string;
   _should_update_export_options(platform: EditorExportPlatform): boolean;
@@ -6046,7 +6046,7 @@ declare class EditorExportPlugin extends RefCounted {
   add_shared_object(path: string, tags: PackedStringArray, target: string): void;
   get_export_platform(): EditorExportPlatform;
   get_export_preset(): EditorExportPreset;
-  get_option(name: string): any;
+  get_option(name: string): unknown;
   skip(): void;
 }
 
@@ -6066,10 +6066,10 @@ declare class EditorExportPreset extends RefCounted {
   get_file_export_mode(path: string, default_: int): int;
   get_files_to_export(): PackedStringArray;
   get_include_filter(): string;
-  get_or_env(name: string, env_var: string): any;
+  get_or_env(name: string, env_var: string): unknown;
   get_patches(): PackedStringArray;
   get_preset_name(): string;
-  get_project_setting(name: string): any;
+  get_project_setting(name: string): unknown;
   get_script_export_mode(): int;
   get_version(name: string, windows_version: boolean): string;
   has(property: string): boolean;
@@ -6148,7 +6148,7 @@ declare class EditorFileSystem extends Node {
   sources_changed: Signal<[boolean]>;
 }
 
-declare class EditorFileSystemDirectory extends Object {
+declare class EditorFileSystemDirectory extends GodotObject {
   find_dir_index(name: string): int;
   find_file_index(name: string): int;
   get_file(idx: int): string;
@@ -6174,7 +6174,7 @@ declare class EditorFileSystemImportFormatSupportQuery extends RefCounted {
 declare class EditorImportPlugin extends ResourceImporter {
   _can_import_threaded(): boolean;
   _get_format_version(): int;
-  _get_import_options(path: string, preset_index: int): Dictionary[];
+  _get_import_options(path: string, preset_index: int): Dictionary;
   _get_import_order(): int;
   _get_importer_name(): string;
   _get_option_visibility(path: string, option_name: string, options: Dictionary): boolean;
@@ -6185,8 +6185,8 @@ declare class EditorImportPlugin extends ResourceImporter {
   _get_resource_type(): string;
   _get_save_extension(): string;
   _get_visible_name(): string;
-  _import(source_file: string, save_path: string, options: Dictionary, platform_variants: String[], gen_files: String[]): int;
-  append_import_external_resource(path: string, custom_options?: Dictionary, custom_importer?: string, generator_parameters?: any): int;
+  _import(source_file: string, save_path: string, options: Dictionary, platform_variants: unknown, gen_files: unknown): int;
+  append_import_external_resource(path: string, custom_options?: Dictionary, custom_importer?: string, generator_parameters?: unknown): int;
 }
 
 declare class EditorInspector extends ScrollContainer {
@@ -6204,7 +6204,7 @@ declare class EditorInspector extends ScrollContainer {
   object_id_selected: Signal<[int]>;
   property_deleted: Signal<[string]>;
   property_edited: Signal<[string]>;
-  property_keyed: Signal<[string, any, boolean]>;
+  property_keyed: Signal<[string, unknown, boolean]>;
   property_selected: Signal<[string]>;
   property_toggled: Signal<[string, boolean]>;
   resource_selected: Signal<[Resource, string]>;
@@ -6223,7 +6223,7 @@ declare class EditorInspectorPlugin extends RefCounted {
   add_property_editor_for_multiple_properties(label: string, properties: PackedStringArray, editor: Control): void;
 }
 
-declare class EditorInterface extends Object {
+declare class EditorInterface extends GodotObject {
   distraction_free_mode: boolean;
   movie_maker_enabled: boolean;
 
@@ -6253,7 +6253,7 @@ declare class EditorInterface extends Object {
   get_node_3d_rotate_snap(): float;
   get_node_3d_scale_snap(): float;
   get_node_3d_translate_snap(): float;
-  get_open_scene_roots(): Node[];
+  get_open_scene_roots(): unknown;
   get_open_scenes(): PackedStringArray;
   get_playing_scene(): string;
   get_resource_filesystem(): EditorFileSystem;
@@ -6268,21 +6268,21 @@ declare class EditorInterface extends Object {
   is_object_edited(object: GodotObject): boolean;
   is_playing_scene(): boolean;
   is_plugin_enabled(plugin: string): boolean;
-  make_mesh_previews(meshes: Mesh[], preview_size: int): Texture2D[];
+  make_mesh_previews(meshes: unknown, preview_size: int): unknown;
   mark_scene_as_unsaved(): void;
   open_scene_from_path(scene_filepath: string, set_inherited?: boolean): void;
   play_current_scene(): void;
   play_custom_scene(scene_filepath: string): void;
   play_main_scene(): void;
-  popup_create_dialog(callback: Callable, base_type?: string, current_type?: string, dialog_title?: string, type_blocklist?: StringName[]): void;
+  popup_create_dialog(callback: Callable, base_type?: string, current_type?: string, dialog_title?: string, type_blocklist?: unknown): void;
   popup_dialog(dialog: Window, rect?: Rect2i): void;
   popup_dialog_centered(dialog: Window, minsize?: Vector2i): void;
   popup_dialog_centered_clamped(dialog: Window, minsize?: Vector2i, fallback_ratio?: float): void;
   popup_dialog_centered_ratio(dialog: Window, ratio?: float): void;
   popup_method_selector(object: GodotObject, callback: Callable, current_value?: string): void;
-  popup_node_selector(callback: Callable, valid_types?: StringName[], current_value?: Node): void;
+  popup_node_selector(callback: Callable, valid_types?: unknown, current_value?: Node): void;
   popup_property_selector(object: GodotObject, callback: Callable, type_filter?: PackedInt32Array, current_value?: string): void;
-  popup_quick_open(callback: Callable, base_types?: StringName[]): void;
+  popup_quick_open(callback: Callable, base_types?: unknown): void;
   reload_scene_from_path(scene_filepath: string): void;
   restart_editor(save?: boolean): void;
   save_all_scenes(): void;
@@ -6298,16 +6298,16 @@ declare class EditorInterface extends Object {
 
 declare class EditorNode3DGizmo extends Node3DGizmo {
   _begin_handle_action(id: int, secondary: boolean): void;
-  _commit_handle(id: int, secondary: boolean, restore: any, cancel: boolean): void;
-  _commit_subgizmos(ids: PackedInt32Array, restores: Transform3D[], cancel: boolean): void;
+  _commit_handle(id: int, secondary: boolean, restore: unknown, cancel: boolean): void;
+  _commit_subgizmos(ids: PackedInt32Array, restores: unknown, cancel: boolean): void;
   _get_handle_name(id: int, secondary: boolean): string;
-  _get_handle_value(id: int, secondary: boolean): any;
+  _get_handle_value(id: int, secondary: boolean): unknown;
   _get_subgizmo_transform(id: int): Transform3D;
   _is_handle_highlighted(id: int, secondary: boolean): boolean;
   _redraw(): void;
   _set_handle(id: int, secondary: boolean, camera: Camera3D, point: Vector2): void;
   _set_subgizmo_transform(id: int, transform: Transform3D): void;
-  _subgizmos_intersect_frustum(camera: Camera3D, frustum: Plane[]): PackedInt32Array;
+  _subgizmos_intersect_frustum(camera: Camera3D, frustum: unknown): PackedInt32Array;
   _subgizmos_intersect_ray(camera: Camera3D, point: Vector2): int;
   add_collision_segments(segments: PackedVector3Array): void;
   add_collision_triangles(triangles: TriangleMesh): void;
@@ -6327,12 +6327,12 @@ declare class EditorNode3DGizmo extends Node3DGizmo {
 declare class EditorNode3DGizmoPlugin extends Resource {
   _begin_handle_action(gizmo: EditorNode3DGizmo, handle_id: int, secondary: boolean): void;
   _can_be_hidden(): boolean;
-  _commit_handle(gizmo: EditorNode3DGizmo, handle_id: int, secondary: boolean, restore: any, cancel: boolean): void;
-  _commit_subgizmos(gizmo: EditorNode3DGizmo, ids: PackedInt32Array, restores: Transform3D[], cancel: boolean): void;
+  _commit_handle(gizmo: EditorNode3DGizmo, handle_id: int, secondary: boolean, restore: unknown, cancel: boolean): void;
+  _commit_subgizmos(gizmo: EditorNode3DGizmo, ids: PackedInt32Array, restores: unknown, cancel: boolean): void;
   _create_gizmo(for_node_3d: Node3D): EditorNode3DGizmo;
   _get_gizmo_name(): string;
   _get_handle_name(gizmo: EditorNode3DGizmo, handle_id: int, secondary: boolean): string;
-  _get_handle_value(gizmo: EditorNode3DGizmo, handle_id: int, secondary: boolean): any;
+  _get_handle_value(gizmo: EditorNode3DGizmo, handle_id: int, secondary: boolean): unknown;
   _get_priority(): int;
   _get_subgizmo_transform(gizmo: EditorNode3DGizmo, subgizmo_id: int): Transform3D;
   _has_gizmo(for_node_3d: Node3D): boolean;
@@ -6341,7 +6341,7 @@ declare class EditorNode3DGizmoPlugin extends Resource {
   _redraw(gizmo: EditorNode3DGizmo): void;
   _set_handle(gizmo: EditorNode3DGizmo, handle_id: int, secondary: boolean, camera: Camera3D, screen_pos: Vector2): void;
   _set_subgizmo_transform(gizmo: EditorNode3DGizmo, subgizmo_id: int, transform: Transform3D): void;
-  _subgizmos_intersect_frustum(gizmo: EditorNode3DGizmo, camera: Camera3D, frustum_planes: Plane[]): PackedInt32Array;
+  _subgizmos_intersect_frustum(gizmo: EditorNode3DGizmo, camera: Camera3D, frustum_planes: unknown): PackedInt32Array;
   _subgizmos_intersect_ray(gizmo: EditorNode3DGizmo, camera: Camera3D, screen_pos: Vector2): int;
   add_material(name: string, material: StandardMaterial3D): void;
   create_handle_material(name: string, billboard?: boolean, texture?: Texture2D): void;
@@ -6350,7 +6350,7 @@ declare class EditorNode3DGizmoPlugin extends Resource {
   get_material(name: string, gizmo?: EditorNode3DGizmo): StandardMaterial3D;
 }
 
-declare class EditorPaths extends Object {
+declare class EditorPaths extends GodotObject {
   get_cache_dir(): string;
   get_config_dir(): string;
   get_data_dir(): string;
@@ -6493,7 +6493,7 @@ declare class EditorProperty extends Container {
   _update_property(): void;
   add_focusable(control: Control): void;
   deselect(): void;
-  emit_changed(property: string, value: any, field?: string, changing?: boolean): void;
+  emit_changed(property: string, value: unknown, field?: string, changing?: boolean): void;
   get_edited_object(): GodotObject;
   get_edited_property(): string;
   is_selected(): boolean;
@@ -6503,15 +6503,15 @@ declare class EditorProperty extends Container {
   set_object_and_property(object: GodotObject, property: string): void;
   update_property(): void;
 
-  multiple_properties_changed: Signal<[PackedStringArray, Array<any>]>;
+  multiple_properties_changed: Signal<[PackedStringArray, Array<unknown>]>;
   object_id_selected: Signal<[string, int]>;
   property_can_revert_changed: Signal<[string, boolean]>;
-  property_changed: Signal<[string, any, string, boolean]>;
+  property_changed: Signal<[string, unknown, string, boolean]>;
   property_checked: Signal<[string, boolean]>;
   property_deleted: Signal<[string]>;
   property_favorited: Signal<[string, boolean]>;
   property_keyed: Signal<[string]>;
-  property_keyed_with_value: Signal<[string, any]>;
+  property_keyed_with_value: Signal<[string, unknown]>;
   property_overridden: Signal<[]>;
   property_pinned: Signal<[string, boolean]>;
   resource_selected: Signal<[string, Resource]>;
@@ -6542,8 +6542,8 @@ declare class EditorResourcePicker extends HBoxContainer {
 declare class EditorResourcePreview extends Node {
   add_preview_generator(generator: EditorResourcePreviewGenerator): void;
   check_for_invalidation(path: string): void;
-  queue_edited_resource_preview(resource: Resource, receiver: GodotObject, receiver_func: string, userdata: any): void;
-  queue_resource_preview(path: string, receiver: GodotObject, receiver_func: string, userdata: any): void;
+  queue_edited_resource_preview(resource: Resource, receiver: GodotObject, receiver_func: string, userdata: unknown): void;
+  queue_resource_preview(path: string, receiver: GodotObject, receiver_func: string, userdata: unknown): void;
   remove_preview_generator(generator: EditorResourcePreviewGenerator): void;
 
   preview_invalidated: Signal<[string]>;
@@ -6567,10 +6567,10 @@ declare class EditorResourceTooltipPlugin extends RefCounted {
 declare class EditorSceneFormatImporter extends RefCounted {
   _get_extensions(): PackedStringArray;
   _get_import_options(path: string): void;
-  _get_option_visibility(path: string, for_animation: boolean, option: string): any;
+  _get_option_visibility(path: string, for_animation: boolean, option: string): unknown;
   _import_scene(path: string, flags: int, options: Dictionary): GodotObject;
-  add_import_option(name: string, value: any): void;
-  add_import_option_advanced(type_: int, name: string, default_value: any, hint: int, hint_string?: string, usage_flags?: int): void;
+  add_import_option(name: string, value: unknown): void;
+  add_import_option_advanced(type_: int, name: string, default_value: unknown, hint: int, hint_string?: string, usage_flags?: int): void;
 
   static readonly IMPORT_SCENE: int;
   static readonly IMPORT_ANIMATION: int;
@@ -6589,15 +6589,15 @@ declare class EditorScenePostImport extends RefCounted {
 declare class EditorScenePostImportPlugin extends RefCounted {
   _get_import_options(path: string): void;
   _get_internal_import_options(category: int): void;
-  _get_internal_option_update_view_required(category: int, option: string): any;
-  _get_internal_option_visibility(category: int, for_animation: boolean, option: string): any;
-  _get_option_visibility(path: string, for_animation: boolean, option: string): any;
+  _get_internal_option_update_view_required(category: int, option: string): unknown;
+  _get_internal_option_visibility(category: int, for_animation: boolean, option: string): unknown;
+  _get_option_visibility(path: string, for_animation: boolean, option: string): unknown;
   _internal_process(category: int, base_node: Node, node: Node, resource: Resource): void;
   _post_process(scene: Node): void;
   _pre_process(scene: Node): void;
-  add_import_option(name: string, value: any): void;
-  add_import_option_advanced(type_: int, name: string, default_value: any, hint: int, hint_string?: string, usage_flags?: int): void;
-  get_option_value(name: string): any;
+  add_import_option(name: string, value: unknown): void;
+  add_import_option_advanced(type_: int, name: string, default_value: unknown, hint: int, hint_string?: string, usage_flags?: int): void;
+  get_option_value(name: string): unknown;
 
   // enum InternalImportCategory
   static readonly INTERNAL_IMPORT_CATEGORY_NODE: int;
@@ -6621,477 +6621,477 @@ declare class EditorScriptPicker extends EditorResourcePicker {
   script_owner: Node;
 }
 
-declare class EditorSelection extends Object {
+declare class EditorSelection extends GodotObject {
   add_node(node: Node): void;
   clear(): void;
-  get_selected_nodes(): Node[];
-  get_top_selected_nodes(): Node[];
-  get_transformable_selected_nodes(): Node[];
+  get_selected_nodes(): unknown;
+  get_top_selected_nodes(): unknown;
+  get_transformable_selected_nodes(): unknown;
   remove_node(node: Node): void;
 
   selection_changed: Signal<[]>;
 }
 
 declare class EditorSettings extends Resource {
-  asset_library/use_threads: boolean;
-  debugger/auto_switch_to_remote_scene_tree: boolean;
-  debugger/auto_switch_to_stack_trace: boolean;
-  debugger/max_node_selection: int;
-  debugger/profile_native_calls: boolean;
-  debugger/profiler_frame_history_size: int;
-  debugger/profiler_frame_max_functions: int;
-  debugger/profiler_target_fps: int;
-  debugger/remote_inspect_refresh_interval: float;
-  debugger/remote_scene_tree_refresh_interval: float;
-  docks/filesystem/always_show_folders: boolean;
-  docks/filesystem/automatically_open_created_scripts: boolean;
-  docks/filesystem/other_file_extensions: string;
-  docks/filesystem/textfile_extensions: string;
-  docks/filesystem/thumbnail_size: int;
-  docks/property_editor/auto_refresh_interval: float;
-  docks/property_editor/subresource_hue_tint: float;
-  docks/scene_tree/accessibility_warnings: boolean;
-  docks/scene_tree/ask_before_deleting_related_animation_tracks: boolean;
-  docks/scene_tree/ask_before_revoking_unique_name: boolean;
-  docks/scene_tree/auto_expand_to_selected: boolean;
-  docks/scene_tree/center_node_on_reparent: boolean;
-  docks/scene_tree/hide_filtered_out_parents: boolean;
-  docks/scene_tree/start_create_dialog_fully_expanded: boolean;
-  editors/2d/auto_resample_delay: float;
-  editors/2d/bone_color1: Color;
-  editors/2d/bone_color2: Color;
-  editors/2d/bone_ik_color: Color;
-  editors/2d/bone_outline_color: Color;
-  editors/2d/bone_outline_size: float;
-  editors/2d/bone_selected_color: Color;
-  editors/2d/bone_width: float;
-  editors/2d/grid_color: Color;
-  editors/2d/guides_color: Color;
-  editors/2d/locked_selection_rectangle_color: Color;
-  editors/2d/ruler_width: float;
-  editors/2d/selection_rectangle_color: Color;
-  editors/2d/smart_snapping_line_color: Color;
-  editors/2d/use_integer_zoom_by_default: boolean;
-  editors/2d/viewport_border_color: Color;
-  editors/2d/zoom_speed_factor: float;
-  editors/3d/active_selection_box_color: Color;
-  editors/3d/default_fov: float;
-  editors/3d/default_z_far: float;
-  editors/3d/default_z_near: float;
-  editors/3d/freelook/freelook_activation_modifier: int;
-  editors/3d/freelook/freelook_base_speed: float;
-  editors/3d/freelook/freelook_inertia: float;
-  editors/3d/freelook/freelook_invert_y_axis: boolean;
-  editors/3d/freelook/freelook_navigation_scheme: int;
-  editors/3d/freelook/freelook_sensitivity: float;
-  editors/3d/freelook/freelook_speed_zoom_link: boolean;
-  editors/3d/grid_division_level_bias: float;
-  editors/3d/grid_division_level_max: int;
-  editors/3d/grid_division_level_min: int;
-  editors/3d/grid_size: int;
-  editors/3d/grid_xy_plane: boolean;
-  editors/3d/grid_xz_plane: boolean;
-  editors/3d/grid_yz_plane: boolean;
-  editors/3d/manipulator_gizmo_opacity: float;
-  editors/3d/manipulator_gizmo_size: int;
-  editors/3d/navigation/emulate_3_button_mouse: boolean;
-  editors/3d/navigation/emulate_numpad: boolean;
-  editors/3d/navigation/invert_x_axis: boolean;
-  editors/3d/navigation/invert_y_axis: boolean;
-  editors/3d/navigation/navigation_scheme: int;
-  editors/3d/navigation/orbit_mouse_button: int;
-  editors/3d/navigation/pan_mouse_button: int;
-  editors/3d/navigation/show_viewport_navigation_gizmo: boolean;
-  editors/3d/navigation/show_viewport_rotation_gizmo: boolean;
-  editors/3d/navigation/warped_mouse_panning: boolean;
-  editors/3d/navigation/zoom_mouse_button: int;
-  editors/3d/navigation/zoom_style: int;
-  editors/3d/navigation_feel/angle_snap_threshold: float;
-  editors/3d/navigation_feel/orbit_inertia: float;
-  editors/3d/navigation_feel/orbit_sensitivity: float;
-  editors/3d/navigation_feel/translation_inertia: float;
-  editors/3d/navigation_feel/translation_sensitivity: float;
-  editors/3d/navigation_feel/zoom_inertia: float;
-  editors/3d/primary_grid_color: Color;
-  editors/3d/primary_grid_steps: int;
-  editors/3d/secondary_grid_color: Color;
-  editors/3d/selection_box_color: Color;
-  editors/3d/show_gizmo_during_rotation: int;
-  editors/3d/view_plane_rotation_gizmo_scale: float;
-  editors/3d_gizmos/gizmo_colors/aabb: Color;
-  editors/3d_gizmos/gizmo_colors/camera: Color;
-  editors/3d_gizmos/gizmo_colors/csg: Color;
-  editors/3d_gizmos/gizmo_colors/decal: Color;
-  editors/3d_gizmos/gizmo_colors/fog_volume: Color;
-  editors/3d_gizmos/gizmo_colors/gridmap_grid: Color;
-  editors/3d_gizmos/gizmo_colors/ik_chain: Color;
-  editors/3d_gizmos/gizmo_colors/instantiated: Color;
-  editors/3d_gizmos/gizmo_colors/joint: Color;
-  editors/3d_gizmos/gizmo_colors/joint_body_a: Color;
-  editors/3d_gizmos/gizmo_colors/joint_body_b: Color;
-  editors/3d_gizmos/gizmo_colors/lightmap_lines: Color;
-  editors/3d_gizmos/gizmo_colors/lightprobe_lines: Color;
-  editors/3d_gizmos/gizmo_colors/occluder: Color;
-  editors/3d_gizmos/gizmo_colors/particle_attractor: Color;
-  editors/3d_gizmos/gizmo_colors/particle_collision: Color;
-  editors/3d_gizmos/gizmo_colors/particles: Color;
-  editors/3d_gizmos/gizmo_colors/path_tilt: Color;
-  editors/3d_gizmos/gizmo_colors/reflection_probe: Color;
-  editors/3d_gizmos/gizmo_colors/selected_bone: Color;
-  editors/3d_gizmos/gizmo_colors/skeleton: Color;
-  editors/3d_gizmos/gizmo_colors/spring_bone_collision: Color;
-  editors/3d_gizmos/gizmo_colors/spring_bone_inside_collision: Color;
-  editors/3d_gizmos/gizmo_colors/spring_bone_joint: Color;
-  editors/3d_gizmos/gizmo_colors/stream_player_3d: Color;
-  editors/3d_gizmos/gizmo_colors/visibility_notifier: Color;
-  editors/3d_gizmos/gizmo_colors/voxel_gi: Color;
-  editors/3d_gizmos/gizmo_settings/bone_axis_length: float;
-  editors/3d_gizmos/gizmo_settings/bone_shape: int;
-  editors/3d_gizmos/gizmo_settings/lightmap_gi_probe_size: float;
-  editors/3d_gizmos/gizmo_settings/path3d_tilt_disk_size: float;
-  editors/3d_gizmos/gizmo_settings/show_collision_shapes_only_when_selected: boolean;
-  editors/animation/autorename_animation_tracks: boolean;
-  editors/animation/confirm_insert_track: boolean;
-  editors/animation/default_animation_step: float;
-  editors/animation/default_create_bezier_tracks: boolean;
-  editors/animation/default_create_reset_tracks: boolean;
-  editors/animation/default_fps_compatibility: boolean;
-  editors/animation/default_fps_mode: int;
-  editors/animation/insert_at_current_time: boolean;
-  editors/animation/onion_layers_future_color: Color;
-  editors/animation/onion_layers_past_color: Color;
-  editors/bone_mapper/handle_colors/error: Color;
-  editors/bone_mapper/handle_colors/missing: Color;
-  editors/bone_mapper/handle_colors/set: Color;
-  editors/bone_mapper/handle_colors/unset: Color;
-  editors/grid_map/pick_distance: float;
-  editors/grid_map/preview_size: int;
-  editors/panning/2d_editor_pan_speed: int;
-  editors/panning/2d_editor_panning_scheme: int;
-  editors/panning/animation_editors_panning_scheme: int;
-  editors/panning/simple_panning: boolean;
-  editors/panning/sub_editors_panning_scheme: int;
-  editors/panning/warped_mouse_panning: boolean;
-  editors/panning/zoom_style: int;
-  editors/polygon_editor/auto_bake_delay: float;
-  editors/polygon_editor/point_grab_radius: int;
-  editors/polygon_editor/show_previous_outline: boolean;
-  editors/shader_editor/behavior/files/restore_shaders_on_load: boolean;
-  editors/tiles_editor/display_grid: boolean;
-  editors/tiles_editor/grid_color: Color;
-  editors/tiles_editor/highlight_selected_layer: boolean;
-  editors/visual_editors/category_colors/color_color: Color;
-  editors/visual_editors/category_colors/conditional_color: Color;
-  editors/visual_editors/category_colors/input_color: Color;
-  editors/visual_editors/category_colors/output_color: Color;
-  editors/visual_editors/category_colors/particle_color: Color;
-  editors/visual_editors/category_colors/scalar_color: Color;
-  editors/visual_editors/category_colors/special_color: Color;
-  editors/visual_editors/category_colors/textures_color: Color;
-  editors/visual_editors/category_colors/transform_color: Color;
-  editors/visual_editors/category_colors/utility_color: Color;
-  editors/visual_editors/category_colors/vector_color: Color;
-  editors/visual_editors/color_theme: string;
-  editors/visual_editors/connection_colors/boolean_color: Color;
-  editors/visual_editors/connection_colors/sampler_color: Color;
-  editors/visual_editors/connection_colors/scalar_color: Color;
-  editors/visual_editors/connection_colors/transform_color: Color;
-  editors/visual_editors/connection_colors/vector2_color: Color;
-  editors/visual_editors/connection_colors/vector3_color: Color;
-  editors/visual_editors/connection_colors/vector4_color: Color;
-  editors/visual_editors/grid_pattern: int;
-  editors/visual_editors/lines_curvature: float;
-  editors/visual_editors/minimap_opacity: float;
-  editors/visual_editors/visual_shader/port_preview_size: int;
-  export/ssh/scp: string;
-  export/ssh/ssh: string;
-  filesystem/directories/autoscan_project_path: string;
-  filesystem/directories/default_project_path: string;
-  filesystem/external_programs/3d_model_editor: string;
-  filesystem/external_programs/audio_editor: string;
-  filesystem/external_programs/raster_image_editor: string;
-  filesystem/external_programs/terminal_emulator: string;
-  filesystem/external_programs/terminal_emulator_flags: string;
-  filesystem/external_programs/vector_image_editor: string;
-  filesystem/file_dialog/display_mode: int;
-  filesystem/file_dialog/show_hidden_files: boolean;
-  filesystem/file_dialog/thumbnail_size: int;
-  filesystem/file_server/password: string;
-  filesystem/file_server/port: int;
-  filesystem/import/blender/blender_path: string;
-  filesystem/import/blender/rpc_port: int;
-  filesystem/import/blender/rpc_server_uptime: float;
-  filesystem/import/fbx/fbx2gltf_path: string;
-  filesystem/on_save/compress_binary_resources: boolean;
-  filesystem/on_save/safe_save_on_backup_then_rename: boolean;
-  filesystem/on_save/warn_on_saving_large_text_resources: boolean;
-  filesystem/quick_open_dialog/default_display_mode: int;
-  filesystem/quick_open_dialog/enable_fuzzy_matching: boolean;
-  filesystem/quick_open_dialog/include_addons: boolean;
-  filesystem/quick_open_dialog/instant_preview: boolean;
-  filesystem/quick_open_dialog/max_fuzzy_misses: int;
-  filesystem/quick_open_dialog/max_results: int;
-  filesystem/quick_open_dialog/show_search_highlight: boolean;
-  filesystem/tools/oidn/oidn_denoise_path: string;
-  input/buffering/agile_event_flushing: boolean;
-  input/buffering/use_accumulated_input: boolean;
-  interface/accessibility/accessibility_support: int;
-  interface/editor/appearance/accept_dialog_cancel_ok_buttons: int;
-  interface/editor/appearance/collapse_main_menu: boolean;
-  interface/editor/appearance/custom_display_scale: float;
-  interface/editor/appearance/display_scale: int;
-  interface/editor/appearance/editor_screen: int;
-  interface/editor/appearance/expand_to_title: boolean;
-  interface/editor/appearance/project_manager_screen: int;
-  interface/editor/appearance/show_update_spinner: int;
-  interface/editor/appearance/use_embedded_menu: boolean;
-  interface/editor/appearance/use_native_file_dialogs: boolean;
-  interface/editor/behavior/automatically_open_screenshots: boolean;
-  interface/editor/behavior/import_resources_when_unfocused: boolean;
-  interface/editor/behavior/save_each_scene_on_quit: boolean;
-  interface/editor/behavior/save_on_focus_loss: boolean;
-  interface/editor/behavior/separate_distraction_mode: boolean;
-  interface/editor/behavior/show_internal_errors_in_toast_notifications: int;
-  interface/editor/display/keep_screen_on: boolean;
-  interface/editor/display/single_window_mode: boolean;
-  interface/editor/display/update_continuously: boolean;
-  interface/editor/display/vsync_mode: int;
-  interface/editor/docks/bottom_dock_tab_style: int;
-  interface/editor/docks/dock_tab_style: int;
-  interface/editor/fonts/code_font: string;
-  interface/editor/fonts/code_font_contextual_ligatures: int;
-  interface/editor/fonts/code_font_custom_opentype_features: string;
-  interface/editor/fonts/code_font_custom_variations: string;
-  interface/editor/fonts/code_font_size: int;
-  interface/editor/fonts/font_allow_msdf: boolean;
-  interface/editor/fonts/font_antialiasing: int;
-  interface/editor/fonts/font_disable_embedded_bitmaps: boolean;
-  interface/editor/fonts/font_hinting: int;
-  interface/editor/fonts/font_subpixel_positioning: int;
-  interface/editor/fonts/main_font: string;
-  interface/editor/fonts/main_font_bold: string;
-  interface/editor/fonts/main_font_custom_opentype_features: string;
-  interface/editor/fonts/main_font_size: int;
-  interface/editor/input/mouse_extra_buttons_navigate_history: boolean;
-  interface/editor/input/tablet_driver: int;
-  interface/editor/localization/editor_language: string;
-  interface/editor/localization/localize_settings: boolean;
-  interface/editor/localization/ui_layout_direction: int;
-  interface/editor/timers/dragging_hover_wait_seconds: float;
-  interface/editor/timers/low_processor_mode_sleep_usec: int;
-  interface/editor/timers/unfocused_low_processor_mode_sleep_usec: int;
-  interface/editors/derive_script_globals_by_name: boolean;
-  interface/inspector/auto_unfold_foreign_scenes: boolean;
-  interface/inspector/color_picker_show_intensity: boolean;
-  interface/inspector/default_color_picker_mode: int;
-  interface/inspector/default_color_picker_shape: int;
-  interface/inspector/default_float_step: float;
-  interface/inspector/default_property_name_style: int;
-  interface/inspector/delimitate_all_container_and_resources: boolean;
-  interface/inspector/disable_folding: boolean;
-  interface/inspector/float_drag_speed: float;
-  interface/inspector/horizontal_vector2_editing: boolean;
-  interface/inspector/horizontal_vector_types_editing: boolean;
-  interface/inspector/integer_drag_speed: float;
-  interface/inspector/max_array_dictionary_items_per_page: int;
-  interface/inspector/nested_color_mode: int;
-  interface/inspector/open_resources_in_current_inspector: boolean;
-  interface/inspector/resources_to_open_in_new_inspector: PackedStringArray;
-  interface/inspector/show_low_level_opentype_features: boolean;
-  interface/multi_window/enable: boolean;
-  interface/multi_window/maximize_window: boolean;
-  interface/multi_window/restore_windows_on_load: boolean;
-  interface/scene_tabs/auto_select_current_scene_file: boolean;
-  interface/scene_tabs/display_close_button: int;
-  interface/scene_tabs/maximum_width: int;
-  interface/scene_tabs/restore_scenes_on_load: boolean;
-  interface/scene_tabs/show_script_button: boolean;
-  interface/scene_tabs/show_thumbnail_on_hover: boolean;
-  interface/theme/accent_color: Color;
-  interface/theme/additional_spacing: int;
-  interface/theme/base_color: Color;
-  interface/theme/base_spacing: int;
-  interface/theme/border_size: int;
-  interface/theme/color_preset: string;
-  interface/theme/contrast: float;
-  interface/theme/corner_radius: int;
-  interface/theme/custom_theme: string;
-  interface/theme/draw_extra_borders: boolean;
-  interface/theme/draw_relationship_lines: int;
-  interface/theme/follow_system_theme: boolean;
-  interface/theme/icon_and_font_color: int;
-  interface/theme/icon_saturation: float;
-  interface/theme/relationship_line_opacity: float;
-  interface/theme/spacing_preset: string;
-  interface/theme/style: string;
-  interface/theme/use_monospace_font_for_editor_symbols: boolean;
-  interface/theme/use_system_accent_color: boolean;
-  interface/touchscreen/enable_long_press_as_right_click: boolean;
-  interface/touchscreen/enable_pan_and_scale_gestures: boolean;
-  interface/touchscreen/enable_touch_optimizations: boolean;
-  interface/touchscreen/scale_gizmo_handles: float;
-  interface/touchscreen/touch_actions_panel: int;
-  network/connection/check_for_updates: int;
-  network/connection/network_mode: int;
-  network/debug/remote_host: string;
-  network/debug/remote_port: int;
-  network/http_proxy/host: string;
-  network/http_proxy/port: int;
-  network/language_server/enable_smart_resolve: boolean;
-  network/language_server/poll_limit_usec: int;
-  network/language_server/remote_host: string;
-  network/language_server/remote_port: int;
-  network/language_server/show_native_symbols_in_editor: boolean;
-  network/language_server/use_thread: boolean;
-  network/tls/editor_tls_certificates: string;
-  network/tls/enable_tls_v1.3: boolean;
-  project_manager/default_renderer: string;
-  project_manager/directory_naming_convention: int;
-  project_manager/sorting_order: int;
-  run/auto_save/save_before_running: boolean;
-  run/bottom_panel/action_on_play: int;
-  run/bottom_panel/action_on_stop: int;
-  run/output/always_clear_output_on_play: boolean;
-  run/output/font_size: int;
-  run/output/max_lines: int;
-  run/platforms/linuxbsd/prefer_wayland: boolean;
-  run/window_placement/android_window: int;
-  run/window_placement/game_embed_mode: int;
-  run/window_placement/rect: int;
-  run/window_placement/rect_custom_position: Vector2;
-  run/window_placement/screen: int;
-  text_editor/appearance/caret/caret_blink: boolean;
-  text_editor/appearance/caret/caret_blink_interval: float;
-  text_editor/appearance/caret/highlight_all_occurrences: boolean;
-  text_editor/appearance/caret/highlight_current_line: boolean;
-  text_editor/appearance/caret/type: int;
-  text_editor/appearance/drag_and_drop_info/show_drag_and_drop_info: boolean;
-  text_editor/appearance/enable_inline_color_picker: boolean;
-  text_editor/appearance/guidelines/line_length_guideline_hard_column: int;
-  text_editor/appearance/guidelines/line_length_guideline_soft_column: int;
-  text_editor/appearance/guidelines/show_line_length_guidelines: boolean;
-  text_editor/appearance/gutters/highlight_type_safe_lines: boolean;
-  text_editor/appearance/gutters/line_numbers_zero_padded: boolean;
-  text_editor/appearance/gutters/show_info_gutter: boolean;
-  text_editor/appearance/gutters/show_line_numbers: boolean;
-  text_editor/appearance/lines/autowrap_mode: int;
-  text_editor/appearance/lines/code_folding: boolean;
-  text_editor/appearance/lines/word_wrap: int;
-  text_editor/appearance/minimap/minimap_width: int;
-  text_editor/appearance/minimap/show_minimap: boolean;
-  text_editor/appearance/whitespace/draw_spaces: boolean;
-  text_editor/appearance/whitespace/draw_tabs: boolean;
-  text_editor/appearance/whitespace/line_spacing: int;
-  text_editor/behavior/documentation/enable_tooltips: boolean;
-  text_editor/behavior/files/auto_reload_and_parse_scripts_on_save: boolean;
-  text_editor/behavior/files/auto_reload_scripts_on_external_change: boolean;
-  text_editor/behavior/files/autosave_interval_secs: int;
-  text_editor/behavior/files/convert_indent_on_save: boolean;
-  text_editor/behavior/files/drop_preload_resources_as_uid: boolean;
-  text_editor/behavior/files/open_dominant_script_on_scene_change: boolean;
-  text_editor/behavior/files/restore_scripts_on_load: boolean;
-  text_editor/behavior/files/trim_final_newlines_on_save: boolean;
-  text_editor/behavior/files/trim_trailing_whitespace_on_save: boolean;
-  text_editor/behavior/general/empty_selection_clipboard: boolean;
-  text_editor/behavior/indent/auto_indent: boolean;
-  text_editor/behavior/indent/indent_wrapped_lines: boolean;
-  text_editor/behavior/indent/size: int;
-  text_editor/behavior/indent/type: int;
-  text_editor/behavior/navigation/custom_word_separators: string;
-  text_editor/behavior/navigation/drag_and_drop_selection: boolean;
-  text_editor/behavior/navigation/move_caret_on_right_click: boolean;
-  text_editor/behavior/navigation/open_script_when_connecting_signal_to_existing_method: boolean;
-  text_editor/behavior/navigation/scroll_past_end_of_file: boolean;
-  text_editor/behavior/navigation/smooth_scrolling: boolean;
-  text_editor/behavior/navigation/stay_in_script_editor_on_node_selected: boolean;
-  text_editor/behavior/navigation/use_custom_word_separators: boolean;
-  text_editor/behavior/navigation/use_default_word_separators: boolean;
-  text_editor/behavior/navigation/v_scroll_speed: int;
-  text_editor/completion/add_node_path_literals: boolean;
-  text_editor/completion/add_string_name_literals: boolean;
-  text_editor/completion/add_type_hints: boolean;
-  text_editor/completion/auto_brace_complete: boolean;
-  text_editor/completion/code_complete_delay: float;
-  text_editor/completion/code_complete_enabled: boolean;
-  text_editor/completion/colorize_suggestions: boolean;
-  text_editor/completion/complete_file_paths: boolean;
-  text_editor/completion/idle_parse_delay: float;
-  text_editor/completion/idle_parse_delay_with_errors_found: float;
-  text_editor/completion/put_callhint_tooltip_below_current_line: boolean;
-  text_editor/completion/use_single_quotes: boolean;
-  text_editor/external/exec_flags: string;
-  text_editor/external/exec_path: string;
-  text_editor/external/use_external_editor: boolean;
-  text_editor/help/class_reference_examples: int;
-  text_editor/help/help_font_size: int;
-  text_editor/help/help_source_font_size: int;
-  text_editor/help/help_title_font_size: int;
-  text_editor/help/show_help_index: boolean;
-  text_editor/help/sort_functions_alphabetically: boolean;
-  text_editor/script_list/group_help_pages: boolean;
-  text_editor/script_list/highlight_scene_scripts: boolean;
-  text_editor/script_list/list_script_names_as: int;
-  text_editor/script_list/script_temperature_enabled: boolean;
-  text_editor/script_list/script_temperature_history_size: int;
-  text_editor/script_list/show_members_overview: boolean;
-  text_editor/script_list/sort_members_outline_alphabetically: boolean;
-  text_editor/script_list/sort_scripts_by: int;
-  text_editor/theme/color_theme: string;
-  text_editor/theme/highlighting/background_color: Color;
-  text_editor/theme/highlighting/base_type_color: Color;
-  text_editor/theme/highlighting/bookmark_color: Color;
-  text_editor/theme/highlighting/brace_mismatch_color: Color;
-  text_editor/theme/highlighting/breakpoint_color: Color;
-  text_editor/theme/highlighting/caret_background_color: Color;
-  text_editor/theme/highlighting/caret_color: Color;
-  text_editor/theme/highlighting/code_folding_color: Color;
-  text_editor/theme/highlighting/comment_color: Color;
-  text_editor/theme/highlighting/comment_markers/critical_color: Color;
-  text_editor/theme/highlighting/comment_markers/critical_list: string;
-  text_editor/theme/highlighting/comment_markers/notice_color: Color;
-  text_editor/theme/highlighting/comment_markers/notice_list: string;
-  text_editor/theme/highlighting/comment_markers/warning_color: Color;
-  text_editor/theme/highlighting/comment_markers/warning_list: string;
-  text_editor/theme/highlighting/completion_background_color: Color;
-  text_editor/theme/highlighting/completion_existing_color: Color;
-  text_editor/theme/highlighting/completion_font_color: Color;
-  text_editor/theme/highlighting/completion_scroll_color: Color;
-  text_editor/theme/highlighting/completion_scroll_hovered_color: Color;
-  text_editor/theme/highlighting/completion_selected_color: Color;
-  text_editor/theme/highlighting/control_flow_keyword_color: Color;
-  text_editor/theme/highlighting/current_line_color: Color;
-  text_editor/theme/highlighting/doc_comment_color: Color;
-  text_editor/theme/highlighting/engine_type_color: Color;
-  text_editor/theme/highlighting/executing_line_color: Color;
-  text_editor/theme/highlighting/folded_code_region_color: Color;
-  text_editor/theme/highlighting/function_color: Color;
-  text_editor/theme/highlighting/gdscript/annotation_color: Color;
-  text_editor/theme/highlighting/gdscript/function_definition_color: Color;
-  text_editor/theme/highlighting/gdscript/global_function_color: Color;
-  text_editor/theme/highlighting/gdscript/node_path_color: Color;
-  text_editor/theme/highlighting/gdscript/node_reference_color: Color;
-  text_editor/theme/highlighting/gdscript/string_name_color: Color;
-  text_editor/theme/highlighting/keyword_color: Color;
-  text_editor/theme/highlighting/line_length_guideline_color: Color;
-  text_editor/theme/highlighting/line_number_color: Color;
-  text_editor/theme/highlighting/mark_color: Color;
-  text_editor/theme/highlighting/member_variable_color: Color;
-  text_editor/theme/highlighting/number_color: Color;
-  text_editor/theme/highlighting/safe_line_number_color: Color;
-  text_editor/theme/highlighting/search_result_border_color: Color;
-  text_editor/theme/highlighting/search_result_color: Color;
-  text_editor/theme/highlighting/selection_color: Color;
-  text_editor/theme/highlighting/string_color: Color;
-  text_editor/theme/highlighting/string_placeholder_color: Color;
-  text_editor/theme/highlighting/symbol_color: Color;
-  text_editor/theme/highlighting/text_color: Color;
-  text_editor/theme/highlighting/text_selected_color: Color;
-  text_editor/theme/highlighting/user_type_color: Color;
-  text_editor/theme/highlighting/warning_color: Color;
-  text_editor/theme/highlighting/word_highlighted_color: Color;
-  version_control/ssh_private_key_path: string;
-  version_control/ssh_public_key_path: string;
-  version_control/username: string;
+  'asset_library/use_threads': boolean;
+  'debugger/auto_switch_to_remote_scene_tree': boolean;
+  'debugger/auto_switch_to_stack_trace': boolean;
+  'debugger/max_node_selection': int;
+  'debugger/profile_native_calls': boolean;
+  'debugger/profiler_frame_history_size': int;
+  'debugger/profiler_frame_max_functions': int;
+  'debugger/profiler_target_fps': int;
+  'debugger/remote_inspect_refresh_interval': float;
+  'debugger/remote_scene_tree_refresh_interval': float;
+  'docks/filesystem/always_show_folders': boolean;
+  'docks/filesystem/automatically_open_created_scripts': boolean;
+  'docks/filesystem/other_file_extensions': string;
+  'docks/filesystem/textfile_extensions': string;
+  'docks/filesystem/thumbnail_size': int;
+  'docks/property_editor/auto_refresh_interval': float;
+  'docks/property_editor/subresource_hue_tint': float;
+  'docks/scene_tree/accessibility_warnings': boolean;
+  'docks/scene_tree/ask_before_deleting_related_animation_tracks': boolean;
+  'docks/scene_tree/ask_before_revoking_unique_name': boolean;
+  'docks/scene_tree/auto_expand_to_selected': boolean;
+  'docks/scene_tree/center_node_on_reparent': boolean;
+  'docks/scene_tree/hide_filtered_out_parents': boolean;
+  'docks/scene_tree/start_create_dialog_fully_expanded': boolean;
+  'editors/2d/auto_resample_delay': float;
+  'editors/2d/bone_color1': Color;
+  'editors/2d/bone_color2': Color;
+  'editors/2d/bone_ik_color': Color;
+  'editors/2d/bone_outline_color': Color;
+  'editors/2d/bone_outline_size': float;
+  'editors/2d/bone_selected_color': Color;
+  'editors/2d/bone_width': float;
+  'editors/2d/grid_color': Color;
+  'editors/2d/guides_color': Color;
+  'editors/2d/locked_selection_rectangle_color': Color;
+  'editors/2d/ruler_width': float;
+  'editors/2d/selection_rectangle_color': Color;
+  'editors/2d/smart_snapping_line_color': Color;
+  'editors/2d/use_integer_zoom_by_default': boolean;
+  'editors/2d/viewport_border_color': Color;
+  'editors/2d/zoom_speed_factor': float;
+  'editors/3d/active_selection_box_color': Color;
+  'editors/3d/default_fov': float;
+  'editors/3d/default_z_far': float;
+  'editors/3d/default_z_near': float;
+  'editors/3d/freelook/freelook_activation_modifier': int;
+  'editors/3d/freelook/freelook_base_speed': float;
+  'editors/3d/freelook/freelook_inertia': float;
+  'editors/3d/freelook/freelook_invert_y_axis': boolean;
+  'editors/3d/freelook/freelook_navigation_scheme': int;
+  'editors/3d/freelook/freelook_sensitivity': float;
+  'editors/3d/freelook/freelook_speed_zoom_link': boolean;
+  'editors/3d/grid_division_level_bias': float;
+  'editors/3d/grid_division_level_max': int;
+  'editors/3d/grid_division_level_min': int;
+  'editors/3d/grid_size': int;
+  'editors/3d/grid_xy_plane': boolean;
+  'editors/3d/grid_xz_plane': boolean;
+  'editors/3d/grid_yz_plane': boolean;
+  'editors/3d/manipulator_gizmo_opacity': float;
+  'editors/3d/manipulator_gizmo_size': int;
+  'editors/3d/navigation/emulate_3_button_mouse': boolean;
+  'editors/3d/navigation/emulate_numpad': boolean;
+  'editors/3d/navigation/invert_x_axis': boolean;
+  'editors/3d/navigation/invert_y_axis': boolean;
+  'editors/3d/navigation/navigation_scheme': int;
+  'editors/3d/navigation/orbit_mouse_button': int;
+  'editors/3d/navigation/pan_mouse_button': int;
+  'editors/3d/navigation/show_viewport_navigation_gizmo': boolean;
+  'editors/3d/navigation/show_viewport_rotation_gizmo': boolean;
+  'editors/3d/navigation/warped_mouse_panning': boolean;
+  'editors/3d/navigation/zoom_mouse_button': int;
+  'editors/3d/navigation/zoom_style': int;
+  'editors/3d/navigation_feel/angle_snap_threshold': float;
+  'editors/3d/navigation_feel/orbit_inertia': float;
+  'editors/3d/navigation_feel/orbit_sensitivity': float;
+  'editors/3d/navigation_feel/translation_inertia': float;
+  'editors/3d/navigation_feel/translation_sensitivity': float;
+  'editors/3d/navigation_feel/zoom_inertia': float;
+  'editors/3d/primary_grid_color': Color;
+  'editors/3d/primary_grid_steps': int;
+  'editors/3d/secondary_grid_color': Color;
+  'editors/3d/selection_box_color': Color;
+  'editors/3d/show_gizmo_during_rotation': int;
+  'editors/3d/view_plane_rotation_gizmo_scale': float;
+  'editors/3d_gizmos/gizmo_colors/aabb': Color;
+  'editors/3d_gizmos/gizmo_colors/camera': Color;
+  'editors/3d_gizmos/gizmo_colors/csg': Color;
+  'editors/3d_gizmos/gizmo_colors/decal': Color;
+  'editors/3d_gizmos/gizmo_colors/fog_volume': Color;
+  'editors/3d_gizmos/gizmo_colors/gridmap_grid': Color;
+  'editors/3d_gizmos/gizmo_colors/ik_chain': Color;
+  'editors/3d_gizmos/gizmo_colors/instantiated': Color;
+  'editors/3d_gizmos/gizmo_colors/joint': Color;
+  'editors/3d_gizmos/gizmo_colors/joint_body_a': Color;
+  'editors/3d_gizmos/gizmo_colors/joint_body_b': Color;
+  'editors/3d_gizmos/gizmo_colors/lightmap_lines': Color;
+  'editors/3d_gizmos/gizmo_colors/lightprobe_lines': Color;
+  'editors/3d_gizmos/gizmo_colors/occluder': Color;
+  'editors/3d_gizmos/gizmo_colors/particle_attractor': Color;
+  'editors/3d_gizmos/gizmo_colors/particle_collision': Color;
+  'editors/3d_gizmos/gizmo_colors/particles': Color;
+  'editors/3d_gizmos/gizmo_colors/path_tilt': Color;
+  'editors/3d_gizmos/gizmo_colors/reflection_probe': Color;
+  'editors/3d_gizmos/gizmo_colors/selected_bone': Color;
+  'editors/3d_gizmos/gizmo_colors/skeleton': Color;
+  'editors/3d_gizmos/gizmo_colors/spring_bone_collision': Color;
+  'editors/3d_gizmos/gizmo_colors/spring_bone_inside_collision': Color;
+  'editors/3d_gizmos/gizmo_colors/spring_bone_joint': Color;
+  'editors/3d_gizmos/gizmo_colors/stream_player_3d': Color;
+  'editors/3d_gizmos/gizmo_colors/visibility_notifier': Color;
+  'editors/3d_gizmos/gizmo_colors/voxel_gi': Color;
+  'editors/3d_gizmos/gizmo_settings/bone_axis_length': float;
+  'editors/3d_gizmos/gizmo_settings/bone_shape': int;
+  'editors/3d_gizmos/gizmo_settings/lightmap_gi_probe_size': float;
+  'editors/3d_gizmos/gizmo_settings/path3d_tilt_disk_size': float;
+  'editors/3d_gizmos/gizmo_settings/show_collision_shapes_only_when_selected': boolean;
+  'editors/animation/autorename_animation_tracks': boolean;
+  'editors/animation/confirm_insert_track': boolean;
+  'editors/animation/default_animation_step': float;
+  'editors/animation/default_create_bezier_tracks': boolean;
+  'editors/animation/default_create_reset_tracks': boolean;
+  'editors/animation/default_fps_compatibility': boolean;
+  'editors/animation/default_fps_mode': int;
+  'editors/animation/insert_at_current_time': boolean;
+  'editors/animation/onion_layers_future_color': Color;
+  'editors/animation/onion_layers_past_color': Color;
+  'editors/bone_mapper/handle_colors/error': Color;
+  'editors/bone_mapper/handle_colors/missing': Color;
+  'editors/bone_mapper/handle_colors/set': Color;
+  'editors/bone_mapper/handle_colors/unset': Color;
+  'editors/grid_map/pick_distance': float;
+  'editors/grid_map/preview_size': int;
+  'editors/panning/2d_editor_pan_speed': int;
+  'editors/panning/2d_editor_panning_scheme': int;
+  'editors/panning/animation_editors_panning_scheme': int;
+  'editors/panning/simple_panning': boolean;
+  'editors/panning/sub_editors_panning_scheme': int;
+  'editors/panning/warped_mouse_panning': boolean;
+  'editors/panning/zoom_style': int;
+  'editors/polygon_editor/auto_bake_delay': float;
+  'editors/polygon_editor/point_grab_radius': int;
+  'editors/polygon_editor/show_previous_outline': boolean;
+  'editors/shader_editor/behavior/files/restore_shaders_on_load': boolean;
+  'editors/tiles_editor/display_grid': boolean;
+  'editors/tiles_editor/grid_color': Color;
+  'editors/tiles_editor/highlight_selected_layer': boolean;
+  'editors/visual_editors/category_colors/color_color': Color;
+  'editors/visual_editors/category_colors/conditional_color': Color;
+  'editors/visual_editors/category_colors/input_color': Color;
+  'editors/visual_editors/category_colors/output_color': Color;
+  'editors/visual_editors/category_colors/particle_color': Color;
+  'editors/visual_editors/category_colors/scalar_color': Color;
+  'editors/visual_editors/category_colors/special_color': Color;
+  'editors/visual_editors/category_colors/textures_color': Color;
+  'editors/visual_editors/category_colors/transform_color': Color;
+  'editors/visual_editors/category_colors/utility_color': Color;
+  'editors/visual_editors/category_colors/vector_color': Color;
+  'editors/visual_editors/color_theme': string;
+  'editors/visual_editors/connection_colors/boolean_color': Color;
+  'editors/visual_editors/connection_colors/sampler_color': Color;
+  'editors/visual_editors/connection_colors/scalar_color': Color;
+  'editors/visual_editors/connection_colors/transform_color': Color;
+  'editors/visual_editors/connection_colors/vector2_color': Color;
+  'editors/visual_editors/connection_colors/vector3_color': Color;
+  'editors/visual_editors/connection_colors/vector4_color': Color;
+  'editors/visual_editors/grid_pattern': int;
+  'editors/visual_editors/lines_curvature': float;
+  'editors/visual_editors/minimap_opacity': float;
+  'editors/visual_editors/visual_shader/port_preview_size': int;
+  'export/ssh/scp': string;
+  'export/ssh/ssh': string;
+  'filesystem/directories/autoscan_project_path': string;
+  'filesystem/directories/default_project_path': string;
+  'filesystem/external_programs/3d_model_editor': string;
+  'filesystem/external_programs/audio_editor': string;
+  'filesystem/external_programs/raster_image_editor': string;
+  'filesystem/external_programs/terminal_emulator': string;
+  'filesystem/external_programs/terminal_emulator_flags': string;
+  'filesystem/external_programs/vector_image_editor': string;
+  'filesystem/file_dialog/display_mode': int;
+  'filesystem/file_dialog/show_hidden_files': boolean;
+  'filesystem/file_dialog/thumbnail_size': int;
+  'filesystem/file_server/password': string;
+  'filesystem/file_server/port': int;
+  'filesystem/import/blender/blender_path': string;
+  'filesystem/import/blender/rpc_port': int;
+  'filesystem/import/blender/rpc_server_uptime': float;
+  'filesystem/import/fbx/fbx2gltf_path': string;
+  'filesystem/on_save/compress_binary_resources': boolean;
+  'filesystem/on_save/safe_save_on_backup_then_rename': boolean;
+  'filesystem/on_save/warn_on_saving_large_text_resources': boolean;
+  'filesystem/quick_open_dialog/default_display_mode': int;
+  'filesystem/quick_open_dialog/enable_fuzzy_matching': boolean;
+  'filesystem/quick_open_dialog/include_addons': boolean;
+  'filesystem/quick_open_dialog/instant_preview': boolean;
+  'filesystem/quick_open_dialog/max_fuzzy_misses': int;
+  'filesystem/quick_open_dialog/max_results': int;
+  'filesystem/quick_open_dialog/show_search_highlight': boolean;
+  'filesystem/tools/oidn/oidn_denoise_path': string;
+  'input/buffering/agile_event_flushing': boolean;
+  'input/buffering/use_accumulated_input': boolean;
+  'interface/accessibility/accessibility_support': int;
+  'interface/editor/appearance/accept_dialog_cancel_ok_buttons': int;
+  'interface/editor/appearance/collapse_main_menu': boolean;
+  'interface/editor/appearance/custom_display_scale': float;
+  'interface/editor/appearance/display_scale': int;
+  'interface/editor/appearance/editor_screen': int;
+  'interface/editor/appearance/expand_to_title': boolean;
+  'interface/editor/appearance/project_manager_screen': int;
+  'interface/editor/appearance/show_update_spinner': int;
+  'interface/editor/appearance/use_embedded_menu': boolean;
+  'interface/editor/appearance/use_native_file_dialogs': boolean;
+  'interface/editor/behavior/automatically_open_screenshots': boolean;
+  'interface/editor/behavior/import_resources_when_unfocused': boolean;
+  'interface/editor/behavior/save_each_scene_on_quit': boolean;
+  'interface/editor/behavior/save_on_focus_loss': boolean;
+  'interface/editor/behavior/separate_distraction_mode': boolean;
+  'interface/editor/behavior/show_internal_errors_in_toast_notifications': int;
+  'interface/editor/display/keep_screen_on': boolean;
+  'interface/editor/display/single_window_mode': boolean;
+  'interface/editor/display/update_continuously': boolean;
+  'interface/editor/display/vsync_mode': int;
+  'interface/editor/docks/bottom_dock_tab_style': int;
+  'interface/editor/docks/dock_tab_style': int;
+  'interface/editor/fonts/code_font': string;
+  'interface/editor/fonts/code_font_contextual_ligatures': int;
+  'interface/editor/fonts/code_font_custom_opentype_features': string;
+  'interface/editor/fonts/code_font_custom_variations': string;
+  'interface/editor/fonts/code_font_size': int;
+  'interface/editor/fonts/font_allow_msdf': boolean;
+  'interface/editor/fonts/font_antialiasing': int;
+  'interface/editor/fonts/font_disable_embedded_bitmaps': boolean;
+  'interface/editor/fonts/font_hinting': int;
+  'interface/editor/fonts/font_subpixel_positioning': int;
+  'interface/editor/fonts/main_font': string;
+  'interface/editor/fonts/main_font_bold': string;
+  'interface/editor/fonts/main_font_custom_opentype_features': string;
+  'interface/editor/fonts/main_font_size': int;
+  'interface/editor/input/mouse_extra_buttons_navigate_history': boolean;
+  'interface/editor/input/tablet_driver': int;
+  'interface/editor/localization/editor_language': string;
+  'interface/editor/localization/localize_settings': boolean;
+  'interface/editor/localization/ui_layout_direction': int;
+  'interface/editor/timers/dragging_hover_wait_seconds': float;
+  'interface/editor/timers/low_processor_mode_sleep_usec': int;
+  'interface/editor/timers/unfocused_low_processor_mode_sleep_usec': int;
+  'interface/editors/derive_script_globals_by_name': boolean;
+  'interface/inspector/auto_unfold_foreign_scenes': boolean;
+  'interface/inspector/color_picker_show_intensity': boolean;
+  'interface/inspector/default_color_picker_mode': int;
+  'interface/inspector/default_color_picker_shape': int;
+  'interface/inspector/default_float_step': float;
+  'interface/inspector/default_property_name_style': int;
+  'interface/inspector/delimitate_all_container_and_resources': boolean;
+  'interface/inspector/disable_folding': boolean;
+  'interface/inspector/float_drag_speed': float;
+  'interface/inspector/horizontal_vector2_editing': boolean;
+  'interface/inspector/horizontal_vector_types_editing': boolean;
+  'interface/inspector/integer_drag_speed': float;
+  'interface/inspector/max_array_dictionary_items_per_page': int;
+  'interface/inspector/nested_color_mode': int;
+  'interface/inspector/open_resources_in_current_inspector': boolean;
+  'interface/inspector/resources_to_open_in_new_inspector': PackedStringArray;
+  'interface/inspector/show_low_level_opentype_features': boolean;
+  'interface/multi_window/enable': boolean;
+  'interface/multi_window/maximize_window': boolean;
+  'interface/multi_window/restore_windows_on_load': boolean;
+  'interface/scene_tabs/auto_select_current_scene_file': boolean;
+  'interface/scene_tabs/display_close_button': int;
+  'interface/scene_tabs/maximum_width': int;
+  'interface/scene_tabs/restore_scenes_on_load': boolean;
+  'interface/scene_tabs/show_script_button': boolean;
+  'interface/scene_tabs/show_thumbnail_on_hover': boolean;
+  'interface/theme/accent_color': Color;
+  'interface/theme/additional_spacing': int;
+  'interface/theme/base_color': Color;
+  'interface/theme/base_spacing': int;
+  'interface/theme/border_size': int;
+  'interface/theme/color_preset': string;
+  'interface/theme/contrast': float;
+  'interface/theme/corner_radius': int;
+  'interface/theme/custom_theme': string;
+  'interface/theme/draw_extra_borders': boolean;
+  'interface/theme/draw_relationship_lines': int;
+  'interface/theme/follow_system_theme': boolean;
+  'interface/theme/icon_and_font_color': int;
+  'interface/theme/icon_saturation': float;
+  'interface/theme/relationship_line_opacity': float;
+  'interface/theme/spacing_preset': string;
+  'interface/theme/style': string;
+  'interface/theme/use_monospace_font_for_editor_symbols': boolean;
+  'interface/theme/use_system_accent_color': boolean;
+  'interface/touchscreen/enable_long_press_as_right_click': boolean;
+  'interface/touchscreen/enable_pan_and_scale_gestures': boolean;
+  'interface/touchscreen/enable_touch_optimizations': boolean;
+  'interface/touchscreen/scale_gizmo_handles': float;
+  'interface/touchscreen/touch_actions_panel': int;
+  'network/connection/check_for_updates': int;
+  'network/connection/network_mode': int;
+  'network/debug/remote_host': string;
+  'network/debug/remote_port': int;
+  'network/http_proxy/host': string;
+  'network/http_proxy/port': int;
+  'network/language_server/enable_smart_resolve': boolean;
+  'network/language_server/poll_limit_usec': int;
+  'network/language_server/remote_host': string;
+  'network/language_server/remote_port': int;
+  'network/language_server/show_native_symbols_in_editor': boolean;
+  'network/language_server/use_thread': boolean;
+  'network/tls/editor_tls_certificates': string;
+  'network/tls/enable_tls_v1.3': boolean;
+  'project_manager/default_renderer': string;
+  'project_manager/directory_naming_convention': int;
+  'project_manager/sorting_order': int;
+  'run/auto_save/save_before_running': boolean;
+  'run/bottom_panel/action_on_play': int;
+  'run/bottom_panel/action_on_stop': int;
+  'run/output/always_clear_output_on_play': boolean;
+  'run/output/font_size': int;
+  'run/output/max_lines': int;
+  'run/platforms/linuxbsd/prefer_wayland': boolean;
+  'run/window_placement/android_window': int;
+  'run/window_placement/game_embed_mode': int;
+  'run/window_placement/rect': int;
+  'run/window_placement/rect_custom_position': Vector2;
+  'run/window_placement/screen': int;
+  'text_editor/appearance/caret/caret_blink': boolean;
+  'text_editor/appearance/caret/caret_blink_interval': float;
+  'text_editor/appearance/caret/highlight_all_occurrences': boolean;
+  'text_editor/appearance/caret/highlight_current_line': boolean;
+  'text_editor/appearance/caret/type': int;
+  'text_editor/appearance/drag_and_drop_info/show_drag_and_drop_info': boolean;
+  'text_editor/appearance/enable_inline_color_picker': boolean;
+  'text_editor/appearance/guidelines/line_length_guideline_hard_column': int;
+  'text_editor/appearance/guidelines/line_length_guideline_soft_column': int;
+  'text_editor/appearance/guidelines/show_line_length_guidelines': boolean;
+  'text_editor/appearance/gutters/highlight_type_safe_lines': boolean;
+  'text_editor/appearance/gutters/line_numbers_zero_padded': boolean;
+  'text_editor/appearance/gutters/show_info_gutter': boolean;
+  'text_editor/appearance/gutters/show_line_numbers': boolean;
+  'text_editor/appearance/lines/autowrap_mode': int;
+  'text_editor/appearance/lines/code_folding': boolean;
+  'text_editor/appearance/lines/word_wrap': int;
+  'text_editor/appearance/minimap/minimap_width': int;
+  'text_editor/appearance/minimap/show_minimap': boolean;
+  'text_editor/appearance/whitespace/draw_spaces': boolean;
+  'text_editor/appearance/whitespace/draw_tabs': boolean;
+  'text_editor/appearance/whitespace/line_spacing': int;
+  'text_editor/behavior/documentation/enable_tooltips': boolean;
+  'text_editor/behavior/files/auto_reload_and_parse_scripts_on_save': boolean;
+  'text_editor/behavior/files/auto_reload_scripts_on_external_change': boolean;
+  'text_editor/behavior/files/autosave_interval_secs': int;
+  'text_editor/behavior/files/convert_indent_on_save': boolean;
+  'text_editor/behavior/files/drop_preload_resources_as_uid': boolean;
+  'text_editor/behavior/files/open_dominant_script_on_scene_change': boolean;
+  'text_editor/behavior/files/restore_scripts_on_load': boolean;
+  'text_editor/behavior/files/trim_final_newlines_on_save': boolean;
+  'text_editor/behavior/files/trim_trailing_whitespace_on_save': boolean;
+  'text_editor/behavior/general/empty_selection_clipboard': boolean;
+  'text_editor/behavior/indent/auto_indent': boolean;
+  'text_editor/behavior/indent/indent_wrapped_lines': boolean;
+  'text_editor/behavior/indent/size': int;
+  'text_editor/behavior/indent/type': int;
+  'text_editor/behavior/navigation/custom_word_separators': string;
+  'text_editor/behavior/navigation/drag_and_drop_selection': boolean;
+  'text_editor/behavior/navigation/move_caret_on_right_click': boolean;
+  'text_editor/behavior/navigation/open_script_when_connecting_signal_to_existing_method': boolean;
+  'text_editor/behavior/navigation/scroll_past_end_of_file': boolean;
+  'text_editor/behavior/navigation/smooth_scrolling': boolean;
+  'text_editor/behavior/navigation/stay_in_script_editor_on_node_selected': boolean;
+  'text_editor/behavior/navigation/use_custom_word_separators': boolean;
+  'text_editor/behavior/navigation/use_default_word_separators': boolean;
+  'text_editor/behavior/navigation/v_scroll_speed': int;
+  'text_editor/completion/add_node_path_literals': boolean;
+  'text_editor/completion/add_string_name_literals': boolean;
+  'text_editor/completion/add_type_hints': boolean;
+  'text_editor/completion/auto_brace_complete': boolean;
+  'text_editor/completion/code_complete_delay': float;
+  'text_editor/completion/code_complete_enabled': boolean;
+  'text_editor/completion/colorize_suggestions': boolean;
+  'text_editor/completion/complete_file_paths': boolean;
+  'text_editor/completion/idle_parse_delay': float;
+  'text_editor/completion/idle_parse_delay_with_errors_found': float;
+  'text_editor/completion/put_callhint_tooltip_below_current_line': boolean;
+  'text_editor/completion/use_single_quotes': boolean;
+  'text_editor/external/exec_flags': string;
+  'text_editor/external/exec_path': string;
+  'text_editor/external/use_external_editor': boolean;
+  'text_editor/help/class_reference_examples': int;
+  'text_editor/help/help_font_size': int;
+  'text_editor/help/help_source_font_size': int;
+  'text_editor/help/help_title_font_size': int;
+  'text_editor/help/show_help_index': boolean;
+  'text_editor/help/sort_functions_alphabetically': boolean;
+  'text_editor/script_list/group_help_pages': boolean;
+  'text_editor/script_list/highlight_scene_scripts': boolean;
+  'text_editor/script_list/list_script_names_as': int;
+  'text_editor/script_list/script_temperature_enabled': boolean;
+  'text_editor/script_list/script_temperature_history_size': int;
+  'text_editor/script_list/show_members_overview': boolean;
+  'text_editor/script_list/sort_members_outline_alphabetically': boolean;
+  'text_editor/script_list/sort_scripts_by': int;
+  'text_editor/theme/color_theme': string;
+  'text_editor/theme/highlighting/background_color': Color;
+  'text_editor/theme/highlighting/base_type_color': Color;
+  'text_editor/theme/highlighting/bookmark_color': Color;
+  'text_editor/theme/highlighting/brace_mismatch_color': Color;
+  'text_editor/theme/highlighting/breakpoint_color': Color;
+  'text_editor/theme/highlighting/caret_background_color': Color;
+  'text_editor/theme/highlighting/caret_color': Color;
+  'text_editor/theme/highlighting/code_folding_color': Color;
+  'text_editor/theme/highlighting/comment_color': Color;
+  'text_editor/theme/highlighting/comment_markers/critical_color': Color;
+  'text_editor/theme/highlighting/comment_markers/critical_list': string;
+  'text_editor/theme/highlighting/comment_markers/notice_color': Color;
+  'text_editor/theme/highlighting/comment_markers/notice_list': string;
+  'text_editor/theme/highlighting/comment_markers/warning_color': Color;
+  'text_editor/theme/highlighting/comment_markers/warning_list': string;
+  'text_editor/theme/highlighting/completion_background_color': Color;
+  'text_editor/theme/highlighting/completion_existing_color': Color;
+  'text_editor/theme/highlighting/completion_font_color': Color;
+  'text_editor/theme/highlighting/completion_scroll_color': Color;
+  'text_editor/theme/highlighting/completion_scroll_hovered_color': Color;
+  'text_editor/theme/highlighting/completion_selected_color': Color;
+  'text_editor/theme/highlighting/control_flow_keyword_color': Color;
+  'text_editor/theme/highlighting/current_line_color': Color;
+  'text_editor/theme/highlighting/doc_comment_color': Color;
+  'text_editor/theme/highlighting/engine_type_color': Color;
+  'text_editor/theme/highlighting/executing_line_color': Color;
+  'text_editor/theme/highlighting/folded_code_region_color': Color;
+  'text_editor/theme/highlighting/function_color': Color;
+  'text_editor/theme/highlighting/gdscript/annotation_color': Color;
+  'text_editor/theme/highlighting/gdscript/function_definition_color': Color;
+  'text_editor/theme/highlighting/gdscript/global_function_color': Color;
+  'text_editor/theme/highlighting/gdscript/node_path_color': Color;
+  'text_editor/theme/highlighting/gdscript/node_reference_color': Color;
+  'text_editor/theme/highlighting/gdscript/string_name_color': Color;
+  'text_editor/theme/highlighting/keyword_color': Color;
+  'text_editor/theme/highlighting/line_length_guideline_color': Color;
+  'text_editor/theme/highlighting/line_number_color': Color;
+  'text_editor/theme/highlighting/mark_color': Color;
+  'text_editor/theme/highlighting/member_variable_color': Color;
+  'text_editor/theme/highlighting/number_color': Color;
+  'text_editor/theme/highlighting/safe_line_number_color': Color;
+  'text_editor/theme/highlighting/search_result_border_color': Color;
+  'text_editor/theme/highlighting/search_result_color': Color;
+  'text_editor/theme/highlighting/selection_color': Color;
+  'text_editor/theme/highlighting/string_color': Color;
+  'text_editor/theme/highlighting/string_placeholder_color': Color;
+  'text_editor/theme/highlighting/symbol_color': Color;
+  'text_editor/theme/highlighting/text_color': Color;
+  'text_editor/theme/highlighting/text_selected_color': Color;
+  'text_editor/theme/highlighting/user_type_color': Color;
+  'text_editor/theme/highlighting/warning_color': Color;
+  'text_editor/theme/highlighting/word_highlighted_color': Color;
+  'version_control/ssh_private_key_path': string;
+  'version_control/ssh_public_key_path': string;
+  'version_control/username': string;
 
   add_property_info(info: Dictionary): void;
   add_shortcut(path: string, shortcut: Shortcut): void;
@@ -7099,9 +7099,9 @@ declare class EditorSettings extends Resource {
   erase(property: string): void;
   get_changed_settings(): PackedStringArray;
   get_favorites(): PackedStringArray;
-  get_project_metadata(section: string, key: string, default_?: any): any;
+  get_project_metadata(section: string, key: string, default_?: unknown): unknown;
   get_recent_dirs(): PackedStringArray;
-  get_setting(name: string): any;
+  get_setting(name: string): unknown;
   get_shortcut(path: string): Shortcut;
   get_shortcut_list(): PackedStringArray;
   has_setting(name: string): boolean;
@@ -7109,12 +7109,12 @@ declare class EditorSettings extends Resource {
   is_shortcut(path: string, event: InputEvent): boolean;
   mark_setting_changed(setting: string): void;
   remove_shortcut(path: string): void;
-  set_builtin_action_override(name: string, actions_list: InputEvent[]): void;
+  set_builtin_action_override(name: string, actions_list: unknown): void;
   set_favorites(dirs: PackedStringArray): void;
-  set_initial_value(name: string, value: any, update_current: boolean): void;
-  set_project_metadata(section: string, key: string, data: any): void;
+  set_initial_value(name: string, value: unknown, update_current: boolean): void;
+  set_project_metadata(section: string, key: string, data: unknown): void;
   set_recent_dirs(dirs: PackedStringArray): void;
-  set_setting(name: string, value: any): void;
+  set_setting(name: string, value: unknown): void;
 
   settings_changed: Signal<[]>;
 
@@ -7163,15 +7163,15 @@ declare class EditorToaster extends HBoxContainer {
 
 declare class EditorTranslationParserPlugin extends RefCounted {
   _get_recognized_extensions(): PackedStringArray;
-  _parse_file(path: string): PackedStringArray[];
+  _parse_file(path: string): unknown;
 }
 
-declare class EditorUndoRedoManager extends Object {
+declare class EditorUndoRedoManager extends GodotObject {
   add_do_method(object: GodotObject, method: string): void;
-  add_do_property(object: GodotObject, property: string, value: any): void;
+  add_do_property(object: GodotObject, property: string, value: unknown): void;
   add_do_reference(object: GodotObject): void;
   add_undo_method(object: GodotObject, method: string): void;
-  add_undo_property(object: GodotObject, property: string, value: any): void;
+  add_undo_property(object: GodotObject, property: string, value: unknown): void;
   add_undo_reference(object: GodotObject): void;
   clear_history(id?: int, increase_version?: boolean): void;
   commit_action(execute?: boolean): void;
@@ -7190,20 +7190,20 @@ declare class EditorUndoRedoManager extends Object {
   static readonly INVALID_HISTORY: int;
 }
 
-declare class EditorVCSInterface extends Object {
+declare class EditorVCSInterface extends GodotObject {
   _checkout_branch(branch_name: string): boolean;
   _commit(msg: string): void;
   _create_branch(branch_name: string): void;
   _create_remote(remote_name: string, remote_url: string): void;
   _discard_file(file_path: string): void;
   _fetch(remote: string): void;
-  _get_branch_list(): String[];
+  _get_branch_list(): unknown;
   _get_current_branch_name(): string;
-  _get_diff(identifier: string, area: int): Dictionary[];
-  _get_line_diff(file_path: string, text: string): Dictionary[];
-  _get_modified_files_data(): Dictionary[];
-  _get_previous_commits(max_commits: int): Dictionary[];
-  _get_remotes(): String[];
+  _get_diff(identifier: string, area: int): Dictionary;
+  _get_line_diff(file_path: string, text: string): Dictionary;
+  _get_modified_files_data(): Dictionary;
+  _get_previous_commits(max_commits: int): Dictionary;
+  _get_remotes(): unknown;
   _get_vcs_name(): string;
   _initialize(project_path: string): boolean;
   _pull(remote: string): void;
@@ -7214,8 +7214,8 @@ declare class EditorVCSInterface extends Object {
   _shut_down(): boolean;
   _stage_file(file_path: string): void;
   _unstage_file(file_path: string): void;
-  add_diff_hunks_into_diff_file(diff_file: Dictionary, diff_hunks: Dictionary[]): Dictionary;
-  add_line_diffs_into_diff_hunk(diff_hunk: Dictionary, line_diffs: Dictionary[]): Dictionary;
+  add_diff_hunks_into_diff_file(diff_file: Dictionary, diff_hunks: Dictionary): Dictionary;
+  add_line_diffs_into_diff_hunk(diff_hunk: Dictionary, line_diffs: Dictionary): Dictionary;
   create_commit(msg: string, author: string, id: string, unix_timestamp: int, offset_minutes: int): Dictionary;
   create_diff_file(new_file: string, old_file: string): Dictionary;
   create_diff_hunk(old_start: int, new_start: int, old_lines: int, new_lines: int): Dictionary;
@@ -7240,7 +7240,7 @@ declare class EncodedObjectAsID extends RefCounted {
   object_id: int;
 }
 
-declare class Engine extends Object {
+declare class Engine extends GodotObject {
   max_fps: int;
   max_physics_steps_per_frame: int;
   physics_jitter_fix: float;
@@ -7249,10 +7249,10 @@ declare class Engine extends Object {
   print_to_stdout: boolean;
   time_scale: float;
 
-  capture_script_backtraces(include_variables?: boolean): ScriptBacktrace[];
+  capture_script_backtraces(include_variables?: boolean): unknown;
   get_architecture_name(): string;
   get_author_info(): Dictionary;
-  get_copyright_info(): Dictionary[];
+  get_copyright_info(): Dictionary;
   get_donor_info(): Dictionary;
   get_frames_drawn(): int;
   get_frames_per_second(): float;
@@ -7278,7 +7278,7 @@ declare class Engine extends Object {
   unregister_singleton(name: string): void;
 }
 
-declare class EngineDebugger extends Object {
+declare class EngineDebugger extends GodotObject {
   clear_breakpoints(): void;
   debug(can_continue?: boolean, is_error_breakpoint?: boolean): void;
   get_depth(): int;
@@ -7291,13 +7291,13 @@ declare class EngineDebugger extends Object {
   is_profiling(name: string): boolean;
   is_skipping_breakpoints(): boolean;
   line_poll(): void;
-  profiler_add_frame_data(name: string, data: Array<any>): void;
-  profiler_enable(name: string, enable: boolean, arguments?: Array<any>): void;
+  profiler_add_frame_data(name: string, data: Array<unknown>): void;
+  profiler_enable(name: string, enable: boolean, arguments?: Array<unknown>): void;
   register_message_capture(name: string, callable: Callable): void;
   register_profiler(name: string, profiler: EngineProfiler): void;
   remove_breakpoint(line: int, source: string): void;
   script_debug(language: ScriptLanguage, can_continue?: boolean, is_error_breakpoint?: boolean): void;
-  send_message(message: string, data: Array<any>): void;
+  send_message(message: string, data: Array<unknown>): void;
   set_depth(depth: int): void;
   set_lines_left(lines: int): void;
   unregister_message_capture(name: string): void;
@@ -7305,9 +7305,9 @@ declare class EngineDebugger extends Object {
 }
 
 declare class EngineProfiler extends RefCounted {
-  _add_frame(data: Array<any>): void;
+  _add_frame(data: Array<unknown>): void;
   _tick(frame_time: float, process_time: float, physics_time: float, physics_frame_time: float): void;
-  _toggle(enable: boolean, options: Array<any>): void;
+  _toggle(enable: boolean, options: Array<unknown>): void;
 }
 
 declare class Environment extends Resource {
@@ -7346,13 +7346,13 @@ declare class Environment extends Resource {
   glow_hdr_scale: float;
   glow_hdr_threshold: float;
   glow_intensity: float;
-  glow_levels/1: float;
-  glow_levels/2: float;
-  glow_levels/3: float;
-  glow_levels/4: float;
-  glow_levels/5: float;
-  glow_levels/6: float;
-  glow_levels/7: float;
+  'glow_levels/1': float;
+  'glow_levels/2': float;
+  'glow_levels/3': float;
+  'glow_levels/4': float;
+  'glow_levels/5': float;
+  'glow_levels/6': float;
+  'glow_levels/7': float;
   glow_map: Texture;
   glow_map_strength: float;
   glow_mix: float;
@@ -7454,7 +7454,7 @@ declare class Environment extends Resource {
 }
 
 declare class Expression extends RefCounted {
-  execute(inputs?: Array<any>, base_instance?: GodotObject, show_error?: boolean, const_calls_only?: boolean): any;
+  execute(inputs?: Array<unknown>, base_instance?: GodotObject, show_error?: boolean, const_calls_only?: boolean): unknown;
   get_error_text(): string;
   has_execute_failed(): boolean;
   parse(expression: string, input_names?: PackedStringArray): int;
@@ -7511,7 +7511,7 @@ declare class FileAccess extends RefCounted {
   static get_sha256(path: string): string;
   static get_size(file: string): int;
   static get_unix_permissions(file: string): int;
-  get_var(allow_objects?: boolean): any;
+  get_var(allow_objects?: boolean): unknown;
   is_open(): boolean;
   static open(path: string, flags: int): FileAccess;
   static open_compressed(path: string, mode_flags: int, compression_mode: int): FileAccess;
@@ -7539,7 +7539,7 @@ declare class FileAccess extends RefCounted {
   store_pascal_string(string: string): boolean;
   store_real(value: float): boolean;
   store_string(string: string): boolean;
-  store_var(value: any, full_objects?: boolean): boolean;
+  store_var(value: unknown, full_objects?: boolean): boolean;
 
   // enum ModeFlags
   static readonly READ: int;
@@ -7728,21 +7728,21 @@ declare class FoldableGroup extends Resource {
   allow_folding_all: boolean;
   resource_local_to_scene: boolean;
 
-  get_containers(): FoldableContainer[];
+  get_containers(): unknown;
   get_expanded_container(): FoldableContainer;
 
   expanded: Signal<[FoldableContainer]>;
 }
 
 declare class Font extends Resource {
-  fallbacks: Font[];
+  fallbacks: unknown;
 
   draw_char(canvas_item: RID, pos: Vector2, char: int, font_size: int, modulate?: Color, oversampling?: float): float;
   draw_char_outline(canvas_item: RID, pos: Vector2, char: int, font_size: int, size?: int, modulate?: Color, oversampling?: float): float;
-  draw_multiline_string(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags: int, justification_flags: int, direction: int, orientation: int, oversampling?: float): void;
-  draw_multiline_string_outline(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags: int, justification_flags: int, direction: int, orientation: int, oversampling?: float): void;
-  draw_string(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags: int, direction: int, orientation: int, oversampling?: float): void;
-  draw_string_outline(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags: int, direction: int, orientation: int, oversampling?: float): void;
+  draw_multiline_string(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_multiline_string_outline(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_string(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_string_outline(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   find_variation(variation_coordinates: Dictionary, face_index?: int, strength?: float, transform?: Transform2D, spacing_top?: int, spacing_bottom?: int, spacing_space?: int, spacing_glyph?: int, baseline_offset?: float): RID;
   get_ascent(font_size?: int): float;
   get_char_size(char: int, font_size: int): Vector2;
@@ -7754,12 +7754,12 @@ declare class Font extends Resource {
   get_font_style_name(): string;
   get_font_weight(): int;
   get_height(font_size?: int): float;
-  get_multiline_string_size(text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, brk_flags: int, justification_flags: int, direction: int, orientation: int): Vector2;
+  get_multiline_string_size(text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int): Vector2;
   get_opentype_features(): Dictionary;
   get_ot_name_strings(): Dictionary;
-  get_rids(): RID[];
+  get_rids(): unknown;
   get_spacing(spacing: int): int;
-  get_string_size(text: string, alignment: int, width?: float, font_size?: int, justification_flags: int, direction: int, orientation: int): Vector2;
+  get_string_size(text: string, alignment: int, width?: float, font_size?: int, justification_flags?: int, direction?: int, orientation?: int): Vector2;
   get_supported_chars(): string;
   get_supported_feature_list(): Dictionary;
   get_supported_variation_list(): Dictionary;
@@ -7819,12 +7819,12 @@ declare class FontFile extends Font {
   get_glyph_texture_idx(cache_index: int, size: Vector2i, glyph: int): int;
   get_glyph_uv_rect(cache_index: int, size: Vector2i, glyph: int): Rect2;
   get_kerning(cache_index: int, size: int, glyph_pair: Vector2i): Vector2;
-  get_kerning_list(cache_index: int, size: int): Vector2i[];
+  get_kerning_list(cache_index: int, size: int): unknown;
   get_language_support_override(language: string): boolean;
   get_language_support_overrides(): PackedStringArray;
   get_script_support_override(script: string): boolean;
   get_script_support_overrides(): PackedStringArray;
-  get_size_cache_list(cache_index: int): Vector2i[];
+  get_size_cache_list(cache_index: int): unknown;
   get_texture_count(cache_index: int, size: Vector2i): int;
   get_texture_image(cache_index: int, size: Vector2i, texture_index: int): Image;
   get_texture_offsets(cache_index: int, size: Vector2i, texture_index: int): PackedInt32Array;
@@ -7880,8 +7880,8 @@ declare class FontVariation extends Font {
   set_spacing(spacing: int, value: int): void;
 }
 
-declare class FramebufferCacheRD extends Object {
-  static get_cache_multipass(textures: RID[], passes: RDFramebufferPass[], views: int): RID;
+declare class FramebufferCacheRD extends GodotObject {
+  static get_cache_multipass(textures: unknown, passes: unknown, views: int): RID;
 }
 
 declare class GDExtension extends Resource {
@@ -7895,12 +7895,12 @@ declare class GDExtension extends Resource {
   static readonly INITIALIZATION_LEVEL_EDITOR: int;
 }
 
-declare class GDExtensionManager extends Object {
+declare class GDExtensionManager extends GodotObject {
   get_extension(path: string): GDExtension;
   get_loaded_extensions(): PackedStringArray;
   is_extension_loaded(path: string): boolean;
   load_extension(path: string): int;
-  load_extension_from_function(path: string, init_func: const GDExtensionInitializationFunction*): int;
+  load_extension_from_function(path: string, init_func: unknown): int;
   reload_extension(path: string): int;
   unload_extension(path: string): int;
 
@@ -8102,90 +8102,90 @@ declare class GPUParticlesCollisionSphere3D extends GPUParticlesCollision3D {
 }
 
 declare class Generic6DOFJoint3D extends Joint3D {
-  angular_limit_x/damping: float;
-  angular_limit_x/enabled: boolean;
-  angular_limit_x/erp: float;
-  angular_limit_x/force_limit: float;
-  angular_limit_x/lower_angle: float;
-  angular_limit_x/restitution: float;
-  angular_limit_x/softness: float;
-  angular_limit_x/upper_angle: float;
-  angular_limit_y/damping: float;
-  angular_limit_y/enabled: boolean;
-  angular_limit_y/erp: float;
-  angular_limit_y/force_limit: float;
-  angular_limit_y/lower_angle: float;
-  angular_limit_y/restitution: float;
-  angular_limit_y/softness: float;
-  angular_limit_y/upper_angle: float;
-  angular_limit_z/damping: float;
-  angular_limit_z/enabled: boolean;
-  angular_limit_z/erp: float;
-  angular_limit_z/force_limit: float;
-  angular_limit_z/lower_angle: float;
-  angular_limit_z/restitution: float;
-  angular_limit_z/softness: float;
-  angular_limit_z/upper_angle: float;
-  angular_motor_x/enabled: boolean;
-  angular_motor_x/force_limit: float;
-  angular_motor_x/target_velocity: float;
-  angular_motor_y/enabled: boolean;
-  angular_motor_y/force_limit: float;
-  angular_motor_y/target_velocity: float;
-  angular_motor_z/enabled: boolean;
-  angular_motor_z/force_limit: float;
-  angular_motor_z/target_velocity: float;
-  angular_spring_x/damping: float;
-  angular_spring_x/enabled: boolean;
-  angular_spring_x/equilibrium_point: float;
-  angular_spring_x/stiffness: float;
-  angular_spring_y/damping: float;
-  angular_spring_y/enabled: boolean;
-  angular_spring_y/equilibrium_point: float;
-  angular_spring_y/stiffness: float;
-  angular_spring_z/damping: float;
-  angular_spring_z/enabled: boolean;
-  angular_spring_z/equilibrium_point: float;
-  angular_spring_z/stiffness: float;
-  linear_limit_x/damping: float;
-  linear_limit_x/enabled: boolean;
-  linear_limit_x/lower_distance: float;
-  linear_limit_x/restitution: float;
-  linear_limit_x/softness: float;
-  linear_limit_x/upper_distance: float;
-  linear_limit_y/damping: float;
-  linear_limit_y/enabled: boolean;
-  linear_limit_y/lower_distance: float;
-  linear_limit_y/restitution: float;
-  linear_limit_y/softness: float;
-  linear_limit_y/upper_distance: float;
-  linear_limit_z/damping: float;
-  linear_limit_z/enabled: boolean;
-  linear_limit_z/lower_distance: float;
-  linear_limit_z/restitution: float;
-  linear_limit_z/softness: float;
-  linear_limit_z/upper_distance: float;
-  linear_motor_x/enabled: boolean;
-  linear_motor_x/force_limit: float;
-  linear_motor_x/target_velocity: float;
-  linear_motor_y/enabled: boolean;
-  linear_motor_y/force_limit: float;
-  linear_motor_y/target_velocity: float;
-  linear_motor_z/enabled: boolean;
-  linear_motor_z/force_limit: float;
-  linear_motor_z/target_velocity: float;
-  linear_spring_x/damping: float;
-  linear_spring_x/enabled: boolean;
-  linear_spring_x/equilibrium_point: float;
-  linear_spring_x/stiffness: float;
-  linear_spring_y/damping: float;
-  linear_spring_y/enabled: boolean;
-  linear_spring_y/equilibrium_point: float;
-  linear_spring_y/stiffness: float;
-  linear_spring_z/damping: float;
-  linear_spring_z/enabled: boolean;
-  linear_spring_z/equilibrium_point: float;
-  linear_spring_z/stiffness: float;
+  'angular_limit_x/damping': float;
+  'angular_limit_x/enabled': boolean;
+  'angular_limit_x/erp': float;
+  'angular_limit_x/force_limit': float;
+  'angular_limit_x/lower_angle': float;
+  'angular_limit_x/restitution': float;
+  'angular_limit_x/softness': float;
+  'angular_limit_x/upper_angle': float;
+  'angular_limit_y/damping': float;
+  'angular_limit_y/enabled': boolean;
+  'angular_limit_y/erp': float;
+  'angular_limit_y/force_limit': float;
+  'angular_limit_y/lower_angle': float;
+  'angular_limit_y/restitution': float;
+  'angular_limit_y/softness': float;
+  'angular_limit_y/upper_angle': float;
+  'angular_limit_z/damping': float;
+  'angular_limit_z/enabled': boolean;
+  'angular_limit_z/erp': float;
+  'angular_limit_z/force_limit': float;
+  'angular_limit_z/lower_angle': float;
+  'angular_limit_z/restitution': float;
+  'angular_limit_z/softness': float;
+  'angular_limit_z/upper_angle': float;
+  'angular_motor_x/enabled': boolean;
+  'angular_motor_x/force_limit': float;
+  'angular_motor_x/target_velocity': float;
+  'angular_motor_y/enabled': boolean;
+  'angular_motor_y/force_limit': float;
+  'angular_motor_y/target_velocity': float;
+  'angular_motor_z/enabled': boolean;
+  'angular_motor_z/force_limit': float;
+  'angular_motor_z/target_velocity': float;
+  'angular_spring_x/damping': float;
+  'angular_spring_x/enabled': boolean;
+  'angular_spring_x/equilibrium_point': float;
+  'angular_spring_x/stiffness': float;
+  'angular_spring_y/damping': float;
+  'angular_spring_y/enabled': boolean;
+  'angular_spring_y/equilibrium_point': float;
+  'angular_spring_y/stiffness': float;
+  'angular_spring_z/damping': float;
+  'angular_spring_z/enabled': boolean;
+  'angular_spring_z/equilibrium_point': float;
+  'angular_spring_z/stiffness': float;
+  'linear_limit_x/damping': float;
+  'linear_limit_x/enabled': boolean;
+  'linear_limit_x/lower_distance': float;
+  'linear_limit_x/restitution': float;
+  'linear_limit_x/softness': float;
+  'linear_limit_x/upper_distance': float;
+  'linear_limit_y/damping': float;
+  'linear_limit_y/enabled': boolean;
+  'linear_limit_y/lower_distance': float;
+  'linear_limit_y/restitution': float;
+  'linear_limit_y/softness': float;
+  'linear_limit_y/upper_distance': float;
+  'linear_limit_z/damping': float;
+  'linear_limit_z/enabled': boolean;
+  'linear_limit_z/lower_distance': float;
+  'linear_limit_z/restitution': float;
+  'linear_limit_z/softness': float;
+  'linear_limit_z/upper_distance': float;
+  'linear_motor_x/enabled': boolean;
+  'linear_motor_x/force_limit': float;
+  'linear_motor_x/target_velocity': float;
+  'linear_motor_y/enabled': boolean;
+  'linear_motor_y/force_limit': float;
+  'linear_motor_y/target_velocity': float;
+  'linear_motor_z/enabled': boolean;
+  'linear_motor_z/force_limit': float;
+  'linear_motor_z/target_velocity': float;
+  'linear_spring_x/damping': float;
+  'linear_spring_x/enabled': boolean;
+  'linear_spring_x/equilibrium_point': float;
+  'linear_spring_x/stiffness': float;
+  'linear_spring_y/damping': float;
+  'linear_spring_y/enabled': boolean;
+  'linear_spring_y/equilibrium_point': float;
+  'linear_spring_y/stiffness': float;
+  'linear_spring_z/damping': float;
+  'linear_spring_z/enabled': boolean;
+  'linear_spring_z/equilibrium_point': float;
+  'linear_spring_z/stiffness': float;
 
   get_flag_x(flag: int): boolean;
   get_flag_y(flag: int): boolean;
@@ -8234,29 +8234,29 @@ declare class Generic6DOFJoint3D extends Joint3D {
   static readonly FLAG_MAX: int;
 }
 
-declare class Geometry2D extends Object {
-  bresenham_line(from_: Vector2i, to: Vector2i): Vector2i[];
-  clip_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): PackedVector2Array[];
-  clip_polyline_with_polygon(polyline: PackedVector2Array, polygon: PackedVector2Array): PackedVector2Array[];
+declare class Geometry2D extends GodotObject {
+  bresenham_line(from_: Vector2i, to: Vector2i): unknown;
+  clip_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): unknown;
+  clip_polyline_with_polygon(polyline: PackedVector2Array, polygon: PackedVector2Array): unknown;
   convex_hull(points: PackedVector2Array): PackedVector2Array;
-  decompose_polygon_in_convex(polygon: PackedVector2Array): PackedVector2Array[];
-  exclude_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): PackedVector2Array[];
+  decompose_polygon_in_convex(polygon: PackedVector2Array): unknown;
+  exclude_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): unknown;
   get_closest_point_to_segment(point: Vector2, s1: Vector2, s2: Vector2): Vector2;
   get_closest_point_to_segment_uncapped(point: Vector2, s1: Vector2, s2: Vector2): Vector2;
   get_closest_points_between_segments(p1: Vector2, q1: Vector2, p2: Vector2, q2: Vector2): PackedVector2Array;
-  intersect_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): PackedVector2Array[];
-  intersect_polyline_with_polygon(polyline: PackedVector2Array, polygon: PackedVector2Array): PackedVector2Array[];
+  intersect_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): unknown;
+  intersect_polyline_with_polygon(polyline: PackedVector2Array, polygon: PackedVector2Array): unknown;
   is_point_in_circle(point: Vector2, circle_position: Vector2, circle_radius: float): boolean;
   is_point_in_polygon(point: Vector2, polygon: PackedVector2Array): boolean;
   is_polygon_clockwise(polygon: PackedVector2Array): boolean;
-  line_intersects_line(from_a: Vector2, dir_a: Vector2, from_b: Vector2, dir_b: Vector2): any;
+  line_intersects_line(from_a: Vector2, dir_a: Vector2, from_b: Vector2, dir_b: Vector2): unknown;
   make_atlas(sizes: PackedVector2Array): Dictionary;
-  merge_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): PackedVector2Array[];
-  offset_polygon(polygon: PackedVector2Array, delta: float, join_type: int): PackedVector2Array[];
-  offset_polyline(polyline: PackedVector2Array, delta: float, join_type: int, end_type: int): PackedVector2Array[];
+  merge_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): unknown;
+  offset_polygon(polygon: PackedVector2Array, delta: float, join_type: int): unknown;
+  offset_polyline(polyline: PackedVector2Array, delta: float, join_type: int, end_type: int): unknown;
   point_is_inside_triangle(point: Vector2, a: Vector2, b: Vector2, c: Vector2): boolean;
   segment_intersects_circle(segment_from: Vector2, segment_to: Vector2, circle_position: Vector2, circle_radius: float): float;
-  segment_intersects_segment(from_a: Vector2, to_a: Vector2, from_b: Vector2, to_b: Vector2): any;
+  segment_intersects_segment(from_a: Vector2, to_a: Vector2, from_b: Vector2, to_b: Vector2): unknown;
   triangulate_delaunay(points: PackedVector2Array): PackedInt32Array;
   triangulate_polygon(polygon: PackedVector2Array): PackedInt32Array;
 
@@ -8277,21 +8277,21 @@ declare class Geometry2D extends Object {
   static readonly END_ROUND: int;
 }
 
-declare class Geometry3D extends Object {
-  build_box_planes(extents: Vector3): Plane[];
-  build_capsule_planes(radius: float, height: float, sides: int, lats: int, axis: int): Plane[];
-  build_cylinder_planes(radius: float, height: float, sides: int, axis: int): Plane[];
+declare class Geometry3D extends GodotObject {
+  build_box_planes(extents: Vector3): unknown;
+  build_capsule_planes(radius: float, height: float, sides: int, lats: int, axis: int): unknown;
+  build_cylinder_planes(radius: float, height: float, sides: int, axis: int): unknown;
   clip_polygon(points: PackedVector3Array, plane: Plane): PackedVector3Array;
-  compute_convex_mesh_points(planes: Plane[]): PackedVector3Array;
+  compute_convex_mesh_points(planes: unknown): PackedVector3Array;
   get_closest_point_to_segment(point: Vector3, s1: Vector3, s2: Vector3): Vector3;
   get_closest_point_to_segment_uncapped(point: Vector3, s1: Vector3, s2: Vector3): Vector3;
   get_closest_points_between_segments(p1: Vector3, p2: Vector3, q1: Vector3, q2: Vector3): PackedVector3Array;
   get_triangle_barycentric_coords(point: Vector3, a: Vector3, b: Vector3, c: Vector3): Vector3;
-  ray_intersects_triangle(from_: Vector3, dir: Vector3, a: Vector3, b: Vector3, c: Vector3): any;
-  segment_intersects_convex(from_: Vector3, to: Vector3, planes: Plane[]): PackedVector3Array;
+  ray_intersects_triangle(from_: Vector3, dir: Vector3, a: Vector3, b: Vector3, c: Vector3): unknown;
+  segment_intersects_convex(from_: Vector3, to: Vector3, planes: unknown): PackedVector3Array;
   segment_intersects_cylinder(from_: Vector3, to: Vector3, height: float, radius: float): PackedVector3Array;
   segment_intersects_sphere(from_: Vector3, to: Vector3, sphere_position: Vector3, sphere_radius: float): PackedVector3Array;
-  segment_intersects_triangle(from_: Vector3, to: Vector3, a: Vector3, b: Vector3, c: Vector3): any;
+  segment_intersects_triangle(from_: Vector3, to: Vector3, a: Vector3, b: Vector3, c: Vector3): unknown;
   tetrahedralize_delaunay(points: PackedVector3Array): PackedInt32Array;
 }
 
@@ -8313,8 +8313,8 @@ declare class GeometryInstance3D extends VisualInstance3D {
   visibility_range_end_margin: float;
   visibility_range_fade_mode: int;
 
-  get_instance_shader_parameter(name: string): any;
-  set_instance_shader_parameter(name: string, value: any): void;
+  get_instance_shader_parameter(name: string): unknown;
+  set_instance_shader_parameter(name: string, value: unknown): void;
 
   // enum ShadowCastingSetting
   static readonly SHADOW_CASTING_SETTING_OFF: int;
@@ -8337,7 +8337,7 @@ declare class GeometryInstance3D extends VisualInstance3D {
   static readonly VISIBILITY_RANGE_FADE_DEPENDENCIES: int;
 }
 
-declare class GodotInstance extends Object {
+declare class GodotInstance extends GodotObject {
   focus_in(): void;
   focus_out(): void;
   is_started(): boolean;
@@ -8407,7 +8407,7 @@ declare class GraphEdit extends Control {
   connection_lines_antialiased: boolean;
   connection_lines_curvature: float;
   connection_lines_thickness: float;
-  connections: Dictionary[];
+  connections: Dictionary;
   focus_mode: int;
   grid_pattern: int;
   minimap_enabled: boolean;
@@ -8445,12 +8445,12 @@ declare class GraphEdit extends Control {
   detach_graph_element_from_frame(element: string): void;
   disconnect_node(from_node: string, from_port: int, to_node: string, to_port: int): void;
   force_connection_drag_end(): void;
-  get_attached_nodes_of_frame(frame: string): StringName[];
+  get_attached_nodes_of_frame(frame: string): unknown;
   get_closest_connection_at_point(point: Vector2, max_distance?: float): Dictionary;
   get_connection_count(from_node: string, from_port: int): int;
   get_connection_line(from_node: Vector2, to_node: Vector2): PackedVector2Array;
-  get_connection_list_from_node(node: string): Dictionary[];
-  get_connections_intersecting_with_rect(rect: Rect2): Dictionary[];
+  get_connection_list_from_node(node: string): Dictionary;
+  get_connections_intersecting_with_rect(rect: Rect2): Dictionary;
   get_element_frame(element: string): GraphFrame;
   get_menu_hbox(): HBoxContainer;
   is_node_connected(from_node: string, from_port: int, to_node: string, to_port: int): boolean;
@@ -8469,12 +8469,12 @@ declare class GraphEdit extends Control {
   connection_to_empty: Signal<[string, int, Vector2]>;
   copy_nodes_request: Signal<[]>;
   cut_nodes_request: Signal<[]>;
-  delete_nodes_request: Signal<[StringName[]]>;
+  delete_nodes_request: Signal<[unknown]>;
   disconnection_request: Signal<[string, int, string, int]>;
   duplicate_nodes_request: Signal<[]>;
   end_node_move: Signal<[]>;
   frame_rect_changed: Signal<[GraphFrame, Rect2]>;
-  graph_elements_linked_to_frame_request: Signal<[Array<any>, string]>;
+  graph_elements_linked_to_frame_request: Signal<[Array<unknown>, string]>;
   node_deselected: Signal<[Node]>;
   node_selected: Signal<[Node]>;
   paste_nodes_request: Signal<[]>;
@@ -8545,8 +8545,8 @@ declare class GraphNode extends GraphElement {
   get_slot_color_right(slot_index: int): Color;
   get_slot_custom_icon_left(slot_index: int): Texture2D;
   get_slot_custom_icon_right(slot_index: int): Texture2D;
-  get_slot_metadata_left(slot_index: int): any;
-  get_slot_metadata_right(slot_index: int): any;
+  get_slot_metadata_left(slot_index: int): unknown;
+  get_slot_metadata_right(slot_index: int): unknown;
   get_slot_type_left(slot_index: int): int;
   get_slot_type_right(slot_index: int): int;
   get_titlebar_hbox(): HBoxContainer;
@@ -8561,8 +8561,8 @@ declare class GraphNode extends GraphElement {
   set_slot_draw_stylebox(slot_index: int, enable: boolean): void;
   set_slot_enabled_left(slot_index: int, enable: boolean): void;
   set_slot_enabled_right(slot_index: int, enable: boolean): void;
-  set_slot_metadata_left(slot_index: int, value: any): void;
-  set_slot_metadata_right(slot_index: int, value: any): void;
+  set_slot_metadata_left(slot_index: int, value: unknown): void;
+  set_slot_metadata_right(slot_index: int, value: unknown): void;
   set_slot_type_left(slot_index: int, type_: int): void;
   set_slot_type_right(slot_index: int, type_: int): void;
 
@@ -8724,8 +8724,8 @@ declare class HTTPRequest extends Node {
   get_body_size(): int;
   get_downloaded_bytes(): int;
   get_http_client_status(): int;
-  request(url: string, custom_headers?: PackedStringArray, method: int, request_data?: string): int;
-  request_raw(url: string, custom_headers?: PackedStringArray, method: int, request_data_raw?: PackedByteArray): int;
+  request(url: string, custom_headers?: PackedStringArray, method?: int, request_data?: string): int;
+  request_raw(url: string, custom_headers?: PackedStringArray, method?: int, request_data_raw?: PackedByteArray): int;
   set_http_proxy(host: string, port: int): void;
   set_https_proxy(host: string, port: int): void;
   set_tls_options(client_options: TLSOptions): void;
@@ -8771,16 +8771,16 @@ declare class HeightMapShape3D extends Shape3D {
 }
 
 declare class HingeJoint3D extends Joint3D {
-  angular_limit/bias: float;
-  angular_limit/enable: boolean;
-  angular_limit/lower: float;
-  angular_limit/relaxation: float;
-  angular_limit/softness: float;
-  angular_limit/upper: float;
-  motor/enable: boolean;
-  motor/max_impulse: float;
-  motor/target_velocity: float;
-  params/bias: float;
+  'angular_limit/bias': float;
+  'angular_limit/enable': boolean;
+  'angular_limit/lower': float;
+  'angular_limit/relaxation': float;
+  'angular_limit/softness': float;
+  'angular_limit/upper': float;
+  'motor/enable': boolean;
+  'motor/max_impulse': float;
+  'motor/target_velocity': float;
+  'params/bias': float;
 
   get_flag(flag: int): boolean;
   get_param(param: int): float;
@@ -8812,13 +8812,13 @@ declare class IKModifier3D extends SkeletonModifier3D {
   set_setting_count(count: int): void;
 }
 
-declare class IP extends Object {
+declare class IP extends GodotObject {
   clear_cache(hostname?: string): void;
   erase_resolve_item(id: int): void;
   get_local_addresses(): PackedStringArray;
-  get_local_interfaces(): Dictionary[];
+  get_local_interfaces(): Dictionary;
   get_resolve_item_address(id: int): string;
-  get_resolve_item_addresses(id: int): Array<any>;
+  get_resolve_item_addresses(id: int): Array<unknown>;
   get_resolve_item_status(id: int): int;
   resolve_hostname(host: string, ip_type: int): string;
   resolve_hostname_addresses(host: string, ip_type: int): PackedStringArray;
@@ -8899,7 +8899,7 @@ declare class Image extends Resource {
   normal_map_to_xy(): void;
   premultiply_alpha(): void;
   resize(width: int, height: int, interpolation: int): void;
-  resize_to_po2(square?: boolean, interpolation: int): void;
+  resize_to_po2(square?: boolean, interpolation?: int): void;
   rgbe_to_srgb(): Image;
   rotate_90(direction: int): void;
   rotate_180(): void;
@@ -9029,12 +9029,12 @@ declare class ImageTexture extends Texture2D {
 }
 
 declare class ImageTexture3D extends Texture3D {
-  create(format: int, width: int, height: int, depth: int, use_mipmaps: boolean, data: Image[]): int;
-  update(data: Image[]): void;
+  create(format: int, width: int, height: int, depth: int, use_mipmaps: boolean, data: unknown): int;
+  update(data: unknown): void;
 }
 
 declare class ImageTextureLayered extends TextureLayered {
-  create_from_images(images: Image[]): int;
+  create_from_images(images: unknown): int;
   update_layer(image: Image, layer: int): void;
 }
 
@@ -9053,17 +9053,17 @@ declare class ImmediateMesh extends Mesh {
 
 declare class ImporterMesh extends Resource {
   add_blend_shape(name: string): void;
-  add_surface(primitive: int, arrays: Array<any>, blend_shapes?: Array<void>, lods?: Dictionary, material?: Material, name?: string, flags?: int): void;
+  add_surface(primitive: int, arrays: Array<unknown>, blend_shapes?: Array<void>, lods?: Dictionary, material?: Material, name?: string, flags?: int): void;
   clear(): void;
   static from_mesh(mesh: Mesh): ImporterMesh;
-  generate_lods(normal_merge_angle: float, normal_split_angle: float, bone_transform_array: Array<any>): void;
+  generate_lods(normal_merge_angle: float, normal_split_angle: float, bone_transform_array: Array<unknown>): void;
   get_blend_shape_count(): int;
   get_blend_shape_mode(): int;
   get_blend_shape_name(blend_shape_idx: int): string;
   get_lightmap_size_hint(): Vector2i;
   get_mesh(base_mesh?: ArrayMesh): ArrayMesh;
-  get_surface_arrays(surface_idx: int): Array<any>;
-  get_surface_blend_shape_arrays(surface_idx: int, blend_shape_idx: int): Array<any>;
+  get_surface_arrays(surface_idx: int): Array<unknown>;
+  get_surface_blend_shape_arrays(surface_idx: int, blend_shape_idx: int): Array<unknown>;
   get_surface_count(): int;
   get_surface_format(surface_idx: int): int;
   get_surface_lod_count(surface_idx: int): int;
@@ -9072,7 +9072,7 @@ declare class ImporterMesh extends Resource {
   get_surface_material(surface_idx: int): Material;
   get_surface_name(surface_idx: int): string;
   get_surface_primitive_type(surface_idx: int): int;
-  static merge_importer_meshes(importer_meshes: ImporterMesh[], relative_transforms: Transform3D[], deduplicate_surfaces?: boolean): ImporterMesh;
+  static merge_importer_meshes(importer_meshes: unknown, relative_transforms: unknown, deduplicate_surfaces?: boolean): ImporterMesh;
   set_blend_shape_mode(mode: int): void;
   set_lightmap_size_hint(size: Vector2i): void;
   set_surface_material(surface_idx: int, material: Material): void;
@@ -9092,7 +9092,7 @@ declare class ImporterMeshInstance3D extends Node3D {
   visibility_range_fade_mode: int;
 }
 
-declare class Input extends Object {
+declare class Input extends GodotObject {
   emulate_mouse_from_touch: boolean;
   emulate_touch_from_mouse: boolean;
   ignore_joypad_on_unfocused_application: boolean;
@@ -9108,7 +9108,7 @@ declare class Input extends Object {
   get_action_raw_strength(action: string, exact_match?: boolean): float;
   get_action_strength(action: string, exact_match?: boolean): float;
   get_axis(negative_action: string, positive_action: string): float;
-  get_connected_joypads(): int[];
+  get_connected_joypads(): unknown;
   get_current_cursor_shape(): int;
   get_gravity(): Vector3;
   get_gyroscope(): Vector3;
@@ -9343,19 +9343,19 @@ declare class InputEventWithModifiers extends InputEventFromWindow {
   is_command_or_control_pressed(): boolean;
 }
 
-declare class InputMap extends Object {
+declare class InputMap extends GodotObject {
   action_add_event(action: string, event: InputEvent): void;
   action_erase_event(action: string, event: InputEvent): void;
   action_erase_events(action: string): void;
   action_get_deadzone(action: string): float;
-  action_get_events(action: string): InputEvent[];
+  action_get_events(action: string): unknown;
   action_has_event(action: string, event: InputEvent): boolean;
   action_set_deadzone(action: string, deadzone: float): void;
   add_action(action: string, deadzone?: float): void;
   erase_action(action: string): void;
   event_is_action(event: InputEvent, action: string, exact_match?: boolean): boolean;
   get_action_description(action: string): string;
-  get_actions(): StringName[];
+  get_actions(): unknown;
   has_action(action: string): boolean;
   load_from_project_settings(): void;
 
@@ -9410,7 +9410,7 @@ declare class ItemList extends Control {
   get_item_icon_modulate(idx: int): Color;
   get_item_icon_region(idx: int): Rect2;
   get_item_language(idx: int): string;
-  get_item_metadata(idx: int): any;
+  get_item_metadata(idx: int): unknown;
   get_item_rect(idx: int, expand?: boolean): Rect2;
   get_item_text(idx: int): string;
   get_item_text_direction(idx: int): int;
@@ -9435,7 +9435,7 @@ declare class ItemList extends Control {
   set_item_icon_region(idx: int, rect: Rect2): void;
   set_item_icon_transposed(idx: int, transposed: boolean): void;
   set_item_language(idx: int, language: string): void;
-  set_item_metadata(idx: int, metadata: any): void;
+  set_item_metadata(idx: int, metadata: unknown): void;
   set_item_selectable(idx: int, selectable: boolean): void;
   set_item_text(idx: int, text: string): void;
   set_item_text_direction(idx: int, direction: int): void;
@@ -9486,29 +9486,29 @@ declare class IterateIK3D extends ChainIK3D {
   set_target_node(index: int, target_node: string): void;
 }
 
-declare class JNISingleton extends Object {
+declare class JNISingleton extends GodotObject {
   has_java_method(method: string): boolean;
 }
 
-declare class JSON extends Resource {
-  data: any;
+declare class GodotJSON extends Resource {
+  data: unknown;
 
-  static from_native(variant: any, full_objects?: boolean): any;
+  static from_native(variant: unknown, full_objects?: boolean): unknown;
   get_error_line(): int;
   get_error_message(): string;
   get_parsed_text(): string;
   parse(json_text: string, keep_text?: boolean): int;
-  static parse_string(json_string: string): any;
-  static stringify(data: any, indent?: string, sort_keys?: boolean, full_precision?: boolean): string;
-  static to_native(json: any, allow_objects?: boolean): any;
+  static parse_string(json_string: string): unknown;
+  static stringify(data: unknown, indent?: string, sort_keys?: boolean, full_precision?: boolean): string;
+  static to_native(json: unknown, allow_objects?: boolean): unknown;
 }
 
-declare class JSONRPC extends Object {
-  make_notification(method: string, params: any): Dictionary;
-  make_request(method: string, params: any, id: any): Dictionary;
-  make_response(result: any, id: any): Dictionary;
-  make_response_error(code: int, message: string, id?: any): Dictionary;
-  process_action(action: any, recurse?: boolean): any;
+declare class JSONRPC extends GodotObject {
+  make_notification(method: string, params: unknown): Dictionary;
+  make_request(method: string, params: unknown, id: unknown): Dictionary;
+  make_response(result: unknown, id: unknown): Dictionary;
+  make_response_error(code: int, message: string, id?: unknown): Dictionary;
+  process_action(action: unknown, recurse?: boolean): unknown;
   process_string(action: string): string;
   set_method(name: string, callback: Callable): void;
 
@@ -9525,12 +9525,12 @@ declare class JacobianIK3D extends IterateIK3D {
 
 declare class JavaClass extends RefCounted {
   get_java_class_name(): string;
-  get_java_method_list(): Dictionary[];
+  get_java_method_list(): Dictionary;
   get_java_parent_class(): JavaClass;
   has_java_method(method: string): boolean;
 }
 
-declare class JavaClassWrapper extends Object {
+declare class JavaClassWrapper extends GodotObject {
   get_exception(): JavaObject;
   wrap(name: string): JavaClass;
 }
@@ -9540,11 +9540,11 @@ declare class JavaObject extends RefCounted {
   has_java_method(method: string): boolean;
 }
 
-declare class JavaScriptBridge extends Object {
+declare class JavaScriptBridge extends GodotObject {
   create_callback(callable: Callable): JavaScriptObject;
-  create_object(object: string): any;
+  create_object(object: string): unknown;
   download_buffer(buffer: PackedByteArray, name: string, mime?: string): void;
-  eval(code: string, use_global_execution_context?: boolean): any;
+  eval(code: string, use_global_execution_context?: boolean): unknown;
   force_fs_sync(): void;
   get_interface(interface_: string): JavaScriptObject;
   is_js_buffer(javascript_object: JavaScriptObject): boolean;
@@ -9631,7 +9631,7 @@ declare class Label extends Control {
   paragraph_separator: string;
   size_flags_vertical: int;
   structured_text_bidi_override: int;
-  structured_text_bidi_override_options: Array<any>;
+  structured_text_bidi_override_options: Array<unknown>;
   tab_stops: PackedFloat32Array;
   text: string;
   text_direction: int;
@@ -9678,7 +9678,7 @@ declare class Label3D extends GeometryInstance3D {
   render_priority: int;
   shaded: boolean;
   structured_text_bidi_override: int;
-  structured_text_bidi_override_options: Array<any>;
+  structured_text_bidi_override_options: Array<unknown>;
   text: string;
   text_direction: int;
   texture_filter: int;
@@ -9890,8 +9890,8 @@ declare class LightmapGI extends VisualInstance3D {
 
 declare class LightmapGIData extends Resource {
   light_texture: TextureLayered;
-  lightmap_textures: TextureLayered[];
-  shadowmask_textures: TextureLayered[];
+  lightmap_textures: unknown;
+  shadowmask_textures: unknown;
 
   add_user(path: string, uv_scale: Rect2, slice_index: int, sub_instance: int): void;
   clear_users(): void;
@@ -10003,7 +10003,7 @@ declare class LineEdit extends Control {
   selecting_enabled: boolean;
   shortcut_keys_enabled: boolean;
   structured_text_bidi_override: int;
-  structured_text_bidi_override_options: Array<any>;
+  structured_text_bidi_override_options: Array<unknown>;
   text: string;
   text_direction: int;
   virtual_keyboard_enabled: boolean;
@@ -10095,7 +10095,7 @@ declare class LinkButton extends BaseButton {
   language: string;
   mouse_default_cursor_shape: int;
   structured_text_bidi_override: int;
-  structured_text_bidi_override_options: Array<any>;
+  structured_text_bidi_override_options: Array<unknown>;
   text: string;
   text_direction: int;
   text_overrun_behavior: int;
@@ -10109,7 +10109,7 @@ declare class LinkButton extends BaseButton {
 }
 
 declare class Logger extends RefCounted {
-  _log_error(function_: string, file: string, line: int, code: string, rationale: string, editor_notify: boolean, error_type: int, script_backtraces: ScriptBacktrace[]): void;
+  _log_error(function_: string, file: string, line: int, code: string, rationale: string, editor_notify: boolean, error_type: int, script_backtraces: unknown): void;
   _log_message(message: string, error: boolean): void;
 
   // enum ErrorType
@@ -10161,7 +10161,7 @@ declare class LookAtModifier3D extends SkeletonModifier3D {
   static readonly ORIGIN_FROM_EXTERNAL_NODE: int;
 }
 
-declare class MainLoop extends Object {
+declare class MainLoop extends GodotObject {
   _finalize(): void;
   _initialize(): void;
   _physics_process(delta: float): boolean;
@@ -10194,13 +10194,13 @@ declare class Marker3D extends Node3D {
   gizmo_extents: float;
 }
 
-declare class Marshalls extends Object {
+declare class Marshalls extends GodotObject {
   base64_to_raw(base64_str: string): PackedByteArray;
   base64_to_utf8(base64_str: string): string;
-  base64_to_variant(base64_str: string, allow_objects?: boolean): any;
+  base64_to_variant(base64_str: string, allow_objects?: boolean): unknown;
   raw_to_base64(array: PackedByteArray): string;
   utf8_to_base64(utf8_str: string): string;
-  variant_to_base64(variant: any, full_objects?: boolean): string;
+  variant_to_base64(variant: unknown, full_objects?: boolean): string;
 }
 
 declare class Material extends Resource {
@@ -10266,7 +10266,7 @@ declare class Mesh extends Resource {
   _set_blend_shape_name(index: int, name: string): void;
   _surface_get_array_index_len(index: int): int;
   _surface_get_array_len(index: int): int;
-  _surface_get_arrays(index: int): Array<any>;
+  _surface_get_arrays(index: int): Array<unknown>;
   _surface_get_blend_shape_arrays(index: int): Array<void>;
   _surface_get_format(index: int): int;
   _surface_get_lods(index: int): Dictionary;
@@ -10281,7 +10281,7 @@ declare class Mesh extends Resource {
   get_aabb(): AABB;
   get_faces(): PackedVector3Array;
   get_surface_count(): int;
-  surface_get_arrays(surf_idx: int): Array<any>;
+  surface_get_arrays(surf_idx: int): Array<unknown>;
   surface_get_blend_shape_arrays(surf_idx: int): Array<void>;
   surface_get_material(surf_idx: int): Material;
   surface_set_material(surf_idx: int, material: Material): void;
@@ -10376,11 +10376,11 @@ declare class MeshDataTool extends RefCounted {
   create_from_surface(mesh: ArrayMesh, surface: int): int;
   get_edge_count(): int;
   get_edge_faces(idx: int): PackedInt32Array;
-  get_edge_meta(idx: int): any;
+  get_edge_meta(idx: int): unknown;
   get_edge_vertex(idx: int, vertex: int): int;
   get_face_count(): int;
   get_face_edge(idx: int, edge: int): int;
-  get_face_meta(idx: int): any;
+  get_face_meta(idx: int): unknown;
   get_face_normal(idx: int): Vector3;
   get_face_vertex(idx: int, vertex: int): int;
   get_format(): int;
@@ -10391,19 +10391,19 @@ declare class MeshDataTool extends RefCounted {
   get_vertex_count(): int;
   get_vertex_edges(idx: int): PackedInt32Array;
   get_vertex_faces(idx: int): PackedInt32Array;
-  get_vertex_meta(idx: int): any;
+  get_vertex_meta(idx: int): unknown;
   get_vertex_normal(idx: int): Vector3;
   get_vertex_tangent(idx: int): Plane;
   get_vertex_uv(idx: int): Vector2;
   get_vertex_uv2(idx: int): Vector2;
   get_vertex_weights(idx: int): PackedFloat32Array;
-  set_edge_meta(idx: int, meta: any): void;
-  set_face_meta(idx: int, meta: any): void;
+  set_edge_meta(idx: int, meta: unknown): void;
+  set_face_meta(idx: int, meta: unknown): void;
   set_material(material: Material): void;
   set_vertex(idx: int, vertex: Vector3): void;
   set_vertex_bones(idx: int, bones: PackedInt32Array): void;
   set_vertex_color(idx: int, color: Color): void;
-  set_vertex_meta(idx: int, meta: any): void;
+  set_vertex_meta(idx: int, meta: unknown): void;
   set_vertex_normal(idx: int, normal: Vector3): void;
   set_vertex_tangent(idx: int, tangent: Plane): void;
   set_vertex_uv(idx: int, uv: Vector2): void;
@@ -10453,7 +10453,7 @@ declare class MeshLibrary extends Resource {
   get_item_navigation_mesh(id: int): NavigationMesh;
   get_item_navigation_mesh_transform(id: int): Transform3D;
   get_item_preview(id: int): Texture2D;
-  get_item_shapes(id: int): Array<any>;
+  get_item_shapes(id: int): Array<unknown>;
   get_last_unused_item_id(): int;
   remove_item(id: int): void;
   set_item_mesh(id: int, mesh: Mesh): void;
@@ -10464,7 +10464,7 @@ declare class MeshLibrary extends Resource {
   set_item_navigation_mesh(id: int, navigation_mesh: NavigationMesh): void;
   set_item_navigation_mesh_transform(id: int, navigation_mesh: Transform3D): void;
   set_item_preview(id: int, texture: Texture2D): void;
-  set_item_shapes(id: int, shapes: Array<any>): void;
+  set_item_shapes(id: int, shapes: Array<unknown>): void;
 }
 
 declare class MeshTexture extends Texture2D {
@@ -10497,13 +10497,13 @@ declare class ModifierBoneTarget3D extends SkeletonModifier3D {
   bone_name: string;
 }
 
-declare class MovieWriter extends Object {
+declare class MovieWriter extends GodotObject {
   _get_audio_mix_rate(): int;
   _get_audio_speaker_mode(): int;
   _handles_file(path: string): boolean;
   _write_begin(movie_size: Vector2i, fps: int, base_path: string): int;
   _write_end(): void;
-  _write_frame(frame_image: Image, audio_frame_block: const void*): int;
+  _write_frame(frame_image: Image, audio_frame_block: void): int;
   static add_writer(writer: MovieWriter): void;
 }
 
@@ -10564,10 +10564,10 @@ declare class MultiplayerAPI extends RefCounted {
   get_unique_id(): int;
   has_multiplayer_peer(): boolean;
   is_server(): boolean;
-  object_configuration_add(object: GodotObject, configuration: any): int;
-  object_configuration_remove(object: GodotObject, configuration: any): int;
+  object_configuration_add(object: GodotObject, configuration: unknown): int;
+  object_configuration_remove(object: GodotObject, configuration: unknown): int;
   poll(): int;
-  rpc(peer: int, object: GodotObject, method: string, arguments?: Array<any>): int;
+  rpc(peer: int, object: GodotObject, method: string, arguments?: Array<unknown>): int;
   static set_default_interface(interface_name: string): void;
 
   connected_to_server: Signal<[]>;
@@ -10587,10 +10587,10 @@ declare class MultiplayerAPIExtension extends MultiplayerAPI {
   _get_peer_ids(): PackedInt32Array;
   _get_remote_sender_id(): int;
   _get_unique_id(): int;
-  _object_configuration_add(object: GodotObject, configuration: any): int;
-  _object_configuration_remove(object: GodotObject, configuration: any): int;
+  _object_configuration_add(object: GodotObject, configuration: unknown): int;
+  _object_configuration_remove(object: GodotObject, configuration: unknown): int;
   _poll(): int;
-  _rpc(peer: int, object: GodotObject, method: string, args: Array<any>): int;
+  _rpc(peer: int, object: GodotObject, method: string, args: Array<unknown>): int;
   _set_multiplayer_peer(multiplayer_peer: MultiplayerPeer): void;
 }
 
@@ -10633,7 +10633,7 @@ declare class MultiplayerPeerExtension extends MultiplayerPeer {
   _get_available_packet_count(): int;
   _get_connection_status(): int;
   _get_max_packet_size(): int;
-  _get_packet(r_buffer: const uint8_t **, r_buffer_size: int32_t*): int;
+  _get_packet(r_buffer: int, r_buffer_size: int): int;
   _get_packet_channel(): int;
   _get_packet_mode(): int;
   _get_packet_peer(): int;
@@ -10645,7 +10645,7 @@ declare class MultiplayerPeerExtension extends MultiplayerPeer {
   _is_server(): boolean;
   _is_server_relay_supported(): boolean;
   _poll(): void;
-  _put_packet(p_buffer: const uint8_t*, p_buffer_size: int): int;
+  _put_packet(p_buffer: int, p_buffer_size: int): int;
   _put_packet_script(p_buffer: PackedByteArray): int;
   _set_refuse_new_connections(p_enable: boolean): void;
   _set_target_peer(p_peer: int): void;
@@ -10659,20 +10659,20 @@ declare class Mutex extends RefCounted {
   unlock(): void;
 }
 
-declare class NativeMenu extends Object {
-  add_check_item(rid: RID, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  add_icon_check_item(rid: RID, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  add_icon_item(rid: RID, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  add_icon_radio_check_item(rid: RID, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  add_item(rid: RID, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  add_multistate_item(rid: RID, label: string, max_states: int, default_state: int, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
-  add_radio_check_item(rid: RID, label: string, callback?: Callable, key_callback?: Callable, tag?: any, accelerator: int, index?: int): int;
+declare class NativeMenu extends GodotObject {
+  add_check_item(rid: RID, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_icon_check_item(rid: RID, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_icon_item(rid: RID, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_icon_radio_check_item(rid: RID, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_item(rid: RID, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_multistate_item(rid: RID, label: string, max_states: int, default_state: int, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_radio_check_item(rid: RID, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
   add_separator(rid: RID, index?: int): int;
-  add_submenu_item(rid: RID, label: string, submenu_rid: RID, tag?: any, index?: int): int;
+  add_submenu_item(rid: RID, label: string, submenu_rid: RID, tag?: unknown, index?: int): int;
   clear(rid: RID): void;
   create_menu(): RID;
   find_item_index_with_submenu(rid: RID, submenu_rid: RID): int;
-  find_item_index_with_tag(rid: RID, tag: any): int;
+  find_item_index_with_tag(rid: RID, tag: unknown): int;
   find_item_index_with_text(rid: RID, text: string): int;
   free_menu(rid: RID): void;
   get_item_accelerator(rid: RID, idx: int): int;
@@ -10684,7 +10684,7 @@ declare class NativeMenu extends Object {
   get_item_max_states(rid: RID, idx: int): int;
   get_item_state(rid: RID, idx: int): int;
   get_item_submenu(rid: RID, idx: int): RID;
-  get_item_tag(rid: RID, idx: int): any;
+  get_item_tag(rid: RID, idx: int): unknown;
   get_item_text(rid: RID, idx: int): string;
   get_item_tooltip(rid: RID, idx: int): string;
   get_minimum_width(rid: RID): float;
@@ -10722,7 +10722,7 @@ declare class NativeMenu extends Object {
   set_item_radio_checkable(rid: RID, idx: int, checkable: boolean): void;
   set_item_state(rid: RID, idx: int, state: int): void;
   set_item_submenu(rid: RID, idx: int, submenu_rid: RID): void;
-  set_item_tag(rid: RID, idx: int, tag: any): void;
+  set_item_tag(rid: RID, idx: int, tag: unknown): void;
   set_item_text(rid: RID, idx: int, text: string): void;
   set_item_tooltip(rid: RID, idx: int, tooltip: string): void;
   set_minimum_width(rid: RID, width: float): void;
@@ -10964,7 +10964,7 @@ declare class NavigationMesh extends Resource {
   static readonly SOURCE_GEOMETRY_MAX: int;
 }
 
-declare class NavigationMeshGenerator extends Object {
+declare class NavigationMeshGenerator extends GodotObject {
   bake(navigation_mesh: NavigationMesh, root_node: Node): void;
   bake_from_source_geometry_data(navigation_mesh: NavigationMesh, source_geometry_data: NavigationMeshSourceGeometryData3D, callback?: Callable): void;
   clear(navigation_mesh: NavigationMesh): void;
@@ -10975,37 +10975,37 @@ declare class NavigationMeshSourceGeometryData2D extends Resource {
   add_obstruction_outline(shape_outline: PackedVector2Array): void;
   add_projected_obstruction(vertices: PackedVector2Array, carve: boolean): void;
   add_traversable_outline(shape_outline: PackedVector2Array): void;
-  append_obstruction_outlines(obstruction_outlines: PackedVector2Array[]): void;
-  append_traversable_outlines(traversable_outlines: PackedVector2Array[]): void;
+  append_obstruction_outlines(obstruction_outlines: unknown): void;
+  append_traversable_outlines(traversable_outlines: unknown): void;
   clear(): void;
   clear_projected_obstructions(): void;
   get_bounds(): Rect2;
-  get_obstruction_outlines(): PackedVector2Array[];
-  get_projected_obstructions(): Array<any>;
-  get_traversable_outlines(): PackedVector2Array[];
+  get_obstruction_outlines(): unknown;
+  get_projected_obstructions(): Array<unknown>;
+  get_traversable_outlines(): unknown;
   has_data(): boolean;
   merge(other_geometry: NavigationMeshSourceGeometryData2D): void;
-  set_obstruction_outlines(obstruction_outlines: PackedVector2Array[]): void;
-  set_projected_obstructions(projected_obstructions: Array<any>): void;
-  set_traversable_outlines(traversable_outlines: PackedVector2Array[]): void;
+  set_obstruction_outlines(obstruction_outlines: unknown): void;
+  set_projected_obstructions(projected_obstructions: Array<unknown>): void;
+  set_traversable_outlines(traversable_outlines: unknown): void;
 }
 
 declare class NavigationMeshSourceGeometryData3D extends Resource {
   add_faces(faces: PackedVector3Array, xform: Transform3D): void;
   add_mesh(mesh: Mesh, xform: Transform3D): void;
-  add_mesh_array(mesh_array: Array<any>, xform: Transform3D): void;
+  add_mesh_array(mesh_array: Array<unknown>, xform: Transform3D): void;
   add_projected_obstruction(vertices: PackedVector3Array, elevation: float, height: float, carve: boolean): void;
   append_arrays(vertices: PackedFloat32Array, indices: PackedInt32Array): void;
   clear(): void;
   clear_projected_obstructions(): void;
   get_bounds(): AABB;
   get_indices(): PackedInt32Array;
-  get_projected_obstructions(): Array<any>;
+  get_projected_obstructions(): Array<unknown>;
   get_vertices(): PackedFloat32Array;
   has_data(): boolean;
   merge(other_geometry: NavigationMeshSourceGeometryData3D): void;
   set_indices(indices: PackedInt32Array): void;
-  set_projected_obstructions(projected_obstructions: Array<any>): void;
+  set_projected_obstructions(projected_obstructions: Array<unknown>): void;
   set_vertices(vertices: PackedFloat32Array): void;
 }
 
@@ -11044,8 +11044,8 @@ declare class NavigationObstacle3D extends Node3D {
 }
 
 declare class NavigationPathQueryParameters2D extends RefCounted {
-  excluded_regions: RID[];
-  included_regions: RID[];
+  excluded_regions: unknown;
+  included_regions: unknown;
   map: RID;
   metadata_flags: int;
   navigation_layers: int;
@@ -11075,8 +11075,8 @@ declare class NavigationPathQueryParameters2D extends RefCounted {
 }
 
 declare class NavigationPathQueryParameters3D extends RefCounted {
-  excluded_regions: RID[];
-  included_regions: RID[];
+  excluded_regions: unknown;
+  included_regions: unknown;
   map: RID;
   metadata_flags: int;
   navigation_layers: int;
@@ -11109,7 +11109,7 @@ declare class NavigationPathQueryResult2D extends RefCounted {
   path: PackedVector2Array;
   path_length: float;
   path_owner_ids: PackedInt64Array;
-  path_rids: RID[];
+  path_rids: unknown;
   path_types: PackedInt32Array;
 
   reset(): void;
@@ -11123,7 +11123,7 @@ declare class NavigationPathQueryResult3D extends RefCounted {
   path: PackedVector3Array;
   path_length: float;
   path_owner_ids: PackedInt64Array;
-  path_rids: RID[];
+  path_rids: unknown;
   path_types: PackedInt32Array;
 
   reset(): void;
@@ -11224,7 +11224,7 @@ declare class NavigationRegion3D extends Node3D {
   navigation_mesh_changed: Signal<[]>;
 }
 
-declare class NavigationServer2D extends Object {
+declare class NavigationServer2D extends GodotObject {
   agent_create(): RID;
   agent_get_avoidance_enabled(agent: RID): boolean;
   agent_get_avoidance_layers(agent: RID): int;
@@ -11262,7 +11262,7 @@ declare class NavigationServer2D extends Object {
   bake_from_source_geometry_data_async(navigation_polygon: NavigationPolygon, source_geometry_data: NavigationMeshSourceGeometryData2D, callback?: Callable): void;
   free_rid(rid: RID): void;
   get_debug_enabled(): boolean;
-  get_maps(): RID[];
+  get_maps(): unknown;
   get_process_info(process_info: int): int;
   is_baking_navigation_polygon(navigation_polygon: NavigationPolygon): boolean;
   link_create(): RID;
@@ -11287,19 +11287,19 @@ declare class NavigationServer2D extends Object {
   link_set_travel_cost(link: RID, travel_cost: float): void;
   map_create(): RID;
   map_force_update(map: RID): void;
-  map_get_agents(map: RID): RID[];
+  map_get_agents(map: RID): unknown;
   map_get_cell_size(map: RID): float;
   map_get_closest_point(map: RID, to_point: Vector2): Vector2;
   map_get_closest_point_owner(map: RID, to_point: Vector2): RID;
   map_get_edge_connection_margin(map: RID): float;
   map_get_iteration_id(map: RID): int;
   map_get_link_connection_radius(map: RID): float;
-  map_get_links(map: RID): RID[];
+  map_get_links(map: RID): unknown;
   map_get_merge_rasterizer_cell_scale(map: RID): float;
-  map_get_obstacles(map: RID): RID[];
+  map_get_obstacles(map: RID): unknown;
   map_get_path(map: RID, origin: Vector2, destination: Vector2, optimize: boolean, navigation_layers?: int): PackedVector2Array;
   map_get_random_point(map: RID, navigation_layers: int, uniformly: boolean): Vector2;
-  map_get_regions(map: RID): RID[];
+  map_get_regions(map: RID): unknown;
   map_get_use_async_iterations(map: RID): boolean;
   map_get_use_edge_connections(map: RID): boolean;
   map_is_active(map: RID): boolean;
@@ -11380,12 +11380,12 @@ declare class NavigationServer2D extends Object {
   static readonly INFO_OBSTACLE_COUNT: int;
 }
 
-declare class NavigationServer2DManager extends Object {
+declare class NavigationServer2DManager extends GodotObject {
   register_server(name: string, create_callback: Callable): void;
   set_default_server(name: string, priority: int): void;
 }
 
-declare class NavigationServer3D extends Object {
+declare class NavigationServer3D extends GodotObject {
   agent_create(): RID;
   agent_get_avoidance_enabled(agent: RID): boolean;
   agent_get_avoidance_layers(agent: RID): int;
@@ -11427,7 +11427,7 @@ declare class NavigationServer3D extends Object {
   bake_from_source_geometry_data_async(navigation_mesh: NavigationMesh, source_geometry_data: NavigationMeshSourceGeometryData3D, callback?: Callable): void;
   free_rid(rid: RID): void;
   get_debug_enabled(): boolean;
-  get_maps(): RID[];
+  get_maps(): unknown;
   get_process_info(process_info: int): int;
   is_baking_navigation_mesh(navigation_mesh: NavigationMesh): boolean;
   link_create(): RID;
@@ -11452,7 +11452,7 @@ declare class NavigationServer3D extends Object {
   link_set_travel_cost(link: RID, travel_cost: float): void;
   map_create(): RID;
   map_force_update(map: RID): void;
-  map_get_agents(map: RID): RID[];
+  map_get_agents(map: RID): unknown;
   map_get_cell_height(map: RID): float;
   map_get_cell_size(map: RID): float;
   map_get_closest_point(map: RID, to_point: Vector3): Vector3;
@@ -11462,12 +11462,12 @@ declare class NavigationServer3D extends Object {
   map_get_edge_connection_margin(map: RID): float;
   map_get_iteration_id(map: RID): int;
   map_get_link_connection_radius(map: RID): float;
-  map_get_links(map: RID): RID[];
+  map_get_links(map: RID): unknown;
   map_get_merge_rasterizer_cell_scale(map: RID): float;
-  map_get_obstacles(map: RID): RID[];
+  map_get_obstacles(map: RID): unknown;
   map_get_path(map: RID, origin: Vector3, destination: Vector3, optimize: boolean, navigation_layers?: int): PackedVector3Array;
   map_get_random_point(map: RID, navigation_layers: int, uniformly: boolean): Vector3;
-  map_get_regions(map: RID): RID[];
+  map_get_regions(map: RID): unknown;
   map_get_up(map: RID): Vector3;
   map_get_use_async_iterations(map: RID): boolean;
   map_get_use_edge_connections(map: RID): boolean;
@@ -11558,7 +11558,7 @@ declare class NavigationServer3D extends Object {
   static readonly INFO_OBSTACLE_COUNT: int;
 }
 
-declare class NavigationServer3DManager extends Object {
+declare class NavigationServer3DManager extends GodotObject {
   register_server(name: string, create_callback: Callable): void;
   set_default_server(name: string, priority: int): void;
 }
@@ -11586,7 +11586,7 @@ declare class NinePatchRect extends Control {
   static readonly AXIS_STRETCH_MODE_TILE_FIT: int;
 }
 
-declare class Node extends Object {
+declare class Node extends GodotObject {
   auto_translate_mode: int;
   editor_description: string;
   multiplayer: MultiplayerAPI;
@@ -11614,33 +11614,33 @@ declare class Node extends Object {
   _shortcut_input(event: InputEvent): void;
   _unhandled_input(event: InputEvent): void;
   _unhandled_key_input(event: InputEvent): void;
-  add_child(node: Node, force_readable_name?: boolean, internal: int): void;
+  add_child(node: Node, force_readable_name?: boolean, internal?: int): void;
   add_sibling(sibling: Node, force_readable_name?: boolean): void;
   add_to_group(group: string, persistent?: boolean): void;
   atr(message: string, context?: string): string;
   atr_n(message: string, plural_message: string, n: int, context?: string): string;
-  call_deferred_thread_group(method: string): any;
-  call_thread_safe(method: string): any;
+  call_deferred_thread_group(method: string): unknown;
+  call_thread_safe(method: string): unknown;
   can_auto_translate(): boolean;
   can_process(): boolean;
   create_tween(): Tween;
   duplicate(flags?: int): Node;
   find_child(pattern: string, recursive?: boolean, owned?: boolean): Node;
-  find_children(pattern: string, type_?: string, recursive?: boolean, owned?: boolean): Node[];
+  find_children(pattern: string, type_?: string, recursive?: boolean, owned?: boolean): unknown;
   find_parent(pattern: string): Node;
   get_accessibility_element(): RID;
   get_child(idx: int, include_internal?: boolean): Node;
   get_child_count(include_internal?: boolean): int;
-  get_children(include_internal?: boolean): Node[];
-  get_groups(): StringName[];
+  get_children(include_internal?: boolean): unknown;
+  get_groups(): unknown;
   get_index(include_internal?: boolean): int;
   get_last_exclusive_window(): Window;
   get_multiplayer_authority(): int;
   get_node(path: string): Node;
-  get_node_and_resource(path: string): Array<any>;
+  get_node_and_resource(path: string): Array<unknown>;
   get_node_or_null(path: string): Node;
-  get_node_rpc_config(): any;
-  static get_orphan_node_ids(): int[];
+  get_node_rpc_config(): unknown;
+  static get_orphan_node_ids(): unknown;
   get_parent(): Node;
   get_path(): string;
   get_path_to(node: Node, use_unique_path?: boolean): string;
@@ -11679,7 +11679,7 @@ declare class Node extends Object {
   static print_orphan_nodes(): void;
   print_tree(): void;
   print_tree_pretty(): void;
-  propagate_call(method: string, args?: Array<any>, parent_first?: boolean): void;
+  propagate_call(method: string, args?: Array<unknown>, parent_first?: boolean): void;
   propagate_notification(what: int): void;
   queue_accessibility_update(): void;
   queue_free(): void;
@@ -11690,9 +11690,9 @@ declare class Node extends Object {
   request_ready(): void;
   reset_physics_interpolation(): void;
   rpc(method: string): int;
-  rpc_config(method: string, config: any): void;
+  rpc_config(method: string, config: unknown): void;
   rpc_id(peer_id: int, method: string): int;
-  set_deferred_thread_group(property: string, value: any): void;
+  set_deferred_thread_group(property: string, value: unknown): void;
   set_display_folded(fold: boolean): void;
   set_editable_instance(node: Node, is_editable: boolean): void;
   set_multiplayer_authority(id: int, recursive?: boolean): void;
@@ -11705,7 +11705,7 @@ declare class Node extends Object {
   set_process_unhandled_input(enable: boolean): void;
   set_process_unhandled_key_input(enable: boolean): void;
   set_scene_instance_load_placeholder(load_placeholder: boolean): void;
-  set_thread_safe(property: string, value: any): void;
+  set_thread_safe(property: string, value: unknown): void;
   set_translation_domain_inherited(): void;
   update_configuration_warnings(): void;
 
@@ -11855,7 +11855,7 @@ declare class Node3D extends Node {
   clear_gizmos(): void;
   clear_subgizmo_selection(): void;
   force_update_transform(): void;
-  get_gizmos(): Node3DGizmo[];
+  get_gizmos(): unknown;
   get_global_transform_interpolated(): Transform3D;
   get_parent_node_3d(): Node3D;
   get_world_3d(): World3D;
@@ -11923,7 +11923,7 @@ declare class NodePath {
 declare class ORMMaterial3D extends BaseMaterial3D {
 }
 
-declare class OS extends Object {
+declare class OS extends GodotObject {
   delta_smoothing: boolean;
   low_processor_usage_mode: boolean;
   low_processor_usage_mode_sleep_usec: int;
@@ -11936,7 +11936,7 @@ declare class OS extends Object {
   create_process(path: string, arguments: PackedStringArray, open_console?: boolean): int;
   delay_msec(msec: int): void;
   delay_usec(usec: int): void;
-  execute(path: string, arguments: PackedStringArray, output?: Array<any>, read_stderr?: boolean, open_console?: boolean): int;
+  execute(path: string, arguments: PackedStringArray, output?: Array<unknown>, read_stderr?: boolean, open_console?: boolean): int;
   execute_with_pipe(path: string, arguments: PackedStringArray, blocking?: boolean): Dictionary;
   find_keycode_from_string(string: string): int;
   get_cache_dir(): string;
@@ -12028,42 +12028,42 @@ declare class OS extends Object {
   static readonly STD_HANDLE_UNKNOWN: int;
 }
 
-declare class Object {
-  _get(property: string): any;
-  _get_property_list(): Dictionary[];
+declare class GodotObject {
+  _get(property: string): unknown;
+  _get_property_list(): Dictionary;
   _init(): void;
-  _iter_get(iter: any): any;
-  _iter_init(iter: Array<any>): boolean;
-  _iter_next(iter: Array<any>): boolean;
+  _iter_get(iter: unknown): unknown;
+  _iter_init(iter: Array<unknown>): boolean;
+  _iter_next(iter: Array<unknown>): boolean;
   _notification(what: int): void;
   _property_can_revert(property: string): boolean;
-  _property_get_revert(property: string): any;
-  _set(property: string, value: any): boolean;
+  _property_get_revert(property: string): unknown;
+  _set(property: string, value: unknown): boolean;
   _to_string(): string;
   _validate_property(property: Dictionary): void;
-  add_user_signal(signal: string, arguments?: Array<any>): void;
-  call(method: string): any;
-  call_deferred(method: string): any;
-  callv(method: string, arg_array: Array<any>): any;
+  add_user_signal(signal: string, arguments?: Array<unknown>): void;
+  call(method: string): unknown;
+  call_deferred(method: string): unknown;
+  callv(method: string, arg_array: Array<unknown>): unknown;
   can_translate_messages(): boolean;
   cancel_free(): void;
   connect(signal: string, callable: Callable, flags?: int): int;
   disconnect(signal: string, callable: Callable): void;
   emit_signal(signal: string): int;
   free(): void;
-  get(property: string): any;
+  get(property: string): unknown;
   get_class(): string;
-  get_incoming_connections(): Dictionary[];
-  get_indexed(property_path: string): any;
+  get_incoming_connections(): Dictionary;
+  get_indexed(property_path: string): unknown;
   get_instance_id(): int;
-  get_meta(name: string, default_?: any): any;
-  get_meta_list(): StringName[];
+  get_meta(name: string, default_?: unknown): unknown;
+  get_meta_list(): unknown;
   get_method_argument_count(method: string): int;
-  get_method_list(): Dictionary[];
-  get_property_list(): Dictionary[];
-  get_script(): any;
-  get_signal_connection_list(signal: string): Dictionary[];
-  get_signal_list(): Dictionary[];
+  get_method_list(): Dictionary;
+  get_property_list(): Dictionary;
+  get_script(): unknown;
+  get_signal_connection_list(signal: string): Dictionary;
+  get_signal_list(): Dictionary;
   get_translation_domain(): string;
   has_connections(signal: string): boolean;
   has_meta(name: string): boolean;
@@ -12077,16 +12077,16 @@ declare class Object {
   notification(what: int, reversed?: boolean): void;
   notify_property_list_changed(): void;
   property_can_revert(property: string): boolean;
-  property_get_revert(property: string): any;
+  property_get_revert(property: string): unknown;
   remove_meta(name: string): void;
   remove_user_signal(signal: string): void;
-  set(property: string, value: any): void;
+  set(property: string, value: unknown): void;
   set_block_signals(enable: boolean): void;
-  set_deferred(property: string, value: any): void;
-  set_indexed(property_path: string, value: any): void;
+  set_deferred(property: string, value: unknown): void;
+  set_indexed(property_path: string, value: unknown): void;
   set_message_translation(enable: boolean): void;
-  set_meta(name: string, value: any): void;
-  set_script(script: any): void;
+  set_meta(name: string, value: unknown): void;
+  set_script(script: unknown): void;
   set_translation_domain(domain: string): void;
   to_string(): string;
   tr(message: string, context?: string): string;
@@ -12166,13 +12166,13 @@ declare class OptionButton extends Button {
   get_item_icon(idx: int): Texture2D;
   get_item_id(idx: int): int;
   get_item_index(id: int): int;
-  get_item_metadata(idx: int): any;
+  get_item_metadata(idx: int): unknown;
   get_item_text(idx: int): string;
   get_item_tooltip(idx: int): string;
   get_popup(): PopupMenu;
   get_selectable_item(from_last?: boolean): int;
   get_selected_id(): int;
-  get_selected_metadata(): any;
+  get_selected_metadata(): unknown;
   has_selectable_items(): boolean;
   is_item_disabled(idx: int): boolean;
   is_item_separator(idx: int): boolean;
@@ -12184,7 +12184,7 @@ declare class OptionButton extends Button {
   set_item_disabled(idx: int, disabled: boolean): void;
   set_item_icon(idx: int, texture: Texture2D): void;
   set_item_id(idx: int, id: int): void;
-  set_item_metadata(idx: int, metadata: any): void;
+  set_item_metadata(idx: int, metadata: unknown): void;
   set_item_text(idx: int, text: string): void;
   set_item_tooltip(idx: int, tooltip: string): void;
   show_popup(): void;
@@ -12222,7 +12222,7 @@ declare class PackedByteArray {
   decode_u16(byte_offset: int): int;
   decode_u32(byte_offset: int): int;
   decode_u64(byte_offset: int): int;
-  decode_var(byte_offset: int, allow_objects?: boolean): any;
+  decode_var(byte_offset: int, allow_objects?: boolean): unknown;
   decode_var_size(byte_offset: int, allow_objects?: boolean): int;
   decompress(buffer_size: int, compression_mode?: int): PackedByteArray;
   decompress_dynamic(max_output_size: int, compression_mode?: int): PackedByteArray;
@@ -12238,7 +12238,7 @@ declare class PackedByteArray {
   encode_u16(byte_offset: int, value: int): void;
   encode_u32(byte_offset: int, value: int): void;
   encode_u64(byte_offset: int, value: int): void;
-  encode_var(byte_offset: int, value: any, allow_objects?: boolean): int;
+  encode_var(byte_offset: int, value: unknown, allow_objects?: boolean): int;
   erase(value: int): boolean;
   fill(value: int): void;
   find(value: int, from_?: int): int;
@@ -12300,7 +12300,7 @@ declare class PackedColorArray {
 }
 
 declare class PackedDataContainer extends Resource {
-  pack(value: any): int;
+  pack(value: unknown): int;
   size(): int;
 }
 
@@ -12535,9 +12535,9 @@ declare class PacketPeer extends RefCounted {
   get_available_packet_count(): int;
   get_packet(): PackedByteArray;
   get_packet_error(): int;
-  get_var(allow_objects?: boolean): any;
+  get_var(allow_objects?: boolean): unknown;
   put_packet(buffer: PackedByteArray): int;
-  put_var(var_: any, full_objects?: boolean): int;
+  put_var(var_: unknown, full_objects?: boolean): int;
 }
 
 declare class PacketPeerDTLS extends PacketPeer {
@@ -12557,8 +12557,8 @@ declare class PacketPeerDTLS extends PacketPeer {
 declare class PacketPeerExtension extends PacketPeer {
   _get_available_packet_count(): int;
   _get_max_packet_size(): int;
-  _get_packet(r_buffer: const uint8_t **, r_buffer_size: int32_t*): int;
-  _put_packet(p_buffer: const uint8_t*, p_buffer_size: int): int;
+  _get_packet(r_buffer: int, r_buffer_size: int): int;
+  _put_packet(p_buffer: int, p_buffer_size: int): int;
 }
 
 declare class PacketPeerStream extends PacketPeer {
@@ -12830,10 +12830,10 @@ declare class PathFollow3D extends Node3D {
   static readonly ROTATION_ORIENTED: int;
 }
 
-declare class Performance extends Object {
-  add_custom_monitor(id: string, callable: Callable, arguments?: Array<any>, type_: int): void;
-  get_custom_monitor(id: string): any;
-  get_custom_monitor_names(): StringName[];
+declare class Performance extends GodotObject {
+  add_custom_monitor(id: string, callable: Callable, arguments?: Array<unknown>, type_?: int): void;
+  get_custom_monitor(id: string): unknown;
+  get_custom_monitor_names(): unknown;
   get_custom_monitor_types(): PackedInt32Array;
   get_monitor(monitor: int): float;
   get_monitor_modification_time(): int;
@@ -12960,7 +12960,7 @@ declare class PhysicalBoneSimulator3D extends SkeletonModifier3D {
   is_simulating_physics(): boolean;
   physical_bones_add_collision_exception(exception: RID): void;
   physical_bones_remove_collision_exception(exception: RID): void;
-  physical_bones_start_simulation(bones?: StringName[]): void;
+  physical_bones_start_simulation(bones?: unknown): void;
   physical_bones_stop_simulation(): void;
 }
 
@@ -12982,7 +12982,7 @@ declare class PhysicsBody2D extends CollisionObject2D {
   input_pickable: boolean;
 
   add_collision_exception_with(body: Node): void;
-  get_collision_exceptions(): PhysicsBody2D[];
+  get_collision_exceptions(): unknown;
   get_gravity(): Vector2;
   move_and_collide(motion: Vector2, test_only?: boolean, safe_margin?: float, recovery_as_collision?: boolean): KinematicCollision2D;
   remove_collision_exception_with(body: Node): void;
@@ -12999,7 +12999,7 @@ declare class PhysicsBody3D extends CollisionObject3D {
 
   add_collision_exception_with(body: Node): void;
   get_axis_lock(axis: int): boolean;
-  get_collision_exceptions(): PhysicsBody3D[];
+  get_collision_exceptions(): unknown;
   get_gravity(): Vector3;
   move_and_collide(motion: Vector3, test_only?: boolean, safe_margin?: float, recovery_as_collision?: boolean, max_collisions?: int): KinematicCollision3D;
   remove_collision_exception_with(body: Node): void;
@@ -13007,7 +13007,7 @@ declare class PhysicsBody3D extends CollisionObject3D {
   test_move(from_: Transform3D, motion: Vector3, collision?: KinematicCollision3D, safe_margin?: float, recovery_as_collision?: boolean, max_collisions?: int): boolean;
 }
 
-declare class PhysicsDirectBodyState2D extends Object {
+declare class PhysicsDirectBodyState2D extends GodotObject {
   angular_velocity: float;
   center_of_mass: Vector2;
   center_of_mass_local: Vector2;
@@ -13104,7 +13104,7 @@ declare class PhysicsDirectBodyState2DExtension extends PhysicsDirectBodyState2D
   _set_transform(transform: Transform2D): void;
 }
 
-declare class PhysicsDirectBodyState3D extends Object {
+declare class PhysicsDirectBodyState3D extends GodotObject {
   angular_velocity: Vector3;
   center_of_mass: Vector3;
   center_of_mass_local: Vector3;
@@ -13205,42 +13205,42 @@ declare class PhysicsDirectBodyState3DExtension extends PhysicsDirectBodyState3D
   _set_transform(transform: Transform3D): void;
 }
 
-declare class PhysicsDirectSpaceState2D extends Object {
+declare class PhysicsDirectSpaceState2D extends GodotObject {
   cast_motion(parameters: PhysicsShapeQueryParameters2D): PackedFloat32Array;
-  collide_shape(parameters: PhysicsShapeQueryParameters2D, max_results?: int): Vector2[];
+  collide_shape(parameters: PhysicsShapeQueryParameters2D, max_results?: int): unknown;
   get_rest_info(parameters: PhysicsShapeQueryParameters2D): Dictionary;
-  intersect_point(parameters: PhysicsPointQueryParameters2D, max_results?: int): Dictionary[];
+  intersect_point(parameters: PhysicsPointQueryParameters2D, max_results?: int): Dictionary;
   intersect_ray(parameters: PhysicsRayQueryParameters2D): Dictionary;
-  intersect_shape(parameters: PhysicsShapeQueryParameters2D, max_results?: int): Dictionary[];
+  intersect_shape(parameters: PhysicsShapeQueryParameters2D, max_results?: int): Dictionary;
 }
 
 declare class PhysicsDirectSpaceState2DExtension extends PhysicsDirectSpaceState2D {
-  _cast_motion(shape_rid: RID, transform: Transform2D, motion: Vector2, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, closest_safe: float*, closest_unsafe: float*): boolean;
-  _collide_shape(shape_rid: RID, transform: Transform2D, motion: Vector2, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, results: void*, max_results: int, result_count: int32_t*): boolean;
-  _intersect_point(position: Vector2, canvas_instance_id: int, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, results: PhysicsServer2DExtensionShapeResult*, max_results: int): int;
-  _intersect_ray(from_: Vector2, to: Vector2, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, hit_from_inside: boolean, result: PhysicsServer2DExtensionRayResult*): boolean;
-  _intersect_shape(shape_rid: RID, transform: Transform2D, motion: Vector2, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, result: PhysicsServer2DExtensionShapeResult*, max_results: int): int;
-  _rest_info(shape_rid: RID, transform: Transform2D, motion: Vector2, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, rest_info: PhysicsServer2DExtensionShapeRestInfo*): boolean;
+  _cast_motion(shape_rid: RID, transform: Transform2D, motion: Vector2, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, closest_safe: float, closest_unsafe: float): boolean;
+  _collide_shape(shape_rid: RID, transform: Transform2D, motion: Vector2, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, results: void, max_results: int, result_count: int): boolean;
+  _intersect_point(position: Vector2, canvas_instance_id: int, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, results: unknown, max_results: int): int;
+  _intersect_ray(from_: Vector2, to: Vector2, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, hit_from_inside: boolean, result: unknown): boolean;
+  _intersect_shape(shape_rid: RID, transform: Transform2D, motion: Vector2, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, result: unknown, max_results: int): int;
+  _rest_info(shape_rid: RID, transform: Transform2D, motion: Vector2, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, rest_info: unknown): boolean;
   is_body_excluded_from_query(body: RID): boolean;
 }
 
-declare class PhysicsDirectSpaceState3D extends Object {
+declare class PhysicsDirectSpaceState3D extends GodotObject {
   cast_motion(parameters: PhysicsShapeQueryParameters3D): PackedFloat32Array;
-  collide_shape(parameters: PhysicsShapeQueryParameters3D, max_results?: int): Vector3[];
+  collide_shape(parameters: PhysicsShapeQueryParameters3D, max_results?: int): unknown;
   get_rest_info(parameters: PhysicsShapeQueryParameters3D): Dictionary;
-  intersect_point(parameters: PhysicsPointQueryParameters3D, max_results?: int): Dictionary[];
+  intersect_point(parameters: PhysicsPointQueryParameters3D, max_results?: int): Dictionary;
   intersect_ray(parameters: PhysicsRayQueryParameters3D): Dictionary;
-  intersect_shape(parameters: PhysicsShapeQueryParameters3D, max_results?: int): Dictionary[];
+  intersect_shape(parameters: PhysicsShapeQueryParameters3D, max_results?: int): Dictionary;
 }
 
 declare class PhysicsDirectSpaceState3DExtension extends PhysicsDirectSpaceState3D {
-  _cast_motion(shape_rid: RID, transform: Transform3D, motion: Vector3, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, closest_safe: float*, closest_unsafe: float*, info: PhysicsServer3DExtensionShapeRestInfo*): boolean;
-  _collide_shape(shape_rid: RID, transform: Transform3D, motion: Vector3, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, results: void*, max_results: int, result_count: int32_t*): boolean;
+  _cast_motion(shape_rid: RID, transform: Transform3D, motion: Vector3, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, closest_safe: float, closest_unsafe: float, info: unknown): boolean;
+  _collide_shape(shape_rid: RID, transform: Transform3D, motion: Vector3, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, results: void, max_results: int, result_count: int): boolean;
   _get_closest_point_to_object_volume(object: RID, point: Vector3): Vector3;
-  _intersect_point(position: Vector3, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, results: PhysicsServer3DExtensionShapeResult*, max_results: int): int;
-  _intersect_ray(from_: Vector3, to: Vector3, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, hit_from_inside: boolean, hit_back_faces: boolean, pick_ray: boolean, result: PhysicsServer3DExtensionRayResult*): boolean;
-  _intersect_shape(shape_rid: RID, transform: Transform3D, motion: Vector3, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, result_count: PhysicsServer3DExtensionShapeResult*, max_results: int): int;
-  _rest_info(shape_rid: RID, transform: Transform3D, motion: Vector3, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, rest_info: PhysicsServer3DExtensionShapeRestInfo*): boolean;
+  _intersect_point(position: Vector3, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, results: unknown, max_results: int): int;
+  _intersect_ray(from_: Vector3, to: Vector3, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, hit_from_inside: boolean, hit_back_faces: boolean, pick_ray: boolean, result: unknown): boolean;
+  _intersect_shape(shape_rid: RID, transform: Transform3D, motion: Vector3, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, result_count: unknown, max_results: int): int;
+  _rest_info(shape_rid: RID, transform: Transform3D, motion: Vector3, margin: float, collision_mask: int, collide_with_bodies: boolean, collide_with_areas: boolean, rest_info: unknown): boolean;
   is_body_excluded_from_query(body: RID): boolean;
 }
 
@@ -13256,7 +13256,7 @@ declare class PhysicsPointQueryParameters2D extends RefCounted {
   collide_with_areas: boolean;
   collide_with_bodies: boolean;
   collision_mask: int;
-  exclude: RID[];
+  exclude: unknown;
   position: Vector2;
 }
 
@@ -13264,7 +13264,7 @@ declare class PhysicsPointQueryParameters3D extends RefCounted {
   collide_with_areas: boolean;
   collide_with_bodies: boolean;
   collision_mask: int;
-  exclude: RID[];
+  exclude: unknown;
   position: Vector3;
 }
 
@@ -13272,28 +13272,28 @@ declare class PhysicsRayQueryParameters2D extends RefCounted {
   collide_with_areas: boolean;
   collide_with_bodies: boolean;
   collision_mask: int;
-  exclude: RID[];
+  exclude: unknown;
   from: Vector2;
   hit_from_inside: boolean;
   to: Vector2;
 
-  static create(from_: Vector2, to: Vector2, collision_mask?: int, exclude?: RID[]): PhysicsRayQueryParameters2D;
+  static create(from_: Vector2, to: Vector2, collision_mask?: int, exclude?: unknown): PhysicsRayQueryParameters2D;
 }
 
 declare class PhysicsRayQueryParameters3D extends RefCounted {
   collide_with_areas: boolean;
   collide_with_bodies: boolean;
   collision_mask: int;
-  exclude: RID[];
+  exclude: unknown;
   from: Vector3;
   hit_back_faces: boolean;
   hit_from_inside: boolean;
   to: Vector3;
 
-  static create(from_: Vector3, to: Vector3, collision_mask?: int, exclude?: RID[]): PhysicsRayQueryParameters3D;
+  static create(from_: Vector3, to: Vector3, collision_mask?: int, exclude?: unknown): PhysicsRayQueryParameters3D;
 }
 
-declare class PhysicsServer2D extends Object {
+declare class PhysicsServer2D extends GodotObject {
   area_add_shape(area: RID, shape: RID, transform?: Transform2D, disabled?: boolean): void;
   area_attach_canvas_instance_id(area: RID, id: int): void;
   area_attach_object_instance_id(area: RID, id: int): void;
@@ -13303,7 +13303,7 @@ declare class PhysicsServer2D extends Object {
   area_get_collision_layer(area: RID): int;
   area_get_collision_mask(area: RID): int;
   area_get_object_instance_id(area: RID): int;
-  area_get_param(area: RID, param: int): any;
+  area_get_param(area: RID, param: int): unknown;
   area_get_shape(area: RID, shape_idx: int): RID;
   area_get_shape_count(area: RID): int;
   area_get_shape_transform(area: RID, shape_idx: int): Transform2D;
@@ -13315,7 +13315,7 @@ declare class PhysicsServer2D extends Object {
   area_set_collision_mask(area: RID, mask: int): void;
   area_set_monitor_callback(area: RID, callback: Callable): void;
   area_set_monitorable(area: RID, monitorable: boolean): void;
-  area_set_param(area: RID, param: int, value: any): void;
+  area_set_param(area: RID, param: int, value: unknown): void;
   area_set_shape(area: RID, shape_idx: int, shape: RID): void;
   area_set_shape_disabled(area: RID, shape_idx: int, disabled: boolean): void;
   area_set_shape_transform(area: RID, shape_idx: int, transform: Transform2D): void;
@@ -13347,12 +13347,12 @@ declare class PhysicsServer2D extends Object {
   body_get_max_contacts_reported(body: RID): int;
   body_get_mode(body: RID): int;
   body_get_object_instance_id(body: RID): int;
-  body_get_param(body: RID, param: int): any;
+  body_get_param(body: RID, param: int): unknown;
   body_get_shape(body: RID, shape_idx: int): RID;
   body_get_shape_count(body: RID): int;
   body_get_shape_transform(body: RID, shape_idx: int): Transform2D;
   body_get_space(body: RID): RID;
-  body_get_state(body: RID, state: int): any;
+  body_get_state(body: RID, state: int): unknown;
   body_is_omitting_force_integration(body: RID): boolean;
   body_remove_collision_exception(body: RID, excepted_body: RID): void;
   body_remove_shape(body: RID, shape_idx: int): void;
@@ -13364,17 +13364,17 @@ declare class PhysicsServer2D extends Object {
   body_set_constant_force(body: RID, force: Vector2): void;
   body_set_constant_torque(body: RID, torque: float): void;
   body_set_continuous_collision_detection_mode(body: RID, mode: int): void;
-  body_set_force_integration_callback(body: RID, callable: Callable, userdata?: any): void;
+  body_set_force_integration_callback(body: RID, callable: Callable, userdata?: unknown): void;
   body_set_max_contacts_reported(body: RID, amount: int): void;
   body_set_mode(body: RID, mode: int): void;
   body_set_omit_force_integration(body: RID, enable: boolean): void;
-  body_set_param(body: RID, param: int, value: any): void;
+  body_set_param(body: RID, param: int, value: unknown): void;
   body_set_shape(body: RID, shape_idx: int, shape: RID): void;
   body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float, direction?: Vector2): void;
   body_set_shape_disabled(body: RID, shape_idx: int, disabled: boolean): void;
   body_set_shape_transform(body: RID, shape_idx: int, transform: Transform2D): void;
   body_set_space(body: RID, space: RID): void;
-  body_set_state(body: RID, state: int, value: any): void;
+  body_set_state(body: RID, state: int, value: unknown): void;
   body_set_state_sync_callback(body: RID, callable: Callable): void;
   body_test_motion(body: RID, parameters: PhysicsTestMotionParameters2D, result?: PhysicsTestMotionResult2D): boolean;
   capsule_shape_create(): RID;
@@ -13403,9 +13403,9 @@ declare class PhysicsServer2D extends Object {
   segment_shape_create(): RID;
   separation_ray_shape_create(): RID;
   set_active(active: boolean): void;
-  shape_get_data(shape: RID): any;
+  shape_get_data(shape: RID): unknown;
   shape_get_type(shape: RID): int;
-  shape_set_data(shape: RID, data: any): void;
+  shape_set_data(shape: RID, data: unknown): void;
   space_create(): RID;
   space_get_direct_state(space: RID): PhysicsDirectSpaceState2D;
   space_get_param(space: RID, param: int): float;
@@ -13521,7 +13521,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   _area_get_collision_layer(area: RID): int;
   _area_get_collision_mask(area: RID): int;
   _area_get_object_instance_id(area: RID): int;
-  _area_get_param(area: RID, param: int): any;
+  _area_get_param(area: RID, param: int): unknown;
   _area_get_shape(area: RID, shape_idx: int): RID;
   _area_get_shape_count(area: RID): int;
   _area_get_shape_transform(area: RID, shape_idx: int): Transform2D;
@@ -13533,7 +13533,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   _area_set_collision_mask(area: RID, mask: int): void;
   _area_set_monitor_callback(area: RID, callback: Callable): void;
   _area_set_monitorable(area: RID, monitorable: boolean): void;
-  _area_set_param(area: RID, param: int, value: any): void;
+  _area_set_param(area: RID, param: int, value: unknown): void;
   _area_set_pickable(area: RID, pickable: boolean): void;
   _area_set_shape(area: RID, shape_idx: int, shape: RID): void;
   _area_set_shape_disabled(area: RID, shape_idx: int, disabled: boolean): void;
@@ -13554,10 +13554,10 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   _body_attach_canvas_instance_id(body: RID, id: int): void;
   _body_attach_object_instance_id(body: RID, id: int): void;
   _body_clear_shapes(body: RID): void;
-  _body_collide_shape(body: RID, body_shape: int, shape: RID, shape_xform: Transform2D, motion: Vector2, results: void*, result_max: int, result_count: int32_t*): boolean;
+  _body_collide_shape(body: RID, body_shape: int, shape: RID, shape_xform: Transform2D, motion: Vector2, results: void, result_max: int, result_count: int): boolean;
   _body_create(): RID;
   _body_get_canvas_instance_id(body: RID): int;
-  _body_get_collision_exceptions(body: RID): RID[];
+  _body_get_collision_exceptions(body: RID): unknown;
   _body_get_collision_layer(body: RID): int;
   _body_get_collision_mask(body: RID): int;
   _body_get_collision_priority(body: RID): float;
@@ -13569,12 +13569,12 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   _body_get_max_contacts_reported(body: RID): int;
   _body_get_mode(body: RID): int;
   _body_get_object_instance_id(body: RID): int;
-  _body_get_param(body: RID, param: int): any;
+  _body_get_param(body: RID, param: int): unknown;
   _body_get_shape(body: RID, shape_idx: int): RID;
   _body_get_shape_count(body: RID): int;
   _body_get_shape_transform(body: RID, shape_idx: int): Transform2D;
   _body_get_space(body: RID): RID;
-  _body_get_state(body: RID, state: int): any;
+  _body_get_state(body: RID, state: int): unknown;
   _body_is_omitting_force_integration(body: RID): boolean;
   _body_remove_collision_exception(body: RID, excepted_body: RID): void;
   _body_remove_shape(body: RID, shape_idx: int): void;
@@ -13587,20 +13587,20 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   _body_set_constant_torque(body: RID, torque: float): void;
   _body_set_contacts_reported_depth_threshold(body: RID, threshold: float): void;
   _body_set_continuous_collision_detection_mode(body: RID, mode: int): void;
-  _body_set_force_integration_callback(body: RID, callable: Callable, userdata: any): void;
+  _body_set_force_integration_callback(body: RID, callable: Callable, userdata: unknown): void;
   _body_set_max_contacts_reported(body: RID, amount: int): void;
   _body_set_mode(body: RID, mode: int): void;
   _body_set_omit_force_integration(body: RID, enable: boolean): void;
-  _body_set_param(body: RID, param: int, value: any): void;
+  _body_set_param(body: RID, param: int, value: unknown): void;
   _body_set_pickable(body: RID, pickable: boolean): void;
   _body_set_shape(body: RID, shape_idx: int, shape: RID): void;
   _body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float, direction: Vector2): void;
   _body_set_shape_disabled(body: RID, shape_idx: int, disabled: boolean): void;
   _body_set_shape_transform(body: RID, shape_idx: int, transform: Transform2D): void;
   _body_set_space(body: RID, space: RID): void;
-  _body_set_state(body: RID, state: int, value: any): void;
+  _body_set_state(body: RID, state: int, value: unknown): void;
   _body_set_state_sync_callback(body: RID, callable: Callable): void;
-  _body_test_motion(body: RID, from_: Transform2D, motion: Vector2, margin: float, collide_separation_ray: boolean, recovery_as_collision: boolean, result: PhysicsServer2DExtensionMotionResult*): boolean;
+  _body_test_motion(body: RID, from_: Transform2D, motion: Vector2, margin: float, collide_separation_ray: boolean, recovery_as_collision: boolean, result: unknown): boolean;
   _capsule_shape_create(): RID;
   _circle_shape_create(): RID;
   _concave_polygon_shape_create(): RID;
@@ -13632,12 +13632,12 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   _segment_shape_create(): RID;
   _separation_ray_shape_create(): RID;
   _set_active(active: boolean): void;
-  _shape_collide(shape_A: RID, xform_A: Transform2D, motion_A: Vector2, shape_B: RID, xform_B: Transform2D, motion_B: Vector2, results: void*, result_max: int, result_count: int32_t*): boolean;
+  _shape_collide(shape_A: RID, xform_A: Transform2D, motion_A: Vector2, shape_B: RID, xform_B: Transform2D, motion_B: Vector2, results: void, result_max: int, result_count: int): boolean;
   _shape_get_custom_solver_bias(shape: RID): float;
-  _shape_get_data(shape: RID): any;
+  _shape_get_data(shape: RID): unknown;
   _shape_get_type(shape: RID): int;
   _shape_set_custom_solver_bias(shape: RID, bias: float): void;
-  _shape_set_data(shape: RID, data: any): void;
+  _shape_set_data(shape: RID, data: unknown): void;
   _space_create(): RID;
   _space_get_contact_count(space: RID): int;
   _space_get_contacts(space: RID): PackedVector2Array;
@@ -13654,12 +13654,12 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   body_test_motion_is_excluding_object(object: int): boolean;
 }
 
-declare class PhysicsServer2DManager extends Object {
+declare class PhysicsServer2DManager extends GodotObject {
   register_server(name: string, create_callback: Callable): void;
   set_default_server(name: string, priority: int): void;
 }
 
-declare class PhysicsServer3D extends Object {
+declare class PhysicsServer3D extends GodotObject {
   area_add_shape(area: RID, shape: RID, transform?: Transform3D, disabled?: boolean): void;
   area_attach_object_instance_id(area: RID, id: int): void;
   area_clear_shapes(area: RID): void;
@@ -13667,7 +13667,7 @@ declare class PhysicsServer3D extends Object {
   area_get_collision_layer(area: RID): int;
   area_get_collision_mask(area: RID): int;
   area_get_object_instance_id(area: RID): int;
-  area_get_param(area: RID, param: int): any;
+  area_get_param(area: RID, param: int): unknown;
   area_get_shape(area: RID, shape_idx: int): RID;
   area_get_shape_count(area: RID): int;
   area_get_shape_transform(area: RID, shape_idx: int): Transform3D;
@@ -13679,7 +13679,7 @@ declare class PhysicsServer3D extends Object {
   area_set_collision_mask(area: RID, mask: int): void;
   area_set_monitor_callback(area: RID, callback: Callable): void;
   area_set_monitorable(area: RID, monitorable: boolean): void;
-  area_set_param(area: RID, param: int, value: any): void;
+  area_set_param(area: RID, param: int, value: unknown): void;
   area_set_ray_pickable(area: RID, enable: boolean): void;
   area_set_shape(area: RID, shape_idx: int, shape: RID): void;
   area_set_shape_disabled(area: RID, shape_idx: int, disabled: boolean): void;
@@ -13709,12 +13709,12 @@ declare class PhysicsServer3D extends Object {
   body_get_max_contacts_reported(body: RID): int;
   body_get_mode(body: RID): int;
   body_get_object_instance_id(body: RID): int;
-  body_get_param(body: RID, param: int): any;
+  body_get_param(body: RID, param: int): unknown;
   body_get_shape(body: RID, shape_idx: int): RID;
   body_get_shape_count(body: RID): int;
   body_get_shape_transform(body: RID, shape_idx: int): Transform3D;
   body_get_space(body: RID): RID;
-  body_get_state(body: RID, state: int): any;
+  body_get_state(body: RID, state: int): unknown;
   body_is_axis_locked(body: RID, axis: int): boolean;
   body_is_continuous_collision_detection_enabled(body: RID): boolean;
   body_is_omitting_force_integration(body: RID): boolean;
@@ -13729,17 +13729,17 @@ declare class PhysicsServer3D extends Object {
   body_set_constant_force(body: RID, force: Vector3): void;
   body_set_constant_torque(body: RID, torque: Vector3): void;
   body_set_enable_continuous_collision_detection(body: RID, enable: boolean): void;
-  body_set_force_integration_callback(body: RID, callable: Callable, userdata?: any): void;
+  body_set_force_integration_callback(body: RID, callable: Callable, userdata?: unknown): void;
   body_set_max_contacts_reported(body: RID, amount: int): void;
   body_set_mode(body: RID, mode: int): void;
   body_set_omit_force_integration(body: RID, enable: boolean): void;
-  body_set_param(body: RID, param: int, value: any): void;
+  body_set_param(body: RID, param: int, value: unknown): void;
   body_set_ray_pickable(body: RID, enable: boolean): void;
   body_set_shape(body: RID, shape_idx: int, shape: RID): void;
   body_set_shape_disabled(body: RID, shape_idx: int, disabled: boolean): void;
   body_set_shape_transform(body: RID, shape_idx: int, transform: Transform3D): void;
   body_set_space(body: RID, space: RID): void;
-  body_set_state(body: RID, state: int, value: any): void;
+  body_set_state(body: RID, state: int, value: unknown): void;
   body_set_state_sync_callback(body: RID, callable: Callable): void;
   body_test_motion(body: RID, parameters: PhysicsTestMotionParameters3D, result?: PhysicsTestMotionResult3D): boolean;
   box_shape_create(): RID;
@@ -13781,10 +13781,10 @@ declare class PhysicsServer3D extends Object {
   pin_joint_set_param(joint: RID, param: int, value: float): void;
   separation_ray_shape_create(): RID;
   set_active(active: boolean): void;
-  shape_get_data(shape: RID): any;
+  shape_get_data(shape: RID): unknown;
   shape_get_margin(shape: RID): float;
   shape_get_type(shape: RID): int;
-  shape_set_data(shape: RID, data: any): void;
+  shape_set_data(shape: RID, data: unknown): void;
   shape_set_margin(shape: RID, margin: float): void;
   slider_joint_get_param(joint: RID, param: int): float;
   slider_joint_set_param(joint: RID, param: int, value: float): void;
@@ -13805,7 +13805,7 @@ declare class PhysicsServer3D extends Object {
   soft_body_get_shrinking_factor(body: RID): float;
   soft_body_get_simulation_precision(body: RID): int;
   soft_body_get_space(body: RID): RID;
-  soft_body_get_state(body: RID, state: int): any;
+  soft_body_get_state(body: RID, state: int): unknown;
   soft_body_get_total_mass(body: RID): float;
   soft_body_is_point_pinned(body: RID, point_index: int): boolean;
   soft_body_move_point(body: RID, point_index: int, global_position: Vector3): void;
@@ -13823,7 +13823,7 @@ declare class PhysicsServer3D extends Object {
   soft_body_set_shrinking_factor(body: RID, shrinking_factor: float): void;
   soft_body_set_simulation_precision(body: RID, simulation_precision: int): void;
   soft_body_set_space(body: RID, space: RID): void;
-  soft_body_set_state(body: RID, state: int, variant: any): void;
+  soft_body_set_state(body: RID, state: int, variant: unknown): void;
   soft_body_set_total_mass(body: RID, total_mass: float): void;
   soft_body_set_transform(body: RID, transform: Transform3D): void;
   soft_body_update_rendering_server(body: RID, rendering_server_handler: PhysicsServer3DRenderingServerHandler): void;
@@ -14013,7 +14013,7 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _area_get_collision_layer(area: RID): int;
   _area_get_collision_mask(area: RID): int;
   _area_get_object_instance_id(area: RID): int;
-  _area_get_param(area: RID, param: int): any;
+  _area_get_param(area: RID, param: int): unknown;
   _area_get_shape(area: RID, shape_idx: int): RID;
   _area_get_shape_count(area: RID): int;
   _area_get_shape_transform(area: RID, shape_idx: int): Transform3D;
@@ -14025,7 +14025,7 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _area_set_collision_mask(area: RID, mask: int): void;
   _area_set_monitor_callback(area: RID, callback: Callable): void;
   _area_set_monitorable(area: RID, monitorable: boolean): void;
-  _area_set_param(area: RID, param: int, value: any): void;
+  _area_set_param(area: RID, param: int, value: unknown): void;
   _area_set_ray_pickable(area: RID, enable: boolean): void;
   _area_set_shape(area: RID, shape_idx: int, shape: RID): void;
   _area_set_shape_disabled(area: RID, shape_idx: int, disabled: boolean): void;
@@ -14046,7 +14046,7 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _body_attach_object_instance_id(body: RID, id: int): void;
   _body_clear_shapes(body: RID): void;
   _body_create(): RID;
-  _body_get_collision_exceptions(body: RID): RID[];
+  _body_get_collision_exceptions(body: RID): unknown;
   _body_get_collision_layer(body: RID): int;
   _body_get_collision_mask(body: RID): int;
   _body_get_collision_priority(body: RID): float;
@@ -14057,12 +14057,12 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _body_get_max_contacts_reported(body: RID): int;
   _body_get_mode(body: RID): int;
   _body_get_object_instance_id(body: RID): int;
-  _body_get_param(body: RID, param: int): any;
+  _body_get_param(body: RID, param: int): unknown;
   _body_get_shape(body: RID, shape_idx: int): RID;
   _body_get_shape_count(body: RID): int;
   _body_get_shape_transform(body: RID, shape_idx: int): Transform3D;
   _body_get_space(body: RID): RID;
-  _body_get_state(body: RID, state: int): any;
+  _body_get_state(body: RID, state: int): unknown;
   _body_get_user_flags(body: RID): int;
   _body_is_axis_locked(body: RID, axis: int): boolean;
   _body_is_continuous_collision_detection_enabled(body: RID): boolean;
@@ -14079,20 +14079,20 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _body_set_constant_torque(body: RID, torque: Vector3): void;
   _body_set_contacts_reported_depth_threshold(body: RID, threshold: float): void;
   _body_set_enable_continuous_collision_detection(body: RID, enable: boolean): void;
-  _body_set_force_integration_callback(body: RID, callable: Callable, userdata: any): void;
+  _body_set_force_integration_callback(body: RID, callable: Callable, userdata: unknown): void;
   _body_set_max_contacts_reported(body: RID, amount: int): void;
   _body_set_mode(body: RID, mode: int): void;
   _body_set_omit_force_integration(body: RID, enable: boolean): void;
-  _body_set_param(body: RID, param: int, value: any): void;
+  _body_set_param(body: RID, param: int, value: unknown): void;
   _body_set_ray_pickable(body: RID, enable: boolean): void;
   _body_set_shape(body: RID, shape_idx: int, shape: RID): void;
   _body_set_shape_disabled(body: RID, shape_idx: int, disabled: boolean): void;
   _body_set_shape_transform(body: RID, shape_idx: int, transform: Transform3D): void;
   _body_set_space(body: RID, space: RID): void;
-  _body_set_state(body: RID, state: int, value: any): void;
+  _body_set_state(body: RID, state: int, value: unknown): void;
   _body_set_state_sync_callback(body: RID, callable: Callable): void;
   _body_set_user_flags(body: RID, flags: int): void;
-  _body_test_motion(body: RID, from_: Transform3D, motion: Vector3, margin: float, max_collisions: int, collide_separation_ray: boolean, recovery_as_collision: boolean, result: PhysicsServer3DExtensionMotionResult*): boolean;
+  _body_test_motion(body: RID, from_: Transform3D, motion: Vector3, margin: float, max_collisions: int, collide_separation_ray: boolean, recovery_as_collision: boolean, result: unknown): boolean;
   _box_shape_create(): RID;
   _capsule_shape_create(): RID;
   _concave_polygon_shape_create(): RID;
@@ -14139,11 +14139,11 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _separation_ray_shape_create(): RID;
   _set_active(active: boolean): void;
   _shape_get_custom_solver_bias(shape: RID): float;
-  _shape_get_data(shape: RID): any;
+  _shape_get_data(shape: RID): unknown;
   _shape_get_margin(shape: RID): float;
   _shape_get_type(shape: RID): int;
   _shape_set_custom_solver_bias(shape: RID, bias: float): void;
-  _shape_set_data(shape: RID, data: any): void;
+  _shape_set_data(shape: RID, data: unknown): void;
   _shape_set_margin(shape: RID, margin: float): void;
   _slider_joint_get_param(joint: RID, param: int): float;
   _slider_joint_set_param(joint: RID, param: int, value: float): void;
@@ -14154,7 +14154,7 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _soft_body_apply_point_impulse(body: RID, point_index: int, impulse: Vector3): void;
   _soft_body_create(): RID;
   _soft_body_get_bounds(body: RID): AABB;
-  _soft_body_get_collision_exceptions(body: RID): RID[];
+  _soft_body_get_collision_exceptions(body: RID): unknown;
   _soft_body_get_collision_layer(body: RID): int;
   _soft_body_get_collision_mask(body: RID): int;
   _soft_body_get_damping_coefficient(body: RID): float;
@@ -14165,7 +14165,7 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _soft_body_get_shrinking_factor(body: RID): float;
   _soft_body_get_simulation_precision(body: RID): int;
   _soft_body_get_space(body: RID): RID;
-  _soft_body_get_state(body: RID, state: int): any;
+  _soft_body_get_state(body: RID, state: int): unknown;
   _soft_body_get_total_mass(body: RID): float;
   _soft_body_is_point_pinned(body: RID, point_index: int): boolean;
   _soft_body_move_point(body: RID, point_index: int, global_position: Vector3): void;
@@ -14183,7 +14183,7 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _soft_body_set_shrinking_factor(body: RID, shrinking_factor: float): void;
   _soft_body_set_simulation_precision(body: RID, simulation_precision: int): void;
   _soft_body_set_space(body: RID, space: RID): void;
-  _soft_body_set_state(body: RID, state: int, variant: any): void;
+  _soft_body_set_state(body: RID, state: int, variant: unknown): void;
   _soft_body_set_total_mass(body: RID, total_mass: float): void;
   _soft_body_set_transform(body: RID, transform: Transform3D): void;
   _soft_body_update_rendering_server(body: RID, rendering_server_handler: PhysicsServer3DRenderingServerHandler): void;
@@ -14204,12 +14204,12 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   body_test_motion_is_excluding_object(object: int): boolean;
 }
 
-declare class PhysicsServer3DManager extends Object {
+declare class PhysicsServer3DManager extends GodotObject {
   register_server(name: string, create_callback: Callable): void;
   set_default_server(name: string, priority: int): void;
 }
 
-declare class PhysicsServer3DRenderingServerHandler extends Object {
+declare class PhysicsServer3DRenderingServerHandler extends GodotObject {
   _set_aabb(aabb: AABB): void;
   _set_normal(vertex_id: int, normal: Vector3): void;
   _set_vertex(vertex_id: int, vertex: Vector3): void;
@@ -14222,7 +14222,7 @@ declare class PhysicsShapeQueryParameters2D extends RefCounted {
   collide_with_areas: boolean;
   collide_with_bodies: boolean;
   collision_mask: int;
-  exclude: RID[];
+  exclude: unknown;
   margin: float;
   motion: Vector2;
   shape: Resource;
@@ -14234,7 +14234,7 @@ declare class PhysicsShapeQueryParameters3D extends RefCounted {
   collide_with_areas: boolean;
   collide_with_bodies: boolean;
   collision_mask: int;
-  exclude: RID[];
+  exclude: unknown;
   margin: float;
   motion: Vector3;
   shape: Resource;
@@ -14244,8 +14244,8 @@ declare class PhysicsShapeQueryParameters3D extends RefCounted {
 
 declare class PhysicsTestMotionParameters2D extends RefCounted {
   collide_separation_ray: boolean;
-  exclude_bodies: RID[];
-  exclude_objects: int[];
+  exclude_bodies: unknown;
+  exclude_objects: unknown;
   from: Transform2D;
   margin: float;
   motion: Vector2;
@@ -14254,8 +14254,8 @@ declare class PhysicsTestMotionParameters2D extends RefCounted {
 
 declare class PhysicsTestMotionParameters3D extends RefCounted {
   collide_separation_ray: boolean;
-  exclude_bodies: RID[];
-  exclude_objects: int[];
+  exclude_bodies: unknown;
+  exclude_objects: unknown;
   from: Transform3D;
   margin: float;
   max_collisions: int;
@@ -14306,9 +14306,9 @@ declare class PinJoint2D extends Joint2D {
 }
 
 declare class PinJoint3D extends Joint3D {
-  params/bias: float;
-  params/damping: float;
-  params/impulse_clamp: float;
+  'params/bias': float;
+  'params/damping': float;
+  'params/impulse_clamp': float;
 
   get_param(param: int): float;
   set_param(param: int, value: float): void;
@@ -14359,9 +14359,9 @@ declare class Plane {
   distance_to(point: Vector3): float;
   get_center(): Vector3;
   has_point(point: Vector3, tolerance?: float): boolean;
-  intersect_3(b: Plane, c: Plane): any;
-  intersects_ray(from_: Vector3, dir: Vector3): any;
-  intersects_segment(from_: Vector3, to: Vector3): any;
+  intersect_3(b: Plane, c: Plane): unknown;
+  intersects_ray(from_: Vector3, dir: Vector3): unknown;
+  intersects_segment(from_: Vector3, to: Vector3): unknown;
   is_equal_approx(to_plane: Plane): boolean;
   is_finite(): boolean;
   is_point_over(point: Vector3): boolean;
@@ -14404,7 +14404,7 @@ declare class Polygon2D extends Node2D {
   invert_enabled: boolean;
   offset: Vector2;
   polygon: PackedVector2Array;
-  polygons: Array<any>;
+  polygons: Array<unknown>;
   skeleton: string;
   texture: Texture2D;
   texture_offset: Vector2;
@@ -14470,17 +14470,17 @@ declare class PopupMenu extends Popup {
   transparent_bg: boolean;
 
   activate_item_by_event(event: InputEvent, for_global_only?: boolean): boolean;
-  add_check_item(label: string, id?: int, accel: int): void;
+  add_check_item(label: string, id?: int, accel?: int): void;
   add_check_shortcut(shortcut: Shortcut, id?: int, global?: boolean): void;
-  add_icon_check_item(texture: Texture2D, label: string, id?: int, accel: int): void;
+  add_icon_check_item(texture: Texture2D, label: string, id?: int, accel?: int): void;
   add_icon_check_shortcut(texture: Texture2D, shortcut: Shortcut, id?: int, global?: boolean): void;
-  add_icon_item(texture: Texture2D, label: string, id?: int, accel: int): void;
-  add_icon_radio_check_item(texture: Texture2D, label: string, id?: int, accel: int): void;
+  add_icon_item(texture: Texture2D, label: string, id?: int, accel?: int): void;
+  add_icon_radio_check_item(texture: Texture2D, label: string, id?: int, accel?: int): void;
   add_icon_radio_check_shortcut(texture: Texture2D, shortcut: Shortcut, id?: int, global?: boolean): void;
   add_icon_shortcut(texture: Texture2D, shortcut: Shortcut, id?: int, global?: boolean, allow_echo?: boolean): void;
-  add_item(label: string, id?: int, accel: int): void;
-  add_multistate_item(label: string, max_states: int, default_state?: int, id?: int, accel: int): void;
-  add_radio_check_item(label: string, id?: int, accel: int): void;
+  add_item(label: string, id?: int, accel?: int): void;
+  add_multistate_item(label: string, max_states: int, default_state?: int, id?: int, accel?: int): void;
+  add_radio_check_item(label: string, id?: int, accel?: int): void;
   add_radio_check_shortcut(shortcut: Shortcut, id?: int, global?: boolean): void;
   add_separator(label?: string, id?: int): void;
   add_shortcut(shortcut: Shortcut, id?: int, global?: boolean, allow_echo?: boolean): void;
@@ -14497,7 +14497,7 @@ declare class PopupMenu extends Popup {
   get_item_indent(index: int): int;
   get_item_index(id: int): int;
   get_item_language(index: int): string;
-  get_item_metadata(index: int): any;
+  get_item_metadata(index: int): unknown;
   get_item_multistate(index: int): int;
   get_item_multistate_max(index: int): int;
   get_item_shortcut(index: int): Shortcut;
@@ -14532,7 +14532,7 @@ declare class PopupMenu extends Popup {
   set_item_indent(index: int, indent: int): void;
   set_item_index(index: int, target_index: int): void;
   set_item_language(index: int, language: string): void;
-  set_item_metadata(index: int, metadata: any): void;
+  set_item_metadata(index: int, metadata: unknown): void;
   set_item_multistate(index: int, state: int): void;
   set_item_multistate_max(index: int, max_states: int): void;
   set_item_shortcut(index: int, shortcut: Shortcut, global?: boolean): void;
@@ -14586,8 +14586,8 @@ declare class PrimitiveMesh extends Mesh {
   material: Material;
   uv2_padding: float;
 
-  _create_mesh_array(): Array<any>;
-  get_mesh_arrays(): Array<any>;
+  _create_mesh_array(): Array<unknown>;
+  get_mesh_arrays(): Array<unknown>;
   request_update(): void;
 }
 
@@ -14629,953 +14629,953 @@ declare class ProgressBar extends Range {
   static readonly FILL_BOTTOM_TO_TOP: int;
 }
 
-declare class ProjectSettings extends Object {
-  accessibility/general/accessibility_driver: string;
-  accessibility/general/accessibility_support: int;
-  accessibility/general/updates_per_second: int;
-  animation/compatibility/default_parent_skeleton_in_mesh_instance_3d: boolean;
-  animation/warnings/check_angle_interpolation_type_conflicting: boolean;
-  animation/warnings/check_invalid_track_paths: boolean;
-  application/boot_splash/bg_color: Color;
-  application/boot_splash/image: string;
-  application/boot_splash/minimum_display_time: int;
-  application/boot_splash/show_image: boolean;
-  application/boot_splash/stretch_mode: int;
-  application/boot_splash/use_filter: boolean;
-  application/config/auto_accept_quit: boolean;
-  application/config/custom_user_dir_name: string;
-  application/config/description: string;
-  application/config/disable_project_settings_override: boolean;
-  application/config/icon: string;
-  application/config/macos_native_icon: string;
-  application/config/name: string;
-  application/config/name_localized: Dictionary;
-  application/config/project_settings_override: string;
-  application/config/quit_on_go_back: boolean;
-  application/config/use_custom_user_dir: boolean;
-  application/config/use_hidden_project_data_directory: boolean;
-  application/config/version: string;
-  application/config/windows_native_icon: string;
-  application/run/delta_smoothing: boolean;
-  application/run/disable_stderr: boolean;
-  application/run/disable_stdout: boolean;
-  application/run/enable_alt_space_menu: boolean;
-  application/run/flush_stdout_on_print: boolean;
-  application/run/flush_stdout_on_print.debug: boolean;
-  application/run/frame_delay_msec: int;
-  application/run/load_shell_environment: boolean;
-  application/run/low_processor_mode: boolean;
-  application/run/low_processor_mode_sleep_usec: int;
-  application/run/main_loop_type: string;
-  application/run/main_scene: string;
-  application/run/max_fps: int;
-  application/run/print_header: boolean;
-  audio/buses/channel_disable_threshold_db: float;
-  audio/buses/channel_disable_time: float;
-  audio/buses/default_bus_layout: string;
-  audio/driver/driver: string;
-  audio/driver/enable_input: boolean;
-  audio/driver/mix_rate: int;
-  audio/driver/mix_rate.web: int;
-  audio/driver/output_latency: int;
-  audio/driver/output_latency.web: int;
-  audio/general/2d_panning_strength: float;
-  audio/general/3d_panning_strength: float;
-  audio/general/default_playback_type: int;
-  audio/general/default_playback_type.web: int;
-  audio/general/ios/mix_with_others: boolean;
-  audio/general/ios/session_category: int;
-  audio/general/text_to_speech: boolean;
-  audio/video/video_delay_compensation_ms: int;
-  collada/use_ambient: boolean;
-  compression/formats/gzip/compression_level: int;
-  compression/formats/zlib/compression_level: int;
-  compression/formats/zstd/compression_level: int;
-  compression/formats/zstd/long_distance_matching: boolean;
-  compression/formats/zstd/window_log_size: int;
-  debug/canvas_items/debug_redraw_color: Color;
-  debug/canvas_items/debug_redraw_time: float;
-  debug/file_logging/enable_file_logging: boolean;
-  debug/file_logging/enable_file_logging.pc: boolean;
-  debug/file_logging/log_path: string;
-  debug/file_logging/max_log_files: int;
-  debug/gdscript/warnings/assert_always_false: int;
-  debug/gdscript/warnings/assert_always_true: int;
-  debug/gdscript/warnings/confusable_capture_reassignment: int;
-  debug/gdscript/warnings/confusable_identifier: int;
-  debug/gdscript/warnings/confusable_local_declaration: int;
-  debug/gdscript/warnings/confusable_local_usage: int;
-  debug/gdscript/warnings/deprecated_keyword: int;
-  debug/gdscript/warnings/directory_rules: Dictionary;
-  debug/gdscript/warnings/empty_file: int;
-  debug/gdscript/warnings/enable: boolean;
-  debug/gdscript/warnings/enum_variable_without_default: int;
-  debug/gdscript/warnings/get_node_default_without_onready: int;
-  debug/gdscript/warnings/incompatible_ternary: int;
-  debug/gdscript/warnings/inference_on_variant: int;
-  debug/gdscript/warnings/inferred_declaration: int;
-  debug/gdscript/warnings/int_as_enum_without_cast: int;
-  debug/gdscript/warnings/int_as_enum_without_match: int;
-  debug/gdscript/warnings/integer_division: int;
-  debug/gdscript/warnings/missing_await: int;
-  debug/gdscript/warnings/missing_tool: int;
-  debug/gdscript/warnings/narrowing_conversion: int;
-  debug/gdscript/warnings/native_method_override: int;
-  debug/gdscript/warnings/onready_with_export: int;
-  debug/gdscript/warnings/redundant_await: int;
-  debug/gdscript/warnings/redundant_static_unload: int;
-  debug/gdscript/warnings/renamed_in_godot_4_hint: boolean;
-  debug/gdscript/warnings/return_value_discarded: int;
-  debug/gdscript/warnings/shadowed_global_identifier: int;
-  debug/gdscript/warnings/shadowed_variable: int;
-  debug/gdscript/warnings/shadowed_variable_base_class: int;
-  debug/gdscript/warnings/standalone_expression: int;
-  debug/gdscript/warnings/standalone_ternary: int;
-  debug/gdscript/warnings/static_called_on_instance: int;
-  debug/gdscript/warnings/unassigned_variable: int;
-  debug/gdscript/warnings/unassigned_variable_op_assign: int;
-  debug/gdscript/warnings/unreachable_code: int;
-  debug/gdscript/warnings/unreachable_pattern: int;
-  debug/gdscript/warnings/unsafe_call_argument: int;
-  debug/gdscript/warnings/unsafe_cast: int;
-  debug/gdscript/warnings/unsafe_method_access: int;
-  debug/gdscript/warnings/unsafe_property_access: int;
-  debug/gdscript/warnings/unsafe_void_return: int;
-  debug/gdscript/warnings/untyped_declaration: int;
-  debug/gdscript/warnings/unused_local_constant: int;
-  debug/gdscript/warnings/unused_parameter: int;
-  debug/gdscript/warnings/unused_private_class_variable: int;
-  debug/gdscript/warnings/unused_signal: int;
-  debug/gdscript/warnings/unused_variable: int;
-  debug/settings/crash_handler/message: string;
-  debug/settings/crash_handler/message.editor: string;
-  debug/settings/gdscript/always_track_call_stacks: boolean;
-  debug/settings/gdscript/always_track_local_variables: boolean;
-  debug/settings/gdscript/max_call_stack: int;
-  debug/settings/physics_interpolation/enable_warnings: boolean;
-  debug/settings/profiler/max_functions: int;
-  debug/settings/profiler/max_timestamp_query_elements: int;
-  debug/settings/stdout/print_fps: boolean;
-  debug/settings/stdout/print_gpu_profile: boolean;
-  debug/settings/stdout/verbose_stdout: boolean;
-  debug/shader_language/warnings/device_limit_exceeded: boolean;
-  debug/shader_language/warnings/enable: boolean;
-  debug/shader_language/warnings/float_comparison: boolean;
-  debug/shader_language/warnings/formatting_error: boolean;
-  debug/shader_language/warnings/magic_position_write: boolean;
-  debug/shader_language/warnings/treat_warnings_as_errors: boolean;
-  debug/shader_language/warnings/unused_constant: boolean;
-  debug/shader_language/warnings/unused_function: boolean;
-  debug/shader_language/warnings/unused_local_variable: boolean;
-  debug/shader_language/warnings/unused_struct: boolean;
-  debug/shader_language/warnings/unused_uniform: boolean;
-  debug/shader_language/warnings/unused_varying: boolean;
-  debug/shapes/avoidance/2d/agents_radius_color: Color;
-  debug/shapes/avoidance/2d/enable_agents_radius: boolean;
-  debug/shapes/avoidance/2d/enable_obstacles_radius: boolean;
-  debug/shapes/avoidance/2d/enable_obstacles_static: boolean;
-  debug/shapes/avoidance/2d/obstacles_radius_color: Color;
-  debug/shapes/avoidance/2d/obstacles_static_edge_pushin_color: Color;
-  debug/shapes/avoidance/2d/obstacles_static_edge_pushout_color: Color;
-  debug/shapes/avoidance/2d/obstacles_static_face_pushin_color: Color;
-  debug/shapes/avoidance/2d/obstacles_static_face_pushout_color: Color;
-  debug/shapes/avoidance/3d/agents_radius_color: Color;
-  debug/shapes/avoidance/3d/enable_agents_radius: boolean;
-  debug/shapes/avoidance/3d/enable_obstacles_radius: boolean;
-  debug/shapes/avoidance/3d/enable_obstacles_static: boolean;
-  debug/shapes/avoidance/3d/obstacles_radius_color: Color;
-  debug/shapes/avoidance/3d/obstacles_static_edge_pushin_color: Color;
-  debug/shapes/avoidance/3d/obstacles_static_edge_pushout_color: Color;
-  debug/shapes/avoidance/3d/obstacles_static_face_pushin_color: Color;
-  debug/shapes/avoidance/3d/obstacles_static_face_pushout_color: Color;
-  debug/shapes/collision/contact_color: Color;
-  debug/shapes/collision/draw_2d_outlines: boolean;
-  debug/shapes/collision/max_contacts_displayed: int;
-  debug/shapes/collision/shape_color: Color;
-  debug/shapes/navigation/2d/agent_path_color: Color;
-  debug/shapes/navigation/2d/agent_path_point_size: float;
-  debug/shapes/navigation/2d/edge_connection_color: Color;
-  debug/shapes/navigation/2d/enable_agent_paths: boolean;
-  debug/shapes/navigation/2d/enable_edge_connections: boolean;
-  debug/shapes/navigation/2d/enable_edge_lines: boolean;
-  debug/shapes/navigation/2d/enable_geometry_face_random_color: boolean;
-  debug/shapes/navigation/2d/enable_link_connections: boolean;
-  debug/shapes/navigation/2d/geometry_edge_color: Color;
-  debug/shapes/navigation/2d/geometry_edge_disabled_color: Color;
-  debug/shapes/navigation/2d/geometry_face_color: Color;
-  debug/shapes/navigation/2d/geometry_face_disabled_color: Color;
-  debug/shapes/navigation/2d/link_connection_color: Color;
-  debug/shapes/navigation/2d/link_connection_disabled_color: Color;
-  debug/shapes/navigation/3d/agent_path_color: Color;
-  debug/shapes/navigation/3d/agent_path_point_size: float;
-  debug/shapes/navigation/3d/edge_connection_color: Color;
-  debug/shapes/navigation/3d/enable_agent_paths: boolean;
-  debug/shapes/navigation/3d/enable_agent_paths_xray: boolean;
-  debug/shapes/navigation/3d/enable_edge_connections: boolean;
-  debug/shapes/navigation/3d/enable_edge_connections_xray: boolean;
-  debug/shapes/navigation/3d/enable_edge_lines: boolean;
-  debug/shapes/navigation/3d/enable_edge_lines_xray: boolean;
-  debug/shapes/navigation/3d/enable_geometry_face_random_color: boolean;
-  debug/shapes/navigation/3d/enable_link_connections: boolean;
-  debug/shapes/navigation/3d/enable_link_connections_xray: boolean;
-  debug/shapes/navigation/3d/geometry_edge_color: Color;
-  debug/shapes/navigation/3d/geometry_edge_disabled_color: Color;
-  debug/shapes/navigation/3d/geometry_face_color: Color;
-  debug/shapes/navigation/3d/geometry_face_disabled_color: Color;
-  debug/shapes/navigation/3d/link_connection_color: Color;
-  debug/shapes/navigation/3d/link_connection_disabled_color: Color;
-  debug/shapes/paths/geometry_color: Color;
-  debug/shapes/paths/geometry_width: float;
-  display/display_server/driver: string;
-  display/display_server/driver.android: string;
-  display/display_server/driver.ios: string;
-  display/display_server/driver.linuxbsd: string;
-  display/display_server/driver.macos: string;
-  display/display_server/driver.visionos: string;
-  display/display_server/driver.windows: string;
-  display/mouse_cursor/custom_image: string;
-  display/mouse_cursor/custom_image_hotspot: Vector2;
-  display/mouse_cursor/tooltip_position_offset: Vector2;
-  display/window/dpi/allow_hidpi: boolean;
-  display/window/energy_saving/keep_screen_on: boolean;
-  display/window/frame_pacing/android/enable_frame_pacing: boolean;
-  display/window/frame_pacing/android/swappy_mode: int;
-  display/window/handheld/orientation: int;
-  display/window/hdr/request_hdr_output: boolean;
-  display/window/ios/allow_high_refresh_rate: boolean;
-  display/window/ios/hide_home_indicator: boolean;
-  display/window/ios/hide_status_bar: boolean;
-  display/window/ios/suppress_ui_gesture: boolean;
-  display/window/per_pixel_transparency/allowed: boolean;
-  display/window/size/always_on_top: boolean;
-  display/window/size/borderless: boolean;
-  display/window/size/extend_to_title: boolean;
-  display/window/size/initial_position: Vector2i;
-  display/window/size/initial_position_type: int;
-  display/window/size/initial_screen: int;
-  display/window/size/maximize_disabled: boolean;
-  display/window/size/minimize_disabled: boolean;
-  display/window/size/mode: int;
-  display/window/size/no_focus: boolean;
-  display/window/size/resizable: boolean;
-  display/window/size/sharp_corners: boolean;
-  display/window/size/transparent: boolean;
-  display/window/size/viewport_height: int;
-  display/window/size/viewport_width: int;
-  display/window/size/window_height_override: int;
-  display/window/size/window_width_override: int;
-  display/window/stretch/aspect: string;
-  display/window/stretch/mode: string;
-  display/window/stretch/scale: float;
-  display/window/stretch/scale_mode: string;
-  display/window/subwindows/embed_subwindows: boolean;
-  display/window/vsync/vsync_mode: int;
-  dotnet/project/assembly_name: string;
-  dotnet/project/assembly_reload_attempts: int;
-  dotnet/project/solution_directory: string;
-  editor/export/convert_text_resources_to_binary: boolean;
-  editor/import/atlas_max_width: int;
-  editor/import/reimport_missing_imported_files: boolean;
-  editor/import/use_multiple_threads: boolean;
-  editor/movie_writer/audio_bit_depth: int;
-  editor/movie_writer/disable_vsync: boolean;
-  editor/movie_writer/fps: int;
-  editor/movie_writer/mix_rate: int;
-  editor/movie_writer/movie_file: string;
-  editor/movie_writer/ogv/audio_quality: float;
-  editor/movie_writer/ogv/encoding_speed: int;
-  editor/movie_writer/ogv/keyframe_interval: int;
-  editor/movie_writer/speaker_mode: int;
-  editor/movie_writer/video_quality: float;
-  editor/naming/default_signal_callback_name: string;
-  editor/naming/default_signal_callback_to_self_name: string;
-  editor/naming/node_name_casing: int;
-  editor/naming/node_name_num_separator: int;
-  editor/naming/scene_name_casing: int;
-  editor/naming/script_name_casing: int;
-  editor/run/main_run_args: string;
-  editor/script/search_in_file_extensions: PackedStringArray;
-  editor/script/templates_search_path: string;
-  editor/version_control/autoload_on_startup: boolean;
-  editor/version_control/plugin_name: string;
-  filesystem/import/blender/enabled: boolean;
-  filesystem/import/blender/enabled.android: boolean;
-  filesystem/import/blender/enabled.web: boolean;
-  filesystem/import/fbx2gltf/enabled: boolean;
-  filesystem/import/fbx2gltf/enabled.android: boolean;
-  filesystem/import/fbx2gltf/enabled.web: boolean;
-  gui/common/default_scroll_deadzone: int;
-  gui/common/drag_threshold: int;
-  gui/common/show_focus_state_on_pointer_event: int;
-  gui/common/snap_controls_to_pixels: boolean;
-  gui/common/swap_cancel_ok: int;
-  gui/common/text_edit_undo_stack_max_size: int;
-  gui/fonts/dynamic_fonts/use_oversampling: boolean;
-  gui/theme/custom: string;
-  gui/theme/custom_font: string;
-  gui/theme/default_font_antialiasing: int;
-  gui/theme/default_font_generate_mipmaps: boolean;
-  gui/theme/default_font_hinting: int;
-  gui/theme/default_font_multichannel_signed_distance_field: boolean;
-  gui/theme/default_font_subpixel_positioning: int;
-  gui/theme/default_theme_scale: float;
-  gui/theme/lcd_subpixel_layout: int;
-  gui/timers/button_shortcut_feedback_highlight_time: float;
-  gui/timers/incremental_search_max_interval_msec: int;
-  gui/timers/text_edit_idle_detect_sec: float;
-  gui/timers/tooltip_delay_sec: float;
-  gui/timers/tooltip_delay_sec.editor_hint: float;
-  input/ui_accept: Dictionary;
-  input/ui_accessibility_drag_and_drop: Dictionary;
-  input/ui_cancel: Dictionary;
-  input/ui_close_dialog: Dictionary;
-  input/ui_close_dialog.macos: Dictionary;
-  input/ui_colorpicker_delete_preset: Dictionary;
-  input/ui_copy: Dictionary;
-  input/ui_cut: Dictionary;
-  input/ui_down: Dictionary;
-  input/ui_end: Dictionary;
-  input/ui_filedialog_delete: Dictionary;
-  input/ui_filedialog_find: Dictionary;
-  input/ui_filedialog_focus_path: Dictionary;
-  input/ui_filedialog_focus_path.macos: Dictionary;
-  input/ui_filedialog_refresh: Dictionary;
-  input/ui_filedialog_show_hidden: Dictionary;
-  input/ui_filedialog_up_one_level: Dictionary;
-  input/ui_focus_mode: Dictionary;
-  input/ui_focus_next: Dictionary;
-  input/ui_focus_prev: Dictionary;
-  input/ui_graph_delete: Dictionary;
-  input/ui_graph_duplicate: Dictionary;
-  input/ui_graph_follow_left: Dictionary;
-  input/ui_graph_follow_left.macos: Dictionary;
-  input/ui_graph_follow_right: Dictionary;
-  input/ui_graph_follow_right.macos: Dictionary;
-  input/ui_home: Dictionary;
-  input/ui_left: Dictionary;
-  input/ui_menu: Dictionary;
-  input/ui_page_down: Dictionary;
-  input/ui_page_up: Dictionary;
-  input/ui_paste: Dictionary;
-  input/ui_redo: Dictionary;
-  input/ui_right: Dictionary;
-  input/ui_select: Dictionary;
-  input/ui_swap_input_direction: Dictionary;
-  input/ui_text_add_selection_for_next_occurrence: Dictionary;
-  input/ui_text_backspace: Dictionary;
-  input/ui_text_backspace_all_to_left: Dictionary;
-  input/ui_text_backspace_all_to_left.macos: Dictionary;
-  input/ui_text_backspace_word: Dictionary;
-  input/ui_text_backspace_word.macos: Dictionary;
-  input/ui_text_caret_add_above: Dictionary;
-  input/ui_text_caret_add_above.macos: Dictionary;
-  input/ui_text_caret_add_below: Dictionary;
-  input/ui_text_caret_add_below.macos: Dictionary;
-  input/ui_text_caret_document_end: Dictionary;
-  input/ui_text_caret_document_end.macos: Dictionary;
-  input/ui_text_caret_document_start: Dictionary;
-  input/ui_text_caret_document_start.macos: Dictionary;
-  input/ui_text_caret_down: Dictionary;
-  input/ui_text_caret_left: Dictionary;
-  input/ui_text_caret_line_end: Dictionary;
-  input/ui_text_caret_line_end.macos: Dictionary;
-  input/ui_text_caret_line_start: Dictionary;
-  input/ui_text_caret_line_start.macos: Dictionary;
-  input/ui_text_caret_page_down: Dictionary;
-  input/ui_text_caret_page_up: Dictionary;
-  input/ui_text_caret_right: Dictionary;
-  input/ui_text_caret_up: Dictionary;
-  input/ui_text_caret_word_left: Dictionary;
-  input/ui_text_caret_word_left.macos: Dictionary;
-  input/ui_text_caret_word_right: Dictionary;
-  input/ui_text_caret_word_right.macos: Dictionary;
-  input/ui_text_clear_carets_and_selection: Dictionary;
-  input/ui_text_completion_accept: Dictionary;
-  input/ui_text_completion_query: Dictionary;
-  input/ui_text_completion_replace: Dictionary;
-  input/ui_text_dedent: Dictionary;
-  input/ui_text_delete: Dictionary;
-  input/ui_text_delete_all_to_right: Dictionary;
-  input/ui_text_delete_all_to_right.macos: Dictionary;
-  input/ui_text_delete_word: Dictionary;
-  input/ui_text_delete_word.macos: Dictionary;
-  input/ui_text_indent: Dictionary;
-  input/ui_text_newline: Dictionary;
-  input/ui_text_newline_above: Dictionary;
-  input/ui_text_newline_blank: Dictionary;
-  input/ui_text_scroll_down: Dictionary;
-  input/ui_text_scroll_down.macos: Dictionary;
-  input/ui_text_scroll_up: Dictionary;
-  input/ui_text_scroll_up.macos: Dictionary;
-  input/ui_text_select_all: Dictionary;
-  input/ui_text_select_word_under_caret: Dictionary;
-  input/ui_text_select_word_under_caret.macos: Dictionary;
-  input/ui_text_skip_selection_for_next_occurrence: Dictionary;
-  input/ui_text_submit: Dictionary;
-  input/ui_text_toggle_insert_mode: Dictionary;
-  input/ui_undo: Dictionary;
-  input/ui_unicode_start: Dictionary;
-  input/ui_up: Dictionary;
-  input_devices/buffering/agile_event_flushing: boolean;
-  input_devices/compatibility/legacy_just_pressed_behavior: boolean;
-  input_devices/joypads/ignore_joypad_on_unfocused_application: boolean;
-  input_devices/pen_tablet/driver: string;
-  input_devices/pen_tablet/driver.windows: string;
-  input_devices/pointing/android/disable_scroll_deadzone: boolean;
-  input_devices/pointing/android/enable_long_press_as_right_click: boolean;
-  input_devices/pointing/android/enable_pan_and_scale_gestures: boolean;
-  input_devices/pointing/android/override_volume_buttons: boolean;
-  input_devices/pointing/android/rotary_input_scroll_axis: int;
-  input_devices/pointing/emulate_mouse_from_touch: boolean;
-  input_devices/pointing/emulate_touch_from_mouse: boolean;
-  input_devices/sensors/enable_accelerometer: boolean;
-  input_devices/sensors/enable_gravity: boolean;
-  input_devices/sensors/enable_gyroscope: boolean;
-  input_devices/sensors/enable_magnetometer: boolean;
-  internationalization/locale/fallback: string;
-  internationalization/locale/include_text_server_data: boolean;
-  internationalization/locale/line_breaking_strictness: int;
-  internationalization/locale/test: string;
-  internationalization/pseudolocalization/double_vowels: boolean;
-  internationalization/pseudolocalization/expansion_ratio: float;
-  internationalization/pseudolocalization/fake_bidi: boolean;
-  internationalization/pseudolocalization/override: boolean;
-  internationalization/pseudolocalization/prefix: string;
-  internationalization/pseudolocalization/replace_with_accents: boolean;
-  internationalization/pseudolocalization/skip_placeholders: boolean;
-  internationalization/pseudolocalization/suffix: string;
-  internationalization/pseudolocalization/use_pseudolocalization: boolean;
-  internationalization/rendering/force_right_to_left_layout_direction: boolean;
-  internationalization/rendering/root_node_auto_translate: boolean;
-  internationalization/rendering/root_node_layout_direction: int;
-  internationalization/rendering/text_driver: string;
-  layer_names/2d_navigation/layer_1: string;
-  layer_names/2d_navigation/layer_2: string;
-  layer_names/2d_navigation/layer_3: string;
-  layer_names/2d_navigation/layer_4: string;
-  layer_names/2d_navigation/layer_5: string;
-  layer_names/2d_navigation/layer_6: string;
-  layer_names/2d_navigation/layer_7: string;
-  layer_names/2d_navigation/layer_8: string;
-  layer_names/2d_navigation/layer_9: string;
-  layer_names/2d_navigation/layer_10: string;
-  layer_names/2d_navigation/layer_11: string;
-  layer_names/2d_navigation/layer_12: string;
-  layer_names/2d_navigation/layer_13: string;
-  layer_names/2d_navigation/layer_14: string;
-  layer_names/2d_navigation/layer_15: string;
-  layer_names/2d_navigation/layer_16: string;
-  layer_names/2d_navigation/layer_17: string;
-  layer_names/2d_navigation/layer_18: string;
-  layer_names/2d_navigation/layer_19: string;
-  layer_names/2d_navigation/layer_20: string;
-  layer_names/2d_navigation/layer_21: string;
-  layer_names/2d_navigation/layer_22: string;
-  layer_names/2d_navigation/layer_23: string;
-  layer_names/2d_navigation/layer_24: string;
-  layer_names/2d_navigation/layer_25: string;
-  layer_names/2d_navigation/layer_26: string;
-  layer_names/2d_navigation/layer_27: string;
-  layer_names/2d_navigation/layer_28: string;
-  layer_names/2d_navigation/layer_29: string;
-  layer_names/2d_navigation/layer_30: string;
-  layer_names/2d_navigation/layer_31: string;
-  layer_names/2d_navigation/layer_32: string;
-  layer_names/2d_physics/layer_1: string;
-  layer_names/2d_physics/layer_2: string;
-  layer_names/2d_physics/layer_3: string;
-  layer_names/2d_physics/layer_4: string;
-  layer_names/2d_physics/layer_5: string;
-  layer_names/2d_physics/layer_6: string;
-  layer_names/2d_physics/layer_7: string;
-  layer_names/2d_physics/layer_8: string;
-  layer_names/2d_physics/layer_9: string;
-  layer_names/2d_physics/layer_10: string;
-  layer_names/2d_physics/layer_11: string;
-  layer_names/2d_physics/layer_12: string;
-  layer_names/2d_physics/layer_13: string;
-  layer_names/2d_physics/layer_14: string;
-  layer_names/2d_physics/layer_15: string;
-  layer_names/2d_physics/layer_16: string;
-  layer_names/2d_physics/layer_17: string;
-  layer_names/2d_physics/layer_18: string;
-  layer_names/2d_physics/layer_19: string;
-  layer_names/2d_physics/layer_20: string;
-  layer_names/2d_physics/layer_21: string;
-  layer_names/2d_physics/layer_22: string;
-  layer_names/2d_physics/layer_23: string;
-  layer_names/2d_physics/layer_24: string;
-  layer_names/2d_physics/layer_25: string;
-  layer_names/2d_physics/layer_26: string;
-  layer_names/2d_physics/layer_27: string;
-  layer_names/2d_physics/layer_28: string;
-  layer_names/2d_physics/layer_29: string;
-  layer_names/2d_physics/layer_30: string;
-  layer_names/2d_physics/layer_31: string;
-  layer_names/2d_physics/layer_32: string;
-  layer_names/2d_render/layer_1: string;
-  layer_names/2d_render/layer_2: string;
-  layer_names/2d_render/layer_3: string;
-  layer_names/2d_render/layer_4: string;
-  layer_names/2d_render/layer_5: string;
-  layer_names/2d_render/layer_6: string;
-  layer_names/2d_render/layer_7: string;
-  layer_names/2d_render/layer_8: string;
-  layer_names/2d_render/layer_9: string;
-  layer_names/2d_render/layer_10: string;
-  layer_names/2d_render/layer_11: string;
-  layer_names/2d_render/layer_12: string;
-  layer_names/2d_render/layer_13: string;
-  layer_names/2d_render/layer_14: string;
-  layer_names/2d_render/layer_15: string;
-  layer_names/2d_render/layer_16: string;
-  layer_names/2d_render/layer_17: string;
-  layer_names/2d_render/layer_18: string;
-  layer_names/2d_render/layer_19: string;
-  layer_names/2d_render/layer_20: string;
-  layer_names/3d_navigation/layer_1: string;
-  layer_names/3d_navigation/layer_2: string;
-  layer_names/3d_navigation/layer_3: string;
-  layer_names/3d_navigation/layer_4: string;
-  layer_names/3d_navigation/layer_5: string;
-  layer_names/3d_navigation/layer_6: string;
-  layer_names/3d_navigation/layer_7: string;
-  layer_names/3d_navigation/layer_8: string;
-  layer_names/3d_navigation/layer_9: string;
-  layer_names/3d_navigation/layer_10: string;
-  layer_names/3d_navigation/layer_11: string;
-  layer_names/3d_navigation/layer_12: string;
-  layer_names/3d_navigation/layer_13: string;
-  layer_names/3d_navigation/layer_14: string;
-  layer_names/3d_navigation/layer_15: string;
-  layer_names/3d_navigation/layer_16: string;
-  layer_names/3d_navigation/layer_17: string;
-  layer_names/3d_navigation/layer_18: string;
-  layer_names/3d_navigation/layer_19: string;
-  layer_names/3d_navigation/layer_20: string;
-  layer_names/3d_navigation/layer_21: string;
-  layer_names/3d_navigation/layer_22: string;
-  layer_names/3d_navigation/layer_23: string;
-  layer_names/3d_navigation/layer_24: string;
-  layer_names/3d_navigation/layer_25: string;
-  layer_names/3d_navigation/layer_26: string;
-  layer_names/3d_navigation/layer_27: string;
-  layer_names/3d_navigation/layer_28: string;
-  layer_names/3d_navigation/layer_29: string;
-  layer_names/3d_navigation/layer_30: string;
-  layer_names/3d_navigation/layer_31: string;
-  layer_names/3d_navigation/layer_32: string;
-  layer_names/3d_physics/layer_1: string;
-  layer_names/3d_physics/layer_2: string;
-  layer_names/3d_physics/layer_3: string;
-  layer_names/3d_physics/layer_4: string;
-  layer_names/3d_physics/layer_5: string;
-  layer_names/3d_physics/layer_6: string;
-  layer_names/3d_physics/layer_7: string;
-  layer_names/3d_physics/layer_8: string;
-  layer_names/3d_physics/layer_9: string;
-  layer_names/3d_physics/layer_10: string;
-  layer_names/3d_physics/layer_11: string;
-  layer_names/3d_physics/layer_12: string;
-  layer_names/3d_physics/layer_13: string;
-  layer_names/3d_physics/layer_14: string;
-  layer_names/3d_physics/layer_15: string;
-  layer_names/3d_physics/layer_16: string;
-  layer_names/3d_physics/layer_17: string;
-  layer_names/3d_physics/layer_18: string;
-  layer_names/3d_physics/layer_19: string;
-  layer_names/3d_physics/layer_20: string;
-  layer_names/3d_physics/layer_21: string;
-  layer_names/3d_physics/layer_22: string;
-  layer_names/3d_physics/layer_23: string;
-  layer_names/3d_physics/layer_24: string;
-  layer_names/3d_physics/layer_25: string;
-  layer_names/3d_physics/layer_26: string;
-  layer_names/3d_physics/layer_27: string;
-  layer_names/3d_physics/layer_28: string;
-  layer_names/3d_physics/layer_29: string;
-  layer_names/3d_physics/layer_30: string;
-  layer_names/3d_physics/layer_31: string;
-  layer_names/3d_physics/layer_32: string;
-  layer_names/3d_render/layer_1: string;
-  layer_names/3d_render/layer_2: string;
-  layer_names/3d_render/layer_3: string;
-  layer_names/3d_render/layer_4: string;
-  layer_names/3d_render/layer_5: string;
-  layer_names/3d_render/layer_6: string;
-  layer_names/3d_render/layer_7: string;
-  layer_names/3d_render/layer_8: string;
-  layer_names/3d_render/layer_9: string;
-  layer_names/3d_render/layer_10: string;
-  layer_names/3d_render/layer_11: string;
-  layer_names/3d_render/layer_12: string;
-  layer_names/3d_render/layer_13: string;
-  layer_names/3d_render/layer_14: string;
-  layer_names/3d_render/layer_15: string;
-  layer_names/3d_render/layer_16: string;
-  layer_names/3d_render/layer_17: string;
-  layer_names/3d_render/layer_18: string;
-  layer_names/3d_render/layer_19: string;
-  layer_names/3d_render/layer_20: string;
-  layer_names/avoidance/layer_1: string;
-  layer_names/avoidance/layer_2: string;
-  layer_names/avoidance/layer_3: string;
-  layer_names/avoidance/layer_4: string;
-  layer_names/avoidance/layer_5: string;
-  layer_names/avoidance/layer_6: string;
-  layer_names/avoidance/layer_7: string;
-  layer_names/avoidance/layer_8: string;
-  layer_names/avoidance/layer_9: string;
-  layer_names/avoidance/layer_10: string;
-  layer_names/avoidance/layer_11: string;
-  layer_names/avoidance/layer_12: string;
-  layer_names/avoidance/layer_13: string;
-  layer_names/avoidance/layer_14: string;
-  layer_names/avoidance/layer_15: string;
-  layer_names/avoidance/layer_16: string;
-  layer_names/avoidance/layer_17: string;
-  layer_names/avoidance/layer_18: string;
-  layer_names/avoidance/layer_19: string;
-  layer_names/avoidance/layer_20: string;
-  layer_names/avoidance/layer_21: string;
-  layer_names/avoidance/layer_22: string;
-  layer_names/avoidance/layer_23: string;
-  layer_names/avoidance/layer_24: string;
-  layer_names/avoidance/layer_25: string;
-  layer_names/avoidance/layer_26: string;
-  layer_names/avoidance/layer_27: string;
-  layer_names/avoidance/layer_28: string;
-  layer_names/avoidance/layer_29: string;
-  layer_names/avoidance/layer_30: string;
-  layer_names/avoidance/layer_31: string;
-  layer_names/avoidance/layer_32: string;
-  memory/limits/message_queue/max_size_mb: int;
-  navigation/2d/default_cell_size: float;
-  navigation/2d/default_edge_connection_margin: float;
-  navigation/2d/default_link_connection_radius: float;
-  navigation/2d/merge_rasterizer_cell_scale: float;
-  navigation/2d/navigation_engine: string;
-  navigation/2d/use_edge_connections: boolean;
-  navigation/2d/warnings/navmesh_cell_size_mismatch: boolean;
-  navigation/2d/warnings/navmesh_edge_merge_errors: boolean;
-  navigation/3d/default_cell_height: float;
-  navigation/3d/default_cell_size: float;
-  navigation/3d/default_edge_connection_margin: float;
-  navigation/3d/default_link_connection_radius: float;
-  navigation/3d/default_up: Vector3;
-  navigation/3d/merge_rasterizer_cell_scale: float;
-  navigation/3d/navigation_engine: string;
-  navigation/3d/use_edge_connections: boolean;
-  navigation/3d/warnings/navmesh_cell_size_mismatch: boolean;
-  navigation/3d/warnings/navmesh_edge_merge_errors: boolean;
-  navigation/avoidance/thread_model/avoidance_use_high_priority_threads: boolean;
-  navigation/avoidance/thread_model/avoidance_use_multiple_threads: boolean;
-  navigation/baking/thread_model/baking_use_high_priority_threads: boolean;
-  navigation/baking/thread_model/baking_use_multiple_threads: boolean;
-  navigation/baking/use_crash_prevention_checks: boolean;
-  navigation/pathfinding/max_threads: int;
-  navigation/world/map_use_async_iterations: boolean;
-  navigation/world/region_use_async_iterations: boolean;
-  network/limits/debugger/max_chars_per_second: int;
-  network/limits/debugger/max_errors_per_second: int;
-  network/limits/debugger/max_queued_messages: int;
-  network/limits/debugger/max_warnings_per_second: int;
-  network/limits/packet_peer_stream/max_buffer_po2: int;
-  network/limits/tcp/connect_timeout_seconds: int;
-  network/limits/unix/connect_timeout_seconds: int;
-  network/limits/webrtc/max_channel_in_buffer_kb: int;
-  network/tls/certificate_bundle_override: string;
-  network/tls/enable_tls_v1.3: boolean;
-  physics/2d/default_angular_damp: float;
-  physics/2d/default_gravity: float;
-  physics/2d/default_gravity_vector: Vector2;
-  physics/2d/default_linear_damp: float;
-  physics/2d/physics_engine: string;
-  physics/2d/run_on_separate_thread: boolean;
-  physics/2d/sleep_threshold_angular: float;
-  physics/2d/sleep_threshold_linear: float;
-  physics/2d/solver/contact_max_allowed_penetration: float;
-  physics/2d/solver/contact_max_separation: float;
-  physics/2d/solver/contact_recycle_radius: float;
-  physics/2d/solver/default_constraint_bias: float;
-  physics/2d/solver/default_contact_bias: float;
-  physics/2d/solver/solver_iterations: int;
-  physics/2d/time_before_sleep: float;
-  physics/3d/default_angular_damp: float;
-  physics/3d/default_gravity: float;
-  physics/3d/default_gravity_vector: Vector3;
-  physics/3d/default_linear_damp: float;
-  physics/3d/physics_engine: string;
-  physics/3d/physics_interpolation/scene_traversal: string;
-  physics/3d/run_on_separate_thread: boolean;
-  physics/3d/sleep_threshold_angular: float;
-  physics/3d/sleep_threshold_linear: float;
-  physics/3d/solver/contact_max_allowed_penetration: float;
-  physics/3d/solver/contact_max_separation: float;
-  physics/3d/solver/contact_recycle_radius: float;
-  physics/3d/solver/default_contact_bias: float;
-  physics/3d/solver/solver_iterations: int;
-  physics/3d/time_before_sleep: float;
-  physics/common/enable_object_picking: boolean;
-  physics/common/max_physics_steps_per_frame: int;
-  physics/common/physics_interpolation: boolean;
-  physics/common/physics_jitter_fix: float;
-  physics/common/physics_ticks_per_second: int;
-  physics/jolt_physics_3d/collisions/active_edge_threshold: float;
-  physics/jolt_physics_3d/collisions/collision_margin_fraction: float;
-  physics/jolt_physics_3d/joints/world_node: int;
-  physics/jolt_physics_3d/limits/max_angular_velocity: float;
-  physics/jolt_physics_3d/limits/max_bodies: int;
-  physics/jolt_physics_3d/limits/max_body_pairs: int;
-  physics/jolt_physics_3d/limits/max_contact_constraints: int;
-  physics/jolt_physics_3d/limits/max_linear_velocity: float;
-  physics/jolt_physics_3d/limits/temporary_memory_buffer_size: int;
-  physics/jolt_physics_3d/limits/world_boundary_shape_size: float;
-  physics/jolt_physics_3d/motion_queries/recovery_amount: float;
-  physics/jolt_physics_3d/motion_queries/recovery_iterations: int;
-  physics/jolt_physics_3d/motion_queries/use_enhanced_internal_edge_removal: boolean;
-  physics/jolt_physics_3d/queries/enable_ray_cast_face_index: boolean;
-  physics/jolt_physics_3d/queries/use_enhanced_internal_edge_removal: boolean;
-  physics/jolt_physics_3d/simulation/allow_sleep: boolean;
-  physics/jolt_physics_3d/simulation/baumgarte_stabilization_factor: float;
-  physics/jolt_physics_3d/simulation/body_pair_contact_cache_angle_threshold: float;
-  physics/jolt_physics_3d/simulation/body_pair_contact_cache_distance_threshold: float;
-  physics/jolt_physics_3d/simulation/body_pair_contact_cache_enabled: boolean;
-  physics/jolt_physics_3d/simulation/bounce_velocity_threshold: float;
-  physics/jolt_physics_3d/simulation/continuous_cd_max_penetration: float;
-  physics/jolt_physics_3d/simulation/continuous_cd_movement_threshold: float;
-  physics/jolt_physics_3d/simulation/generate_all_kinematic_contacts: boolean;
-  physics/jolt_physics_3d/simulation/penetration_slop: float;
-  physics/jolt_physics_3d/simulation/position_steps: int;
-  physics/jolt_physics_3d/simulation/sleep_time_threshold: float;
-  physics/jolt_physics_3d/simulation/sleep_velocity_threshold: float;
-  physics/jolt_physics_3d/simulation/soft_body_point_radius: float;
-  physics/jolt_physics_3d/simulation/speculative_contact_distance: float;
-  physics/jolt_physics_3d/simulation/use_enhanced_internal_edge_removal: boolean;
-  physics/jolt_physics_3d/simulation/velocity_steps: int;
-  rendering/2d/batching/item_buffer_size: int;
-  rendering/2d/batching/uniform_set_cache_size: int;
-  rendering/2d/sdf/oversize: int;
-  rendering/2d/sdf/scale: int;
-  rendering/2d/shadow_atlas/size: int;
-  rendering/2d/snap/snap_2d_transforms_to_pixel: boolean;
-  rendering/2d/snap/snap_2d_vertices_to_pixel: boolean;
-  rendering/anti_aliasing/quality/msaa_2d: int;
-  rendering/anti_aliasing/quality/msaa_3d: int;
-  rendering/anti_aliasing/quality/screen_space_aa: int;
-  rendering/anti_aliasing/quality/smaa_edge_detection_threshold: float;
-  rendering/anti_aliasing/quality/use_debanding: boolean;
-  rendering/anti_aliasing/quality/use_taa: boolean;
-  rendering/anti_aliasing/screen_space_roughness_limiter/amount: float;
-  rendering/anti_aliasing/screen_space_roughness_limiter/enabled: boolean;
-  rendering/anti_aliasing/screen_space_roughness_limiter/limit: float;
-  rendering/camera/depth_of_field/depth_of_field_bokeh_quality: int;
-  rendering/camera/depth_of_field/depth_of_field_bokeh_shape: int;
-  rendering/camera/depth_of_field/depth_of_field_use_jitter: boolean;
-  rendering/driver/depth_prepass/disable_for_vendors: string;
-  rendering/driver/depth_prepass/enable: boolean;
-  rendering/driver/threads/thread_model: int;
-  rendering/environment/defaults/default_clear_color: Color;
-  rendering/environment/defaults/default_environment: string;
-  rendering/environment/glow/upscale_mode: int;
-  rendering/environment/glow/upscale_mode.mobile: int;
-  rendering/environment/screen_space_reflection/half_size: boolean;
-  rendering/environment/ssao/adaptive_target: float;
-  rendering/environment/ssao/blur_passes: int;
-  rendering/environment/ssao/fadeout_from: float;
-  rendering/environment/ssao/fadeout_to: float;
-  rendering/environment/ssao/half_size: boolean;
-  rendering/environment/ssao/quality: int;
-  rendering/environment/ssil/adaptive_target: float;
-  rendering/environment/ssil/blur_passes: int;
-  rendering/environment/ssil/fadeout_from: float;
-  rendering/environment/ssil/fadeout_to: float;
-  rendering/environment/ssil/half_size: boolean;
-  rendering/environment/ssil/quality: int;
-  rendering/environment/subsurface_scattering/subsurface_scattering_depth_scale: float;
-  rendering/environment/subsurface_scattering/subsurface_scattering_quality: int;
-  rendering/environment/subsurface_scattering/subsurface_scattering_scale: float;
-  rendering/environment/volumetric_fog/use_filter: int;
-  rendering/environment/volumetric_fog/volume_depth: int;
-  rendering/environment/volumetric_fog/volume_size: int;
-  rendering/gl_compatibility/driver: string;
-  rendering/gl_compatibility/driver.android: string;
-  rendering/gl_compatibility/driver.ios: string;
-  rendering/gl_compatibility/driver.linuxbsd: string;
-  rendering/gl_compatibility/driver.macos: string;
-  rendering/gl_compatibility/driver.web: string;
-  rendering/gl_compatibility/driver.windows: string;
-  rendering/gl_compatibility/fallback_to_angle: boolean;
-  rendering/gl_compatibility/fallback_to_gles: boolean;
-  rendering/gl_compatibility/fallback_to_native: boolean;
-  rendering/gl_compatibility/force_angle_on_devices: Array<any>;
-  rendering/gl_compatibility/item_buffer_size: int;
-  rendering/gl_compatibility/nvidia_disable_threaded_optimization: boolean;
-  rendering/global_illumination/gi/use_half_resolution: boolean;
-  rendering/global_illumination/sdfgi/frames_to_converge: int;
-  rendering/global_illumination/sdfgi/frames_to_update_lights: int;
-  rendering/global_illumination/sdfgi/probe_ray_count: int;
-  rendering/global_illumination/voxel_gi/quality: int;
-  rendering/lightmapping/bake_performance/max_rays_per_pass: int;
-  rendering/lightmapping/bake_performance/max_rays_per_probe_pass: int;
-  rendering/lightmapping/bake_performance/max_transparency_rays: int;
-  rendering/lightmapping/bake_performance/region_size: int;
-  rendering/lightmapping/bake_quality/high_quality_probe_ray_count: int;
-  rendering/lightmapping/bake_quality/high_quality_ray_count: int;
-  rendering/lightmapping/bake_quality/low_quality_probe_ray_count: int;
-  rendering/lightmapping/bake_quality/low_quality_ray_count: int;
-  rendering/lightmapping/bake_quality/medium_quality_probe_ray_count: int;
-  rendering/lightmapping/bake_quality/medium_quality_ray_count: int;
-  rendering/lightmapping/bake_quality/ultra_quality_probe_ray_count: int;
-  rendering/lightmapping/bake_quality/ultra_quality_ray_count: int;
-  rendering/lightmapping/denoising/denoiser: int;
-  rendering/lightmapping/lightmap_gi/use_bicubic_filter: boolean;
-  rendering/lightmapping/primitive_meshes/texel_size: float;
-  rendering/lightmapping/probe_capture/update_speed: float;
-  rendering/lights_and_shadows/directional_shadow/16_bits: boolean;
-  rendering/lights_and_shadows/directional_shadow/size: int;
-  rendering/lights_and_shadows/directional_shadow/size.mobile: int;
-  rendering/lights_and_shadows/directional_shadow/soft_shadow_filter_quality: int;
-  rendering/lights_and_shadows/directional_shadow/soft_shadow_filter_quality.mobile: int;
-  rendering/lights_and_shadows/positional_shadow/atlas_16_bits: boolean;
-  rendering/lights_and_shadows/positional_shadow/atlas_quadrant_0_subdiv: int;
-  rendering/lights_and_shadows/positional_shadow/atlas_quadrant_1_subdiv: int;
-  rendering/lights_and_shadows/positional_shadow/atlas_quadrant_2_subdiv: int;
-  rendering/lights_and_shadows/positional_shadow/atlas_quadrant_3_subdiv: int;
-  rendering/lights_and_shadows/positional_shadow/atlas_size: int;
-  rendering/lights_and_shadows/positional_shadow/atlas_size.mobile: int;
-  rendering/lights_and_shadows/positional_shadow/soft_shadow_filter_quality: int;
-  rendering/lights_and_shadows/positional_shadow/soft_shadow_filter_quality.mobile: int;
-  rendering/lights_and_shadows/tighter_shadow_caster_culling: boolean;
-  rendering/lights_and_shadows/use_physical_light_units: boolean;
-  rendering/limits/cluster_builder/max_clustered_elements: float;
-  rendering/limits/global_shader_variables/buffer_size: int;
-  rendering/limits/opengl/max_lights_per_object: int;
-  rendering/limits/opengl/max_renderable_elements: int;
-  rendering/limits/opengl/max_renderable_lights: int;
-  rendering/limits/spatial_indexer/threaded_cull_minimum_instances: int;
-  rendering/limits/spatial_indexer/update_iterations_per_frame: int;
-  rendering/limits/time/time_rollover_secs: float;
-  rendering/mesh_lod/lod_change/threshold_pixels: float;
-  rendering/occlusion_culling/bvh_build_quality: int;
-  rendering/occlusion_culling/jitter_projection: boolean;
-  rendering/occlusion_culling/occlusion_rays_per_thread: int;
-  rendering/occlusion_culling/use_occlusion_culling: boolean;
-  rendering/reflections/reflection_atlas/reflection_count: int;
-  rendering/reflections/reflection_atlas/reflection_size: int;
-  rendering/reflections/reflection_atlas/reflection_size.mobile: int;
-  rendering/reflections/sky_reflections/fast_filter_high_quality: boolean;
-  rendering/reflections/sky_reflections/ggx_samples: int;
-  rendering/reflections/sky_reflections/ggx_samples.mobile: int;
-  rendering/reflections/sky_reflections/roughness_layers: int;
-  rendering/reflections/sky_reflections/texture_array_reflections: boolean;
-  rendering/reflections/sky_reflections/texture_array_reflections.mobile: boolean;
-  rendering/reflections/specular_occlusion/enabled: boolean;
-  rendering/renderer/rendering_method: string;
-  rendering/renderer/rendering_method.mobile: string;
-  rendering/renderer/rendering_method.web: string;
-  rendering/rendering_device/d3d12/agility_sdk_version: int;
-  rendering/rendering_device/d3d12/max_resource_descriptors: int;
-  rendering/rendering_device/d3d12/max_sampler_descriptors: int;
-  rendering/rendering_device/driver: string;
-  rendering/rendering_device/driver.android: string;
-  rendering/rendering_device/driver.ios: string;
-  rendering/rendering_device/driver.linuxbsd: string;
-  rendering/rendering_device/driver.macos: string;
-  rendering/rendering_device/driver.visionos: string;
-  rendering/rendering_device/driver.windows: string;
-  rendering/rendering_device/fallback_to_d3d12: boolean;
-  rendering/rendering_device/fallback_to_opengl3: boolean;
-  rendering/rendering_device/fallback_to_vulkan: boolean;
-  rendering/rendering_device/pipeline_cache/enable: boolean;
-  rendering/rendering_device/pipeline_cache/save_chunk_size_mb: float;
-  rendering/rendering_device/staging_buffer/block_size_kb: int;
-  rendering/rendering_device/staging_buffer/max_size_mb: int;
-  rendering/rendering_device/staging_buffer/texture_download_region_size_px: int;
-  rendering/rendering_device/staging_buffer/texture_upload_region_size_px: int;
-  rendering/rendering_device/vsync/frame_queue_size: int;
-  rendering/rendering_device/vsync/swapchain_image_count: int;
-  rendering/rendering_device/vulkan/max_descriptors_per_pool: int;
-  rendering/scaling_3d/fsr_sharpness: float;
-  rendering/scaling_3d/mode: int;
-  rendering/scaling_3d/mode.ios: int;
-  rendering/scaling_3d/mode.macos: int;
-  rendering/scaling_3d/scale: float;
-  rendering/shader_compiler/shader_cache/compress: boolean;
-  rendering/shader_compiler/shader_cache/enabled: boolean;
-  rendering/shader_compiler/shader_cache/strip_debug: boolean;
-  rendering/shader_compiler/shader_cache/strip_debug.release: boolean;
-  rendering/shader_compiler/shader_cache/use_zstd_compression: boolean;
-  rendering/shading/overrides/force_lambert_over_burley: boolean;
-  rendering/shading/overrides/force_lambert_over_burley.mobile: boolean;
-  rendering/shading/overrides/force_vertex_shading: boolean;
-  rendering/textures/basis_universal/rdo_dict_size: int;
-  rendering/textures/basis_universal/zstd_supercompression: boolean;
-  rendering/textures/basis_universal/zstd_supercompression_level: int;
-  rendering/textures/canvas_textures/default_texture_filter: int;
-  rendering/textures/canvas_textures/default_texture_repeat: int;
-  rendering/textures/decals/filter: int;
-  rendering/textures/default_filters/anisotropic_filtering_level: int;
-  rendering/textures/default_filters/texture_mipmap_bias: float;
-  rendering/textures/default_filters/use_nearest_mipmap_filter: boolean;
-  rendering/textures/light_projectors/filter: int;
-  rendering/textures/lossless_compression/force_png: boolean;
-  rendering/textures/vram_compression/cache_gpu_compressor: boolean;
-  rendering/textures/vram_compression/compress_with_gpu: boolean;
-  rendering/textures/vram_compression/import_etc2_astc: boolean;
-  rendering/textures/vram_compression/import_s3tc_bptc: boolean;
-  rendering/textures/webp_compression/compression_method: int;
-  rendering/textures/webp_compression/lossless_compression_factor: float;
-  rendering/viewport/hdr_2d: boolean;
-  rendering/viewport/transparent_background: boolean;
-  rendering/vrs/mode: int;
-  rendering/vrs/texture: string;
-  threading/worker_pool/low_priority_thread_ratio: float;
-  threading/worker_pool/max_threads: int;
-  xr/openxr/binding_modifiers/analog_threshold: boolean;
-  xr/openxr/binding_modifiers/dpad_binding: boolean;
-  xr/openxr/default_action_map: string;
-  xr/openxr/enabled: boolean;
-  xr/openxr/environment_blend_mode: int;
-  xr/openxr/extensions/debug_message_types: int;
-  xr/openxr/extensions/debug_utils: int;
-  xr/openxr/extensions/eye_gaze_interaction: boolean;
-  xr/openxr/extensions/frame_synthesis: boolean;
-  xr/openxr/extensions/hand_interaction_profile: boolean;
-  xr/openxr/extensions/hand_tracking: boolean;
-  xr/openxr/extensions/hand_tracking_controller_data_source: boolean;
-  xr/openxr/extensions/hand_tracking_unobstructed_data_source: boolean;
-  xr/openxr/extensions/render_model: boolean;
-  xr/openxr/extensions/spatial_entity/april_tag_dict: int;
-  xr/openxr/extensions/spatial_entity/aruco_dict: int;
-  xr/openxr/extensions/spatial_entity/enable_builtin_anchor_detection: boolean;
-  xr/openxr/extensions/spatial_entity/enable_builtin_marker_tracking: boolean;
-  xr/openxr/extensions/spatial_entity/enable_builtin_plane_detection: boolean;
-  xr/openxr/extensions/spatial_entity/enable_marker_tracking: boolean;
-  xr/openxr/extensions/spatial_entity/enable_persistent_anchors: boolean;
-  xr/openxr/extensions/spatial_entity/enable_plane_tracking: boolean;
-  xr/openxr/extensions/spatial_entity/enable_spatial_anchors: boolean;
-  xr/openxr/extensions/spatial_entity/enabled: boolean;
-  xr/openxr/extensions/user_presence: boolean;
-  xr/openxr/form_factor: int;
-  xr/openxr/foveation_dynamic: boolean;
-  xr/openxr/foveation_level: int;
-  xr/openxr/reference_space: int;
-  xr/openxr/startup_alert: boolean;
-  xr/openxr/submit_depth_buffer: boolean;
-  xr/openxr/target_api_version: string;
-  xr/openxr/view_configuration: int;
-  xr/shaders/enabled: boolean;
+declare class ProjectSettings extends GodotObject {
+  'accessibility/general/accessibility_driver': string;
+  'accessibility/general/accessibility_support': int;
+  'accessibility/general/updates_per_second': int;
+  'animation/compatibility/default_parent_skeleton_in_mesh_instance_3d': boolean;
+  'animation/warnings/check_angle_interpolation_type_conflicting': boolean;
+  'animation/warnings/check_invalid_track_paths': boolean;
+  'application/boot_splash/bg_color': Color;
+  'application/boot_splash/image': string;
+  'application/boot_splash/minimum_display_time': int;
+  'application/boot_splash/show_image': boolean;
+  'application/boot_splash/stretch_mode': int;
+  'application/boot_splash/use_filter': boolean;
+  'application/config/auto_accept_quit': boolean;
+  'application/config/custom_user_dir_name': string;
+  'application/config/description': string;
+  'application/config/disable_project_settings_override': boolean;
+  'application/config/icon': string;
+  'application/config/macos_native_icon': string;
+  'application/config/name': string;
+  'application/config/name_localized': Dictionary;
+  'application/config/project_settings_override': string;
+  'application/config/quit_on_go_back': boolean;
+  'application/config/use_custom_user_dir': boolean;
+  'application/config/use_hidden_project_data_directory': boolean;
+  'application/config/version': string;
+  'application/config/windows_native_icon': string;
+  'application/run/delta_smoothing': boolean;
+  'application/run/disable_stderr': boolean;
+  'application/run/disable_stdout': boolean;
+  'application/run/enable_alt_space_menu': boolean;
+  'application/run/flush_stdout_on_print': boolean;
+  'application/run/flush_stdout_on_print.debug': boolean;
+  'application/run/frame_delay_msec': int;
+  'application/run/load_shell_environment': boolean;
+  'application/run/low_processor_mode': boolean;
+  'application/run/low_processor_mode_sleep_usec': int;
+  'application/run/main_loop_type': string;
+  'application/run/main_scene': string;
+  'application/run/max_fps': int;
+  'application/run/print_header': boolean;
+  'audio/buses/channel_disable_threshold_db': float;
+  'audio/buses/channel_disable_time': float;
+  'audio/buses/default_bus_layout': string;
+  'audio/driver/driver': string;
+  'audio/driver/enable_input': boolean;
+  'audio/driver/mix_rate': int;
+  'audio/driver/mix_rate.web': int;
+  'audio/driver/output_latency': int;
+  'audio/driver/output_latency.web': int;
+  'audio/general/2d_panning_strength': float;
+  'audio/general/3d_panning_strength': float;
+  'audio/general/default_playback_type': int;
+  'audio/general/default_playback_type.web': int;
+  'audio/general/ios/mix_with_others': boolean;
+  'audio/general/ios/session_category': int;
+  'audio/general/text_to_speech': boolean;
+  'audio/video/video_delay_compensation_ms': int;
+  'collada/use_ambient': boolean;
+  'compression/formats/gzip/compression_level': int;
+  'compression/formats/zlib/compression_level': int;
+  'compression/formats/zstd/compression_level': int;
+  'compression/formats/zstd/long_distance_matching': boolean;
+  'compression/formats/zstd/window_log_size': int;
+  'debug/canvas_items/debug_redraw_color': Color;
+  'debug/canvas_items/debug_redraw_time': float;
+  'debug/file_logging/enable_file_logging': boolean;
+  'debug/file_logging/enable_file_logging.pc': boolean;
+  'debug/file_logging/log_path': string;
+  'debug/file_logging/max_log_files': int;
+  'debug/gdscript/warnings/assert_always_false': int;
+  'debug/gdscript/warnings/assert_always_true': int;
+  'debug/gdscript/warnings/confusable_capture_reassignment': int;
+  'debug/gdscript/warnings/confusable_identifier': int;
+  'debug/gdscript/warnings/confusable_local_declaration': int;
+  'debug/gdscript/warnings/confusable_local_usage': int;
+  'debug/gdscript/warnings/deprecated_keyword': int;
+  'debug/gdscript/warnings/directory_rules': Dictionary;
+  'debug/gdscript/warnings/empty_file': int;
+  'debug/gdscript/warnings/enable': boolean;
+  'debug/gdscript/warnings/enum_variable_without_default': int;
+  'debug/gdscript/warnings/get_node_default_without_onready': int;
+  'debug/gdscript/warnings/incompatible_ternary': int;
+  'debug/gdscript/warnings/inference_on_variant': int;
+  'debug/gdscript/warnings/inferred_declaration': int;
+  'debug/gdscript/warnings/int_as_enum_without_cast': int;
+  'debug/gdscript/warnings/int_as_enum_without_match': int;
+  'debug/gdscript/warnings/integer_division': int;
+  'debug/gdscript/warnings/missing_await': int;
+  'debug/gdscript/warnings/missing_tool': int;
+  'debug/gdscript/warnings/narrowing_conversion': int;
+  'debug/gdscript/warnings/native_method_override': int;
+  'debug/gdscript/warnings/onready_with_export': int;
+  'debug/gdscript/warnings/redundant_await': int;
+  'debug/gdscript/warnings/redundant_static_unload': int;
+  'debug/gdscript/warnings/renamed_in_godot_4_hint': boolean;
+  'debug/gdscript/warnings/return_value_discarded': int;
+  'debug/gdscript/warnings/shadowed_global_identifier': int;
+  'debug/gdscript/warnings/shadowed_variable': int;
+  'debug/gdscript/warnings/shadowed_variable_base_class': int;
+  'debug/gdscript/warnings/standalone_expression': int;
+  'debug/gdscript/warnings/standalone_ternary': int;
+  'debug/gdscript/warnings/static_called_on_instance': int;
+  'debug/gdscript/warnings/unassigned_variable': int;
+  'debug/gdscript/warnings/unassigned_variable_op_assign': int;
+  'debug/gdscript/warnings/unreachable_code': int;
+  'debug/gdscript/warnings/unreachable_pattern': int;
+  'debug/gdscript/warnings/unsafe_call_argument': int;
+  'debug/gdscript/warnings/unsafe_cast': int;
+  'debug/gdscript/warnings/unsafe_method_access': int;
+  'debug/gdscript/warnings/unsafe_property_access': int;
+  'debug/gdscript/warnings/unsafe_void_return': int;
+  'debug/gdscript/warnings/untyped_declaration': int;
+  'debug/gdscript/warnings/unused_local_constant': int;
+  'debug/gdscript/warnings/unused_parameter': int;
+  'debug/gdscript/warnings/unused_private_class_variable': int;
+  'debug/gdscript/warnings/unused_signal': int;
+  'debug/gdscript/warnings/unused_variable': int;
+  'debug/settings/crash_handler/message': string;
+  'debug/settings/crash_handler/message.editor': string;
+  'debug/settings/gdscript/always_track_call_stacks': boolean;
+  'debug/settings/gdscript/always_track_local_variables': boolean;
+  'debug/settings/gdscript/max_call_stack': int;
+  'debug/settings/physics_interpolation/enable_warnings': boolean;
+  'debug/settings/profiler/max_functions': int;
+  'debug/settings/profiler/max_timestamp_query_elements': int;
+  'debug/settings/stdout/print_fps': boolean;
+  'debug/settings/stdout/print_gpu_profile': boolean;
+  'debug/settings/stdout/verbose_stdout': boolean;
+  'debug/shader_language/warnings/device_limit_exceeded': boolean;
+  'debug/shader_language/warnings/enable': boolean;
+  'debug/shader_language/warnings/float_comparison': boolean;
+  'debug/shader_language/warnings/formatting_error': boolean;
+  'debug/shader_language/warnings/magic_position_write': boolean;
+  'debug/shader_language/warnings/treat_warnings_as_errors': boolean;
+  'debug/shader_language/warnings/unused_constant': boolean;
+  'debug/shader_language/warnings/unused_function': boolean;
+  'debug/shader_language/warnings/unused_local_variable': boolean;
+  'debug/shader_language/warnings/unused_struct': boolean;
+  'debug/shader_language/warnings/unused_uniform': boolean;
+  'debug/shader_language/warnings/unused_varying': boolean;
+  'debug/shapes/avoidance/2d/agents_radius_color': Color;
+  'debug/shapes/avoidance/2d/enable_agents_radius': boolean;
+  'debug/shapes/avoidance/2d/enable_obstacles_radius': boolean;
+  'debug/shapes/avoidance/2d/enable_obstacles_static': boolean;
+  'debug/shapes/avoidance/2d/obstacles_radius_color': Color;
+  'debug/shapes/avoidance/2d/obstacles_static_edge_pushin_color': Color;
+  'debug/shapes/avoidance/2d/obstacles_static_edge_pushout_color': Color;
+  'debug/shapes/avoidance/2d/obstacles_static_face_pushin_color': Color;
+  'debug/shapes/avoidance/2d/obstacles_static_face_pushout_color': Color;
+  'debug/shapes/avoidance/3d/agents_radius_color': Color;
+  'debug/shapes/avoidance/3d/enable_agents_radius': boolean;
+  'debug/shapes/avoidance/3d/enable_obstacles_radius': boolean;
+  'debug/shapes/avoidance/3d/enable_obstacles_static': boolean;
+  'debug/shapes/avoidance/3d/obstacles_radius_color': Color;
+  'debug/shapes/avoidance/3d/obstacles_static_edge_pushin_color': Color;
+  'debug/shapes/avoidance/3d/obstacles_static_edge_pushout_color': Color;
+  'debug/shapes/avoidance/3d/obstacles_static_face_pushin_color': Color;
+  'debug/shapes/avoidance/3d/obstacles_static_face_pushout_color': Color;
+  'debug/shapes/collision/contact_color': Color;
+  'debug/shapes/collision/draw_2d_outlines': boolean;
+  'debug/shapes/collision/max_contacts_displayed': int;
+  'debug/shapes/collision/shape_color': Color;
+  'debug/shapes/navigation/2d/agent_path_color': Color;
+  'debug/shapes/navigation/2d/agent_path_point_size': float;
+  'debug/shapes/navigation/2d/edge_connection_color': Color;
+  'debug/shapes/navigation/2d/enable_agent_paths': boolean;
+  'debug/shapes/navigation/2d/enable_edge_connections': boolean;
+  'debug/shapes/navigation/2d/enable_edge_lines': boolean;
+  'debug/shapes/navigation/2d/enable_geometry_face_random_color': boolean;
+  'debug/shapes/navigation/2d/enable_link_connections': boolean;
+  'debug/shapes/navigation/2d/geometry_edge_color': Color;
+  'debug/shapes/navigation/2d/geometry_edge_disabled_color': Color;
+  'debug/shapes/navigation/2d/geometry_face_color': Color;
+  'debug/shapes/navigation/2d/geometry_face_disabled_color': Color;
+  'debug/shapes/navigation/2d/link_connection_color': Color;
+  'debug/shapes/navigation/2d/link_connection_disabled_color': Color;
+  'debug/shapes/navigation/3d/agent_path_color': Color;
+  'debug/shapes/navigation/3d/agent_path_point_size': float;
+  'debug/shapes/navigation/3d/edge_connection_color': Color;
+  'debug/shapes/navigation/3d/enable_agent_paths': boolean;
+  'debug/shapes/navigation/3d/enable_agent_paths_xray': boolean;
+  'debug/shapes/navigation/3d/enable_edge_connections': boolean;
+  'debug/shapes/navigation/3d/enable_edge_connections_xray': boolean;
+  'debug/shapes/navigation/3d/enable_edge_lines': boolean;
+  'debug/shapes/navigation/3d/enable_edge_lines_xray': boolean;
+  'debug/shapes/navigation/3d/enable_geometry_face_random_color': boolean;
+  'debug/shapes/navigation/3d/enable_link_connections': boolean;
+  'debug/shapes/navigation/3d/enable_link_connections_xray': boolean;
+  'debug/shapes/navigation/3d/geometry_edge_color': Color;
+  'debug/shapes/navigation/3d/geometry_edge_disabled_color': Color;
+  'debug/shapes/navigation/3d/geometry_face_color': Color;
+  'debug/shapes/navigation/3d/geometry_face_disabled_color': Color;
+  'debug/shapes/navigation/3d/link_connection_color': Color;
+  'debug/shapes/navigation/3d/link_connection_disabled_color': Color;
+  'debug/shapes/paths/geometry_color': Color;
+  'debug/shapes/paths/geometry_width': float;
+  'display/display_server/driver': string;
+  'display/display_server/driver.android': string;
+  'display/display_server/driver.ios': string;
+  'display/display_server/driver.linuxbsd': string;
+  'display/display_server/driver.macos': string;
+  'display/display_server/driver.visionos': string;
+  'display/display_server/driver.windows': string;
+  'display/mouse_cursor/custom_image': string;
+  'display/mouse_cursor/custom_image_hotspot': Vector2;
+  'display/mouse_cursor/tooltip_position_offset': Vector2;
+  'display/window/dpi/allow_hidpi': boolean;
+  'display/window/energy_saving/keep_screen_on': boolean;
+  'display/window/frame_pacing/android/enable_frame_pacing': boolean;
+  'display/window/frame_pacing/android/swappy_mode': int;
+  'display/window/handheld/orientation': int;
+  'display/window/hdr/request_hdr_output': boolean;
+  'display/window/ios/allow_high_refresh_rate': boolean;
+  'display/window/ios/hide_home_indicator': boolean;
+  'display/window/ios/hide_status_bar': boolean;
+  'display/window/ios/suppress_ui_gesture': boolean;
+  'display/window/per_pixel_transparency/allowed': boolean;
+  'display/window/size/always_on_top': boolean;
+  'display/window/size/borderless': boolean;
+  'display/window/size/extend_to_title': boolean;
+  'display/window/size/initial_position': Vector2i;
+  'display/window/size/initial_position_type': int;
+  'display/window/size/initial_screen': int;
+  'display/window/size/maximize_disabled': boolean;
+  'display/window/size/minimize_disabled': boolean;
+  'display/window/size/mode': int;
+  'display/window/size/no_focus': boolean;
+  'display/window/size/resizable': boolean;
+  'display/window/size/sharp_corners': boolean;
+  'display/window/size/transparent': boolean;
+  'display/window/size/viewport_height': int;
+  'display/window/size/viewport_width': int;
+  'display/window/size/window_height_override': int;
+  'display/window/size/window_width_override': int;
+  'display/window/stretch/aspect': string;
+  'display/window/stretch/mode': string;
+  'display/window/stretch/scale': float;
+  'display/window/stretch/scale_mode': string;
+  'display/window/subwindows/embed_subwindows': boolean;
+  'display/window/vsync/vsync_mode': int;
+  'dotnet/project/assembly_name': string;
+  'dotnet/project/assembly_reload_attempts': int;
+  'dotnet/project/solution_directory': string;
+  'editor/export/convert_text_resources_to_binary': boolean;
+  'editor/import/atlas_max_width': int;
+  'editor/import/reimport_missing_imported_files': boolean;
+  'editor/import/use_multiple_threads': boolean;
+  'editor/movie_writer/audio_bit_depth': int;
+  'editor/movie_writer/disable_vsync': boolean;
+  'editor/movie_writer/fps': int;
+  'editor/movie_writer/mix_rate': int;
+  'editor/movie_writer/movie_file': string;
+  'editor/movie_writer/ogv/audio_quality': float;
+  'editor/movie_writer/ogv/encoding_speed': int;
+  'editor/movie_writer/ogv/keyframe_interval': int;
+  'editor/movie_writer/speaker_mode': int;
+  'editor/movie_writer/video_quality': float;
+  'editor/naming/default_signal_callback_name': string;
+  'editor/naming/default_signal_callback_to_self_name': string;
+  'editor/naming/node_name_casing': int;
+  'editor/naming/node_name_num_separator': int;
+  'editor/naming/scene_name_casing': int;
+  'editor/naming/script_name_casing': int;
+  'editor/run/main_run_args': string;
+  'editor/script/search_in_file_extensions': PackedStringArray;
+  'editor/script/templates_search_path': string;
+  'editor/version_control/autoload_on_startup': boolean;
+  'editor/version_control/plugin_name': string;
+  'filesystem/import/blender/enabled': boolean;
+  'filesystem/import/blender/enabled.android': boolean;
+  'filesystem/import/blender/enabled.web': boolean;
+  'filesystem/import/fbx2gltf/enabled': boolean;
+  'filesystem/import/fbx2gltf/enabled.android': boolean;
+  'filesystem/import/fbx2gltf/enabled.web': boolean;
+  'gui/common/default_scroll_deadzone': int;
+  'gui/common/drag_threshold': int;
+  'gui/common/show_focus_state_on_pointer_event': int;
+  'gui/common/snap_controls_to_pixels': boolean;
+  'gui/common/swap_cancel_ok': int;
+  'gui/common/text_edit_undo_stack_max_size': int;
+  'gui/fonts/dynamic_fonts/use_oversampling': boolean;
+  'gui/theme/custom': string;
+  'gui/theme/custom_font': string;
+  'gui/theme/default_font_antialiasing': int;
+  'gui/theme/default_font_generate_mipmaps': boolean;
+  'gui/theme/default_font_hinting': int;
+  'gui/theme/default_font_multichannel_signed_distance_field': boolean;
+  'gui/theme/default_font_subpixel_positioning': int;
+  'gui/theme/default_theme_scale': float;
+  'gui/theme/lcd_subpixel_layout': int;
+  'gui/timers/button_shortcut_feedback_highlight_time': float;
+  'gui/timers/incremental_search_max_interval_msec': int;
+  'gui/timers/text_edit_idle_detect_sec': float;
+  'gui/timers/tooltip_delay_sec': float;
+  'gui/timers/tooltip_delay_sec.editor_hint': float;
+  'input/ui_accept': Dictionary;
+  'input/ui_accessibility_drag_and_drop': Dictionary;
+  'input/ui_cancel': Dictionary;
+  'input/ui_close_dialog': Dictionary;
+  'input/ui_close_dialog.macos': Dictionary;
+  'input/ui_colorpicker_delete_preset': Dictionary;
+  'input/ui_copy': Dictionary;
+  'input/ui_cut': Dictionary;
+  'input/ui_down': Dictionary;
+  'input/ui_end': Dictionary;
+  'input/ui_filedialog_delete': Dictionary;
+  'input/ui_filedialog_find': Dictionary;
+  'input/ui_filedialog_focus_path': Dictionary;
+  'input/ui_filedialog_focus_path.macos': Dictionary;
+  'input/ui_filedialog_refresh': Dictionary;
+  'input/ui_filedialog_show_hidden': Dictionary;
+  'input/ui_filedialog_up_one_level': Dictionary;
+  'input/ui_focus_mode': Dictionary;
+  'input/ui_focus_next': Dictionary;
+  'input/ui_focus_prev': Dictionary;
+  'input/ui_graph_delete': Dictionary;
+  'input/ui_graph_duplicate': Dictionary;
+  'input/ui_graph_follow_left': Dictionary;
+  'input/ui_graph_follow_left.macos': Dictionary;
+  'input/ui_graph_follow_right': Dictionary;
+  'input/ui_graph_follow_right.macos': Dictionary;
+  'input/ui_home': Dictionary;
+  'input/ui_left': Dictionary;
+  'input/ui_menu': Dictionary;
+  'input/ui_page_down': Dictionary;
+  'input/ui_page_up': Dictionary;
+  'input/ui_paste': Dictionary;
+  'input/ui_redo': Dictionary;
+  'input/ui_right': Dictionary;
+  'input/ui_select': Dictionary;
+  'input/ui_swap_input_direction': Dictionary;
+  'input/ui_text_add_selection_for_next_occurrence': Dictionary;
+  'input/ui_text_backspace': Dictionary;
+  'input/ui_text_backspace_all_to_left': Dictionary;
+  'input/ui_text_backspace_all_to_left.macos': Dictionary;
+  'input/ui_text_backspace_word': Dictionary;
+  'input/ui_text_backspace_word.macos': Dictionary;
+  'input/ui_text_caret_add_above': Dictionary;
+  'input/ui_text_caret_add_above.macos': Dictionary;
+  'input/ui_text_caret_add_below': Dictionary;
+  'input/ui_text_caret_add_below.macos': Dictionary;
+  'input/ui_text_caret_document_end': Dictionary;
+  'input/ui_text_caret_document_end.macos': Dictionary;
+  'input/ui_text_caret_document_start': Dictionary;
+  'input/ui_text_caret_document_start.macos': Dictionary;
+  'input/ui_text_caret_down': Dictionary;
+  'input/ui_text_caret_left': Dictionary;
+  'input/ui_text_caret_line_end': Dictionary;
+  'input/ui_text_caret_line_end.macos': Dictionary;
+  'input/ui_text_caret_line_start': Dictionary;
+  'input/ui_text_caret_line_start.macos': Dictionary;
+  'input/ui_text_caret_page_down': Dictionary;
+  'input/ui_text_caret_page_up': Dictionary;
+  'input/ui_text_caret_right': Dictionary;
+  'input/ui_text_caret_up': Dictionary;
+  'input/ui_text_caret_word_left': Dictionary;
+  'input/ui_text_caret_word_left.macos': Dictionary;
+  'input/ui_text_caret_word_right': Dictionary;
+  'input/ui_text_caret_word_right.macos': Dictionary;
+  'input/ui_text_clear_carets_and_selection': Dictionary;
+  'input/ui_text_completion_accept': Dictionary;
+  'input/ui_text_completion_query': Dictionary;
+  'input/ui_text_completion_replace': Dictionary;
+  'input/ui_text_dedent': Dictionary;
+  'input/ui_text_delete': Dictionary;
+  'input/ui_text_delete_all_to_right': Dictionary;
+  'input/ui_text_delete_all_to_right.macos': Dictionary;
+  'input/ui_text_delete_word': Dictionary;
+  'input/ui_text_delete_word.macos': Dictionary;
+  'input/ui_text_indent': Dictionary;
+  'input/ui_text_newline': Dictionary;
+  'input/ui_text_newline_above': Dictionary;
+  'input/ui_text_newline_blank': Dictionary;
+  'input/ui_text_scroll_down': Dictionary;
+  'input/ui_text_scroll_down.macos': Dictionary;
+  'input/ui_text_scroll_up': Dictionary;
+  'input/ui_text_scroll_up.macos': Dictionary;
+  'input/ui_text_select_all': Dictionary;
+  'input/ui_text_select_word_under_caret': Dictionary;
+  'input/ui_text_select_word_under_caret.macos': Dictionary;
+  'input/ui_text_skip_selection_for_next_occurrence': Dictionary;
+  'input/ui_text_submit': Dictionary;
+  'input/ui_text_toggle_insert_mode': Dictionary;
+  'input/ui_undo': Dictionary;
+  'input/ui_unicode_start': Dictionary;
+  'input/ui_up': Dictionary;
+  'input_devices/buffering/agile_event_flushing': boolean;
+  'input_devices/compatibility/legacy_just_pressed_behavior': boolean;
+  'input_devices/joypads/ignore_joypad_on_unfocused_application': boolean;
+  'input_devices/pen_tablet/driver': string;
+  'input_devices/pen_tablet/driver.windows': string;
+  'input_devices/pointing/android/disable_scroll_deadzone': boolean;
+  'input_devices/pointing/android/enable_long_press_as_right_click': boolean;
+  'input_devices/pointing/android/enable_pan_and_scale_gestures': boolean;
+  'input_devices/pointing/android/override_volume_buttons': boolean;
+  'input_devices/pointing/android/rotary_input_scroll_axis': int;
+  'input_devices/pointing/emulate_mouse_from_touch': boolean;
+  'input_devices/pointing/emulate_touch_from_mouse': boolean;
+  'input_devices/sensors/enable_accelerometer': boolean;
+  'input_devices/sensors/enable_gravity': boolean;
+  'input_devices/sensors/enable_gyroscope': boolean;
+  'input_devices/sensors/enable_magnetometer': boolean;
+  'internationalization/locale/fallback': string;
+  'internationalization/locale/include_text_server_data': boolean;
+  'internationalization/locale/line_breaking_strictness': int;
+  'internationalization/locale/test': string;
+  'internationalization/pseudolocalization/double_vowels': boolean;
+  'internationalization/pseudolocalization/expansion_ratio': float;
+  'internationalization/pseudolocalization/fake_bidi': boolean;
+  'internationalization/pseudolocalization/override': boolean;
+  'internationalization/pseudolocalization/prefix': string;
+  'internationalization/pseudolocalization/replace_with_accents': boolean;
+  'internationalization/pseudolocalization/skip_placeholders': boolean;
+  'internationalization/pseudolocalization/suffix': string;
+  'internationalization/pseudolocalization/use_pseudolocalization': boolean;
+  'internationalization/rendering/force_right_to_left_layout_direction': boolean;
+  'internationalization/rendering/root_node_auto_translate': boolean;
+  'internationalization/rendering/root_node_layout_direction': int;
+  'internationalization/rendering/text_driver': string;
+  'layer_names/2d_navigation/layer_1': string;
+  'layer_names/2d_navigation/layer_2': string;
+  'layer_names/2d_navigation/layer_3': string;
+  'layer_names/2d_navigation/layer_4': string;
+  'layer_names/2d_navigation/layer_5': string;
+  'layer_names/2d_navigation/layer_6': string;
+  'layer_names/2d_navigation/layer_7': string;
+  'layer_names/2d_navigation/layer_8': string;
+  'layer_names/2d_navigation/layer_9': string;
+  'layer_names/2d_navigation/layer_10': string;
+  'layer_names/2d_navigation/layer_11': string;
+  'layer_names/2d_navigation/layer_12': string;
+  'layer_names/2d_navigation/layer_13': string;
+  'layer_names/2d_navigation/layer_14': string;
+  'layer_names/2d_navigation/layer_15': string;
+  'layer_names/2d_navigation/layer_16': string;
+  'layer_names/2d_navigation/layer_17': string;
+  'layer_names/2d_navigation/layer_18': string;
+  'layer_names/2d_navigation/layer_19': string;
+  'layer_names/2d_navigation/layer_20': string;
+  'layer_names/2d_navigation/layer_21': string;
+  'layer_names/2d_navigation/layer_22': string;
+  'layer_names/2d_navigation/layer_23': string;
+  'layer_names/2d_navigation/layer_24': string;
+  'layer_names/2d_navigation/layer_25': string;
+  'layer_names/2d_navigation/layer_26': string;
+  'layer_names/2d_navigation/layer_27': string;
+  'layer_names/2d_navigation/layer_28': string;
+  'layer_names/2d_navigation/layer_29': string;
+  'layer_names/2d_navigation/layer_30': string;
+  'layer_names/2d_navigation/layer_31': string;
+  'layer_names/2d_navigation/layer_32': string;
+  'layer_names/2d_physics/layer_1': string;
+  'layer_names/2d_physics/layer_2': string;
+  'layer_names/2d_physics/layer_3': string;
+  'layer_names/2d_physics/layer_4': string;
+  'layer_names/2d_physics/layer_5': string;
+  'layer_names/2d_physics/layer_6': string;
+  'layer_names/2d_physics/layer_7': string;
+  'layer_names/2d_physics/layer_8': string;
+  'layer_names/2d_physics/layer_9': string;
+  'layer_names/2d_physics/layer_10': string;
+  'layer_names/2d_physics/layer_11': string;
+  'layer_names/2d_physics/layer_12': string;
+  'layer_names/2d_physics/layer_13': string;
+  'layer_names/2d_physics/layer_14': string;
+  'layer_names/2d_physics/layer_15': string;
+  'layer_names/2d_physics/layer_16': string;
+  'layer_names/2d_physics/layer_17': string;
+  'layer_names/2d_physics/layer_18': string;
+  'layer_names/2d_physics/layer_19': string;
+  'layer_names/2d_physics/layer_20': string;
+  'layer_names/2d_physics/layer_21': string;
+  'layer_names/2d_physics/layer_22': string;
+  'layer_names/2d_physics/layer_23': string;
+  'layer_names/2d_physics/layer_24': string;
+  'layer_names/2d_physics/layer_25': string;
+  'layer_names/2d_physics/layer_26': string;
+  'layer_names/2d_physics/layer_27': string;
+  'layer_names/2d_physics/layer_28': string;
+  'layer_names/2d_physics/layer_29': string;
+  'layer_names/2d_physics/layer_30': string;
+  'layer_names/2d_physics/layer_31': string;
+  'layer_names/2d_physics/layer_32': string;
+  'layer_names/2d_render/layer_1': string;
+  'layer_names/2d_render/layer_2': string;
+  'layer_names/2d_render/layer_3': string;
+  'layer_names/2d_render/layer_4': string;
+  'layer_names/2d_render/layer_5': string;
+  'layer_names/2d_render/layer_6': string;
+  'layer_names/2d_render/layer_7': string;
+  'layer_names/2d_render/layer_8': string;
+  'layer_names/2d_render/layer_9': string;
+  'layer_names/2d_render/layer_10': string;
+  'layer_names/2d_render/layer_11': string;
+  'layer_names/2d_render/layer_12': string;
+  'layer_names/2d_render/layer_13': string;
+  'layer_names/2d_render/layer_14': string;
+  'layer_names/2d_render/layer_15': string;
+  'layer_names/2d_render/layer_16': string;
+  'layer_names/2d_render/layer_17': string;
+  'layer_names/2d_render/layer_18': string;
+  'layer_names/2d_render/layer_19': string;
+  'layer_names/2d_render/layer_20': string;
+  'layer_names/3d_navigation/layer_1': string;
+  'layer_names/3d_navigation/layer_2': string;
+  'layer_names/3d_navigation/layer_3': string;
+  'layer_names/3d_navigation/layer_4': string;
+  'layer_names/3d_navigation/layer_5': string;
+  'layer_names/3d_navigation/layer_6': string;
+  'layer_names/3d_navigation/layer_7': string;
+  'layer_names/3d_navigation/layer_8': string;
+  'layer_names/3d_navigation/layer_9': string;
+  'layer_names/3d_navigation/layer_10': string;
+  'layer_names/3d_navigation/layer_11': string;
+  'layer_names/3d_navigation/layer_12': string;
+  'layer_names/3d_navigation/layer_13': string;
+  'layer_names/3d_navigation/layer_14': string;
+  'layer_names/3d_navigation/layer_15': string;
+  'layer_names/3d_navigation/layer_16': string;
+  'layer_names/3d_navigation/layer_17': string;
+  'layer_names/3d_navigation/layer_18': string;
+  'layer_names/3d_navigation/layer_19': string;
+  'layer_names/3d_navigation/layer_20': string;
+  'layer_names/3d_navigation/layer_21': string;
+  'layer_names/3d_navigation/layer_22': string;
+  'layer_names/3d_navigation/layer_23': string;
+  'layer_names/3d_navigation/layer_24': string;
+  'layer_names/3d_navigation/layer_25': string;
+  'layer_names/3d_navigation/layer_26': string;
+  'layer_names/3d_navigation/layer_27': string;
+  'layer_names/3d_navigation/layer_28': string;
+  'layer_names/3d_navigation/layer_29': string;
+  'layer_names/3d_navigation/layer_30': string;
+  'layer_names/3d_navigation/layer_31': string;
+  'layer_names/3d_navigation/layer_32': string;
+  'layer_names/3d_physics/layer_1': string;
+  'layer_names/3d_physics/layer_2': string;
+  'layer_names/3d_physics/layer_3': string;
+  'layer_names/3d_physics/layer_4': string;
+  'layer_names/3d_physics/layer_5': string;
+  'layer_names/3d_physics/layer_6': string;
+  'layer_names/3d_physics/layer_7': string;
+  'layer_names/3d_physics/layer_8': string;
+  'layer_names/3d_physics/layer_9': string;
+  'layer_names/3d_physics/layer_10': string;
+  'layer_names/3d_physics/layer_11': string;
+  'layer_names/3d_physics/layer_12': string;
+  'layer_names/3d_physics/layer_13': string;
+  'layer_names/3d_physics/layer_14': string;
+  'layer_names/3d_physics/layer_15': string;
+  'layer_names/3d_physics/layer_16': string;
+  'layer_names/3d_physics/layer_17': string;
+  'layer_names/3d_physics/layer_18': string;
+  'layer_names/3d_physics/layer_19': string;
+  'layer_names/3d_physics/layer_20': string;
+  'layer_names/3d_physics/layer_21': string;
+  'layer_names/3d_physics/layer_22': string;
+  'layer_names/3d_physics/layer_23': string;
+  'layer_names/3d_physics/layer_24': string;
+  'layer_names/3d_physics/layer_25': string;
+  'layer_names/3d_physics/layer_26': string;
+  'layer_names/3d_physics/layer_27': string;
+  'layer_names/3d_physics/layer_28': string;
+  'layer_names/3d_physics/layer_29': string;
+  'layer_names/3d_physics/layer_30': string;
+  'layer_names/3d_physics/layer_31': string;
+  'layer_names/3d_physics/layer_32': string;
+  'layer_names/3d_render/layer_1': string;
+  'layer_names/3d_render/layer_2': string;
+  'layer_names/3d_render/layer_3': string;
+  'layer_names/3d_render/layer_4': string;
+  'layer_names/3d_render/layer_5': string;
+  'layer_names/3d_render/layer_6': string;
+  'layer_names/3d_render/layer_7': string;
+  'layer_names/3d_render/layer_8': string;
+  'layer_names/3d_render/layer_9': string;
+  'layer_names/3d_render/layer_10': string;
+  'layer_names/3d_render/layer_11': string;
+  'layer_names/3d_render/layer_12': string;
+  'layer_names/3d_render/layer_13': string;
+  'layer_names/3d_render/layer_14': string;
+  'layer_names/3d_render/layer_15': string;
+  'layer_names/3d_render/layer_16': string;
+  'layer_names/3d_render/layer_17': string;
+  'layer_names/3d_render/layer_18': string;
+  'layer_names/3d_render/layer_19': string;
+  'layer_names/3d_render/layer_20': string;
+  'layer_names/avoidance/layer_1': string;
+  'layer_names/avoidance/layer_2': string;
+  'layer_names/avoidance/layer_3': string;
+  'layer_names/avoidance/layer_4': string;
+  'layer_names/avoidance/layer_5': string;
+  'layer_names/avoidance/layer_6': string;
+  'layer_names/avoidance/layer_7': string;
+  'layer_names/avoidance/layer_8': string;
+  'layer_names/avoidance/layer_9': string;
+  'layer_names/avoidance/layer_10': string;
+  'layer_names/avoidance/layer_11': string;
+  'layer_names/avoidance/layer_12': string;
+  'layer_names/avoidance/layer_13': string;
+  'layer_names/avoidance/layer_14': string;
+  'layer_names/avoidance/layer_15': string;
+  'layer_names/avoidance/layer_16': string;
+  'layer_names/avoidance/layer_17': string;
+  'layer_names/avoidance/layer_18': string;
+  'layer_names/avoidance/layer_19': string;
+  'layer_names/avoidance/layer_20': string;
+  'layer_names/avoidance/layer_21': string;
+  'layer_names/avoidance/layer_22': string;
+  'layer_names/avoidance/layer_23': string;
+  'layer_names/avoidance/layer_24': string;
+  'layer_names/avoidance/layer_25': string;
+  'layer_names/avoidance/layer_26': string;
+  'layer_names/avoidance/layer_27': string;
+  'layer_names/avoidance/layer_28': string;
+  'layer_names/avoidance/layer_29': string;
+  'layer_names/avoidance/layer_30': string;
+  'layer_names/avoidance/layer_31': string;
+  'layer_names/avoidance/layer_32': string;
+  'memory/limits/message_queue/max_size_mb': int;
+  'navigation/2d/default_cell_size': float;
+  'navigation/2d/default_edge_connection_margin': float;
+  'navigation/2d/default_link_connection_radius': float;
+  'navigation/2d/merge_rasterizer_cell_scale': float;
+  'navigation/2d/navigation_engine': string;
+  'navigation/2d/use_edge_connections': boolean;
+  'navigation/2d/warnings/navmesh_cell_size_mismatch': boolean;
+  'navigation/2d/warnings/navmesh_edge_merge_errors': boolean;
+  'navigation/3d/default_cell_height': float;
+  'navigation/3d/default_cell_size': float;
+  'navigation/3d/default_edge_connection_margin': float;
+  'navigation/3d/default_link_connection_radius': float;
+  'navigation/3d/default_up': Vector3;
+  'navigation/3d/merge_rasterizer_cell_scale': float;
+  'navigation/3d/navigation_engine': string;
+  'navigation/3d/use_edge_connections': boolean;
+  'navigation/3d/warnings/navmesh_cell_size_mismatch': boolean;
+  'navigation/3d/warnings/navmesh_edge_merge_errors': boolean;
+  'navigation/avoidance/thread_model/avoidance_use_high_priority_threads': boolean;
+  'navigation/avoidance/thread_model/avoidance_use_multiple_threads': boolean;
+  'navigation/baking/thread_model/baking_use_high_priority_threads': boolean;
+  'navigation/baking/thread_model/baking_use_multiple_threads': boolean;
+  'navigation/baking/use_crash_prevention_checks': boolean;
+  'navigation/pathfinding/max_threads': int;
+  'navigation/world/map_use_async_iterations': boolean;
+  'navigation/world/region_use_async_iterations': boolean;
+  'network/limits/debugger/max_chars_per_second': int;
+  'network/limits/debugger/max_errors_per_second': int;
+  'network/limits/debugger/max_queued_messages': int;
+  'network/limits/debugger/max_warnings_per_second': int;
+  'network/limits/packet_peer_stream/max_buffer_po2': int;
+  'network/limits/tcp/connect_timeout_seconds': int;
+  'network/limits/unix/connect_timeout_seconds': int;
+  'network/limits/webrtc/max_channel_in_buffer_kb': int;
+  'network/tls/certificate_bundle_override': string;
+  'network/tls/enable_tls_v1.3': boolean;
+  'physics/2d/default_angular_damp': float;
+  'physics/2d/default_gravity': float;
+  'physics/2d/default_gravity_vector': Vector2;
+  'physics/2d/default_linear_damp': float;
+  'physics/2d/physics_engine': string;
+  'physics/2d/run_on_separate_thread': boolean;
+  'physics/2d/sleep_threshold_angular': float;
+  'physics/2d/sleep_threshold_linear': float;
+  'physics/2d/solver/contact_max_allowed_penetration': float;
+  'physics/2d/solver/contact_max_separation': float;
+  'physics/2d/solver/contact_recycle_radius': float;
+  'physics/2d/solver/default_constraint_bias': float;
+  'physics/2d/solver/default_contact_bias': float;
+  'physics/2d/solver/solver_iterations': int;
+  'physics/2d/time_before_sleep': float;
+  'physics/3d/default_angular_damp': float;
+  'physics/3d/default_gravity': float;
+  'physics/3d/default_gravity_vector': Vector3;
+  'physics/3d/default_linear_damp': float;
+  'physics/3d/physics_engine': string;
+  'physics/3d/physics_interpolation/scene_traversal': string;
+  'physics/3d/run_on_separate_thread': boolean;
+  'physics/3d/sleep_threshold_angular': float;
+  'physics/3d/sleep_threshold_linear': float;
+  'physics/3d/solver/contact_max_allowed_penetration': float;
+  'physics/3d/solver/contact_max_separation': float;
+  'physics/3d/solver/contact_recycle_radius': float;
+  'physics/3d/solver/default_contact_bias': float;
+  'physics/3d/solver/solver_iterations': int;
+  'physics/3d/time_before_sleep': float;
+  'physics/common/enable_object_picking': boolean;
+  'physics/common/max_physics_steps_per_frame': int;
+  'physics/common/physics_interpolation': boolean;
+  'physics/common/physics_jitter_fix': float;
+  'physics/common/physics_ticks_per_second': int;
+  'physics/jolt_physics_3d/collisions/active_edge_threshold': float;
+  'physics/jolt_physics_3d/collisions/collision_margin_fraction': float;
+  'physics/jolt_physics_3d/joints/world_node': int;
+  'physics/jolt_physics_3d/limits/max_angular_velocity': float;
+  'physics/jolt_physics_3d/limits/max_bodies': int;
+  'physics/jolt_physics_3d/limits/max_body_pairs': int;
+  'physics/jolt_physics_3d/limits/max_contact_constraints': int;
+  'physics/jolt_physics_3d/limits/max_linear_velocity': float;
+  'physics/jolt_physics_3d/limits/temporary_memory_buffer_size': int;
+  'physics/jolt_physics_3d/limits/world_boundary_shape_size': float;
+  'physics/jolt_physics_3d/motion_queries/recovery_amount': float;
+  'physics/jolt_physics_3d/motion_queries/recovery_iterations': int;
+  'physics/jolt_physics_3d/motion_queries/use_enhanced_internal_edge_removal': boolean;
+  'physics/jolt_physics_3d/queries/enable_ray_cast_face_index': boolean;
+  'physics/jolt_physics_3d/queries/use_enhanced_internal_edge_removal': boolean;
+  'physics/jolt_physics_3d/simulation/allow_sleep': boolean;
+  'physics/jolt_physics_3d/simulation/baumgarte_stabilization_factor': float;
+  'physics/jolt_physics_3d/simulation/body_pair_contact_cache_angle_threshold': float;
+  'physics/jolt_physics_3d/simulation/body_pair_contact_cache_distance_threshold': float;
+  'physics/jolt_physics_3d/simulation/body_pair_contact_cache_enabled': boolean;
+  'physics/jolt_physics_3d/simulation/bounce_velocity_threshold': float;
+  'physics/jolt_physics_3d/simulation/continuous_cd_max_penetration': float;
+  'physics/jolt_physics_3d/simulation/continuous_cd_movement_threshold': float;
+  'physics/jolt_physics_3d/simulation/generate_all_kinematic_contacts': boolean;
+  'physics/jolt_physics_3d/simulation/penetration_slop': float;
+  'physics/jolt_physics_3d/simulation/position_steps': int;
+  'physics/jolt_physics_3d/simulation/sleep_time_threshold': float;
+  'physics/jolt_physics_3d/simulation/sleep_velocity_threshold': float;
+  'physics/jolt_physics_3d/simulation/soft_body_point_radius': float;
+  'physics/jolt_physics_3d/simulation/speculative_contact_distance': float;
+  'physics/jolt_physics_3d/simulation/use_enhanced_internal_edge_removal': boolean;
+  'physics/jolt_physics_3d/simulation/velocity_steps': int;
+  'rendering/2d/batching/item_buffer_size': int;
+  'rendering/2d/batching/uniform_set_cache_size': int;
+  'rendering/2d/sdf/oversize': int;
+  'rendering/2d/sdf/scale': int;
+  'rendering/2d/shadow_atlas/size': int;
+  'rendering/2d/snap/snap_2d_transforms_to_pixel': boolean;
+  'rendering/2d/snap/snap_2d_vertices_to_pixel': boolean;
+  'rendering/anti_aliasing/quality/msaa_2d': int;
+  'rendering/anti_aliasing/quality/msaa_3d': int;
+  'rendering/anti_aliasing/quality/screen_space_aa': int;
+  'rendering/anti_aliasing/quality/smaa_edge_detection_threshold': float;
+  'rendering/anti_aliasing/quality/use_debanding': boolean;
+  'rendering/anti_aliasing/quality/use_taa': boolean;
+  'rendering/anti_aliasing/screen_space_roughness_limiter/amount': float;
+  'rendering/anti_aliasing/screen_space_roughness_limiter/enabled': boolean;
+  'rendering/anti_aliasing/screen_space_roughness_limiter/limit': float;
+  'rendering/camera/depth_of_field/depth_of_field_bokeh_quality': int;
+  'rendering/camera/depth_of_field/depth_of_field_bokeh_shape': int;
+  'rendering/camera/depth_of_field/depth_of_field_use_jitter': boolean;
+  'rendering/driver/depth_prepass/disable_for_vendors': string;
+  'rendering/driver/depth_prepass/enable': boolean;
+  'rendering/driver/threads/thread_model': int;
+  'rendering/environment/defaults/default_clear_color': Color;
+  'rendering/environment/defaults/default_environment': string;
+  'rendering/environment/glow/upscale_mode': int;
+  'rendering/environment/glow/upscale_mode.mobile': int;
+  'rendering/environment/screen_space_reflection/half_size': boolean;
+  'rendering/environment/ssao/adaptive_target': float;
+  'rendering/environment/ssao/blur_passes': int;
+  'rendering/environment/ssao/fadeout_from': float;
+  'rendering/environment/ssao/fadeout_to': float;
+  'rendering/environment/ssao/half_size': boolean;
+  'rendering/environment/ssao/quality': int;
+  'rendering/environment/ssil/adaptive_target': float;
+  'rendering/environment/ssil/blur_passes': int;
+  'rendering/environment/ssil/fadeout_from': float;
+  'rendering/environment/ssil/fadeout_to': float;
+  'rendering/environment/ssil/half_size': boolean;
+  'rendering/environment/ssil/quality': int;
+  'rendering/environment/subsurface_scattering/subsurface_scattering_depth_scale': float;
+  'rendering/environment/subsurface_scattering/subsurface_scattering_quality': int;
+  'rendering/environment/subsurface_scattering/subsurface_scattering_scale': float;
+  'rendering/environment/volumetric_fog/use_filter': int;
+  'rendering/environment/volumetric_fog/volume_depth': int;
+  'rendering/environment/volumetric_fog/volume_size': int;
+  'rendering/gl_compatibility/driver': string;
+  'rendering/gl_compatibility/driver.android': string;
+  'rendering/gl_compatibility/driver.ios': string;
+  'rendering/gl_compatibility/driver.linuxbsd': string;
+  'rendering/gl_compatibility/driver.macos': string;
+  'rendering/gl_compatibility/driver.web': string;
+  'rendering/gl_compatibility/driver.windows': string;
+  'rendering/gl_compatibility/fallback_to_angle': boolean;
+  'rendering/gl_compatibility/fallback_to_gles': boolean;
+  'rendering/gl_compatibility/fallback_to_native': boolean;
+  'rendering/gl_compatibility/force_angle_on_devices': Array<unknown>;
+  'rendering/gl_compatibility/item_buffer_size': int;
+  'rendering/gl_compatibility/nvidia_disable_threaded_optimization': boolean;
+  'rendering/global_illumination/gi/use_half_resolution': boolean;
+  'rendering/global_illumination/sdfgi/frames_to_converge': int;
+  'rendering/global_illumination/sdfgi/frames_to_update_lights': int;
+  'rendering/global_illumination/sdfgi/probe_ray_count': int;
+  'rendering/global_illumination/voxel_gi/quality': int;
+  'rendering/lightmapping/bake_performance/max_rays_per_pass': int;
+  'rendering/lightmapping/bake_performance/max_rays_per_probe_pass': int;
+  'rendering/lightmapping/bake_performance/max_transparency_rays': int;
+  'rendering/lightmapping/bake_performance/region_size': int;
+  'rendering/lightmapping/bake_quality/high_quality_probe_ray_count': int;
+  'rendering/lightmapping/bake_quality/high_quality_ray_count': int;
+  'rendering/lightmapping/bake_quality/low_quality_probe_ray_count': int;
+  'rendering/lightmapping/bake_quality/low_quality_ray_count': int;
+  'rendering/lightmapping/bake_quality/medium_quality_probe_ray_count': int;
+  'rendering/lightmapping/bake_quality/medium_quality_ray_count': int;
+  'rendering/lightmapping/bake_quality/ultra_quality_probe_ray_count': int;
+  'rendering/lightmapping/bake_quality/ultra_quality_ray_count': int;
+  'rendering/lightmapping/denoising/denoiser': int;
+  'rendering/lightmapping/lightmap_gi/use_bicubic_filter': boolean;
+  'rendering/lightmapping/primitive_meshes/texel_size': float;
+  'rendering/lightmapping/probe_capture/update_speed': float;
+  'rendering/lights_and_shadows/directional_shadow/16_bits': boolean;
+  'rendering/lights_and_shadows/directional_shadow/size': int;
+  'rendering/lights_and_shadows/directional_shadow/size.mobile': int;
+  'rendering/lights_and_shadows/directional_shadow/soft_shadow_filter_quality': int;
+  'rendering/lights_and_shadows/directional_shadow/soft_shadow_filter_quality.mobile': int;
+  'rendering/lights_and_shadows/positional_shadow/atlas_16_bits': boolean;
+  'rendering/lights_and_shadows/positional_shadow/atlas_quadrant_0_subdiv': int;
+  'rendering/lights_and_shadows/positional_shadow/atlas_quadrant_1_subdiv': int;
+  'rendering/lights_and_shadows/positional_shadow/atlas_quadrant_2_subdiv': int;
+  'rendering/lights_and_shadows/positional_shadow/atlas_quadrant_3_subdiv': int;
+  'rendering/lights_and_shadows/positional_shadow/atlas_size': int;
+  'rendering/lights_and_shadows/positional_shadow/atlas_size.mobile': int;
+  'rendering/lights_and_shadows/positional_shadow/soft_shadow_filter_quality': int;
+  'rendering/lights_and_shadows/positional_shadow/soft_shadow_filter_quality.mobile': int;
+  'rendering/lights_and_shadows/tighter_shadow_caster_culling': boolean;
+  'rendering/lights_and_shadows/use_physical_light_units': boolean;
+  'rendering/limits/cluster_builder/max_clustered_elements': float;
+  'rendering/limits/global_shader_variables/buffer_size': int;
+  'rendering/limits/opengl/max_lights_per_object': int;
+  'rendering/limits/opengl/max_renderable_elements': int;
+  'rendering/limits/opengl/max_renderable_lights': int;
+  'rendering/limits/spatial_indexer/threaded_cull_minimum_instances': int;
+  'rendering/limits/spatial_indexer/update_iterations_per_frame': int;
+  'rendering/limits/time/time_rollover_secs': float;
+  'rendering/mesh_lod/lod_change/threshold_pixels': float;
+  'rendering/occlusion_culling/bvh_build_quality': int;
+  'rendering/occlusion_culling/jitter_projection': boolean;
+  'rendering/occlusion_culling/occlusion_rays_per_thread': int;
+  'rendering/occlusion_culling/use_occlusion_culling': boolean;
+  'rendering/reflections/reflection_atlas/reflection_count': int;
+  'rendering/reflections/reflection_atlas/reflection_size': int;
+  'rendering/reflections/reflection_atlas/reflection_size.mobile': int;
+  'rendering/reflections/sky_reflections/fast_filter_high_quality': boolean;
+  'rendering/reflections/sky_reflections/ggx_samples': int;
+  'rendering/reflections/sky_reflections/ggx_samples.mobile': int;
+  'rendering/reflections/sky_reflections/roughness_layers': int;
+  'rendering/reflections/sky_reflections/texture_array_reflections': boolean;
+  'rendering/reflections/sky_reflections/texture_array_reflections.mobile': boolean;
+  'rendering/reflections/specular_occlusion/enabled': boolean;
+  'rendering/renderer/rendering_method': string;
+  'rendering/renderer/rendering_method.mobile': string;
+  'rendering/renderer/rendering_method.web': string;
+  'rendering/rendering_device/d3d12/agility_sdk_version': int;
+  'rendering/rendering_device/d3d12/max_resource_descriptors': int;
+  'rendering/rendering_device/d3d12/max_sampler_descriptors': int;
+  'rendering/rendering_device/driver': string;
+  'rendering/rendering_device/driver.android': string;
+  'rendering/rendering_device/driver.ios': string;
+  'rendering/rendering_device/driver.linuxbsd': string;
+  'rendering/rendering_device/driver.macos': string;
+  'rendering/rendering_device/driver.visionos': string;
+  'rendering/rendering_device/driver.windows': string;
+  'rendering/rendering_device/fallback_to_d3d12': boolean;
+  'rendering/rendering_device/fallback_to_opengl3': boolean;
+  'rendering/rendering_device/fallback_to_vulkan': boolean;
+  'rendering/rendering_device/pipeline_cache/enable': boolean;
+  'rendering/rendering_device/pipeline_cache/save_chunk_size_mb': float;
+  'rendering/rendering_device/staging_buffer/block_size_kb': int;
+  'rendering/rendering_device/staging_buffer/max_size_mb': int;
+  'rendering/rendering_device/staging_buffer/texture_download_region_size_px': int;
+  'rendering/rendering_device/staging_buffer/texture_upload_region_size_px': int;
+  'rendering/rendering_device/vsync/frame_queue_size': int;
+  'rendering/rendering_device/vsync/swapchain_image_count': int;
+  'rendering/rendering_device/vulkan/max_descriptors_per_pool': int;
+  'rendering/scaling_3d/fsr_sharpness': float;
+  'rendering/scaling_3d/mode': int;
+  'rendering/scaling_3d/mode.ios': int;
+  'rendering/scaling_3d/mode.macos': int;
+  'rendering/scaling_3d/scale': float;
+  'rendering/shader_compiler/shader_cache/compress': boolean;
+  'rendering/shader_compiler/shader_cache/enabled': boolean;
+  'rendering/shader_compiler/shader_cache/strip_debug': boolean;
+  'rendering/shader_compiler/shader_cache/strip_debug.release': boolean;
+  'rendering/shader_compiler/shader_cache/use_zstd_compression': boolean;
+  'rendering/shading/overrides/force_lambert_over_burley': boolean;
+  'rendering/shading/overrides/force_lambert_over_burley.mobile': boolean;
+  'rendering/shading/overrides/force_vertex_shading': boolean;
+  'rendering/textures/basis_universal/rdo_dict_size': int;
+  'rendering/textures/basis_universal/zstd_supercompression': boolean;
+  'rendering/textures/basis_universal/zstd_supercompression_level': int;
+  'rendering/textures/canvas_textures/default_texture_filter': int;
+  'rendering/textures/canvas_textures/default_texture_repeat': int;
+  'rendering/textures/decals/filter': int;
+  'rendering/textures/default_filters/anisotropic_filtering_level': int;
+  'rendering/textures/default_filters/texture_mipmap_bias': float;
+  'rendering/textures/default_filters/use_nearest_mipmap_filter': boolean;
+  'rendering/textures/light_projectors/filter': int;
+  'rendering/textures/lossless_compression/force_png': boolean;
+  'rendering/textures/vram_compression/cache_gpu_compressor': boolean;
+  'rendering/textures/vram_compression/compress_with_gpu': boolean;
+  'rendering/textures/vram_compression/import_etc2_astc': boolean;
+  'rendering/textures/vram_compression/import_s3tc_bptc': boolean;
+  'rendering/textures/webp_compression/compression_method': int;
+  'rendering/textures/webp_compression/lossless_compression_factor': float;
+  'rendering/viewport/hdr_2d': boolean;
+  'rendering/viewport/transparent_background': boolean;
+  'rendering/vrs/mode': int;
+  'rendering/vrs/texture': string;
+  'threading/worker_pool/low_priority_thread_ratio': float;
+  'threading/worker_pool/max_threads': int;
+  'xr/openxr/binding_modifiers/analog_threshold': boolean;
+  'xr/openxr/binding_modifiers/dpad_binding': boolean;
+  'xr/openxr/default_action_map': string;
+  'xr/openxr/enabled': boolean;
+  'xr/openxr/environment_blend_mode': int;
+  'xr/openxr/extensions/debug_message_types': int;
+  'xr/openxr/extensions/debug_utils': int;
+  'xr/openxr/extensions/eye_gaze_interaction': boolean;
+  'xr/openxr/extensions/frame_synthesis': boolean;
+  'xr/openxr/extensions/hand_interaction_profile': boolean;
+  'xr/openxr/extensions/hand_tracking': boolean;
+  'xr/openxr/extensions/hand_tracking_controller_data_source': boolean;
+  'xr/openxr/extensions/hand_tracking_unobstructed_data_source': boolean;
+  'xr/openxr/extensions/render_model': boolean;
+  'xr/openxr/extensions/spatial_entity/april_tag_dict': int;
+  'xr/openxr/extensions/spatial_entity/aruco_dict': int;
+  'xr/openxr/extensions/spatial_entity/enable_builtin_anchor_detection': boolean;
+  'xr/openxr/extensions/spatial_entity/enable_builtin_marker_tracking': boolean;
+  'xr/openxr/extensions/spatial_entity/enable_builtin_plane_detection': boolean;
+  'xr/openxr/extensions/spatial_entity/enable_marker_tracking': boolean;
+  'xr/openxr/extensions/spatial_entity/enable_persistent_anchors': boolean;
+  'xr/openxr/extensions/spatial_entity/enable_plane_tracking': boolean;
+  'xr/openxr/extensions/spatial_entity/enable_spatial_anchors': boolean;
+  'xr/openxr/extensions/spatial_entity/enabled': boolean;
+  'xr/openxr/extensions/user_presence': boolean;
+  'xr/openxr/form_factor': int;
+  'xr/openxr/foveation_dynamic': boolean;
+  'xr/openxr/foveation_level': int;
+  'xr/openxr/reference_space': int;
+  'xr/openxr/startup_alert': boolean;
+  'xr/openxr/submit_depth_buffer': boolean;
+  'xr/openxr/target_api_version': string;
+  'xr/openxr/view_configuration': int;
+  'xr/shaders/enabled': boolean;
 
   add_property_info(hint: Dictionary): void;
   check_changed_settings_in_group(setting_prefix: string): boolean;
   clear(name: string): void;
   get_changed_settings(): PackedStringArray;
-  get_global_class_list(): Dictionary[];
+  get_global_class_list(): Dictionary;
   get_order(name: string): int;
-  get_setting(name: string, default_value?: any): any;
-  get_setting_with_override(name: string): any;
-  get_setting_with_override_and_custom_features(name: string, features: PackedStringArray): any;
+  get_setting(name: string, default_value?: unknown): unknown;
+  get_setting_with_override(name: string): unknown;
+  get_setting_with_override_and_custom_features(name: string, features: PackedStringArray): unknown;
   globalize_path(path: string): string;
   has_setting(name: string): boolean;
   load_resource_pack(pack: string, replace_files?: boolean, offset?: int): boolean;
@@ -15584,10 +15584,10 @@ declare class ProjectSettings extends Object {
   save_custom(file: string): int;
   set_as_basic(name: string, basic: boolean): void;
   set_as_internal(name: string, internal: boolean): void;
-  set_initial_value(name: string, value: any): void;
+  set_initial_value(name: string, value: unknown): void;
   set_order(name: string, position: int): void;
   set_restart_if_changed(name: string, restart: boolean): void;
-  set_setting(name: string, value: any): void;
+  set_setting(name: string, value: unknown): void;
 
   settings_changed: Signal<[]>;
 }
@@ -15639,7 +15639,7 @@ declare class Projection {
 
 declare class PropertyTweener extends Tweener {
   as_relative(): PropertyTweener;
-  from(value: any): PropertyTweener;
+  from(value: unknown): PropertyTweener;
   from_current(): PropertyTweener;
   set_custom_interpolator(interpolator_method: Callable): PropertyTweener;
   set_delay(delay: float): PropertyTweener;
@@ -15663,7 +15663,7 @@ declare class Quaternion {
   z: float;
 
   angle_to(to: Quaternion): float;
-  dot(with: Quaternion): float;
+  dot(with_: Quaternion): float;
   exp(): Quaternion;
   static from_euler(euler: Vector3): Quaternion;
   get_angle(): float;
@@ -15702,7 +15702,7 @@ declare class RDFramebufferPass extends RefCounted {
 }
 
 declare class RDPipelineColorBlendState extends RefCounted {
-  attachments: RDPipelineColorBlendStateAttachment[];
+  attachments: unknown;
   blend_constant: Color;
   enable_logic_op: boolean;
   logic_op: int;
@@ -15754,7 +15754,7 @@ declare class RDPipelineMultisampleState extends RefCounted {
   enable_sample_shading: boolean;
   min_sample_shading: float;
   sample_count: int;
-  sample_masks: int[];
+  sample_masks: unknown;
 }
 
 declare class RDPipelineRasterizationState extends RefCounted {
@@ -15773,7 +15773,7 @@ declare class RDPipelineRasterizationState extends RefCounted {
 
 declare class RDPipelineSpecializationConstant extends RefCounted {
   constant_id: int;
-  value: any;
+  value: unknown;
 }
 
 declare class RDSamplerState extends RefCounted {
@@ -15798,7 +15798,7 @@ declare class RDShaderFile extends Resource {
   base_error: string;
 
   get_spirv(version?: string): RDShaderSPIRV;
-  get_version_list(): StringName[];
+  get_version_list(): unknown;
   set_bytecode(bytecode: RDShaderSPIRV, version?: string): void;
 }
 
@@ -15878,7 +15878,7 @@ declare class RDUniform extends RefCounted {
 
   add_id(id: RID): void;
   clear_ids(): void;
-  get_ids(): RID[];
+  get_ids(): unknown;
 }
 
 declare class RDVertexAttribute extends RefCounted {
@@ -15923,7 +15923,7 @@ declare class Range extends Control {
 
   _value_changed(new_value: float): void;
   set_value_no_signal(value: float): void;
-  share(with: Node): void;
+  share(with_: Node): void;
   unshare(): void;
 
   changed: Signal<[]>;
@@ -16031,7 +16031,7 @@ declare class RectangleShape2D extends Shape2D {
   size: Vector2;
 }
 
-declare class RefCounted extends Object {
+declare class RefCounted extends GodotObject {
   get_reference_count(): int;
   init_ref(): boolean;
   reference(): boolean;
@@ -16090,7 +16090,7 @@ declare class RemoteTransform3D extends Node3D {
   force_update_cache(): void;
 }
 
-declare class RenderData extends Object {
+declare class RenderData extends GodotObject {
   get_camera_attributes(): RID;
   get_environment(): RID;
   get_render_scene_buffers(): RenderSceneBuffers;
@@ -16162,7 +16162,7 @@ declare class RenderSceneBuffersRD extends RenderSceneBuffers {
   has_texture(context: string, name: string): boolean;
 }
 
-declare class RenderSceneData extends Object {
+declare class RenderSceneData extends GodotObject {
   get_cam_projection(): Projection;
   get_cam_transform(): Transform3D;
   get_uniform_buffer(): RID;
@@ -16183,7 +16183,7 @@ declare class RenderSceneDataExtension extends RenderSceneData {
 declare class RenderSceneDataRD extends RenderSceneData {
 }
 
-declare class RenderingDevice extends Object {
+declare class RenderingDevice extends GodotObject {
   acceleration_structure_build(acceleration_structure: RID): int;
   barrier(from_: int, to: int): void;
   blas_create(vertex_array: RID, index_array: RID, geometry_bits: int, position_attribute_location?: int): RID;
@@ -16202,7 +16202,7 @@ declare class RenderingDevice extends Object {
   compute_list_dispatch_indirect(compute_list: int, buffer: RID, offset: int): void;
   compute_list_end(): void;
   compute_list_set_push_constant(compute_list: int, buffer: PackedByteArray, size_bytes: int): void;
-  compute_pipeline_create(shader: RID, specialization_constants?: RDPipelineSpecializationConstant[]): RID;
+  compute_pipeline_create(shader: RID, specialization_constants?: unknown): RID;
   compute_pipeline_is_valid(compute_pipeline: RID): boolean;
   create_local_device(): RenderingDevice;
   draw_command_begin_label(name: string, color: Color): void;
@@ -16210,12 +16210,12 @@ declare class RenderingDevice extends Object {
   draw_command_insert_label(name: string, color: Color): void;
   draw_list_begin(framebuffer: RID, draw_flags: int, clear_color_values?: PackedColorArray, clear_depth_value?: float, clear_stencil_value?: int, region?: Rect2, breadcrumb?: int): int;
   draw_list_begin_for_screen(screen?: int, clear_color?: Color): int;
-  draw_list_begin_split(framebuffer: RID, splits: int, initial_color_action: int, final_color_action: int, initial_depth_action: int, final_depth_action: int, clear_color_values?: PackedColorArray, clear_depth?: float, clear_stencil?: int, region?: Rect2, storage_textures?: RID[]): PackedInt64Array;
+  draw_list_begin_split(framebuffer: RID, splits: int, initial_color_action: int, final_color_action: int, initial_depth_action: int, final_depth_action: int, clear_color_values?: PackedColorArray, clear_depth?: float, clear_stencil?: int, region?: Rect2, storage_textures?: unknown): PackedInt64Array;
   draw_list_bind_index_array(draw_list: int, index_array: RID): void;
   draw_list_bind_render_pipeline(draw_list: int, render_pipeline: RID): void;
   draw_list_bind_uniform_set(draw_list: int, uniform_set: RID, set_index: int): void;
   draw_list_bind_vertex_array(draw_list: int, vertex_array: RID): void;
-  draw_list_bind_vertex_buffers_format(draw_list: int, vertex_format: int, vertex_count: int, vertex_buffers: RID[], offsets?: PackedInt64Array): void;
+  draw_list_bind_vertex_buffers_format(draw_list: int, vertex_format: int, vertex_count: int, vertex_buffers: unknown, offsets?: PackedInt64Array): void;
   draw_list_disable_scissor(draw_list: int): void;
   draw_list_draw(draw_list: int, use_indices: boolean, instances: int, procedural_vertex_count?: int): void;
   draw_list_draw_indirect(draw_list: int, use_indices: boolean, buffer: RID, offset?: int, draw_count?: int, stride?: int): void;
@@ -16225,12 +16225,12 @@ declare class RenderingDevice extends Object {
   draw_list_set_push_constant(draw_list: int, buffer: PackedByteArray, size_bytes: int): void;
   draw_list_switch_to_next_pass(): int;
   draw_list_switch_to_next_pass_split(splits: int): PackedInt64Array;
-  framebuffer_create(textures: RID[], validate_with_format?: int, view_count?: int): RID;
+  framebuffer_create(textures: unknown, validate_with_format?: int, view_count?: int): RID;
   framebuffer_create_empty(size: Vector2i, samples: int, validate_with_format?: int): RID;
-  framebuffer_create_multipass(textures: RID[], passes: RDFramebufferPass[], validate_with_format?: int, view_count?: int): RID;
-  framebuffer_format_create(attachments: RDAttachmentFormat[], view_count?: int): int;
+  framebuffer_create_multipass(textures: unknown, passes: unknown, validate_with_format?: int, view_count?: int): RID;
+  framebuffer_format_create(attachments: unknown, view_count?: int): int;
   framebuffer_format_create_empty(samples: int): int;
-  framebuffer_format_create_multipass(attachments: RDAttachmentFormat[], passes: RDFramebufferPass[], view_count?: int): int;
+  framebuffer_format_create_multipass(attachments: unknown, passes: unknown, view_count?: int): int;
   framebuffer_format_get_texture_samples(format: int, render_pass?: int): int;
   framebuffer_get_format(framebuffer: RID): int;
   framebuffer_is_valid(framebuffer: RID): boolean;
@@ -16261,7 +16261,7 @@ declare class RenderingDevice extends Object {
   get_tracked_object_type_count(): int;
   has_feature(feature: int): boolean;
   index_array_create(index_buffer: RID, index_offset: int, index_count: int): RID;
-  index_buffer_create(size_indices: int, format: int, data?: PackedByteArray, use_restart_indices?: boolean, creation_bits: int): RID;
+  index_buffer_create(size_indices: int, format: int, data?: PackedByteArray, use_restart_indices?: boolean, creation_bits?: int): RID;
   limit_get(limit: int): int;
   raytracing_list_begin(): int;
   raytracing_list_bind_raytracing_pipeline(raytracing_list: int, raytracing_pipeline: RID): void;
@@ -16269,9 +16269,9 @@ declare class RenderingDevice extends Object {
   raytracing_list_end(): void;
   raytracing_list_set_push_constant(raytracing_list: int, buffer: PackedByteArray, size_bytes: int): void;
   raytracing_list_trace_rays(raytracing_list: int, width: int, height: int): void;
-  raytracing_pipeline_create(shader: RID, specialization_constants?: RDPipelineSpecializationConstant[]): RID;
+  raytracing_pipeline_create(shader: RID, specialization_constants?: unknown): RID;
   raytracing_pipeline_is_valid(raytracing_pipeline: RID): boolean;
-  render_pipeline_create(shader: RID, framebuffer_format: int, vertex_format: int, primitive: int, rasterization_state: RDPipelineRasterizationState, multisample_state: RDPipelineMultisampleState, stencil_state: RDPipelineDepthStencilState, color_blend_state: RDPipelineColorBlendState, dynamic_state_flags: int, for_render_pass?: int, specialization_constants?: RDPipelineSpecializationConstant[]): RID;
+  render_pipeline_create(shader: RID, framebuffer_format: int, vertex_format: int, primitive: int, rasterization_state: RDPipelineRasterizationState, multisample_state: RDPipelineMultisampleState, stencil_state: RDPipelineDepthStencilState, color_blend_state: RDPipelineColorBlendState, dynamic_state_flags: int, for_render_pass?: int, specialization_constants?: unknown): RID;
   render_pipeline_is_valid(render_pipeline: RID): boolean;
   sampler_create(state: RDSamplerState): RID;
   sampler_is_format_supported_for_filter(format: int, sampler_filter: int): boolean;
@@ -16285,16 +16285,16 @@ declare class RenderingDevice extends Object {
   shader_create_from_spirv(spirv_data: RDShaderSPIRV, name?: string): RID;
   shader_create_placeholder(): RID;
   shader_get_vertex_input_attribute_mask(shader: RID): int;
-  storage_buffer_create(size_bytes: int, data?: PackedByteArray, usage: int, creation_bits: int): RID;
+  storage_buffer_create(size_bytes: int, data?: PackedByteArray, usage?: int, creation_bits?: int): RID;
   submit(): void;
   sync(): void;
   texture_buffer_create(size_bytes: int, format: int, data?: PackedByteArray): RID;
   texture_clear(texture: RID, color: Color, base_mipmap: int, mipmap_count: int, base_layer: int, layer_count: int): int;
   texture_copy(from_texture: RID, to_texture: RID, from_pos: Vector3, to_pos: Vector3, size: Vector3, src_mipmap: int, dst_mipmap: int, src_layer: int, dst_layer: int): int;
-  texture_create(format: RDTextureFormat, view: RDTextureView, data?: PackedByteArray[]): RID;
+  texture_create(format: RDTextureFormat, view: RDTextureView, data?: unknown): RID;
   texture_create_from_extension(type_: int, format: int, samples: int, usage_flags: int, image: int, width: int, height: int, depth: int, layers: int, mipmaps?: int): RID;
   texture_create_shared(view: RDTextureView, with_texture: RID): RID;
-  texture_create_shared_from_slice(view: RDTextureView, with_texture: RID, layer: int, mipmap: int, mipmaps?: int, slice_type: int): RID;
+  texture_create_shared_from_slice(view: RDTextureView, with_texture: RID, layer: int, mipmap: int, mipmaps?: int, slice_type?: int): RID;
   texture_get_data(texture: RID, layer: int): PackedByteArray;
   texture_get_data_async(texture: RID, layer: int, callback: Callable): int;
   texture_get_format(texture: RID): RDTextureFormat;
@@ -16308,13 +16308,13 @@ declare class RenderingDevice extends Object {
   texture_update(texture: RID, layer: int, data: PackedByteArray): int;
   tlas_create(instances_buffer: RID): RID;
   tlas_instances_buffer_create(instance_count: int, creation_bits: int): RID;
-  tlas_instances_buffer_fill(instances_buffer: RID, blases: RID[], transforms: Transform3D[]): void;
-  uniform_buffer_create(size_bytes: int, data?: PackedByteArray, creation_bits: int): RID;
-  uniform_set_create(uniforms: RDUniform[], shader: RID, shader_set: int): RID;
+  tlas_instances_buffer_fill(instances_buffer: RID, blases: unknown, transforms: unknown): void;
+  uniform_buffer_create(size_bytes: int, data?: PackedByteArray, creation_bits?: int): RID;
+  uniform_set_create(uniforms: unknown, shader: RID, shader_set: int): RID;
   uniform_set_is_valid(uniform_set: RID): boolean;
-  vertex_array_create(vertex_count: int, vertex_format: int, src_buffers: RID[], offsets?: PackedInt64Array): RID;
-  vertex_buffer_create(size_bytes: int, data?: PackedByteArray, creation_bits: int): RID;
-  vertex_format_create(vertex_descriptions: RDVertexAttribute[]): int;
+  vertex_array_create(vertex_count: int, vertex_format: int, src_buffers: unknown, offsets?: PackedInt64Array): RID;
+  vertex_buffer_create(size_bytes: int, data?: PackedByteArray, creation_bits?: int): RID;
+  vertex_format_create(vertex_descriptions: unknown): int;
 
   // enum DeviceType
   static readonly DEVICE_TYPE_OTHER: int;
@@ -16921,10 +16921,10 @@ declare class RenderingDevice extends Object {
   static readonly INVALID_FORMAT_ID: int;
 }
 
-declare class RenderingServer extends Object {
+declare class RenderingServer extends GodotObject {
   render_loop_enabled: boolean;
 
-  bake_render_uv2(base: RID, material_overrides: RID[], image_size: Vector2i): Image[];
+  bake_render_uv2(base: RID, material_overrides: unknown, image_size: Vector2i): unknown;
   call_on_render_thread(callable: Callable): void;
   camera_attributes_create(): RID;
   camera_attributes_set_auto_exposure(camera_attributes: RID, enable: boolean, min_sensitivity: float, max_sensitivity: float, speed: float, scale: float): void;
@@ -16966,9 +16966,9 @@ declare class RenderingServer extends Object {
   canvas_item_attach_skeleton(item: RID, skeleton: RID): void;
   canvas_item_clear(item: RID): void;
   canvas_item_create(): RID;
-  canvas_item_get_instance_shader_parameter(instance: RID, parameter: string): any;
-  canvas_item_get_instance_shader_parameter_default_value(instance: RID, parameter: string): any;
-  canvas_item_get_instance_shader_parameter_list(instance: RID): Dictionary[];
+  canvas_item_get_instance_shader_parameter(instance: RID, parameter: string): unknown;
+  canvas_item_get_instance_shader_parameter_default_value(instance: RID, parameter: string): unknown;
+  canvas_item_get_instance_shader_parameter_list(instance: RID): Dictionary;
   canvas_item_reset_physics_interpolation(item: RID): void;
   canvas_item_set_canvas_group_mode(item: RID, mode: int, clear_margin?: float, fit_empty?: boolean, fit_margin?: float, blur_mipmaps?: boolean): void;
   canvas_item_set_clip(item: RID, clip: boolean): void;
@@ -16979,7 +16979,7 @@ declare class RenderingServer extends Object {
   canvas_item_set_distance_field_mode(item: RID, enabled: boolean): void;
   canvas_item_set_draw_behind_parent(item: RID, enabled: boolean): void;
   canvas_item_set_draw_index(item: RID, index: int): void;
-  canvas_item_set_instance_shader_parameter(instance: RID, parameter: string, value: any): void;
+  canvas_item_set_instance_shader_parameter(instance: RID, parameter: string, value: unknown): void;
   canvas_item_set_interpolated(item: RID, interpolated: boolean): void;
   canvas_item_set_light_mask(item: RID, mask: int): void;
   canvas_item_set_material(item: RID, material: RID): void;
@@ -17045,8 +17045,8 @@ declare class RenderingServer extends Object {
   compositor_effect_create(): RID;
   compositor_effect_set_callback(effect: RID, callback_type: int, callback: Callable): void;
   compositor_effect_set_enabled(effect: RID, enabled: boolean): void;
-  compositor_effect_set_flag(effect: RID, flag: int, set: boolean): void;
-  compositor_set_compositor_effects(compositor: RID, effects: RID[]): void;
+  compositor_effect_set_flag(effect: RID, flag: int, set_: boolean): void;
+  compositor_set_compositor_effects(compositor: RID, effects: unknown): void;
   create_local_rendering_device(): RenderingDevice;
   debug_canvas_item_get_rect(item: RID): Rect2;
   decal_create(): RID;
@@ -17067,7 +17067,7 @@ declare class RenderingServer extends Object {
   environment_create(): RID;
   environment_glow_set_use_bicubic_upscale(enable: boolean): void;
   environment_set_adjustment(env: RID, enable: boolean, brightness: float, contrast: float, saturation: float, use_1d_color_correction: boolean, color_correction: RID): void;
-  environment_set_ambient_light(env: RID, color: Color, ambient: int, energy?: float, sky_contribution?: float, reflection_source: int): void;
+  environment_set_ambient_light(env: RID, color: Color, ambient: int, energy?: float, sky_contribution?: float, reflection_source?: int): void;
   environment_set_background(env: RID, bg: int): void;
   environment_set_bg_color(env: RID, color: Color): void;
   environment_set_bg_energy(env: RID, multiplier: float, exposure_value: float): void;
@@ -17107,7 +17107,7 @@ declare class RenderingServer extends Object {
   get_frame_setup_time_cpu(): float;
   get_rendering_device(): RenderingDevice;
   get_rendering_info(info: int): int;
-  get_shader_parameter_list(shader: RID): Dictionary[];
+  get_shader_parameter_list(shader: RID): Dictionary;
   get_test_cube(): RID;
   get_test_texture(): RID;
   get_video_adapter_api_version(): string;
@@ -17116,13 +17116,13 @@ declare class RenderingServer extends Object {
   get_video_adapter_vendor(): string;
   get_white_texture(): RID;
   gi_set_use_half_resolution(half_resolution: boolean): void;
-  global_shader_parameter_add(name: string, type_: int, default_value: any): void;
-  global_shader_parameter_get(name: string): any;
-  global_shader_parameter_get_list(): StringName[];
+  global_shader_parameter_add(name: string, type_: int, default_value: unknown): void;
+  global_shader_parameter_get(name: string): unknown;
+  global_shader_parameter_get_list(): unknown;
   global_shader_parameter_get_type(name: string): int;
   global_shader_parameter_remove(name: string): void;
-  global_shader_parameter_set(name: string, value: any): void;
-  global_shader_parameter_set_override(name: string, value: any): void;
+  global_shader_parameter_set(name: string, value: unknown): void;
+  global_shader_parameter_set_override(name: string, value: unknown): void;
   has_changed(): boolean;
   has_feature(feature: int): boolean;
   has_os_feature(feature: string): boolean;
@@ -17130,16 +17130,16 @@ declare class RenderingServer extends Object {
   instance_attach_skeleton(instance: RID, skeleton: RID): void;
   instance_create(): RID;
   instance_create2(base: RID, scenario: RID): RID;
-  instance_geometry_get_shader_parameter(instance: RID, parameter: string): any;
-  instance_geometry_get_shader_parameter_default_value(instance: RID, parameter: string): any;
-  instance_geometry_get_shader_parameter_list(instance: RID): Dictionary[];
+  instance_geometry_get_shader_parameter(instance: RID, parameter: string): unknown;
+  instance_geometry_get_shader_parameter_default_value(instance: RID, parameter: string): unknown;
+  instance_geometry_get_shader_parameter_list(instance: RID): Dictionary;
   instance_geometry_set_cast_shadows_setting(instance: RID, shadow_casting_setting: int): void;
   instance_geometry_set_flag(instance: RID, flag: int, enabled: boolean): void;
   instance_geometry_set_lightmap(instance: RID, lightmap: RID, lightmap_uv_scale: Rect2, lightmap_slice: int): void;
   instance_geometry_set_lod_bias(instance: RID, lod_bias: float): void;
   instance_geometry_set_material_overlay(instance: RID, material: RID): void;
   instance_geometry_set_material_override(instance: RID, material: RID): void;
-  instance_geometry_set_shader_parameter(instance: RID, parameter: string, value: any): void;
+  instance_geometry_set_shader_parameter(instance: RID, parameter: string, value: unknown): void;
   instance_geometry_set_transparency(instance: RID, transparency: float): void;
   instance_geometry_set_visibility_range(instance: RID, min: float, max: float, min_margin: float, max_margin: float, fade_mode: int): void;
   instance_set_base(instance: RID, base: RID): void;
@@ -17156,7 +17156,7 @@ declare class RenderingServer extends Object {
   instance_set_visible(instance: RID, visible: boolean): void;
   instance_teleport(instance: RID): void;
   instances_cull_aabb(aabb: AABB, scenario?: RID): PackedInt64Array;
-  instances_cull_convex(convex: Plane[], scenario?: RID): PackedInt64Array;
+  instances_cull_convex(convex: unknown, scenario?: RID): PackedInt64Array;
   instances_cull_ray(from_: Vector3, to: Vector3, scenario?: RID): PackedInt64Array;
   is_on_render_thread(): boolean;
   light_directional_set_blend_splits(light: RID, enable: boolean): void;
@@ -17189,17 +17189,17 @@ declare class RenderingServer extends Object {
   lightmaps_set_bicubic_filter(enable: boolean): void;
   make_sphere_mesh(latitudes: int, longitudes: int, radius: float): RID;
   material_create(): RID;
-  material_get_param(material: RID, parameter: string): any;
+  material_get_param(material: RID, parameter: string): unknown;
   material_set_next_pass(material: RID, next_material: RID): void;
-  material_set_param(material: RID, parameter: string, value: any): void;
+  material_set_param(material: RID, parameter: string, value: unknown): void;
   material_set_render_priority(material: RID, priority: int): void;
   material_set_shader(shader_material: RID, shader: RID): void;
   material_set_use_debanding(enable: boolean): void;
   mesh_add_surface(mesh: RID, surface: Dictionary): void;
-  mesh_add_surface_from_arrays(mesh: RID, primitive: int, arrays: Array<any>, blend_shapes?: Array<any>, lods?: Dictionary, compress_format: int): void;
+  mesh_add_surface_from_arrays(mesh: RID, primitive: int, arrays: Array<unknown>, blend_shapes?: Array<unknown>, lods?: Dictionary, compress_format?: int): void;
   mesh_clear(mesh: RID): void;
   mesh_create(): RID;
-  mesh_create_from_surfaces(surfaces: Dictionary[], blend_shape_count?: int): RID;
+  mesh_create_from_surfaces(surfaces: Dictionary, blend_shape_count?: int): RID;
   mesh_get_blend_shape_count(mesh: RID): int;
   mesh_get_blend_shape_mode(mesh: RID): int;
   mesh_get_custom_aabb(mesh: RID): AABB;
@@ -17208,7 +17208,7 @@ declare class RenderingServer extends Object {
   mesh_set_blend_shape_mode(mesh: RID, mode: int): void;
   mesh_set_custom_aabb(mesh: RID, aabb: AABB): void;
   mesh_set_shadow_mesh(mesh: RID, shadow_mesh: RID): void;
-  mesh_surface_get_arrays(mesh: RID, surface: int): Array<any>;
+  mesh_surface_get_arrays(mesh: RID, surface: int): Array<unknown>;
   mesh_surface_get_blend_shape_arrays(mesh: RID, surface: int): Array<void>;
   mesh_surface_get_format_attribute_stride(format: int, vertex_count: int): int;
   mesh_surface_get_format_index_stride(format: int, vertex_count: int): int;
@@ -17296,7 +17296,7 @@ declare class RenderingServer extends Object {
   particles_set_randomness_ratio(particles: RID, ratio: float): void;
   particles_set_speed_scale(particles: RID, scale: float): void;
   particles_set_subemitter(particles: RID, subemitter_particles: RID): void;
-  particles_set_trail_bind_poses(particles: RID, bind_poses: Transform3D[]): void;
+  particles_set_trail_bind_poses(particles: RID, bind_poses: unknown): void;
   particles_set_trails(particles: RID, enable: boolean, length_sec: float): void;
   particles_set_transform_align(particles: RID, align: int): void;
   particles_set_use_local_coordinates(particles: RID, enable: boolean): void;
@@ -17332,7 +17332,7 @@ declare class RenderingServer extends Object {
   shader_create(): RID;
   shader_get_code(shader: RID): string;
   shader_get_default_texture_parameter(shader: RID, name: string, index?: int): RID;
-  shader_get_parameter_default(shader: RID, name: string): any;
+  shader_get_parameter_default(shader: RID, name: string): unknown;
   shader_set_code(shader: RID, code: string): void;
   shader_set_default_texture_parameter(shader: RID, name: string, texture: RID, index?: int): void;
   shader_set_path_hint(shader: RID, path: string): void;
@@ -17355,16 +17355,16 @@ declare class RenderingServer extends Object {
   texture_2d_create(image: Image): RID;
   texture_2d_get(texture: RID): Image;
   texture_2d_layer_get(texture: RID, layer: int): Image;
-  texture_2d_layered_create(layers: Image[], layered_type: int): RID;
+  texture_2d_layered_create(layers: unknown, layered_type: int): RID;
   texture_2d_layered_placeholder_create(layered_type: int): RID;
   texture_2d_placeholder_create(): RID;
   texture_2d_update(texture: RID, image: Image, layer: int): void;
-  texture_3d_create(format: int, width: int, height: int, depth: int, mipmaps: boolean, data: Image[]): RID;
-  texture_3d_get(texture: RID): Image[];
+  texture_3d_create(format: int, width: int, height: int, depth: int, mipmaps: boolean, data: unknown): RID;
+  texture_3d_get(texture: RID): unknown;
   texture_3d_placeholder_create(): RID;
-  texture_3d_update(texture: RID, data: Image[]): void;
-  texture_create_from_native_handle(type_: int, format: int, native_handle: int, width: int, height: int, depth: int, layers?: int, layered_type: int): RID;
-  texture_drawable_blit_rect(textures: RID[], rect: Rect2i, material: RID, modulate: Color, source_textures: RID[], to_mipmap?: int): void;
+  texture_3d_update(texture: RID, data: unknown): void;
+  texture_create_from_native_handle(type_: int, format: int, native_handle: int, width: int, height: int, depth: int, layers?: int, layered_type?: int): RID;
+  texture_drawable_blit_rect(textures: unknown, rect: Rect2i, material: RID, modulate: Color, source_textures: unknown, to_mipmap?: int): void;
   texture_drawable_create(width: int, height: int, format: int, color?: Color, with_mipmaps?: boolean): RID;
   texture_drawable_generate_mipmaps(texture: RID): void;
   texture_drawable_get_default_material(): RID;
@@ -18089,7 +18089,7 @@ declare class ResourceFormatLoader extends RefCounted {
   _get_resource_type(path: string): string;
   _get_resource_uid(path: string): int;
   _handles_type(type_: string): boolean;
-  _load(path: string, original_path: string, use_sub_threads: boolean, cache_mode: int): any;
+  _load(path: string, original_path: string, use_sub_threads: boolean, cache_mode: int): unknown;
   _recognize_path(path: string, type_: string): boolean;
   _rename_dependencies(path: string, renames: Dictionary): int;
 
@@ -18119,7 +18119,7 @@ declare class ResourceImporter extends RefCounted {
 
 declare class ResourceImporterBMFont extends ResourceImporter {
   compress: boolean;
-  fallbacks: Array<any>;
+  fallbacks: Array<unknown>;
   scaling_mode: int;
 }
 
@@ -18140,7 +18140,7 @@ declare class ResourceImporterDynamicFont extends ResourceImporter {
   antialiasing: int;
   compress: boolean;
   disable_embedded_bitmaps: boolean;
-  fallbacks: Array<any>;
+  fallbacks: Array<unknown>;
   force_autohinter: boolean;
   generate_mipmaps: boolean;
   hinting: int;
@@ -18152,7 +18152,7 @@ declare class ResourceImporterDynamicFont extends ResourceImporter {
   multichannel_signed_distance_field: boolean;
   opentype_features: Dictionary;
   oversampling: float;
-  preload: Array<any>;
+  preload: Array<unknown>;
   script_support: Dictionary;
   subpixel_positioning: int;
 }
@@ -18167,7 +18167,7 @@ declare class ResourceImporterImageFont extends ResourceImporter {
   columns: int;
   compress: boolean;
   descent: int;
-  fallbacks: Array<any>;
+  fallbacks: Array<unknown>;
   image_margin: Rect2i;
   kerning_pairs: PackedStringArray;
   rows: int;
@@ -18175,16 +18175,16 @@ declare class ResourceImporterImageFont extends ResourceImporter {
 }
 
 declare class ResourceImporterLayeredTexture extends ResourceImporter {
-  compress/channel_pack: int;
-  compress/hdr_compression: int;
-  compress/high_quality: boolean;
-  compress/lossy_quality: float;
-  compress/mode: int;
-  compress/rdo_quality_loss: float;
-  compress/uastc_level: int;
-  mipmaps/generate: boolean;
-  mipmaps/limit: int;
-  slices/arrangement: int;
+  'compress/channel_pack': int;
+  'compress/hdr_compression': int;
+  'compress/high_quality': boolean;
+  'compress/lossy_quality': float;
+  'compress/mode': int;
+  'compress/rdo_quality_loss': float;
+  'compress/uastc_level': int;
+  'mipmaps/generate': boolean;
+  'mipmaps/limit': int;
+  'slices/arrangement': int;
 }
 
 declare class ResourceImporterOBJ extends ResourceImporter {
@@ -18209,62 +18209,62 @@ declare class ResourceImporterSVG extends ResourceImporter {
 
 declare class ResourceImporterScene extends ResourceImporter {
   _subresources: Dictionary;
-  animation/fps: float;
-  animation/import: boolean;
-  animation/import_rest_as_RESET: boolean;
-  animation/remove_immutable_tracks: boolean;
-  animation/trimming: boolean;
-  import_script/path: string;
-  materials/extract: int;
-  materials/extract_format: int;
-  materials/extract_path: string;
-  meshes/create_shadow_meshes: boolean;
-  meshes/ensure_tangents: boolean;
-  meshes/force_disable_compression: boolean;
-  meshes/generate_lods: boolean;
-  meshes/light_baking: int;
-  meshes/lightmap_texel_size: float;
-  nodes/apply_root_scale: boolean;
-  nodes/import_as_skeleton_bones: boolean;
-  nodes/root_name: string;
-  nodes/root_scale: float;
-  nodes/root_script: Script;
-  nodes/root_type: string;
-  nodes/use_name_suffixes: boolean;
-  nodes/use_node_type_suffixes: boolean;
-  skins/use_named_skins: boolean;
+  'animation/fps': float;
+  'animation/import': boolean;
+  'animation/import_rest_as_RESET': boolean;
+  'animation/remove_immutable_tracks': boolean;
+  'animation/trimming': boolean;
+  'import_script/path': string;
+  'materials/extract': int;
+  'materials/extract_format': int;
+  'materials/extract_path': string;
+  'meshes/create_shadow_meshes': boolean;
+  'meshes/ensure_tangents': boolean;
+  'meshes/force_disable_compression': boolean;
+  'meshes/generate_lods': boolean;
+  'meshes/light_baking': int;
+  'meshes/lightmap_texel_size': float;
+  'nodes/apply_root_scale': boolean;
+  'nodes/import_as_skeleton_bones': boolean;
+  'nodes/root_name': string;
+  'nodes/root_scale': float;
+  'nodes/root_script': Script;
+  'nodes/root_type': string;
+  'nodes/use_name_suffixes': boolean;
+  'nodes/use_node_type_suffixes': boolean;
+  'skins/use_named_skins': boolean;
 }
 
 declare class ResourceImporterShaderFile extends ResourceImporter {
 }
 
 declare class ResourceImporterTexture extends ResourceImporter {
-  compress/channel_pack: int;
-  compress/hdr_compression: int;
-  compress/high_quality: boolean;
-  compress/lossy_quality: float;
-  compress/mode: int;
-  compress/normal_map: int;
-  compress/rdo_quality_loss: float;
-  compress/uastc_level: int;
-  detect_3d/compress_to: int;
-  editor/convert_colors_with_editor_theme: boolean;
-  editor/scale_with_editor_scale: boolean;
-  mipmaps/generate: boolean;
-  mipmaps/limit: int;
-  process/channel_remap/alpha: int;
-  process/channel_remap/blue: int;
-  process/channel_remap/green: int;
-  process/channel_remap/red: int;
-  process/fix_alpha_border: boolean;
-  process/hdr_as_srgb: boolean;
-  process/hdr_clamp_exposure: boolean;
-  process/normal_map_invert_y: boolean;
-  process/premult_alpha: boolean;
-  process/size_limit: int;
-  roughness/mode: int;
-  roughness/src_normal: string;
-  svg/scale: float;
+  'compress/channel_pack': int;
+  'compress/hdr_compression': int;
+  'compress/high_quality': boolean;
+  'compress/lossy_quality': float;
+  'compress/mode': int;
+  'compress/normal_map': int;
+  'compress/rdo_quality_loss': float;
+  'compress/uastc_level': int;
+  'detect_3d/compress_to': int;
+  'editor/convert_colors_with_editor_theme': boolean;
+  'editor/scale_with_editor_scale': boolean;
+  'mipmaps/generate': boolean;
+  'mipmaps/limit': int;
+  'process/channel_remap/alpha': int;
+  'process/channel_remap/blue': int;
+  'process/channel_remap/green': int;
+  'process/channel_remap/red': int;
+  'process/fix_alpha_border': boolean;
+  'process/hdr_as_srgb': boolean;
+  'process/hdr_clamp_exposure': boolean;
+  'process/normal_map_invert_y': boolean;
+  'process/premult_alpha': boolean;
+  'process/size_limit': int;
+  'roughness/mode': int;
+  'roughness/src_normal': string;
+  'svg/scale': float;
 }
 
 declare class ResourceImporterTextureAtlas extends ResourceImporter {
@@ -18275,19 +18275,19 @@ declare class ResourceImporterTextureAtlas extends ResourceImporter {
 }
 
 declare class ResourceImporterWAV extends ResourceImporter {
-  compress/mode: int;
-  edit/loop_begin: int;
-  edit/loop_end: int;
-  edit/loop_mode: int;
-  edit/normalize: boolean;
-  edit/trim: boolean;
-  force/8_bit: boolean;
-  force/max_rate: boolean;
-  force/max_rate_hz: float;
-  force/mono: boolean;
+  'compress/mode': int;
+  'edit/loop_begin': int;
+  'edit/loop_end': int;
+  'edit/loop_mode': int;
+  'edit/normalize': boolean;
+  'edit/trim': boolean;
+  'force/8_bit': boolean;
+  'force/max_rate': boolean;
+  'force/max_rate_hz': float;
+  'force/mono': boolean;
 }
 
-declare class ResourceLoader extends Object {
+declare class ResourceLoader extends GodotObject {
   add_resource_format_loader(format_loader: ResourceFormatLoader, at_front?: boolean): void;
   exists(path: string, type_hint?: string): boolean;
   get_cached_ref(path: string): Resource;
@@ -18296,10 +18296,10 @@ declare class ResourceLoader extends Object {
   get_resource_uid(path: string): int;
   has_cached(path: string): boolean;
   list_directory(directory_path: string): PackedStringArray;
-  load(path: string, type_hint?: string, cache_mode: int): Resource;
+  load(path: string, type_hint?: string, cache_mode?: int): Resource;
   load_threaded_get(path: string): Resource;
-  load_threaded_get_status(path: string, progress?: Array<any>): int;
-  load_threaded_request(path: string, type_hint?: string, use_sub_threads?: boolean, cache_mode: int): int;
+  load_threaded_get_status(path: string, progress?: Array<unknown>): int;
+  load_threaded_request(path: string, type_hint?: string, use_sub_threads?: boolean, cache_mode?: int): int;
   remove_resource_format_loader(format_loader: ResourceFormatLoader): void;
   set_abort_on_missing_resources(abort: boolean): void;
 
@@ -18325,12 +18325,12 @@ declare class ResourcePreloader extends Node {
   rename_resource(name: string, newname: string): void;
 }
 
-declare class ResourceSaver extends Object {
+declare class ResourceSaver extends GodotObject {
   add_resource_format_saver(format_saver: ResourceFormatSaver, at_front?: boolean): void;
   get_recognized_extensions(type_: Resource): PackedStringArray;
   get_resource_id_for_path(path: string, generate?: boolean): int;
   remove_resource_format_saver(format_saver: ResourceFormatSaver): void;
-  save(resource: Resource, path?: string, flags: int): int;
+  save(resource: Resource, path?: string, flags?: int): int;
   set_uid(resource: string, uid: int): int;
 
   // enum SaverFlags
@@ -18344,7 +18344,7 @@ declare class ResourceSaver extends Object {
   static readonly FLAG_REPLACE_SUBRESOURCE_PATHS: int;
 }
 
-declare class ResourceUID extends Object {
+declare class ResourceUID extends GodotObject {
   add_id(id: int, path: string): void;
   create_id(): int;
   create_id_for_path(path: string): int;
@@ -18403,7 +18403,7 @@ declare class RichTextLabel extends Control {
   bbcode_enabled: boolean;
   clip_contents: boolean;
   context_menu_enabled: boolean;
-  custom_effects: Array<any>;
+  custom_effects: Array<unknown>;
   deselect_on_focus_loss_enabled: boolean;
   drag_and_drop_selection_enabled: boolean;
   fit_content: boolean;
@@ -18420,7 +18420,7 @@ declare class RichTextLabel extends Control {
   selection_enabled: boolean;
   shortcut_keys_enabled: boolean;
   structured_text_bidi_override: int;
-  structured_text_bidi_override_options: Array<any>;
+  structured_text_bidi_override_options: Array<unknown>;
   tab_size: int;
   tab_stops: PackedFloat32Array;
   text: string;
@@ -18431,8 +18431,8 @@ declare class RichTextLabel extends Control {
   visible_characters_behavior: int;
   visible_ratio: float;
 
-  add_hr(width?: int, height?: int, color?: Color, alignment: int, width_in_percent?: boolean, height_in_percent?: boolean): void;
-  add_image(image: Texture2D, width?: int, height?: int, color?: Color, inline_align: int, region?: Rect2, key?: any, pad?: boolean, tooltip?: string, width_in_percent?: boolean, height_in_percent?: boolean, alt_text?: string): void;
+  add_hr(width?: int, height?: int, color?: Color, alignment?: int, width_in_percent?: boolean, height_in_percent?: boolean): void;
+  add_image(image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2, key?: unknown, pad?: boolean, tooltip?: string, width_in_percent?: boolean, height_in_percent?: boolean, alt_text?: string): void;
   add_text(text: string): void;
   append_text(bbcode: string): void;
   clear(): void;
@@ -18459,7 +18459,7 @@ declare class RichTextLabel extends Control {
   get_visible_content_rect(): Rect2i;
   get_visible_line_count(): int;
   get_visible_paragraph_count(): int;
-  install_effect(effect: any): void;
+  install_effect(effect: unknown): void;
   invalidate_paragraph(paragraph: int): boolean;
   is_finished(): boolean;
   is_menu_visible(): boolean;
@@ -18487,12 +18487,12 @@ declare class RichTextLabel extends Control {
   push_italics(): void;
   push_language(language: string): void;
   push_list(level: int, type_: int, capitalize: boolean, bullet?: string): void;
-  push_meta(data: any, underline_mode: int, tooltip?: string): void;
+  push_meta(data: unknown, underline_mode: int, tooltip?: string): void;
   push_mono(): void;
   push_normal(): void;
   push_outline_color(color: Color): void;
   push_outline_size(outline_size: int): void;
-  push_paragraph(alignment: int, base_direction: int, language?: string, st_parser: int, justification_flags: int, tab_stops?: PackedFloat32Array): void;
+  push_paragraph(alignment: int, base_direction: int, language?: string, st_parser?: int, justification_flags?: int, tab_stops?: PackedFloat32Array): void;
   push_strikethrough(color?: Color): void;
   push_table(columns: int, inline_align: int, align_to_row?: int, name?: string): void;
   push_underline(color?: Color): void;
@@ -18508,12 +18508,12 @@ declare class RichTextLabel extends Control {
   set_cell_size_override(min_size: Vector2, max_size: Vector2): void;
   set_table_column_expand(column: int, expand: boolean, ratio?: int, shrink?: boolean): void;
   set_table_column_name(column: int, name: string): void;
-  update_image(key: any, mask: int, image: Texture2D, width?: int, height?: int, color?: Color, inline_align: int, region?: Rect2, pad?: boolean, tooltip?: string, width_in_percent?: boolean, height_in_percent?: boolean): void;
+  update_image(key: unknown, mask: int, image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2, pad?: boolean, tooltip?: string, width_in_percent?: boolean, height_in_percent?: boolean): void;
 
   finished: Signal<[]>;
-  meta_clicked: Signal<[any]>;
-  meta_hover_ended: Signal<[any]>;
-  meta_hover_started: Signal<[any]>;
+  meta_clicked: Signal<[unknown]>;
+  meta_hover_ended: Signal<[unknown]>;
+  meta_hover_started: Signal<[unknown]>;
 
   // enum ListType
   static readonly LIST_NUMBERS: int;
@@ -18574,7 +18574,7 @@ declare class RigidBody2D extends PhysicsBody2D {
   apply_impulse(impulse: Vector2, position?: Vector2): void;
   apply_torque(torque: float): void;
   apply_torque_impulse(torque: float): void;
-  get_colliding_bodies(): Node2D[];
+  get_colliding_bodies(): unknown;
   get_contact_count(): int;
   set_axis_velocity(axis_velocity: Vector2): void;
 
@@ -18634,7 +18634,7 @@ declare class RigidBody3D extends PhysicsBody3D {
   apply_impulse(impulse: Vector3, position?: Vector3): void;
   apply_torque(torque: Vector3): void;
   apply_torque_impulse(impulse: Vector3): void;
-  get_colliding_bodies(): Node3D[];
+  get_colliding_bodies(): unknown;
   get_contact_count(): int;
   get_inverse_inertia_tensor(): Basis;
   set_axis_velocity(axis_velocity: Vector3): void;
@@ -18666,7 +18666,7 @@ declare class RootMotionView extends VisualInstance3D {
 
 declare class SceneState extends RefCounted {
   get_base_scene_state(): SceneState;
-  get_connection_binds(idx: int): Array<any>;
+  get_connection_binds(idx: int): Array<unknown>;
   get_connection_count(): int;
   get_connection_flags(idx: int): int;
   get_connection_method(idx: int): string;
@@ -18684,7 +18684,7 @@ declare class SceneState extends RefCounted {
   get_node_path(idx: int, for_parent?: boolean): string;
   get_node_property_count(idx: int): int;
   get_node_property_name(idx: int, prop_idx: int): string;
-  get_node_property_value(idx: int, prop_idx: int): any;
+  get_node_property_value(idx: int, prop_idx: int): unknown;
   get_node_type(idx: int): string;
   get_path(): string;
   is_node_instance_placeholder(idx: int): boolean;
@@ -18721,8 +18721,8 @@ declare class SceneTree extends MainLoop {
   get_multiplayer(for_path?: string): MultiplayerAPI;
   get_node_count(): int;
   get_node_count_in_group(group: string): int;
-  get_nodes_in_group(group: string): Node[];
-  get_processed_tweens(): Tween[];
+  get_nodes_in_group(group: string): unknown;
+  get_processed_tweens(): unknown;
   has_group(name: string): boolean;
   is_accessibility_enabled(): boolean;
   is_accessibility_supported(): boolean;
@@ -18731,8 +18731,8 @@ declare class SceneTree extends MainLoop {
   queue_delete(obj: GodotObject): void;
   quit(exit_code?: int): void;
   reload_current_scene(): int;
-  set_group(group: string, property: string, value: any): void;
-  set_group_flags(call_flags: int, group: string, property: string, value: any): void;
+  set_group(group: string, property: string, value: unknown): void;
+  set_group_flags(call_flags: int, group: string, property: string, value: unknown): void;
   set_multiplayer(multiplayer: MultiplayerAPI, root_path?: string): void;
   unload_current_scene(): void;
 
@@ -18766,12 +18766,12 @@ declare class Script extends Resource {
   get_base_script(): Script;
   get_global_name(): string;
   get_instance_base_type(): string;
-  get_property_default_value(property: string): any;
-  get_rpc_config(): any;
+  get_property_default_value(property: string): unknown;
+  get_rpc_config(): unknown;
   get_script_constant_map(): Dictionary;
-  get_script_method_list(): Dictionary[];
-  get_script_property_list(): Dictionary[];
-  get_script_signal_list(): Dictionary[];
+  get_script_method_list(): Dictionary;
+  get_script_property_list(): Dictionary;
+  get_script_signal_list(): Dictionary;
   has_script_signal(signal_name: string): boolean;
   has_source_code(): boolean;
   instance_has(base_object: GodotObject): boolean;
@@ -18788,14 +18788,14 @@ declare class ScriptBacktrace extends RefCounted {
   get_frame_line(index: int): int;
   get_global_variable_count(): int;
   get_global_variable_name(variable_index: int): string;
-  get_global_variable_value(variable_index: int): any;
+  get_global_variable_value(variable_index: int): unknown;
   get_language_name(): string;
   get_local_variable_count(frame_index: int): int;
   get_local_variable_name(frame_index: int, variable_index: int): string;
-  get_local_variable_value(frame_index: int, variable_index: int): any;
+  get_local_variable_value(frame_index: int, variable_index: int): unknown;
   get_member_variable_count(frame_index: int): int;
   get_member_variable_name(frame_index: int, variable_index: int): string;
-  get_member_variable_value(frame_index: int, variable_index: int): any;
+  get_member_variable_value(frame_index: int, variable_index: int): unknown;
   is_empty(): boolean;
 }
 
@@ -18814,8 +18814,8 @@ declare class ScriptEditor extends PanelContainer {
   get_breakpoints(): PackedStringArray;
   get_current_editor(): ScriptEditorBase;
   get_current_script(): Script;
-  get_open_script_editors(): ScriptEditorBase[];
-  get_open_scripts(): Script[];
+  get_open_script_editors(): unknown;
+  get_open_scripts(): unknown;
   goto_help(topic: string): void;
   goto_line(line_number: int): void;
   open_script_create_dialog(base_name: string, base_path: string): void;
@@ -18852,19 +18852,19 @@ declare class ScriptExtension extends Script {
   _get_class_icon_path(): string;
   _get_constants(): Dictionary;
   _get_doc_class_name(): string;
-  _get_documentation(): Dictionary[];
+  _get_documentation(): Dictionary;
   _get_global_name(): string;
   _get_instance_base_type(): string;
   _get_language(): ScriptLanguage;
   _get_member_line(member: string): int;
-  _get_members(): StringName[];
+  _get_members(): unknown;
   _get_method_info(method: string): Dictionary;
-  _get_property_default_value(property: string): any;
-  _get_rpc_config(): any;
-  _get_script_method_argument_count(method: string): any;
-  _get_script_method_list(): Dictionary[];
-  _get_script_property_list(): Dictionary[];
-  _get_script_signal_list(): Dictionary[];
+  _get_property_default_value(property: string): unknown;
+  _get_rpc_config(): unknown;
+  _get_script_method_argument_count(method: string): unknown;
+  _get_script_method_list(): Dictionary;
+  _get_script_property_list(): Dictionary;
+  _get_script_signal_list(): Dictionary;
   _get_source_code(): string;
   _has_method(method: string): boolean;
   _has_property_default_value(property: string): boolean;
@@ -18872,20 +18872,20 @@ declare class ScriptExtension extends Script {
   _has_source_code(): boolean;
   _has_static_method(method: string): boolean;
   _inherits_script(script: Script): boolean;
-  _instance_create(for_object: GodotObject): void*;
+  _instance_create(for_object: GodotObject): void;
   _instance_has(object: GodotObject): boolean;
   _is_abstract(): boolean;
   _is_placeholder_fallback_enabled(): boolean;
   _is_tool(): boolean;
   _is_valid(): boolean;
-  _placeholder_erased(placeholder: void*): void;
-  _placeholder_instance_create(for_object: GodotObject): void*;
+  _placeholder_erased(placeholder: void): void;
+  _placeholder_instance_create(for_object: GodotObject): void;
   _reload(keep_state: boolean): int;
   _set_source_code(code: string): void;
   _update_exports(): void;
 }
 
-declare class ScriptLanguage extends Object {
+declare class ScriptLanguage extends GodotObject {
 
   // enum ScriptNameCasing
   static readonly SCRIPT_NAME_CASING_AUTO: int;
@@ -18896,19 +18896,19 @@ declare class ScriptLanguage extends Object {
 }
 
 declare class ScriptLanguageExtension extends ScriptLanguage {
-  _add_global_constant(name: string, value: any): void;
-  _add_named_global_constant(name: string, value: any): void;
+  _add_global_constant(name: string, value: unknown): void;
+  _add_named_global_constant(name: string, value: unknown): void;
   _auto_indent_code(code: string, from_line: int, to_line: int): string;
   _can_inherit_from_file(): boolean;
   _can_make_function(): boolean;
   _complete_code(code: string, path: string, owner: GodotObject): Dictionary;
   _create_script(): GodotObject;
-  _debug_get_current_stack_info(): Dictionary[];
+  _debug_get_current_stack_info(): Dictionary;
   _debug_get_error(): string;
   _debug_get_globals(max_subitems: int, max_depth: int): Dictionary;
   _debug_get_stack_level_count(): int;
   _debug_get_stack_level_function(level: int): string;
-  _debug_get_stack_level_instance(level: int): void*;
+  _debug_get_stack_level_instance(level: int): void;
   _debug_get_stack_level_line(level: int): int;
   _debug_get_stack_level_locals(level: int, max_subitems: int, max_depth: int): Dictionary;
   _debug_get_stack_level_members(level: int, max_subitems: int, max_depth: int): Dictionary;
@@ -18917,15 +18917,15 @@ declare class ScriptLanguageExtension extends ScriptLanguage {
   _find_function(function_: string, code: string): int;
   _finish(): void;
   _frame(): void;
-  _get_built_in_templates(object: string): Dictionary[];
+  _get_built_in_templates(object: string): Dictionary;
   _get_comment_delimiters(): PackedStringArray;
   _get_doc_comment_delimiters(): PackedStringArray;
   _get_extension(): string;
   _get_global_class_name(path: string): Dictionary;
   _get_name(): string;
-  _get_public_annotations(): Dictionary[];
+  _get_public_annotations(): Dictionary;
   _get_public_constants(): Dictionary;
-  _get_public_functions(): Dictionary[];
+  _get_public_functions(): Dictionary;
   _get_recognized_extensions(): PackedStringArray;
   _get_reserved_words(): PackedStringArray;
   _get_string_delimiters(): PackedStringArray;
@@ -18941,13 +18941,13 @@ declare class ScriptLanguageExtension extends ScriptLanguage {
   _open_in_external_editor(script: Script, line: int, column: int): int;
   _overrides_external_editor(): boolean;
   _preferred_file_name_casing(): int;
-  _profiling_get_accumulated_data(info_array: ScriptLanguageExtensionProfilingInfo*, info_max: int): int;
-  _profiling_get_frame_data(info_array: ScriptLanguageExtensionProfilingInfo*, info_max: int): int;
+  _profiling_get_accumulated_data(info_array: unknown, info_max: int): int;
+  _profiling_get_frame_data(info_array: unknown, info_max: int): int;
   _profiling_set_save_native_calls(enable: boolean): void;
   _profiling_start(): void;
   _profiling_stop(): void;
   _reload_all_scripts(): void;
-  _reload_scripts(scripts: Array<any>, soft_reload: boolean): void;
+  _reload_scripts(scripts: Array<unknown>, soft_reload: boolean): void;
   _reload_tool_script(script: Script, soft_reload: boolean): void;
   _remove_named_global_constant(name: string): void;
   _supports_builtin_mode(): boolean;
@@ -19060,7 +19060,7 @@ declare class Shader extends Resource {
 
   get_default_texture_parameter(name: string, index?: int): Texture;
   get_mode(): int;
-  get_shader_uniform_list(get_groups?: boolean): Array<any>;
+  get_shader_uniform_list(get_groups?: boolean): Array<unknown>;
   inspect_native_shader_code(): void;
   set_default_texture_parameter(name: string, texture: Texture, index?: int): void;
 
@@ -19080,7 +19080,7 @@ declare class ShaderInclude extends Resource {
   code: string;
 }
 
-declare class ShaderIncludeDB extends Object {
+declare class ShaderIncludeDB extends GodotObject {
   static get_built_in_include_file(filename: string): string;
   static has_built_in_include_file(filename: string): boolean;
   static list_built_in_include_files(): PackedStringArray;
@@ -19089,8 +19089,8 @@ declare class ShaderIncludeDB extends Object {
 declare class ShaderMaterial extends Material {
   shader: Shader;
 
-  get_shader_parameter(param: string): any;
-  set_shader_parameter(param: string, value: any): void;
+  get_shader_parameter(param: string): unknown;
+  set_shader_parameter(param: string, value: unknown): void;
 }
 
 declare class Shape2D extends Resource {
@@ -19115,7 +19115,7 @@ declare class ShapeCast2D extends Node2D {
   collide_with_areas: boolean;
   collide_with_bodies: boolean;
   collision_mask: int;
-  collision_result: Array<any>;
+  collision_result: Array<unknown>;
   enabled: boolean;
   exclude_parent: boolean;
   margin: float;
@@ -19146,7 +19146,7 @@ declare class ShapeCast3D extends Node3D {
   collide_with_areas: boolean;
   collide_with_bodies: boolean;
   collision_mask: int;
-  collision_result: Array<any>;
+  collision_result: Array<unknown>;
   debug_shape_custom_color: Color;
   enabled: boolean;
   exclude_parent: boolean;
@@ -19176,18 +19176,18 @@ declare class ShapeCast3D extends Node3D {
 }
 
 declare class Shortcut extends Resource {
-  events: Array<any>;
+  events: Array<unknown>;
 
   get_as_text(): string;
   has_valid_event(): boolean;
   matches_event(event: InputEvent): boolean;
 }
 
-declare class Signal {
+declare class GodotSignal {
   connect(callable: Callable, flags?: int): int;
   disconnect(callable: Callable): void;
   emit(): void;
-  get_connections(): Array<any>;
+  get_connections(): Array<unknown>;
   get_name(): string;
   get_object(): GodotObject;
   get_object_id(): int;
@@ -19229,8 +19229,8 @@ declare class Skeleton3D extends Node3D {
   get_bone_global_pose_no_override(bone_idx: int): Transform3D;
   get_bone_global_pose_override(bone_idx: int): Transform3D;
   get_bone_global_rest(bone_idx: int): Transform3D;
-  get_bone_meta(bone_idx: int, key: string): any;
-  get_bone_meta_list(bone_idx: int): StringName[];
+  get_bone_meta(bone_idx: int, key: string): unknown;
+  get_bone_meta_list(bone_idx: int): unknown;
   get_bone_name(bone_idx: int): string;
   get_bone_parent(bone_idx: int): int;
   get_bone_pose(bone_idx: int): Transform3D;
@@ -19246,7 +19246,7 @@ declare class Skeleton3D extends Node3D {
   localize_rests(): void;
   physical_bones_add_collision_exception(exception: RID): void;
   physical_bones_remove_collision_exception(exception: RID): void;
-  physical_bones_start_simulation(bones?: StringName[]): void;
+  physical_bones_start_simulation(bones?: unknown): void;
   physical_bones_stop_simulation(): void;
   register_skin(skin: Skin): SkinReference;
   reset_bone_pose(bone_idx: int): void;
@@ -19254,7 +19254,7 @@ declare class Skeleton3D extends Node3D {
   set_bone_enabled(bone_idx: int, enabled?: boolean): void;
   set_bone_global_pose(bone_idx: int, pose: Transform3D): void;
   set_bone_global_pose_override(bone_idx: int, pose: Transform3D, amount: float, persistent?: boolean): void;
-  set_bone_meta(bone_idx: int, key: string, value: any): void;
+  set_bone_meta(bone_idx: int, key: string, value: unknown): void;
   set_bone_name(bone_idx: int, name: string): void;
   set_bone_parent(bone_idx: int, parent_idx: int): void;
   set_bone_pose(bone_idx: int, pose: Transform3D): void;
@@ -19401,8 +19401,8 @@ declare class SkeletonModification2DPhysicalBones extends SkeletonModification2D
   fetch_physical_bones(): void;
   get_physical_bone_node(joint_idx: int): string;
   set_physical_bone_node(joint_idx: int, physicalbone2d_node: string): void;
-  start_simulation(bones?: StringName[]): void;
-  stop_simulation(bones?: StringName[]): void;
+  start_simulation(bones?: unknown): void;
+  stop_simulation(bones?: unknown): void;
 }
 
 declare class SkeletonModification2DStackHolder extends SkeletonModification2D {
@@ -19589,28 +19589,28 @@ declare class Slider extends Range {
 }
 
 declare class SliderJoint3D extends Joint3D {
-  angular_limit/damping: float;
-  angular_limit/lower_angle: float;
-  angular_limit/restitution: float;
-  angular_limit/softness: float;
-  angular_limit/upper_angle: float;
-  angular_motion/damping: float;
-  angular_motion/restitution: float;
-  angular_motion/softness: float;
-  angular_ortho/damping: float;
-  angular_ortho/restitution: float;
-  angular_ortho/softness: float;
-  linear_limit/damping: float;
-  linear_limit/lower_distance: float;
-  linear_limit/restitution: float;
-  linear_limit/softness: float;
-  linear_limit/upper_distance: float;
-  linear_motion/damping: float;
-  linear_motion/restitution: float;
-  linear_motion/softness: float;
-  linear_ortho/damping: float;
-  linear_ortho/restitution: float;
-  linear_ortho/softness: float;
+  'angular_limit/damping': float;
+  'angular_limit/lower_angle': float;
+  'angular_limit/restitution': float;
+  'angular_limit/softness': float;
+  'angular_limit/upper_angle': float;
+  'angular_motion/damping': float;
+  'angular_motion/restitution': float;
+  'angular_motion/softness': float;
+  'angular_ortho/damping': float;
+  'angular_ortho/restitution': float;
+  'angular_ortho/softness': float;
+  'linear_limit/damping': float;
+  'linear_limit/lower_distance': float;
+  'linear_limit/restitution': float;
+  'linear_limit/softness': float;
+  'linear_limit/upper_distance': float;
+  'linear_motion/damping': float;
+  'linear_motion/restitution': float;
+  'linear_motion/softness': float;
+  'linear_ortho/damping': float;
+  'linear_ortho/restitution': float;
+  'linear_ortho/softness': float;
 
   get_param(param: int): float;
   set_param(param: int, value: float): void;
@@ -19667,7 +19667,7 @@ declare class SoftBody3D extends MeshInstance3D {
   apply_central_impulse(impulse: Vector3): void;
   apply_force(point_index: int, force: Vector3): void;
   apply_impulse(point_index: int, impulse: Vector3): void;
-  get_collision_exceptions(): PhysicsBody3D[];
+  get_collision_exceptions(): unknown;
   get_collision_layer_value(layer_number: int): boolean;
   get_collision_mask_value(layer_number: int): boolean;
   get_physics_rid(): RID;
@@ -19744,7 +19744,7 @@ declare class SplitContainer extends Container {
 
   clamp_split_offset(priority_index?: int): void;
   get_drag_area_control(): Control;
-  get_drag_area_controls(): Control[];
+  get_drag_area_controls(): unknown;
 
   drag_ended: Signal<[]>;
   drag_started: Signal<[]>;
@@ -20021,18 +20021,18 @@ declare class StreamPeer extends RefCounted {
   get_32(): int;
   get_64(): int;
   get_available_bytes(): int;
-  get_data(bytes: int): Array<any>;
+  get_data(bytes: int): Array<unknown>;
   get_double(): float;
   get_float(): float;
   get_half(): float;
-  get_partial_data(bytes: int): Array<any>;
+  get_partial_data(bytes: int): Array<unknown>;
   get_string(bytes?: int): string;
   get_u8(): int;
   get_u16(): int;
   get_u32(): int;
   get_u64(): int;
   get_utf8_string(bytes?: int): string;
-  get_var(allow_objects?: boolean): any;
+  get_var(allow_objects?: boolean): unknown;
   put_8(value: int): void;
   put_16(value: int): void;
   put_32(value: int): void;
@@ -20041,14 +20041,14 @@ declare class StreamPeer extends RefCounted {
   put_double(value: float): void;
   put_float(value: float): void;
   put_half(value: float): void;
-  put_partial_data(data: PackedByteArray): Array<any>;
+  put_partial_data(data: PackedByteArray): Array<unknown>;
   put_string(value: string): void;
   put_u8(value: int): void;
   put_u16(value: int): void;
   put_u32(value: int): void;
   put_u64(value: int): void;
   put_utf8_string(value: string): void;
-  put_var(value: any, full_objects?: boolean): void;
+  put_var(value: unknown, full_objects?: boolean): void;
 }
 
 declare class StreamPeerBuffer extends StreamPeer {
@@ -20064,10 +20064,10 @@ declare class StreamPeerBuffer extends StreamPeer {
 
 declare class StreamPeerExtension extends StreamPeer {
   _get_available_bytes(): int;
-  _get_data(r_buffer: uint8_t*, r_bytes: int, r_received: int32_t*): int;
-  _get_partial_data(r_buffer: uint8_t*, r_bytes: int, r_received: int32_t*): int;
-  _put_data(p_data: const uint8_t*, p_bytes: int, r_sent: int32_t*): int;
-  _put_partial_data(p_data: const uint8_t*, p_bytes: int, r_sent: int32_t*): int;
+  _get_data(r_buffer: int, r_bytes: int, r_received: int): int;
+  _get_partial_data(r_buffer: int, r_bytes: int, r_received: int): int;
+  _put_data(p_data: int, p_bytes: int, r_sent: int): int;
+  _put_partial_data(p_data: int, p_bytes: int, r_sent: int): int;
 }
 
 declare class StreamPeerGZIP extends StreamPeer {
@@ -20120,7 +20120,7 @@ declare class StreamPeerUDS extends StreamPeerSocket {
   get_connected_path(): string;
 }
 
-declare class String {
+declare class GodotString {
   begins_with(text: string): boolean;
   bigrams(): PackedStringArray;
   bin_to_int(): int;
@@ -20140,7 +20140,7 @@ declare class String {
   filenocasecmp_to(to: string): int;
   find(what: string, from_?: int): int;
   findn(what: string, from_?: int): int;
-  format(values: any, placeholder?: string): string;
+  format(values: unknown, placeholder?: string): string;
   get_base_dir(): string;
   get_basename(): string;
   get_extension(): string;
@@ -20192,8 +20192,8 @@ declare class String {
   remove_chars(chars: string): string;
   repeat(count: int): string;
   replace(what: string, forwhat: string): string;
-  replace_char(key: int, with: int): string;
-  replace_chars(keys: string, with: int): string;
+  replace_char(key: int, with_: int): string;
+  replace_chars(keys: string, with_: int): string;
   replacen(what: string, forwhat: string): string;
   reverse(): string;
   rfind(what: string, from_?: int): int;
@@ -20258,7 +20258,7 @@ declare class StringName {
   filenocasecmp_to(to: string): int;
   find(what: string, from_?: int): int;
   findn(what: string, from_?: int): int;
-  format(values: any, placeholder?: string): string;
+  format(values: unknown, placeholder?: string): string;
   get_base_dir(): string;
   get_basename(): string;
   get_extension(): string;
@@ -20305,8 +20305,8 @@ declare class StringName {
   remove_chars(chars: string): string;
   repeat(count: int): string;
   replace(what: string, forwhat: string): string;
-  replace_char(key: int, with: int): string;
-  replace_chars(keys: string, with: int): string;
+  replace_char(key: int, with_: int): string;
+  replace_chars(keys: string, with_: int): string;
   replacen(what: string, forwhat: string): string;
   reverse(): string;
   rfind(what: string, from_?: int): int;
@@ -20485,15 +20485,15 @@ declare class SubtweenTweener extends Tweener {
 
 declare class SurfaceTool extends RefCounted {
   add_index(index: int): void;
-  add_triangle_fan(vertices: PackedVector3Array, uvs?: PackedVector2Array, colors?: PackedColorArray, uv2s?: PackedVector2Array, normals?: PackedVector3Array, tangents?: Plane[]): void;
+  add_triangle_fan(vertices: PackedVector3Array, uvs?: PackedVector2Array, colors?: PackedColorArray, uv2s?: PackedVector2Array, normals?: PackedVector3Array, tangents?: unknown): void;
   add_vertex(vertex: Vector3): void;
   append_from(existing: Mesh, surface: int, transform: Transform3D): void;
   begin(primitive: int): void;
   clear(): void;
   commit(existing?: ArrayMesh, flags?: int): ArrayMesh;
-  commit_to_arrays(): Array<any>;
+  commit_to_arrays(): Array<unknown>;
   create_from(existing: Mesh, surface: int): void;
-  create_from_arrays(arrays: Array<any>, primitive_type: int): void;
+  create_from_arrays(arrays: Array<unknown>, primitive_type: int): void;
   create_from_blend_shape(existing: Mesh, surface: int, blend_shape: string): void;
   deindex(): void;
   generate_lod(nd_threshold: float, target_index_count?: int): PackedInt32Array;
@@ -20608,7 +20608,7 @@ declare class TabBar extends Control {
   get_tab_icon_max_width(tab_idx: int): int;
   get_tab_idx_at_point(point: Vector2): int;
   get_tab_language(tab_idx: int): string;
-  get_tab_metadata(tab_idx: int): any;
+  get_tab_metadata(tab_idx: int): unknown;
   get_tab_offset(): int;
   get_tab_rect(tab_idx: int): Rect2;
   get_tab_text_direction(tab_idx: int): int;
@@ -20626,7 +20626,7 @@ declare class TabBar extends Control {
   set_tab_icon(tab_idx: int, icon: Texture2D): void;
   set_tab_icon_max_width(tab_idx: int, width: int): void;
   set_tab_language(tab_idx: int, language: string): void;
-  set_tab_metadata(tab_idx: int, metadata: any): void;
+  set_tab_metadata(tab_idx: int, metadata: unknown): void;
   set_tab_text_direction(tab_idx: int, direction: int): void;
   set_tab_title(tab_idx: int, title: string): void;
   set_tab_tooltip(tab_idx: int, tooltip: string): void;
@@ -20677,7 +20677,7 @@ declare class TabContainer extends Container {
   get_tab_icon_max_width(tab_idx: int): int;
   get_tab_idx_at_point(point: Vector2): int;
   get_tab_idx_from_control(control: Control): int;
-  get_tab_metadata(tab_idx: int): any;
+  get_tab_metadata(tab_idx: int): unknown;
   get_tab_title(tab_idx: int): string;
   get_tab_tooltip(tab_idx: int): string;
   is_tab_disabled(tab_idx: int): boolean;
@@ -20690,7 +20690,7 @@ declare class TabContainer extends Container {
   set_tab_hidden(tab_idx: int, hidden: boolean): void;
   set_tab_icon(tab_idx: int, icon: Texture2D): void;
   set_tab_icon_max_width(tab_idx: int, width: int): void;
-  set_tab_metadata(tab_idx: int, metadata: any): void;
+  set_tab_metadata(tab_idx: int, metadata: unknown): void;
   set_tab_title(tab_idx: int, title: string): void;
   set_tab_tooltip(tab_idx: int, tooltip: string): void;
 
@@ -20748,7 +20748,7 @@ declare class TextEdit extends Control {
   selecting_enabled: boolean;
   shortcut_keys_enabled: boolean;
   structured_text_bidi_override: int;
-  structured_text_bidi_override_options: Array<any>;
+  structured_text_bidi_override_options: Array<unknown>;
   syntax_highlighter: SyntaxHighlighter;
   tab_input_mode: boolean;
   text: string;
@@ -20810,10 +20810,10 @@ declare class TextEdit extends Control {
   get_line_count(): int;
   get_line_gutter_icon(line: int, gutter: int): Texture2D;
   get_line_gutter_item_color(line: int, gutter: int): Color;
-  get_line_gutter_metadata(line: int, gutter: int): any;
+  get_line_gutter_metadata(line: int, gutter: int): unknown;
   get_line_gutter_text(line: int, gutter: int): string;
   get_line_height(): int;
-  get_line_ranges_from_carets(only_selections?: boolean, merge_adjacent?: boolean): Vector2i[];
+  get_line_ranges_from_carets(only_selections?: boolean, merge_adjacent?: boolean): unknown;
   get_line_width(line: int, wrap_index?: int): int;
   get_line_with_ime(line: int): string;
   get_line_wrap_count(line: int): int;
@@ -20905,7 +20905,7 @@ declare class TextEdit extends Control {
   set_line_gutter_clickable(line: int, gutter: int, clickable: boolean): void;
   set_line_gutter_icon(line: int, gutter: int, icon: Texture2D): void;
   set_line_gutter_item_color(line: int, gutter: int, color: Color): void;
-  set_line_gutter_metadata(line: int, gutter: int, metadata: any): void;
+  set_line_gutter_metadata(line: int, gutter: int, metadata: unknown): void;
   set_line_gutter_text(line: int, gutter: int, text: string): void;
   set_overtype_mode_enabled(enabled: boolean): void;
   set_search_flags(flags: int): void;
@@ -21000,8 +21000,8 @@ declare class TextLine extends RefCounted {
   text_overrun_behavior: int;
   width: float;
 
-  add_object(key: any, size: Vector2, inline_align: int, length?: int, baseline?: float): boolean;
-  add_string(text: string, font: Font, font_size: int, language?: string, meta?: any): boolean;
+  add_object(key: unknown, size: Vector2, inline_align: int, length?: int, baseline?: float): boolean;
+  add_string(text: string, font: Font, font_size: int, language?: string, meta?: unknown): boolean;
   clear(): void;
   draw(canvas: RID, pos: Vector2, color?: Color, oversampling?: float): void;
   draw_outline(canvas: RID, pos: Vector2, outline_size?: int, color?: Color, oversampling?: float): void;
@@ -21012,14 +21012,14 @@ declare class TextLine extends RefCounted {
   get_line_underline_position(): float;
   get_line_underline_thickness(): float;
   get_line_width(): float;
-  get_object_rect(key: any): Rect2;
-  get_objects(): Array<any>;
+  get_object_rect(key: unknown): Rect2;
+  get_objects(): Array<unknown>;
   get_rid(): RID;
   get_size(): Vector2;
-  has_object(key: any): boolean;
+  has_object(key: unknown): boolean;
   hit_test(coords: float): int;
-  resize_object(key: any, size: Vector2, inline_align: int, baseline?: float): boolean;
-  set_bidi_override(override: Array<any>): void;
+  resize_object(key: unknown, size: Vector2, inline_align: int, baseline?: float): boolean;
+  set_bidi_override(override: Array<unknown>): void;
   tab_align(tab_stops: PackedFloat32Array): void;
 }
 
@@ -21036,7 +21036,7 @@ declare class TextMesh extends PrimitiveMesh {
   offset: Vector2;
   pixel_size: float;
   structured_text_bidi_override: int;
-  structured_text_bidi_override_options: Array<any>;
+  structured_text_bidi_override_options: Array<unknown>;
   text: string;
   text_direction: int;
   uppercase: boolean;
@@ -21059,8 +21059,8 @@ declare class TextParagraph extends RefCounted {
   text_overrun_behavior: int;
   width: float;
 
-  add_object(key: any, size: Vector2, inline_align: int, length?: int, baseline?: float): boolean;
-  add_string(text: string, font: Font, font_size: int, language?: string, meta?: any): boolean;
+  add_object(key: unknown, size: Vector2, inline_align: int, length?: int, baseline?: float): boolean;
+  add_string(text: string, font: Font, font_size: int, language?: string, meta?: unknown): boolean;
   clear(): void;
   clear_dropcap(): void;
   draw(canvas: RID, pos: Vector2, color?: Color, dc_color?: Color, oversampling?: float): void;
@@ -21077,8 +21077,8 @@ declare class TextParagraph extends RefCounted {
   get_line_ascent(line: int): float;
   get_line_count(): int;
   get_line_descent(line: int): float;
-  get_line_object_rect(line: int, key: any): Rect2;
-  get_line_objects(line: int): Array<any>;
+  get_line_object_rect(line: int, key: unknown): Rect2;
+  get_line_objects(line: int): Array<unknown>;
   get_line_range(line: int): Vector2i;
   get_line_rid(line: int): RID;
   get_line_size(line: int): Vector2;
@@ -21089,10 +21089,10 @@ declare class TextParagraph extends RefCounted {
   get_range(): Vector2i;
   get_rid(): RID;
   get_size(): Vector2;
-  has_object(key: any): boolean;
+  has_object(key: unknown): boolean;
   hit_test(coords: Vector2): int;
-  resize_object(key: any, size: Vector2, inline_align: int, baseline?: float): boolean;
-  set_bidi_override(override: Array<any>): void;
+  resize_object(key: unknown, size: Vector2, inline_align: int, baseline?: float): boolean;
+  set_bidi_override(override: Array<unknown>): void;
   set_dropcap(text: string, font: Font, font_size: int, dropcap_margins?: Rect2, language?: string): boolean;
   tab_align(tab_stops: PackedFloat32Array): void;
 }
@@ -21135,7 +21135,7 @@ declare class TextServer extends RefCounted {
   font_get_hinting(font_rid: RID): int;
   font_get_keep_rounding_remainders(font_rid: RID): boolean;
   font_get_kerning(font_rid: RID, size: int, glyph_pair: Vector2i): Vector2;
-  font_get_kerning_list(font_rid: RID, size: int): Vector2i[];
+  font_get_kerning_list(font_rid: RID, size: int): unknown;
   font_get_language_support_override(font_rid: RID, language: string): boolean;
   font_get_language_support_overrides(font_rid: RID): PackedStringArray;
   font_get_msdf_pixel_range(font_rid: RID): int;
@@ -21147,8 +21147,8 @@ declare class TextServer extends RefCounted {
   font_get_scale(font_rid: RID, size: int): float;
   font_get_script_support_override(font_rid: RID, script: string): boolean;
   font_get_script_support_overrides(font_rid: RID): PackedStringArray;
-  font_get_size_cache_info(font_rid: RID): Dictionary[];
-  font_get_size_cache_list(font_rid: RID): Vector2i[];
+  font_get_size_cache_info(font_rid: RID): Dictionary;
+  font_get_size_cache_list(font_rid: RID): unknown;
   font_get_spacing(font_rid: RID, spacing: int): int;
   font_get_stretch(font_rid: RID): int;
   font_get_style(font_rid: RID): int;
@@ -21243,7 +21243,7 @@ declare class TextServer extends RefCounted {
   load_support_data(filename: string): boolean;
   name_to_tag(name: string): int;
   parse_number(number: string, language?: string): string;
-  parse_structured_text(parser_type: int, args: Array<any>, text: string): Vector3i[];
+  parse_structured_text(parser_type: int, args: Array<unknown>, text: string): unknown;
   percent_sign(language?: string): string;
   save_support_data(filename: string): boolean;
   shaped_get_run_count(shaped: RID): int;
@@ -21252,18 +21252,18 @@ declare class TextServer extends RefCounted {
   shaped_get_run_font_size(shaped: RID, index: int): int;
   shaped_get_run_glyph_range(shaped: RID, index: int): Vector2i;
   shaped_get_run_language(shaped: RID, index: int): string;
-  shaped_get_run_object(shaped: RID, index: int): any;
+  shaped_get_run_object(shaped: RID, index: int): unknown;
   shaped_get_run_range(shaped: RID, index: int): Vector2i;
   shaped_get_run_text(shaped: RID, index: int): string;
   shaped_get_span_count(shaped: RID): int;
-  shaped_get_span_embedded_object(shaped: RID, index: int): any;
-  shaped_get_span_meta(shaped: RID, index: int): any;
-  shaped_get_span_object(shaped: RID, index: int): any;
+  shaped_get_span_embedded_object(shaped: RID, index: int): unknown;
+  shaped_get_span_meta(shaped: RID, index: int): unknown;
+  shaped_get_span_object(shaped: RID, index: int): unknown;
   shaped_get_span_text(shaped: RID, index: int): string;
   shaped_get_text(shaped: RID): string;
-  shaped_set_span_update_font(shaped: RID, index: int, fonts: RID[], size: int, opentype_features?: Dictionary): void;
-  shaped_text_add_object(shaped: RID, key: any, size: Vector2, inline_align: int, length?: int, baseline?: float): boolean;
-  shaped_text_add_string(shaped: RID, text: string, fonts: RID[], size: int, opentype_features?: Dictionary, language?: string, meta?: any): boolean;
+  shaped_set_span_update_font(shaped: RID, index: int, fonts: unknown, size: int, opentype_features?: Dictionary): void;
+  shaped_text_add_object(shaped: RID, key: unknown, size: Vector2, inline_align: int, length?: int, baseline?: float): boolean;
+  shaped_text_add_string(shaped: RID, text: string, fonts: unknown, size: int, opentype_features?: Dictionary, language?: string, meta?: unknown): boolean;
   shaped_text_clear(rid: RID): void;
   shaped_text_closest_character_pos(shaped: RID, pos: int): int;
   shaped_text_draw(shaped: RID, canvas: RID, pos: Vector2, clip_l?: float, clip_r?: float, color?: Color, oversampling?: float): void;
@@ -21279,18 +21279,18 @@ declare class TextServer extends RefCounted {
   shaped_text_get_direction(shaped: RID): int;
   shaped_text_get_dominant_direction_in_range(shaped: RID, start: int, end: int): int;
   shaped_text_get_ellipsis_glyph_count(shaped: RID): int;
-  shaped_text_get_ellipsis_glyphs(shaped: RID): Dictionary[];
+  shaped_text_get_ellipsis_glyphs(shaped: RID): Dictionary;
   shaped_text_get_ellipsis_pos(shaped: RID): int;
   shaped_text_get_glyph_count(shaped: RID): int;
-  shaped_text_get_glyphs(shaped: RID): Dictionary[];
+  shaped_text_get_glyphs(shaped: RID): Dictionary;
   shaped_text_get_grapheme_bounds(shaped: RID, pos: int): Vector2;
   shaped_text_get_inferred_direction(shaped: RID): int;
-  shaped_text_get_line_breaks(shaped: RID, width: float, start?: int, break_flags: int): PackedInt32Array;
-  shaped_text_get_line_breaks_adv(shaped: RID, width: PackedFloat32Array, start?: int, once?: boolean, break_flags: int): PackedInt32Array;
-  shaped_text_get_object_glyph(shaped: RID, key: any): int;
-  shaped_text_get_object_range(shaped: RID, key: any): Vector2i;
-  shaped_text_get_object_rect(shaped: RID, key: any): Rect2;
-  shaped_text_get_objects(shaped: RID): Array<any>;
+  shaped_text_get_line_breaks(shaped: RID, width: float, start?: int, break_flags?: int): PackedInt32Array;
+  shaped_text_get_line_breaks_adv(shaped: RID, width: PackedFloat32Array, start?: int, once?: boolean, break_flags?: int): PackedInt32Array;
+  shaped_text_get_object_glyph(shaped: RID, key: unknown): int;
+  shaped_text_get_object_range(shaped: RID, key: unknown): Vector2i;
+  shaped_text_get_object_rect(shaped: RID, key: unknown): Rect2;
+  shaped_text_get_objects(shaped: RID): Array<unknown>;
   shaped_text_get_orientation(shaped: RID): int;
   shaped_text_get_parent(shaped: RID): RID;
   shaped_text_get_preserve_control(shaped: RID): boolean;
@@ -21304,18 +21304,18 @@ declare class TextServer extends RefCounted {
   shaped_text_get_underline_thickness(shaped: RID): float;
   shaped_text_get_width(shaped: RID): float;
   shaped_text_get_word_breaks(shaped: RID, grapheme_flags: int, skip_grapheme_flags: int): PackedInt32Array;
-  shaped_text_has_object(shaped: RID, key: any): boolean;
+  shaped_text_has_object(shaped: RID, key: unknown): boolean;
   shaped_text_has_visible_chars(shaped: RID): boolean;
   shaped_text_hit_test_grapheme(shaped: RID, coords: float): int;
   shaped_text_hit_test_position(shaped: RID, coords: float): int;
   shaped_text_is_ready(shaped: RID): boolean;
   shaped_text_next_character_pos(shaped: RID, pos: int): int;
   shaped_text_next_grapheme_pos(shaped: RID, pos: int): int;
-  shaped_text_overrun_trim_to_width(shaped: RID, width?: float, overrun_trim_flags: int): void;
+  shaped_text_overrun_trim_to_width(shaped: RID, width?: float, overrun_trim_flags?: int): void;
   shaped_text_prev_character_pos(shaped: RID, pos: int): int;
   shaped_text_prev_grapheme_pos(shaped: RID, pos: int): int;
-  shaped_text_resize_object(shaped: RID, key: any, size: Vector2, inline_align: int, baseline?: float): boolean;
-  shaped_text_set_bidi_override(shaped: RID, override: Array<any>): void;
+  shaped_text_resize_object(shaped: RID, key: unknown, size: Vector2, inline_align: int, baseline?: float): boolean;
+  shaped_text_set_bidi_override(shaped: RID, override: Array<unknown>): void;
   shaped_text_set_custom_ellipsis(shaped: RID, char: int): void;
   shaped_text_set_custom_punctuation(shaped: RID, punct: string): void;
   shaped_text_set_direction(shaped: RID, direction: int): void;
@@ -21324,7 +21324,7 @@ declare class TextServer extends RefCounted {
   shaped_text_set_preserve_invalid(shaped: RID, enabled: boolean): void;
   shaped_text_set_spacing(shaped: RID, spacing: int, value: int): void;
   shaped_text_shape(shaped: RID): boolean;
-  shaped_text_sort_logical(shaped: RID): Dictionary[];
+  shaped_text_sort_logical(shaped: RID): Dictionary;
   shaped_text_substr(shaped: RID, start: int, length: int): RID;
   shaped_text_tab_align(shaped: RID, tab_stops: PackedFloat32Array): float;
   spoof_check(string: string): boolean;
@@ -21514,7 +21514,7 @@ declare class TextServerExtension extends TextServer {
   _font_get_hinting(font_rid: RID): int;
   _font_get_keep_rounding_remainders(font_rid: RID): boolean;
   _font_get_kerning(font_rid: RID, size: int, glyph_pair: Vector2i): Vector2;
-  _font_get_kerning_list(font_rid: RID, size: int): Vector2i[];
+  _font_get_kerning_list(font_rid: RID, size: int): unknown;
   _font_get_language_support_override(font_rid: RID, language: string): boolean;
   _font_get_language_support_overrides(font_rid: RID): PackedStringArray;
   _font_get_msdf_pixel_range(font_rid: RID): int;
@@ -21526,8 +21526,8 @@ declare class TextServerExtension extends TextServer {
   _font_get_scale(font_rid: RID, size: int): float;
   _font_get_script_support_override(font_rid: RID, script: string): boolean;
   _font_get_script_support_overrides(font_rid: RID): PackedStringArray;
-  _font_get_size_cache_info(font_rid: RID): Dictionary[];
-  _font_get_size_cache_list(font_rid: RID): Vector2i[];
+  _font_get_size_cache_info(font_rid: RID): Dictionary;
+  _font_get_size_cache_list(font_rid: RID): unknown;
   _font_get_spacing(font_rid: RID, spacing: int): int;
   _font_get_stretch(font_rid: RID): int;
   _font_get_style(font_rid: RID): int;
@@ -21563,7 +21563,7 @@ declare class TextServerExtension extends TextServer {
   _font_set_ascent(font_rid: RID, size: int, ascent: float): void;
   _font_set_baseline_offset(font_rid: RID, baseline_offset: float): void;
   _font_set_data(font_rid: RID, data: PackedByteArray): void;
-  _font_set_data_ptr(font_rid: RID, data_ptr: const uint8_t*, data_size: int): void;
+  _font_set_data_ptr(font_rid: RID, data_ptr: int, data_size: int): void;
   _font_set_descent(font_rid: RID, size: int, descent: float): void;
   _font_set_disable_embedded_bitmaps(font_rid: RID, disable_embedded_bitmaps: boolean): void;
   _font_set_embolden(font_rid: RID, strength: float): void;
@@ -21623,7 +21623,7 @@ declare class TextServerExtension extends TextServer {
   _load_support_data(filename: string): boolean;
   _name_to_tag(name: string): int;
   _parse_number(number: string, language: string): string;
-  _parse_structured_text(parser_type: int, args: Array<any>, text: string): Vector3i[];
+  _parse_structured_text(parser_type: int, args: Array<unknown>, text: string): unknown;
   _percent_sign(language: string): string;
   _reference_oversampling_level(oversampling: float): void;
   _save_support_data(filename: string): boolean;
@@ -21633,18 +21633,18 @@ declare class TextServerExtension extends TextServer {
   _shaped_get_run_font_size(shaped: RID, index: int): int;
   _shaped_get_run_glyph_range(shaped: RID, index: int): Vector2i;
   _shaped_get_run_language(shaped: RID, index: int): string;
-  _shaped_get_run_object(shaped: RID, index: int): any;
+  _shaped_get_run_object(shaped: RID, index: int): unknown;
   _shaped_get_run_range(shaped: RID, index: int): Vector2i;
   _shaped_get_run_text(shaped: RID, index: int): string;
   _shaped_get_span_count(shaped: RID): int;
-  _shaped_get_span_embedded_object(shaped: RID, index: int): any;
-  _shaped_get_span_meta(shaped: RID, index: int): any;
-  _shaped_get_span_object(shaped: RID, index: int): any;
+  _shaped_get_span_embedded_object(shaped: RID, index: int): unknown;
+  _shaped_get_span_meta(shaped: RID, index: int): unknown;
+  _shaped_get_span_object(shaped: RID, index: int): unknown;
   _shaped_get_span_text(shaped: RID, index: int): string;
   _shaped_get_text(shaped: RID): string;
-  _shaped_set_span_update_font(shaped: RID, index: int, fonts: RID[], size: int, opentype_features: Dictionary): void;
-  _shaped_text_add_object(shaped: RID, key: any, size: Vector2, inline_align: int, length: int, baseline: float): boolean;
-  _shaped_text_add_string(shaped: RID, text: string, fonts: RID[], size: int, opentype_features: Dictionary, language: string, meta: any): boolean;
+  _shaped_set_span_update_font(shaped: RID, index: int, fonts: unknown, size: int, opentype_features: Dictionary): void;
+  _shaped_text_add_object(shaped: RID, key: unknown, size: Vector2, inline_align: int, length: int, baseline: float): boolean;
+  _shaped_text_add_string(shaped: RID, text: string, fonts: unknown, size: int, opentype_features: Dictionary, language: string, meta: unknown): boolean;
   _shaped_text_clear(shaped: RID): void;
   _shaped_text_closest_character_pos(shaped: RID, pos: int): int;
   _shaped_text_draw(shaped: RID, canvas: RID, pos: Vector2, clip_l: float, clip_r: float, color: Color, oversampling: float): void;
@@ -21652,7 +21652,7 @@ declare class TextServerExtension extends TextServer {
   _shaped_text_duplicate(shaped: RID): RID;
   _shaped_text_fit_to_width(shaped: RID, width: float, justification_flags: int): float;
   _shaped_text_get_ascent(shaped: RID): float;
-  _shaped_text_get_carets(shaped: RID, position: int, caret: CaretInfo*): void;
+  _shaped_text_get_carets(shaped: RID, position: int, caret: unknown): void;
   _shaped_text_get_character_breaks(shaped: RID): PackedInt32Array;
   _shaped_text_get_custom_ellipsis(shaped: RID): int;
   _shaped_text_get_custom_punctuation(shaped: RID): string;
@@ -21660,18 +21660,18 @@ declare class TextServerExtension extends TextServer {
   _shaped_text_get_direction(shaped: RID): int;
   _shaped_text_get_dominant_direction_in_range(shaped: RID, start: int, end: int): int;
   _shaped_text_get_ellipsis_glyph_count(shaped: RID): int;
-  _shaped_text_get_ellipsis_glyphs(shaped: RID): const Glyph*;
+  _shaped_text_get_ellipsis_glyphs(shaped: RID): unknown;
   _shaped_text_get_ellipsis_pos(shaped: RID): int;
   _shaped_text_get_glyph_count(shaped: RID): int;
-  _shaped_text_get_glyphs(shaped: RID): const Glyph*;
+  _shaped_text_get_glyphs(shaped: RID): unknown;
   _shaped_text_get_grapheme_bounds(shaped: RID, pos: int): Vector2;
   _shaped_text_get_inferred_direction(shaped: RID): int;
   _shaped_text_get_line_breaks(shaped: RID, width: float, start: int, break_flags: int): PackedInt32Array;
   _shaped_text_get_line_breaks_adv(shaped: RID, width: PackedFloat32Array, start: int, once: boolean, break_flags: int): PackedInt32Array;
-  _shaped_text_get_object_glyph(shaped: RID, key: any): int;
-  _shaped_text_get_object_range(shaped: RID, key: any): Vector2i;
-  _shaped_text_get_object_rect(shaped: RID, key: any): Rect2;
-  _shaped_text_get_objects(shaped: RID): Array<any>;
+  _shaped_text_get_object_glyph(shaped: RID, key: unknown): int;
+  _shaped_text_get_object_range(shaped: RID, key: unknown): Vector2i;
+  _shaped_text_get_object_rect(shaped: RID, key: unknown): Rect2;
+  _shaped_text_get_objects(shaped: RID): Array<unknown>;
   _shaped_text_get_orientation(shaped: RID): int;
   _shaped_text_get_parent(shaped: RID): RID;
   _shaped_text_get_preserve_control(shaped: RID): boolean;
@@ -21685,7 +21685,7 @@ declare class TextServerExtension extends TextServer {
   _shaped_text_get_underline_thickness(shaped: RID): float;
   _shaped_text_get_width(shaped: RID): float;
   _shaped_text_get_word_breaks(shaped: RID, grapheme_flags: int, skip_grapheme_flags: int): PackedInt32Array;
-  _shaped_text_has_object(shaped: RID, key: any): boolean;
+  _shaped_text_has_object(shaped: RID, key: unknown): boolean;
   _shaped_text_hit_test_grapheme(shaped: RID, coord: float): int;
   _shaped_text_hit_test_position(shaped: RID, coord: float): int;
   _shaped_text_is_ready(shaped: RID): boolean;
@@ -21694,8 +21694,8 @@ declare class TextServerExtension extends TextServer {
   _shaped_text_overrun_trim_to_width(shaped: RID, width: float, trim_flags: int): void;
   _shaped_text_prev_character_pos(shaped: RID, pos: int): int;
   _shaped_text_prev_grapheme_pos(shaped: RID, pos: int): int;
-  _shaped_text_resize_object(shaped: RID, key: any, size: Vector2, inline_align: int, baseline: float): boolean;
-  _shaped_text_set_bidi_override(shaped: RID, override: Array<any>): void;
+  _shaped_text_resize_object(shaped: RID, key: unknown, size: Vector2, inline_align: int, baseline: float): boolean;
+  _shaped_text_set_bidi_override(shaped: RID, override: Array<unknown>): void;
   _shaped_text_set_custom_ellipsis(shaped: RID, char: int): void;
   _shaped_text_set_custom_punctuation(shaped: RID, punct: string): void;
   _shaped_text_set_direction(shaped: RID, direction: int): void;
@@ -21704,7 +21704,7 @@ declare class TextServerExtension extends TextServer {
   _shaped_text_set_preserve_invalid(shaped: RID, enabled: boolean): void;
   _shaped_text_set_spacing(shaped: RID, spacing: int, value: int): void;
   _shaped_text_shape(shaped: RID): boolean;
-  _shaped_text_sort_logical(shaped: RID): const Glyph*;
+  _shaped_text_sort_logical(shaped: RID): unknown;
   _shaped_text_substr(shaped: RID, start: int, length: int): RID;
   _shaped_text_tab_align(shaped: RID, tab_stops: PackedFloat32Array): float;
   _shaped_text_update_breaks(shaped: RID): boolean;
@@ -21720,12 +21720,12 @@ declare class TextServerExtension extends TextServer {
   _unreference_oversampling_level(oversampling: float): void;
 }
 
-declare class TextServerManager extends Object {
+declare class TextServerManager extends GodotObject {
   add_interface(interface_: TextServer): void;
   find_interface(name: string): TextServer;
   get_interface(idx: int): TextServer;
   get_interface_count(): int;
-  get_interfaces(): Dictionary[];
+  get_interfaces(): Dictionary;
   get_primary_interface(): TextServer;
   remove_interface(interface_: TextServer): void;
   set_primary_interface(index: TextServer): void;
@@ -21776,14 +21776,14 @@ declare class Texture2DRD extends Texture2D {
 }
 
 declare class Texture3D extends Texture {
-  _get_data(): Image[];
+  _get_data(): unknown;
   _get_depth(): int;
   _get_format(): int;
   _get_height(): int;
   _get_width(): int;
   _has_mipmaps(): boolean;
   create_placeholder(): Resource;
-  get_data(): Image[];
+  get_data(): unknown;
   get_depth(): int;
   get_format(): int;
   get_height(): int;
@@ -21943,7 +21943,7 @@ declare class Theme extends Resource {
   get_stylebox(name: string, theme_type: string): StyleBox;
   get_stylebox_list(theme_type: string): PackedStringArray;
   get_stylebox_type_list(): PackedStringArray;
-  get_theme_item(data_type: int, name: string, theme_type: string): any;
+  get_theme_item(data_type: int, name: string, theme_type: string): unknown;
   get_theme_item_list(data_type: int, theme_type: string): PackedStringArray;
   get_theme_item_type_list(data_type: int): PackedStringArray;
   get_type_list(): PackedStringArray;
@@ -21976,7 +21976,7 @@ declare class Theme extends Resource {
   set_font_size(name: string, theme_type: string, font_size: int): void;
   set_icon(name: string, theme_type: string, texture: Texture2D): void;
   set_stylebox(name: string, theme_type: string, texture: StyleBox): void;
-  set_theme_item(data_type: int, name: string, theme_type: string, value: any): void;
+  set_theme_item(data_type: int, name: string, theme_type: string, value: unknown): void;
   set_type_variation(theme_type: string, base_type: string): void;
 
   // enum DataType
@@ -21989,7 +21989,7 @@ declare class Theme extends Resource {
   static readonly DATA_TYPE_MAX: int;
 }
 
-declare class ThemeDB extends Object {
+declare class ThemeDB extends GodotObject {
   fallback_base_scale: float;
   fallback_font: Font;
   fallback_font_size: int;
@@ -22009,7 +22009,7 @@ declare class Thread extends RefCounted {
   is_started(): boolean;
   static set_thread_safety_checks_enabled(enabled: boolean): void;
   start(callable: Callable, priority: int): int;
-  wait_to_finish(): any;
+  wait_to_finish(): unknown;
 
   // enum Priority
   static readonly PRIORITY_LOW: int;
@@ -22017,7 +22017,7 @@ declare class Thread extends RefCounted {
   static readonly PRIORITY_HIGH: int;
 }
 
-declare class TileData extends Object {
+declare class TileData extends GodotObject {
   flip_h: boolean;
   flip_v: boolean;
   material: Material;
@@ -22037,8 +22037,8 @@ declare class TileData extends Object {
   get_collision_polygons_count(layer_id: int): int;
   get_constant_angular_velocity(layer_id: int): float;
   get_constant_linear_velocity(layer_id: int): Vector2;
-  get_custom_data(layer_name: string): any;
-  get_custom_data_by_layer_id(layer_id: int): any;
+  get_custom_data(layer_name: string): unknown;
+  get_custom_data_by_layer_id(layer_id: int): unknown;
   get_navigation_polygon(layer_id: int, flip_h?: boolean, flip_v?: boolean, transpose?: boolean): NavigationPolygon;
   get_occluder(layer_id: int, flip_h?: boolean, flip_v?: boolean, transpose?: boolean): OccluderPolygon2D;
   get_occluder_polygon(layer_id: int, polygon_index: int, flip_h?: boolean, flip_v?: boolean, transpose?: boolean): OccluderPolygon2D;
@@ -22055,8 +22055,8 @@ declare class TileData extends Object {
   set_collision_polygons_count(layer_id: int, polygons_count: int): void;
   set_constant_angular_velocity(layer_id: int, velocity: float): void;
   set_constant_linear_velocity(layer_id: int, velocity: Vector2): void;
-  set_custom_data(layer_name: string, value: any): void;
-  set_custom_data_by_layer_id(layer_id: int, value: any): void;
+  set_custom_data(layer_name: string, value: unknown): void;
+  set_custom_data_by_layer_id(layer_id: int, value: unknown): void;
   set_navigation_polygon(layer_id: int, navigation_polygon: NavigationPolygon): void;
   set_occluder(layer_id: int, occluder_polygon: OccluderPolygon2D): void;
   set_occluder_polygon(layer_id: int, polygon_index: int, polygon: OccluderPolygon2D): void;
@@ -22095,10 +22095,10 @@ declare class TileMap extends Node2D {
   get_layers_count(): int;
   get_navigation_map(layer: int): RID;
   get_neighbor_cell(coords: Vector2i, neighbor: int): Vector2i;
-  get_pattern(layer: int, coords_array: Vector2i[]): TileMapPattern;
-  get_surrounding_cells(coords: Vector2i): Vector2i[];
-  get_used_cells(layer: int): Vector2i[];
-  get_used_cells_by_id(layer: int, source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): Vector2i[];
+  get_pattern(layer: int, coords_array: unknown): TileMapPattern;
+  get_surrounding_cells(coords: Vector2i): unknown;
+  get_used_cells(layer: int): unknown;
+  get_used_cells_by_id(layer: int, source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): unknown;
   get_used_rect(): Rect2i;
   is_cell_flipped_h(layer: int, coords: Vector2i, use_proxies?: boolean): boolean;
   is_cell_flipped_v(layer: int, coords: Vector2i, use_proxies?: boolean): boolean;
@@ -22113,8 +22113,8 @@ declare class TileMap extends Node2D {
   notify_runtime_tile_data_update(layer?: int): void;
   remove_layer(layer: int): void;
   set_cell(layer: int, coords: Vector2i, source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): void;
-  set_cells_terrain_connect(layer: int, cells: Vector2i[], terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
-  set_cells_terrain_path(layer: int, path: Vector2i[], terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
+  set_cells_terrain_connect(layer: int, cells: unknown, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
+  set_cells_terrain_path(layer: int, path: unknown, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
   set_layer_enabled(layer: int, enabled: boolean): void;
   set_layer_modulate(layer: int, modulate: Color): void;
   set_layer_name(layer: int, name: string): void;
@@ -22151,7 +22151,7 @@ declare class TileMapLayer extends Node2D {
   y_sort_origin: int;
 
   _tile_data_runtime_update(coords: Vector2i, tile_data: TileData): void;
-  _update_cells(coords: Vector2i[], forced_cleanup: boolean): void;
+  _update_cells(coords: unknown, forced_cleanup: boolean): void;
   _use_tile_data_runtime_update(coords: Vector2i): boolean;
   clear(): void;
   erase_cell(coords: Vector2i): void;
@@ -22163,10 +22163,10 @@ declare class TileMapLayer extends Node2D {
   get_coords_for_body_rid(body: RID): Vector2i;
   get_navigation_map(): RID;
   get_neighbor_cell(coords: Vector2i, neighbor: int): Vector2i;
-  get_pattern(coords_array: Vector2i[]): TileMapPattern;
-  get_surrounding_cells(coords: Vector2i): Vector2i[];
-  get_used_cells(): Vector2i[];
-  get_used_cells_by_id(source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): Vector2i[];
+  get_pattern(coords_array: unknown): TileMapPattern;
+  get_surrounding_cells(coords: Vector2i): unknown;
+  get_used_cells(): unknown;
+  get_used_cells_by_id(source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): unknown;
   get_used_rect(): Rect2i;
   has_body_rid(body: RID): boolean;
   is_cell_flipped_h(coords: Vector2i): boolean;
@@ -22177,8 +22177,8 @@ declare class TileMapLayer extends Node2D {
   map_to_local(map_position: Vector2i): Vector2;
   notify_runtime_tile_data_update(): void;
   set_cell(coords: Vector2i, source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): void;
-  set_cells_terrain_connect(cells: Vector2i[], terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
-  set_cells_terrain_path(path: Vector2i[], terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
+  set_cells_terrain_connect(cells: unknown, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
+  set_cells_terrain_path(path: unknown, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
   set_navigation_map(map: RID): void;
   set_pattern(position: Vector2i, pattern: TileMapPattern): void;
   update_internals(): void;
@@ -22196,7 +22196,7 @@ declare class TileMapPattern extends Resource {
   get_cell_atlas_coords(coords: Vector2i): Vector2i;
   get_cell_source_id(coords: Vector2i): int;
   get_size(): Vector2i;
-  get_used_cells(): Vector2i[];
+  get_used_cells(): unknown;
   has_cell(coords: Vector2i): boolean;
   is_empty(): boolean;
   remove_cell(coords: Vector2i, update_size: boolean): void;
@@ -22221,8 +22221,8 @@ declare class TileSet extends Resource {
   add_terrain_set(to_position?: int): void;
   cleanup_invalid_tile_proxies(): void;
   clear_tile_proxies(): void;
-  get_alternative_level_tile_proxy(source_from: int, coords_from: Vector2i, alternative_from: int): Array<any>;
-  get_coords_level_tile_proxy(source_from: int, coords_from: Vector2i): Array<any>;
+  get_alternative_level_tile_proxy(source_from: int, coords_from: Vector2i, alternative_from: int): Array<unknown>;
+  get_coords_level_tile_proxy(source_from: int, coords_from: Vector2i): Array<unknown>;
   get_custom_data_layer_by_name(layer_name: string): int;
   get_custom_data_layer_name(layer_index: int): string;
   get_custom_data_layer_type(layer_index: int): int;
@@ -22255,7 +22255,7 @@ declare class TileSet extends Resource {
   has_custom_data_layer_by_name(layer_name: string): boolean;
   has_source(source_id: int): boolean;
   has_source_level_tile_proxy(source_from: int): boolean;
-  map_tile_proxy(source_from: int, coords_from: Vector2i, alternative_from: int): Array<any>;
+  map_tile_proxy(source_from: int, coords_from: Vector2i, alternative_from: int): Array<unknown>;
   move_custom_data_layer(layer_index: int, to_position: int): void;
   move_navigation_layer(layer_index: int, to_position: int): void;
   move_occlusion_layer(layer_index: int, to_position: int): void;
@@ -22401,7 +22401,7 @@ declare class TileSetSource extends Resource {
   has_tile(atlas_coords: Vector2i): boolean;
 }
 
-declare class Time extends Object {
+declare class Time extends GodotObject {
   get_date_dict_from_system(utc?: boolean): Dictionary;
   get_date_dict_from_unix_time(unix_time_val: int): Dictionary;
   get_date_string_from_system(utc?: boolean): string;
@@ -22581,10 +22581,10 @@ declare class TranslationDomain extends RefCounted {
 
   add_translation(translation: Translation): void;
   clear(): void;
-  find_translations(locale: string, exact: boolean): Translation[];
+  find_translations(locale: string, exact: boolean): unknown;
   get_locale_override(): string;
   get_translation_object(locale: string): Translation;
-  get_translations(): Translation[];
+  get_translations(): unknown;
   has_translation(translation: Translation): boolean;
   has_translation_for_locale(locale: string, exact: boolean): boolean;
   pseudolocalize(message: string): string;
@@ -22594,13 +22594,13 @@ declare class TranslationDomain extends RefCounted {
   translate_plural(message: string, message_plural: string, n: int, context?: string): string;
 }
 
-declare class TranslationServer extends Object {
+declare class TranslationServer extends GodotObject {
   pseudolocalization_enabled: boolean;
 
   add_translation(translation: Translation): void;
   clear(): void;
   compare_locales(locale_a: string, locale_b: string): int;
-  find_translations(locale: string, exact: boolean): Translation[];
+  find_translations(locale: string, exact: boolean): unknown;
   format_number(number: string, locale: string): string;
   get_all_countries(): PackedStringArray;
   get_all_languages(): PackedStringArray;
@@ -22616,7 +22616,7 @@ declare class TranslationServer extends Object {
   get_script_name(script: string): string;
   get_tool_locale(): string;
   get_translation_object(locale: string): Translation;
-  get_translations(): Translation[];
+  get_translations(): unknown;
   has_domain(domain: string): boolean;
   has_translation(translation: Translation): boolean;
   has_translation_for_locale(locale: string, exact: boolean): boolean;
@@ -22722,7 +22722,7 @@ declare class Tree extends Control {
   static readonly SCROLL_HINT_MODE_BOTTOM: int;
 }
 
-declare class TreeItem extends Object {
+declare class TreeItem extends GodotObject {
   collapsed: boolean;
   custom_minimum_height: int;
   disable_folding: boolean;
@@ -22749,7 +22749,7 @@ declare class TreeItem extends Object {
   get_cell_mode(column: int): int;
   get_child(index: int): TreeItem;
   get_child_count(): int;
-  get_children(): TreeItem[];
+  get_children(): unknown;
   get_custom_bg_color(column: int): Color;
   get_custom_color(column: int): Color;
   get_custom_draw_callback(column: int): Callable;
@@ -22766,7 +22766,7 @@ declare class TreeItem extends Object {
   get_icon_region(column: int): Rect2;
   get_index(): int;
   get_language(column: int): string;
-  get_metadata(column: int): any;
+  get_metadata(column: int): unknown;
   get_next(): TreeItem;
   get_next_in_tree(wrap?: boolean): TreeItem;
   get_next_visible(wrap?: boolean): TreeItem;
@@ -22777,7 +22777,7 @@ declare class TreeItem extends Object {
   get_range(column: int): float;
   get_range_config(column: int): Dictionary;
   get_structured_text_bidi_override(column: int): int;
-  get_structured_text_bidi_override_options(column: int): Array<any>;
+  get_structured_text_bidi_override_options(column: int): Array<unknown>;
   get_suffix(column: int): string;
   get_text(column: int): string;
   get_text_alignment(column: int): int;
@@ -22830,12 +22830,12 @@ declare class TreeItem extends Object {
   set_icon_region(column: int, region: Rect2): void;
   set_indeterminate(column: int, indeterminate: boolean): void;
   set_language(column: int, language: string): void;
-  set_metadata(column: int, meta: any): void;
+  set_metadata(column: int, meta: unknown): void;
   set_range(column: int, value: float): void;
   set_range_config(column: int, min: float, max: float, step: float, expr?: boolean): void;
   set_selectable(column: int, selectable: boolean): void;
   set_structured_text_bidi_override(column: int, parser: int): void;
-  set_structured_text_bidi_override_options(column: int, args: Array<any>): void;
+  set_structured_text_bidi_override_options(column: int, args: Array<unknown>): void;
   set_suffix(column: int, text: string): void;
   set_text(column: int, text: string): void;
   set_text_alignment(column: int, text_alignment: int): void;
@@ -22877,7 +22877,7 @@ declare class Tween extends RefCounted {
   get_loops_left(): int;
   get_total_elapsed_time(): float;
   has_tweeners(): boolean;
-  static interpolate_value(initial_value: any, delta_value: any, elapsed_time: float, duration: float, trans_type: int, ease_type: int): any;
+  static interpolate_value(initial_value: unknown, delta_value: unknown, elapsed_time: float, duration: float, trans_type: int, ease_type: int): unknown;
   is_running(): boolean;
   is_valid(): boolean;
   kill(): void;
@@ -22893,11 +22893,11 @@ declare class Tween extends RefCounted {
   set_speed_scale(speed: float): Tween;
   set_trans(trans: int): Tween;
   stop(): void;
-  tween_await(signal: Signal): AwaitTweener;
+  tween_await(signal: GodotSignal): AwaitTweener;
   tween_callback(callback: Callable): CallbackTweener;
   tween_interval(time: float): IntervalTweener;
-  tween_method(method: Callable, from_: any, to: any, duration: float): MethodTweener;
-  tween_property(object: GodotObject, property: string, final_val: any, duration: float): PropertyTweener;
+  tween_method(method: Callable, from_: unknown, to: unknown, duration: float): MethodTweener;
+  tween_property(object: GodotObject, property: string, final_val: unknown, duration: float): PropertyTweener;
   tween_subtween(subtween: Tween): SubtweenTweener;
 
   finished: Signal<[]>;
@@ -22986,14 +22986,14 @@ declare class UDSServer extends SocketServer {
   take_connection(): StreamPeerUDS;
 }
 
-declare class UndoRedo extends Object {
+declare class UndoRedo extends GodotObject {
   max_steps: int;
 
   add_do_method(callable: Callable): void;
-  add_do_property(object: GodotObject, property: string, value: any): void;
+  add_do_property(object: GodotObject, property: string, value: unknown): void;
   add_do_reference(object: GodotObject): void;
   add_undo_method(callable: Callable): void;
-  add_undo_property(object: GodotObject, property: string, value: any): void;
+  add_undo_property(object: GodotObject, property: string, value: unknown): void;
   add_undo_reference(object: GodotObject): void;
   clear_history(increase_version?: boolean): void;
   commit_action(execute?: boolean): void;
@@ -23019,8 +23019,8 @@ declare class UndoRedo extends Object {
   static readonly MERGE_ALL: int;
 }
 
-declare class UniformSetCacheRD extends Object {
-  static get_cache(shader: RID, set: int, uniforms: RDUniform[]): RID;
+declare class UniformSetCacheRD extends GodotObject {
+  static get_cache(shader: RID, set_: int, uniforms: unknown): RID;
 }
 
 declare class VBoxContainer extends BoxContainer {
@@ -23063,13 +23063,13 @@ declare class Vector2 {
   ceil(): Vector2;
   clamp(min: Vector2, max: Vector2): Vector2;
   clampf(min: float, max: float): Vector2;
-  cross(with: Vector2): float;
+  cross(with_: Vector2): float;
   cubic_interpolate(b: Vector2, pre_a: Vector2, post_b: Vector2, weight: float): Vector2;
   cubic_interpolate_in_time(b: Vector2, pre_a: Vector2, post_b: Vector2, weight: float, b_t: float, pre_a_t: float, post_b_t: float): Vector2;
   direction_to(to: Vector2): Vector2;
   distance_squared_to(to: Vector2): float;
   distance_to(to: Vector2): float;
-  dot(with: Vector2): float;
+  dot(with_: Vector2): float;
   floor(): Vector2;
   static from_angle(angle: float): Vector2;
   is_equal_approx(to: Vector2): boolean;
@@ -23080,12 +23080,12 @@ declare class Vector2 {
   length_squared(): float;
   lerp(to: Vector2, weight: float): Vector2;
   limit_length(length?: float): Vector2;
-  max(with: Vector2): Vector2;
+  max(with_: Vector2): Vector2;
   max_axis_index(): int;
-  maxf(with: float): Vector2;
-  min(with: Vector2): Vector2;
+  maxf(with_: float): Vector2;
+  min(with_: Vector2): Vector2;
   min_axis_index(): int;
-  minf(with: float): Vector2;
+  minf(with_: float): Vector2;
   move_toward(to: Vector2, delta: float): Vector2;
   normalized(): Vector2;
   orthogonal(): Vector2;
@@ -23126,12 +23126,12 @@ declare class Vector2i {
   distance_to(to: Vector2i): float;
   length(): float;
   length_squared(): int;
-  max(with: Vector2i): Vector2i;
+  max(with_: Vector2i): Vector2i;
   max_axis_index(): int;
-  maxi(with: int): Vector2i;
-  min(with: Vector2i): Vector2i;
+  maxi(with_: int): Vector2i;
+  min(with_: Vector2i): Vector2i;
   min_axis_index(): int;
-  mini(with: int): Vector2i;
+  mini(with_: int): Vector2i;
   sign(): Vector2i;
   snapped(step: Vector2i): Vector2i;
   snappedi(step: int): Vector2i;
@@ -23163,13 +23163,13 @@ declare class Vector3 {
   ceil(): Vector3;
   clamp(min: Vector3, max: Vector3): Vector3;
   clampf(min: float, max: float): Vector3;
-  cross(with: Vector3): Vector3;
+  cross(with_: Vector3): Vector3;
   cubic_interpolate(b: Vector3, pre_a: Vector3, post_b: Vector3, weight: float): Vector3;
   cubic_interpolate_in_time(b: Vector3, pre_a: Vector3, post_b: Vector3, weight: float, b_t: float, pre_a_t: float, post_b_t: float): Vector3;
   direction_to(to: Vector3): Vector3;
   distance_squared_to(to: Vector3): float;
   distance_to(to: Vector3): float;
-  dot(with: Vector3): float;
+  dot(with_: Vector3): float;
   floor(): Vector3;
   inverse(): Vector3;
   is_equal_approx(to: Vector3): boolean;
@@ -23180,17 +23180,17 @@ declare class Vector3 {
   length_squared(): float;
   lerp(to: Vector3, weight: float): Vector3;
   limit_length(length?: float): Vector3;
-  max(with: Vector3): Vector3;
+  max(with_: Vector3): Vector3;
   max_axis_index(): int;
-  maxf(with: float): Vector3;
-  min(with: Vector3): Vector3;
+  maxf(with_: float): Vector3;
+  min(with_: Vector3): Vector3;
   min_axis_index(): int;
-  minf(with: float): Vector3;
+  minf(with_: float): Vector3;
   move_toward(to: Vector3, delta: float): Vector3;
   normalized(): Vector3;
   static octahedron_decode(uv: Vector2): Vector3;
   octahedron_encode(): Vector2;
-  outer(with: Vector3): Basis;
+  outer(with_: Vector3): Basis;
   posmod(mod: float): Vector3;
   posmodv(modv: Vector3): Vector3;
   project(b: Vector3): Vector3;
@@ -23238,12 +23238,12 @@ declare class Vector3i {
   distance_to(to: Vector3i): float;
   length(): float;
   length_squared(): int;
-  max(with: Vector3i): Vector3i;
+  max(with_: Vector3i): Vector3i;
   max_axis_index(): int;
-  maxi(with: int): Vector3i;
-  min(with: Vector3i): Vector3i;
+  maxi(with_: int): Vector3i;
+  min(with_: Vector3i): Vector3i;
   min_axis_index(): int;
-  mini(with: int): Vector3i;
+  mini(with_: int): Vector3i;
   sign(): Vector3i;
   snapped(step: Vector3i): Vector3i;
   snappedi(step: int): Vector3i;
@@ -23280,7 +23280,7 @@ declare class Vector4 {
   direction_to(to: Vector4): Vector4;
   distance_squared_to(to: Vector4): float;
   distance_to(to: Vector4): float;
-  dot(with: Vector4): float;
+  dot(with_: Vector4): float;
   floor(): Vector4;
   inverse(): Vector4;
   is_equal_approx(to: Vector4): boolean;
@@ -23290,12 +23290,12 @@ declare class Vector4 {
   length(): float;
   length_squared(): float;
   lerp(to: Vector4, weight: float): Vector4;
-  max(with: Vector4): Vector4;
+  max(with_: Vector4): Vector4;
   max_axis_index(): int;
-  maxf(with: float): Vector4;
-  min(with: Vector4): Vector4;
+  maxf(with_: float): Vector4;
+  min(with_: Vector4): Vector4;
   min_axis_index(): int;
-  minf(with: float): Vector4;
+  minf(with_: float): Vector4;
   normalized(): Vector4;
   posmod(mod: float): Vector4;
   posmodv(modv: Vector4): Vector4;
@@ -23328,12 +23328,12 @@ declare class Vector4i {
   distance_to(to: Vector4i): float;
   length(): float;
   length_squared(): int;
-  max(with: Vector4i): Vector4i;
+  max(with_: Vector4i): Vector4i;
   max_axis_index(): int;
-  maxi(with: int): Vector4i;
-  min(with: Vector4i): Vector4i;
+  maxi(with_: int): Vector4i;
+  min(with_: Vector4i): Vector4i;
   min_axis_index(): int;
-  mini(with: int): Vector4i;
+  mini(with_: int): Vector4i;
   sign(): Vector4i;
   snapped(step: Vector4i): Vector4i;
   snappedi(step: int): Vector4i;
@@ -23489,7 +23489,7 @@ declare class Viewport extends Node {
   get_camera_2d(): Camera2D;
   get_camera_3d(): Camera3D;
   get_canvas_cull_mask_bit(layer: int): boolean;
-  get_embedded_subwindows(): Window[];
+  get_embedded_subwindows(): unknown;
   get_final_transform(): Transform2D;
   get_mouse_position(): Vector2;
   get_oversampling(): float;
@@ -23501,7 +23501,7 @@ declare class Viewport extends Node {
   get_viewport_rid(): RID;
   get_visible_rect(): Rect2;
   gui_cancel_drag(): void;
-  gui_get_drag_data(): any;
+  gui_get_drag_data(): unknown;
   gui_get_drag_description(): string;
   gui_get_focus_owner(): Control;
   gui_get_hovered_control(): Control;
@@ -23729,7 +23729,7 @@ declare class VisualShader extends Shader {
   detach_node_from_frame(type_: int, id: int): void;
   disconnect_nodes(type_: int, from_node: int, from_port: int, to_node: int, to_port: int): void;
   get_node(type_: int, id: int): VisualShaderNode;
-  get_node_connections(type_: int): Dictionary[];
+  get_node_connections(type_: int): Dictionary;
   get_node_list(type_: int): PackedInt32Array;
   get_node_position(type_: int, id: int): Vector2;
   get_valid_node_id(type_: int): int;
@@ -23779,11 +23779,11 @@ declare class VisualShaderNode extends Resource {
 
   clear_default_input_values(): void;
   get_default_input_port(type_: int): int;
-  get_default_input_values(): Array<any>;
-  get_input_port_default_value(port: int): any;
+  get_default_input_values(): Array<unknown>;
+  get_input_port_default_value(port: int): unknown;
   remove_input_port_default_value(port: int): void;
-  set_default_input_values(values: Array<any>): void;
-  set_input_port_default_value(port: int, value: any, prev_value?: any): void;
+  set_default_input_values(values: Array<unknown>): void;
+  set_input_port_default_value(port: int, value: unknown, prev_value?: unknown): void;
 
   // enum PortType
   static readonly PORT_TYPE_SCALAR: int;
@@ -23935,13 +23935,13 @@ declare class VisualShaderNodeCurveXYZTexture extends VisualShaderNodeResizableB
 
 declare class VisualShaderNodeCustom extends VisualShaderNode {
   _get_category(): string;
-  _get_code(input_vars: String[], output_vars: String[], mode: int, type_: int): string;
+  _get_code(input_vars: unknown, output_vars: unknown, mode: int, type_: int): string;
   _get_default_input_port(type_: int): int;
   _get_description(): string;
   _get_func_code(mode: int, type_: int): string;
   _get_global_code(mode: int): string;
   _get_input_port_count(): int;
-  _get_input_port_default_value(port: int): any;
+  _get_input_port_default_value(port: int): unknown;
   _get_input_port_name(port: int): string;
   _get_input_port_type(port: int): int;
   _get_name(): string;
@@ -24739,8 +24739,8 @@ declare class VoxelGIData extends Resource {
   get_to_cell_xform(): Transform3D;
 }
 
-declare class WeakRef extends RefCounted {
-  get_ref(): any;
+declare class GodotWeakRef extends RefCounted {
+  get_ref(): unknown;
 }
 
 declare class Window extends Viewport {
@@ -24935,7 +24935,7 @@ declare class Window extends Viewport {
   static readonly NOTIFICATION_THEME_CHANGED: int;
 }
 
-declare class WorkerThreadPool extends Object {
+declare class WorkerThreadPool extends GodotObject {
   add_group_task(action: Callable, elements: int, tasks_needed?: int, high_priority?: boolean, description?: string): int;
   add_task(action: Callable, high_priority?: boolean, description?: string): int;
   get_caller_group_id(): int;
@@ -25151,7 +25151,7 @@ declare class XRCamera3D extends Camera3D {
 
 declare class XRController3D extends XRNode3D {
   get_float(name: string): float;
-  get_input(name: string): any;
+  get_input(name: string): unknown;
   get_tracker_hand(): int;
   get_vector2(name: string): Vector2;
   is_button_pressed(name: string): boolean;
@@ -25408,7 +25408,7 @@ declare class XRInterface extends RefCounted {
   get_play_area(): PackedVector3Array;
   get_projection_for_view(view: int, aspect: float, near: float, far: float): Projection;
   get_render_target_size(): Vector2;
-  get_supported_environment_blend_modes(): Array<any>;
+  get_supported_environment_blend_modes(): Array<unknown>;
   get_system_info(): Dictionary;
   get_tracking_status(): int;
   get_transform_for_view(view: int, cam_transform: Transform3D): Transform3D;
@@ -25537,11 +25537,11 @@ declare class XRPositionalTracker extends XRTracker {
   hand: int;
   profile: string;
 
-  get_input(name: string): any;
+  get_input(name: string): unknown;
   get_pose(name: string): XRPose;
   has_pose(name: string): boolean;
   invalidate_pose(name: string): void;
-  set_input(name: string, value: any): void;
+  set_input(name: string, value: unknown): void;
   set_pose(name: string, transform: Transform3D, linear_velocity: Vector3, angular_velocity: Vector3, tracking_confidence: int): void;
 
   button_pressed: Signal<[string]>;
@@ -25559,7 +25559,7 @@ declare class XRPositionalTracker extends XRTracker {
   static readonly TRACKER_HAND_MAX: int;
 }
 
-declare class XRServer extends Object {
+declare class XRServer extends GodotObject {
   camera_locked_to_origin: boolean;
   primary_interface: XRInterface;
   world_origin: Transform3D;
@@ -25573,7 +25573,7 @@ declare class XRServer extends Object {
   get_hmd_transform(): Transform3D;
   get_interface(idx: int): XRInterface;
   get_interface_count(): int;
-  get_interfaces(): Dictionary[];
+  get_interfaces(): Dictionary;
   get_reference_frame(): Transform3D;
   get_tracker(tracker_name: string): XRTracker;
   get_trackers(tracker_types: int): Dictionary;
@@ -25611,19 +25611,10 @@ declare class XRTracker extends RefCounted {
   type: int;
 }
 
-declare class XRVRS extends Object {
+declare class XRVRS extends GodotObject {
   vrs_min_radius: float;
   vrs_render_region: Rect2i;
   vrs_strength: float;
 
   make_vrs_texture(target_size: Vector2, eye_foci: PackedVector2Array): RID;
-}
-
-declare class bool {
-}
-
-declare class float {
-}
-
-declare class int {
 }

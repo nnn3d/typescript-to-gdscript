@@ -1,5 +1,5 @@
 {
-  "version": "master",
+  "version": "4.7",
   "classes": {
     "AABB": {
       "name": "AABB",
