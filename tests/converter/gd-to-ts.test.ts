@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { convertGdToTs } from '../../src/converter/gd-to-ts/index.js';
+import { GodotClassRegistry } from '../../src/typings/godot-registry.js';
 import { readFileSync, readdirSync } from 'fs';
 import { join, basename } from 'path';
 import { fileURLToPath } from 'url';
@@ -8,6 +9,8 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const FIXTURES_DIR = join(__dirname, '..', 'fixtures', 'gd-to-ts');
+const REGISTRY_PATH = join(__dirname, '..', '..', 'typings', 'latest', 'godot-class-registry.json');
+const registry = GodotClassRegistry.fromJsonFile(REGISTRY_PATH);
 
 /**
  * Normalize code for comparison:
@@ -46,6 +49,7 @@ describe('GD to TS: Fixture-based tests', () => {
       const result = convertGdToTs({
         source: gdSource,
         filePath: gdFilePath,
+        registry,
       });
 
       // Log diagnostics for debugging

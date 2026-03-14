@@ -5,14 +5,14 @@ class Self extends Node {
 
   run() {
     this.print_data();
-    this.getNode('TestNode');
+    this.get_node('TestNode');
     floori(1.1);
   }
 
   Test = class extends Self {
     run() {
       print('test');
-      this.print_data();
+      print_data();
     }
   }
 }

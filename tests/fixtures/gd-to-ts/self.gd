@@ -6,7 +6,7 @@ func print_data():
 
 func run():
     print_data()
-    getNode('TestNode')
+    get_node('TestNode')
     floori(1.1)
 
 class Test extends Self:

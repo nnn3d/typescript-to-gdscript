@@ -5,6 +5,13 @@
   "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "typesVersions": {
+    "*": {
+      "typings": ["typings/index.d.ts"],
+      "typings/4.6": ["typings/4.6/index.d.ts"],
+      "typings/latest": ["typings/latest/index.d.ts"]
+    }
+  },
   "bin": {
     "ts2gd": "dist/cli/index.js"
   },
@@ -14,7 +21,9 @@
     "test": "vitest",
     "test:run": "vitest run",
     "lint": "tsc --noEmit",
-    "generate:ast-types": "ts-node src/parser/gdscript/generate-types.ts"
+    "generate:ast-types": "ts-node src/parser/gdscript/generate-types.ts",
+    "generate:godot-typings": "node dist/cli/index.js generate-typings --docs-dir vendor/godot/doc/classes --typings-dir typings --set-latest",
+    "set-latest": "node dist/cli/index.js set-latest"
   },
   "keywords": [
     "typescript",

@@ -203,6 +203,17 @@ export function parseAllClassXmls(classDocsDir: string): Map<string, GodotClassX
   return classes;
 }
 
+// ─── GDScript-specific builtins not in @GlobalScope XML ──
+
+const GDSCRIPT_BUILTINS = [
+  'range', 'len', 'load', 'preload', 'assert',
+  'int', 'float', 'bool', 'String',
+  'str', 'type_string',
+  'is_instance_of',
+  'inst_to_dict', 'dict_to_inst',
+  'print_stack', 'get_stack',
+];
+
 // ─── Known constructor types (value types constructed as functions in GDScript) ──
 
 const CONSTRUCTOR_TYPES = new Set([
@@ -233,7 +244,10 @@ export function generateRegistryData(classes: Map<string, GodotClassXml>): Godot
   for (const [name, cls] of classes) {
     // @GlobalScope is special — its members become globals
     if (name === '@GlobalScope') {
-      registry.globalFunctions = cls.methods.map(m => m.name);
+      registry.globalFunctions = [
+        ...cls.methods.map(m => m.name),
+        ...GDSCRIPT_BUILTINS,
+      ];
       registry.globalConstants = cls.constants
         .filter(c => !c.enumName)
         .map(c => c.name);
@@ -355,6 +369,43 @@ export class GodotClassRegistry {
   getData(): GodotRegistryData {
     return this.data;
   }
+}
+
+// ─── Version Detection ────────────────────────────────────────
+
+export interface GodotVersion {
+  major: number;
+  minor: number;
+  patch: number;
+  status: string;
+  /** e.g. "4.7" */
+  short: string;
+  /** e.g. "4.7.0" */
+  full: string;
+}
+
+/**
+ * Parses version.py from the Godot repo to extract version info.
+ */
+export function parseGodotVersion(versionPyPath: string): GodotVersion {
+  const content = readFileSync(versionPyPath, 'utf-8');
+  const get = (key: string): string => {
+    const m = new RegExp(`^${key}\\s*=\\s*(.+)$`, 'm').exec(content);
+    if (!m) return '';
+    return m[1]!.replace(/^["']|["']$/g, '').trim();
+  };
+  const major = parseInt(get('major')) || 0;
+  const minor = parseInt(get('minor')) || 0;
+  const patch = parseInt(get('patch')) || 0;
+  const status = get('status');
+  return {
+    major,
+    minor,
+    patch,
+    status,
+    short: `${major}.${minor}`,
+    full: `${major}.${minor}.${patch}`,
+  };
 }
 
 // ─── Generation Entry Point ───────────────────────────────────

@@ -1,15 +1,16 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, cpSync, existsSync } from 'fs';
 import { resolve, dirname, relative, extname, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.js';
 import { convertGdToTs } from '../converter/gd-to-ts/index.js';
 import { lintFiles } from '../linter/index.js';
 import { generateClassTypings } from '../typings/classes.js';
 import { generateGodotDocsTypings } from '../typings/godot-docs.js';
-import { GodotClassRegistry, generateGodotRegistry } from '../typings/godot-registry.js';
+import { parseGodotVersion } from '../typings/godot-registry.js';
 import { Watcher } from '../watcher/index.js';
+import { resolveRegistry } from '../config/index.js';
 
 const program = new Command();
 
@@ -70,11 +71,9 @@ program
   .description('Convert GDScript file(s) to TypeScript')
   .argument('<files...>', 'GDScript files to convert')
   .option('-o, --output-dir <dir>', 'Output directory')
-  .option('--registry <path>', 'Path to godot-class-registry.json')
+  .option('--registry <path>', 'Path to godot-class-registry.json (overrides tstogd.json and bundled)')
   .action((files: string[], opts) => {
-    const registry = opts.registry
-      ? GodotClassRegistry.fromJsonFile(resolve(opts.registry))
-      : undefined;
+    const registry = resolveRegistry({ registryPath: opts.registry });
 
     for (const file of files) {
       const filePath = resolve(file);
@@ -155,49 +154,118 @@ program
 
 // ─── Generate Typings ──────────────────────────────────────
 
+/**
+ * Detects Godot version from vendor/godot/version.py relative to the given godot docs dir.
+ * The docs dir is expected to be vendor/godot/doc/classes, so version.py is at ../../version.py.
+ */
+function detectGodotVersion(docsDir: string): string | null {
+  // Try docsDir/../../version.py (standard layout: vendor/godot/doc/classes)
+  const candidates = [
+    join(docsDir, '..', '..', 'version.py'),
+    join(docsDir, '..', 'version.py'),
+  ];
+  for (const candidate of candidates) {
+    if (existsSync(candidate)) {
+      const ver = parseGodotVersion(candidate);
+      return ver.short;
+    }
+  }
+  return null;
+}
+
+/**
+ * Copies all files from sourceDir to targetDir.
+ */
+function copyTypingsDir(sourceDir: string, targetDir: string): void {
+  mkdirSync(targetDir, { recursive: true });
+  cpSync(sourceDir, targetDir, { recursive: true });
+}
+
+/**
+ * Writes index.d.ts into a version folder so it can be used independently.
+ */
+function writeVersionIndexDts(versionDir: string): void {
+  const content = `/// <reference path="../gd-helpers.d.ts" />\n/// <reference path="godot.d.ts" />\n`;
+  writeFileSync(join(versionDir, 'index.d.ts'), content);
+}
+
 program
   .command('generate-typings')
-  .description('Generate TypeScript typings and class registry from Godot docs')
+  .description('Generate TypeScript typings and class registry from Godot docs into versioned typings folder')
   .option('--docs-dir <dir>', 'Godot XML class documentation directory')
-  .option('--output-dir <dir>', 'Output directory for .d.ts files', '.')
+  .option('--typings-dir <dir>', 'Root typings directory', 'typings')
   .option('--patch-dir <dir>', 'Directory containing .patch files')
-  .option('--registry-output <path>', 'Output path for godot-class-registry.json')
-  .option('--version <ver>', 'Godot version label')
+  .option('--version <ver>', 'Godot version label (auto-detected from vendor/godot/version.py if omitted)')
+  .option('--set-latest', 'Also copy to latest/', true)
   .action((opts) => {
-    if (opts.docsDir) {
-      generateGodotDocsTypings({
-        classDocsDir: resolve(opts.docsDir),
-        outputDir: resolve(opts.outputDir),
-        patchDir: opts.patchDir ? resolve(opts.patchDir) : undefined,
-        registryOutputPath: opts.registryOutput ? resolve(opts.registryOutput) : undefined,
-        version: opts.version,
-      });
-      console.log('Generated Godot typings.');
-      if (opts.registryOutput) {
-        console.log(`Generated registry: ${resolve(opts.registryOutput)}`);
-      }
-    } else {
+    if (!opts.docsDir) {
       console.error('--docs-dir is required');
       process.exit(1);
     }
+
+    const docsDir = resolve(opts.docsDir);
+    const typingsRoot = resolve(opts.typingsDir);
+    const version = opts.version ?? detectGodotVersion(docsDir);
+
+    if (!version) {
+      console.error('Could not detect Godot version. Use --version to specify it.');
+      process.exit(1);
+    }
+
+    const versionDir = join(typingsRoot, version);
+    mkdirSync(versionDir, { recursive: true });
+
+    const registryPath = join(versionDir, 'godot-class-registry.json');
+
+    generateGodotDocsTypings({
+      classDocsDir: docsDir,
+      outputDir: versionDir,
+      patchDir: opts.patchDir ? resolve(opts.patchDir) : undefined,
+      registryOutputPath: registryPath,
+      version,
+    });
+
+    writeVersionIndexDts(versionDir);
+    console.log(`Generated typings for Godot ${version} in ${versionDir}`);
+
+    if (opts.setLatest) {
+      const latestDir = join(typingsRoot, 'latest');
+      copyTypingsDir(versionDir, latestDir);
+      console.log(`Copied to ${latestDir}`);
+    }
   });
 
-// ─── Generate Registry Only ─────────────────────────────────
+// ─── Set Latest ──────────────────────────────────────────────
 
 program
-  .command('generate-registry')
-  .description('Generate Godot class registry JSON from Godot docs')
-  .requiredOption('--docs-dir <dir>', 'Godot XML class documentation directory')
-  .option('-o, --output <path>', 'Output path for registry JSON', 'godot-class-registry.json')
-  .option('--version <ver>', 'Godot version label')
-  .action((opts) => {
-    generateGodotRegistry({
-      classDocsDir: resolve(opts.docsDir),
-      outputPath: resolve(opts.output),
-      version: opts.version,
-    });
-    console.log(`Generated registry: ${resolve(opts.output)}`);
+  .command('set-latest')
+  .description('Set the "latest" typings from an existing version folder')
+  .argument('<version>', 'Version folder name to copy from (e.g. "4.6")')
+  .option('--typings-dir <dir>', 'Root typings directory', 'typings')
+  .action((version: string, opts) => {
+    const typingsRoot = resolve(opts.typingsDir);
+    const sourceDir = join(typingsRoot, version);
+    const latestDir = join(typingsRoot, 'latest');
+
+    if (!existsSync(sourceDir)) {
+      console.error(`Version folder not found: ${sourceDir}`);
+      console.error(`Available versions: ${getAvailableVersions(typingsRoot).join(', ') || '(none)'}`);
+      process.exit(1);
+    }
+
+    copyTypingsDir(sourceDir, latestDir);
+    writeVersionIndexDts(latestDir);
+    console.log(`Set latest typings to version ${version}`);
   });
+
+function getAvailableVersions(typingsRoot: string): string[] {
+  if (!existsSync(typingsRoot)) return [];
+  return readdirSync(typingsRoot).filter(name => {
+    if (name === 'latest' || name.endsWith('.d.ts') || name.endsWith('.ts')) return false;
+    const fullPath = join(typingsRoot, name);
+    return statSync(fullPath).isDirectory() && existsSync(join(fullPath, 'godot.d.ts'));
+  });
+}
 
 // ─── Generate Class Typings ────────────────────────────────
 

@@ -44,14 +44,30 @@ For features, that unsupported in TS, should be used strongly typed helpers.
 ## Project Structure
 
 ```
+vendor/
+  godot/               # Git submodule: official godot repo (shallow clone, master branch)
+                       # Only vendor/godot/doc/classes/*.xml and version.py are used
+
+typings/               # Versioned Godot typings (committed to git, used as TS lib)
+  index.d.ts           # Entry point: references gd-helpers.d.ts + latest/godot.d.ts
+  gd-helpers.d.ts      # gd namespace type defs (signal, enum_, as, math, decorators)
+  4.6/                 # Godot 4.6 typings
+    godot.d.ts         # 25K-line declare class/function definitions
+    godot-class-registry.json  # Class hierarchy JSON (916 classes)
+  latest/              # Copy of active version (used by index.d.ts)
+    godot.d.ts
+    godot-class-registry.json
+
 src/
+  config/
+    index.ts           # tstogd.json loader, registry resolver (CLI → config → bundled latest)
   converter/
     ts-to-gd/          # Main TS->GD converter
       transformer.ts   # AST visitor, walks TS AST and emits GDScript
       emitter.ts       # GDScriptEmitter: line/col tracking, source map integration
       index.ts         # convertTsToGd() entry point
     gd-to-ts/          # GD->TS converter
-      index.ts         # convertGdToTs() with typed AST, local scope tracking
+      index.ts         # convertGdToTs() with typed AST, local scope tracking, required GodotClassRegistry
     common/            # Shared types and type mapping
       index.ts         # TransformContext, TransformDiagnostic, TransformResult, tsTypeToGdType()
   parser/
@@ -64,9 +80,11 @@ src/
   sourcemap/
     index.ts           # SourceMapper (write) + SourceMapReader (read/verify)
   typings/
+    godot-registry.ts  # GodotClassRegistry + XML parsing + version detection from version.py
+    godot-docs.ts      # generateGodotDocsTypings: generates godot.d.ts + optional registry JSON
     classes.ts         # generateClassTypings: scans TS files, outputs global .d.ts
     scenes.ts          # generateSceneTypings: parses .tscn for getNode() overloads
-    godot-docs.ts      # generateGodotDocsTypings: Godot XML docs + .patch system
+    index.ts           # Barrel exports for all typings modules
   linter/
     index.ts           # lintFiles() entry point
     rules/index.ts     # 5 lint rules
@@ -75,15 +93,19 @@ src/
   watcher/
     index.ts           # Watcher class using chokidar, auto-converts with lint+cache
   cli/
-    index.ts           # Commander CLI: convert, convert-gd, lint, watch, generate-typings, generate-class-typings
+    index.ts           # Commander CLI: convert, convert-gd, lint, watch, generate-typings, set-latest, generate-class-typings
   types/
-    gd-helpers.d.ts    # gd namespace type defs (signal, enum_, as, math, decorators)
+    gd-helpers.d.ts    # gd namespace type defs (original, copied to typings/)
 
 tests/
-  fixtures/            # 16 paired .ts/.gd fixture files (TS->GD)
-  fixtures/gd-to-ts/   # 11 paired .gd/.ts fixture files (GD->TS)
+  fixtures/ts-to-gd/   # 16 paired .ts/.gd fixture files (TS->GD)
+  fixtures/gd-to-ts/   # 12 paired .gd/.ts fixture files (GD->TS)
   converter/
     ts-to-gd.test.ts   # Fixture-based test runner (16 dynamic tests)
+    gd-to-ts.test.ts   # Fixture-based test runner (12 dynamic tests)
+  typings/
+    godot-registry.test.ts    # Registry unit tests + real Godot docs parsing + version detection
+    gd-to-ts-registry.test.ts # Integration: GD->TS converter with registry for inherited members
   sourcemap/
     ts-to-gd-sourcemap.test.ts  # Source map verification (9 tests with concrete line:column checks)
 ```
@@ -91,11 +113,19 @@ tests/
 ## CLI Commands (binary: `ts2gd`)
 
 - `ts2gd convert <files...>` — Convert TS to GD (`-o`, `--source-map`, `--root-dir`, `--tsconfig`)
-- `ts2gd convert-gd <files...>` — Convert GD to TS (`-o`)
+- `ts2gd convert-gd <files...>` — Convert GD to TS (`-o`, `--registry`)
 - `ts2gd lint <files...>` — Lint TS files (`--root-dir`, `--tsconfig`)
 - `ts2gd watch` — Watch and auto-convert (`--root-dir`, `--output-dir`, `--source-map`, `--tsconfig`, `--class-typings`)
-- `ts2gd generate-typings` — Generate from Godot docs (`--docs-dir`, `--output-dir`, `--patch-dir`)
+- `ts2gd generate-typings` — Generate versioned typings from Godot docs (`--docs-dir`, `--typings-dir`, `--patch-dir`, `--version`, `--set-latest`)
+- `ts2gd set-latest <version>` — Set "latest" typings from existing version folder (`--typings-dir`)
 - `ts2gd generate-class-typings <files...>` — Generate global class .d.ts (`-o`, `--root-dir`, `--tsconfig`)
+
+### Typings usage by consumer projects
+Consumer projects add to their `tsconfig.json`:
+```json
+{ "compilerOptions": { "types": ["typescript-to-gdscript/typings"] } }
+```
+This loads `typings/index.d.ts` which references `gd-helpers.d.ts` + `latest/godot.d.ts`.
 
 ## Implementation Status
 
@@ -110,7 +140,7 @@ tests/
   - Comments (// -> #, /** */ -> ##), await stripping, new->.new()
 - [x] Source maps for TS-to-GD (GDScriptEmitter tracks line/col, 9 tests with concrete position checks)
 - [x] GDScript AST types generated from tree-sitter node-types.json (85 typed interfaces with field overloads)
-- [x] GD-to-TS converter with typed AST and 11 fixture tests:
+- [x] GD-to-TS converter with typed AST and 12 fixture tests:
   - Classes, extends, class_name, constructor_definition → constructor
   - Variables (typed, inferred `:=`, static), const → static property
   - Functions with params (typed, default, typed_default), return types
@@ -124,11 +154,23 @@ tests/
   - Lambda, await, conditional expression, array, dictionary, subscript, parenthesized
   - Local scope tracking: function params and local vars shadow class members for `this.` resolution
   - `async` auto-detected from `await` usage in function body
+  - Inner class definitions: `class Foo extends Bar:` → `Foo = class extends Bar { ... }`
+  - GodotClassRegistry integration: inherited members from Godot classes resolved for `this.` prefix
+  - Registry always required: precise member checking via GodotClassRegistry (resolved: CLI flag → tstogd.json → bundled latest)
 - [x] Typings generation (classes, scenes, godot-docs with .patch system)
+- [x] Godot class registry (916 classes from XML docs, inheritance chain resolution, global functions)
+  - Git submodule: `vendor/godot` (official godot repo, shallow clone)
+  - `GodotClassRegistry` class with `getAllMembers()`, `isGlobal()`, `getInheritanceChain()`
+  - Integrated into GD-to-TS converter for inherited member resolution (`this.` prefix)
+  - GDScript-specific builtins (range, len, load, preload, assert, etc.) added alongside @GlobalScope
+  - Generates `godot.d.ts` (25K lines) + `godot-class-registry.json` (916 classes, 130 global functions)
+  - Versioned typings: `typings/<version>/` folders, with `latest/` copy
+  - Auto-detects Godot version from `vendor/godot/version.py`
+  - `set-latest` CLI command to switch active version
+  - Consumer tsconfig: `"types": ["typescript-to-gdscript/typings"]`
 - [x] Linting (5 rules: single-class, no-undefined, no-const-let, no-top-level, no-unsupported)
 - [x] Watch mode + CLI + Cache
 - [ ] ESLint plugin
-- [ ] TS-to-GD multi-line lambda emitting fix (functions fixture skipped)
 - [ ] Source map integration with linter (map Godot LSP errors back to TS via source maps)
 
 ## Features Specification
@@ -251,11 +293,15 @@ As presented above, it uses from CLI, and watch for TS files for transformation,
 ### Tests
 There should be tests for transformations - some for ts -> gd, and some for gd -> ts, to cover all possible cases and errors. Also test for correct source maps. Also for correct linting.
 
-#### TS-to-GD test fixtures (16 paired .ts/.gd files)
-annotations, arrays-dicts, await-coroutines, classes, comments, constructor, control-flow, enums, functions (skipped), lambda, operators, signals, static-members, strings, type-casting, variables
+#### TS-to-GD test fixtures (16 paired .ts/.gd files in tests/fixtures/ts-to-gd/)
+annotations, arrays-dicts, await-coroutines, classes, comments, constructor, control-flow, enums, functions, lambda, operators, signals, static-members, strings, type-casting, variables
 
-#### GD-to-TS test fixtures (11 paired .gd/.ts files in tests/fixtures/gd-to-ts/)
-annotations, comments, constructor, control-flow, enums, expressions, functions, lambda, operators, signals, variables
+#### GD-to-TS test fixtures (12 paired .gd/.ts files in tests/fixtures/gd-to-ts/)
+annotations, comments, constructor, control-flow, enums, expressions, functions, lambda, operators, self, signals, variables
+
+#### Godot registry tests (tests/typings/)
+- `godot-registry.test.ts` — XML parsing, registry generation, GodotClassRegistry class, real Godot docs (916 classes)
+- `gd-to-ts-registry.test.ts` — Integration: GD->TS with registry for inherited member resolution
 
 #### Known transform edge cases resolved
 - Numeric literals: use `getText()` to preserve `100.0` (TS parser `node.text` strips trailing `.0`)
@@ -264,3 +310,7 @@ annotations, comments, constructor, control-flow, enums, expressions, functions,
 - `@gd.export` decorator: `export` is TS reserved word, handled via `gd.decorators.export_` in types
 - GD-to-TS `self.prop = param` double-this: attribute handler detects `self` at chain start, uses raw identifier for remaining parts; local scope (params + local vars) shadows class members to prevent `this.param`
 - GD-to-TS `_init` → `constructor`: tree-sitter parses `_init` as `constructor_definition` node type (separate from `function_definition`)
+- GD-to-TS inner `class` → `Name = class extends ... { ... }`: tree-sitter uses `class_body` node type but field name is `body`; members get extra 2-space indent
+- GD-to-TS `self.` resolution: registry always required, only known class members (own + inherited from Godot classes) get `this.` prefix; user-defined parent classes not in registry won't resolve inherited members
+- `tstogd.json` config: consumer project config file for registry resolution (godotVersion, registryPath, rootDir, outputDir, etc.)
+- GD-to-TS multi-line lambda body: `emitLambda()` returns header only, `emitLambdaBody()` emits indented body separately

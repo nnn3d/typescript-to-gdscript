@@ -10,6 +10,8 @@ export {
   type GodotClassInfo,
   type GodotEnumInfo,
   type GenerateRegistryOptions,
+  parseGodotVersion,
+  type GodotVersion,
   type GodotClassXml,
   type GodotMethodXml,
   type GodotPropertyXml,

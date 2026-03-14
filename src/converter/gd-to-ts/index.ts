@@ -4,42 +4,6 @@ import { isGDNodeType } from '../../parser/gdscript/types.js';
 import type { TransformResult, TransformDiagnostic } from '../common/index.js';
 import type { GodotClassRegistry } from '../../typings/godot-registry.js';
 
-/**
- * Fallback set of global/builtin functions used when no registry is provided.
- */
-const FALLBACK_GLOBALS = new Set([
-  'print', 'print_rich', 'print_verbose', 'printerr', 'printraw', 'prints', 'printt',
-  'push_error', 'push_warning',
-  'abs', 'absf', 'absi', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atan2', 'atanh',
-  'ceil', 'ceilf', 'ceili', 'clamp', 'clampf', 'clampi',
-  'cos', 'cosh', 'db_to_linear', 'deg_to_rad',
-  'ease', 'error_string', 'exp',
-  'floor', 'floorf', 'floori', 'fmod', 'fposmod',
-  'hash', 'instance_from_id', 'inverse_lerp', 'is_equal_approx', 'is_finite',
-  'is_inf', 'is_instance_id_valid', 'is_instance_valid', 'is_nan', 'is_same',
-  'is_zero_approx',
-  'lerp', 'lerp_angle', 'lerpf', 'linear_to_db', 'log',
-  'max', 'maxf', 'maxi', 'min', 'minf', 'mini', 'move_toward',
-  'nearest_po2', 'pingpong', 'posmod', 'pow',
-  'rad_to_deg', 'randf', 'randf_range', 'randi', 'randi_range', 'randomize',
-  'remap', 'round', 'roundf', 'roundi',
-  'seed', 'sign', 'signf', 'signi', 'sin', 'sinh', 'smoothstep', 'snapped',
-  'sqrt', 'str', 'str_to_var',
-  'tan', 'tanh', 'type_convert', 'type_string', 'typeof',
-  'weakref', 'wrap', 'wrapf', 'wrapi',
-  'Vector2', 'Vector2i', 'Vector3', 'Vector3i', 'Vector4', 'Vector4i',
-  'Color', 'Rect2', 'Rect2i', 'Transform2D', 'Transform3D',
-  'Basis', 'Quaternion', 'AABB', 'Plane', 'Projection',
-  'RID', 'Callable', 'Signal', 'Dictionary', 'Array',
-  'PackedByteArray', 'PackedInt32Array', 'PackedInt64Array',
-  'PackedFloat32Array', 'PackedFloat64Array',
-  'PackedStringArray', 'PackedVector2Array', 'PackedVector3Array',
-  'PackedColorArray', 'PackedVector4Array',
-  'StringName', 'NodePath',
-  'range', 'len', 'load', 'preload', 'assert',
-  'int', 'float', 'bool', 'String',
-]);
-
 export interface GdToTsOptions {
   /** GDScript source code */
   source: string;
@@ -47,8 +11,8 @@ export interface GdToTsOptions {
   filePath: string;
   /** Whether this is an addon file */
   isAddon?: boolean;
-  /** Godot class registry for inherited member resolution */
-  registry?: GodotClassRegistry;
+  /** Godot class registry for inherited member resolution (required) */
+  registry: GodotClassRegistry;
 }
 
 export function convertGdToTs(options: GdToTsOptions): TransformResult {
@@ -60,7 +24,7 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
     diagnostics: [],
     classMembers: new Set(),
     localVars: new Set(),
-    registry: options.registry ?? null,
+    registry: options.registry,
   };
 
   const code = emitSourceFile(root, ctx);
@@ -80,17 +44,14 @@ interface GdToTsContext {
   /** Local variables in current scope (params + local vars) — these shadow classMembers */
   localVars: Set<string>;
   /** Godot class registry for inherited member resolution */
-  registry: GodotClassRegistry | null;
+  registry: GodotClassRegistry;
 }
 
 /**
  * Check if a name is a global function/constructor (not a class member).
  */
 function isGlobalName(name: string, ctx: GdToTsContext): boolean {
-  if (ctx.registry) {
-    return ctx.registry.isGlobal(name);
-  }
-  return FALLBACK_GLOBALS.has(name);
+  return ctx.registry.isGlobal(name);
 }
 
 // ─── Source File ─────────────────────────────────────────────
@@ -942,9 +903,11 @@ function emitCall(node: GDNode, ctx: GdToTsContext): string {
 
   if (!callee) return `(${args})`;
 
-  // For bare identifier calls: add this. if not a global function and not a local var
-  if (isGDNodeType(callee, 'identifier') && !isGlobalName(callee.text, ctx) && !ctx.localVars.has(callee.text)) {
-    return `this.${callee.text}(${args})`;
+  // For bare identifier calls: add this. prefix for known class members
+  if (isGDNodeType(callee, 'identifier') && !ctx.localVars.has(callee.text) && !isGlobalName(callee.text, ctx)) {
+    if (ctx.classMembers.has(callee.text)) {
+      return `this.${callee.text}(${args})`;
+    }
   }
 
   const calleeStr = emitExpr(callee, ctx);

@@ -7,6 +7,8 @@ export { lintFiles, type LintOptions, type LintResult } from './linter/index.js'
 export { generateClassTypings } from './typings/classes.js';
 export { generateSceneTypings } from './typings/scenes.js';
 export { generateGodotDocsTypings } from './typings/godot-docs.js';
+export { GodotClassRegistry, generateGodotRegistry, parseGodotVersion } from './typings/godot-registry.js';
 export { FileCache } from './cache/index.js';
 export { Watcher, type WatcherOptions } from './watcher/index.js';
+export { resolveRegistry, loadConfig, type TsToGdConfig, type ResolveRegistryOptions } from './config/index.js';
 export type { TransformResult, TransformDiagnostic, TransformContext } from './converter/common/index.js';
