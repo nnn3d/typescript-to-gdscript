@@ -6,6 +6,7 @@ import { join } from 'path';
 export interface GodotClassInfo {
   name: string;
   inherits: string | null;
+  description?: string;
   methods: string[];
   properties: string[];
   signals: string[];
@@ -33,6 +34,8 @@ export interface GodotRegistryData {
 export interface GodotClassXml {
   name: string;
   inherits?: string;
+  briefDescription?: string;
+  description?: string;
   methods: GodotMethodXml[];
   properties: GodotPropertyXml[];
   signals: GodotSignalXml[];
@@ -44,6 +47,7 @@ export interface GodotMethodXml {
   name: string;
   returnType: string;
   parameters: GodotParamXml[];
+  description?: string;
   isVirtual: boolean;
   isStatic: boolean;
   isConst: boolean;
@@ -59,6 +63,7 @@ export interface GodotParamXml {
 export interface GodotPropertyXml {
   name: string;
   type: string;
+  description?: string;
   setter?: string;
   getter?: string;
 }
@@ -66,12 +71,59 @@ export interface GodotPropertyXml {
 export interface GodotSignalXml {
   name: string;
   parameters: GodotParamXml[];
+  description?: string;
 }
 
 export interface GodotConstantXml {
   name: string;
   value: string;
+  description?: string;
   enumName?: string;
+}
+
+/**
+ * Extracts text content from a `<description>` tag within a body string.
+ * Returns trimmed text or undefined if empty/missing.
+ */
+function extractDescription(body: string): string | undefined {
+  const match = /<description>([\s\S]*?)<\/description>/.exec(body);
+  if (!match) return undefined;
+  const text = match[1]!.trim();
+  return text || undefined;
+}
+
+/**
+ * Converts Godot BBCode-style markup to plain text for JSDoc.
+ * Strips [code], [b], [i], [url], [param], etc. tags.
+ */
+export function gdDocToPlain(text: string): string {
+  return text
+    .replace(/\[codeblock\][\s\S]*?\[\/codeblock\]/g, '') // remove code blocks entirely
+    .replace(/\[codeblocks\][\s\S]*?\[\/codeblocks\]/g, '')
+    .replace(/\[code\](.*?)\[\/code\]/g, '`$1`')
+    .replace(/\[param\s+(\w+)\]/g, '`$1`')
+    .replace(/\[b\](.*?)\[\/b\]/g, '**$1**')
+    .replace(/\[i\](.*?)\[\/i\]/g, '*$1*')
+    .replace(/\[url=([^\]]*)\](.*?)\[\/url\]/g, '$2 ($1)')
+    .replace(/\[([A-Z]\w*)\]/g, '{@link $1}')  // class refs like [Node]
+    .replace(/\[method\s+([^\]]+)\]/g, '{@link $1}')
+    .replace(/\[member\s+([^\]]+)\]/g, '{@link $1}')
+    .replace(/\[signal\s+([^\]]+)\]/g, '{@link $1}')
+    .replace(/\[constant\s+([^\]]+)\]/g, '{@link $1}')
+    .replace(/\[enum\s+([^\]]+)\]/g, '{@link $1}')
+    .replace(/\[kbd\](.*?)\[\/kbd\]/g, '`$1`')
+    .replace(/\[annotation\s+[^\]]+\]/g, '')
+    .replace(/\[theme_item\s+[^\]]+\]/g, '')
+    .replace(/\[color=[^\]]*\](.*?)\[\/color\]/g, '$1')
+    .replace(/\[font=[^\]]*\](.*?)\[\/font\]/g, '$1')
+    .replace(/\[br\]/g, '\n')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    // Normalize indentation: replace tabs and collapse multi-spaces
+    .split('\n').map(l => l.replace(/\t/g, '').trim()).join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 /**
@@ -84,6 +136,12 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
   const name = nameMatch[1]!;
   const inheritsMatch = /inherits="([^"]+)"/.exec(xmlContent);
   const inherits = inheritsMatch?.[1];
+
+  // Parse class-level descriptions
+  const briefMatch = /<brief_description>([\s\S]*?)<\/brief_description>/.exec(xmlContent);
+  const briefDescription = briefMatch?.[1]?.trim() || undefined;
+  const classDescMatch = xmlContent.match(/<class[^>]*>[\s\S]*?<description>([\s\S]*?)<\/description>/);
+  const classDescription = classDescMatch?.[1]?.trim() || undefined;
 
   const methods: GodotMethodXml[] = [];
   const properties: GodotPropertyXml[] = [];
@@ -118,6 +176,7 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
       name: methodName,
       returnType,
       parameters: params,
+      description: extractDescription(body),
       isVirtual: qualifiers.includes('virtual'),
       isStatic: qualifiers.includes('static'),
       isConst: qualifiers.includes('const'),
@@ -125,12 +184,14 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
     });
   }
 
-  // Parse properties (members)
-  const propRegex = /<member name="([^"]+)" type="([^"]+)"(?:\s+setter="([^"]*)")?(?:\s+getter="([^"]*)")?/g;
+  // Parse properties (members) — may have inline text or child <description>
+  const propRegex = /<member name="([^"]+)" type="([^"]+)"(?:\s+setter="([^"]*)")?(?:\s+getter="([^"]*)")?[^>]*(?:\/>|>([\s\S]*?)<\/member>)/g;
   while ((match = propRegex.exec(xmlContent)) !== null) {
+    const propDesc = match[5]?.trim() || undefined;
     properties.push({
       name: match[1]!,
       type: match[2]!,
+      description: propDesc,
       setter: match[3],
       getter: match[4],
     });
@@ -147,15 +208,17 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
     while ((paramMatch = paramRegex2.exec(body)) !== null) {
       params.push({ name: paramMatch[1]!, type: paramMatch[2]! });
     }
-    signals.push({ name: sigName, parameters: params });
+    signals.push({ name: sigName, parameters: params, description: extractDescription(body) });
   }
 
-  // Parse constants
-  const constRegex = /<constant name="([^"]+)" value="([^"]*)"(?:\s+enum="([^"]*)")?/g;
+  // Parse constants — may have inline text or child content
+  const constRegex = /<constant name="([^"]+)" value="([^"]*)"(?:\s+enum="([^"]*)")?[^>]*(?:\/>|>([\s\S]*?)<\/constant>)/g;
   while ((match = constRegex.exec(xmlContent)) !== null) {
+    const constContent = match[4]?.trim() || undefined;
     constants.push({
       name: match[1]!,
       value: match[2]!,
+      description: constContent,
       enumName: match[3],
     });
   }
@@ -176,6 +239,8 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
   return {
     name,
     inherits,
+    briefDescription,
+    description: classDescription,
     methods,
     properties,
     signals,
@@ -261,6 +326,7 @@ export function generateRegistryData(classes: Map<string, GodotClassXml>): Godot
     registry.classes[name] = {
       name,
       inherits: cls.inherits ?? null,
+      description: cls.briefDescription,
       methods: cls.methods.map(m => m.name),
       properties: cls.properties.map(p => p.name),
       signals: cls.signals.map(s => s.name),

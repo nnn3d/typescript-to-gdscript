@@ -5,6 +5,7 @@ import {
   parseAllClassXmls,
   generateRegistryData,
   GodotClassRegistry,
+  gdDocToPlain,
   type GodotClassXml,
   type GodotMethodXml,
   type GodotParamXml,
@@ -110,7 +111,40 @@ function sanitizeFunctionName(name: string): string {
   return name;
 }
 
-function emitMethodSignature(method: GodotMethodXml): string {
+/**
+ * Formats a description string as JSDoc comment lines.
+ * Returns array of lines like ["  /** Description here *​/"]
+ * or multi-line JSDoc for longer descriptions.
+ */
+function emitJsDoc(description: string | undefined, indent: string = '  '): string[] {
+  if (!description) return [];
+  var plain = gdDocToPlain(description);
+  if (!plain) return [];
+
+  // Escape */ inside JSDoc to prevent premature closure
+  plain = plain.replace(/\*\//g, '*\\/');
+
+  // Use brief (first sentence or first line) for short descriptions
+  const lines = plain.split('\n').filter(l => l.trim());
+  if (lines.length === 1 && lines[0]!.length < 100) {
+    return [`${indent}/** ${lines[0]} */`];
+  }
+
+  // Multi-line JSDoc
+  const result: string[] = [`${indent}/**`];
+  for (const line of lines) {
+    result.push(`${indent} * ${line}`);
+  }
+  result.push(`${indent} */`);
+  return result;
+}
+
+function emitMethodSignature(method: GodotMethodXml): string[] {
+  const lines: string[] = [];
+
+  // JSDoc
+  lines.push(...emitJsDoc(method.description));
+
   // Once we see an optional param, all subsequent must be optional too
   let seenOptional = false;
   const params: string[] = method.parameters.map(p => {
@@ -126,7 +160,8 @@ function emitMethodSignature(method: GodotMethodXml): string {
   const returnType = godotTypeToTs(method.returnType);
   const staticPrefix = method.isStatic ? 'static ' : '';
   const methodName = needsQuoting(method.name) ? `'${method.name}'` : method.name;
-  return `  ${staticPrefix}${methodName}(${params.join(', ')}): ${returnType};`;
+  lines.push(`  ${staticPrefix}${methodName}(${params.join(', ')}): ${returnType};`);
+  return lines;
 }
 
 /**
@@ -170,11 +205,14 @@ function sanitizeClassName(name: string): string {
  */
 function generateInterfaceDeclaration(cls: GodotClassXml, tsName: string): string {
   const lines: string[] = [];
-  lines.push(`// Generated from GDScript ${cls.name} class`);
+
+  // Class-level JSDoc
+  lines.push(...emitJsDoc(cls.briefDescription, ''));
   lines.push(`interface ${tsName} {`);
 
   // Properties (skip static-like things)
   for (const prop of cls.properties) {
+    lines.push(...emitJsDoc(prop.description));
     const tsType = godotTypeToTs(prop.type);
     const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
     lines.push(`  ${propName}: ${tsType};`);
@@ -187,6 +225,7 @@ function generateInterfaceDeclaration(cls: GodotClassXml, tsName: string): strin
   // Methods (skip static and virtual)
   for (const method of cls.methods) {
     if (method.isStatic) continue;
+    lines.push(...emitJsDoc(method.description));
     let seenOptional = false;
     const params: string[] = method.parameters.map(p => {
       const tsType = godotTypeToTs(p.type);
@@ -219,10 +258,13 @@ function generateClassDeclaration(cls: GodotClassXml, dictOnlyOverrides?: Set<st
   const extendsName = cls.inherits ? sanitizeClassName(cls.inherits) : '';
   const extendsClause = extendsName ? ` extends ${extendsName}` : '';
 
+  // Class-level JSDoc
+  lines.push(...emitJsDoc(cls.briefDescription, ''));
   lines.push(`declare class ${className}${extendsClause} {`);
 
   // Properties
   for (const prop of cls.properties) {
+    lines.push(...emitJsDoc(prop.description));
     const tsType = godotTypeToTs(prop.type);
     const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
     lines.push(`  ${propName}: ${tsType};`);
@@ -234,13 +276,14 @@ function generateClassDeclaration(cls: GodotClassXml, dictOnlyOverrides?: Set<st
 
   // Methods
   for (const method of cls.methods) {
-    lines.push(emitMethodSignature(method));
+    lines.push(...emitMethodSignature(method));
   }
 
   // Signals
   if (cls.signals.length > 0) {
     lines.push('');
     for (const sig of cls.signals) {
+      lines.push(...emitJsDoc(sig.description));
       const paramTypes = sig.parameters.map(p => godotTypeToTs(p.type));
       const sigName = needsQuoting(sig.name) ? `'${sig.name}'` : sig.name;
       lines.push(`  ${sigName}: Signal<[${paramTypes.join(', ')}]>;`);
@@ -254,6 +297,9 @@ function generateClassDeclaration(cls: GodotClassXml, dictOnlyOverrides?: Set<st
       // Emit as static readonly constants grouped by comment
       lines.push(`  // enum ${e.name}`);
       for (const v of e.values) {
+        // Find description from constants
+        const constInfo = cls.constants.find(c => c.name === v.name);
+        lines.push(...emitJsDoc(constInfo?.description));
         lines.push(`  static readonly ${v.name}: int;`);
       }
     }
@@ -264,6 +310,7 @@ function generateClassDeclaration(cls: GodotClassXml, dictOnlyOverrides?: Set<st
   if (nonEnumConstants.length > 0) {
     lines.push('');
     for (const c of nonEnumConstants) {
+      lines.push(...emitJsDoc(c.description));
       lines.push(`  static readonly ${c.name}: int;`);
     }
   }
@@ -292,6 +339,7 @@ function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
 
   // Global functions
   for (const method of cls.methods) {
+    lines.push(...emitJsDoc(method.description, ''));
     let seenOptional = false;
     const params = method.parameters.map(p => {
       const tsType = godotTypeToTs(p.type);
@@ -315,6 +363,9 @@ function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
       if (enumName === 'Error') enumName = 'GodotError';
       lines.push(`declare const enum ${enumName} {`);
       for (const v of e.values) {
+        // Find description from constants
+        const constInfo = cls.constants.find(c => c.name === v.name);
+        lines.push(...emitJsDoc(constInfo?.description));
         lines.push(`  ${v.name} = ${v.value},`);
       }
       lines.push('}');
@@ -327,6 +378,7 @@ function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
   if (nonEnumConstants.length > 0) {
     lines.push('');
     for (const c of nonEnumConstants) {
+      lines.push(...emitJsDoc(c.description, ''));
       lines.push(`declare const ${c.name}: int;`);
     }
   }
@@ -379,7 +431,7 @@ function computeDictOnlyOverrides(classes: Map<string, GodotClassXml>): Set<stri
  */
 interface ParsedOverride {
   /** The full declaration header, e.g. "interface Array<T>" or "declare class Node extends GodotObject" */
-  header: string;
+  header: string | undefined;
   /** Member name → full source text (one or more lines). Order preserved. */
   members: Map<string, string>;
   /** Extra lines (index signatures, comments) that don't have a named member */
@@ -417,7 +469,7 @@ function loadOverrides(overrideDir: string): Map<string, ParsedOverride> {
         header = content.substring(stmt.pos, headerEnd).trim().replace(/\{$/, '').trim();
       }
 
-      if (!name || !stmt.members) continue;
+      if (!name || !(stmt as any).members) continue;
       membersNode = (stmt as any).members as ts.NodeArray<any>;
 
       const members = new Map<string, string>();
