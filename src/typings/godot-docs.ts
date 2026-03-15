@@ -465,8 +465,9 @@ function loadOverrides(overrideDir: string): Map<string, ParsedOverride> {
         header = content.substring(stmt.pos, headerEnd).trim().replace(/\{$/, '').trim();
       } else if (ts.isClassDeclaration(stmt) && stmt.name) {
         name = stmt.name.text;
-        const headerEnd = stmt.members.pos;
-        header = content.substring(stmt.pos, headerEnd).trim().replace(/\{$/, '').trim();
+        // For class overrides, don't replace header (preserve extends clause etc.)
+        // Only interface overrides need header replacement (for adding generics to built-in types)
+        header = undefined;
       }
 
       if (!name || !(stmt as any).members) continue;
@@ -534,11 +535,13 @@ function applyOverride(generated: string, override: ParsedOverride): string {
   const lines = generated.split('\n');
 
   // Replace header line (first line that has interface/class + {)
-  const headerIdx = lines.findIndex(l => /^(interface|declare class)\s/.test(l.trim()));
-  if (headerIdx >= 0) {
-    // Preserve "// Generated from..." comment if present
-    const isComment = headerIdx > 0 && lines[headerIdx - 1].startsWith('//');
-    lines[headerIdx] = override.header + ' {';
+  if (override.header) {
+    const headerIdx = lines.findIndex(l => /^(interface|declare class)\s/.test(l.trim()));
+    if (headerIdx >= 0) {
+      // The override header may be multi-line (with JSDoc). Split it into individual lines.
+      const headerLines = (override.header + ' {').split('\n');
+      lines.splice(headerIdx, 1, ...headerLines);
+    }
   }
 
   // Parse generated members: find each "  memberName(" or "  memberName:" line
@@ -553,7 +556,8 @@ function applyOverride(generated: string, override: ParsedOverride): string {
     i++;
   }
 
-  // Process body lines
+  // Process body lines — buffer JSDoc lines so they can be dropped when a member is overridden
+  var pendingJsDoc: string[] = [];
   while (i < lines.length) {
     const line = lines[i];
     const trimmed = line.trimStart();
@@ -561,12 +565,20 @@ function applyOverride(generated: string, override: ParsedOverride): string {
     // Closing brace — stop
     if (trimmed === '}') break;
 
+    // Buffer JSDoc/comment lines
+    if (trimmed.startsWith('/**') || trimmed.startsWith('* ') || trimmed.startsWith('*/') || trimmed === '*') {
+      pendingJsDoc.push(line);
+      i++;
+      continue;
+    }
+
     // Try to extract member name from this line
     const memberMatch = trimmed.match(/^(?:static\s+)?(?:readonly\s+)?(?:'([^']+)'|(\w+))\s*[:(]/);
     if (memberMatch) {
       const memberName = memberMatch[1] ?? memberMatch[2];
       if (override.members.has(memberName)) {
-        // Replace with override version
+        // Drop buffered JSDoc (replaced by override's own JSDoc)
+        pendingJsDoc = [];
         result.push(override.members.get(memberName)!);
         usedOverrides.add(memberName);
         i++;
@@ -574,9 +586,14 @@ function applyOverride(generated: string, override: ParsedOverride): string {
       }
     }
 
+    // Flush buffered JSDoc (not overridden) then push current line
+    result.push(...pendingJsDoc);
+    pendingJsDoc = [];
     result.push(line);
     i++;
   }
+  // Flush any trailing JSDoc
+  result.push(...pendingJsDoc);
 
   // Add override-only members (new additions) before closing brace
   for (const [name, text] of override.members) {

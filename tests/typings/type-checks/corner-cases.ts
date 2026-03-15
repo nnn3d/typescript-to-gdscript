@@ -163,7 +163,7 @@ class MathEdgeCases extends Node {
 class GetNodeTest extends Node {
   test_get_node() {
     var child: Node = this.get_node("Child");
-    var maybe: Node = this.get_node_or_null("Maybe");
+    var maybe: Node | null = this.get_node_or_null("Maybe");
 
     // Can add retrieved nodes
     var other: Node = this.get_node("Other");

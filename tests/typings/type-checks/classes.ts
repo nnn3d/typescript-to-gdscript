@@ -34,7 +34,7 @@ class NodeMethodsTest extends Node {
     this.add_child(child);
     this.remove_child(child);
     var found: Node = this.get_node("Path/To/Node");
-    var maybe: Node = this.get_node_or_null("Maybe");
+    var maybe: Node | null = this.get_node_or_null("Maybe");
     var count: int = this.get_child_count();
     var parent: Node = this.get_parent();
     var path: string = this.get_path();
