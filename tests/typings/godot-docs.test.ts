@@ -5,20 +5,22 @@ import { tmpdir } from 'os';
 import { generateGodotDocsTypings } from '../../src/typings/godot-docs.js';
 
 const GODOT_DOCS_DIR = join(__dirname, '../../vendor/godot/doc/classes');
-const LATEST_GODOT_DTS = join(__dirname, '../../typings/latest/godot.d.ts');
+const OVERRIDE_DIR = join(__dirname, '../../typings/overrides');
+const VERSION_GODOT_DTS = join(__dirname, '../../typings/4.7/godot.d.ts');
 
 describe('Godot Docs: typings generation', () => {
-  it('should generate godot.d.ts matching typings/latest/godot.d.ts', () => {
+  it('should generate godot.d.ts matching typings/4.7/godot.d.ts', () => {
     const tmpDir = mkdtempSync(join(tmpdir(), 'godot-typings-'));
 
     try {
       generateGodotDocsTypings({
         classDocsDir: GODOT_DOCS_DIR,
         outputDir: tmpDir,
+        overrideDir: OVERRIDE_DIR,
       });
 
       const generated = readFileSync(join(tmpDir, 'godot.d.ts'), 'utf-8');
-      const expected = readFileSync(LATEST_GODOT_DTS, 'utf-8');
+      const expected = readFileSync(VERSION_GODOT_DTS, 'utf-8');
 
       const generatedLines = generated.split('\n');
       const expectedLines = expected.split('\n');

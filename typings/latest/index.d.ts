@@ -1,3 +1,2 @@
-/// <reference path="../globals.d.ts" />
-/// <reference path="../gd-helpers.d.ts" />
-/// <reference path="godot.d.ts" />
+// @version 4.7
+/// <reference path="../4.7/index.d.ts" />

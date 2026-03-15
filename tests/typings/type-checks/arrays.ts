@@ -32,17 +32,16 @@ class ArrayTest extends Node {
     var last: string = arr.back();
     var cnt: int = arr.count("hello");
 
-    // map/filter/reduce take Callable (not JS callbacks)
-    var mapped: Array<string> = arr.map(new Callable());
-    var filtered: Array<string> = arr.filter(new Callable());
-    var reduced: string = arr.reduce(new Callable());
+    // map/filter/reduce use typed function signatures
+    var mapped: Array<string> = arr.map((x: string) => x);
+    var filtered: Array<string> = arr.filter((x: string) => x === "yes");
+    var reduced: string = arr.reduce((acc: string, x: string) => acc + x);
+
+    // map with different return type
+    var bools: Array<boolean> = arr.map((x: string) => x === "yes");
 
     // @ts-expect-error — gdscript Array has no JS pop()
     arr.pop();
-
-    // Callable = Function, so lambdas are accepted
-    arr.map((x: string) => x);
-    arr.filter((x: string) => true);
   }
 
   test_no_js_array_methods() {

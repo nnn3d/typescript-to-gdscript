@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual improvements can be applied via .patch files.
+// Manual overrides applied from typings/overrides/*.d.ts
 
 // @GlobalScope — global functions and constants
 
@@ -1811,59 +1811,79 @@ declare class Area3D extends CollisionObject3D {
   static readonly SPACE_OVERRIDE_REPLACE_COMBINE: int;
 }
 
-declare class GodotArray {
-  all(method: Callable): boolean;
-  any(method: Callable): boolean;
-  append(value: unknown): void;
-  append_array(array: Array<unknown>): void;
-  assign(array: Array<unknown>): void;
-  back(): unknown;
-  bsearch(value: unknown, before?: boolean): int;
-  bsearch_custom(value: unknown, func: Callable, before?: boolean): int;
+// Generated from GDScript Array class
+/**
+ * Override: Array<T> — adds generic type parameter to GDScript Array.
+ *
+ * The generator produces `interface Array { ... }` with `unknown` for element types.
+ * This override replaces it with `interface Array<T>` so that typed arrays work:
+ *   var nums: Array<int> = [];
+ *   nums.append(42);       // OK
+ *   nums.append("hello");  // Error: string is not int
+ */
+interface Array<T = unknown> {
+  all(method: (value: T) => boolean): boolean;
+  any(method: (value: T) => boolean): boolean;
+  append(value: T): void;
+  append_array(array: Array<T>): void;
+  assign(array: Array<T>): void;
+  back(): T;
+  bsearch(value: T, before?: boolean): int;
+  bsearch_custom(value: T, func: (a: T, b: T) => boolean, before?: boolean): int;
   clear(): void;
-  count(value: unknown): int;
-  duplicate(deep?: boolean): Array<unknown>;
-  duplicate_deep(deep_subresources_mode?: int): Array<unknown>;
-  erase(value: unknown): void;
-  fill(value: unknown): void;
-  filter(method: Callable): Array<unknown>;
-  find(what: unknown, from_?: int): int;
-  find_custom(method: Callable, from_?: int): int;
-  front(): unknown;
-  get(index: int): unknown;
+  count(value: T): int;
+  duplicate(deep?: boolean): Array<T>;
+  duplicate_deep(deep_subresources_mode?: int): Array<T>;
+  erase(value: T): void;
+  fill(value: T): void;
+  filter(method: (value: T) => boolean): Array<T>;
+  find(what: T, from_?: int): int;
+  find_custom(method: (value: T) => boolean, from_?: int): int;
+  front(): T;
+  get(index: int): T;
   get_typed_builtin(): int;
   get_typed_class_name(): string;
   get_typed_script(): unknown;
-  has(value: unknown): boolean;
+  has(value: T): boolean;
   hash(): int;
-  insert(position: int, value: unknown): int;
+  insert(position: int, value: T): int;
   is_empty(): boolean;
   is_read_only(): boolean;
-  is_same_typed(array: Array<unknown>): boolean;
+  is_same_typed(array: Array<T>): boolean;
   is_typed(): boolean;
   make_read_only(): void;
-  map(method: Callable): Array<unknown>;
-  max(): unknown;
-  min(): unknown;
-  pick_random(): unknown;
-  pop_at(position: int): unknown;
-  pop_back(): unknown;
-  pop_front(): unknown;
-  push_back(value: unknown): void;
-  push_front(value: unknown): void;
-  reduce(method: Callable, accum?: unknown): unknown;
+  map<U>(method: (value: T) => U): Array<U>;
+  max(): T;
+  min(): T;
+  pick_random(): T;
+  pop_at(position: int): T;
+  pop_back(): T;
+  pop_front(): T;
+  push_back(value: T): void;
+  push_front(value: T): void;
+  reduce<U>(method: (accum: U, value: T) => U, accum: U): U;
+  reduce(method: (accum: T, value: T) => T, accum?: T): T;
   remove_at(position: int): void;
   resize(size: int): int;
   reverse(): void;
-  rfind(what: unknown, from_?: int): int;
-  rfind_custom(method: Callable, from_?: int): int;
-  set(index: int, value: unknown): void;
+  rfind(what: T, from_?: int): int;
+  rfind_custom(method: (value: T) => boolean, from_?: int): int;
+  set(index: int, value: T): void;
   shuffle(): void;
   size(): int;
-  slice(begin: int, end?: int, step?: int, deep?: boolean): Array<unknown>;
+  slice(begin: int, end?: int, step?: int, deep?: boolean): Array<T>;
   sort(): void;
-  sort_custom(func: Callable): void;
+  sort_custom(func: (a: T, b: T) => boolean): void;
+  [index: number]: T;
 }
+
+type GodotArray = Array<unknown>;
+interface ArrayConstructor {
+  new <T>(): Array<T>;
+  new <T>(...items: T[]): Array<T>;
+}
+declare var Array: ArrayConstructor;
+declare var GodotArray: { new(): Array<unknown> };
 
 declare class ArrayMesh extends Mesh {
   blend_shape_mode: int;
@@ -3308,13 +3328,20 @@ declare class CPUParticles3D extends GeometryInstance3D {
   static readonly EMISSION_SHAPE_MAX: int;
 }
 
-declare class Callable {
-  bind(): Callable;
-  bindv(arguments: Array<unknown>): Callable;
-  call(): unknown;
-  call_deferred(): void;
-  callv(arguments: Array<unknown>): unknown;
-  static create(variant: unknown, method: string): Callable;
+// Generated from GDScript Callable class
+/**
+ * Override: Function — untyped base for bare Callable/Function variables.
+ *
+ * Typed overloads (with `this` parameter) live on CallableFunction,
+ * which TS automatically uses for concrete function types (lambdas, etc.).
+ * This base interface works for `var c = new Callable()` and `var fn: Function`.
+ */
+interface Function {
+  bind(...args: any[]): Callable;
+  bindv(args: Array<any>): Callable;
+  call(...args: any[]): unknown;
+  call_deferred(...args: any[]): void;
+  callv(args: Array<any>): unknown;
   get_argument_count(): int;
   get_bound_arguments(): Array<unknown>;
   get_bound_arguments_count(): int;
@@ -3327,10 +3354,35 @@ declare class Callable {
   is_null(): boolean;
   is_standard(): boolean;
   is_valid(): boolean;
-  rpc(): void;
-  rpc_id(peer_id: int): void;
+  rpc(...args: any[]): void;
+  rpc_id(peer_id: int, ...args: any[]): void;
   unbind(argcount: int): Callable;
 }
+
+type Callable = Function;
+declare var Callable: { new(): Callable; create(object: GodotObject, method: string): Callable };
+/**
+ * Override: CallableFunction — typed overloads for concrete function types.
+ *
+ * TS uses CallableFunction for lambda/arrow types and concrete function references.
+ * These overloads provide type-safe call/bind with `this` parameter inference.
+ *
+ * GDScript bind() appends arguments to the END of the parameter list,
+ * so bind(lastArg) on (a, b, c) => R returns (a, b) => R.
+ */
+interface CallableFunction extends Function {
+  bind<F>(this: F): F;
+  bind<Init extends any[], L, R>(this: (...args: [...Init, L]) => R, arg: L): (...args: Init) => R;
+  bind<Init extends any[], L1, L2, R>(this: (...args: [...Init, L1, L2]) => R, arg1: L1, arg2: L2): (...args: Init) => R;
+  bind<Init extends any[], L1, L2, L3, R>(this: (...args: [...Init, L1, L2, L3]) => R, arg1: L1, arg2: L2, arg3: L3): (...args: Init) => R;
+  call<A extends any[], R>(this: (...args: A) => R, ...args: A): R;
+  call_deferred<A extends any[], R>(this: (...args: A) => R, ...args: A): void;
+  callv<A extends any[], R>(this: (...args: A) => R, args: A): R;
+  rpc<A extends any[]>(this: (...args: A) => any, ...args: A): void;
+  rpc_id<A extends any[]>(this: (...args: A) => any, peer_id: int, ...args: A): void;
+  unbind<F>(this: F, argcount: int): F;
+}
+interface NewableFunction extends Function {}
 
 declare class CallbackTweener extends Tweener {
   set_delay(delay: float): CallbackTweener;
@@ -3875,7 +3927,7 @@ declare class CircleShape2D extends Shape2D {
 
 declare class ClassDB extends GodotObject {
   can_instantiate(class_: string): boolean;
-  class_call_static(class_: string, method: string): unknown;
+  class_call_static(class_: string, method: string, ...args: any[]): unknown;
   class_exists(class_: string): boolean;
   class_get_api_type(class_: string): int;
   class_get_enum_constants(class_: string, enum_: string, no_inheritance?: boolean): PackedStringArray;
@@ -5136,7 +5188,8 @@ declare class Decal extends VisualInstance3D {
   static readonly TEXTURE_MAX: int;
 }
 
-declare class Dictionary {
+// Generated from GDScript Dictionary class
+interface Object {
   assign(dictionary: Dictionary): void;
   clear(): void;
   duplicate(deep?: boolean): Dictionary;
@@ -5172,6 +5225,10 @@ declare class Dictionary {
   sort(): void;
   values(): Array<unknown>;
 }
+
+type Dictionary = Object;
+declare var Dictionary: { new(): Dictionary };
+declare var Object: typeof GodotObject;
 
 declare class DirAccess extends RefCounted {
   include_hidden: boolean;
@@ -7167,10 +7224,10 @@ declare class EditorTranslationParserPlugin extends RefCounted {
 }
 
 declare class EditorUndoRedoManager extends GodotObject {
-  add_do_method(object: GodotObject, method: string): void;
+  add_do_method(object: GodotObject, method: string, ...args: any[]): void;
   add_do_property(object: GodotObject, property: string, value: unknown): void;
   add_do_reference(object: GodotObject): void;
-  add_undo_method(object: GodotObject, method: string): void;
+  add_undo_method(object: GodotObject, method: string, ...args: any[]): void;
   add_undo_property(object: GodotObject, property: string, value: unknown): void;
   add_undo_reference(object: GodotObject): void;
   clear_history(id?: int, increase_version?: boolean): void;
@@ -9542,7 +9599,7 @@ declare class JavaObject extends RefCounted {
 
 declare class JavaScriptBridge extends GodotObject {
   create_callback(callable: Callable): JavaScriptObject;
-  create_object(object: string): unknown;
+  create_object(object: string, ...args: any[]): unknown;
   download_buffer(buffer: PackedByteArray, name: string, mime?: string): void;
   eval(code: string, use_global_execution_context?: boolean): unknown;
   force_fs_sync(): void;
@@ -11619,8 +11676,8 @@ declare class Node extends GodotObject {
   add_to_group(group: string, persistent?: boolean): void;
   atr(message: string, context?: string): string;
   atr_n(message: string, plural_message: string, n: int, context?: string): string;
-  call_deferred_thread_group(method: string): unknown;
-  call_thread_safe(method: string): unknown;
+  call_deferred_thread_group(method: string, ...args: any[]): unknown;
+  call_thread_safe(method: string, ...args: any[]): unknown;
   can_auto_translate(): boolean;
   can_process(): boolean;
   create_tween(): Tween;
@@ -11689,9 +11746,9 @@ declare class Node extends GodotObject {
   replace_by(node: Node, keep_groups?: boolean): void;
   request_ready(): void;
   reset_physics_interpolation(): void;
-  rpc(method: string): int;
+  rpc(method: string, ...args: any[]): int;
   rpc_config(method: string, config: unknown): void;
-  rpc_id(peer_id: int, method: string): int;
+  rpc_id(peer_id: int, method: string, ...args: any[]): int;
   set_deferred_thread_group(property: string, value: unknown): void;
   set_display_folded(fold: boolean): void;
   set_editable_instance(node: Node, is_editable: boolean): void;
@@ -12042,14 +12099,14 @@ declare class GodotObject {
   _to_string(): string;
   _validate_property(property: Dictionary): void;
   add_user_signal(signal: string, arguments?: Array<unknown>): void;
-  call(method: string): unknown;
-  call_deferred(method: string): unknown;
+  call(method: string, ...args: any[]): unknown;
+  call_deferred(method: string, ...args: any[]): unknown;
   callv(method: string, arg_array: Array<unknown>): unknown;
   can_translate_messages(): boolean;
   cancel_free(): void;
   connect(signal: string, callable: Callable, flags?: int): int;
   disconnect(signal: string, callable: Callable): void;
-  emit_signal(signal: string): int;
+  emit_signal(signal: string, ...args: any[]): int;
   free(): void;
   get(property: string): unknown;
   get_class(): string;
@@ -12105,6 +12162,33 @@ declare class GodotObject {
   static readonly NOTIFICATION_POSTINITIALIZE: int;
   static readonly NOTIFICATION_PREDELETE: int;
   static readonly NOTIFICATION_EXTENSION_RELOADED: int;
+
+  // Override Dictionary-only methods from Object interface with never.
+  // Only methods that no Godot subclass uses are overridden here.
+  /** @deprecated GodotObject is not a Dictionary */ assign: never;
+  /** @deprecated GodotObject is not a Dictionary */ find_key: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_or_add: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_key_builtin: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_key_class_name: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_key_script: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_value_builtin: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_value_class_name: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_value_script: never;
+  /** @deprecated GodotObject is not a Dictionary */ has_all: never;
+  /** @deprecated GodotObject is not a Dictionary */ hash: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_read_only: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_same_typed: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_same_typed_key: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_same_typed_value: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_typed: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_typed_key: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_typed_value: never;
+  /** @deprecated GodotObject is not a Dictionary */ keys: never;
+  /** @deprecated GodotObject is not a Dictionary */ make_read_only: never;
+  /** @deprecated GodotObject is not a Dictionary */ merged: never;
+  /** @deprecated GodotObject is not a Dictionary */ recursive_equal: never;
+  /** @deprecated GodotObject is not a Dictionary */ sort: never;
+  /** @deprecated GodotObject is not a Dictionary */ values: never;
 }
 
 declare class Occluder3D extends Resource {
@@ -18709,8 +18793,8 @@ declare class SceneTree extends MainLoop {
   quit_on_go_back: boolean;
   root: Window;
 
-  call_group(group: string, method: string): void;
-  call_group_flags(flags: int, group: string, method: string): void;
+  call_group(group: string, method: string, ...args: any[]): void;
+  call_group_flags(flags: int, group: string, method: string, ...args: any[]): void;
   change_scene_to_file(path: string): int;
   change_scene_to_node(node: Node): int;
   change_scene_to_packed(packed_scene: PackedScene): int;
@@ -19186,7 +19270,7 @@ declare class Shortcut extends Resource {
 declare class GodotSignal {
   connect(callable: Callable, flags?: int): int;
   disconnect(callable: Callable): void;
-  emit(): void;
+  emit(...args: any[]): void;
   get_connections(): Array<unknown>;
   get_name(): string;
   get_object(): GodotObject;
@@ -20120,7 +20204,8 @@ declare class StreamPeerUDS extends StreamPeerSocket {
   get_connected_path(): string;
 }
 
-declare class GodotString {
+// Generated from GDScript String class
+interface String {
   begins_with(text: string): boolean;
   bigrams(): PackedStringArray;
   bin_to_int(): int;
@@ -20128,7 +20213,6 @@ declare class GodotString {
   c_unescape(): string;
   capitalize(): string;
   casecmp_to(to: string): int;
-  static chr(code: int): string;
   contains(what: string): boolean;
   containsn(what: string): boolean;
   count(what: string, from_?: int, to?: int): int;
@@ -20151,7 +20235,6 @@ declare class GodotString {
   hash(): int;
   hex_decode(): PackedByteArray;
   hex_to_int(): int;
-  static humanize_size(size: int): string;
   indent(prefix: string): string;
   insert(position: int, what: string): string;
   is_absolute_path(): boolean;
@@ -20181,10 +20264,6 @@ declare class GodotString {
   naturalcasecmp_to(to: string): int;
   naturalnocasecmp_to(to: string): int;
   nocasecmp_to(to: string): int;
-  static num(number: float, decimals?: int): string;
-  static num_int64(number: int, base?: int, capitalize_hex?: boolean): string;
-  static num_scientific(number: float): string;
-  static num_uint64(number: int, base?: int, capitalize_hex?: boolean): string;
   pad_decimals(digits: int): string;
   pad_zeros(digits: int): string;
   path_join(path: string): string;
@@ -20237,7 +20316,11 @@ declare class GodotString {
   validate_node_name(): string;
   xml_escape(escape_quotes?: boolean): string;
   xml_unescape(): string;
+
+  [index: number]: string;
 }
+
+type GodotString = String;
 
 declare class StringName {
   begins_with(text: string): boolean;
@@ -22730,7 +22813,7 @@ declare class TreeItem extends GodotObject {
 
   add_button(column: int, button: Texture2D, id?: int, disabled?: boolean, tooltip_text?: string, description?: string): void;
   add_child(child: TreeItem): void;
-  call_recursive(method: string): void;
+  call_recursive(method: string, ...args: any[]): void;
   clear_buttons(): void;
   clear_custom_bg_color(column: int): void;
   clear_custom_color(column: int): void;

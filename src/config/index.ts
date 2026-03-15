@@ -49,8 +49,21 @@ function getPackageTypingsDir(): string {
 }
 
 /**
+ * Reads the latest version from typings/latest/index.d.ts.
+ * Parses the "// @version X.Y" comment.
+ */
+function getLatestVersion(): string | null {
+  const typingsDir = getPackageTypingsDir();
+  const latestIndex = join(typingsDir, 'latest', 'index.d.ts');
+  if (!existsSync(latestIndex)) return null;
+  const content = readFileSync(latestIndex, 'utf-8');
+  const match = content.match(/\/\/\s*@version\s+(\S+)/);
+  return match?.[1] ?? null;
+}
+
+/**
  * Resolves the bundled registry JSON path for a given version.
- * Falls back to "latest" if the version folder doesn't exist.
+ * Falls back to the version referenced by latest/index.d.ts.
  */
 function getBundledRegistryPath(version?: string): string | null {
   const typingsDir = getPackageTypingsDir();
@@ -58,8 +71,12 @@ function getBundledRegistryPath(version?: string): string | null {
     const versionedPath = join(typingsDir, version, 'godot-class-registry.json');
     if (existsSync(versionedPath)) return versionedPath;
   }
-  const latestPath = join(typingsDir, 'latest', 'godot-class-registry.json');
-  if (existsSync(latestPath)) return latestPath;
+  // Resolve from latest/ pointer
+  const latestVersion = getLatestVersion();
+  if (latestVersion) {
+    const path = join(typingsDir, latestVersion, 'godot-class-registry.json');
+    if (existsSync(path)) return path;
+  }
   return null;
 }
 

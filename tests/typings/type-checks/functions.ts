@@ -2,7 +2,7 @@
 
 class FunctionTest extends Node {
   test_gdscript_callable_methods() {
-    var fn: Function = () => {};
+    var fn = () => {};
 
     // GDScript Callable methods work
     var bound: Callable = fn.bind();
@@ -27,8 +27,19 @@ class FunctionTest extends Node {
     var unbound: Callable = fn.unbind(1);
   }
 
+  generic_args() {
+    const fn = (arg1: string, arg2: int) => {};
+
+    fn.call('', 0);
+    // @ts-expect-error — wrong arguments
+    fn.call()
+    fn.bind(0).call('');
+    // @ts-expect-error — wrong arguments
+    fn.bind('')
+  }
+
   test_no_js_function_methods() {
-    var fn: Function = () => {};
+    var fn = () => {};
 
     // @ts-expect-error — no JS apply
     fn.apply(null, []);
@@ -54,9 +65,9 @@ class FunctionTest extends Node {
 
   test_function_as_callable() {
     // Function and Callable are interchangeable
-    var fn: Function = () => {};
+    var fn = () => {};
     var c: Callable = fn;
-    var fn2: Function = c;
+    var fn2 = c;
 
     // Lambda assigned to Callable
     var cb: Callable = () => {};
@@ -80,15 +91,17 @@ class FunctionTest extends Node {
   }
 
   test_callable_in_gdscript_apis() {
-    // Callable is accepted where GDScript APIs expect it
+    // Array methods accept typed functions
     var arr: Array<int> = [];
-    var filtered: Array<int> = arr.filter(new Callable());
-    var mapped: Array<int> = arr.map(new Callable());
-    var reduced: int = arr.reduce(new Callable());
-    arr.sort_custom(new Callable());
-
-    // Lambdas also work since Callable = Function
-    arr.filter(() => true);
+    var filtered: Array<int> = arr.filter((x: int) => x > 0);
+    var mapped: Array<int> = arr.map((x: int) => x * 2);
+    var reduced: int = arr.reduce((acc: int, x: int) => acc + x);
     arr.sort_custom((a: int, b: int) => a < b);
+
+    // map can change element type
+    var bools: Array<boolean> = arr.map((x: int) => x > 0);
+
+    // reduce with different accumulator type
+    var sum: float = arr.reduce((acc: float, x: int) => acc + x, 0.0);
   }
 }

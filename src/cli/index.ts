@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, cpSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync } from 'fs';
 import { resolve, dirname, relative, extname, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.js';
 import { convertGdToTs } from '../converter/gd-to-ts/index.js';
@@ -174,14 +174,6 @@ function detectGodotVersion(docsDir: string): string | null {
 }
 
 /**
- * Copies all files from sourceDir to targetDir.
- */
-function copyTypingsDir(sourceDir: string, targetDir: string): void {
-  mkdirSync(targetDir, { recursive: true });
-  cpSync(sourceDir, targetDir, { recursive: true });
-}
-
-/**
  * Writes index.d.ts into a version folder so it can be used independently.
  */
 function writeVersionIndexDts(versionDir: string): void {
@@ -189,14 +181,24 @@ function writeVersionIndexDts(versionDir: string): void {
   writeFileSync(join(versionDir, 'index.d.ts'), content);
 }
 
+/**
+ * Writes latest/index.d.ts that references a version folder.
+ * latest/ is just a pointer, not a copy.
+ */
+function writeLatestIndexDts(latestDir: string, version: string): void {
+  mkdirSync(latestDir, { recursive: true });
+  const content = `// @version ${version}\n/// <reference path="../${version}/index.d.ts" />\n`;
+  writeFileSync(join(latestDir, 'index.d.ts'), content);
+}
+
 program
   .command('generate-typings')
   .description('Generate TypeScript typings and class registry from Godot docs into versioned typings folder')
   .option('--docs-dir <dir>', 'Godot XML class documentation directory')
   .option('--typings-dir <dir>', 'Root typings directory', 'typings')
-  .option('--patch-dir <dir>', 'Directory containing .patch files')
+  .option('--override-dir <dir>', 'Directory containing override .d.ts files')
   .option('--version <ver>', 'Godot version label (auto-detected from vendor/godot/version.py if omitted)')
-  .option('--set-latest', 'Also copy to latest/', true)
+  .option('--set-latest', 'Also update latest/ reference', true)
   .action((opts) => {
     if (!opts.docsDir) {
       console.error('--docs-dir is required');
@@ -216,11 +218,12 @@ program
     mkdirSync(versionDir, { recursive: true });
 
     const registryPath = join(versionDir, 'godot-class-registry.json');
+    const overrideDir = opts.overrideDir ? resolve(opts.overrideDir) : join(typingsRoot, 'overrides');
 
     generateGodotDocsTypings({
       classDocsDir: docsDir,
       outputDir: versionDir,
-      patchDir: opts.patchDir ? resolve(opts.patchDir) : undefined,
+      overrideDir: existsSync(overrideDir) ? overrideDir : undefined,
       registryOutputPath: registryPath,
       version,
     });
@@ -230,8 +233,8 @@ program
 
     if (opts.setLatest) {
       const latestDir = join(typingsRoot, 'latest');
-      copyTypingsDir(versionDir, latestDir);
-      console.log(`Copied to ${latestDir}`);
+      writeLatestIndexDts(latestDir, version);
+      console.log(`Updated latest/ → ${version}`);
     }
   });
 
@@ -239,8 +242,8 @@ program
 
 program
   .command('set-latest')
-  .description('Set the "latest" typings from an existing version folder')
-  .argument('<version>', 'Version folder name to copy from (e.g. "4.6")')
+  .description('Set the "latest" typings to point to an existing version folder')
+  .argument('<version>', 'Version folder name to point to (e.g. "4.7")')
   .option('--typings-dir <dir>', 'Root typings directory', 'typings')
   .action((version: string, opts) => {
     const typingsRoot = resolve(opts.typingsDir);
@@ -253,8 +256,7 @@ program
       process.exit(1);
     }
 
-    copyTypingsDir(sourceDir, latestDir);
-    writeVersionIndexDts(latestDir);
+    writeLatestIndexDts(latestDir, version);
     console.log(`Set latest typings to version ${version}`);
   });
 

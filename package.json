@@ -7,9 +7,15 @@
   "types": "dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "typings": ["typings/index.d.ts"],
-      "typings/4.7": ["typings/4.7/index.d.ts"],
-      "typings/latest": ["typings/latest/index.d.ts"]
+      "typings": [
+        "typings/index.d.ts"
+      ],
+      "typings/4.7": [
+        "typings/4.7/index.d.ts"
+      ],
+      "typings/latest": [
+        "typings/latest/index.d.ts"
+      ]
     }
   },
   "bin": {
@@ -22,8 +28,8 @@
     "test:run": "vitest run",
     "lint": "tsc --noEmit",
     "generate:ast-types": "ts-node src/parser/gdscript/generate-types.ts",
-    "generate:godot-typings": "node dist/cli/index.js generate-typings --docs-dir vendor/godot/doc/classes --typings-dir typings --set-latest",
-    "set-latest": "node dist/cli/index.js set-latest"
+    "generate:godot-typings": "tsx src/cli/index.ts generate-typings --docs-dir vendor/godot/doc/classes --typings-dir typings --set-latest",
+    "set-latest": "tsx src/cli/index.ts set-latest"
   },
   "keywords": [
     "typescript",
@@ -46,6 +52,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "tsx": "^4.21.0",
     "vitest": "^3.0.0"
   }
 }

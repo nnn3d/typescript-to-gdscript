@@ -9,7 +9,7 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const FIXTURES_DIR = join(__dirname, '..', 'fixtures', 'gd-to-ts');
-const REGISTRY_PATH = join(__dirname, '..', '..', 'typings', 'latest', 'godot-class-registry.json');
+const REGISTRY_PATH = join(__dirname, '..', '..', 'typings', '4.7', 'godot-class-registry.json');
 const registry = GodotClassRegistry.fromJsonFile(REGISTRY_PATH);
 
 /**

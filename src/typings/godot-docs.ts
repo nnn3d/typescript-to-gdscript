@@ -1,6 +1,6 @@
-import { writeFileSync, readdirSync, existsSync } from 'fs';
-import { join } from 'path';
-import { execSync } from 'child_process';
+import { writeFileSync, readFileSync, readdirSync, existsSync } from 'fs';
+import { join, resolve } from 'path';
+import ts from 'typescript';
 import {
   parseAllClassXmls,
   generateRegistryData,
@@ -15,8 +15,8 @@ export interface GodotDocsTypingsOptions {
   classDocsDir: string;
   /** Output directory for generated .d.ts files */
   outputDir: string;
-  /** Directory containing .patch files to apply on top of generated types */
-  patchDir?: string;
+  /** Directory containing override .d.ts files to merge into generated output */
+  overrideDir?: string;
   /** Also generate the class registry JSON at this path */
   registryOutputPath?: string;
   /** Godot version label */
@@ -113,17 +113,20 @@ function sanitizeFunctionName(name: string): string {
 function emitMethodSignature(method: GodotMethodXml): string {
   // Once we see an optional param, all subsequent must be optional too
   let seenOptional = false;
-  const params = method.parameters.map(p => {
+  const params: string[] = method.parameters.map(p => {
     const tsType = godotTypeToTs(p.type);
     if (p.defaultValue !== undefined) seenOptional = true;
     const optional = seenOptional ? '?' : '';
     return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
-  }).join(', ');
+  });
+  if (method.isVararg) {
+    params.push('...args: any[]');
+  }
 
   const returnType = godotTypeToTs(method.returnType);
   const staticPrefix = method.isStatic ? 'static ' : '';
   const methodName = needsQuoting(method.name) ? `'${method.name}'` : method.name;
-  return `  ${staticPrefix}${methodName}(${params}): ${returnType};`;
+  return `  ${staticPrefix}${methodName}(${params.join(', ')}): ${returnType};`;
 }
 
 /**
@@ -165,36 +168,14 @@ function sanitizeClassName(name: string): string {
  * Generates a TS interface from a GDScript class, used for classes that map
  * to TS built-in interfaces (Object, Array, String, Function).
  */
-/**
- * Type mapper that replaces Variant with a type parameter (for generic interfaces like Array<T>).
- */
-function godotTypeToTsGeneric(type: string, elementTypeParam?: string): string {
-  if (!elementTypeParam) return godotTypeToTs(type);
-
-  const cleaned = type.replace(/[\s*]*\*+\s*$/, '').replace(/^const\s+/, '').trim();
-
-  // Variant → T (the element type parameter)
-  if (cleaned === 'Variant') return elementTypeParam;
-
-  // Array → Array<T>, Array[X] → Array<T>
-  if (cleaned === 'Array') return `Array<${elementTypeParam}>`;
-  if (cleaned.startsWith('Array[')) return `Array<${elementTypeParam}>`;
-
-  return godotTypeToTs(type);
-}
-
 function generateInterfaceDeclaration(cls: GodotClassXml, tsName: string): string {
   const lines: string[] = [];
   lines.push(`// Generated from GDScript ${cls.name} class`);
-
-  // Array is generic with <T> for element type
-  const typeParam = cls.name === 'Array' ? '<T>' : '';
-  const elementTypeParam = cls.name === 'Array' ? 'T' : undefined;
-  lines.push(`interface ${tsName}${typeParam} {`);
+  lines.push(`interface ${tsName} {`);
 
   // Properties (skip static-like things)
   for (const prop of cls.properties) {
-    const tsType = godotTypeToTsGeneric(prop.type, elementTypeParam);
+    const tsType = godotTypeToTs(prop.type);
     const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
     lines.push(`  ${propName}: ${tsType};`);
   }
@@ -207,22 +188,19 @@ function generateInterfaceDeclaration(cls: GodotClassXml, tsName: string): strin
   for (const method of cls.methods) {
     if (method.isStatic) continue;
     let seenOptional = false;
-    const params = method.parameters.map(p => {
-      const tsType = godotTypeToTsGeneric(p.type, elementTypeParam);
+    const params: string[] = method.parameters.map(p => {
+      const tsType = godotTypeToTs(p.type);
       if (p.defaultValue !== undefined) seenOptional = true;
       const optional = seenOptional ? '?' : '';
       const paramName = TS_RESERVED.has(p.name) ? `${p.name}_` : p.name;
       return `${paramName}${optional}: ${tsType}`;
     });
-    const returnType = godotTypeToTsGeneric(method.returnType, elementTypeParam);
+    if (method.isVararg) {
+      params.push('...args: any[]');
+    }
+    const returnType = godotTypeToTs(method.returnType);
     const methodName = needsQuoting(method.name) ? `'${method.name}'` : method.name;
     lines.push(`  ${methodName}(${params.join(', ')}): ${returnType};`);
-  }
-
-  // For Array interface, add index signature
-  if (cls.name === 'Array') {
-    lines.push('');
-    lines.push('  [index: number]: T;');
   }
 
   // For String interface, add index signature
@@ -394,6 +372,178 @@ function computeDictOnlyOverrides(classes: Map<string, GodotClassXml>): Set<stri
   return result;
 }
 
+// ─── Override System ───────────────────────────────────────────
+
+/**
+ * Parsed override: a class/interface declaration with individual members.
+ */
+interface ParsedOverride {
+  /** The full declaration header, e.g. "interface Array<T>" or "declare class Node extends GodotObject" */
+  header: string;
+  /** Member name → full source text (one or more lines). Order preserved. */
+  members: Map<string, string>;
+  /** Extra lines (index signatures, comments) that don't have a named member */
+  extras: string[];
+}
+
+/**
+ * Loads all override .d.ts files from a directory and parses them.
+ * Returns a map: TS declaration name → ParsedOverride.
+ */
+function loadOverrides(overrideDir: string): Map<string, ParsedOverride> {
+  const result = new Map<string, ParsedOverride>();
+  if (!existsSync(overrideDir)) return result;
+
+  const files = readdirSync(overrideDir).filter(f => f.endsWith('.d.ts')).sort();
+
+  for (const file of files) {
+    const filePath = join(overrideDir, file);
+    const content = readFileSync(filePath, 'utf-8');
+    const sourceFile = ts.createSourceFile(filePath, content, ts.ScriptTarget.Latest, true);
+
+    for (const stmt of sourceFile.statements) {
+      var name: string | undefined;
+      var header: string | undefined;
+      var membersNode: ts.NodeArray<ts.TypeElement | ts.ClassElement> | undefined;
+
+      if (ts.isInterfaceDeclaration(stmt)) {
+        name = stmt.name.text;
+        // Get header from source: everything from "interface" to "{"
+        const headerEnd = stmt.members.pos;
+        header = content.substring(stmt.pos, headerEnd).trim().replace(/\{$/, '').trim();
+      } else if (ts.isClassDeclaration(stmt) && stmt.name) {
+        name = stmt.name.text;
+        const headerEnd = stmt.members.pos;
+        header = content.substring(stmt.pos, headerEnd).trim().replace(/\{$/, '').trim();
+      }
+
+      if (!name || !stmt.members) continue;
+      membersNode = (stmt as any).members as ts.NodeArray<any>;
+
+      const members = new Map<string, string>();
+      const extras: string[] = [];
+
+      for (const member of membersNode) {
+        var memberName: string | undefined;
+
+        if (ts.isMethodDeclaration(member) || ts.isMethodSignature(member)) {
+          memberName = member.name?.getText(sourceFile);
+        } else if (ts.isPropertyDeclaration(member) || ts.isPropertySignature(member)) {
+          memberName = member.name?.getText(sourceFile);
+        } else if (ts.isIndexSignatureDeclaration(member)) {
+          // Index signatures like [index: number]: T
+          extras.push('  ' + member.getText(sourceFile));
+          continue;
+        }
+
+        if (memberName) {
+          // Get text without excessive leading trivia, but keep JSDoc
+          const start = member.getStart(sourceFile);
+          const end = member.getEnd();
+          var text = content.substring(start, end).trimEnd();
+
+          // Check for JSDoc above (between fullStart and start)
+          const trivia = content.substring(member.getFullStart(), start);
+          const jsdocMatch = trivia.match(/(\/\*\*[\s\S]*?\*\/)\s*$/);
+          if (jsdocMatch) {
+            text = jsdocMatch[1] + '\n' + text;
+          }
+
+          // Ensure proper indentation
+          const lines = text.split('\n').map(l => {
+            const trimmed = l.trimStart();
+            if (trimmed === '') return '';
+            return '  ' + trimmed;
+          });
+          text = lines.join('\n');
+
+          // Support multiple overloads by appending
+          if (members.has(memberName)) {
+            members.set(memberName, members.get(memberName)! + '\n' + text);
+          } else {
+            members.set(memberName, text);
+          }
+        }
+      }
+
+      result.set(name, { header, members, extras });
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Applies override to a generated declaration string.
+ * Replaces the header and merges members: overridden members replace generated ones,
+ * new members from the override are appended.
+ */
+function applyOverride(generated: string, override: ParsedOverride): string {
+  const lines = generated.split('\n');
+
+  // Replace header line (first line that has interface/class + {)
+  const headerIdx = lines.findIndex(l => /^(interface|declare class)\s/.test(l.trim()));
+  if (headerIdx >= 0) {
+    // Preserve "// Generated from..." comment if present
+    const isComment = headerIdx > 0 && lines[headerIdx - 1].startsWith('//');
+    lines[headerIdx] = override.header + ' {';
+  }
+
+  // Parse generated members: find each "  memberName(" or "  memberName:" line
+  const result: string[] = [];
+  const usedOverrides = new Set<string>();
+  var i = 0;
+
+  // Copy lines up to and including the opening brace
+  while (i < lines.length) {
+    result.push(lines[i]);
+    if (lines[i].trimEnd().endsWith('{')) { i++; break; }
+    i++;
+  }
+
+  // Process body lines
+  while (i < lines.length) {
+    const line = lines[i];
+    const trimmed = line.trimStart();
+
+    // Closing brace — stop
+    if (trimmed === '}') break;
+
+    // Try to extract member name from this line
+    const memberMatch = trimmed.match(/^(?:static\s+)?(?:readonly\s+)?(?:'([^']+)'|(\w+))\s*[:(]/);
+    if (memberMatch) {
+      const memberName = memberMatch[1] ?? memberMatch[2];
+      if (override.members.has(memberName)) {
+        // Replace with override version
+        result.push(override.members.get(memberName)!);
+        usedOverrides.add(memberName);
+        i++;
+        continue;
+      }
+    }
+
+    result.push(line);
+    i++;
+  }
+
+  // Add override-only members (new additions) before closing brace
+  for (const [name, text] of override.members) {
+    if (!usedOverrides.has(name)) {
+      result.push(text);
+    }
+  }
+
+  // Add extras (index signatures etc.)
+  for (const extra of override.extras) {
+    result.push(extra);
+  }
+
+  // Closing brace
+  result.push('}');
+
+  return result.join('\n');
+}
+
 /**
  * Generates TypeScript typings from Godot XML class documentation.
  * Also generates the class registry JSON if registryOutputPath is specified.
@@ -407,14 +557,34 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
     [...classes.keys()].filter(n => !n.startsWith('@'))
   );
 
+  // Load override .d.ts files
+  const overrides = options.overrideDir ? loadOverrides(options.overrideDir) : new Map();
+
+  // Report unmatched overrides (class name not found in Godot docs)
+  // Special overrides that don't map to a Godot class directly
+  const SPECIAL_OVERRIDES = new Set(['CallableFunction']);
+  for (const overrideName of overrides.keys()) {
+    if (SPECIAL_OVERRIDES.has(overrideName)) continue;
+    // Map interface names back to GD class names for validation
+    var found = false;
+    for (const [gdName, tsName] of INTERFACE_CLASSES) {
+      if (tsName === overrideName) { found = true; break; }
+    }
+    if (!found) {
+      const sanitizedName = [...CLASS_NAME_CONFLICTS.entries()].find(([_, v]) => v === overrideName)?.[0] ?? overrideName;
+      found = classes.has(sanitizedName) || classes.has(overrideName);
+    }
+    if (!found) {
+      console.warn(`Warning: override for "${overrideName}" does not match any Godot class`);
+    }
+  }
+
   // Compute Dictionary-only member names that no Object subclass defines.
-  // These get overridden with `never` on GodotObject so that Godot class
-  // instances don't expose Dictionary API inherited from the Object interface.
   const dictOnlyOverrides = computeDictOnlyOverrides(classes);
 
   const allDeclarations: string[] = [];
   allDeclarations.push('// AUTO-GENERATED from Godot class documentation.');
-  allDeclarations.push('// Manual improvements can be applied via .patch files.');
+  allDeclarations.push('// Manual overrides applied from typings/overrides/*.d.ts');
   allDeclarations.push('');
 
   // Sort class names for deterministic output
@@ -438,19 +608,23 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
     // Some GD classes are emitted as TS interfaces (replacing built-in types)
     const interfaceName = INTERFACE_CLASSES.get(name);
     if (interfaceName) {
-      allDeclarations.push(generateInterfaceDeclaration(cls, interfaceName));
+      var declaration = generateInterfaceDeclaration(cls, interfaceName);
+
+      // Apply overrides if available (by TS interface name)
+      const override = overrides.get(interfaceName);
+      if (override) {
+        declaration = applyOverride(declaration, override);
+      }
+
+      allDeclarations.push(declaration);
       allDeclarations.push('');
 
       // Emit renamed alias so existing references still work
-      // (e.g. GodotArray, GodotString, Dictionary, Callable)
       const renamedName = CLASS_NAME_CONFLICTS.get(name);
       if (renamedName) {
-        // Array is generic, so the alias needs a type parameter
-        if (name === 'Array') {
-          allDeclarations.push(`type ${renamedName} = ${interfaceName}<unknown>;`);
-        } else {
-          allDeclarations.push(`type ${renamedName} = ${interfaceName};`);
-        }
+        // Check if override added generics (look for < in header)
+        const hasGenerics = override?.header.includes('<') ?? false;
+        allDeclarations.push(`type ${renamedName} = ${interfaceName}${hasGenerics ? '<unknown>' : ''};`);
       }
       // Dictionary → Object interface, but keep Dictionary as a type alias + constructor
       if (name === 'Dictionary') {
@@ -462,50 +636,57 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
       if (name === 'Callable') {
         allDeclarations.push(`type Callable = Function;`);
         allDeclarations.push('declare var Callable: { new(): Callable; create(object: GodotObject, method: string): Callable };');
-        allDeclarations.push('interface CallableFunction extends Function {}');
+        // Use CallableFunction override if available, otherwise emit empty extension
+        const cfOverride = overrides.get('CallableFunction');
+        if (cfOverride) {
+          // Emit the full override content
+          const cfLines = [cfOverride.header + ' {'];
+          for (const [, text] of cfOverride.members) {
+            cfLines.push(text);
+          }
+          for (const extra of cfOverride.extras) {
+            cfLines.push(extra);
+          }
+          cfLines.push('}');
+          allDeclarations.push(cfLines.join('\n'));
+        } else {
+          allDeclarations.push('interface CallableFunction extends Function {}');
+        }
         allDeclarations.push('interface NewableFunction extends Function {}');
       }
       // Array → keep ArrayConstructor + GodotArray constructor
       if (name === 'Array') {
+        const hasGenerics = override?.header.includes('<') ?? false;
+        const typeParam = hasGenerics ? '<T>' : '';
+        const unknownParam = hasGenerics ? '<unknown>' : '';
         allDeclarations.push('interface ArrayConstructor {');
-        allDeclarations.push('  new <T>(): Array<T>;');
-        allDeclarations.push('  new <T>(...items: T[]): Array<T>;');
+        allDeclarations.push(`  new ${typeParam}(): Array${typeParam};`);
+        allDeclarations.push(`  new ${typeParam}(...items: ${hasGenerics ? 'T' : 'unknown'}[]): Array${typeParam};`);
         allDeclarations.push('}');
         allDeclarations.push('declare var Array: ArrayConstructor;');
-        allDeclarations.push('declare var GodotArray: { new(): Array<unknown> };');
+        allDeclarations.push(`declare var GodotArray: { new(): Array${unknownParam} };`);
       }
 
       allDeclarations.push('');
       continue;
     }
 
-    allDeclarations.push(generateClassDeclaration(cls, name === 'Object' ? dictOnlyOverrides : undefined));
+    var classDecl = generateClassDeclaration(cls, name === 'Object' ? dictOnlyOverrides : undefined);
+
+    // Apply overrides if available (by TS class name)
+    const className = sanitizeClassName(name);
+    const classOverride = overrides.get(className);
+    if (classOverride) {
+      classDecl = applyOverride(classDecl, classOverride);
+    }
+
+    allDeclarations.push(classDecl);
     allDeclarations.push('');
   }
 
   const outputPath = join(options.outputDir, 'godot.d.ts');
   const output = allDeclarations.join('\n');
   writeFileSync(outputPath, output);
-
-  // Apply patches if patch directory exists
-  if (options.patchDir && existsSync(options.patchDir)) {
-    const patches = readdirSync(options.patchDir)
-      .filter(f => f.endsWith('.patch'))
-      .sort();
-
-    for (const patchFile of patches) {
-      const patchPath = join(options.patchDir, patchFile);
-      try {
-        execSync(`patch -p0 "${outputPath}" < "${patchPath}"`, {
-          cwd: options.outputDir,
-          stdio: 'pipe',
-        });
-        console.log(`Applied patch: ${patchFile}`);
-      } catch (e) {
-        console.error(`Failed to apply patch: ${patchFile}`);
-      }
-    }
-  }
 
   // Generate registry JSON if requested
   let registry: GodotClassRegistry | null = null;
