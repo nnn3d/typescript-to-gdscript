@@ -22,6 +22,8 @@ export interface UserClassInfo {
   name: string;
   extends: string;
   members: Set<string>;
+  /** Known types of member variables (for gd.math detection across inheritance) */
+  memberTypes: Map<string, string>;
 }
 
 /**
@@ -34,6 +36,7 @@ export function parseGdClassInfo(source: string): UserClassInfo | null {
   let className = '';
   let extendsClass = '';
   const members = new Set<string>();
+  const memberTypes = new Map<string, string>();
 
   for (const child of root.namedChildren) {
     if (isGDNodeType(child, 'extends_statement')) {
@@ -50,7 +53,14 @@ export function parseGdClassInfo(source: string): UserClassInfo | null {
       members.add(name === '_init' ? 'constructor' : name);
     } else if (isGDNodeType(child, 'variable_statement') || isGDNodeType(child, 'export_variable_statement') || isGDNodeType(child, 'onready_variable_statement')) {
       const name = child.childForFieldName('name')?.text;
-      if (name) members.add(name);
+      if (name) {
+        members.add(name);
+        const typeNode = child.childForFieldName('type');
+        const valueNode = child.childForFieldName('value');
+        const inferredType = typeNode ? extractGdTypeName(typeNode)
+          : (valueNode ? inferExprTypeStatic(valueNode) : null);
+        if (inferredType) memberTypes.set(name, inferredType);
+      }
     } else if (isGDNodeType(child, 'signal_statement')) {
       const name = child.childForFieldName('name')?.text;
       if (name) members.add(name);
@@ -61,7 +71,7 @@ export function parseGdClassInfo(source: string): UserClassInfo | null {
   }
 
   if (!className) return null;
-  return { name: className, extends: extendsClass, members };
+  return { name: className, extends: extendsClass, members, memberTypes };
 }
 
 /**
@@ -97,6 +107,29 @@ function resolveAllInheritedMembers(
   }
 
   return allMembers;
+}
+
+/**
+ * Walks user class inheritance chain and copies memberTypes into the target map.
+ * Does not overwrite types already present (own types take priority).
+ */
+function resolveInheritedMemberTypes(
+  extendsClass: string,
+  userClasses: Map<string, UserClassInfo>,
+  target: Map<string, string>,
+): void {
+  let current: string | null = extendsClass;
+  const visited = new Set<string>();
+
+  while (current && !visited.has(current)) {
+    visited.add(current);
+    const userClass = userClasses.get(current);
+    if (!userClass) break;
+    for (const [name, type] of userClass.memberTypes) {
+      if (!target.has(name)) target.set(name, type);
+    }
+    current = userClass.extends || null;
+  }
 }
 
 export function convertGdToTs(options: GdToTsOptions): TransformResult {
@@ -208,6 +241,8 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
     for (const name of inherited) {
       ctx.classMembers.add(name);
     }
+    // Also inherit member types from user classes
+    resolveInheritedMemberTypes(extendsClass, ctx.userClasses, ctx.classMemberTypes);
   }
 
   // Second pass: emit everything
@@ -1218,6 +1253,17 @@ function extractGdTypeName(typeNode: GDNode): string | null {
 }
 
 /** Infer the GD type of an expression (best-effort, for gd.math detection) */
+/** Infer type from expression without context (for parseGdClassInfo). Only handles constructor calls. */
+function inferExprTypeStatic(node: GDNode): string | null {
+  if (isGDNodeType(node, 'call')) {
+    const callee = node.namedChildren[0];
+    if (callee && isGDNodeType(callee, 'identifier') && OPERATOR_OVERLOAD_TYPES.has(callee.text)) {
+      return callee.text;
+    }
+  }
+  return null;
+}
+
 function inferExprType(node: GDNode, ctx: GdToTsContext): string | null {
   // Constructor call: Vector2(...), Color(...), etc.
   if (isGDNodeType(node, 'call')) {

@@ -1811,59 +1811,70 @@ declare class Area3D extends CollisionObject3D {
   static readonly SPACE_OVERRIDE_REPLACE_COMBINE: int;
 }
 
-declare class GodotArray {
+// Generated from GDScript Array class
+interface Array<T> {
   all(method: Callable): boolean;
   any(method: Callable): boolean;
-  append(value: unknown): void;
-  append_array(array: Array<unknown>): void;
-  assign(array: Array<unknown>): void;
-  back(): unknown;
-  bsearch(value: unknown, before?: boolean): int;
-  bsearch_custom(value: unknown, func: Callable, before?: boolean): int;
+  append(value: T): void;
+  append_array(array: Array<T>): void;
+  assign(array: Array<T>): void;
+  back(): T;
+  bsearch(value: T, before?: boolean): int;
+  bsearch_custom(value: T, func: Callable, before?: boolean): int;
   clear(): void;
-  count(value: unknown): int;
-  duplicate(deep?: boolean): Array<unknown>;
-  duplicate_deep(deep_subresources_mode?: int): Array<unknown>;
-  erase(value: unknown): void;
-  fill(value: unknown): void;
-  filter(method: Callable): Array<unknown>;
-  find(what: unknown, from_?: int): int;
+  count(value: T): int;
+  duplicate(deep?: boolean): Array<T>;
+  duplicate_deep(deep_subresources_mode?: int): Array<T>;
+  erase(value: T): void;
+  fill(value: T): void;
+  filter(method: Callable): Array<T>;
+  find(what: T, from_?: int): int;
   find_custom(method: Callable, from_?: int): int;
-  front(): unknown;
-  get(index: int): unknown;
+  front(): T;
+  get(index: int): T;
   get_typed_builtin(): int;
   get_typed_class_name(): string;
-  get_typed_script(): unknown;
-  has(value: unknown): boolean;
+  get_typed_script(): T;
+  has(value: T): boolean;
   hash(): int;
-  insert(position: int, value: unknown): int;
+  insert(position: int, value: T): int;
   is_empty(): boolean;
   is_read_only(): boolean;
-  is_same_typed(array: Array<unknown>): boolean;
+  is_same_typed(array: Array<T>): boolean;
   is_typed(): boolean;
   make_read_only(): void;
-  map(method: Callable): Array<unknown>;
-  max(): unknown;
-  min(): unknown;
-  pick_random(): unknown;
-  pop_at(position: int): unknown;
-  pop_back(): unknown;
-  pop_front(): unknown;
-  push_back(value: unknown): void;
-  push_front(value: unknown): void;
-  reduce(method: Callable, accum?: unknown): unknown;
+  map(method: Callable): Array<T>;
+  max(): T;
+  min(): T;
+  pick_random(): T;
+  pop_at(position: int): T;
+  pop_back(): T;
+  pop_front(): T;
+  push_back(value: T): void;
+  push_front(value: T): void;
+  reduce(method: Callable, accum?: T): T;
   remove_at(position: int): void;
   resize(size: int): int;
   reverse(): void;
-  rfind(what: unknown, from_?: int): int;
+  rfind(what: T, from_?: int): int;
   rfind_custom(method: Callable, from_?: int): int;
-  set(index: int, value: unknown): void;
+  set(index: int, value: T): void;
   shuffle(): void;
   size(): int;
-  slice(begin: int, end?: int, step?: int, deep?: boolean): Array<unknown>;
+  slice(begin: int, end?: int, step?: int, deep?: boolean): Array<T>;
   sort(): void;
   sort_custom(func: Callable): void;
+
+  [index: number]: T;
 }
+
+type GodotArray = Array<unknown>;
+interface ArrayConstructor {
+  new <T>(): Array<T>;
+  new <T>(...items: T[]): Array<T>;
+}
+declare var Array: ArrayConstructor;
+declare var GodotArray: { new(): Array<unknown> };
 
 declare class ArrayMesh extends Mesh {
   blend_shape_mode: int;
@@ -3308,13 +3319,13 @@ declare class CPUParticles3D extends GeometryInstance3D {
   static readonly EMISSION_SHAPE_MAX: int;
 }
 
-declare class Callable {
+// Generated from GDScript Callable class
+interface Function {
   bind(): Callable;
   bindv(arguments: Array<unknown>): Callable;
   call(): unknown;
   call_deferred(): void;
   callv(arguments: Array<unknown>): unknown;
-  static create(variant: unknown, method: string): Callable;
   get_argument_count(): int;
   get_bound_arguments(): Array<unknown>;
   get_bound_arguments_count(): int;
@@ -3331,6 +3342,11 @@ declare class Callable {
   rpc_id(peer_id: int): void;
   unbind(argcount: int): Callable;
 }
+
+type Callable = Function;
+declare var Callable: { new(): Callable; create(object: GodotObject, method: string): Callable };
+interface CallableFunction extends Function {}
+interface NewableFunction extends Function {}
 
 declare class CallbackTweener extends Tweener {
   set_delay(delay: float): CallbackTweener;
@@ -5136,7 +5152,8 @@ declare class Decal extends VisualInstance3D {
   static readonly TEXTURE_MAX: int;
 }
 
-declare class Dictionary {
+// Generated from GDScript Dictionary class
+interface Object {
   assign(dictionary: Dictionary): void;
   clear(): void;
   duplicate(deep?: boolean): Dictionary;
@@ -5172,6 +5189,10 @@ declare class Dictionary {
   sort(): void;
   values(): Array<unknown>;
 }
+
+type Dictionary = Object;
+declare var Dictionary: { new(): Dictionary };
+declare var Object: typeof GodotObject;
 
 declare class DirAccess extends RefCounted {
   include_hidden: boolean;
@@ -12105,6 +12126,33 @@ declare class GodotObject {
   static readonly NOTIFICATION_POSTINITIALIZE: int;
   static readonly NOTIFICATION_PREDELETE: int;
   static readonly NOTIFICATION_EXTENSION_RELOADED: int;
+
+  // Override Dictionary-only methods from Object interface with never.
+  // Only methods that no Godot subclass uses are overridden here.
+  /** @deprecated GodotObject is not a Dictionary */ assign: never;
+  /** @deprecated GodotObject is not a Dictionary */ find_key: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_or_add: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_key_builtin: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_key_class_name: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_key_script: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_value_builtin: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_value_class_name: never;
+  /** @deprecated GodotObject is not a Dictionary */ get_typed_value_script: never;
+  /** @deprecated GodotObject is not a Dictionary */ has_all: never;
+  /** @deprecated GodotObject is not a Dictionary */ hash: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_read_only: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_same_typed: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_same_typed_key: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_same_typed_value: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_typed: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_typed_key: never;
+  /** @deprecated GodotObject is not a Dictionary */ is_typed_value: never;
+  /** @deprecated GodotObject is not a Dictionary */ keys: never;
+  /** @deprecated GodotObject is not a Dictionary */ make_read_only: never;
+  /** @deprecated GodotObject is not a Dictionary */ merged: never;
+  /** @deprecated GodotObject is not a Dictionary */ recursive_equal: never;
+  /** @deprecated GodotObject is not a Dictionary */ sort: never;
+  /** @deprecated GodotObject is not a Dictionary */ values: never;
 }
 
 declare class Occluder3D extends Resource {
@@ -20120,7 +20168,8 @@ declare class StreamPeerUDS extends StreamPeerSocket {
   get_connected_path(): string;
 }
 
-declare class GodotString {
+// Generated from GDScript String class
+interface String {
   begins_with(text: string): boolean;
   bigrams(): PackedStringArray;
   bin_to_int(): int;
@@ -20128,7 +20177,6 @@ declare class GodotString {
   c_unescape(): string;
   capitalize(): string;
   casecmp_to(to: string): int;
-  static chr(code: int): string;
   contains(what: string): boolean;
   containsn(what: string): boolean;
   count(what: string, from_?: int, to?: int): int;
@@ -20151,7 +20199,6 @@ declare class GodotString {
   hash(): int;
   hex_decode(): PackedByteArray;
   hex_to_int(): int;
-  static humanize_size(size: int): string;
   indent(prefix: string): string;
   insert(position: int, what: string): string;
   is_absolute_path(): boolean;
@@ -20181,10 +20228,6 @@ declare class GodotString {
   naturalcasecmp_to(to: string): int;
   naturalnocasecmp_to(to: string): int;
   nocasecmp_to(to: string): int;
-  static num(number: float, decimals?: int): string;
-  static num_int64(number: int, base?: int, capitalize_hex?: boolean): string;
-  static num_scientific(number: float): string;
-  static num_uint64(number: int, base?: int, capitalize_hex?: boolean): string;
   pad_decimals(digits: int): string;
   pad_zeros(digits: int): string;
   path_join(path: string): string;
@@ -20237,7 +20280,11 @@ declare class GodotString {
   validate_node_name(): string;
   xml_escape(escape_quotes?: boolean): string;
   xml_unescape(): string;
+
+  [index: number]: string;
 }
+
+type GodotString = String;
 
 declare class StringName {
   begins_with(text: string): boolean;

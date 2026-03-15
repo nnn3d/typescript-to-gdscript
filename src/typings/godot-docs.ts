@@ -134,6 +134,18 @@ const SKIP_CLASSES = new Set([
   'int', 'float', 'bool', 'Nil',
 ]);
 
+/**
+ * GDScript classes emitted as TS interfaces (replacing standard TS built-in types).
+ * Maps GD class name → TS interface name. These are generated from Godot docs
+ * instead of being hardcoded in globals.d.ts.
+ */
+const INTERFACE_CLASSES = new Map<string, string>([
+  ['Dictionary', 'Object'],
+  ['Array', 'Array'],
+  ['String', 'String'],
+  ['Callable', 'Function'],
+]);
+
 /** Names that conflict with TS/JS built-in globals and need prefixing */
 const CLASS_NAME_CONFLICTS = new Map<string, string>([
   ['Object', 'GodotObject'],
@@ -149,7 +161,81 @@ function sanitizeClassName(name: string): string {
   return CLASS_NAME_CONFLICTS.get(name) ?? name;
 }
 
-function generateClassDeclaration(cls: GodotClassXml): string {
+/**
+ * Generates a TS interface from a GDScript class, used for classes that map
+ * to TS built-in interfaces (Object, Array, String, Function).
+ */
+/**
+ * Type mapper that replaces Variant with a type parameter (for generic interfaces like Array<T>).
+ */
+function godotTypeToTsGeneric(type: string, elementTypeParam?: string): string {
+  if (!elementTypeParam) return godotTypeToTs(type);
+
+  const cleaned = type.replace(/[\s*]*\*+\s*$/, '').replace(/^const\s+/, '').trim();
+
+  // Variant → T (the element type parameter)
+  if (cleaned === 'Variant') return elementTypeParam;
+
+  // Array → Array<T>, Array[X] → Array<T>
+  if (cleaned === 'Array') return `Array<${elementTypeParam}>`;
+  if (cleaned.startsWith('Array[')) return `Array<${elementTypeParam}>`;
+
+  return godotTypeToTs(type);
+}
+
+function generateInterfaceDeclaration(cls: GodotClassXml, tsName: string): string {
+  const lines: string[] = [];
+  lines.push(`// Generated from GDScript ${cls.name} class`);
+
+  // Array is generic with <T> for element type
+  const typeParam = cls.name === 'Array' ? '<T>' : '';
+  const elementTypeParam = cls.name === 'Array' ? 'T' : undefined;
+  lines.push(`interface ${tsName}${typeParam} {`);
+
+  // Properties (skip static-like things)
+  for (const prop of cls.properties) {
+    const tsType = godotTypeToTsGeneric(prop.type, elementTypeParam);
+    const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
+    lines.push(`  ${propName}: ${tsType};`);
+  }
+
+  if (cls.properties.length > 0 && cls.methods.length > 0) {
+    lines.push('');
+  }
+
+  // Methods (skip static and virtual)
+  for (const method of cls.methods) {
+    if (method.isStatic) continue;
+    let seenOptional = false;
+    const params = method.parameters.map(p => {
+      const tsType = godotTypeToTsGeneric(p.type, elementTypeParam);
+      if (p.defaultValue !== undefined) seenOptional = true;
+      const optional = seenOptional ? '?' : '';
+      const paramName = TS_RESERVED.has(p.name) ? `${p.name}_` : p.name;
+      return `${paramName}${optional}: ${tsType}`;
+    });
+    const returnType = godotTypeToTsGeneric(method.returnType, elementTypeParam);
+    const methodName = needsQuoting(method.name) ? `'${method.name}'` : method.name;
+    lines.push(`  ${methodName}(${params.join(', ')}): ${returnType};`);
+  }
+
+  // For Array interface, add index signature
+  if (cls.name === 'Array') {
+    lines.push('');
+    lines.push('  [index: number]: T;');
+  }
+
+  // For String interface, add index signature
+  if (cls.name === 'String') {
+    lines.push('');
+    lines.push('  [index: number]: string;');
+  }
+
+  lines.push('}');
+  return lines.join('\n');
+}
+
+function generateClassDeclaration(cls: GodotClassXml, dictOnlyOverrides?: Set<string>): string {
   const lines: string[] = [];
   const className = sanitizeClassName(cls.name);
   const extendsName = cls.inherits ? sanitizeClassName(cls.inherits) : '';
@@ -201,6 +287,16 @@ function generateClassDeclaration(cls: GodotClassXml): string {
     lines.push('');
     for (const c of nonEnumConstants) {
       lines.push(`  static readonly ${c.name}: int;`);
+    }
+  }
+
+  // For GodotObject: override Dictionary-only methods from Object interface with never
+  if (cls.name === 'Object' && dictOnlyOverrides && dictOnlyOverrides.size > 0) {
+    lines.push('');
+    lines.push('  // Override Dictionary-only methods from Object interface with never.');
+    lines.push('  // Only methods that no Godot subclass uses are overridden here.');
+    for (const name of [...dictOnlyOverrides].sort()) {
+      lines.push(`  /** @deprecated GodotObject is not a Dictionary */ ${name}: never;`);
     }
   }
 
@@ -261,6 +357,44 @@ function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
 }
 
 /**
+ * Computes Dictionary member names that no class in the Object hierarchy defines.
+ * These are safe to override with `never` on GodotObject to block Dictionary API leaking
+ * through the Object interface to all Godot classes.
+ */
+function computeDictOnlyOverrides(classes: Map<string, GodotClassXml>): Set<string> {
+  const dictClass = classes.get('Dictionary');
+  if (!dictClass) return new Set();
+
+  // Collect all Dictionary member names (methods + properties)
+  const dictMembers = new Set<string>();
+  for (const m of dictClass.methods) dictMembers.add(m.name);
+  for (const p of dictClass.properties) dictMembers.add(p.name);
+
+  // Collect all member names used by any class that inherits from Object
+  const objectSubclassMembers = new Set<string>();
+  for (const [name, cls] of classes) {
+    if (name === 'Object' || name === 'Dictionary' || name.startsWith('@') || SKIP_CLASSES.has(name)) continue;
+    if (!cls.inherits) continue; // no parent — not in Object hierarchy
+    for (const m of cls.methods) objectSubclassMembers.add(m.name);
+    for (const p of cls.properties) objectSubclassMembers.add(p.name);
+  }
+
+  // Also exclude names that Object itself defines (they'd conflict)
+  const objectClass = classes.get('Object');
+  if (objectClass) {
+    for (const m of objectClass.methods) objectSubclassMembers.add(m.name);
+    for (const p of objectClass.properties) objectSubclassMembers.add(p.name);
+  }
+
+  // Dictionary-only = in Dictionary but not in any Object-hierarchy class
+  const result = new Set<string>();
+  for (const name of dictMembers) {
+    if (!objectSubclassMembers.has(name)) result.add(name);
+  }
+  return result;
+}
+
+/**
  * Generates TypeScript typings from Godot XML class documentation.
  * Also generates the class registry JSON if registryOutputPath is specified.
  * Returns the GodotClassRegistry if generated.
@@ -272,6 +406,11 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
   knownClasses = new Set(
     [...classes.keys()].filter(n => !n.startsWith('@'))
   );
+
+  // Compute Dictionary-only member names that no Object subclass defines.
+  // These get overridden with `never` on GodotObject so that Godot class
+  // instances don't expose Dictionary API inherited from the Object interface.
+  const dictOnlyOverrides = computeDictOnlyOverrides(classes);
 
   const allDeclarations: string[] = [];
   allDeclarations.push('// AUTO-GENERATED from Godot class documentation.');
@@ -296,7 +435,51 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
     // Skip primitive types handled by gd-helpers.d.ts or TS builtins
     if (SKIP_CLASSES.has(name)) continue;
 
-    allDeclarations.push(generateClassDeclaration(cls));
+    // Some GD classes are emitted as TS interfaces (replacing built-in types)
+    const interfaceName = INTERFACE_CLASSES.get(name);
+    if (interfaceName) {
+      allDeclarations.push(generateInterfaceDeclaration(cls, interfaceName));
+      allDeclarations.push('');
+
+      // Emit renamed alias so existing references still work
+      // (e.g. GodotArray, GodotString, Dictionary, Callable)
+      const renamedName = CLASS_NAME_CONFLICTS.get(name);
+      if (renamedName) {
+        // Array is generic, so the alias needs a type parameter
+        if (name === 'Array') {
+          allDeclarations.push(`type ${renamedName} = ${interfaceName}<unknown>;`);
+        } else {
+          allDeclarations.push(`type ${renamedName} = ${interfaceName};`);
+        }
+      }
+      // Dictionary → Object interface, but keep Dictionary as a type alias + constructor
+      if (name === 'Dictionary') {
+        allDeclarations.push(`type Dictionary = Object;`);
+        allDeclarations.push('declare var Dictionary: { new(): Dictionary };');
+        allDeclarations.push('declare var Object: typeof GodotObject;');
+      }
+      // Callable → Function, keep Callable alias + constructor + CallableFunction/NewableFunction
+      if (name === 'Callable') {
+        allDeclarations.push(`type Callable = Function;`);
+        allDeclarations.push('declare var Callable: { new(): Callable; create(object: GodotObject, method: string): Callable };');
+        allDeclarations.push('interface CallableFunction extends Function {}');
+        allDeclarations.push('interface NewableFunction extends Function {}');
+      }
+      // Array → keep ArrayConstructor + GodotArray constructor
+      if (name === 'Array') {
+        allDeclarations.push('interface ArrayConstructor {');
+        allDeclarations.push('  new <T>(): Array<T>;');
+        allDeclarations.push('  new <T>(...items: T[]): Array<T>;');
+        allDeclarations.push('}');
+        allDeclarations.push('declare var Array: ArrayConstructor;');
+        allDeclarations.push('declare var GodotArray: { new(): Array<unknown> };');
+      }
+
+      allDeclarations.push('');
+      continue;
+    }
+
+    allDeclarations.push(generateClassDeclaration(cls, name === 'Object' ? dictOnlyOverrides : undefined));
     allDeclarations.push('');
   }
 

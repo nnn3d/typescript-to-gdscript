@@ -185,7 +185,7 @@ function copyTypingsDir(sourceDir: string, targetDir: string): void {
  * Writes index.d.ts into a version folder so it can be used independently.
  */
 function writeVersionIndexDts(versionDir: string): void {
-  const content = `/// <reference path="../gd-helpers.d.ts" />\n/// <reference path="godot.d.ts" />\n`;
+  const content = `/// <reference path="../globals.d.ts" />\n/// <reference path="../gd-helpers.d.ts" />\n/// <reference path="godot.d.ts" />\n`;
   writeFileSync(join(versionDir, 'index.d.ts'), content);
 }
 

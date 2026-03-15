@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "noLib": true,
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false,
+    "types": []
+  },
+  "include": [
+    "../../../typings/gd-helpers.d.ts",
+    "../../../typings/globals.d.ts",
+    "../../../typings/latest/godot.d.ts",
+    "./**/*.ts"
+  ]
+}
