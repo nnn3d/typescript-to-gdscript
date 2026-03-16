@@ -48,6 +48,7 @@ type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => i
 type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;
 type ConstructorParameters<T extends abstract new (...args: any) => any> = T extends abstract new (...args: infer P) => any ? P : never;
 type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: infer R) => any ? R : any;
+type NoInfer<T> = intrinsic;
 
 // ─── Template literal support ───────────────────────────────
 

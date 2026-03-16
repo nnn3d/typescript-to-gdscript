@@ -36,12 +36,12 @@ class EnumTest extends Node {
 
   test_enum() {
     // Access enum values as numbers
-    var x: number = this.MY_ENUM.VALUE_1;
-    var y: number = this.MY_ENUM.VALUE_2;
-    var z: number = this.MY_ENUM.VALUE_3;
+    let x: number = this.MY_ENUM.VALUE_1;
+    let y: number = this.MY_ENUM.VALUE_2;
+    let z: number = this.MY_ENUM.VALUE_3;
 
     // @ts-expect-error — non-existent enum value
-    var w = this.MY_ENUM.NONEXISTENT;
+    let w = this.MY_ENUM.NONEXISTENT;
   }
 }
 
@@ -49,35 +49,50 @@ class EnumTest extends Node {
 
 class AsTest extends Node {
   test_as() {
-    var node: Node = this;
+    let node: Node = this;
 
     // gd.as returns the type or null
-    var sprite = gd.as(node, Sprite2D);
+    let sprite = gd.as(node, Sprite2D);
     // Result could be Sprite2D or null
-    var check: Sprite2D | null = sprite;
+    let check: Sprite2D | null = sprite;
 
     // When the type is known to match, no null
-    var sprite2d: Sprite2D = new Sprite2D();
-    var result = gd.as(sprite2d, Sprite2D);
-    var exact: Sprite2D = result;
+    let sprite2d: Sprite2D = new Sprite2D();
+    let result = gd.as(sprite2d, Sprite2D);
+    let exact: Sprite2D = result;
   }
 }
 
-// ─── gd.math ────────────────────────────────────────────────
+// ─── gd.ops ─────────────────────────────────────────────────
 
-class MathTest extends Node {
-  test_math() {
-    var v1 = new Vector2();
-    var v2 = new Vector2();
+class OpsTest extends Node {
+  test_ops() {
+    let v1 = new Vector2();
+    let v2 = new Vector2();
 
-    // gd.math preserves the type
-    var v3: Vector2 = gd.math.add(v1, v2);
-    var v4: Vector2 = gd.math.sub(v1, v2);
-    var v5: Vector2 = gd.math.mul(v1, v2);
-    var v6: Vector2 = gd.math.div(v1, v2);
+    // gd.ops infers result from operator overloads
+    let v3: Vector2 = gd.ops.add(v1, v2);
+    let v4: Vector2 = gd.ops.sub(v1, v2);
+    let v5: Vector2 = gd.ops.mul(v1, v2);
+    let v6: Vector2 = gd.ops.div(v1, v2);
 
-    // Multiple operands
-    var v7: Vector2 = gd.math.add(v1, v2, v1);
+    // Mixed-type: Vector2 * float -> Vector2
+    let v7: Vector2 = gd.ops.mul(v1, 2.0);
+    let v8: Vector2 = gd.ops.mul(2.0, v1);
+    let v9: float = gd.ops.mul(2.0, 1);
+
+    // @ts-expect-error — can't multiply Vector2 and Vector3
+    gd.ops.mul(new Vector2(), new Vector3());
+
+    // Comparison operators
+    let eq: boolean = gd.ops.eq(v1, v2);
+    let ne: boolean = gd.ops.ne(v1, v2);
+    let gt: boolean = gd.ops.gt(v1, v2);
+    let lt: boolean = gd.ops.lt(v1, v2);
+
+    // Unary operators
+    let neg: Vector2 = gd.ops.minus(v1);
+    let pos: Vector2 = gd.ops.plus(v1);
   }
 }
 
@@ -99,14 +114,14 @@ class DecoratorTest extends Node {
 
 class StringNameTest extends Node {
   test_string_helpers() {
-    var sn: string = StringName("my_name");
-    var np: string = NodePath("Path/To/Node");
+    let sn: string = StringName("my_name");
+    let np: string = NodePath("Path/To/Node");
 
     // @ts-expect-error — StringName requires a string argument
-    var bad1 = StringName(123);
+    let bad1 = StringName(123);
 
     // @ts-expect-error — NodePath requires a string argument
-    var bad2 = NodePath(123);
+    let bad2 = NodePath(123);
   }
 }
 
@@ -115,12 +130,12 @@ class StringNameTest extends Node {
 class TypeAliasTest extends Node {
   test_aliases() {
     // int and float are aliases for number
-    var i: int = 42;
-    var f: float = 3.14;
-    var n: number = i + f;
+    let i: int = 42;
+    let f: float = 3.14;
+    let n: number = i + f;
 
     // Can assign int to float and vice versa (both are number)
-    var f2: float = i;
-    var i2: int = f;
+    let f2: float = i;
+    let i2: int = f;
   }
 }

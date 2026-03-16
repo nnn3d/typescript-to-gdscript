@@ -10,20 +10,20 @@ class ControlFlow extends Node {
   }
 
   test_for() {
-    for (var i of range(10)) {
+    for (let i of range(10)) {
       print(i);
     }
   }
 
   test_while() {
-    var count: int = 0;
+    let count: int = 0;
     while (count < 10) {
       count += 1;
     }
   }
 
   test_match() {
-    var value: int = 42;
+    let value: int = 42;
     switch (value) {
       case 1: {
         print("one");
@@ -41,7 +41,7 @@ class ControlFlow extends Node {
   }
 
   test_break_continue() {
-    for (var i of range(10)) {
+    for (let i of range(10)) {
       if (i === 5) {
         break;
       }

@@ -41,6 +41,7 @@ export interface GodotClassXml {
   signals: GodotSignalXml[];
   constants: GodotConstantXml[];
   enums: GodotEnumInfo[];
+  operators: GodotOperatorXml[];
 }
 
 export interface GodotMethodXml {
@@ -79,6 +80,15 @@ export interface GodotConstantXml {
   value: string;
   description?: string;
   enumName?: string;
+}
+
+export interface GodotOperatorXml {
+  /** e.g., "+", "-", "*", "/", "==", "!=", "<", "<=", ">", ">=", "unary+", "unary-" */
+  operator: string;
+  returnType: string;
+  /** For binary operators, the right-hand operand type. Absent for unary. */
+  rightType?: string;
+  description?: string;
 }
 
 /**
@@ -236,6 +246,31 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
     }
   }
 
+  // Parse operators
+  const operators: GodotOperatorXml[] = [];
+  const operatorRegex = /<operator name="operator ([^"]+)"[^>]*>([\s\S]*?)<\/operator>/g;
+  while ((match = operatorRegex.exec(xmlContent)) !== null) {
+    var opName = match[1]!
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"');
+    const opBody = match[2]!;
+
+    const returnMatch = /<return type="([^"]*)"/.exec(opBody);
+    const returnType = returnMatch?.[1] ?? '';
+
+    const paramMatch = /<param index="0" name="[^"]*" type="([^"]+)"/.exec(opBody);
+    const rightType = paramMatch?.[1];
+
+    operators.push({
+      operator: opName,
+      returnType,
+      rightType,
+      description: extractDescription(opBody),
+    });
+  }
+
   return {
     name,
     inherits,
@@ -246,6 +281,7 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
     signals,
     constants,
     enums: [...enumMap.values()],
+    operators,
   };
 }
 
@@ -409,7 +445,7 @@ export class GodotClassRegistry {
     while (current && !visited.has(current)) {
       visited.add(current);
       chain.push(current);
-      const cls = this.data.classes[current];
+      const cls: GodotClassInfo | undefined = this.data.classes[current];
       current = cls?.inherits ?? null;
     }
 

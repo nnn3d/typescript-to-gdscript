@@ -4,19 +4,19 @@
 
 class InheritanceTest extends Node {
   test_inheritance() {
-    var obj: GodotObject = new Node();
-    var ref: RefCounted = new Resource();
-    var node: Node = new Node2D();
-    var node2d: Node2D = new Sprite2D();
+    let obj: GodotObject = new Node();
+    let ref: RefCounted = new Resource();
+    let node: Node = new Node2D();
+    let node2d: Node2D = new Sprite2D();
 
     // @ts-expect-error — Node is not RefCounted (different branch)
-    var bad: RefCounted = new Node();
+    let bad: RefCounted = new Node();
 
     // @ts-expect-error — Sprite2D is not RefCounted
-    var bad2: RefCounted = new Sprite2D();
+    let bad2: RefCounted = new Sprite2D();
 
     // @ts-expect-error — RefCounted is not Node
-    var bad3: Node = new RefCounted();
+    let bad3: Node = new RefCounted();
   }
 }
 
@@ -30,18 +30,18 @@ class NodeMethodsTest extends Node {
     this._physics_process(0.016);
 
     // Tree operations
-    var child = new Node();
+    let child = new Node();
     this.add_child(child);
     this.remove_child(child);
-    var found: Node = this.get_node("Path/To/Node");
-    var maybe: Node | null = this.get_node_or_null("Maybe");
-    var count: int = this.get_child_count();
-    var parent: Node = this.get_parent();
-    var path: string = this.get_path();
+    let found: Node = this.get_node("Path/To/Node");
+    let maybe: Node | null = this.get_node_or_null("Maybe");
+    let count: int = this.get_child_count();
+    let parent: Node = this.get_parent();
+    let path: string = this.get_path();
 
     // Node inherits GodotObject methods
-    var cls: string = this.get_class();
-    var id: int = this.get_instance_id();
+    let cls: string = this.get_class();
+    let id: int = this.get_instance_id();
     this.free();
   }
 }
@@ -50,31 +50,31 @@ class NodeMethodsTest extends Node {
 
 class VectorTest extends Node {
   test_vector2() {
-    var v = new Vector2();
+    let v = new Vector2();
     v.x = 10.0;
     v.y = 20.0;
 
-    var len: float = v.length();
-    var norm: Vector2 = v.normalized();
-    var dot: float = v.dot(new Vector2());
-    var dist: float = v.distance_to(new Vector2());
-    var angle: float = v.angle();
-    var lerped: Vector2 = v.lerp(new Vector2(), 0.5);
-    var rotated: Vector2 = v.rotated(1.57);
-    var abs_v: Vector2 = v.abs();
+    let len: float = v.length();
+    let norm: Vector2 = v.normalized();
+    let dot: float = v.dot(new Vector2());
+    let dist: float = v.distance_to(new Vector2());
+    let angle: float = v.angle();
+    let lerped: Vector2 = v.lerp(new Vector2(), 0.5);
+    let rotated: Vector2 = v.rotated(1.57);
+    let abs_v: Vector2 = v.abs();
 
     // Static members
-    var axis_x: int = Vector2.AXIS_X;
-    var zero: int = Vector2.ZERO;
+    let axis_x: int = Vector2.AXIS_X;
+    let zero: int = Vector2.ZERO;
 
     // Static factory
-    var from: Vector2 = Vector2.from_angle(1.0);
+    let from: Vector2 = Vector2.from_angle(1.0);
 
     // @ts-expect-error — Vector2 has no push method
     v.push(1);
 
     // @ts-expect-error — Vector2 has no length property (it's a method)
-    var bad: number = v.length;
+    let bad: number = v.length;
   }
 }
 
@@ -82,25 +82,25 @@ class VectorTest extends Node {
 
 class CallableTest extends Node {
   test_callable_class() {
-    var c = new Callable();
-    var result: unknown = c.call();
+    let c = new Callable();
+    let result: unknown = c.call();
     c.call_deferred();
-    var bound: Callable = c.bind();
-    var method: string = c.get_method();
-    var obj: GodotObject = c.get_object();
-    var is_null: boolean = c.is_null();
-    var is_valid: boolean = c.is_valid();
+    let bound: Callable = c.bind();
+    let method: string = c.get_method();
+    let obj: GodotObject = c.get_object();
+    let is_null: boolean = c.is_null();
+    let is_valid: boolean = c.is_valid();
 
     // Static factory
-    var created: Callable = Callable.create(this, "method_name");
+    let created: Callable = Callable.create(this, "method_name");
   }
 
   test_function_interface() {
     // Function interface has Callable-like methods (bind, call)
-    var fn: Function = () => {};
-    var bound: Callable = fn.bind();
-    var result: unknown = fn.call();
-    var arg_count: int = fn.get_argument_count();
+    let fn: Function = () => {};
+    let bound: Callable = fn.bind();
+    let result: unknown = fn.call();
+    let arg_count: int = fn.get_argument_count();
   }
 }
 
@@ -117,19 +117,37 @@ class SignalPropertyTest extends Node {
   }
 }
 
+// ─── GodotObject ─────────────────────────────────
+
+class GodotObjectTest extends Object {
+  test_fn(value: string): number {
+    return 0;
+  }
+  test_val = 10;
+  test_builtin_methods() {
+    const t: unknown = this.call('test_fn', 'sdf');
+    // @ts-expect-error — problems with ts typings
+    const t2: number = this.call('test_fn', 'sdf');
+    // @ts-expect-error — bad args
+    const t3 = this.call('test_fn', 0);
+    // @ts-expect-error — not a function
+    const t4 = this.call('test_val');
+  }
+}
+
 // ─── Global functions ───────────────────────────────────────
 
 class GlobalFunctionsTest extends Node {
   test_global_functions() {
     // Math functions
-    var a: float = absf(-3.14);
-    var b: int = absi(-42);
-    var c: float = cos(1.0);
-    var d: float = sin(1.0);
-    var e: float = sqrt(4.0);
-    var f: unknown = lerp(0.0, 1.0, 0.5);
-    var g: float = clampf(1.5, 0.0, 1.0);
-    var h: int = clampi(5, 0, 3);
+    let a: float = absf(-3.14);
+    let b: int = absi(-42);
+    let c: float = cos(1.0);
+    let d: float = sin(1.0);
+    let e: float = sqrt(4.0);
+    let f: unknown = lerp(0.0, 1.0, 0.5);
+    let g: float = clampf(1.5, 0.0, 1.0);
+    let h: int = clampi(5, 0, 3);
 
     // Print functions
     print("hello");
@@ -138,8 +156,8 @@ class GlobalFunctionsTest extends Node {
     prints("spaced", "output");
 
     // Utility
-    var hashed: int = hash("test");
-    var type: string = type_string(0);
-    var valid: boolean = is_instance_valid(this);
+    let hashed: int = hash("test");
+    let type: string = type_string(0);
+    let valid: boolean = is_instance_valid(this);
   }
 }

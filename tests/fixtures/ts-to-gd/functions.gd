@@ -31,3 +31,13 @@ static func create_instance() -> MyClass:
 # Void return
 func do_nothing() -> void:
 	pass
+
+func call(fn: Callable):
+	fn.call()
+	fn.call_deferred()
+	fn.callv()
+	self.var_func.call("")
+	self.var_func.call("")
+	self.say_hello()
+	var var_say_hello = self.say_hello
+	var_say_hello.call()

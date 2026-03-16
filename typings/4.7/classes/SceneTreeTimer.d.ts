@@ -1,0 +1,11 @@
+// AUTO-GENERATED from Godot class documentation.
+// Manual overrides applied from typings/overrides/*.d.ts
+
+/** One-shot timer. */
+declare class SceneTreeTimer extends RefCounted {
+  /** The time remaining (in seconds). */
+  time_left: float;
+
+  /** Emitted when the timer reaches 0. */
+  timeout: Signal<[]>;
+}

@@ -25,3 +25,15 @@ func test_vector_math():
     var v4 = v1 * v2
     var v5 = v1 - v2
     var i3 = i1 + i2
+
+func test_multiple_vector_math():
+    var v3 = v1 + v2 + v1
+    var v4 = v1 * v2 - v1
+    var v5 = v1 - v2 * v2 + v1 / v2
+    var v6 = v1 - 2 * 1 + v1 / v2
+
+func test_ops_helpers():
+    var v3 = v1 > v2
+    var v4 = v1 >= v2
+    var v5 = v1 < v2
+    var v6 = v1 <= v2

@@ -26,6 +26,46 @@ declare function StringName(value: string): string;
 /** Global helper for NodePath */
 declare function NodePath(value: string): string;
 
+// ─── Operator Symbols ─────────────────────────────────────────
+// Unique symbols used as branded keys for operator overload dispatch.
+// Godot classes declare [__add](right: T): R overloads keyed by these symbols.
+
+declare const __add: unique symbol;
+declare const __sub: unique symbol;
+declare const __mul: unique symbol;
+declare const __div: unique symbol;
+declare const __eq: unique symbol;
+declare const __ne: unique symbol;
+declare const __gt: unique symbol;
+declare const __gte: unique symbol;
+declare const __lt: unique symbol;
+declare const __lte: unique symbol;
+declare const __plus: unique symbol;
+declare const __minus: unique symbol;
+
+// ─── Operator Type Dispatch ───────────────────────────────────
+
+/**
+ * Operator symbols hold unions of `{ right: R, ret: Ret }` entries (binary)
+ * or `{ ret: Ret }` entries (unary). This enables extraction of valid
+ * right-hand types and per-overload return type inference.
+ */
+
+/** Get the operator entries union from a type */
+type OpEntries<S extends symbol, L> = S extends keyof L ? L[S] : never;
+
+/** Extract valid right-hand types (distributes over the union) */
+type _ExtractRight<U> = U extends { right: infer R } ? R : never;
+type OpRight<S extends symbol, L> = _ExtractRight<OpEntries<S, L>>;
+
+/** Extract return type matching a specific right-hand type */
+type _ExtractRet<U, R> = U extends { right: R; ret: infer Ret } ? Ret : never;
+type OpResult<S extends symbol, L, R> = _ExtractRet<OpEntries<S, L>, R>;
+
+/** Extract unary operator return type */
+type _ExtractUnaryRet<U> = U extends { ret: infer Ret } ? Ret : never;
+type UnaryOpResult<S extends symbol, L> = _ExtractUnaryRet<OpEntries<S, L>>;
+
 declare const gd: {
   /** Create a signal. Transforms to `signal name` in GDScript. */
   readonly signal: <T extends unknown[] = unknown[]>() => Signal<T>;
@@ -43,15 +83,31 @@ declare const gd: {
   readonly as: <T, U>(value: T, type: new (...args: any[]) => U) =>
     T extends U ? U : U | null;
 
-  readonly math: {
-    /** Transforms to `a + b + ...` in GDScript (operator overload for non-primitives) */
-    readonly add: <T>(...operands: T[]) => T;
-    /** Transforms to `a - b - ...` in GDScript */
-    readonly sub: <T>(...operands: T[]) => T;
-    /** Transforms to `a * b * ...` in GDScript */
-    readonly mul: <T>(...operands: T[]) => T;
-    /** Transforms to `a / b / ...` in GDScript */
-    readonly div: <T>(...operands: T[]) => T;
+  readonly ops: {
+    /** Transforms to `a + b` in GDScript */
+    readonly add: <L extends Record<typeof __add, any>, R extends OpRight<typeof __add, L>>(a: L, b: R) => OpResult<typeof __add, L, R>;
+    /** Transforms to `a - b` in GDScript */
+    readonly sub: <L extends Record<typeof __sub, any>, R extends OpRight<typeof __sub, L>>(a: L, b: R) => OpResult<typeof __sub, L, R>;
+    /** Transforms to `a * b` in GDScript */
+    readonly mul: <L extends Record<typeof __mul, any>, R extends OpRight<typeof __mul, L>>(a: L, b: R) => OpResult<typeof __mul, L, R>;
+    /** Transforms to `a / b` in GDScript */
+    readonly div: <L extends Record<typeof __div, any>, R extends OpRight<typeof __div, L>>(a: L, b: R) => OpResult<typeof __div, L, R>;
+    /** Transforms to `a == b` in GDScript */
+    readonly eq: <L extends Record<typeof __eq, any>, R extends OpRight<typeof __eq, L>>(a: L, b: R) => OpResult<typeof __eq, L, R>;
+    /** Transforms to `a != b` in GDScript */
+    readonly ne: <L extends Record<typeof __ne, any>, R extends OpRight<typeof __ne, L>>(a: L, b: R) => OpResult<typeof __ne, L, R>;
+    /** Transforms to `a > b` in GDScript */
+    readonly gt: <L extends Record<typeof __gt, any>, R extends OpRight<typeof __gt, L>>(a: L, b: R) => OpResult<typeof __gt, L, R>;
+    /** Transforms to `a >= b` in GDScript */
+    readonly gte: <L extends Record<typeof __gte, any>, R extends OpRight<typeof __gte, L>>(a: L, b: R) => OpResult<typeof __gte, L, R>;
+    /** Transforms to `a < b` in GDScript */
+    readonly lt: <L extends Record<typeof __lt, any>, R extends OpRight<typeof __lt, L>>(a: L, b: R) => OpResult<typeof __lt, L, R>;
+    /** Transforms to `a <= b` in GDScript */
+    readonly lte: <L extends Record<typeof __lte, any>, R extends OpRight<typeof __lte, L>>(a: L, b: R) => OpResult<typeof __lte, L, R>;
+    /** Transforms to `+a` in GDScript (unary plus) */
+    readonly plus: <T extends Record<typeof __plus, any>>(a: T) => UnaryOpResult<typeof __plus, T>;
+    /** Transforms to `-a` in GDScript (unary minus) */
+    readonly minus: <T extends Record<typeof __minus, any>>(a: T) => UnaryOpResult<typeof __minus, T>;
   }
 
   // Decorators

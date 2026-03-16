@@ -136,7 +136,7 @@ This loads `typings/index.d.ts` which references `gd-helpers.d.ts` + `latest/god
   - Methods, signals (gd.signal), enums (gd.enum)
   - Control flow (if/elif/else, for-of->for-in, while, switch->match)
   - Expressions (this->self, ===->==, &&->and, ||->or, !->not)
-  - StringName/NodePath, gd.as, gd.math.*, lambdas with types
+  - StringName/NodePath, gd.as, gd.ops.*, lambdas with types
   - Comments (// -> #, /** */ -> ##), await stripping, new->.new()
 - [x] Source maps for TS-to-GD (GDScriptEmitter tracks line/col, 9 tests with concrete position checks)
 - [x] GDScript AST types generated from tree-sitter node-types.json (85 typed interfaces with field overloads)
@@ -168,7 +168,7 @@ This loads `typings/index.d.ts` which references `gd-helpers.d.ts` + `latest/god
   - Auto-detects Godot version from `vendor/godot/version.py`
   - `set-latest` CLI command to switch active version
   - Consumer tsconfig: `"types": ["typescript-to-gdscript/typings"]`
-- [x] Linting (5 rules: single-class, no-undefined, no-const-let, no-top-level, no-unsupported)
+- [x] Linting (5 rules: single-class, no-undefined, no-var, no-top-level, no-unsupported)
 - [x] Watch mode + CLI + Cache
 - [ ] ESLint plugin
 - [ ] Source map integration with linter (map Godot LSP errors back to TS via source maps)
@@ -221,7 +221,7 @@ After transformation, only primitive (available in gdscript) types and classes t
 There are enums in typescript, but they are not fully compatible with gdscript enums, also they can't be defined inside classes. So for enums should be helper like `gd.enums`. Example in ts class - `NAMED = gd.enum('THING_1', 'THING_2', ['THING_3', -1])` is same as `enum Named {THING_1, THING_2, ANOTHER_THING = -1}`. For anonymous enums there will be no equivalent in ts, but from gdscript to ts it will be converts as constants, eg `enum {UNIT_NEUTRAL, UNIT_ENEMY, UNIT_ALLY}` in gdscript should be `UNIT_NEUTRAL = 0; UNIT_ENEMY = 1; UNIT_ALLY = 2` after transforming to typescript.
 
 ##### Math operations override
-There should be helpers for operations like `Vector2(1, 1) + Vector2(1, 1)`. `gd.math.add()`, `gd.math.div()`, `gd.math.mul()`, `gd.math.sub()` should be used for that. For example `gd.math.add(Vector2(1, 1), Vector2(1, 2), Vector2(2, 3))`. Use them from type information only when necessary.
+There should be helpers for operations like `Vector2(1, 1) + Vector2(1, 1)`. `gd.ops` provides typed operator helpers: `add`, `sub`, `mul`, `div` (binary arithmetic), `eq`, `ne`, `gt`, `gte`, `lt`, `lte` (binary comparison), `plus`, `minus` (unary). Binary ops take exactly 2 args, unary ops take 1. For example `gd.ops.add(Vector2(1, 1), Vector2(1, 2))`. Operator overloads are generated from Godot XML docs using unique symbols (`__add`, `__mul`, etc.) on each class, enabling type inference: `gd.ops.mul(Vector2(...), 2.0)` returns `Vector2`, `gd.ops.mul(Vector2(...), Vector3(...))` is a TS error.
 
 ##### Signals
 Signals another helper, like `gd.signal<[...]>()`. Also, there should be type `Signal<[...]>` with generic args for type safety ofcourse.
@@ -235,8 +235,8 @@ TS `constructor()` used for gdscript `_init()` and vice versa.
 ##### Gdscript dicts `{}`
 In typescript, default object (`{}`) should have type like gdscript `Dictionary` type, but all other classes (`RefCounted` and so on) should extend another object type, which like gdscript `Object` type - itself it should have `null` prototype in types.
 
-##### TS const and let
-`const` and `let` in typescript are restricted. Everywhere should be used `var`.
+##### TS var keyword
+`var` in typescript is restricted. Use `let` or `const` instead (both convert to GDScript `var`).
 
 ##### Array
 Array type in typescript should be same as gdscript array, but with generic types.
@@ -283,7 +283,7 @@ Also there should be eslint plugin, which do same lint and return results to esl
 #### Current lint rules
 1. **singleClassRule** — Only one class per file allowed
 2. **noUndefinedRule** — `undefined` restricted, use `null`
-3. **noConstLetRule** — `const`/`let` restricted, use `var`
+3. **noVarRule** — `var` restricted, use `let` or `const`
 4. **noTopLevelStatementsRule** — No top-level statements outside classes
 5. **noUnsupportedFeaturesRule** — Spread, yield, for...in not supported
 

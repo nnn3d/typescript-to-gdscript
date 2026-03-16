@@ -1,4 +1,4 @@
-import { writeFileSync, readFileSync, readdirSync, existsSync } from 'fs';
+import { writeFileSync, readFileSync, readdirSync, existsSync, mkdirSync, rmSync } from 'fs';
 import { join, resolve } from 'path';
 import ts from 'typescript';
 import {
@@ -9,6 +9,7 @@ import {
   type GodotClassXml,
   type GodotMethodXml,
   type GodotParamXml,
+  type GodotOperatorXml,
 } from './godot-registry.js';
 
 export interface GodotDocsTypingsOptions {
@@ -164,6 +165,68 @@ function emitMethodSignature(method: GodotMethodXml): string[] {
   return lines;
 }
 
+// ─── Operator Overloads ─────────────────────────────────────────
+
+/** Maps GDScript operator names to unique symbol names */
+const OPERATOR_SYMBOL_MAP: Record<string, string> = {
+  '+': '__add',
+  '-': '__sub',
+  '*': '__mul',
+  '/': '__div',
+  '==': '__eq',
+  '!=': '__ne',
+  '>': '__gt',
+  '>=': '__gte',
+  '<': '__lt',
+  '<=': '__lte',
+  'unary+': '__plus',
+  'unary-': '__minus',
+};
+
+/**
+ * Generates operator overload declarations as symbol-keyed union properties.
+ * Binary ops: [__add]: { right: T1, ret: R1 } | { right: T2, ret: R2 };
+ * Unary ops:  [__minus]: { ret: R };
+ *
+ * This union-of-entries pattern enables extracting the set of valid right-hand
+ * types and per-overload return type inference via distributive conditional types.
+ */
+function emitOperatorOverloads(operators: GodotOperatorXml[]): string[] {
+  const lines: string[] = [];
+
+  // Group operators by symbol name
+  const grouped = new Map<string, GodotOperatorXml[]>();
+  for (const op of operators) {
+    const symbolName = OPERATOR_SYMBOL_MAP[op.operator];
+    if (!symbolName) continue;
+    if (!grouped.has(symbolName)) grouped.set(symbolName, []);
+    grouped.get(symbolName)!.push(op);
+  }
+
+  if (grouped.size === 0) return lines;
+
+  lines.push('');
+  lines.push('  // Operator overloads');
+
+  for (const [symbolName, ops] of grouped) {
+    const isUnary = ops[0]!.operator.startsWith('unary');
+
+    if (isUnary) {
+      const returnType = godotTypeToTs(ops[0]!.returnType);
+      lines.push(`  [${symbolName}]: { ret: ${returnType} };`);
+    } else {
+      const entries = ops.map(op => {
+        const rightType = godotTypeToTs(op.rightType ?? 'Variant');
+        const returnType = godotTypeToTs(op.returnType);
+        return `{ right: ${rightType}; ret: ${returnType} }`;
+      });
+      lines.push(`  [${symbolName}]: ${entries.join(' | ')};`);
+    }
+  }
+
+  return lines;
+}
+
 /**
  * Generates a TypeScript declaration for a single Godot class.
  */
@@ -248,6 +311,11 @@ function generateInterfaceDeclaration(cls: GodotClassXml, tsName: string): strin
     lines.push('  [index: number]: string;');
   }
 
+  // Operator overloads
+  if (cls.operators.length > 0) {
+    lines.push(...emitOperatorOverloads(cls.operators));
+  }
+
   lines.push('}');
   return lines.join('\n');
 }
@@ -315,6 +383,11 @@ function generateClassDeclaration(cls: GodotClassXml, dictOnlyOverrides?: Set<st
     }
   }
 
+  // Operator overloads
+  if (cls.operators.length > 0) {
+    lines.push(...emitOperatorOverloads(cls.operators));
+  }
+
   // For GodotObject: override Dictionary-only methods from Object interface with never
   if (cls.name === 'Object' && dictOnlyOverrides && dictOnlyOverrides.size > 0) {
     lines.push('');
@@ -332,6 +405,52 @@ function generateClassDeclaration(cls: GodotClassXml, dictOnlyOverrides?: Set<st
 /**
  * Generates global scope declarations (top-level functions, constants, enums).
  */
+/**
+ * Generates a Number interface extension with operator overloads from int and float XML docs.
+ * Since int/float are `type number`, their operators need to be on the Number interface.
+ * We merge both int and float operators, deduplicating where they overlap.
+ */
+function generateNumberOperatorOverloads(classes: Map<string, GodotClassXml>): string | null {
+  const intCls = classes.get('int');
+  const floatCls = classes.get('float');
+  if (!intCls && !floatCls) return null;
+
+  // Merge all operators from both int and float, grouped by symbol
+  const grouped = new Map<string, { entries: Set<string>; isUnary: boolean }>();
+
+  for (const cls of [intCls, floatCls]) {
+    if (!cls) continue;
+    for (const op of cls.operators) {
+      const symbolName = OPERATOR_SYMBOL_MAP[op.operator];
+      if (!symbolName) continue;
+
+      if (!grouped.has(symbolName)) {
+        grouped.set(symbolName, { entries: new Set(), isUnary: op.operator.startsWith('unary') });
+      }
+      const group = grouped.get(symbolName)!;
+
+      const returnType = godotTypeToTs(op.returnType);
+      if (group.isUnary) {
+        group.entries.add(`{ ret: ${returnType} }`);
+      } else {
+        const rightType = godotTypeToTs(op.rightType ?? 'Variant');
+        group.entries.add(`{ right: ${rightType}; ret: ${returnType} }`);
+      }
+    }
+  }
+
+  if (grouped.size === 0) return null;
+
+  const lines: string[] = [];
+  lines.push('// Operator overloads for int/float (number type)');
+  lines.push('interface Number {');
+  for (const [symbolName, group] of grouped) {
+    lines.push(`  [${symbolName}]: ${[...group.entries].join(' | ')};`);
+  }
+  lines.push('}');
+  return lines.join('\n');
+}
+
 function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
   const lines: string[] = [];
   lines.push('// @GlobalScope — global functions and constants');
@@ -651,10 +770,17 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
   // Compute Dictionary-only member names that no Object subclass defines.
   const dictOnlyOverrides = computeDictOnlyOverrides(classes);
 
-  const allDeclarations: string[] = [];
-  allDeclarations.push('// AUTO-GENERATED from Godot class documentation.');
-  allDeclarations.push('// Manual overrides applied from typings/overrides/*.d.ts');
-  allDeclarations.push('');
+  // Prepare classes/ subdirectory — clean and recreate
+  const classesDir = join(options.outputDir, 'classes');
+  if (existsSync(classesDir)) {
+    rmSync(classesDir, { recursive: true, force: true });
+  }
+  mkdirSync(classesDir, { recursive: true });
+
+  const header = '// AUTO-GENERATED from Godot class documentation.\n// Manual overrides applied from typings/overrides/*.d.ts\n';
+
+  // Track generated files for the index
+  const generatedFiles: string[] = [];
 
   // Sort class names for deterministic output
   const sortedNames = [...classes.keys()].sort();
@@ -663,8 +789,10 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
     const cls = classes.get(name)!;
 
     if (name === '@GlobalScope') {
-      allDeclarations.push(generateGlobalScopeDeclaration(cls));
-      allDeclarations.push('');
+      const content = header + '\n' + generateGlobalScopeDeclaration(cls) + '\n';
+      const fileName = '_globals.d.ts';
+      writeFileSync(join(classesDir, fileName), content);
+      generatedFiles.push(fileName);
       continue;
     }
 
@@ -677,6 +805,8 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
     // Some GD classes are emitted as TS interfaces (replacing built-in types)
     const interfaceName = INTERFACE_CLASSES.get(name);
     if (interfaceName) {
+      const fileLines: string[] = [];
+
       var declaration = generateInterfaceDeclaration(cls, interfaceName);
 
       // Apply overrides if available (by TS interface name)
@@ -685,30 +815,27 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
         declaration = applyOverride(declaration, override);
       }
 
-      allDeclarations.push(declaration);
-      allDeclarations.push('');
+      fileLines.push(declaration);
+      fileLines.push('');
 
       // Emit renamed alias so existing references still work
       const renamedName = CLASS_NAME_CONFLICTS.get(name);
       if (renamedName) {
-        // Check if override added generics (look for < in header)
         const hasGenerics = override?.header.includes('<') ?? false;
-        allDeclarations.push(`type ${renamedName} = ${interfaceName}${hasGenerics ? '<unknown>' : ''};`);
+        fileLines.push(`type ${renamedName} = ${interfaceName}${hasGenerics ? '<unknown>' : ''};`);
       }
       // Dictionary → Object interface, but keep Dictionary as a type alias + constructor
       if (name === 'Dictionary') {
-        allDeclarations.push(`type Dictionary = Object;`);
-        allDeclarations.push('declare var Dictionary: { new(): Dictionary };');
-        allDeclarations.push('declare var Object: typeof GodotObject;');
+        fileLines.push(`type Dictionary = Object;`);
+        fileLines.push('declare var Dictionary: { new(): Dictionary };');
+        fileLines.push('declare var Object: typeof GodotObject;');
       }
       // Callable → Function, keep Callable alias + constructor + CallableFunction/NewableFunction
       if (name === 'Callable') {
-        allDeclarations.push(`type Callable = Function;`);
-        allDeclarations.push('declare var Callable: { new(): Callable; create(object: GodotObject, method: string): Callable };');
-        // Use CallableFunction override if available, otherwise emit empty extension
+        fileLines.push(`type Callable = Function;`);
+        fileLines.push('declare var Callable: { new(): Callable; create(object: GodotObject, method: string): Callable };');
         const cfOverride = overrides.get('CallableFunction');
         if (cfOverride) {
-          // Emit the full override content
           const cfLines = [cfOverride.header + ' {'];
           for (const [, text] of cfOverride.members) {
             cfLines.push(text);
@@ -717,26 +844,28 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
             cfLines.push(extra);
           }
           cfLines.push('}');
-          allDeclarations.push(cfLines.join('\n'));
+          fileLines.push(cfLines.join('\n'));
         } else {
-          allDeclarations.push('interface CallableFunction extends Function {}');
+          fileLines.push('interface CallableFunction extends Function {}');
         }
-        allDeclarations.push('interface NewableFunction extends Function {}');
+        fileLines.push('interface NewableFunction extends Function {}');
       }
       // Array → keep ArrayConstructor + GodotArray constructor
       if (name === 'Array') {
         const hasGenerics = override?.header.includes('<') ?? false;
         const typeParam = hasGenerics ? '<T>' : '';
         const unknownParam = hasGenerics ? '<unknown>' : '';
-        allDeclarations.push('interface ArrayConstructor {');
-        allDeclarations.push(`  new ${typeParam}(): Array${typeParam};`);
-        allDeclarations.push(`  new ${typeParam}(...items: ${hasGenerics ? 'T' : 'unknown'}[]): Array${typeParam};`);
-        allDeclarations.push('}');
-        allDeclarations.push('declare var Array: ArrayConstructor;');
-        allDeclarations.push(`declare var GodotArray: { new(): Array${unknownParam} };`);
+        fileLines.push('interface ArrayConstructor {');
+        fileLines.push(`  new ${typeParam}(): Array${typeParam};`);
+        fileLines.push(`  new ${typeParam}(...items: ${hasGenerics ? 'T' : 'unknown'}[]): Array${typeParam};`);
+        fileLines.push('}');
+        fileLines.push('declare var Array: ArrayConstructor;');
+        fileLines.push(`declare var GodotArray: { new(): Array${unknownParam} };`);
       }
 
-      allDeclarations.push('');
+      const fileName = `${name}.d.ts`;
+      writeFileSync(join(classesDir, fileName), header + '\n' + fileLines.join('\n') + '\n');
+      generatedFiles.push(fileName);
       continue;
     }
 
@@ -749,13 +878,24 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
       classDecl = applyOverride(classDecl, classOverride);
     }
 
-    allDeclarations.push(classDecl);
-    allDeclarations.push('');
+    const fileName = `${name}.d.ts`;
+    writeFileSync(join(classesDir, fileName), header + '\n' + classDecl + '\n');
+    generatedFiles.push(fileName);
   }
 
-  const outputPath = join(options.outputDir, 'godot.d.ts');
-  const output = allDeclarations.join('\n');
-  writeFileSync(outputPath, output);
+  // Generate Number interface extension with int/float operator overloads
+  const numberOps = generateNumberOperatorOverloads(classes);
+  if (numberOps) {
+    const fileName = '_number-ops.d.ts';
+    writeFileSync(join(classesDir, fileName), header + '\n' + numberOps + '\n');
+    generatedFiles.push(fileName);
+  }
+
+  // Generate classes/index.d.ts that references all class files
+  const indexLines = generatedFiles
+    .sort()
+    .map(f => `/// <reference path="${f}" />`);
+  writeFileSync(join(classesDir, 'index.d.ts'), indexLines.join('\n') + '\n');
 
   // Generate registry JSON if requested
   let registry: GodotClassRegistry | null = null;

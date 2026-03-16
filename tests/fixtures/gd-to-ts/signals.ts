@@ -4,7 +4,7 @@ class Signals extends Node {
   score_updated = gd.signal<[float]>();
 
   take_damage(amount: int) {
-    var old_hp: int = health;
+    let old_hp: int = health;
     health -= amount;
     this.health_changed.emit(old_hp, health);
     if (health <= 0) {

@@ -8,8 +8,8 @@ class TSOnlyTest extends Node {
 
   test_tsonly() {
     // Should still be usable as the inner type in TS
-    var d: boolean = this.metadata.debug;
-    var v: string = this.metadata.version;
+    let d: boolean = this.metadata.debug;
+    let v: string = this.metadata.version;
   }
 }
 
@@ -32,8 +32,8 @@ class SignalTypeTest extends Node {
     });
 
     // Check connection
-    var fn = (a: float, b: Node) => {};
-    var connected: boolean = this.damage_dealt.is_connected(fn);
+    let fn = (a: float, b: Node) => {};
+    let connected: boolean = this.damage_dealt.is_connected(fn);
     this.damage_dealt.disconnect(fn);
   }
 }
@@ -43,22 +43,22 @@ class SignalTypeTest extends Node {
 class RenamedClassTest extends Node {
   test_godot_classes() {
     // GodotObject is available directly
-    var obj = new GodotObject();
+    let obj = new GodotObject();
     obj.get_class();
     obj.has_method("test");
 
     // Global Object = GodotObject
-    var obj2 = new Object();
+    let obj2 = new Object();
     obj2.get_class();
     obj2.has_method("test");
 
     // GodotArray is the untyped array class
-    var arr = new GodotArray();
+    let arr = new GodotArray();
     arr.append("value");
     arr.size();
 
     // Array<T> is the generic GDScript array
-    var typed_arr: Array<int> = [];
+    let typed_arr: Array<int> = [];
     typed_arr.append(42);
     typed_arr.size();
   }
@@ -68,11 +68,11 @@ class RenamedClassTest extends Node {
 
 class PackedArrayTest extends Node {
   test_packed_arrays() {
-    var bytes = new PackedByteArray();
-    var floats = new PackedFloat32Array();
-    var ints = new PackedInt32Array();
-    var strings = new PackedStringArray();
-    var vectors = new PackedVector2Array();
+    let bytes = new PackedByteArray();
+    let floats = new PackedFloat32Array();
+    let ints = new PackedInt32Array();
+    let strings = new PackedStringArray();
+    let vectors = new PackedVector2Array();
 
     // These should have their own methods
     bytes.append(0);
@@ -87,16 +87,16 @@ class PackedArrayTest extends Node {
 class EnumConstTest extends Node {
   test_enum_constants() {
     // GodotObject connect flags
-    var flag: int = GodotObject.CONNECT_DEFERRED;
-    var one_shot: int = GodotObject.CONNECT_ONE_SHOT;
+    let flag: int = GodotObject.CONNECT_DEFERRED;
+    let one_shot: int = GodotObject.CONNECT_ONE_SHOT;
 
     // Vector2 axis constants
-    var ax: int = Vector2.AXIS_X;
-    var ay: int = Vector2.AXIS_Y;
+    let ax: int = Vector2.AXIS_X;
+    let ay: int = Vector2.AXIS_Y;
 
     // Node process mode (from godot docs)
     // These are int constants
-    var notif: int = GodotObject.NOTIFICATION_POSTINITIALIZE;
+    let notif: int = GodotObject.NOTIFICATION_POSTINITIALIZE;
   }
 }
 
@@ -107,13 +107,13 @@ class ResourceTest extends Resource {
     // Resource properties
     this.resource_name = "test";
     this.resource_path = "res://test.tres";
-    var path: string = this.resource_path;
+    let path: string = this.resource_path;
 
     // Inherited from RefCounted
-    var count: int = this.get_reference_count();
+    let count: int = this.get_reference_count();
 
     // Inherited from GodotObject
-    var cls: string = this.get_class();
+    let cls: string = this.get_class();
 
     // Resource does NOT have Node methods
     // @ts-expect-error — Resource is not a Node, no add_child
@@ -134,27 +134,30 @@ class ResourceTest extends Resource {
   }
 }
 
-// ─── Multiple gd.math operands ──────────────────────────────
+// ─── gd.ops type safety ─────────────────────────────────────
 
-class MathEdgeCases extends Node {
-  test_math_type_safety() {
-    var v1 = new Vector2();
-    var v2 = new Vector2();
-    var v3 = new Vector2();
+class OpsEdgeCases extends Node {
+  test_ops_type_safety() {
+    let v1 = new Vector2();
+    let v2 = new Vector2();
 
-    // Multiple operands
-    var sum: Vector2 = gd.math.add(v1, v2, v3);
-    var diff: Vector2 = gd.math.sub(v1, v2, v3);
+    // Chained ops (2 args each)
+    let sum: Vector2 = gd.ops.add(gd.ops.add(v1, v2), v1);
 
-    // gd.math with Vector3
-    var a = new Vector3();
-    var b = new Vector3();
-    var c: Vector3 = gd.math.add(a, b);
+    // gd.ops with Vector3
+    let a = new Vector3();
+    let b = new Vector3();
+    let c: Vector3 = gd.ops.add(a, b);
 
-    // gd.math with Color
-    var c1 = new Color();
-    var c2 = new Color();
-    var c3: Color = gd.math.mul(c1, c2);
+    // gd.ops with Color
+    let c1 = new Color();
+    let c2 = new Color();
+    let c3: Color = gd.ops.mul(c1, c2);
+
+    // Numeric ops
+    let n1: int = 10;
+    let n2: float = 3.14;
+    let r: float = gd.ops.mul(n1, n2);
   }
 }
 
@@ -162,11 +165,21 @@ class MathEdgeCases extends Node {
 
 class GetNodeTest extends Node {
   test_get_node() {
-    var child: Node = this.get_node("Child");
-    var maybe: Node | null = this.get_node_or_null("Maybe");
+    let child: Node = this.get_node("Child");
+    let maybe: Node | null = this.get_node_or_null("Maybe");
 
     // Can add retrieved nodes
-    var other: Node = this.get_node("Other");
+    let other: Node = this.get_node("Other");
     this.add_child(other);
+  }
+}
+
+// ─── Globals ─────────────────────────────
+
+class GlobalsTest extends Node {
+  globals() {
+    let inf: number = INF;
+    let pi: number = PI;
+    let length = len([]);
   }
 }

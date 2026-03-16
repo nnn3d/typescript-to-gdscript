@@ -1,11 +1,17 @@
+type SomeObject = {
+  key: 'value'
+}
+
 class MyClass extends Node {
-  health_changed = gd.signal<[int, int]>();
+  health_changed = gd.signal<[from: int, to: int]>();
+  mana_changed = gd.signal<[int, int]>();
+  stamina_changed = gd.signal<[number, unknown, SomeObject]>();
   game_over = gd.signal();
 
   health: int = 100;
 
   take_damage(amount: int) {
-    var old_health: int = this.health;
+    let old_health: int = this.health;
     this.health -= amount;
     this.health_changed.emit(old_health, this.health);
     if (this.health <= 0) {

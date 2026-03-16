@@ -1,3 +1,3 @@
 /// <reference path="../globals.d.ts" />
 /// <reference path="../gd-helpers.d.ts" />
-/// <reference path="godot.d.ts" />
+/// <reference path="classes/index.d.ts" />

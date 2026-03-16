@@ -1,0 +1,17 @@
+// AUTO-GENERATED from Godot class documentation.
+// Manual overrides applied from typings/overrides/*.d.ts
+
+/** A base class of the collision that interacts with {@link SpringBoneSimulator3D}. */
+declare class SpringBoneCollision3D extends Node3D {
+  /** The index of the attached bone. */
+  bone: int;
+  /** The name of the attached bone. */
+  bone_name: string;
+  /** The offset of the position from {@link Skeleton3D}'s {@link bone} pose position. */
+  position_offset: Vector3;
+  /** The offset of the rotation from {@link Skeleton3D}'s {@link bone} pose rotation. */
+  rotation_offset: Quaternion;
+
+  /** Get parent {@link Skeleton3D} node of the parent {@link SpringBoneSimulator3D} if found. */
+  get_skeleton(): Skeleton3D;
+}

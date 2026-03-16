@@ -1,6 +1,6 @@
 class MyClass extends Node {
   test_if() {
-    var x: int = 5;
+    let x: int = 5;
 
     if (x > 10) {
       print("big");
@@ -12,7 +12,7 @@ class MyClass extends Node {
   }
 
   test_while() {
-    var i: int = 0;
+    let i: int = 0;
     while (i < 10) {
       print(i);
       i += 1;
@@ -20,14 +20,14 @@ class MyClass extends Node {
   }
 
   test_for() {
-    var items = [1, 2, 3, 4, 5];
-    for (var item of items) {
+    let items = [1, 2, 3, 4, 5];
+    for (let item of items) {
       print(item);
     }
   }
 
   test_match() {
-    var value: int = 2;
+    let value: int = 2;
     switch (value) {
       case 1:
         print("one");
@@ -45,7 +45,7 @@ class MyClass extends Node {
   }
 
   test_break_continue() {
-    var i: int = 0;
+    let i: int = 0;
     while (i < 20) {
       i += 1;
       if (i === 5) {

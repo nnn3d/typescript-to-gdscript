@@ -8,9 +8,9 @@ class Variables extends Node {
   inferred = 42;
 
   _ready() {
-    var x: int = 5;
-    var y: float = 3.14;
-    var greeting: string = "hello";
-    var local_inferred = true;
+    let x: int = 5;
+    let y: float = 3.14;
+    let greeting: string = "hello";
+    let local_inferred = true;
   }
 }

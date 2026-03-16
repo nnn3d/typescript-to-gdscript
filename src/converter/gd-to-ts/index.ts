@@ -22,7 +22,7 @@ export interface UserClassInfo {
   name: string;
   extends: string;
   members: Set<string>;
-  /** Known types of member variables (for gd.math detection across inheritance) */
+  /** Known types of member variables (for gd.ops detection across inheritance) */
   memberTypes: Map<string, string>;
 }
 
@@ -175,9 +175,9 @@ interface GdToTsContext {
   classMembers: Set<string>;
   /** Local variables in current scope (params + local vars) — these shadow classMembers */
   localVars: Set<string>;
-  /** Tracked types of local variables (for gd.math detection) */
+  /** Tracked types of local variables (for gd.ops detection) */
   localVarTypes: Map<string, string>;
-  /** Tracked types of class member variables (for gd.math detection) */
+  /** Tracked types of class member variables (for gd.ops detection) */
   classMemberTypes: Map<string, string>;
   /** Godot class registry for inherited member resolution */
   registry: GodotClassRegistry;
@@ -568,7 +568,7 @@ function emitLocalVariable(node: GDNode, ctx: GdToTsContext, indent: string): st
   const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode) : '';
   const init = valueNode ? ` = ${emitExpr(valueNode, ctx)}` : '';
 
-  return `${indent}var ${name}${typeAnnotation}${init};`;
+  return `${indent}let ${name}${typeAnnotation}${init};`;
 }
 
 // ─── Type Annotations ─────────────────────────────────────────
@@ -863,7 +863,7 @@ function emitForStatement(node: GDNode, ctx: GdToTsContext, depth: number): stri
   const iterable = right ? emitExpr(right, ctx) : '[]';
   const bodyStr = body ? emitBody(body, ctx, depth + 1) : '';
 
-  return `${indent}for (var ${varName} of ${iterable}) {\n${bodyStr}\n${indent}}`;
+  return `${indent}for (let ${varName} of ${iterable}) {\n${bodyStr}\n${indent}}`;
 }
 
 function emitWhileStatement(node: GDNode, ctx: GdToTsContext, depth: number): string {
@@ -1161,13 +1161,13 @@ function emitBinaryOp(node: GDNode, ctx: GdToTsContext): string {
   }
 
   // Check if this is an arithmetic op on operator-overloaded types (Vector2, Color, etc.)
-  const mathFn = GD_MATH_OPS[opText];
+  const mathFn = GD_OPS_MAP[opText];
   if (mathFn && left) {
     const leftType = inferExprType(left, ctx);
     if (leftType && OPERATOR_OVERLOAD_TYPES.has(leftType)) {
       const leftStr = emitExpr(left, ctx);
       const rightStr = right ? emitExpr(right, ctx) : '';
-      return `gd.math.${mathFn}(${leftStr}, ${rightStr})`;
+      return `gd.ops.${mathFn}(${leftStr}, ${rightStr})`;
     }
   }
 
@@ -1233,9 +1233,9 @@ function emitCommentInline(node: GDNode): string {
   return `// ${content}`;
 }
 
-// ─── Type Inference (for gd.math detection) ──────────────────
+// ─── Type Inference (for gd.ops detection) ──────────────────
 
-/** Types that require gd.math.* wrappers for arithmetic */
+/** Types that require gd.ops.* wrappers for arithmetic */
 const OPERATOR_OVERLOAD_TYPES = new Set([
   'Vector2', 'Vector2i', 'Vector3', 'Vector3i', 'Vector4', 'Vector4i',
   'Color', 'Quaternion', 'Basis', 'Transform2D', 'Transform3D', 'Projection',
@@ -1252,7 +1252,7 @@ function extractGdTypeName(typeNode: GDNode): string | null {
   return typeNode.text;
 }
 
-/** Infer the GD type of an expression (best-effort, for gd.math detection) */
+/** Infer the GD type of an expression (best-effort, for gd.ops detection) */
 /** Infer type from expression without context (for parseGdClassInfo). Only handles constructor calls. */
 function inferExprTypeStatic(node: GDNode): string | null {
   if (isGDNodeType(node, 'call')) {
@@ -1285,11 +1285,17 @@ function inferExprType(node: GDNode, ctx: GdToTsContext): string | null {
   return null;
 }
 
-const GD_MATH_OPS: Record<string, string> = {
+const GD_OPS_MAP: Record<string, string> = {
   '+': 'add',
   '-': 'sub',
   '*': 'mul',
   '/': 'div',
+  '==': 'eq',
+  '!=': 'ne',
+  '>': 'gt',
+  '>=': 'gte',
+  '<': 'lt',
+  '<=': 'lte',
 };
 
 // ─── Helpers ──────────────────────────────────────────────────

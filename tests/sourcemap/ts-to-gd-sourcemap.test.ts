@@ -65,7 +65,7 @@ describe('Source Map: TS-to-GD mappings', () => {
     // Line 2:   health: int = 100;
     // Line 3:   speed: float = 10.5;
     // Line 4:   _ready() {
-    // Line 5:     var x: int = 5;
+    // Line 5:     let x: int = 5;
     // Line 6:   }
     // Line 7: }
     const code = [
@@ -73,7 +73,7 @@ describe('Source Map: TS-to-GD mappings', () => {
       '  health: int = 100;',
       '  speed: float = 10.5;',
       '  _ready() {',
-      '    var x: int = 5;',
+      '    let x: int = 5;',
       '  }',
       '}',
       '',
@@ -250,7 +250,7 @@ describe('Source Map: TS-to-GD mappings', () => {
     // TS source:
     // Line 1: class Loops extends Node {
     // Line 2:   run() {
-    // Line 3:     for (var item of items) {
+    // Line 3:     for (let item of items) {
     // Line 4:       process(item);
     // Line 5:     }
     // Line 6:     while (true) {
@@ -261,7 +261,7 @@ describe('Source Map: TS-to-GD mappings', () => {
     const code = [
       'class Loops extends Node {',
       '  run() {',
-      '    for (var item of items) {',
+      '    for (let item of items) {',
       '      process(item);',
       '    }',
       '    while (true) {',
@@ -386,7 +386,7 @@ describe('Source Map: TS-to-GD mappings', () => {
       'class Full extends Node {',       // Line 1
       '  hp: int = 10;',                 // Line 2
       '  run() {',                        // Line 3
-      '    var x: int = 1;',             // Line 4
+      '    let x: int = 1;',             // Line 4
       '    return x;',                    // Line 5
       '  }',                              // Line 6
       '}',                                // Line 7

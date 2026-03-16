@@ -180,8 +180,8 @@ class Enemy extends Node2D {
 For operator overloading on value types (Vector2, Color, etc.):
 
 ```typescript
-var result = gd.math.add(Vector2(1, 1), Vector2(2, 3));
-var scaled = gd.math.mul(position, 2.0);
+var result = gd.ops.add(Vector2(1, 1), Vector2(2, 3));
+var scaled = gd.ops.mul(position, 2.0);
 ```
 
 ### Type casting (`as`)

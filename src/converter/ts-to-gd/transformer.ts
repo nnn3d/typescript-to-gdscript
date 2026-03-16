@@ -208,7 +208,49 @@ export class TsToGdTransformer {
   private visitSignalDeclaration(node: ts.PropertyDeclaration): void {
     const pos = this.getLineAndCol(node);
     const name = node.name.getText(this.ctx.sourceFile);
-    this.emitter.writeLine(`signal ${name}`, pos.line, pos.col);
+
+    // Extract signal parameters from gd.signal<[...]>() type arguments
+    const params = this.extractSignalParams(node);
+    if (params.length > 0) {
+      const paramStr = params.map(p => `${p.name}: ${p.type}`).join(', ');
+      this.emitter.writeLine(`signal ${name}(${paramStr})`, pos.line, pos.col);
+    } else {
+      this.emitter.writeLine(`signal ${name}`, pos.line, pos.col);
+    }
+  }
+
+  private extractSignalParams(node: ts.PropertyDeclaration): { name: string; type: string }[] {
+    if (!node.initializer || !ts.isCallExpression(node.initializer)) return [];
+    const call = node.initializer;
+
+    // Get type arguments: gd.signal<[from: int, to: int]>()
+    if (!call.typeArguments || call.typeArguments.length === 0) return [];
+    const typeArg = call.typeArguments[0]!;
+
+    // Must be a tuple type: [from: int, to: int]
+    if (!ts.isTupleTypeNode(typeArg)) return [];
+
+    const params: { name: string; type: string }[] = [];
+    for (var i = 0; i < typeArg.elements.length; i++) {
+      var element = typeArg.elements[i]!;
+      var paramName: string;
+      var typeNode: ts.TypeNode;
+
+      // Named tuple element: `from: int`
+      if (ts.isNamedTupleMember(element)) {
+        paramName = element.name.text;
+        typeNode = element.type;
+      } else {
+        // Unnamed: generate arg1, arg2, ...
+        paramName = `arg${i + 1}`;
+        typeNode = element;
+      }
+
+      var gdType = tsTypeNodeToGdType(typeNode, this.ctx.checker, this.ctx.sourceFile);
+      // unknown, non-GDScript types → Variant
+      params.push({ name: paramName, type: gdType ?? 'Variant' });
+    }
+    return params;
   }
 
   // ─── Enums ───────────────────────────────────────────────────
@@ -399,15 +441,11 @@ export class TsToGdTransformer {
       const pos = this.getLineAndCol(decl);
       const name = decl.name.getText(this.ctx.sourceFile);
 
-      // Check for const/let restriction
+      // Check for var restriction (const and let are both allowed)
       const flags = node.declarationList.flags;
-      if (flags & ts.NodeFlags.Const) {
+      if (!(flags & (ts.NodeFlags.Const | ts.NodeFlags.Let))) {
         this.addDiagnostic(node, 'warning',
-          '`const` is restricted; use `var` instead. Converting to `var`.');
-      }
-      if (flags & ts.NodeFlags.Let) {
-        this.addDiagnostic(node, 'warning',
-          '`let` is restricted; use `var` instead. Converting to `var`.');
+          '`var` is restricted; use `let` or `const` instead. Converting to `var`.');
       }
 
       // Type
@@ -781,33 +819,30 @@ export class TsToGdTransformer {
         }
       }
 
-      // gd.math.add/sub/mul/div -> operator
+      // gd.ops.add/sub/mul/div/eq/ne/gt/gte/lt/lte/plus/minus -> operator
       if (ts.isPropertyAccessExpression(obj)) {
         const gdObj = obj.expression;
-        const mathNs = obj.name.text;
-        if (ts.isIdentifier(gdObj) && gdObj.text === 'gd' && mathNs === 'math') {
-          return this.emitMathHelper(method, node.arguments);
+        const opsNs = obj.name.text;
+        if (ts.isIdentifier(gdObj) && gdObj.text === 'gd' && opsNs === 'ops') {
+          return this.emitOpsHelper(method, node.arguments);
         }
       }
 
-      // Handle self.method() calls
+      // Handle self.method() / self.property() calls
       if (this.isSelfExpression(obj)) {
-        // Check if it's a method call or function call via type checker
+        // Check if it's a method call or function (property) call via type checker
         const symbol = this.ctx.checker.getSymbolAtLocation(node.expression);
         if (symbol) {
           const declarations = symbol.getDeclarations();
           if (declarations && declarations.length > 0) {
             const decl = declarations[0]!;
-            if (ts.isMethodDeclaration(decl)) {
-              return `${method}(${args})`;
-            }
             if (ts.isPropertyDeclaration(decl)) {
-              return `${method}.call(${args})`;
+              return `self.${method}.call(${args})`;
             }
           }
         }
-        // Default: treat as method call (no self prefix)
-        return `${method}(${args})`;
+        // Method call or default
+        return `self.${method}(${args})`;
       }
     }
 
@@ -826,6 +861,26 @@ export class TsToGdTransformer {
     }
 
     const callee = this.emitExpression(node.expression);
+
+    // Check if the callee is a Callable type (function variable, parameter)
+    // In GDScript, Callable values must be invoked via .call()
+    if (ts.isIdentifier(node.expression)) {
+      const symbol = this.ctx.checker.getSymbolAtLocation(node.expression);
+      if (symbol) {
+        const declarations = symbol.getDeclarations();
+        if (declarations && declarations.length > 0) {
+          const decl = declarations[0]!;
+          // Local variables and parameters holding callables need .call()
+          if (ts.isVariableDeclaration(decl) || ts.isParameter(decl)) {
+            const type = this.ctx.checker.getTypeAtLocation(node.expression);
+            if (type.getCallSignatures().length > 0 && !type.getConstructSignatures().length) {
+              return `${callee}.call(${args})`;
+            }
+          }
+        }
+      }
+    }
+
     return `${callee}(${args})`;
   }
 
@@ -834,19 +889,23 @@ export class TsToGdTransformer {
     return node.kind === ts.SyntaxKind.ThisKeyword;
   }
 
-  // ─── Math Helpers ────────────────────────────────────────────
+  // ─── Operator Helpers ────────────────────────────────────────
 
-  private emitMathHelper(method: string, args: ts.NodeArray<ts.Expression>): string {
+  private emitOpsHelper(method: string, args: ts.NodeArray<ts.Expression>): string {
     const operands = args.map(a => this.emitExpression(a));
-    const opMap: Record<string, string> = {
-      add: ' + ',
-      sub: ' - ',
-      mul: ' * ',
-      div: ' / ',
+
+    // Unary operators (1 arg)
+    if (method === 'plus' && operands.length === 1) return `+${operands[0]}`;
+    if (method === 'minus' && operands.length === 1) return `-${operands[0]}`;
+
+    // Binary operators (2 args)
+    const binaryOpMap: Record<string, string> = {
+      add: ' + ', sub: ' - ', mul: ' * ', div: ' / ',
+      eq: ' == ', ne: ' != ', gt: ' > ', gte: ' >= ', lt: ' < ', lte: ' <= ',
     };
-    const op = opMap[method];
-    if (op && operands.length >= 2) {
-      return `(${operands.join(op)})`;
+    const op = binaryOpMap[method];
+    if (op && operands.length === 2) {
+      return `(${operands[0]}${op}${operands[1]})`;
     }
     return `${operands.join(', ')}`;
   }

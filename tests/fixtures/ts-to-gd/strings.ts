@@ -1,9 +1,9 @@
 class MyClass extends Node {
   test_strings() {
-    var simple: string = "Hello, World!";
-    var with_quotes: string = "He said \"hi\"";
-    var concat = "Hello" + " " + "World";
-    var sn = StringName("my_action");
-    var np = NodePath("Sprite2D/AnimationPlayer");
+    let simple: string = "Hello, World!";
+    let with_quotes: string = "He said \"hi\"";
+    let concat = "Hello" + " " + "World";
+    let sn = StringName("my_action");
+    let np = NodePath("Sprite2D/AnimationPlayer");
   }
 }

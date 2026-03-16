@@ -1,0 +1,10 @@
+// AUTO-GENERATED from Godot class documentation.
+// Manual overrides applied from typings/overrides/*.d.ts
+
+/** Wrapper to use a PacketPeer over a StreamPeer. */
+declare class PacketPeerStream extends PacketPeer {
+  input_buffer_max_size: int;
+  output_buffer_max_size: int;
+  /** The wrapped {@link StreamPeer} object. */
+  stream_peer: StreamPeer;
+}

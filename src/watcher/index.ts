@@ -2,6 +2,7 @@ import { watch, type FSWatcher } from 'chokidar';
 import { extname, resolve, relative } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.js';
 import { lintFiles } from '../linter/index.js';
+import { validateGdFiles } from '../godot-validate/index.js';
 import { generateClassTypings } from '../typings/classes.js';
 import { FileCache } from '../cache/index.js';
 import { writeFileSync, mkdirSync } from 'fs';
@@ -22,6 +23,10 @@ export interface WatcherOptions {
   cacheDir?: string;
   /** Callback for diagnostics */
   onDiagnostic?: (file: string, message: string, severity: string) => void;
+  /** Path to Godot executable (enables GD validation after conversion) */
+  godotPath?: string;
+  /** Godot project root for validation (defaults to rootDir) */
+  projectRoot?: string;
 }
 
 export class Watcher {
@@ -73,7 +78,9 @@ export class Watcher {
 
     if (ext === '.ts' && !filePath.endsWith('.d.ts')) {
       this.tsFiles.add(filePath);
-      this.convertFile(filePath);
+      this.convertFile(filePath).catch(err => {
+        this.log(filePath, `Unexpected error: ${err.message}`, 'error');
+      });
       this.regenerateClassTypings();
     } else if (ext === '.tscn') {
       // Scene file changed — regenerate scene typings
@@ -87,7 +94,7 @@ export class Watcher {
     this.cache.save();
   }
 
-  private convertFile(filePath: string): void {
+  private async convertFile(filePath: string): Promise<void> {
     // Check cache
     if (!this.cache.needsUpdate(filePath)) {
       return;
@@ -151,6 +158,19 @@ export class Watcher {
     this.cache.save();
 
     this.log(filePath, `Converted -> ${relative(this.options.rootDir, outputPath)}`, 'info');
+
+    // Validate with Godot if configured
+    if (this.options.godotPath) {
+      const projectRoot = this.options.projectRoot ?? this.options.rootDir;
+      const validateResult = await validateGdFiles({
+        gdFiles: [outputPath],
+        projectRoot,
+        godotPath: this.options.godotPath,
+      });
+      for (const d of validateResult.diagnostics) {
+        this.log(d.file || filePath, `[${d.severity}] ${d.message} (${d.line}:${d.column})`, d.severity);
+      }
+    }
   }
 
   private regenerateClassTypings(): void {

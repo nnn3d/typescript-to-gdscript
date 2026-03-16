@@ -1,0 +1,14 @@
+// AUTO-GENERATED from Godot class documentation.
+// Manual overrides applied from typings/overrides/*.d.ts
+
+/** A visual shader node that makes particles emitted in a shape defined by a {@link Mesh}. */
+declare class VisualShaderNodeParticleMeshEmitter extends VisualShaderNodeParticleEmitter {
+  /** The {@link Mesh} that defines emission shape. */
+  mesh: Mesh;
+  /**
+   * Index of the surface that emits particles. {@link use_all_surfaces} must be `false` for this to take effect.
+   */
+  surface_index: int;
+  /** If `true`, the particles will emit from all surfaces of the mesh. */
+  use_all_surfaces: boolean;
+}

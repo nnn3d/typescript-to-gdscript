@@ -10,7 +10,8 @@ import { generateClassTypings } from '../typings/classes.js';
 import { generateGodotDocsTypings } from '../typings/godot-docs.js';
 import { parseGodotVersion } from '../typings/godot-registry.js';
 import { Watcher } from '../watcher/index.js';
-import { resolveRegistry } from '../config/index.js';
+import { resolveRegistry, resolveGodotPath } from '../config/index.js';
+import { validateGdFiles } from '../godot-validate/index.js';
 
 const program = new Command();
 
@@ -123,6 +124,39 @@ program
     if (hasErrors) process.exit(1);
   });
 
+// ─── Validate GD ─────────────────────────────────────────────
+
+program
+  .command('validate-gd')
+  .description('Validate GDScript files using Godot CLI and remap errors to TypeScript via source maps')
+  .argument('<files...>', 'GDScript or TypeScript files to validate (.ts auto-resolves to .gd)')
+  .option('--godot-path <path>', 'Path to Godot executable')
+  .option('--project-root <dir>', 'Godot project root (must contain project.godot)', '.')
+  .option('--source-map-dir <dir>', 'Directory containing .gd.map source map files')
+  .action(async (files: string[], opts) => {
+    const godotPath = resolveGodotPath({ godotPath: opts.godotPath });
+    const projectRoot = resolve(opts.projectRoot);
+
+    const gdFiles = files.map(f => {
+      const resolved = resolve(f);
+      return resolved.endsWith('.ts') ? resolved.replace(/\.ts$/, '.gd') : resolved;
+    });
+
+    const result = await validateGdFiles({
+      gdFiles,
+      projectRoot,
+      godotPath,
+      sourceMapDir: opts.sourceMapDir ? resolve(opts.sourceMapDir) : undefined,
+    });
+
+    for (const diag of result.diagnostics) {
+      const prefix = diag.severity === 'error' ? 'ERROR' : diag.severity === 'warning' ? 'WARN' : 'INFO';
+      console.error(`[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`);
+    }
+
+    if (result.diagnostics.some(d => d.severity === 'error')) process.exit(1);
+  });
+
 // ─── Watch ──────────────────────────────────────────────────
 
 program
@@ -133,14 +167,19 @@ program
   .option('--source-map', 'Generate source maps', false)
   .option('--tsconfig <path>', 'Path to tsconfig.json')
   .option('--class-typings <path>', 'Output path for global class typings')
+  .option('--godot-path <path>', 'Path to Godot executable (enables GD validation after conversion)')
+  .option('--project-root <dir>', 'Godot project root for validation')
   .action((opts) => {
     const rootDir = resolve(opts.rootDir);
+    const godotPath = opts.godotPath ? resolveGodotPath({ godotPath: opts.godotPath }) : undefined;
     const watcher = new Watcher({
       rootDir,
       outputDir: opts.outputDir ? resolve(opts.outputDir) : rootDir,
       tsConfigPath: opts.tsconfig ? resolve(opts.tsconfig) : undefined,
       sourceMap: opts.sourceMap,
       classTypingsOutput: opts.classTypings ? resolve(opts.classTypings) : undefined,
+      godotPath,
+      projectRoot: opts.projectRoot ? resolve(opts.projectRoot) : undefined,
     });
 
     watcher.start();
@@ -177,7 +216,7 @@ function detectGodotVersion(docsDir: string): string | null {
  * Writes index.d.ts into a version folder so it can be used independently.
  */
 function writeVersionIndexDts(versionDir: string): void {
-  const content = `/// <reference path="../globals.d.ts" />\n/// <reference path="../gd-helpers.d.ts" />\n/// <reference path="godot.d.ts" />\n`;
+  const content = `/// <reference path="../globals.d.ts" />\n/// <reference path="../gd-helpers.d.ts" />\n/// <reference path="classes/index.d.ts" />\n`;
   writeFileSync(join(versionDir, 'index.d.ts'), content);
 }
 
@@ -265,7 +304,7 @@ function getAvailableVersions(typingsRoot: string): string[] {
   return readdirSync(typingsRoot).filter(name => {
     if (name === 'latest' || name.endsWith('.d.ts') || name.endsWith('.ts')) return false;
     const fullPath = join(typingsRoot, name);
-    return statSync(fullPath).isDirectory() && existsSync(join(fullPath, 'godot.d.ts'));
+    return statSync(fullPath).isDirectory() && (existsSync(join(fullPath, 'classes')) || existsSync(join(fullPath, 'godot.d.ts')));
   });
 }
 

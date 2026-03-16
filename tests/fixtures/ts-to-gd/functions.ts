@@ -26,15 +26,27 @@ class MyClass extends Node {
   // Var as function
   var_func = (value: string): MyClass => {
     // Anonymous function
-    var inner_func = (another_value: string) => {
-      var result = another_value + '.';
+    let inner_func = (another_value: string) => {
+      let result = another_value + '.';
       return result;
     }
 
     // Anonymous empty function
-    var inner_func_empty = (another_value: string) => {
+    let inner_func_empty = (another_value: string) => {
     }
 
     return this;
+  }
+
+  call(fn: () => void) {
+    fn();
+    fn.call_deferred();
+    fn.callv();
+    this.var_func('');
+    this.var_func.call('');
+    this.say_hello();
+
+    let var_say_hello = this.say_hello;
+    var_say_hello();
   }
 }

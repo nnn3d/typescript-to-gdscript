@@ -5,20 +5,34 @@ class Operators extends Node {
   i2 = 2;
 
   test_operators() {
-    var a: int = 10;
-    var b: int = 3;
-    var c: boolean = a > b && a !== 0;
-    var d: boolean = a < b || b === 0;
-    var e: boolean = !c;
-    var f: int = a + b;
-    var g: float = a / b;
-    var h: int = a % b;
+    let a: int = 10;
+    let b: int = 3;
+    let c: boolean = a > b && a !== 0;
+    let d: boolean = a < b || b === 0;
+    let e: boolean = !c;
+    let f: int = a + b;
+    let g: float = a / b;
+    let h: int = a % b;
   }
 
   test_vector_math() {
-    var v3 = gd.math.add(this.v1, this.v2);
-    var v4 = gd.math.mul(this.v1, this.v2);
-    var v5 = gd.math.sub(this.v1, this.v2);
-    var i3 = this.i1 + this.i2;
+    let v3 = gd.ops.add(this.v1, this.v2);
+    let v4 = gd.ops.mul(this.v1, this.v2);
+    let v5 = gd.ops.sub(this.v1, this.v2);
+    let i3 = this.i1 + this.i2;
+  }
+
+  test_multiple_vector_math() {
+    let v3 = gd.ops.add(gd.ops.add(this.v1, this.v2), this.v1);
+    let v4 = gd.ops.sub(gd.ops.mul(this.v1, this.v2), this.v1);
+    let v5 = gd.ops.add(gd.ops.sub(this.v1, gd.ops.mul(this.v2, this.v2)), gd.ops.div(this.v1, this.v2));
+    let v6 = gd.ops.add(gd.ops.sub(this.v1, 2 * 1), gd.ops.div(this.v1, this.v2));
+  }
+
+  test_ops_helpers() {
+    let v3 = gd.ops.gt(this.v1, this.v2);
+    let v4 = gd.ops.gte(this.v1, this.v2);
+    let v5 = gd.ops.lt(this.v1, this.v2);
+    let v6 = gd.ops.lte(this.v1, this.v2);
   }
 }

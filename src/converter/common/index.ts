@@ -83,6 +83,12 @@ export function tsTypeToGdType(type: ts.Type, checker: ts.TypeChecker): string |
     return 'Array';
   }
 
+  // Function/callable types
+  if (type.getCallSignatures().length > 0 && !type.getConstructSignatures().length) {
+    const symbol = type.getSymbol();
+    if (!symbol || symbol.getName() === '__type') return 'Callable';
+  }
+
   // Class types
   const symbol = type.getSymbol();
   if (symbol) {
@@ -116,6 +122,17 @@ export function tsTypeNodeToGdType(
     if (name === 'int' || name === 'float') return name;
     if (name === 'TSOnly') return null;
     if (name === 'Signal') return 'Signal';
+    // Type aliases (non-class) → Variant (they don't exist in GDScript)
+    const symbol = checker.getSymbolAtLocation(typeNode.typeName);
+    if (symbol) {
+      const declarations = symbol.getDeclarations();
+      if (declarations && declarations.length > 0) {
+        const decl = declarations[0]!;
+        if (ts.isTypeAliasDeclaration(decl)) {
+          return 'Variant';
+        }
+      }
+    }
     // Strip generic args for class types
     return name;
   }
@@ -126,11 +143,18 @@ export function tsTypeNodeToGdType(
   if (typeNode.kind === ts.SyntaxKind.BooleanKeyword) return 'bool';
   if (typeNode.kind === ts.SyntaxKind.VoidKeyword) return 'void';
   if (typeNode.kind === ts.SyntaxKind.NullKeyword) return 'null';
+  if (typeNode.kind === ts.SyntaxKind.UnknownKeyword) return 'Variant';
+  if (typeNode.kind === ts.SyntaxKind.AnyKeyword) return 'Variant';
 
   // Array type: T[] -> Array[T]
   if (ts.isArrayTypeNode(typeNode)) {
     const elementType = tsTypeNodeToGdType(typeNode.elementType, checker, sourceFile);
     return elementType ? `Array[${elementType}]` : 'Array';
+  }
+
+  // Function type: () => void -> Callable
+  if (ts.isFunctionTypeNode(typeNode)) {
+    return 'Callable';
   }
 
   // Union/intersection -> omit

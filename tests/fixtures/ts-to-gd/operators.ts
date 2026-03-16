@@ -1,35 +1,35 @@
 class MyClass extends Node {
   test_arithmetic() {
-    var a: int = 10;
-    var b: int = 3;
-    var sum = a + b;
-    var diff = a - b;
-    var prod = a * b;
-    var quot = a / b;
-    var remainder = a % b;
-    var power = a ** b;
+    let a: int = 10;
+    let b: int = 3;
+    let sum = a + b;
+    let diff = a - b;
+    let prod = a * b;
+    let quot = a / b;
+    let remainder = a % b;
+    let power = a ** b;
   }
 
   test_comparison() {
-    var x: int = 5;
-    var is_equal = x === 5;
-    var not_equal = x !== 3;
-    var greater = x > 3;
-    var less = x < 10;
-    var gte = x >= 5;
-    var lte = x <= 5;
+    let x: int = 5;
+    let is_equal = x === 5;
+    let not_equal = x !== 3;
+    let greater = x > 3;
+    let less = x < 10;
+    let gte = x >= 5;
+    let lte = x <= 5;
   }
 
   test_logical() {
-    var a: boolean = true;
-    var b: boolean = false;
-    var and_result = a && b;
-    var or_result = a || b;
-    var not_result = !a;
+    let a: boolean = true;
+    let b: boolean = false;
+    let and_result = a && b;
+    let or_result = a || b;
+    let not_result = !a;
   }
 
   test_assignment() {
-    var x: int = 10;
+    let x: int = 10;
     x += 5;
     x -= 3;
     x *= 2;
@@ -38,10 +38,17 @@ class MyClass extends Node {
   }
 
   test_vector_math() {
-    var v1 = Vector2(1, 2);
-    var v2 = Vector2(3, 4);
-    var v3 = gd.math.add(v1, v2);
-    var v4 = gd.math.mul(v1, v2);
-    var v5 = gd.math.sub(v1, v2);
+    let v1 = Vector2(1, 2);
+    let v2 = Vector2(3, 4);
+    let v3 = gd.ops.add(v1, v2);
+    let v4 = gd.ops.mul(v1, v2);
+    let v5 = gd.ops.sub(v1, v2);
+  }
+
+  test_multipple_vector_math() {
+    let v3 = gd.ops.add(gd.ops.add(this.v1, this.v2), this.v1);
+    let v4 = gd.ops.sub(gd.ops.mul(this.v1, this.v2), this.v1);
+    let v5 = gd.ops.add(gd.ops.sub(this.v1, gd.ops.mul(this.v2, this.v2)), gd.ops.div(this.v1, this.v2));
+    let v6 = gd.ops.add(gd.ops.sub(this.v1, 2 * 1), gd.ops.div(this.v1, this.v2));
   }
 }

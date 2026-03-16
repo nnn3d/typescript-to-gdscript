@@ -6,7 +6,7 @@ class MyClass extends Node {
   }
 
   async complex_async() {
-    var result = await this.long_task();
+    let result = await this.long_task();
     print(result);
   }
 

@@ -3,47 +3,47 @@
 class DictionaryTest extends Node {
   test_dictionary_class() {
     // Dictionary as a class
-    var dict = new Dictionary();
+    let dict = new Dictionary();
     dict.has("key");
     dict.get("key");
     dict.set("key", "value");
     dict.erase("key");
     dict.clear();
-    var s: int = dict.size();
-    var empty: boolean = dict.is_empty();
-    var k: Array<unknown> = dict.keys();
-    var v: Array<unknown> = dict.values();
+    let s: int = dict.size();
+    let empty: boolean = dict.is_empty();
+    let k: Array<unknown> = dict.keys();
+    let v: Array<unknown> = dict.values();
     // @ts-expect-error — Dictionary is not GodotObject
     dict.get_class();
     dict.is_same_typed_key(new Dictionary());
     dict.merge(new Dictionary());
-    var merged: Dictionary = dict.merged(new Dictionary());
-    var duped: Dictionary = dict.duplicate();
+    let merged: Dictionary = dict.merged(new Dictionary());
+    let duped: Dictionary = dict.duplicate();
     dict.sort();
   }
 
   test_dictionary_literal() {
     // With noLib, {} literals inherit Object interface = Dictionary methods
-    var dict = {};
+    let dict = {};
     dict.has("key");
     dict.get("key");
     dict.set("key", "value");
     dict.erase("key");
     dict.clear();
-    var s: int = dict.size();
-    var empty: boolean = dict.is_empty();
-    var k: Array<unknown> = dict.keys();
-    var v: Array<unknown> = dict.values();
+    let s: int = dict.size();
+    let empty: boolean = dict.is_empty();
+    let k: Array<unknown> = dict.keys();
+    let v: Array<unknown> = dict.values();
     dict.is_same_typed_key(new Dictionary());
     dict.merge(new Dictionary());
-    var merged: Dictionary = dict.merged(new Dictionary());
-    var duped: Dictionary = dict.duplicate();
+    let merged: Dictionary = dict.merged(new Dictionary());
+    let duped: Dictionary = dict.duplicate();
     dict.sort();
   }
 
   test_godot_object_via_global() {
-    // Global var Object = typeof GodotObject
-    var obj = new Object();
+    // Global let Object = typeof GodotObject
+    let obj = new Object();
     obj.get_class();
     obj.has_method("test");
     obj.get_instance_id();
@@ -55,7 +55,7 @@ class DictionaryTest extends Node {
   test_godot_object_vie_extends() {
     class Test extends Object {}
 
-    var obj = new Test();
+    let obj = new Test();
     obj.get_class();
     obj.has_method("test");
     obj.get_instance_id();
@@ -65,10 +65,10 @@ class DictionaryTest extends Node {
   }
 
   test_dictionary_type_assignment() {
-    var dict: Dictionary = new Dictionary();
+    let dict: Dictionary = new Dictionary();
 
     // @ts-expect-error — Node is not Dictionary (structurally incompatible)
-    var bad: Dictionary = new Node();
+    let bad: Dictionary = new Node();
   }
 }
 
@@ -77,22 +77,22 @@ class DictionaryTest extends Node {
 class GodotObjectMethodsTest extends RefCounted {
   test_refcounted_has_godot_object_methods() {
     // RefCounted extends GodotObject — has GodotObject methods
-    var cls: string = this.get_class();
-    var has: boolean = this.has_method("test");
-    var has_sig: boolean = this.has_signal("my_signal");
+    let cls: string = this.get_class();
+    let has: boolean = this.has_method("test");
+    let has_sig: boolean = this.has_signal("my_signal");
     this.set("property", 42);
-    var val: unknown = this.get("property");
+    let val: unknown = this.get("property");
     this.connect("signal_name", new Callable());
     this.disconnect("signal_name", new Callable());
-    var id: int = this.get_instance_id();
+    let id: int = this.get_instance_id();
     this.set_meta("key", "value");
-    var meta: unknown = this.get_meta("key");
+    let meta: unknown = this.get_meta("key");
     this.notification(0);
-    var script: unknown = this.get_script();
-    var str: string = this.to_string();
+    let script: unknown = this.get_script();
+    let str: string = this.to_string();
 
     // RefCounted-specific methods
-    var count: int = this.get_reference_count();
+    let count: int = this.get_reference_count();
     this.reference();
     this.unreference();
   }

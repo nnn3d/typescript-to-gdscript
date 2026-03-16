@@ -18,6 +18,8 @@ export interface TsToGdConfig {
   tsconfig?: string;
   /** Generate source maps */
   sourceMap?: boolean;
+  /** Path to Godot executable for GDScript validation */
+  godotPath?: string;
 }
 
 const CONFIG_FILENAME = 'tstogd.json';
@@ -79,6 +81,38 @@ function getBundledRegistryPath(version?: string): string | null {
   }
   return null;
 }
+
+// ─── Godot Path Resolution ────────────────────────────────────
+
+export interface ResolveGodotPathOptions {
+  /** Explicit path from CLI flag (highest priority) */
+  godotPath?: string;
+  /** Directory to search for tstogd.json (defaults to CWD) */
+  configDir?: string;
+}
+
+/**
+ * Resolves the Godot executable path with the following priority:
+ * 1. Explicit --godot-path CLI flag
+ * 2. godotPath from tstogd.json
+ * 3. GODOT_PATH environment variable
+ * 4. "godot" on system PATH
+ */
+export function resolveGodotPath(options?: ResolveGodotPathOptions): string {
+  if (options?.godotPath) return resolve(options.godotPath);
+
+  const config = loadConfig(options?.configDir);
+  if (config?.godotPath) {
+    const configDir = options?.configDir ?? process.cwd();
+    return resolve(configDir, config.godotPath);
+  }
+
+  if (process.env.GODOT_PATH) return process.env.GODOT_PATH;
+
+  return 'godot';
+}
+
+// ─── Registry Resolution ──────────────────────────────────────
 
 export interface ResolveRegistryOptions {
   /** Explicit registry path from CLI flag (highest priority) */

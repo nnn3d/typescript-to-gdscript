@@ -41,3 +41,9 @@ func test_vector_math():
 	var v3 = (v1 + v2)
 	var v4 = (v1 * v2)
 	var v5 = (v1 - v2)
+
+func test_multipple_vector_math():
+	var v3 = ((self.v1 + self.v2) + self.v1)
+	var v4 = ((self.v1 * self.v2) - self.v1)
+	var v5 = ((self.v1 - (self.v2 * self.v2)) + (self.v1 / self.v2))
+	var v6 = ((self.v1 - 2 * 1) + (self.v1 / self.v2))

@@ -8,15 +8,15 @@ class MyClass extends Node {
 
   _ready() {
     // Local variables
-    var x: int = 5;
-    var y: float = 3.14;
-    var greeting: string = "hello";
-    var flag: boolean = false;
+    let x: int = 5;
+    let y: float = 3.14;
+    let greeting: string = "hello";
+    let flag: boolean = false;
 
     // Variable without explicit type (inferred)
-    var result = x + y;
+    let result = x + y;
 
     // Null value
-    var node: Node = null;
+    let node: Node = null;
   }
 }

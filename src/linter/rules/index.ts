@@ -52,26 +52,16 @@ const noUndefinedRule: LintRule = (sf, _checker, diagnostics) => {
 };
 
 /**
- * Rule: No const or let (only var allowed)
+ * Rule: No var (let and const allowed, both convert to GDScript var)
  */
-const noConstLetRule: LintRule = (sf, _checker, diagnostics) => {
+const noVarRule: LintRule = (sf, _checker, diagnostics) => {
   function visit(node: ts.Node) {
     if (ts.isVariableStatement(node)) {
       const flags = node.declarationList.flags;
-      if (flags & ts.NodeFlags.Const) {
+      if (!(flags & (ts.NodeFlags.Const | ts.NodeFlags.Let))) {
         const { line, col } = getLineAndCol(sf, node);
         diagnostics.push({
-          message: '`const` is restricted; use `var` instead',
-          severity: 'warning',
-          file: sf.fileName,
-          line,
-          column: col,
-        });
-      }
-      if (flags & ts.NodeFlags.Let) {
-        const { line, col } = getLineAndCol(sf, node);
-        diagnostics.push({
-          message: '`let` is restricted; use `var` instead',
+          message: '`var` is restricted; use `let` or `const` instead',
           severity: 'warning',
           file: sf.fileName,
           line,
@@ -145,6 +135,59 @@ const noUnsupportedFeaturesRule: LintRule = (sf, _checker, diagnostics) => {
         column: col,
       });
     }
+    // Optional chaining (?.) — not supported in GDScript
+    if (
+      (ts.isPropertyAccessExpression(node) || ts.isElementAccessExpression(node) || ts.isCallExpression(node)) &&
+      node.questionDotToken
+    ) {
+      const { line, col } = getLineAndCol(sf, node);
+      diagnostics.push({
+        message: 'Optional chaining (`?.`) is not supported in GDScript',
+        severity: 'error',
+        file: sf.fileName,
+        line,
+        column: col,
+      });
+    }
+    // Nullish coalescing (??) — not supported in GDScript
+    if (
+      ts.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken
+    ) {
+      const { line, col } = getLineAndCol(sf, node);
+      diagnostics.push({
+        message: 'Nullish coalescing (`??`) is not supported in GDScript',
+        severity: 'error',
+        file: sf.fileName,
+        line,
+        column: col,
+      });
+    }
+    // Destructuring — not supported in GDScript
+    if (ts.isVariableDeclaration(node) && (ts.isArrayBindingPattern(node.name) || ts.isObjectBindingPattern(node.name))) {
+      const { line, col } = getLineAndCol(sf, node);
+      diagnostics.push({
+        message: 'Destructuring is not supported in GDScript',
+        severity: 'error',
+        file: sf.fileName,
+        line,
+        column: col,
+      });
+    }
+    // Nullish coalescing assignment (??=) — not supported
+    if (
+      ts.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.QuestionQuestionEqualsToken
+    ) {
+      const { line, col } = getLineAndCol(sf, node);
+      diagnostics.push({
+        message: 'Nullish coalescing assignment (`??=`) is not supported in GDScript',
+        severity: 'error',
+        file: sf.fileName,
+        line,
+        column: col,
+      });
+    }
     ts.forEachChild(node, visit);
   }
   visit(sf);
@@ -153,7 +196,7 @@ const noUnsupportedFeaturesRule: LintRule = (sf, _checker, diagnostics) => {
 export const lintRules: LintRule[] = [
   singleClassRule,
   noUndefinedRule,
-  noConstLetRule,
+  noVarRule,
   noTopLevelStatementsRule,
   noUnsupportedFeaturesRule,
 ];
