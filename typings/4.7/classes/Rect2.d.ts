@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D axis-aligned bounding box using floating-point coordinates. */
-declare class Rect2 {
+declare interface Rect2 {
   /**
    * The ending point. This is usually the bottom-right corner of the rectangle, and is equivalent to `position + size`. Setting this point affects the {@link size}.
    */
@@ -79,4 +79,54 @@ declare class Rect2 {
   [__ne]: { right: Rect2; ret: boolean };
   [__mul]: { right: Transform2D; ret: Rect2 };
   [__eq]: { right: Rect2; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  sort: never;
+  values: never;
 }
+
+declare interface Rect2Constructor {
+  /** Constructs a {@link Rect2} with its {@link position} and {@link size} set to {@link Vector2.ZERO}. */
+  (): Rect2;
+  /** Constructs a {@link Rect2} as a copy of the given {@link Rect2}. */
+  (from_: Rect2): Rect2;
+  /** Constructs a {@link Rect2} from a {@link Rect2i}. */
+  (from_: Rect2i): Rect2;
+  /** Constructs a {@link Rect2} by `position` and `size`. */
+  (position: Vector2, size: Vector2): Rect2;
+  /**
+   * Constructs a {@link Rect2} by setting its {@link position} to (`x`, `y`), and its {@link size} to (`width`, `height`).
+   */
+  (x: float, y: float, width: float, height: float): Rect2;
+}
+declare const Rect2: Rect2Constructor;

@@ -67,8 +67,8 @@ class AsTest extends Node {
 
 class OpsTest extends Node {
   test_ops() {
-    let v1 = new Vector2();
-    let v2 = new Vector2();
+    let v1 = Vector2();
+    let v2 = Vector2();
 
     // gd.ops infers result from operator overloads
     let v3: Vector2 = gd.ops.add(v1, v2);
@@ -82,7 +82,7 @@ class OpsTest extends Node {
     let v9: float = gd.ops.mul(2.0, 1);
 
     // @ts-expect-error — can't multiply Vector2 and Vector3
-    gd.ops.mul(new Vector2(), new Vector3());
+    gd.ops.mul(Vector2(), Vector3());
 
     // Comparison operators
     let eq: boolean = gd.ops.eq(v1, v2);

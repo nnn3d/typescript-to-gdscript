@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3D axis-aligned bounding box. */
-declare class AABB {
+declare interface AABB {
   /**
    * The ending point. This is usually the corner on the top-right and back of the bounding box, and is equivalent to `position + size`. Setting this point affects the {@link size}.
    */
@@ -127,4 +127,48 @@ declare class AABB {
   [__ne]: { right: AABB; ret: boolean };
   [__mul]: { right: Transform3D; ret: AABB };
   [__eq]: { right: AABB; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  sort: never;
+  values: never;
 }
+
+declare interface AABBConstructor {
+  /** Constructs an {@link AABB} with its {@link position} and {@link size} set to {@link Vector3.ZERO}. */
+  (): AABB;
+  /** Constructs an {@link AABB} as a copy of the given {@link AABB}. */
+  (from_: AABB): AABB;
+  /** Constructs an {@link AABB} by `position` and `size`. */
+  (position: Vector3, size: Vector3): AABB;
+}
+declare const AABB: AABBConstructor;

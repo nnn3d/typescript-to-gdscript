@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of {@link Vector2}s. */
-declare class PackedVector2Array {
+declare interface PackedVector2Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: Vector2): boolean;
   /** Appends a {@link PackedVector2Array} at the end of this array. */
@@ -91,4 +91,44 @@ declare class PackedVector2Array {
   [__mul]: { right: Transform2D; ret: PackedVector2Array };
   [__add]: { right: PackedVector2Array; ret: PackedVector2Array };
   [__eq]: { right: PackedVector2Array; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  duplicate_deep: never;
+  find_key: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has_all: never;
+  hash: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  values: never;
 }
+
+declare interface PackedVector2ArrayConstructor {
+  /** Constructs an empty {@link PackedVector2Array}. */
+  (): PackedVector2Array;
+  /** Constructs a {@link PackedVector2Array} as a copy of the given {@link PackedVector2Array}. */
+  (from_: PackedVector2Array): PackedVector2Array;
+  /**
+   * Constructs a new {@link PackedVector2Array}. Optionally, you can pass in a generic {@link Array} that will be converted.
+   * **Note:** When initializing a {@link PackedVector2Array} with elements, it must be initialized with an {@link Array} of {@link Vector2} values:
+   */
+  (from_: Array<unknown>): PackedVector2Array;
+}
+declare const PackedVector2Array: PackedVector2ArrayConstructor;

@@ -236,6 +236,21 @@ const SKIP_CLASSES = new Set([
 ]);
 
 /**
+ * Fundamental value types that are constructed as function calls in GDScript (not `new`).
+ * These are emitted as interface + constructor function instead of `declare class`.
+ */
+const VALUE_TYPES = new Set([
+  'Vector2', 'Vector2i', 'Vector3', 'Vector3i', 'Vector4', 'Vector4i',
+  'Color', 'Rect2', 'Rect2i', 'Transform2D', 'Transform3D',
+  'Basis', 'Quaternion', 'AABB', 'Plane', 'Projection',
+  'RID',
+  'PackedByteArray', 'PackedInt32Array', 'PackedInt64Array',
+  'PackedFloat32Array', 'PackedFloat64Array',
+  'PackedStringArray', 'PackedVector2Array', 'PackedVector3Array',
+  'PackedColorArray', 'PackedVector4Array',
+]);
+
+/**
  * GDScript classes emitted as TS interfaces (replacing standard TS built-in types).
  * Maps GD class name → TS interface name. These are generated from Godot docs
  * instead of being hardcoded in globals.d.ts.
@@ -271,7 +286,7 @@ function generateInterfaceDeclaration(cls: GodotClassXml, tsName: string): strin
 
   // Class-level JSDoc
   lines.push(...emitJsDoc(cls.briefDescription, ''));
-  lines.push(`interface ${tsName} {`);
+  lines.push(`declare interface ${tsName} {`);
 
   // Properties (skip static-like things)
   for (const prop of cls.properties) {
@@ -403,6 +418,118 @@ function generateClassDeclaration(cls: GodotClassXml, dictOnlyOverrides?: Set<st
 }
 
 /**
+ * Generates a value type declaration as interface + constructor function.
+ * Value types in GDScript are called as functions (Vector2(1, 2)), not with `new`.
+ */
+function generateValueTypeDeclaration(cls: GodotClassXml, dictMembers?: Set<string>): string {
+  const lines: string[] = [];
+  const className = sanitizeClassName(cls.name);
+
+  // Collect own member names to avoid overriding with never
+  const ownMembers = new Set<string>();
+  for (const prop of cls.properties) ownMembers.add(prop.name);
+  for (const method of cls.methods) ownMembers.add(method.name);
+
+  // Interface for instance members
+  lines.push(...emitJsDoc(cls.briefDescription, ''));
+  lines.push(`declare interface ${className} {`);
+
+  // Properties
+  for (const prop of cls.properties) {
+    lines.push(...emitJsDoc(prop.description));
+    const tsType = godotTypeToTs(prop.type);
+    const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
+    lines.push(`  ${propName}: ${tsType};`);
+  }
+
+  if (cls.properties.length > 0 && cls.methods.length > 0) {
+    lines.push('');
+  }
+
+  // Instance methods (non-static only)
+  for (const method of cls.methods) {
+    if (method.isStatic) continue;
+    lines.push(...emitMethodSignature(method));
+  }
+
+  // Operator overloads
+  if (cls.operators.length > 0) {
+    lines.push(...emitOperatorOverloads(cls.operators));
+  }
+
+  // Anti-dict: override Dictionary members with never to prevent leaking through Object interface
+  if (dictMembers && dictMembers.size > 0) {
+    const toOverride = [...dictMembers].filter(m => !ownMembers.has(m)).sort();
+    if (toOverride.length > 0) {
+      lines.push('');
+      lines.push('  // Dictionary method overrides (prevent Object interface leaking)');
+      for (const m of toOverride) {
+        lines.push(`  ${m}: never;`);
+      }
+    }
+  }
+
+  lines.push('}');
+  lines.push('');
+
+  // Constructor interface with static members
+  lines.push(`declare interface ${className}Constructor {`);
+
+  // Constructor overloads from XML
+  for (const ctor of cls.constructors) {
+    lines.push(...emitJsDoc(ctor.description));
+    let seenOptional = false;
+    const params = ctor.parameters.map(p => {
+      const tsType = godotTypeToTs(p.type);
+      if (p.defaultValue !== undefined) seenOptional = true;
+      const optional = seenOptional ? '?' : '';
+      return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
+    });
+    lines.push(`  (${params.join(', ')}): ${className};`);
+  }
+
+  // If no constructors found in XML, add a default one
+  if (cls.constructors.length === 0) {
+    lines.push(`  (): ${className};`);
+  }
+
+  // Static methods (emit without 'static' prefix since this is an interface)
+  for (const method of cls.methods) {
+    if (!method.isStatic) continue;
+    const sig = emitMethodSignature(method);
+    lines.push(...sig.map(l => l.replace('  static ', '  ')));
+  }
+
+  // Enums as static readonly
+  if (cls.enums.length > 0) {
+    lines.push('');
+    for (const e of cls.enums) {
+      lines.push(`  // enum ${e.name}`);
+      for (const v of e.values) {
+        const constInfo = cls.constants.find(c => c.name === v.name);
+        lines.push(...emitJsDoc(constInfo?.description));
+        lines.push(`  readonly ${v.name}: int;`);
+      }
+    }
+  }
+
+  // Non-enum constants
+  const nonEnumConstants = cls.constants.filter(c => !c.enumName);
+  if (nonEnumConstants.length > 0) {
+    lines.push('');
+    for (const c of nonEnumConstants) {
+      lines.push(...emitJsDoc(c.description));
+      lines.push(`  readonly ${c.name}: ${className};`);
+    }
+  }
+
+  lines.push('}');
+  lines.push(`declare const ${className}: ${className}Constructor;`);
+
+  return lines.join('\n');
+}
+
+/**
  * Generates global scope declarations (top-level functions, constants, enums).
  */
 /**
@@ -443,7 +570,7 @@ function generateNumberOperatorOverloads(classes: Map<string, GodotClassXml>): s
 
   const lines: string[] = [];
   lines.push('// Operator overloads for int/float (number type)');
-  lines.push('interface Number {');
+  lines.push('declare interface Number {');
   for (const [symbolName, group] of grouped) {
     lines.push(`  [${symbolName}]: ${[...group.entries].join(' | ')};`);
   }
@@ -502,6 +629,31 @@ function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
     }
   }
 
+  // GDScript built-in constants and functions (from @GDScript, not in @GlobalScope XML docs)
+  lines.push('');
+  lines.push('// @GDScript — built-in constants and functions');
+  lines.push('/** Positive floating-point infinity. */');
+  lines.push('declare const INF: float;');
+  lines.push('/** "Not a Number" invalid float value. */');
+  lines.push('declare const NAN: float;');
+  lines.push('/** Constant that represents how many times the diameter of a circle fits around its perimeter. Approximately 3.14159265358979. */');
+  lines.push('declare const PI: float;');
+  lines.push('/** The circle constant, the circumference of the unit circle in radians. Approximately 6.28318530717959. Equivalent to PI * 2. */');
+  lines.push('declare const TAU: float;');
+  lines.push('');
+  lines.push('/** Returns the length of the given Variant. Arrays, strings, dictionaries, and packed arrays return their element count. */');
+  lines.push('declare function len(value: unknown): int;');
+  lines.push('/** Returns an array with the given range. range(n) is [0..n-1], range(a,b) is [a..b-1], range(a,b,step). */');
+  lines.push('declare function range(end: int): Array<int>;');
+  lines.push('declare function range(begin: int, end: int): Array<int>;');
+  lines.push('declare function range(begin: int, end: int, step: int): Array<int>;');
+  lines.push('/** Loads a resource from the given path. */');
+  lines.push('declare function load<T = unknown>(path: string): T;');
+  lines.push('/** Returns a resource from the filesystem that is loaded during script parsing. */');
+  lines.push('declare function preload<T = unknown>(path: string): T;');
+  lines.push('/** Asserts that the condition is true. If the condition is false in debug builds, execution is halted. */');
+  lines.push('declare function assert(condition: boolean, message?: string): void;');
+
   return lines.join('\n');
 }
 
@@ -541,6 +693,20 @@ function computeDictOnlyOverrides(classes: Map<string, GodotClassXml>): Set<stri
     if (!objectSubclassMembers.has(name)) result.add(name);
   }
   return result;
+}
+
+/**
+ * Collects all Dictionary interface member names (methods + properties).
+ * Used to override them with `never` on value type interfaces, preventing
+ * Dictionary methods from leaking through the TS Object interface.
+ */
+function collectAllDictMembers(classes: Map<string, GodotClassXml>): Set<string> {
+  const dictClass = classes.get('Dictionary');
+  if (!dictClass) return new Set();
+  const members = new Set<string>();
+  for (const m of dictClass.methods) members.add(m.name);
+  for (const p of dictClass.properties) members.add(p.name);
+  return members;
 }
 
 // ─── Override System ───────────────────────────────────────────
@@ -655,10 +821,16 @@ function applyOverride(generated: string, override: ParsedOverride): string {
 
   // Replace header line (first line that has interface/class + {)
   if (override.header) {
-    const headerIdx = lines.findIndex(l => /^(interface|declare class)\s/.test(l.trim()));
+    const headerIdx = lines.findIndex(l => /^(declare\s+)?(interface|class)\s/.test(l.trim()));
     if (headerIdx >= 0) {
       // The override header may be multi-line (with JSDoc). Split it into individual lines.
       const headerLines = (override.header + ' {').split('\n');
+      // Ensure the interface/class line has `declare` prefix
+      for (let hi = 0; hi < headerLines.length; hi++) {
+        if (/^\s*(interface|class)\s/.test(headerLines[hi]) && !/^\s*declare\s/.test(headerLines[hi])) {
+          headerLines[hi] = 'declare ' + headerLines[hi];
+        }
+      }
       lines.splice(headerIdx, 1, ...headerLines);
     }
   }
@@ -770,6 +942,9 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
   // Compute Dictionary-only member names that no Object subclass defines.
   const dictOnlyOverrides = computeDictOnlyOverrides(classes);
 
+  // Collect all Dictionary members for value type anti-dict overrides
+  const allDictMembers = collectAllDictMembers(classes);
+
   // Prepare classes/ subdirectory — clean and recreate
   const classesDir = join(options.outputDir, 'classes');
   if (existsSync(classesDir)) {
@@ -836,7 +1011,8 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
         fileLines.push('declare var Callable: { new(): Callable; create(object: GodotObject, method: string): Callable };');
         const cfOverride = overrides.get('CallableFunction');
         if (cfOverride) {
-          const cfLines = [cfOverride.header + ' {'];
+          const cfHeader = cfOverride.header!.replace(/^(interface|class)\s/m, 'declare $1 ');
+          const cfLines = [cfHeader + ' {'];
           for (const [, text] of cfOverride.members) {
             cfLines.push(text);
           }
@@ -846,16 +1022,16 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
           cfLines.push('}');
           fileLines.push(cfLines.join('\n'));
         } else {
-          fileLines.push('interface CallableFunction extends Function {}');
+          fileLines.push('declare interface CallableFunction extends Function {}');
         }
-        fileLines.push('interface NewableFunction extends Function {}');
+        fileLines.push('declare interface NewableFunction extends Function {}');
       }
       // Array → keep ArrayConstructor + GodotArray constructor
       if (name === 'Array') {
         const hasGenerics = override?.header.includes('<') ?? false;
         const typeParam = hasGenerics ? '<T>' : '';
         const unknownParam = hasGenerics ? '<unknown>' : '';
-        fileLines.push('interface ArrayConstructor {');
+        fileLines.push('declare interface ArrayConstructor {');
         fileLines.push(`  new ${typeParam}(): Array${typeParam};`);
         fileLines.push(`  new ${typeParam}(...items: ${hasGenerics ? 'T' : 'unknown'}[]): Array${typeParam};`);
         fileLines.push('}');
@@ -865,6 +1041,23 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
 
       const fileName = `${name}.d.ts`;
       writeFileSync(join(classesDir, fileName), header + '\n' + fileLines.join('\n') + '\n');
+      generatedFiles.push(fileName);
+      continue;
+    }
+
+    // Value types: emitted as interface + constructor function (no `new`)
+    if (VALUE_TYPES.has(name)) {
+      var valueDecl = generateValueTypeDeclaration(cls, allDictMembers);
+
+      // Apply overrides if available
+      const className = sanitizeClassName(name);
+      const classOverride = overrides.get(className);
+      if (classOverride) {
+        valueDecl = applyOverride(valueDecl, classOverride);
+      }
+
+      const fileName = `${name}.d.ts`;
+      writeFileSync(join(classesDir, fileName), header + '\n' + valueDecl + '\n');
       generatedFiles.push(fileName);
       continue;
     }

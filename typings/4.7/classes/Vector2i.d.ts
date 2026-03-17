@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D vector using integer coordinates. */
-declare class Vector2i {
+declare interface Vector2i {
   /** The vector's X component. Also accessible by using the index position `[0]`. */
   x: int;
   /** The vector's Y component. Also accessible by using the index position `[1]`. */
@@ -69,33 +69,6 @@ declare class Vector2i {
   /** Returns a new vector with each component snapped to the closest multiple of `step`. */
   snappedi(step: int): Vector2i;
 
-  // enum Axis
-  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_X: int;
-  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_Y: int;
-
-  /** Zero vector, a vector with all components set to `0`. */
-  static readonly ZERO: int;
-  /** One vector, a vector with all components set to `1`. */
-  static readonly ONE: int;
-  /**
-   * Min vector, a vector with all components equal to `INT32_MIN`. Can be used as a negative integer equivalent of {@link Vector2.INF}.
-   */
-  static readonly MIN: int;
-  /**
-   * Max vector, a vector with all components equal to `INT32_MAX`. Can be used as an integer equivalent of {@link Vector2.INF}.
-   */
-  static readonly MAX: int;
-  /** Left unit vector. Represents the direction of left. */
-  static readonly LEFT: int;
-  /** Right unit vector. Represents the direction of right. */
-  static readonly RIGHT: int;
-  /** Up unit vector. Y is down in 2D, so this vector points -Y. */
-  static readonly UP: int;
-  /** Down unit vector. Y is down in 2D, so this vector points +Y. */
-  static readonly DOWN: int;
-
   // Operator overloads
   [__ne]: { right: Vector2i; ret: boolean };
   [__mul]: { right: Vector2i; ret: Vector2i } | { right: float; ret: Vector2 } | { right: int; ret: Vector2i };
@@ -109,4 +82,81 @@ declare class Vector2i {
   [__gte]: { right: Vector2i; ret: boolean };
   [__plus]: { ret: Vector2i };
   [__minus]: { ret: Vector2i };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
 }
+
+declare interface Vector2iConstructor {
+  /** Constructs a default-initialized {@link Vector2i} with all components set to `0`. */
+  (): Vector2i;
+  /** Constructs a {@link Vector2i} as a copy of the given {@link Vector2i}. */
+  (from_: Vector2i): Vector2i;
+  /**
+   * Constructs a new {@link Vector2i} from the given {@link Vector2} by truncating components' fractional parts (rounding towards zero). For a different behavior consider passing the result of {@link Vector2.ceil}, {@link Vector2.floor} or {@link Vector2.round} to this constructor instead.
+   */
+  (from_: Vector2): Vector2i;
+  /** Constructs a new {@link Vector2i} from the given `x` and `y`. */
+  (x: int, y: int): Vector2i;
+
+  // enum Axis
+  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_X: int;
+  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_Y: int;
+
+  /** Zero vector, a vector with all components set to `0`. */
+  readonly ZERO: Vector2i;
+  /** One vector, a vector with all components set to `1`. */
+  readonly ONE: Vector2i;
+  /**
+   * Min vector, a vector with all components equal to `INT32_MIN`. Can be used as a negative integer equivalent of {@link Vector2.INF}.
+   */
+  readonly MIN: Vector2i;
+  /**
+   * Max vector, a vector with all components equal to `INT32_MAX`. Can be used as an integer equivalent of {@link Vector2.INF}.
+   */
+  readonly MAX: Vector2i;
+  /** Left unit vector. Represents the direction of left. */
+  readonly LEFT: Vector2i;
+  /** Right unit vector. Represents the direction of right. */
+  readonly RIGHT: Vector2i;
+  /** Up unit vector. Y is down in 2D, so this vector points -Y. */
+  readonly UP: Vector2i;
+  /** Down unit vector. Y is down in 2D, so this vector points +Y. */
+  readonly DOWN: Vector2i;
+}
+declare const Vector2i: Vector2iConstructor;

@@ -50,22 +50,22 @@ class NodeMethodsTest extends Node {
 
 class VectorTest extends Node {
   test_vector2() {
-    let v = new Vector2();
+    let v = Vector2();
     v.x = 10.0;
     v.y = 20.0;
 
     let len: float = v.length();
     let norm: Vector2 = v.normalized();
-    let dot: float = v.dot(new Vector2());
-    let dist: float = v.distance_to(new Vector2());
+    let dot: float = v.dot(Vector2());
+    let dist: float = v.distance_to(Vector2());
     let angle: float = v.angle();
-    let lerped: Vector2 = v.lerp(new Vector2(), 0.5);
+    let lerped: Vector2 = v.lerp(Vector2(), 0.5);
     let rotated: Vector2 = v.rotated(1.57);
     let abs_v: Vector2 = v.abs();
 
     // Static members
     let axis_x: int = Vector2.AXIS_X;
-    let zero: int = Vector2.ZERO;
+    let zero: Vector2 = Vector2.ZERO;
 
     // Static factory
     let from: Vector2 = Vector2.from_angle(1.0);

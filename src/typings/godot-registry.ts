@@ -37,6 +37,7 @@ export interface GodotClassXml {
   briefDescription?: string;
   description?: string;
   methods: GodotMethodXml[];
+  constructors: GodotMethodXml[];
   properties: GodotPropertyXml[];
   signals: GodotSignalXml[];
   constants: GodotConstantXml[];
@@ -271,12 +272,42 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
     });
   }
 
+  // Parse constructors
+  const constructorMethods: GodotMethodXml[] = [];
+  const ctorRegex = /<constructor name="([^"]+)"[^>]*>([\s\S]*?)<\/constructor>/g;
+  while ((match = ctorRegex.exec(xmlContent)) !== null) {
+    const ctorBody = match[2]!;
+    const returnMatch = /<return type="([^"]*)"/.exec(ctorBody);
+    const returnType = returnMatch?.[1] ?? name;
+    const params: GodotParamXml[] = [];
+    const paramRegex3 = /<param index="\d+" name="([^"]+)" type="([^"]+)"(?:\s+default="([^"]*)")?/g;
+    let paramMatch: RegExpExecArray | null;
+    while ((paramMatch = paramRegex3.exec(ctorBody)) !== null) {
+      params.push({
+        name: paramMatch[1]!,
+        type: paramMatch[2]!,
+        defaultValue: paramMatch[3],
+      });
+    }
+    constructorMethods.push({
+      name: match[1]!,
+      returnType,
+      parameters: params,
+      description: extractDescription(ctorBody),
+      isVirtual: false,
+      isStatic: false,
+      isConst: false,
+      isVararg: false,
+    });
+  }
+
   return {
     name,
     inherits,
     briefDescription,
     description: classDescription,
     methods,
+    constructors: constructorMethods,
     properties,
     signals,
     constants,

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D axis-aligned bounding box using integer coordinates. */
-declare class Rect2i {
+declare interface Rect2i {
   /**
    * The ending point. This is usually the bottom-right corner of the rectangle, and is equivalent to `position + size`. Setting this point affects the {@link size}.
    */
@@ -69,4 +69,56 @@ declare class Rect2i {
   // Operator overloads
   [__ne]: { right: Rect2i; ret: boolean };
   [__eq]: { right: Rect2i; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  sort: never;
+  values: never;
 }
+
+declare interface Rect2iConstructor {
+  /**
+   * Constructs a {@link Rect2i} with its {@link position} and {@link size} set to {@link Vector2i.ZERO}.
+   */
+  (): Rect2i;
+  /** Constructs a {@link Rect2i} as a copy of the given {@link Rect2i}. */
+  (from_: Rect2i): Rect2i;
+  /** Constructs a {@link Rect2i} from a {@link Rect2}. The floating-point coordinates are truncated. */
+  (from_: Rect2): Rect2i;
+  /** Constructs a {@link Rect2i} by `position` and `size`. */
+  (position: Vector2i, size: Vector2i): Rect2i;
+  /**
+   * Constructs a {@link Rect2i} by setting its {@link position} to (`x`, `y`), and its {@link size} to (`width`, `height`).
+   */
+  (x: int, y: int, width: int, height: int): Rect2i;
+}
+declare const Rect2i: Rect2iConstructor;

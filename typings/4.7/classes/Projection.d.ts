@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 4×4 matrix for 3D projective transformations. */
-declare class Projection {
+declare interface Projection {
   /** The projection matrix's W vector (column 3). Equivalent to array index `3`. */
   w: Vector4;
   /** The projection matrix's X vector (column 0). Equivalent to array index `0`. */
@@ -12,50 +12,6 @@ declare class Projection {
   /** The projection matrix's Z vector (column 2). Equivalent to array index `2`. */
   z: Vector4;
 
-  /**
-   * Creates a new {@link Projection} that projects positions from a depth range of `-1` to `1` to one that ranges from `0` to `1`, and flips the projected positions vertically, according to `flip_y`.
-   */
-  static create_depth_correction(flip_y: boolean): Projection;
-  /**
-   * Creates a new {@link Projection} that scales a given projection to fit around a given {@link AABB} in projection space.
-   */
-  static create_fit_aabb(aabb: AABB): Projection;
-  /**
-   * Creates a new {@link Projection} for projecting positions onto a head-mounted display with the given X:Y aspect ratio, distance between eyes, display width, distance to lens, oversampling factor, and depth clipping planes.
-   * `eye` creates the projection for the left eye when set to 1, or the right eye when set to 2.
-   */
-  static create_for_hmd(eye: int, aspect: float, intraocular_dist: float, display_width: float, display_to_lens: float, oversample: float, z_near: float, z_far: float): Projection;
-  /**
-   * Creates a new {@link Projection} that projects positions in a frustum with the given clipping planes.
-   */
-  static create_frustum(left: float, right: float, bottom: float, top: float, z_near: float, z_far: float): Projection;
-  /**
-   * Creates a new {@link Projection} that projects positions in a frustum with the given size, X:Y aspect ratio, offset, and clipping planes.
-   * `flip_fov` determines whether the projection's field of view is flipped over its diagonal.
-   */
-  static create_frustum_aspect(size: float, aspect: float, offset: Vector2, z_near: float, z_far: float, flip_fov?: boolean): Projection;
-  /** Creates a new {@link Projection} that projects positions into the given {@link Rect2}. */
-  static create_light_atlas_rect(rect: Rect2): Projection;
-  /**
-   * Creates a new {@link Projection} that projects positions using an orthogonal projection with the given clipping planes.
-   */
-  static create_orthogonal(left: float, right: float, bottom: float, top: float, z_near: float, z_far: float): Projection;
-  /**
-   * Creates a new {@link Projection} that projects positions using an orthogonal projection with the given size, X:Y aspect ratio, and clipping planes.
-   * `flip_fov` determines whether the projection's field of view is flipped over its diagonal.
-   */
-  static create_orthogonal_aspect(size: float, aspect: float, z_near: float, z_far: float, flip_fov?: boolean): Projection;
-  /**
-   * Creates a new {@link Projection} that projects positions using a perspective projection with the given Y-axis field of view (in degrees), X:Y aspect ratio, and clipping planes.
-   * `flip_fov` determines whether the projection's field of view is flipped over its diagonal.
-   */
-  static create_perspective(fovy: float, aspect: float, z_near: float, z_far: float, flip_fov?: boolean): Projection;
-  /**
-   * Creates a new {@link Projection} that projects positions using a perspective projection with the given Y-axis field of view (in degrees), X:Y aspect ratio, and clipping distances. The projection is adjusted for a head-mounted display with the given distance between eyes and distance to a point that can be focused on.
-   * `eye` creates the projection for the left eye when set to 1, or the right eye when set to 2.
-   * `flip_fov` determines whether the projection's field of view is flipped over its diagonal.
-   */
-  static create_perspective_hmd(fovy: float, aspect: float, z_near: float, z_far: float, flip_fov: boolean, eye: int, intraocular_dist: float, convergence_dist: float): Projection;
   /**
    * Returns a scalar value that is the signed factor by which areas are scaled by this matrix. If the sign is negative, the matrix flips the orientation of the area.
    * The determinant can be used to calculate the invertibility of a matrix or solve linear systems of equations involving the matrix, among other applications.
@@ -69,11 +25,6 @@ declare class Projection {
   get_far_plane_half_extents(): Vector2;
   /** Returns the horizontal field of view of the projection (in degrees). */
   get_fov(): float;
-  /**
-   * Returns the vertical field of view of the projection (in degrees) associated with the given horizontal field of view (in degrees) and aspect ratio.
-   * **Note:** Unlike most methods of {@link Projection}, `aspect` is expected to be 1 divided by the X:Y aspect ratio.
-   */
-  static get_fovy(fovx: float, aspect: float): float;
   /** Returns the factor by which the visible level of detail is scaled by this {@link Projection}. */
   get_lod_multiplier(): float;
   /**
@@ -109,31 +60,131 @@ declare class Projection {
    */
   perspective_znear_adjusted(new_znear: float): Projection;
 
-  // enum Planes
-  /** The index value of the projection's near clipping plane. */
-  static readonly PLANE_NEAR: int;
-  /** The index value of the projection's far clipping plane. */
-  static readonly PLANE_FAR: int;
-  /** The index value of the projection's left clipping plane. */
-  static readonly PLANE_LEFT: int;
-  /** The index value of the projection's top clipping plane. */
-  static readonly PLANE_TOP: int;
-  /** The index value of the projection's right clipping plane. */
-  static readonly PLANE_RIGHT: int;
-  /** The index value of the projection bottom clipping plane. */
-  static readonly PLANE_BOTTOM: int;
-
-  /**
-   * A {@link Projection} with no transformation defined. When applied to other data structures, no transformation is performed.
-   */
-  static readonly IDENTITY: int;
-  /**
-   * A {@link Projection} with all values initialized to 0. When applied to other data structures, they will be zeroed.
-   */
-  static readonly ZERO: int;
-
   // Operator overloads
   [__ne]: { right: Projection; ret: boolean };
   [__mul]: { right: Projection; ret: Projection } | { right: Vector4; ret: Vector4 };
   [__eq]: { right: Projection; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
 }
+
+declare interface ProjectionConstructor {
+  /**
+   * Constructs a default-initialized {@link Projection} identical to {@link IDENTITY}.
+   * **Note:** In C#, this constructs a {@link Projection} identical to {@link ZERO}.
+   */
+  (): Projection;
+  /** Constructs a {@link Projection} as a copy of the given {@link Projection}. */
+  (from_: Projection): Projection;
+  /** Constructs a Projection as a copy of the given {@link Transform3D}. */
+  (from_: Transform3D): Projection;
+  /** Constructs a Projection from four {@link Vector4} values (matrix columns). */
+  (x_axis: Vector4, y_axis: Vector4, z_axis: Vector4, w_axis: Vector4): Projection;
+  /**
+   * Creates a new {@link Projection} that projects positions from a depth range of `-1` to `1` to one that ranges from `0` to `1`, and flips the projected positions vertically, according to `flip_y`.
+   */
+  create_depth_correction(flip_y: boolean): Projection;
+  /**
+   * Creates a new {@link Projection} that scales a given projection to fit around a given {@link AABB} in projection space.
+   */
+  create_fit_aabb(aabb: AABB): Projection;
+  /**
+   * Creates a new {@link Projection} for projecting positions onto a head-mounted display with the given X:Y aspect ratio, distance between eyes, display width, distance to lens, oversampling factor, and depth clipping planes.
+   * `eye` creates the projection for the left eye when set to 1, or the right eye when set to 2.
+   */
+  create_for_hmd(eye: int, aspect: float, intraocular_dist: float, display_width: float, display_to_lens: float, oversample: float, z_near: float, z_far: float): Projection;
+  /**
+   * Creates a new {@link Projection} that projects positions in a frustum with the given clipping planes.
+   */
+  create_frustum(left: float, right: float, bottom: float, top: float, z_near: float, z_far: float): Projection;
+  /**
+   * Creates a new {@link Projection} that projects positions in a frustum with the given size, X:Y aspect ratio, offset, and clipping planes.
+   * `flip_fov` determines whether the projection's field of view is flipped over its diagonal.
+   */
+  create_frustum_aspect(size: float, aspect: float, offset: Vector2, z_near: float, z_far: float, flip_fov?: boolean): Projection;
+  /** Creates a new {@link Projection} that projects positions into the given {@link Rect2}. */
+  create_light_atlas_rect(rect: Rect2): Projection;
+  /**
+   * Creates a new {@link Projection} that projects positions using an orthogonal projection with the given clipping planes.
+   */
+  create_orthogonal(left: float, right: float, bottom: float, top: float, z_near: float, z_far: float): Projection;
+  /**
+   * Creates a new {@link Projection} that projects positions using an orthogonal projection with the given size, X:Y aspect ratio, and clipping planes.
+   * `flip_fov` determines whether the projection's field of view is flipped over its diagonal.
+   */
+  create_orthogonal_aspect(size: float, aspect: float, z_near: float, z_far: float, flip_fov?: boolean): Projection;
+  /**
+   * Creates a new {@link Projection} that projects positions using a perspective projection with the given Y-axis field of view (in degrees), X:Y aspect ratio, and clipping planes.
+   * `flip_fov` determines whether the projection's field of view is flipped over its diagonal.
+   */
+  create_perspective(fovy: float, aspect: float, z_near: float, z_far: float, flip_fov?: boolean): Projection;
+  /**
+   * Creates a new {@link Projection} that projects positions using a perspective projection with the given Y-axis field of view (in degrees), X:Y aspect ratio, and clipping distances. The projection is adjusted for a head-mounted display with the given distance between eyes and distance to a point that can be focused on.
+   * `eye` creates the projection for the left eye when set to 1, or the right eye when set to 2.
+   * `flip_fov` determines whether the projection's field of view is flipped over its diagonal.
+   */
+  create_perspective_hmd(fovy: float, aspect: float, z_near: float, z_far: float, flip_fov: boolean, eye: int, intraocular_dist: float, convergence_dist: float): Projection;
+  /**
+   * Returns the vertical field of view of the projection (in degrees) associated with the given horizontal field of view (in degrees) and aspect ratio.
+   * **Note:** Unlike most methods of {@link Projection}, `aspect` is expected to be 1 divided by the X:Y aspect ratio.
+   */
+  get_fovy(fovx: float, aspect: float): float;
+
+  // enum Planes
+  /** The index value of the projection's near clipping plane. */
+  readonly PLANE_NEAR: int;
+  /** The index value of the projection's far clipping plane. */
+  readonly PLANE_FAR: int;
+  /** The index value of the projection's left clipping plane. */
+  readonly PLANE_LEFT: int;
+  /** The index value of the projection's top clipping plane. */
+  readonly PLANE_TOP: int;
+  /** The index value of the projection's right clipping plane. */
+  readonly PLANE_RIGHT: int;
+  /** The index value of the projection bottom clipping plane. */
+  readonly PLANE_BOTTOM: int;
+
+  /**
+   * A {@link Projection} with no transformation defined. When applied to other data structures, no transformation is performed.
+   */
+  readonly IDENTITY: Projection;
+  /**
+   * A {@link Projection} with all values initialized to 0. When applied to other data structures, they will be zeroed.
+   */
+  readonly ZERO: Projection;
+}
+declare const Projection: ProjectionConstructor;

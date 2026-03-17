@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of {@link Vector4}s. */
-declare class PackedVector4Array {
+declare interface PackedVector4Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: Vector4): boolean;
   /** Appends a {@link PackedVector4Array} at the end of this array. */
@@ -90,4 +90,44 @@ declare class PackedVector4Array {
   [__ne]: { right: PackedVector4Array; ret: boolean };
   [__add]: { right: PackedVector4Array; ret: PackedVector4Array };
   [__eq]: { right: PackedVector4Array; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  duplicate_deep: never;
+  find_key: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has_all: never;
+  hash: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  values: never;
 }
+
+declare interface PackedVector4ArrayConstructor {
+  /** Constructs an empty {@link PackedVector4Array}. */
+  (): PackedVector4Array;
+  /** Constructs a {@link PackedVector4Array} as a copy of the given {@link PackedVector4Array}. */
+  (from_: PackedVector4Array): PackedVector4Array;
+  /**
+   * Constructs a new {@link PackedVector4Array}. Optionally, you can pass in a generic {@link Array} that will be converted.
+   * **Note:** When initializing a {@link PackedVector4Array} with elements, it must be initialized with an {@link Array} of {@link Vector4} values:
+   */
+  (from_: Array<unknown>): PackedVector4Array;
+}
+declare const PackedVector4Array: PackedVector4ArrayConstructor;

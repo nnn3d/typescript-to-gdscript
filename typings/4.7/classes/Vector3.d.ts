@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3D vector using floating-point coordinates. */
-declare class Vector3 {
+declare interface Vector3 {
   /** The vector's X component. Also accessible by using the index position `[0]`. */
   x: float;
   /** The vector's Y component. Also accessible by using the index position `[1]`. */
@@ -137,10 +137,6 @@ declare class Vector3 {
    */
   normalized(): Vector3;
   /**
-   * Returns the {@link Vector3} from an octahedral-compressed form created using {@link octahedron_encode} (stored as a {@link Vector2}).
-   */
-  static octahedron_decode(uv: Vector2): Vector3;
-  /**
    * Returns the octahedral-encoded (oct32) form of this {@link Vector3} as a {@link Vector2}. Since a {@link Vector2} occupies 1/3 less memory compared to {@link Vector3}, this form of compression can be used to pass greater amounts of {@link normalized} {@link Vector3}s without increasing storage or memory requirements. See also {@link octahedron_decode}.
    * **Note:** {@link octahedron_encode} can only be used for {@link normalized} vectors. {@link octahedron_encode} does *not* check whether this {@link Vector3} is normalized, and will return a value that does not decompress to the original value if the {@link Vector3} is not normalized.
    * **Note:** Octahedral compression is *lossy*, although visual differences are rarely perceptible in real world scenarios.
@@ -201,47 +197,6 @@ declare class Vector3 {
    */
   snappedf(step: float): Vector3;
 
-  // enum Axis
-  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_X: int;
-  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_Y: int;
-  /** Enumerated value for the Z axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_Z: int;
-
-  /** Zero vector, a vector with all components set to `0`. */
-  static readonly ZERO: int;
-  /** One vector, a vector with all components set to `1`. */
-  static readonly ONE: int;
-  /** Infinity vector, a vector with all components set to {@link @GDScript.INF}. */
-  static readonly INF: int;
-  /** Left unit vector. Represents the local direction of left, and the global direction of west. */
-  static readonly LEFT: int;
-  /** Right unit vector. Represents the local direction of right, and the global direction of east. */
-  static readonly RIGHT: int;
-  /** Up unit vector. */
-  static readonly UP: int;
-  /** Down unit vector. */
-  static readonly DOWN: int;
-  /**
-   * Forward unit vector. Represents the local direction of forward, and the global direction of north. Keep in mind that the forward direction for lights, cameras, etc is different from 3D assets like characters, which face towards the camera by convention. Use {@link Vector3.MODEL_FRONT} and similar constants when working in 3D asset space.
-   */
-  static readonly FORWARD: int;
-  /** Back unit vector. Represents the local direction of back, and the global direction of south. */
-  static readonly BACK: int;
-  /** Unit vector pointing towards the left side of imported 3D assets. */
-  static readonly MODEL_LEFT: int;
-  /** Unit vector pointing towards the right side of imported 3D assets. */
-  static readonly MODEL_RIGHT: int;
-  /** Unit vector pointing towards the top side (up) of imported 3D assets. */
-  static readonly MODEL_TOP: int;
-  /** Unit vector pointing towards the bottom side (down) of imported 3D assets. */
-  static readonly MODEL_BOTTOM: int;
-  /** Unit vector pointing towards the front side (facing forward) of imported 3D assets. */
-  static readonly MODEL_FRONT: int;
-  /** Unit vector pointing towards the rear side (back) of imported 3D assets. */
-  static readonly MODEL_REAR: int;
-
   // Operator overloads
   [__ne]: { right: Vector3; ret: boolean };
   [__mul]: { right: Basis; ret: Vector3 } | { right: Quaternion; ret: Vector3 } | { right: Transform3D; ret: Vector3 } | { right: Vector3; ret: Vector3 } | { right: float; ret: Vector3 } | { right: int; ret: Vector3 };
@@ -255,4 +210,97 @@ declare class Vector3 {
   [__gte]: { right: Vector3; ret: boolean };
   [__plus]: { ret: Vector3 };
   [__minus]: { ret: Vector3 };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
 }
+
+declare interface Vector3Constructor {
+  /** Constructs a default-initialized {@link Vector3} with all components set to `0`. */
+  (): Vector3;
+  /** Constructs a {@link Vector3} as a copy of the given {@link Vector3}. */
+  (from_: Vector3): Vector3;
+  /** Constructs a new {@link Vector3} from {@link Vector3i}. */
+  (from_: Vector3i): Vector3;
+  /** Returns a {@link Vector3} with the given components. */
+  (x: float, y: float, z: float): Vector3;
+  /**
+   * Returns the {@link Vector3} from an octahedral-compressed form created using {@link octahedron_encode} (stored as a {@link Vector2}).
+   */
+  octahedron_decode(uv: Vector2): Vector3;
+
+  // enum Axis
+  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_X: int;
+  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_Y: int;
+  /** Enumerated value for the Z axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_Z: int;
+
+  /** Zero vector, a vector with all components set to `0`. */
+  readonly ZERO: Vector3;
+  /** One vector, a vector with all components set to `1`. */
+  readonly ONE: Vector3;
+  /** Infinity vector, a vector with all components set to {@link @GDScript.INF}. */
+  readonly INF: Vector3;
+  /** Left unit vector. Represents the local direction of left, and the global direction of west. */
+  readonly LEFT: Vector3;
+  /** Right unit vector. Represents the local direction of right, and the global direction of east. */
+  readonly RIGHT: Vector3;
+  /** Up unit vector. */
+  readonly UP: Vector3;
+  /** Down unit vector. */
+  readonly DOWN: Vector3;
+  /**
+   * Forward unit vector. Represents the local direction of forward, and the global direction of north. Keep in mind that the forward direction for lights, cameras, etc is different from 3D assets like characters, which face towards the camera by convention. Use {@link Vector3.MODEL_FRONT} and similar constants when working in 3D asset space.
+   */
+  readonly FORWARD: Vector3;
+  /** Back unit vector. Represents the local direction of back, and the global direction of south. */
+  readonly BACK: Vector3;
+  /** Unit vector pointing towards the left side of imported 3D assets. */
+  readonly MODEL_LEFT: Vector3;
+  /** Unit vector pointing towards the right side of imported 3D assets. */
+  readonly MODEL_RIGHT: Vector3;
+  /** Unit vector pointing towards the top side (up) of imported 3D assets. */
+  readonly MODEL_TOP: Vector3;
+  /** Unit vector pointing towards the bottom side (down) of imported 3D assets. */
+  readonly MODEL_BOTTOM: Vector3;
+  /** Unit vector pointing towards the front side (facing forward) of imported 3D assets. */
+  readonly MODEL_FRONT: Vector3;
+  /** Unit vector pointing towards the rear side (back) of imported 3D assets. */
+  readonly MODEL_REAR: Vector3;
+}
+declare const Vector3: Vector3Constructor;

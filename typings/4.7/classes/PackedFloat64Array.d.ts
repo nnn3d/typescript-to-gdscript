@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of 64-bit floating-point values. */
-declare class PackedFloat64Array {
+declare interface PackedFloat64Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: float): boolean;
   /** Appends a {@link PackedFloat64Array} at the end of this array. */
@@ -93,4 +93,43 @@ declare class PackedFloat64Array {
   [__ne]: { right: PackedFloat64Array; ret: boolean };
   [__add]: { right: PackedFloat64Array; ret: PackedFloat64Array };
   [__eq]: { right: PackedFloat64Array; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  duplicate_deep: never;
+  find_key: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has_all: never;
+  hash: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  values: never;
 }
+
+declare interface PackedFloat64ArrayConstructor {
+  /** Constructs an empty {@link PackedFloat64Array}. */
+  (): PackedFloat64Array;
+  /** Constructs a {@link PackedFloat64Array} as a copy of the given {@link PackedFloat64Array}. */
+  (from_: PackedFloat64Array): PackedFloat64Array;
+  /**
+   * Constructs a new {@link PackedFloat64Array}. Optionally, you can pass in a generic {@link Array} that will be converted.
+   */
+  (from_: Array<unknown>): PackedFloat64Array;
+}
+declare const PackedFloat64Array: PackedFloat64ArrayConstructor;

@@ -1873,3 +1873,26 @@ declare const INT32_MAX: int;
 declare const INT64_MIN: int;
 /** Maximum value of a 64-bit signed integer. */
 declare const INT64_MAX: int;
+
+// @GDScript — built-in constants and functions
+/** Positive floating-point infinity. */
+declare const INF: float;
+/** "Not a Number" invalid float value. */
+declare const NAN: float;
+/** Constant that represents how many times the diameter of a circle fits around its perimeter. Approximately 3.14159265358979. */
+declare const PI: float;
+/** The circle constant, the circumference of the unit circle in radians. Approximately 6.28318530717959. Equivalent to PI * 2. */
+declare const TAU: float;
+
+/** Returns the length of the given Variant. Arrays, strings, dictionaries, and packed arrays return their element count. */
+declare function len(value: unknown): int;
+/** Returns an array with the given range. range(n) is [0..n-1], range(a,b) is [a..b-1], range(a,b,step). */
+declare function range(end: int): Array<int>;
+declare function range(begin: int, end: int): Array<int>;
+declare function range(begin: int, end: int, step: int): Array<int>;
+/** Loads a resource from the given path. */
+declare function load<T = unknown>(path: string): T;
+/** Returns a resource from the filesystem that is loaded during script parsing. */
+declare function preload<T = unknown>(path: string): T;
+/** Asserts that the condition is true. If the condition is false in debug builds, execution is halted. */
+declare function assert(condition: boolean, message?: string): void;

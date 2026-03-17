@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of 64-bit integers. */
-declare class PackedInt64Array {
+declare interface PackedInt64Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: int): boolean;
   /** Appends a {@link PackedInt64Array} at the end of this array. */
@@ -80,4 +80,43 @@ declare class PackedInt64Array {
   [__ne]: { right: PackedInt64Array; ret: boolean };
   [__add]: { right: PackedInt64Array; ret: PackedInt64Array };
   [__eq]: { right: PackedInt64Array; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  duplicate_deep: never;
+  find_key: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has_all: never;
+  hash: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  values: never;
 }
+
+declare interface PackedInt64ArrayConstructor {
+  /** Constructs an empty {@link PackedInt64Array}. */
+  (): PackedInt64Array;
+  /** Constructs a {@link PackedInt64Array} as a copy of the given {@link PackedInt64Array}. */
+  (from_: PackedInt64Array): PackedInt64Array;
+  /**
+   * Constructs a new {@link PackedInt64Array}. Optionally, you can pass in a generic {@link Array} that will be converted.
+   */
+  (from_: Array<unknown>): PackedInt64Array;
+}
+declare const PackedInt64Array: PackedInt64ArrayConstructor;

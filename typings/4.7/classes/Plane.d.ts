@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A plane in Hessian normal form. */
-declare class Plane {
+declare interface Plane {
   /**
    * The distance from the origin to the plane, expressed in terms of {@link normal} (according to its direction and magnitude). Actual absolute distance from the origin to the plane can be calculated as `abs(d) / normal.length()` (if {@link normal} has zero length then this {@link Plane} does not represent a valid plane).
    * In the scalar equation of the plane `ax + by + cz = d`, this is [code skip-lint]d[/code], while the `(a, b, c)` coordinates are represented by the {@link normal} property.
@@ -59,17 +59,82 @@ declare class Plane {
   /** Returns the orthogonal projection of `point` into a point in the plane. */
   project(point: Vector3): Vector3;
 
-  /** A plane that extends in the Y and Z axes (normal vector points +X). */
-  static readonly PLANE_YZ: int;
-  /** A plane that extends in the X and Z axes (normal vector points +Y). */
-  static readonly PLANE_XZ: int;
-  /** A plane that extends in the X and Y axes (normal vector points +Z). */
-  static readonly PLANE_XY: int;
-
   // Operator overloads
   [__ne]: { right: Plane; ret: boolean };
   [__mul]: { right: Transform3D; ret: Plane };
   [__eq]: { right: Plane; ret: boolean };
   [__plus]: { ret: Plane };
   [__minus]: { ret: Plane };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
 }
+
+declare interface PlaneConstructor {
+  /** Constructs a default-initialized {@link Plane} with all components set to `0`. */
+  (): Plane;
+  /** Constructs a {@link Plane} as a copy of the given {@link Plane}. */
+  (from_: Plane): Plane;
+  /**
+   * Creates a plane from the four parameters. The three components of the resulting plane's {@link normal} are `a`, `b` and `c`, and the plane has a distance of `d` from the origin.
+   */
+  (a: float, b: float, c: float, d: float): Plane;
+  /**
+   * Creates a plane from the normal vector. The plane will intersect the origin.
+   * The `normal` of the plane must be a unit vector.
+   */
+  (normal: Vector3): Plane;
+  /**
+   * Creates a plane from the normal vector and the plane's distance from the origin.
+   * The `normal` of the plane must be a unit vector.
+   */
+  (normal: Vector3, d: float): Plane;
+  /**
+   * Creates a plane from the normal vector and a point on the plane.
+   * The `normal` of the plane must be a unit vector.
+   */
+  (normal: Vector3, point: Vector3): Plane;
+  /** Creates a plane from the three points, given in clockwise order. */
+  (point1: Vector3, point2: Vector3, point3: Vector3): Plane;
+
+  /** A plane that extends in the Y and Z axes (normal vector points +X). */
+  readonly PLANE_YZ: Plane;
+  /** A plane that extends in the X and Z axes (normal vector points +Y). */
+  readonly PLANE_XZ: Plane;
+  /** A plane that extends in the X and Y axes (normal vector points +Z). */
+  readonly PLANE_XY: Plane;
+}
+declare const Plane: PlaneConstructor;

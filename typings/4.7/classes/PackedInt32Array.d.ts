@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of 32-bit integers. */
-declare class PackedInt32Array {
+declare interface PackedInt32Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: int): boolean;
   /** Appends a {@link PackedInt32Array} at the end of this array. */
@@ -80,4 +80,43 @@ declare class PackedInt32Array {
   [__ne]: { right: PackedInt32Array; ret: boolean };
   [__add]: { right: PackedInt32Array; ret: PackedInt32Array };
   [__eq]: { right: PackedInt32Array; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  duplicate_deep: never;
+  find_key: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has_all: never;
+  hash: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  values: never;
 }
+
+declare interface PackedInt32ArrayConstructor {
+  /** Constructs an empty {@link PackedInt32Array}. */
+  (): PackedInt32Array;
+  /** Constructs a {@link PackedInt32Array} as a copy of the given {@link PackedInt32Array}. */
+  (from_: PackedInt32Array): PackedInt32Array;
+  /**
+   * Constructs a new {@link PackedInt32Array}. Optionally, you can pass in a generic {@link Array} that will be converted.
+   */
+  (from_: Array<unknown>): PackedInt32Array;
+}
+declare const PackedInt32Array: PackedInt32ArrayConstructor;

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3D vector using integer coordinates. */
-declare class Vector3i {
+declare interface Vector3i {
   /** The vector's X component. Also accessible by using the index position `[0]`. */
   x: int;
   /** The vector's Y component. Also accessible by using the index position `[1]`. */
@@ -69,39 +69,6 @@ declare class Vector3i {
   /** Returns a new vector with each component snapped to the closest multiple of `step`. */
   snappedi(step: int): Vector3i;
 
-  // enum Axis
-  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_X: int;
-  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_Y: int;
-  /** Enumerated value for the Z axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_Z: int;
-
-  /** Zero vector, a vector with all components set to `0`. */
-  static readonly ZERO: int;
-  /** One vector, a vector with all components set to `1`. */
-  static readonly ONE: int;
-  /**
-   * Min vector, a vector with all components equal to `INT32_MIN`. Can be used as a negative integer equivalent of {@link Vector3.INF}.
-   */
-  static readonly MIN: int;
-  /**
-   * Max vector, a vector with all components equal to `INT32_MAX`. Can be used as an integer equivalent of {@link Vector3.INF}.
-   */
-  static readonly MAX: int;
-  /** Left unit vector. Represents the local direction of left, and the global direction of west. */
-  static readonly LEFT: int;
-  /** Right unit vector. Represents the local direction of right, and the global direction of east. */
-  static readonly RIGHT: int;
-  /** Up unit vector. */
-  static readonly UP: int;
-  /** Down unit vector. */
-  static readonly DOWN: int;
-  /** Forward unit vector. Represents the local direction of forward, and the global direction of north. */
-  static readonly FORWARD: int;
-  /** Back unit vector. Represents the local direction of back, and the global direction of south. */
-  static readonly BACK: int;
-
   // Operator overloads
   [__ne]: { right: Vector3i; ret: boolean };
   [__mul]: { right: Vector3i; ret: Vector3i } | { right: float; ret: Vector3 } | { right: int; ret: Vector3i };
@@ -115,4 +82,87 @@ declare class Vector3i {
   [__gte]: { right: Vector3i; ret: boolean };
   [__plus]: { ret: Vector3i };
   [__minus]: { ret: Vector3i };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
 }
+
+declare interface Vector3iConstructor {
+  /** Constructs a default-initialized {@link Vector3i} with all components set to `0`. */
+  (): Vector3i;
+  /** Constructs a {@link Vector3i} as a copy of the given {@link Vector3i}. */
+  (from_: Vector3i): Vector3i;
+  /**
+   * Constructs a new {@link Vector3i} from the given {@link Vector3} by truncating components' fractional parts (rounding towards zero). For a different behavior consider passing the result of {@link Vector3.ceil}, {@link Vector3.floor} or {@link Vector3.round} to this constructor instead.
+   */
+  (from_: Vector3): Vector3i;
+  /** Returns a {@link Vector3i} with the given components. */
+  (x: int, y: int, z: int): Vector3i;
+
+  // enum Axis
+  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_X: int;
+  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_Y: int;
+  /** Enumerated value for the Z axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_Z: int;
+
+  /** Zero vector, a vector with all components set to `0`. */
+  readonly ZERO: Vector3i;
+  /** One vector, a vector with all components set to `1`. */
+  readonly ONE: Vector3i;
+  /**
+   * Min vector, a vector with all components equal to `INT32_MIN`. Can be used as a negative integer equivalent of {@link Vector3.INF}.
+   */
+  readonly MIN: Vector3i;
+  /**
+   * Max vector, a vector with all components equal to `INT32_MAX`. Can be used as an integer equivalent of {@link Vector3.INF}.
+   */
+  readonly MAX: Vector3i;
+  /** Left unit vector. Represents the local direction of left, and the global direction of west. */
+  readonly LEFT: Vector3i;
+  /** Right unit vector. Represents the local direction of right, and the global direction of east. */
+  readonly RIGHT: Vector3i;
+  /** Up unit vector. */
+  readonly UP: Vector3i;
+  /** Down unit vector. */
+  readonly DOWN: Vector3i;
+  /** Forward unit vector. Represents the local direction of forward, and the global direction of north. */
+  readonly FORWARD: Vector3i;
+  /** Back unit vector. Represents the local direction of back, and the global direction of south. */
+  readonly BACK: Vector3i;
+}
+declare const Vector3i: Vector3iConstructor;

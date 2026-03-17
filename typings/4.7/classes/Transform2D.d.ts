@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2×3 matrix representing a 2D transformation. */
-declare class Transform2D {
+declare interface Transform2D {
   /**
    * The translation offset of this transform, and the column `2` of the matrix. In 2D space, this can be seen as the position.
    */
@@ -120,6 +120,68 @@ declare class Transform2D {
    */
   translated_local(offset: Vector2): Transform2D;
 
+  // Operator overloads
+  [__ne]: { right: Transform2D; ret: boolean };
+  [__mul]: { right: PackedVector2Array; ret: PackedVector2Array } | { right: Rect2; ret: Rect2 } | { right: Transform2D; ret: Transform2D } | { right: Vector2; ret: Vector2 } | { right: float; ret: Transform2D } | { right: int; ret: Transform2D };
+  [__div]: { right: float; ret: Transform2D } | { right: int; ret: Transform2D };
+  [__eq]: { right: Transform2D; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
+}
+
+declare interface Transform2DConstructor {
+  /**
+   * Constructs a {@link Transform2D} identical to {@link IDENTITY}.
+   * **Note:** In C#, this constructs a {@link Transform2D} with all of its components set to {@link Vector2.ZERO}.
+   */
+  (): Transform2D;
+  /** Constructs a {@link Transform2D} as a copy of the given {@link Transform2D}. */
+  (from_: Transform2D): Transform2D;
+  /** Constructs a {@link Transform2D} from a given angle (in radians) and position. */
+  (rotation: float, position: Vector2): Transform2D;
+  /**
+   * Constructs a {@link Transform2D} from a given angle (in radians), scale, skew (in radians), and position.
+   */
+  (rotation: float, scale: Vector2, skew: float, position: Vector2): Transform2D;
+  /**
+   * Constructs a {@link Transform2D} from 3 {@link Vector2} values representing {@link x}, {@link y}, and the {@link origin} (the three matrix columns).
+   */
+  (x_axis: Vector2, y_axis: Vector2, origin: Vector2): Transform2D;
+
   /**
    * The identity {@link Transform2D}. This is a transform with no translation, no rotation, and a scale of {@link Vector2.ONE}. This also means that:
    * - The {@link x} points right ({@link Vector2.RIGHT});
@@ -127,21 +189,16 @@ declare class Transform2D {
    * If a {@link Vector2}, a {@link Rect2}, a {@link PackedVector2Array}, or another {@link Transform2D} is transformed (multiplied) by this constant, no transformation occurs.
    * **Note:** In GDScript, this constant is equivalent to creating a [constructor Transform2D] without any arguments. It can be used to make your code clearer, and for consistency with C#.
    */
-  static readonly IDENTITY: int;
+  readonly IDENTITY: Transform2D;
   /**
    * When any transform is multiplied by {@link FLIP_X}, it negates all components of the {@link x} axis (the X column).
    * When {@link FLIP_X} is multiplied by any transform, it negates the {@link Vector2.x} component of all axes (the X row).
    */
-  static readonly FLIP_X: int;
+  readonly FLIP_X: Transform2D;
   /**
    * When any transform is multiplied by {@link FLIP_Y}, it negates all components of the {@link y} axis (the Y column).
    * When {@link FLIP_Y} is multiplied by any transform, it negates the {@link Vector2.y} component of all axes (the Y row).
    */
-  static readonly FLIP_Y: int;
-
-  // Operator overloads
-  [__ne]: { right: Transform2D; ret: boolean };
-  [__mul]: { right: PackedVector2Array; ret: PackedVector2Array } | { right: Rect2; ret: Rect2 } | { right: Transform2D; ret: Transform2D } | { right: Vector2; ret: Vector2 } | { right: float; ret: Transform2D } | { right: int; ret: Transform2D };
-  [__div]: { right: float; ret: Transform2D } | { right: int; ret: Transform2D };
-  [__eq]: { right: Transform2D; ret: boolean };
+  readonly FLIP_Y: Transform2D;
 }
+declare const Transform2D: Transform2DConstructor;

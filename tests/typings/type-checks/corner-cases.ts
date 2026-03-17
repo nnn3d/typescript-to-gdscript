@@ -68,17 +68,17 @@ class RenamedClassTest extends Node {
 
 class PackedArrayTest extends Node {
   test_packed_arrays() {
-    let bytes = new PackedByteArray();
-    let floats = new PackedFloat32Array();
-    let ints = new PackedInt32Array();
-    let strings = new PackedStringArray();
-    let vectors = new PackedVector2Array();
+    let bytes = PackedByteArray();
+    let floats = PackedFloat32Array();
+    let ints = PackedInt32Array();
+    let strings = PackedStringArray();
+    let vectors = PackedVector2Array();
 
     // These should have their own methods
     bytes.append(0);
     bytes.size();
     strings.append("hello");
-    vectors.append(new Vector2());
+    vectors.append(Vector2());
   }
 }
 
@@ -138,20 +138,20 @@ class ResourceTest extends Resource {
 
 class OpsEdgeCases extends Node {
   test_ops_type_safety() {
-    let v1 = new Vector2();
-    let v2 = new Vector2();
+    let v1 = Vector2();
+    let v2 = Vector2();
 
     // Chained ops (2 args each)
     let sum: Vector2 = gd.ops.add(gd.ops.add(v1, v2), v1);
 
     // gd.ops with Vector3
-    let a = new Vector3();
-    let b = new Vector3();
+    let a = Vector3();
+    let b = Vector3();
     let c: Vector3 = gd.ops.add(a, b);
 
     // gd.ops with Color
-    let c1 = new Color();
-    let c2 = new Color();
+    let c1 = Color();
+    let c2 = Color();
     let c3: Color = gd.ops.mul(c1, c2);
 
     // Numeric ops
@@ -181,5 +181,16 @@ class GlobalsTest extends Node {
     let inf: number = INF;
     let pi: number = PI;
     let length = len([]);
+  }
+}
+
+// ─── Vector ─────────────────────────────
+
+class VectorDictTest extends Node {
+  vector_dict_test() {
+    let v = Vector2();
+
+    // @ts-expect-error — keys() is Dictionary-only, overridden with never
+    v.keys();
   }
 }

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of {@link String}s. */
-declare class PackedStringArray {
+declare interface PackedStringArray {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: string): boolean;
   /** Appends a {@link PackedStringArray} at the end of this array. */
@@ -77,4 +77,43 @@ declare class PackedStringArray {
   [__ne]: { right: PackedStringArray; ret: boolean };
   [__add]: { right: PackedStringArray; ret: PackedStringArray };
   [__eq]: { right: PackedStringArray; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  duplicate_deep: never;
+  find_key: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has_all: never;
+  hash: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  values: never;
 }
+
+declare interface PackedStringArrayConstructor {
+  /** Constructs an empty {@link PackedStringArray}. */
+  (): PackedStringArray;
+  /** Constructs a {@link PackedStringArray} as a copy of the given {@link PackedStringArray}. */
+  (from_: PackedStringArray): PackedStringArray;
+  /**
+   * Constructs a new {@link PackedStringArray}. Optionally, you can pass in a generic {@link Array} that will be converted.
+   */
+  (from_: Array<unknown>): PackedStringArray;
+}
+declare const PackedStringArray: PackedStringArrayConstructor;

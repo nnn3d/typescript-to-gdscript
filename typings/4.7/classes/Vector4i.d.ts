@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 4D vector using integer coordinates. */
-declare class Vector4i {
+declare interface Vector4i {
   /** The vector's W component. Also accessible by using the index position `[3]`. */
   w: int;
   /** The vector's X component. Also accessible by using the index position `[0]`. */
@@ -71,29 +71,6 @@ declare class Vector4i {
   /** Returns a new vector with each component snapped to the closest multiple of `step`. */
   snappedi(step: int): Vector4i;
 
-  // enum Axis
-  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_X: int;
-  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_Y: int;
-  /** Enumerated value for the Z axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_Z: int;
-  /** Enumerated value for the W axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_W: int;
-
-  /** Zero vector, a vector with all components set to `0`. */
-  static readonly ZERO: int;
-  /** One vector, a vector with all components set to `1`. */
-  static readonly ONE: int;
-  /**
-   * Min vector, a vector with all components equal to `INT32_MIN`. Can be used as a negative integer equivalent of {@link Vector4.INF}.
-   */
-  static readonly MIN: int;
-  /**
-   * Max vector, a vector with all components equal to `INT32_MAX`. Can be used as an integer equivalent of {@link Vector4.INF}.
-   */
-  static readonly MAX: int;
-
   // Operator overloads
   [__ne]: { right: Vector4i; ret: boolean };
   [__mul]: { right: Vector4i; ret: Vector4i } | { right: float; ret: Vector4 } | { right: int; ret: Vector4i };
@@ -107,4 +84,77 @@ declare class Vector4i {
   [__gte]: { right: Vector4i; ret: boolean };
   [__plus]: { ret: Vector4i };
   [__minus]: { ret: Vector4i };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
 }
+
+declare interface Vector4iConstructor {
+  /** Constructs a default-initialized {@link Vector4i} with all components set to `0`. */
+  (): Vector4i;
+  /** Constructs a {@link Vector4i} as a copy of the given {@link Vector4i}. */
+  (from_: Vector4i): Vector4i;
+  /**
+   * Constructs a new {@link Vector4i} from the given {@link Vector4} by truncating components' fractional parts (rounding towards zero). For a different behavior consider passing the result of {@link Vector4.ceil}, {@link Vector4.floor} or {@link Vector4.round} to this constructor instead.
+   */
+  (from_: Vector4): Vector4i;
+  /** Returns a {@link Vector4i} with the given components. */
+  (x: int, y: int, z: int, w: int): Vector4i;
+
+  // enum Axis
+  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_X: int;
+  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_Y: int;
+  /** Enumerated value for the Z axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_Z: int;
+  /** Enumerated value for the W axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_W: int;
+
+  /** Zero vector, a vector with all components set to `0`. */
+  readonly ZERO: Vector4i;
+  /** One vector, a vector with all components set to `1`. */
+  readonly ONE: Vector4i;
+  /**
+   * Min vector, a vector with all components equal to `INT32_MIN`. Can be used as a negative integer equivalent of {@link Vector4.INF}.
+   */
+  readonly MIN: Vector4i;
+  /**
+   * Max vector, a vector with all components equal to `INT32_MAX`. Can be used as an integer equivalent of {@link Vector4.INF}.
+   */
+  readonly MAX: Vector4i;
+}
+declare const Vector4i: Vector4iConstructor;

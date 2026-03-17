@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A unit quaternion used for representing 3D rotations. */
-declare class Quaternion {
+declare interface Quaternion {
   /**
    * W component of the quaternion. This is the "real" part.
    * **Note:** Quaternion components should usually not be manipulated directly.
@@ -38,10 +38,6 @@ declare class Quaternion {
    * Returns the exponential of this quaternion. The rotation axis of the result is the normalized rotation axis of this quaternion, the angle of the result is the length of the vector part of this quaternion.
    */
   exp(): Quaternion;
-  /**
-   * Constructs a new {@link Quaternion} from the given {@link Vector3} of Euler angles (https://en.wikipedia.org/wiki/Euler_angles), in radians. This method always uses the YXZ convention ({@link EULER_ORDER_YXZ}).
-   */
-  static from_euler(euler: Vector3): Quaternion;
   /**
    * Returns the angle of the rotation represented by this quaternion.
    * **Note:** The quaternion must be normalized.
@@ -101,13 +97,6 @@ declare class Quaternion {
    */
   spherical_cubic_interpolate_in_time(b: Quaternion, pre_a: Quaternion, post_b: Quaternion, weight: float, b_t: float, pre_a_t: float, post_b_t: float): Quaternion;
 
-  /**
-   * The identity quaternion, representing no rotation. This has the same rotation as {@link Basis.IDENTITY}.
-   * If a {@link Vector3} is rotated (multiplied) by this quaternion, it does not change.
-   * **Note:** In GDScript, this constant is equivalent to creating a [constructor Quaternion] without any arguments. It can be used to make your code clearer, and for consistency with C#.
-   */
-  static readonly IDENTITY: int;
-
   // Operator overloads
   [__ne]: { right: Quaternion; ret: boolean };
   [__mul]: { right: Quaternion; ret: Quaternion } | { right: Vector3; ret: Vector3 } | { right: float; ret: Quaternion } | { right: int; ret: Quaternion };
@@ -117,4 +106,80 @@ declare class Quaternion {
   [__eq]: { right: Quaternion; ret: boolean };
   [__plus]: { ret: Quaternion };
   [__minus]: { ret: Quaternion };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
 }
+
+declare interface QuaternionConstructor {
+  /**
+   * Constructs a {@link Quaternion} identical to {@link IDENTITY}.
+   * **Note:** In C#, this constructs a {@link Quaternion} with all of its components set to `0.0`.
+   */
+  (): Quaternion;
+  /** Constructs a {@link Quaternion} as a copy of the given {@link Quaternion}. */
+  (from_: Quaternion): Quaternion;
+  /**
+   * Constructs a {@link Quaternion} representing the shortest arc between `arc_from` and `arc_to`. These can be imagined as two points intersecting a sphere's surface, with a radius of `1.0`.
+   */
+  (arc_from: Vector3, arc_to: Vector3): Quaternion;
+  /**
+   * Constructs a {@link Quaternion} representing rotation around the `axis` by the given `angle`, in radians. The axis must be a normalized vector.
+   */
+  (axis: Vector3, angle: float): Quaternion;
+  /**
+   * Constructs a {@link Quaternion} from the given rotation {@link Basis}.
+   * This constructor is faster than {@link Basis.get_rotation_quaternion}, but the given basis must be *orthonormalized* (see {@link Basis.orthonormalized}). Otherwise, the constructor fails and returns {@link IDENTITY}.
+   */
+  (from_: Basis): Quaternion;
+  /**
+   * Constructs a {@link Quaternion} defined by the given values.
+   * **Note:** Only normalized quaternions represent rotation; if these values are not normalized, the new {@link Quaternion} will not be a valid rotation.
+   */
+  (x: float, y: float, z: float, w: float): Quaternion;
+  /**
+   * Constructs a new {@link Quaternion} from the given {@link Vector3} of Euler angles (https://en.wikipedia.org/wiki/Euler_angles), in radians. This method always uses the YXZ convention ({@link EULER_ORDER_YXZ}).
+   */
+  from_euler(euler: Vector3): Quaternion;
+
+  /**
+   * The identity quaternion, representing no rotation. This has the same rotation as {@link Basis.IDENTITY}.
+   * If a {@link Vector3} is rotated (multiplied) by this quaternion, it does not change.
+   * **Note:** In GDScript, this constant is equivalent to creating a [constructor Quaternion] without any arguments. It can be used to make your code clearer, and for consistency with C#.
+   */
+  readonly IDENTITY: Quaternion;
+}
+declare const Quaternion: QuaternionConstructor;

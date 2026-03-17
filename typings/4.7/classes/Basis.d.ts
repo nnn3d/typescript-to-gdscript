@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3×3 matrix for representing 3D rotation and scale. */
-declare class Basis {
+declare interface Basis {
   /**
    * The basis's X axis, and the column `0` of the matrix.
    * On the identity basis, this vector points right ({@link Vector3.RIGHT}).
@@ -26,19 +26,6 @@ declare class Basis {
    * **Note:** If the basis's scale is the same for every axis, its determinant is always that scale by the power of 3.
    */
   determinant(): float;
-  /**
-   * Constructs a new {@link Basis} that only represents rotation from the given {@link Vector3} of Euler angles (https://en.wikipedia.org/wiki/Euler_angles), in radians.
-   * - The {@link Vector3.x} should contain the angle around the {@link x} axis (pitch);
-   * - The {@link Vector3.y} should contain the angle around the {@link y} axis (yaw);
-   * - The {@link Vector3.z} should contain the angle around the {@link z} axis (roll).
-   * The order of each consecutive rotation can be changed with `order` (see {@link EulerOrder} constants). By default, the YXZ convention is used ({@link EULER_ORDER_YXZ}): the basis rotates first around the Y axis (yaw), then X (pitch), and lastly Z (roll). When using the opposite method {@link get_euler}, this order is reversed.
-   */
-  static from_euler(euler: Vector3, order?: int): Basis;
-  /**
-   * Constructs a new {@link Basis} that only represents scale, with no rotation or shear, from the given `scale` vector.
-   * **Note:** In linear algebra, the matrix of this basis is also known as a diagonal matrix (https://en.wikipedia.org/wiki/Diagonal_matrix).
-   */
-  static from_scale(scale: Vector3): Basis;
   /**
    * Returns this basis's rotation as a {@link Vector3} of Euler angles (https://en.wikipedia.org/wiki/Euler_angles), in radians. For the returned value:
    * - The {@link Vector3.x} contains the angle around the {@link x} axis (pitch);
@@ -78,13 +65,6 @@ declare class Basis {
    * Returns `true` if this basis is orthonormal. An orthonormal basis is both *orthogonal* (the axes are perpendicular to each other) and *normalized* (the length of every axis is `1.0`). This method can be especially useful during physics calculations.
    */
   is_orthonormal(): boolean;
-  /**
-   * Creates a new {@link Basis} with a rotation such that the forward axis (-Z) points towards the `target` position.
-   * By default, the -Z axis (camera forward) is treated as forward (implies +X is right). If `use_model_front` is `true`, the +Z axis (asset front) is treated as forward (implies +X is left) and points toward the `target` position.
-   * The up axis (+Y) points as close to the `up` vector as possible while staying perpendicular to the forward axis. The returned basis is orthonormalized (see {@link orthonormalized}).
-   * The `target` and the `up` cannot be {@link Vector3.ZERO}, and shouldn't be colinear to avoid unintended rotation around local Z axis.
-   */
-  static looking_at(target: Vector3, up?: Vector3, use_model_front?: boolean): Basis;
   /**
    * Returns the orthonormalized version of this basis. An orthonormal basis is both *orthogonal* (the axes are perpendicular to each other) and *normalized* (the axes have a length of `1.0`), which also means it can only represent a rotation.
    * It is often useful to call this method to avoid rounding errors on a rotating basis:
@@ -130,6 +110,90 @@ declare class Basis {
    */
   transposed(): Basis;
 
+  // Operator overloads
+  [__ne]: { right: Basis; ret: boolean };
+  [__mul]: { right: Basis; ret: Basis } | { right: Vector3; ret: Vector3 } | { right: float; ret: Basis } | { right: int; ret: Basis };
+  [__div]: { right: float; ret: Basis } | { right: int; ret: Basis };
+  [__eq]: { right: Basis; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
+}
+
+declare interface BasisConstructor {
+  /**
+   * Constructs a {@link Basis} identical to {@link IDENTITY}.
+   * **Note:** In C#, this constructs a {@link Basis} with all of its components set to {@link Vector3.ZERO}.
+   */
+  (): Basis;
+  /** Constructs a {@link Basis} as a copy of the given {@link Basis}. */
+  (from_: Basis): Basis;
+  /**
+   * Constructs a {@link Basis} that only represents rotation, rotated around the `axis` by the given `angle`, in radians. The axis must be a normalized vector.
+   * **Note:** This is the same as using {@link rotated} on the {@link IDENTITY} basis. With more than one angle consider using {@link from_euler}, instead.
+   */
+  (axis: Vector3, angle: float): Basis;
+  /**
+   * Constructs a {@link Basis} that only represents rotation from the given {@link Quaternion}.
+   * **Note:** Quaternions *only* store rotation, not scale. Because of this, conversions from {@link Basis} to {@link Quaternion} cannot always be reversed.
+   */
+  (from_: Quaternion): Basis;
+  /** Constructs a {@link Basis} from 3 axis vectors. These are the columns of the basis matrix. */
+  (x_axis: Vector3, y_axis: Vector3, z_axis: Vector3): Basis;
+  /**
+   * Constructs a new {@link Basis} that only represents rotation from the given {@link Vector3} of Euler angles (https://en.wikipedia.org/wiki/Euler_angles), in radians.
+   * - The {@link Vector3.x} should contain the angle around the {@link x} axis (pitch);
+   * - The {@link Vector3.y} should contain the angle around the {@link y} axis (yaw);
+   * - The {@link Vector3.z} should contain the angle around the {@link z} axis (roll).
+   * The order of each consecutive rotation can be changed with `order` (see {@link EulerOrder} constants). By default, the YXZ convention is used ({@link EULER_ORDER_YXZ}): the basis rotates first around the Y axis (yaw), then X (pitch), and lastly Z (roll). When using the opposite method {@link get_euler}, this order is reversed.
+   */
+  from_euler(euler: Vector3, order?: int): Basis;
+  /**
+   * Constructs a new {@link Basis} that only represents scale, with no rotation or shear, from the given `scale` vector.
+   * **Note:** In linear algebra, the matrix of this basis is also known as a diagonal matrix (https://en.wikipedia.org/wiki/Diagonal_matrix).
+   */
+  from_scale(scale: Vector3): Basis;
+  /**
+   * Creates a new {@link Basis} with a rotation such that the forward axis (-Z) points towards the `target` position.
+   * By default, the -Z axis (camera forward) is treated as forward (implies +X is right). If `use_model_front` is `true`, the +Z axis (asset front) is treated as forward (implies +X is left) and points toward the `target` position.
+   * The up axis (+Y) points as close to the `up` vector as possible while staying perpendicular to the forward axis. The returned basis is orthonormalized (see {@link orthonormalized}).
+   * The `target` and the `up` cannot be {@link Vector3.ZERO}, and shouldn't be colinear to avoid unintended rotation around local Z axis.
+   */
+  looking_at(target: Vector3, up?: Vector3, use_model_front?: boolean): Basis;
+
   /**
    * The identity {@link Basis}. This is an orthonormal basis with no rotation, no shear, and a scale of {@link Vector3.ONE}. This also means that:
    * - The {@link x} points right ({@link Vector3.RIGHT});
@@ -138,26 +202,21 @@ declare class Basis {
    * If a {@link Vector3} or another {@link Basis} is transformed (multiplied) by this constant, no transformation occurs.
    * **Note:** In GDScript, this constant is equivalent to creating a [constructor Basis] without any arguments. It can be used to make your code clearer, and for consistency with C#.
    */
-  static readonly IDENTITY: int;
+  readonly IDENTITY: Basis;
   /**
    * When any basis is multiplied by {@link FLIP_X}, it negates all components of the {@link x} axis (the X column).
    * When {@link FLIP_X} is multiplied by any basis, it negates the {@link Vector3.x} component of all axes (the X row).
    */
-  static readonly FLIP_X: int;
+  readonly FLIP_X: Basis;
   /**
    * When any basis is multiplied by {@link FLIP_Y}, it negates all components of the {@link y} axis (the Y column).
    * When {@link FLIP_Y} is multiplied by any basis, it negates the {@link Vector3.y} component of all axes (the Y row).
    */
-  static readonly FLIP_Y: int;
+  readonly FLIP_Y: Basis;
   /**
    * When any basis is multiplied by {@link FLIP_Z}, it negates all components of the {@link z} axis (the Z column).
    * When {@link FLIP_Z} is multiplied by any basis, it negates the {@link Vector3.z} component of all axes (the Z row).
    */
-  static readonly FLIP_Z: int;
-
-  // Operator overloads
-  [__ne]: { right: Basis; ret: boolean };
-  [__mul]: { right: Basis; ret: Basis } | { right: Vector3; ret: Vector3 } | { right: float; ret: Basis } | { right: int; ret: Basis };
-  [__div]: { right: float; ret: Basis } | { right: int; ret: Basis };
-  [__eq]: { right: Basis; ret: boolean };
+  readonly FLIP_Z: Basis;
 }
+declare const Basis: BasisConstructor;

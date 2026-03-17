@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of {@link Color}s. */
-declare class PackedColorArray {
+declare interface PackedColorArray {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: Color): boolean;
   /** Appends a {@link PackedColorArray} at the end of this array. */
@@ -77,4 +77,44 @@ declare class PackedColorArray {
   [__ne]: { right: PackedColorArray; ret: boolean };
   [__add]: { right: PackedColorArray; ret: PackedColorArray };
   [__eq]: { right: PackedColorArray; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  duplicate_deep: never;
+  find_key: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has_all: never;
+  hash: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  values: never;
 }
+
+declare interface PackedColorArrayConstructor {
+  /** Constructs an empty {@link PackedColorArray}. */
+  (): PackedColorArray;
+  /** Constructs a {@link PackedColorArray} as a copy of the given {@link PackedColorArray}. */
+  (from_: PackedColorArray): PackedColorArray;
+  /**
+   * Constructs a new {@link PackedColorArray}. Optionally, you can pass in a generic {@link Array} that will be converted.
+   * **Note:** When initializing a {@link PackedColorArray} with elements, it must be initialized with an {@link Array} of {@link Color} values:
+   */
+  (from_: Array<unknown>): PackedColorArray;
+}
+declare const PackedColorArray: PackedColorArrayConstructor;

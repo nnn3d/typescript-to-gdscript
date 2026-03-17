@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of {@link Vector3}s. */
-declare class PackedVector3Array {
+declare interface PackedVector3Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: Vector3): boolean;
   /** Appends a {@link PackedVector3Array} at the end of this array. */
@@ -91,4 +91,44 @@ declare class PackedVector3Array {
   [__mul]: { right: Transform3D; ret: PackedVector3Array };
   [__add]: { right: PackedVector3Array; ret: PackedVector3Array };
   [__eq]: { right: PackedVector3Array; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  duplicate_deep: never;
+  find_key: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has_all: never;
+  hash: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  values: never;
 }
+
+declare interface PackedVector3ArrayConstructor {
+  /** Constructs an empty {@link PackedVector3Array}. */
+  (): PackedVector3Array;
+  /** Constructs a {@link PackedVector3Array} as a copy of the given {@link PackedVector3Array}. */
+  (from_: PackedVector3Array): PackedVector3Array;
+  /**
+   * Constructs a new {@link PackedVector3Array}. Optionally, you can pass in a generic {@link Array} that will be converted.
+   * **Note:** When initializing a {@link PackedVector3Array} with elements, it must be initialized with an {@link Array} of {@link Vector3} values:
+   */
+  (from_: Array<unknown>): PackedVector3Array;
+}
+declare const PackedVector3Array: PackedVector3ArrayConstructor;

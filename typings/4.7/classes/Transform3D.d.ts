@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3×4 matrix representing a 3D transformation. */
-declare class Transform3D {
+declare interface Transform3D {
   /**
    * The {@link Basis} of this transform. It is composed by 3 axes ({@link Basis.x}, {@link Basis.y}, and {@link Basis.z}). Together, these represent the transform's rotation, scale, and shear.
    */
@@ -82,6 +82,69 @@ declare class Transform3D {
    */
   translated_local(offset: Vector3): Transform3D;
 
+  // Operator overloads
+  [__ne]: { right: Transform3D; ret: boolean };
+  [__mul]: { right: AABB; ret: AABB } | { right: PackedVector3Array; ret: PackedVector3Array } | { right: Plane; ret: Plane } | { right: Transform3D; ret: Transform3D } | { right: Vector3; ret: Vector3 } | { right: float; ret: Transform3D } | { right: int; ret: Transform3D };
+  [__div]: { right: float; ret: Transform3D } | { right: int; ret: Transform3D };
+  [__eq]: { right: Transform3D; ret: boolean };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
+}
+
+declare interface Transform3DConstructor {
+  /**
+   * Constructs a {@link Transform3D} identical to {@link IDENTITY}.
+   * **Note:** In C#, this constructs a {@link Transform3D} with its {@link origin} and the components of its {@link basis} set to {@link Vector3.ZERO}.
+   */
+  (): Transform3D;
+  /** Constructs a {@link Transform3D} as a copy of the given {@link Transform3D}. */
+  (from_: Transform3D): Transform3D;
+  /** Constructs a {@link Transform3D} from a {@link Basis} and {@link Vector3}. */
+  (basis: Basis, origin: Vector3): Transform3D;
+  /**
+   * Constructs a {@link Transform3D} from a {@link Projection}. Because {@link Transform3D} is a 3×4 matrix and {@link Projection} is a 4×4 matrix, this operation trims the last row of the projection matrix (`from.x.w`, `from.y.w`, `from.z.w`, and `from.w.w` are not included in the new transform).
+   */
+  (from_: Projection): Transform3D;
+  /**
+   * Constructs a {@link Transform3D} from four {@link Vector3} values (also called matrix columns).
+   * The first three arguments are the {@link basis}'s axes ({@link Basis.x}, {@link Basis.y}, and {@link Basis.z}).
+   */
+  (x_axis: Vector3, y_axis: Vector3, z_axis: Vector3, origin: Vector3): Transform3D;
+
   /**
    * The identity {@link Transform3D}. This is a transform with no translation, no rotation, and a scale of {@link Vector3.ONE}. Its {@link basis} is equal to {@link Basis.IDENTITY}. This also means that:
    * - Its {@link Basis.x} points right ({@link Vector3.RIGHT});
@@ -90,23 +153,18 @@ declare class Transform3D {
    * If a {@link Vector3}, an {@link AABB}, a {@link Plane}, a {@link PackedVector3Array}, or another {@link Transform3D} is transformed (multiplied) by this constant, no transformation occurs.
    * **Note:** In GDScript, this constant is equivalent to creating a [constructor Transform3D] without any arguments. It can be used to make your code clearer, and for consistency with C#.
    */
-  static readonly IDENTITY: int;
+  readonly IDENTITY: Transform3D;
   /**
    * {@link Transform3D} with mirroring applied perpendicular to the YZ plane. Its {@link basis} is equal to {@link Basis.FLIP_X}.
    */
-  static readonly FLIP_X: int;
+  readonly FLIP_X: Transform3D;
   /**
    * {@link Transform3D} with mirroring applied perpendicular to the XZ plane. Its {@link basis} is equal to {@link Basis.FLIP_Y}.
    */
-  static readonly FLIP_Y: int;
+  readonly FLIP_Y: Transform3D;
   /**
    * {@link Transform3D} with mirroring applied perpendicular to the XY plane. Its {@link basis} is equal to {@link Basis.FLIP_Z}.
    */
-  static readonly FLIP_Z: int;
-
-  // Operator overloads
-  [__ne]: { right: Transform3D; ret: boolean };
-  [__mul]: { right: AABB; ret: AABB } | { right: PackedVector3Array; ret: PackedVector3Array } | { right: Plane; ret: Plane } | { right: Transform3D; ret: Transform3D } | { right: Vector3; ret: Vector3 } | { right: float; ret: Transform3D } | { right: int; ret: Transform3D };
-  [__div]: { right: float; ret: Transform3D } | { right: int; ret: Transform3D };
-  [__eq]: { right: Transform3D; ret: boolean };
+  readonly FLIP_Z: Transform3D;
 }
+declare const Transform3D: Transform3DConstructor;

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 4D vector using floating-point coordinates. */
-declare class Vector4 {
+declare interface Vector4 {
   /** The vector's W component. Also accessible by using the index position `[3]`. */
   w: float;
   /** The vector's X component. Also accessible by using the index position `[0]`. */
@@ -132,23 +132,6 @@ declare class Vector4 {
    */
   snappedf(step: float): Vector4;
 
-  // enum Axis
-  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_X: int;
-  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_Y: int;
-  /** Enumerated value for the Z axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_Z: int;
-  /** Enumerated value for the W axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_W: int;
-
-  /** Zero vector, a vector with all components set to `0`. */
-  static readonly ZERO: int;
-  /** One vector, a vector with all components set to `1`. */
-  static readonly ONE: int;
-  /** Infinity vector, a vector with all components set to {@link @GDScript.INF}. */
-  static readonly INF: int;
-
   // Operator overloads
   [__ne]: { right: Vector4; ret: boolean };
   [__mul]: { right: Projection; ret: Vector4 } | { right: Vector4; ret: Vector4 } | { right: float; ret: Vector4 } | { right: int; ret: Vector4 };
@@ -162,4 +145,69 @@ declare class Vector4 {
   [__gte]: { right: Vector4; ret: boolean };
   [__plus]: { ret: Vector4 };
   [__minus]: { ret: Vector4 };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
 }
+
+declare interface Vector4Constructor {
+  /** Constructs a default-initialized {@link Vector4} with all components set to `0`. */
+  (): Vector4;
+  /** Constructs a {@link Vector4} as a copy of the given {@link Vector4}. */
+  (from_: Vector4): Vector4;
+  /** Constructs a new {@link Vector4} from the given {@link Vector4i}. */
+  (from_: Vector4i): Vector4;
+  /** Returns a {@link Vector4} with the given components. */
+  (x: float, y: float, z: float, w: float): Vector4;
+
+  // enum Axis
+  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_X: int;
+  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_Y: int;
+  /** Enumerated value for the Z axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_Z: int;
+  /** Enumerated value for the W axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_W: int;
+
+  /** Zero vector, a vector with all components set to `0`. */
+  readonly ZERO: Vector4;
+  /** One vector, a vector with all components set to `1`. */
+  readonly ONE: Vector4;
+  /** Infinity vector, a vector with all components set to {@link @GDScript.INF}. */
+  readonly INF: Vector4;
+}
+declare const Vector4: Vector4Constructor;

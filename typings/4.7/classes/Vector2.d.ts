@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D vector using floating-point coordinates. */
-declare class Vector2 {
+declare interface Vector2 {
   /** The vector's X component. Also accessible by using the index position `[0]`. */
   x: float;
   /** The vector's Y component. Also accessible by using the index position `[1]`. */
@@ -89,11 +89,6 @@ declare class Vector2 {
   dot(with_: Vector2): float;
   /** Returns a new vector with all components rounded down (towards negative infinity). */
   floor(): Vector2;
-  /**
-   * Creates a {@link Vector2} rotated to the given `angle` in radians. This is equivalent to doing `Vector2(cos(angle), sin(angle))` or `Vector2.RIGHT.rotated(angle)`.
-   * **Note:** The length of the returned {@link Vector2} is *approximately* `1.0`, but is is not guaranteed to be exactly `1.0` due to floating-point precision issues. Call {@link normalized} on the returned {@link Vector2} if you require a unit vector.
-   */
-  static from_angle(angle: float): Vector2;
   /**
    * Returns `true` if this vector and `to` are approximately equal, by running {@link @GlobalScope.is_equal_approx} on each component.
    */
@@ -210,27 +205,6 @@ declare class Vector2 {
    */
   snappedf(step: float): Vector2;
 
-  // enum Axis
-  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_X: int;
-  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
-  static readonly AXIS_Y: int;
-
-  /** Zero vector, a vector with all components set to `0`. */
-  static readonly ZERO: int;
-  /** One vector, a vector with all components set to `1`. */
-  static readonly ONE: int;
-  /** Infinity vector, a vector with all components set to {@link @GDScript.INF}. */
-  static readonly INF: int;
-  /** Left unit vector. Represents the direction of left. */
-  static readonly LEFT: int;
-  /** Right unit vector. Represents the direction of right. */
-  static readonly RIGHT: int;
-  /** Up unit vector. Y is down in 2D, so this vector points -Y. */
-  static readonly UP: int;
-  /** Down unit vector. Y is down in 2D, so this vector points +Y. */
-  static readonly DOWN: int;
-
   // Operator overloads
   [__ne]: { right: Vector2; ret: boolean };
   [__mul]: { right: Transform2D; ret: Vector2 } | { right: Vector2; ret: Vector2 } | { right: float; ret: Vector2 } | { right: int; ret: Vector2 };
@@ -244,4 +218,78 @@ declare class Vector2 {
   [__gte]: { right: Vector2; ret: boolean };
   [__plus]: { ret: Vector2 };
   [__minus]: { ret: Vector2 };
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
 }
+
+declare interface Vector2Constructor {
+  /** Constructs a default-initialized {@link Vector2} with all components set to `0`. */
+  (): Vector2;
+  /** Constructs a {@link Vector2} as a copy of the given {@link Vector2}. */
+  (from_: Vector2): Vector2;
+  /** Constructs a new {@link Vector2} from {@link Vector2i}. */
+  (from_: Vector2i): Vector2;
+  /** Constructs a new {@link Vector2} from the given `x` and `y`. */
+  (x: float, y: float): Vector2;
+  /**
+   * Creates a {@link Vector2} rotated to the given `angle` in radians. This is equivalent to doing `Vector2(cos(angle), sin(angle))` or `Vector2.RIGHT.rotated(angle)`.
+   * **Note:** The length of the returned {@link Vector2} is *approximately* `1.0`, but is is not guaranteed to be exactly `1.0` due to floating-point precision issues. Call {@link normalized} on the returned {@link Vector2} if you require a unit vector.
+   */
+  from_angle(angle: float): Vector2;
+
+  // enum Axis
+  /** Enumerated value for the X axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_X: int;
+  /** Enumerated value for the Y axis. Returned by {@link max_axis_index} and {@link min_axis_index}. */
+  readonly AXIS_Y: int;
+
+  /** Zero vector, a vector with all components set to `0`. */
+  readonly ZERO: Vector2;
+  /** One vector, a vector with all components set to `1`. */
+  readonly ONE: Vector2;
+  /** Infinity vector, a vector with all components set to {@link @GDScript.INF}. */
+  readonly INF: Vector2;
+  /** Left unit vector. Represents the direction of left. */
+  readonly LEFT: Vector2;
+  /** Right unit vector. Represents the direction of right. */
+  readonly RIGHT: Vector2;
+  /** Up unit vector. Y is down in 2D, so this vector points -Y. */
+  readonly UP: Vector2;
+  /** Down unit vector. Y is down in 2D, so this vector points +Y. */
+  readonly DOWN: Vector2;
+}
+declare const Vector2: Vector2Constructor;
