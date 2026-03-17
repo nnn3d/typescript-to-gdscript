@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D vector using integer coordinates. */
-declare interface Vector2i {
+interface Vector2i {
   /** The vector's X component. Also accessible by using the index position `[0]`. */
   x: int;
   /** The vector's Y component. Also accessible by using the index position `[1]`. */
@@ -120,7 +120,7 @@ declare interface Vector2i {
   values: never;
 }
 
-declare interface Vector2iConstructor {
+interface Vector2iConstructor {
   /** Constructs a default-initialized {@link Vector2i} with all components set to `0`. */
   (): Vector2i;
   /** Constructs a {@link Vector2i} as a copy of the given {@link Vector2i}. */

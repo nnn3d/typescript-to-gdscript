@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of {@link Color}s. */
-declare interface PackedColorArray {
+interface PackedColorArray {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: Color): boolean;
   /** Appends a {@link PackedColorArray} at the end of this array. */
@@ -106,7 +106,7 @@ declare interface PackedColorArray {
   values: never;
 }
 
-declare interface PackedColorArrayConstructor {
+interface PackedColorArrayConstructor {
   /** Constructs an empty {@link PackedColorArray}. */
   (): PackedColorArray;
   /** Constructs a {@link PackedColorArray} as a copy of the given {@link PackedColorArray}. */

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of bytes. */
-declare interface PackedByteArray {
+interface PackedByteArray {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: int): boolean;
   /** Appends a {@link PackedByteArray} at the end of this array. */
@@ -309,7 +309,7 @@ declare interface PackedByteArray {
   values: never;
 }
 
-declare interface PackedByteArrayConstructor {
+interface PackedByteArrayConstructor {
   /** Constructs an empty {@link PackedByteArray}. */
   (): PackedByteArray;
   /** Constructs a {@link PackedByteArray} as a copy of the given {@link PackedByteArray}. */

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A unit quaternion used for representing 3D rotations. */
-declare interface Quaternion {
+interface Quaternion {
   /**
    * W component of the quaternion. This is the "real" part.
    * **Note:** Quaternion components should usually not be manipulated directly.
@@ -144,7 +144,7 @@ declare interface Quaternion {
   values: never;
 }
 
-declare interface QuaternionConstructor {
+interface QuaternionConstructor {
   /**
    * Constructs a {@link Quaternion} identical to {@link IDENTITY}.
    * **Note:** In C#, this constructs a {@link Quaternion} with all of its components set to `0.0`.

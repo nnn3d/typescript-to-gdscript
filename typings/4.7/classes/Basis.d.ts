@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3×3 matrix for representing 3D rotation and scale. */
-declare interface Basis {
+interface Basis {
   /**
    * The basis's X axis, and the column `0` of the matrix.
    * On the identity basis, this vector points right ({@link Vector3.RIGHT}).
@@ -153,7 +153,7 @@ declare interface Basis {
   values: never;
 }
 
-declare interface BasisConstructor {
+interface BasisConstructor {
   /**
    * Constructs a {@link Basis} identical to {@link IDENTITY}.
    * **Note:** In C#, this constructs a {@link Basis} with all of its components set to {@link Vector3.ZERO}.

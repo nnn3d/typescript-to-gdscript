@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 4×4 matrix for 3D projective transformations. */
-declare interface Projection {
+interface Projection {
   /** The projection matrix's W vector (column 3). Equivalent to array index `3`. */
   w: Vector4;
   /** The projection matrix's X vector (column 0). Equivalent to array index `0`. */
@@ -102,7 +102,7 @@ declare interface Projection {
   values: never;
 }
 
-declare interface ProjectionConstructor {
+interface ProjectionConstructor {
   /**
    * Constructs a default-initialized {@link Projection} identical to {@link IDENTITY}.
    * **Note:** In C#, this constructs a {@link Projection} identical to {@link ZERO}.

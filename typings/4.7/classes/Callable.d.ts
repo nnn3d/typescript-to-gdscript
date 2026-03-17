@@ -9,7 +9,7 @@
  * which TS automatically uses for concrete function types (lambdas, etc.).
  * This base interface works for `var c = new Callable()` and `var fn: Function`.
  */
-declare interface Function {
+interface Function {
   bind(...args: any[]): Callable;
   bindv(args: Array<any>): Callable;
   call(...args: any[]): unknown;
@@ -47,7 +47,7 @@ declare var Callable: { new(): Callable; create(object: GodotObject, method: str
  * GDScript bind() appends arguments to the END of the parameter list,
  * so bind(lastArg) on (a, b, c) => R returns (a, b) => R.
  */
-declare interface CallableFunction extends Function {
+interface CallableFunction extends Function {
   bind<F>(this: F): F;
   bind<Init extends any[], L, R>(this: (...args: [...Init, L]) => R, arg: L): (...args: Init) => R;
   bind<Init extends any[], L1, L2, R>(this: (...args: [...Init, L1, L2]) => R, arg1: L1, arg2: L2): (...args: Init) => R;
@@ -69,4 +69,4 @@ declare interface CallableFunction extends Function {
   rpc_id<A extends any[]>(this: (...args: A) => any, peer_id: int, ...args: A): void;
   unbind<F>(this: F, argcount: int): F;
 }
-declare interface NewableFunction extends Function {}
+interface NewableFunction extends Function {}

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3D vector using floating-point coordinates. */
-declare interface Vector3 {
+interface Vector3 {
   /** The vector's X component. Also accessible by using the index position `[0]`. */
   x: float;
   /** The vector's Y component. Also accessible by using the index position `[1]`. */
@@ -248,7 +248,7 @@ declare interface Vector3 {
   values: never;
 }
 
-declare interface Vector3Constructor {
+interface Vector3Constructor {
   /** Constructs a default-initialized {@link Vector3} with all components set to `0`. */
   (): Vector3;
   /** Constructs a {@link Vector3} as a copy of the given {@link Vector3}. */

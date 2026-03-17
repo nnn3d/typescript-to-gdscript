@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A built-in type for strings. */
-declare interface String {
+interface String {
   /** Returns `true` if the string begins with the given `text`. See also {@link ends_with}. */
   begins_with(text: string): boolean;
   /** Returns an array containing the bigrams (pairs of consecutive characters) of this string. */

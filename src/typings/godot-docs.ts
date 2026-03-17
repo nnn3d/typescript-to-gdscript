@@ -286,7 +286,7 @@ function generateInterfaceDeclaration(cls: GodotClassXml, tsName: string): strin
 
   // Class-level JSDoc
   lines.push(...emitJsDoc(cls.briefDescription, ''));
-  lines.push(`declare interface ${tsName} {`);
+  lines.push(`interface ${tsName} {`);
 
   // Properties (skip static-like things)
   for (const prop of cls.properties) {
@@ -432,7 +432,7 @@ function generateValueTypeDeclaration(cls: GodotClassXml, dictMembers?: Set<stri
 
   // Interface for instance members
   lines.push(...emitJsDoc(cls.briefDescription, ''));
-  lines.push(`declare interface ${className} {`);
+  lines.push(`interface ${className} {`);
 
   // Properties
   for (const prop of cls.properties) {
@@ -473,7 +473,7 @@ function generateValueTypeDeclaration(cls: GodotClassXml, dictMembers?: Set<stri
   lines.push('');
 
   // Constructor interface with static members
-  lines.push(`declare interface ${className}Constructor {`);
+  lines.push(`interface ${className}Constructor {`);
 
   // Constructor overloads from XML
   for (const ctor of cls.constructors) {
@@ -570,7 +570,7 @@ function generateNumberOperatorOverloads(classes: Map<string, GodotClassXml>): s
 
   const lines: string[] = [];
   lines.push('// Operator overloads for int/float (number type)');
-  lines.push('declare interface Number {');
+  lines.push('interface Number {');
   for (const [symbolName, group] of grouped) {
     lines.push(`  [${symbolName}]: ${[...group.entries].join(' | ')};`);
   }
@@ -821,16 +821,10 @@ function applyOverride(generated: string, override: ParsedOverride): string {
 
   // Replace header line (first line that has interface/class + {)
   if (override.header) {
-    const headerIdx = lines.findIndex(l => /^(declare\s+)?(interface|class)\s/.test(l.trim()));
+    const headerIdx = lines.findIndex(l => /^(interface|declare class)\s/.test(l.trim()));
     if (headerIdx >= 0) {
       // The override header may be multi-line (with JSDoc). Split it into individual lines.
       const headerLines = (override.header + ' {').split('\n');
-      // Ensure the interface/class line has `declare` prefix
-      for (let hi = 0; hi < headerLines.length; hi++) {
-        if (/^\s*(interface|class)\s/.test(headerLines[hi]) && !/^\s*declare\s/.test(headerLines[hi])) {
-          headerLines[hi] = 'declare ' + headerLines[hi];
-        }
-      }
       lines.splice(headerIdx, 1, ...headerLines);
     }
   }
@@ -1011,8 +1005,7 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
         fileLines.push('declare var Callable: { new(): Callable; create(object: GodotObject, method: string): Callable };');
         const cfOverride = overrides.get('CallableFunction');
         if (cfOverride) {
-          const cfHeader = cfOverride.header!.replace(/^(interface|class)\s/m, 'declare $1 ');
-          const cfLines = [cfHeader + ' {'];
+          const cfLines = [cfOverride.header + ' {'];
           for (const [, text] of cfOverride.members) {
             cfLines.push(text);
           }
@@ -1022,16 +1015,16 @@ export function generateGodotDocsTypings(options: GodotDocsTypingsOptions): Godo
           cfLines.push('}');
           fileLines.push(cfLines.join('\n'));
         } else {
-          fileLines.push('declare interface CallableFunction extends Function {}');
+          fileLines.push('interface CallableFunction extends Function {}');
         }
-        fileLines.push('declare interface NewableFunction extends Function {}');
+        fileLines.push('interface NewableFunction extends Function {}');
       }
       // Array → keep ArrayConstructor + GodotArray constructor
       if (name === 'Array') {
         const hasGenerics = override?.header.includes('<') ?? false;
         const typeParam = hasGenerics ? '<T>' : '';
         const unknownParam = hasGenerics ? '<unknown>' : '';
-        fileLines.push('declare interface ArrayConstructor {');
+        fileLines.push('interface ArrayConstructor {');
         fileLines.push(`  new ${typeParam}(): Array${typeParam};`);
         fileLines.push(`  new ${typeParam}(...items: ${hasGenerics ? 'T' : 'unknown'}[]): Array${typeParam};`);
         fileLines.push('}');

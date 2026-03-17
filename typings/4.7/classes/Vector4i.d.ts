@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 4D vector using integer coordinates. */
-declare interface Vector4i {
+interface Vector4i {
   /** The vector's W component. Also accessible by using the index position `[3]`. */
   w: int;
   /** The vector's X component. Also accessible by using the index position `[0]`. */
@@ -122,7 +122,7 @@ declare interface Vector4i {
   values: never;
 }
 
-declare interface Vector4iConstructor {
+interface Vector4iConstructor {
   /** Constructs a default-initialized {@link Vector4i} with all components set to `0`. */
   (): Vector4i;
   /** Constructs a {@link Vector4i} as a copy of the given {@link Vector4i}. */

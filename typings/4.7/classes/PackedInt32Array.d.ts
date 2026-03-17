@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of 32-bit integers. */
-declare interface PackedInt32Array {
+interface PackedInt32Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: int): boolean;
   /** Appends a {@link PackedInt32Array} at the end of this array. */
@@ -109,7 +109,7 @@ declare interface PackedInt32Array {
   values: never;
 }
 
-declare interface PackedInt32ArrayConstructor {
+interface PackedInt32ArrayConstructor {
   /** Constructs an empty {@link PackedInt32Array}. */
   (): PackedInt32Array;
   /** Constructs a {@link PackedInt32Array} as a copy of the given {@link PackedInt32Array}. */

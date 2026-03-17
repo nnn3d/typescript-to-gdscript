@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of 64-bit floating-point values. */
-declare interface PackedFloat64Array {
+interface PackedFloat64Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: float): boolean;
   /** Appends a {@link PackedFloat64Array} at the end of this array. */
@@ -122,7 +122,7 @@ declare interface PackedFloat64Array {
   values: never;
 }
 
-declare interface PackedFloat64ArrayConstructor {
+interface PackedFloat64ArrayConstructor {
   /** Constructs an empty {@link PackedFloat64Array}. */
   (): PackedFloat64Array;
   /** Constructs a {@link PackedFloat64Array} as a copy of the given {@link PackedFloat64Array}. */

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of {@link Vector2}s. */
-declare interface PackedVector2Array {
+interface PackedVector2Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: Vector2): boolean;
   /** Appends a {@link PackedVector2Array} at the end of this array. */
@@ -120,7 +120,7 @@ declare interface PackedVector2Array {
   values: never;
 }
 
-declare interface PackedVector2ArrayConstructor {
+interface PackedVector2ArrayConstructor {
   /** Constructs an empty {@link PackedVector2Array}. */
   (): PackedVector2Array;
   /** Constructs a {@link PackedVector2Array} as a copy of the given {@link PackedVector2Array}. */

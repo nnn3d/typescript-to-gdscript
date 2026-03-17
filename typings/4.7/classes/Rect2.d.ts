@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D axis-aligned bounding box using floating-point coordinates. */
-declare interface Rect2 {
+interface Rect2 {
   /**
    * The ending point. This is usually the bottom-right corner of the rectangle, and is equivalent to `position + size`. Setting this point affects the {@link size}.
    */
@@ -115,7 +115,7 @@ declare interface Rect2 {
   values: never;
 }
 
-declare interface Rect2Constructor {
+interface Rect2Constructor {
   /** Constructs a {@link Rect2} with its {@link position} and {@link size} set to {@link Vector2.ZERO}. */
   (): Rect2;
   /** Constructs a {@link Rect2} as a copy of the given {@link Rect2}. */
