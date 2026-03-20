@@ -1,5 +1,5 @@
 import { writeFileSync, readFileSync, readdirSync, existsSync, mkdirSync, rmSync } from 'fs';
-import { join, resolve } from 'path';
+import { join } from 'path';
 import ts from 'typescript';
 import {
   parseAllClassXmls,
@@ -10,7 +10,7 @@ import {
   type GodotMethodXml,
   type GodotParamXml,
   type GodotOperatorXml,
-} from './godot-registry.js';
+} from './godot-registry.ts';
 
 export interface GodotDocsTypingsOptions {
   /** Path to Godot docs XML class reference directory */

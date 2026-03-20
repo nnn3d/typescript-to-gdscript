@@ -9,6 +9,7 @@
     ".": "./dist/index.js",
     "./eslint": "./dist/eslint/plugin.js"
   },
+  "packageManager": "yarn@1.22.22",
   "typesVersions": {
     "*": {
       "typings": [
@@ -34,6 +35,12 @@
     "generate:ast-types": "node src/parser/gdscript/generate-types.ts",
     "generate:godot-typings": "node src/cli/index.ts generate-typings --docs-dir vendor/godot/doc/classes --typings-dir typings --set-latest",
     "set-latest": "node src/cli/index.ts set-latest"
+  },
+  "prettier": {
+    "trailingComma": "all",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true
   },
   "keywords": [
     "typescript",

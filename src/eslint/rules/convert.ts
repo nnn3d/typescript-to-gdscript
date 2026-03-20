@@ -116,7 +116,7 @@ function reportDiagnostics(context: any, diagnostics: TransformDiagnostic[]): bo
     if (diagFile !== contextFile) continue;
 
     const loc = diag.line > 0
-      ? { start: { line: diag.line, column: diag.column }, end: { line: diag.line, column: diag.column + 1 } }
+      ? { start: { line: diag.line, column: diag.column }, end: { line: diag.line, column: diag.column + 100 } }
       : undefined;
 
     context.report({
@@ -163,7 +163,7 @@ function runGodotValidation(context: any, params: GodotValidationParams): void {
 
     for (const diag of validateResult.diagnostics) {
       const loc = diag.line > 0
-        ? { start: { line: diag.line, column: diag.column }, end: { line: diag.line, column: diag.column + 1 } }
+        ? { start: { line: diag.line, column: diag.column }, end: { line: diag.line, column: diag.column + 100 } }
         : undefined;
 
       context.report({

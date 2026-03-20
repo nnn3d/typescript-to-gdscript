@@ -1,6 +1,6 @@
-export { generateClassTypings, type ClassTypingsOptions } from './classes.js';
-export { generateSceneTypings, type SceneTypingsOptions } from './scenes.js';
-export { generateGodotDocsTypings, type GodotDocsTypingsOptions } from './godot-docs.js';
+export { generateClassTypings, type ClassTypingsOptions } from './classes.ts';
+export { generateSceneTypings, type SceneTypingsOptions } from './scenes.ts';
+export { generateGodotDocsTypings, type GodotDocsTypingsOptions } from './godot-docs.ts';
 export {
   GodotClassRegistry,
   generateGodotRegistry,
@@ -17,4 +17,4 @@ export {
   type GodotPropertyXml,
   type GodotSignalXml,
   type GodotParamXml,
-} from './godot-registry.js';
+} from './godot-registry.ts';
