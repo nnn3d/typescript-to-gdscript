@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach, beforeAll } from 'vitest';
-import { parseGodotErrors, remapError, validateGdFiles, type GodotRawError } from '../../src/godot-validate/index.js';
-import { convertTsToGd } from '../../src/converter/ts-to-gd/index.js';
+import { parseGodotErrors, remapError, validateGdFiles, type GodotRawError } from '../../src/godot-validate';
+import { convertTsToGd } from '../../src/converter/ts-to-gd';
 import { writeFileSync, mkdirSync, rmSync } from 'fs';
 import { join, resolve } from 'path';
 import { fileURLToPath } from 'url';

@@ -40,29 +40,20 @@ describe('ESLint Plugin: Converter diagnostics', () => {
       const filePath = resolve(FIXTURES_DIR, tsFile);
 
       const eslint = new ESLint({
-        overrideConfigFile: true,
-        overrideConfig: {
-          files: ['**/*.ts'],
-          languageOptions: {
-            parser: tsParser,
-            parserOptions: {
-              ecmaVersion: 2022,
-              sourceType: 'module',
-            },
-          },
-          plugins: {
-            ts2gd: plugin,
-          },
-          rules: {
-            'ts2gd/convert': ['error', {
-              rootDir: FIXTURES_DIR,
-            }],
-          },
-        } as any,
+        overrideConfigFile: join(__dirname, './eslint.config.ts')
       });
 
       const results = await eslint.lintFiles([filePath]);
       const messages = results[0]?.messages ?? [];
+
+      expect(
+        messages.length,
+        `Expected to have ${expected.length} errors, but got ${messages.length}:` +
+          `\nErrors:\n` +
+          messages +
+          `\nExpected:\n` +
+          expected,
+      ).toBe(expected.length);
 
       if (expected.length === 0) {
         // Filter to only ts2gd messages
@@ -106,31 +97,20 @@ describe('ESLint Plugin: Godot validation', () => {
       const filePath = resolve(FIXTURES_DIR, tsFile);
 
       const eslint = new ESLint({
-        overrideConfigFile: true,
-        overrideConfig: {
-          files: ['**/*.ts'],
-          languageOptions: {
-            parser: tsParser,
-            parserOptions: {
-              ecmaVersion: 2022,
-              sourceType: 'module',
-            },
-          },
-          plugins: {
-            ts2gd: plugin,
-          },
-          rules: {
-            'ts2gd/convert': ['error', {
-              rootDir: FIXTURES_DIR,
-              godotPath: 'godot',
-              projectRoot: FIXTURES_DIR,
-            }],
-          },
-        } as any,
+        overrideConfigFile: join(__dirname, './eslint.config.ts')
       });
 
       const results = await eslint.lintFiles([filePath]);
       const messages = results[0]?.messages ?? [];
+
+      expect(
+        messages.length,
+        `Expected to have ${expected.length} errors, but got ${messages.length}:` +
+          `\nErrors:\n` +
+          JSON.stringify(messages, null, 2) +
+          `\nExpected:\n` +
+          JSON.stringify(expected, null, 2),
+      ).toBe(expected.length);
 
       for (const exp of expected) {
         const match = messages.find(

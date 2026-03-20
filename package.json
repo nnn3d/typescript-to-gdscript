@@ -66,6 +66,7 @@
     "@types/node": "^22.0.0",
     "@typescript-eslint/parser": "^8.57.1",
     "eslint": "^10.0.3",
+    "jiti": "^2.6.1",
     "tsx": "^4.21.0",
     "vitest": "^3.0.0"
   }

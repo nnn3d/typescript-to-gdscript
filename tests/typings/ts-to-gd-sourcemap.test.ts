@@ -1,6 +1,6 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { convertTsToGd } from '../../src/converter/ts-to-gd/index.js';
-import { SourceMapReader } from '../../src/sourcemap/index.js';
+import { convertTsToGd } from '../../src/converter/ts-to-gd';
+import { SourceMapReader } from '../../src/sourcemap';
 import { writeFileSync, mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
 import { fileURLToPath } from 'url';

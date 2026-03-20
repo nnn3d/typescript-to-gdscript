@@ -1,15 +1,17 @@
 import { defineConfig } from "eslint/config";
-import { join } from "path";
+import { dirname, join } from 'path';
 
 import tsParser from "@typescript-eslint/parser";
 import plugin from "../../src/eslint/plugin.ts";
-import path from 'node:path'
+import { fileURLToPath } from 'url';
 
-const __dirname = path.dirname(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 const FIXTURES_DIR = join(__dirname, "fixtures");
 
+
 export default defineConfig([{
-  files: ["**/*.ts"],
+  files: ["**/fixtures/*.ts"],
   languageOptions: {
     parser: tsParser,
     parserOptions: {
@@ -25,6 +27,8 @@ export default defineConfig([{
       "error",
       {
         rootDir: FIXTURES_DIR,
+        godotPath: 'godot',
+        projectRoot: FIXTURES_DIR,
       },
     ],
   },

@@ -1,3 +1,3 @@
 [
-  { "message": "Godot", "severity": 2 }
+  { "message": "Function \"nonexistent_function()\" not found in base self", "severity": 2 }
 ]
