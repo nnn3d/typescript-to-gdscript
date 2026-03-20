@@ -204,10 +204,16 @@ interface GdToTsContext {
 }
 
 /**
- * Check if a name is a global function/constructor (not a class member).
+ * Check if a name is a global function/constructor/class (not a class member).
+ * In GDScript, bare identifiers that are not local, not global, and not class names
+ * must be class members (self properties/methods).
  */
 function isGlobalName(name: string, ctx: GdToTsContext): boolean {
-  return ctx.registry.isGlobal(name);
+  return (
+    ctx.registry.isGlobal(name) ||
+    ctx.registry.hasClass(name) ||
+    ctx.userClasses.has(name)
+  );
 }
 
 // ─── Source File ─────────────────────────────────────────────

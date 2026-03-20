@@ -1,4 +1,4 @@
-extends Node
+extends ColorPicker
 class_name Self
 
 func print_data():
