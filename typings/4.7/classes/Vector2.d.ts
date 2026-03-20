@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D vector using floating-point coordinates. */
-interface Vector2 {
+declare interface Vector2 {
   /** The vector's X component. Also accessible by using the index position `[0]`. */
   x: float;
   /** The vector's Y component. Also accessible by using the index position `[1]`. */
@@ -256,7 +256,7 @@ interface Vector2 {
   values: never;
 }
 
-interface Vector2Constructor {
+declare interface Vector2Constructor {
   /** Constructs a default-initialized {@link Vector2} with all components set to `0`. */
   (): Vector2;
   /** Constructs a {@link Vector2} as a copy of the given {@link Vector2}. */

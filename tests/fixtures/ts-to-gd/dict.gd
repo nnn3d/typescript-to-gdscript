@@ -1,11 +1,17 @@
 extends Node
 class_name MyClass
 
-enum Direction {UP, DOWN, LEFT, RIGHT}
-enum State {IDLE, WALKING, RUNNING = 5}
-
-var current_direction: int = 0
-var current_state: int = 0
-
-func set_direction(dir: int):
-	self.current_direction = dir
+func test_dict():
+	var key1 = "key"
+	var key2 = Vector2.DOWN
+	var key3 = Node2D.new()
+	var dict = {
+		key1: "value",
+		key2: "value",
+		key3: "value",
+		"key": "value",
+	}
+	var dict2 = {
+		key1: "value",
+		"key2": "value",
+	}

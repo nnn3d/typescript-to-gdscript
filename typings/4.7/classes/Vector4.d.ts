@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 4D vector using floating-point coordinates. */
-interface Vector4 {
+declare interface Vector4 {
   /** The vector's W component. Also accessible by using the index position `[3]`. */
   w: float;
   /** The vector's X component. Also accessible by using the index position `[0]`. */
@@ -183,7 +183,7 @@ interface Vector4 {
   values: never;
 }
 
-interface Vector4Constructor {
+declare interface Vector4Constructor {
   /** Constructs a default-initialized {@link Vector4} with all components set to `0`. */
   (): Vector4;
   /** Constructs a {@link Vector4} as a copy of the given {@link Vector4}. */

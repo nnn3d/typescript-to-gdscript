@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A plane in Hessian normal form. */
-interface Plane {
+declare interface Plane {
   /**
    * The distance from the origin to the plane, expressed in terms of {@link normal} (according to its direction and magnitude). Actual absolute distance from the origin to the plane can be calculated as `abs(d) / normal.length()` (if {@link normal} has zero length then this {@link Plane} does not represent a valid plane).
    * In the scalar equation of the plane `ax + by + cz = d`, this is [code skip-lint]d[/code], while the `(a, b, c)` coordinates are represented by the {@link normal} property.
@@ -103,7 +103,7 @@ interface Plane {
   values: never;
 }
 
-interface PlaneConstructor {
+declare interface PlaneConstructor {
   /** Constructs a default-initialized {@link Plane} with all components set to `0`. */
   (): Plane;
   /** Constructs a {@link Plane} as a copy of the given {@link Plane}. */

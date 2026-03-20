@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A handle for a {@link Resource}'s unique identifier. */
-interface RID {
+declare interface RID {
   /** Returns the ID of the referenced low-level resource. */
   get_id(): int;
   /** Returns `true` if the {@link RID} is not `0`. */
@@ -53,7 +53,7 @@ interface RID {
   values: never;
 }
 
-interface RIDConstructor {
+declare interface RIDConstructor {
   /** Constructs an empty {@link RID} with the invalid ID `0`. */
   (): RID;
   /** Constructs an {@link RID} as a copy of the given {@link RID}. */

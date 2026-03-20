@@ -1,4 +1,4 @@
-class MyClass extends Node {
+export default class MyClass extends Node {
   test_if() {
     let x: int = 5;
 

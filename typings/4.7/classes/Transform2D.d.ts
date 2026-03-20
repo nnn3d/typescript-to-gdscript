@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2×3 matrix representing a 2D transformation. */
-interface Transform2D {
+declare interface Transform2D {
   /**
    * The translation offset of this transform, and the column `2` of the matrix. In 2D space, this can be seen as the position.
    */
@@ -163,7 +163,7 @@ interface Transform2D {
   values: never;
 }
 
-interface Transform2DConstructor {
+declare interface Transform2DConstructor {
   /**
    * Constructs a {@link Transform2D} identical to {@link IDENTITY}.
    * **Note:** In C#, this constructs a {@link Transform2D} with all of its components set to {@link Vector2.ZERO}.

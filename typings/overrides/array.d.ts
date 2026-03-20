@@ -46,4 +46,5 @@ interface Array<T = unknown> {
   slice(begin: int, end?: int, step?: int, deep?: boolean): Array<T>;
   sort_custom(func: (a: T, b: T) => boolean): void;
   [index: number]: T;
+  [Symbol.iterator](): IterableIterator<T>;
 }

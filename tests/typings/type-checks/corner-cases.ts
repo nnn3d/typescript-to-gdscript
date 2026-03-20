@@ -194,3 +194,13 @@ class VectorDictTest extends Node {
     v.keys();
   }
 }
+
+// ─── ForOf ─────────────────────────────
+
+class ForOfTest extends Node {
+  for_of_test() {
+    for (let i of range(10)) {
+      print(i);
+    }
+  }
+}

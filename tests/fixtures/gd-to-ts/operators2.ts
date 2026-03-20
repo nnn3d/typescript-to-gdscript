@@ -1,4 +1,4 @@
-class Operators2 extends Operators {
+export default class Operators2 extends Operators {
   test_vector_math() {
     let v3 = gd.ops.add(this.v1, this.v2);
     let v4 = gd.ops.mul(this.v1, this.v2);

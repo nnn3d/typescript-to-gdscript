@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of {@link String}s. */
-interface PackedStringArray {
+declare interface PackedStringArray {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: string): boolean;
   /** Appends a {@link PackedStringArray} at the end of this array. */
@@ -106,7 +106,7 @@ interface PackedStringArray {
   values: never;
 }
 
-interface PackedStringArrayConstructor {
+declare interface PackedStringArrayConstructor {
   /** Constructs an empty {@link PackedStringArray}. */
   (): PackedStringArray;
   /** Constructs a {@link PackedStringArray} as a copy of the given {@link PackedStringArray}. */

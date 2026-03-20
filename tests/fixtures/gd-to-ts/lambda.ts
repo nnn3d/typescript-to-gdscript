@@ -1,4 +1,4 @@
-class Lambda extends Node {
+export default class Lambda extends Node {
   test_lambda() {
     let double = (x: int): int => x * 2;
     let greet = () => { print("hello"); };

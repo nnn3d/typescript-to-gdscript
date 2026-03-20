@@ -1,4 +1,4 @@
-class MyClass extends Node {
+export default class MyClass extends Node {
   test_arrays() {
     let numbers = [1, 2, 3, 4, 5];
     let first = numbers[0];

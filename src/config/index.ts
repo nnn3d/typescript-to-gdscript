@@ -1,5 +1,5 @@
 import { readFileSync, existsSync } from 'fs';
-import { join, resolve, dirname } from 'path';
+import { join, resolve, dirname, relative } from 'path';
 import { fileURLToPath } from 'url';
 import { GodotClassRegistry } from '../typings/godot-registry.js';
 
@@ -10,16 +10,68 @@ export interface TsToGdConfig {
   godotVersion?: string;
   /** Path to a custom godot-class-registry.json. Overrides godotVersion. */
   registryPath?: string;
-  /** Root directory for TS source files */
+  /** Root directory (base for relative paths). Defaults to config file directory or CWD. */
   rootDir?: string;
-  /** Output directory for GDScript files */
+  /** Output directory for GDScript files (deprecated, use gdDir) */
   outputDir?: string;
+  /** TypeScript source directory (relative to rootDir or absolute). Defaults to rootDir. */
+  tsDir?: string;
+  /** GDScript output directory (relative to rootDir or absolute). Defaults to tsDir. */
+  gdDir?: string;
+  /** Directory for generated global class typings (relative to rootDir). Defaults to "_gdtots". */
+  classTypingsPath?: string;
   /** Path to tsconfig.json */
   tsconfig?: string;
   /** Generate source maps */
   sourceMap?: boolean;
   /** Path to Godot executable for GDScript validation */
   godotPath?: string;
+}
+
+// ─── Resolved Config ─────────────────────────────────────────
+
+export interface ResolvedConfig {
+  rootDir: string;
+  tsDir: string;
+  gdDir: string;
+  classTypingsPath: string;
+  tsconfig?: string;
+  sourceMap?: boolean;
+  godotVersion?: string;
+  registryPath?: string;
+  godotPath?: string;
+}
+
+/**
+ * Loads tstogd.json and resolves all paths to absolute.
+ * CLI flags can override any field via the `overrides` parameter.
+ * Returns fully resolved config with absolute paths.
+ */
+export function resolveConfig(options?: {
+  configDir?: string;
+  overrides?: Partial<TsToGdConfig>;
+}): ResolvedConfig {
+  const configDir = options?.configDir ?? process.cwd();
+  const config = loadConfig(configDir);
+  const overrides = options?.overrides ?? {};
+
+  // Merge: CLI overrides > config > defaults
+  const rootDir = resolve(configDir, overrides.rootDir ?? config?.rootDir ?? '.');
+  const tsDir = resolve(rootDir, overrides.tsDir ?? config?.tsDir ?? '.');
+  const gdDir = resolve(rootDir, overrides.gdDir ?? config?.gdDir ?? overrides.outputDir ?? config?.outputDir ?? (relative(rootDir, tsDir) || '.'));
+  const classTypingsPath = overrides.classTypingsPath ?? config?.classTypingsPath ?? '_gdtots';
+
+  return {
+    rootDir,
+    tsDir,
+    gdDir,
+    classTypingsPath,
+    tsconfig: overrides.tsconfig ?? config?.tsconfig,
+    sourceMap: overrides.sourceMap ?? config?.sourceMap,
+    godotVersion: overrides.godotVersion ?? config?.godotVersion,
+    registryPath: overrides.registryPath ?? config?.registryPath,
+    godotPath: overrides.godotPath ?? config?.godotPath,
+  };
 }
 
 const CONFIG_FILENAME = 'tstogd.json';

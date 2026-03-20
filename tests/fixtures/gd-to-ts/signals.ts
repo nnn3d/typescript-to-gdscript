@@ -1,4 +1,4 @@
-class Signals extends Node {
+export default class Signals extends Node {
   health_changed = gd.signal<[int, int]>();
   died = gd.signal();
   score_updated = gd.signal<[float]>();

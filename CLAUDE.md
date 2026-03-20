@@ -17,6 +17,11 @@ This project is for converting typescript code to gdscript code for godot game e
 - Lint ts files for transformation errors (like unsupported TS features) and gdscript errors from godot LSP
 - Watch mode, with transformations and linting
 
+## General Instructions
+
+- When adding new user-facing features, update README.md to document them.
+- When modifying existing features, update README.md if the documentation is affected.
+
 ## Project Philosophy
 
 Main point to write like on gdscript, but with strong types support by TS, and good linting and autocomplete.
@@ -85,9 +90,11 @@ src/
     classes.ts         # generateClassTypings: scans TS files, outputs global .d.ts
     scenes.ts          # generateSceneTypings: parses .tscn for getNode() overloads
     index.ts           # Barrel exports for all typings modules
-  linter/
-    index.ts           # lintFiles() entry point
-    rules/index.ts     # 5 lint rules
+  eslint/
+    plugin.ts          # ESLint plugin: eslint-plugin-ts2gd
+    rules/convert.ts   # Single rule: convert TS→GD + optional Godot validation
+  godot-validate/
+    index.ts           # Godot CLI validation (async + sync), error parsing, source map remapping
   cache/
     index.ts           # FileCache with SHA-256, external modification detection
   watcher/
@@ -108,6 +115,11 @@ tests/
     gd-to-ts-registry.test.ts # Integration: GD->TS converter with registry for inherited members
   sourcemap/
     ts-to-gd-sourcemap.test.ts  # Source map verification (9 tests with concrete line:column checks)
+  eslint/
+    eslint.test.ts     # ESLint plugin fixture-based tests (converter diags + Godot validation)
+    fixtures/          # Paired .ts/.json fixture files + project.godot for Godot tests
+  godot-validate/
+    godot-validate.test.ts  # Godot error parsing, remapping, CLI integration tests
 ```
 
 ## CLI Commands (binary: `ts2gd`)
@@ -168,10 +180,11 @@ This loads `typings/index.d.ts` which references `gd-helpers.d.ts` + `latest/god
   - Auto-detects Godot version from `vendor/godot/version.py`
   - `set-latest` CLI command to switch active version
   - Consumer tsconfig: `"types": ["typescript-to-gdscript/typings"]`
-- [x] Linting (5 rules: single-class, no-undefined, no-var, no-top-level, no-unsupported)
+- [x] Converter diagnostics (replaced standalone linter: single-class, no-undefined, no-var, no-top-level, no-unsupported)
 - [x] Watch mode + CLI + Cache
-- [ ] ESLint plugin
-- [ ] Source map integration with linter (map Godot LSP errors back to TS via source maps)
+- [x] Godot validation (CLI --check-only, error parsing, source map remapping to TS positions)
+- [x] ESLint plugin (ts2gd/convert rule: converter diagnostics + optional Godot validation)
+- [ ] Source map integration with Godot LSP (map LSP errors back to TS via source maps in IDE)
 
 ## Features Specification
 
@@ -207,6 +220,8 @@ IMPORTANT FOR CLAUDE: ask me if you find some other cases with transformation pr
 
 ##### TS file structure
 All files in gdscript are files, so there should be only one class in typescript file, with only allowed import for types or type declarations / exports. All other named classes should be available globally, like in gdscript - which should be generated in one `d.ts` file (but not for anonymous classes). All other content should be inside this class.
+
+Source TS files must use `export default class ClassName extends Base { ... }`. The `export default` modifier is stripped during TS-to-GD conversion (GD output is identical). This enables the generated globals `.d.ts` to reference the source class via `import + declare global` pattern without duplicating members.
 
 ##### TS types after transformation
 After transformation, only primitive (available in gdscript) types and classes types are saved in code (without generics for classes). There should be special global helper type like `type TSOnly<T> = T`, which contents removes from transformation. If type is union or intersection, or another unsupported by gdscript - it should be removed.
@@ -263,7 +278,7 @@ GDScript has no `async` keyword. The `async` modifier is stripped during TS->GD 
 This generation should be worked with watch mode, also with once transformation.
 
 #### TS classes
-All root named classes in TS should be added to global declaration file, to be able global classes usage.
+All root named default-exported classes in TS are added to a global declaration file using `import _ClassName from "./path.js"; declare global { class ClassName extends _ClassName {} }` pattern. This makes classes available globally (like GDScript's `class_name`) without duplicating members. Source files must use `export default class`.
 
 #### GD node paths
 Check godot files for scripts, and create global declaration merge, to add typings for classes `getNode("...")` function for autocomplete. There is are ready made example in `https://github.com/johnfn/ts2gd`, with this functionality.
@@ -272,20 +287,24 @@ Check godot files for scripts, and create global declaration merge, to add typin
 There are should be script to generate typings from godot docs. It first generates typings as is (there is are ready made example for generation in `https://github.com/johnfn/ts2gd`). And then applies to them `.patch` files to add more granular manual typings, such as generics.
 There also should be global d.ts file this some hardcoded global types, like `int` or `float` aliases (see above). It changes manually.
 
-### Linting TS files
-Linting script works both from CLI and with watch mode. It should:
+### Linting / Diagnostics
+Diagnostics are produced by converters during transformation (no standalone linter). The ESLint plugin (`ts2gd/convert` rule) integrates these:
 
-- lint for transformation errors (eg unsupported feature, bad file structure, etc)
-- lint for gdscript errors, using godot LSP and sourcemaps from compilation.
+1. **Converter diagnostics** — produced by `convertTsToGd()` for unsupported TS features:
+   - Only one class per file
+   - `undefined` restricted (use `null`)
+   - `var` restricted (use `let` or `const`)
+   - No top-level statements outside classes
+   - Spread, yield, `for...in`, optional chaining, nullish coalescing, destructuring not supported
+2. **Godot validation** — optional, runs Godot CLI `--check-only` on generated GDScript:
+   - Type mismatches, unknown functions, parse errors
+   - Errors remapped to TS positions via source maps (sync VLQ decoder for ESLint)
 
-Also there should be eslint plugin, which do same lint and return results to eslint.
-
-#### Current lint rules
-1. **singleClassRule** — Only one class per file allowed
-2. **noUndefinedRule** — `undefined` restricted, use `null`
-3. **noVarRule** — `var` restricted, use `let` or `const`
-4. **noTopLevelStatementsRule** — No top-level statements outside classes
-5. **noUnsupportedFeaturesRule** — Spread, yield, for...in not supported
+#### ESLint plugin
+- Package export: `typescript-to-gdscript/eslint`
+- Single rule: `ts2gd/convert` — hooks into `Program` node, converts file, reports diagnostics
+- Options: `rootDir`, `tsDir`, `tsconfig`, `godotPath`, `projectRoot`, `sourceMap`
+- Flat config compatible (ESLint >= 9)
 
 ### Watch mode
 As presented above, it uses from CLI, and watch for TS files for transformation, also for godot scenes to check scripts usage for getNode types generation.
@@ -302,6 +321,18 @@ annotations, comments, constructor, control-flow, enums, expressions, functions,
 #### Godot registry tests (tests/typings/)
 - `godot-registry.test.ts` — XML parsing, registry generation, GodotClassRegistry class, real Godot docs (916 classes)
 - `gd-to-ts-registry.test.ts` — Integration: GD->TS with registry for inherited member resolution
+- `class-typings.test.ts` — Class typings generation: import+declare global pattern, cross-file tsc compilation (Animal→Dog→DogOwner)
+
+#### Converter diagnostics tests (tests/converter/)
+- `converter-diag.test.ts` — Fixture-based: paired .ts/.json files in tests/fixtures/converter-diag/
+
+#### ESLint plugin tests (tests/eslint/)
+- `eslint.test.ts` — Fixture-based: paired .ts/.json files in tests/eslint/fixtures/
+- Converter diagnostics: valid-code, var-usage, optional-chaining, nullish-coalescing, spread, destructuring, for-in, multiple-classes, undefined-usage, getter-warning
+- Godot validation: godot-unknown-func, godot-type-mismatch, godot-valid-code
+
+#### Godot validation tests (tests/godot-validate/)
+- `godot-validate.test.ts` — Error parsing (multiple formats), source map remapping, Godot CLI integration
 
 #### Known transform edge cases resolved
 - Numeric literals: use `getText()` to preserve `100.0` (TS parser `node.text` strips trailing `.0`)
@@ -314,3 +345,5 @@ annotations, comments, constructor, control-flow, enums, expressions, functions,
 - GD-to-TS `self.` resolution: registry always required, only known class members (own + inherited from Godot classes) get `this.` prefix; user-defined parent classes not in registry won't resolve inherited members
 - `tstogd.json` config: consumer project config file for registry resolution (godotVersion, registryPath, rootDir, outputDir, etc.)
 - GD-to-TS multi-line lambda body: `emitLambda()` returns header only, `emitLambdaBody()` emits indented body separately
+- `export default class`: TS parses as ClassDeclaration with ExportKeyword+DefaultKeyword modifiers; transformer ignores these modifiers transparently, GD output is identical
+- Cross-file class visibility: generated globals `.d.ts` uses `import _Name from "./path.js"` + `declare global { class Name extends _Name {} }` pattern; `import()` type in extends clause doesn't work (TS treats it as dynamic import returning Promise)

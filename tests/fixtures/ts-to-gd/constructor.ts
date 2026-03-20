@@ -1,4 +1,4 @@
-class MyClass extends RefCounted {
+export default class MyClass extends RefCounted {
   value: int = 0;
   label: string = "";
 

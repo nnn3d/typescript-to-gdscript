@@ -11,7 +11,7 @@
  *   nums.append(42);       // OK
  *   nums.append("hello");  // Error: string is not int
  */
-interface Array<T = unknown> {
+declare interface Array<T = unknown> {
   all(method: (value: T) => boolean): boolean;
   any(method: (value: T) => boolean): boolean;
   append(value: T): void;
@@ -122,11 +122,12 @@ interface Array<T = unknown> {
   [__eq]: { right: Array<unknown>; ret: boolean };
   [__gt]: { right: Array<unknown>; ret: boolean };
   [__gte]: { right: Array<unknown>; ret: boolean };
+  [Symbol.iterator](): IterableIterator<T>;
   [index: number]: T;
 }
 
 type GodotArray = Array<unknown>;
-interface ArrayConstructor {
+declare interface ArrayConstructor {
   new <T>(): Array<T>;
   new <T>(...items: T[]): Array<T>;
 }

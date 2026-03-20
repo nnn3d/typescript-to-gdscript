@@ -71,6 +71,34 @@ interface SymbolConstructor {
 }
 declare var Symbol: SymbolConstructor;
 
+// ─── Iterator (for for-of loops) ─────────────────────────────
+
+interface IteratorYieldResult<TYield> {
+  done?: false;
+  value: TYield;
+}
+
+interface IteratorReturnResult<TReturn> {
+  done: true;
+  value: TReturn;
+}
+
+type IteratorResult<T, TReturn = any> = IteratorYieldResult<T> | IteratorReturnResult<TReturn>;
+
+interface Iterator<T, TReturn = any, TNext = any> {
+  next(...[value]: [] | [TNext]): IteratorResult<T, TReturn>;
+  return?(value?: TReturn): IteratorResult<T, TReturn>;
+  throw?(e?: any): IteratorResult<T, TReturn>;
+}
+
+interface Iterable<T, TReturn = any, TNext = any> {
+  [Symbol.iterator](): Iterator<T, TReturn, TNext>;
+}
+
+interface IterableIterator<T, TReturn = any, TNext = any> extends Iterator<T, TReturn, TNext> {
+  [Symbol.iterator](): IterableIterator<T, TReturn, TNext>;
+}
+
 // ─── Promise (for async/await) ──────────────────────────────
 
 interface PromiseLike<T> {
@@ -89,6 +117,11 @@ interface Promise<T> {
     onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null
   ): Promise<T | TResult>;
 }
+
+interface PromiseConstructor {
+  new <T>(executor: (resolve: (value: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void): Promise<T>;
+}
+declare var Promise: PromiseConstructor;
 
 // ─── Decorator context types (required for TS decorators) ───
 

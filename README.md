@@ -1,6 +1,6 @@
 # typescript-to-gdscript
 
-Convert TypeScript to GDScript for the Godot game engine, with source maps, linting, and type-safe helpers.
+Convert TypeScript to GDScript for the Godot game engine, with source maps, ESLint integration, and type-safe helpers.
 
 ## Philosophy
 
@@ -91,25 +91,6 @@ Options:
 - `-o, --output-dir <dir>` — Output directory
 - `--registry <path>` — Path to `godot-class-registry.json`
 
-### `ts2gd lint <files...>`
-
-Lint TypeScript files for GDScript transformation issues.
-
-```bash
-ts2gd lint src/**/*.ts
-```
-
-Lint rules:
-- **singleClassRule** — Only one class per file
-- **noUndefinedRule** — `undefined` is restricted, use `null`
-- **noConstLetRule** — `const`/`let` are restricted, use `var`
-- **noTopLevelStatementsRule** — No top-level statements outside classes
-- **noUnsupportedFeaturesRule** — Spread, yield, `for...in` not supported
-
-Options:
-- `--root-dir <dir>` — Root directory
-- `--tsconfig <path>` — Path to tsconfig.json
-
 ### `ts2gd watch`
 
 Watch TypeScript files and auto-convert on change.
@@ -180,14 +161,14 @@ class Enemy extends Node2D {
 For operator overloading on value types (Vector2, Color, etc.):
 
 ```typescript
-var result = gd.ops.add(Vector2(1, 1), Vector2(2, 3));
-var scaled = gd.ops.mul(position, 2.0);
+let result = gd.ops.add(Vector2(1, 1), Vector2(2, 3));
+let scaled = gd.ops.mul(position, 2.0);
 ```
 
 ### Type casting (`as`)
 
 ```typescript
-var sprite = gd.as(get_node("Sprite"), Sprite2D);
+let sprite = gd.as(get_node("Sprite"), Sprite2D);
 ```
 
 ### Decorators
@@ -208,8 +189,8 @@ class Player extends CharacterBody2D {
 ### StringName / NodePath
 
 ```typescript
-var sn = StringName('my_signal');
-var np = NodePath('Path/To/Node');
+let sn = StringName('my_signal');
+let np = NodePath('Path/To/Node');
 ```
 
 ## Transform Rules
@@ -220,7 +201,7 @@ Each `.ts` file must contain exactly one class. Named classes are available glob
 ### Types
 - `int` and `float` are type aliases for `number`. Pure `number` converts to GDScript `float`.
 - `undefined` is restricted — use `null`.
-- `const` and `let` are restricted — use `var`.
+- `var` is restricted — use `let` or `const` (both convert to GDScript `var`).
 - `TSOnly<T>` wrapper type is stripped during transformation.
 
 ### Constructor
@@ -252,6 +233,75 @@ typings/
     godot.d.ts
     godot-class-registry.json
 ```
+
+## ESLint Plugin
+
+The ESLint plugin reports converter diagnostics (unsupported TS features) and optionally Godot validation errors inline in your editor.
+
+### Setup
+
+Install ESLint and the TypeScript parser:
+
+```bash
+yarn add --dev eslint @typescript-eslint/parser
+```
+
+Create `eslint.config.js` (ESLint flat config):
+
+```javascript
+import ts2gd from 'typescript-to-gdscript/eslint';
+import tsParser from '@typescript-eslint/parser';
+
+export default [{
+  files: ['src/**/*.ts'],
+  languageOptions: {
+    parser: tsParser,
+    parserOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+    },
+  },
+  plugins: {
+    ts2gd,
+  },
+  rules: {
+    'ts2gd/convert': ['error', {
+      rootDir: '.',
+      godotPath: 'godot',       // optional: enables Godot validation
+      projectRoot: '.',          // optional: Godot project root (must contain project.godot)
+    }],
+  },
+}];
+```
+
+### Rule: `ts2gd/convert`
+
+Converts each TS file to GDScript and reports errors at two levels:
+
+1. **Converter diagnostics** — unsupported TS features:
+   - `var` keyword (use `let` or `const`)
+   - `undefined` (use `null`)
+   - Optional chaining (`?.`), nullish coalescing (`??`, `??=`)
+   - Spread operator (`...`), destructuring
+   - `yield`, `for...in`
+   - Multiple classes per file
+   - Top-level statements outside classes
+
+2. **Godot validation errors** (when `godotPath` is configured) — errors detected by the Godot compiler:
+   - Type mismatches
+   - Unknown functions/methods
+   - Parse errors in generated GDScript
+
+### Rule options
+
+| Option | Type | Description |
+|--------|------|-------------|
+| `rootDir` | `string` | Root directory for the project |
+| `tsDir` | `string` | TypeScript source directory |
+| `tsconfig` | `string` | Path to tsconfig.json |
+| `godotPath` | `string` | Path to Godot executable (enables Godot validation) |
+| `projectRoot` | `string` | Godot project root (must contain `project.godot`) |
+| `sourceMap` | `boolean` | Generate source maps for error remapping |
 
 ## Development
 

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A color represented in RGBA format. */
-interface Color {
+declare interface Color {
   /**
    * The color's alpha component, typically on the range of 0 to 1. A value of 0 means that the color is fully transparent. A value of 1 means that the color is fully opaque.
    * **Note:** The alpha channel is always stored with linear encoding, regardless of the encoding of the other color channels. The {@link linear_to_srgb} and {@link srgb_to_linear} methods do not affect the alpha channel.
@@ -155,7 +155,7 @@ interface Color {
   values: never;
 }
 
-interface ColorConstructor {
+declare interface ColorConstructor {
   /**
    * Constructs a default {@link Color} from opaque black. This is the same as {@link BLACK}.
    * **Note:** In C#, this constructs a {@link Color} with all of its components set to `0.0` (transparent black).

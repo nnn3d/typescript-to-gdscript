@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3×4 matrix representing a 3D transformation. */
-interface Transform3D {
+declare interface Transform3D {
   /**
    * The {@link Basis} of this transform. It is composed by 3 axes ({@link Basis.x}, {@link Basis.y}, and {@link Basis.z}). Together, these represent the transform's rotation, scale, and shear.
    */
@@ -125,7 +125,7 @@ interface Transform3D {
   values: never;
 }
 
-interface Transform3DConstructor {
+declare interface Transform3DConstructor {
   /**
    * Constructs a {@link Transform3D} identical to {@link IDENTITY}.
    * **Note:** In C#, this constructs a {@link Transform3D} with its {@link origin} and the components of its {@link basis} set to {@link Vector3.ZERO}.

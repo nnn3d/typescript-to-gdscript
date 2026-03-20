@@ -1,7 +1,6 @@
 import { watch, type FSWatcher } from 'chokidar';
 import { extname, resolve, relative } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.js';
-import { lintFiles } from '../linter/index.js';
 import { validateGdFiles } from '../godot-validate/index.js';
 import { generateClassTypings } from '../typings/classes.js';
 import { FileCache } from '../cache/index.js';
@@ -9,10 +8,14 @@ import { writeFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 
 export interface WatcherOptions {
-  /** Root directory to watch */
+  /** Root directory (base for relative paths) */
   rootDir: string;
-  /** Output directory for GDScript files */
-  outputDir: string;
+  /** TypeScript source directory to watch. Defaults to rootDir. */
+  tsDir?: string;
+  /** GDScript output directory. Defaults to tsDir. */
+  gdDir?: string;
+  /** Output directory for GDScript files (deprecated, use gdDir) */
+  outputDir?: string;
   /** Path to tsconfig.json */
   tsConfigPath?: string;
   /** Enable source maps */
@@ -34,9 +37,13 @@ export class Watcher {
   private fsWatcher: FSWatcher | null = null;
   private cache: FileCache;
   private tsFiles: Set<string> = new Set();
+  private tsDir: string;
+  private gdDir: string;
 
   constructor(options: WatcherOptions) {
     this.options = options;
+    this.tsDir = options.tsDir ?? options.rootDir;
+    this.gdDir = options.gdDir ?? options.outputDir ?? this.tsDir;
     this.cache = new FileCache(
       options.cacheDir ?? resolve(options.rootDir, '.ts2gd-cache')
     );
@@ -44,7 +51,7 @@ export class Watcher {
 
   start(): void {
     const patterns = [
-      `${this.options.rootDir}/**/*.ts`,
+      `${this.tsDir}/**/*.ts`,
       `${this.options.rootDir}/**/*.tscn`,
     ];
 
@@ -64,7 +71,7 @@ export class Watcher {
       .on('change', (path) => this.handleFile(resolve(path)))
       .on('unlink', (path) => this.handleRemove(resolve(path)));
 
-    console.log(`Watching ${this.options.rootDir} for changes...`);
+    console.log(`Watching ${this.tsDir} for changes...`);
   }
 
   stop(): void {
@@ -106,31 +113,10 @@ export class Watcher {
       return;
     }
 
-    // Lint first
-    const lintResults = lintFiles({
-      files: [filePath],
-      rootDir: this.options.rootDir,
-      tsConfigPath: this.options.tsConfigPath,
-    });
-
-    for (const result of lintResults) {
-      for (const d of result.diagnostics) {
-        this.log(d.file, `[${d.severity}] ${d.message} (${d.line}:${d.column})`, d.severity);
-      }
-    }
-
-    const hasErrors = lintResults.some(r =>
-      r.diagnostics.some(d => d.severity === 'error')
-    );
-    if (hasErrors) {
-      this.log(filePath, 'Lint errors found, skipping conversion', 'error');
-      return;
-    }
-
-    // Convert
+    // Convert (diagnostics are produced by the converter itself)
     const result = convertTsToGd({
       filePath,
-      rootDir: this.options.rootDir,
+      rootDir: this.tsDir,
       tsConfigPath: this.options.tsConfigPath,
       sourceMap: this.options.sourceMap,
     });
@@ -144,8 +130,8 @@ export class Watcher {
     }
 
     // Write output
-    const relPath = relative(this.options.rootDir, filePath);
-    const outputPath = resolve(this.options.outputDir, relPath.replace(/\.ts$/, '.gd'));
+    const relPath = relative(this.tsDir, filePath);
+    const outputPath = resolve(this.gdDir, relPath.replace(/\.ts$/, '.gd'));
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, result.code);
 
@@ -157,7 +143,7 @@ export class Watcher {
     this.cache.update(filePath, outputPath);
     this.cache.save();
 
-    this.log(filePath, `Converted -> ${relative(this.options.rootDir, outputPath)}`, 'info');
+    this.log(filePath, `Converted -> ${relative(this.options.rootDir, outputPath) || outputPath}`, 'info');
 
     // Validate with Godot if configured
     if (this.options.godotPath) {

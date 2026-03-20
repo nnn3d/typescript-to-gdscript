@@ -1,4 +1,4 @@
-class MyClass extends Node {
+export default class MyClass extends Node {
   // Variable declarations with types
   speed: float = 10.5;
   health: int = 100;

@@ -69,6 +69,16 @@ export class GDScriptEmitter {
     this.write('\n');
   }
 
+  /** Get current indentation level */
+  getIndentLevel(): number {
+    return this.indentLevel;
+  }
+
+  /** Get indentation string for a given level */
+  getIndentStr(level?: number): string {
+    return this.indentStr.repeat(level ?? this.indentLevel);
+  }
+
   /** Write current indentation */
   writeIndent(): void {
     const indent = this.indentStr.repeat(this.indentLevel);

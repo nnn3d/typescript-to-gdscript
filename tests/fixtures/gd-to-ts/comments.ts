@@ -1,4 +1,4 @@
-class Comments extends Node {
+export default class Comments extends Node {
   /** Doc comment for health */
   health: int = 100;
   // Regular comment

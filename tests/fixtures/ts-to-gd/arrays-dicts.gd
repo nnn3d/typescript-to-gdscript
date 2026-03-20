@@ -11,6 +11,10 @@ func test_arrays():
 		print(n)
 
 func test_dictionaries():
-	var dict = {"name": "Player", "health": 100, "alive": true}
+	var dict = {
+		"name": "Player",
+		"health": 100,
+		"alive": true,
+	}
 	var player_name = dict["name"]
 	dict["score"] = 9001

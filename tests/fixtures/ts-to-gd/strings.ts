@@ -1,4 +1,4 @@
-class MyClass extends Node {
+export default class MyClass extends Node {
   test_strings() {
     let simple: string = "Hello, World!";
     let with_quotes: string = "He said \"hi\"";

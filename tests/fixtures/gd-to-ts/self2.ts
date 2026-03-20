@@ -1,4 +1,4 @@
-class Self2 extends Self {
+export default class Self2 extends Self {
   run() {
     this.print_data();
     this.is_physics_interpolated();

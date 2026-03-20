@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "Node16",
+    "target": "esnext",
+    "module": "nodenext",
     "moduleResolution": "Node16",
     "lib": ["ES2022"],
     "outDir": "dist",
@@ -14,7 +14,10 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "rewriteRelativeImportExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "tests"]

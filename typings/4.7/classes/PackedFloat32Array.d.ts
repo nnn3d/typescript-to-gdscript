@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of 32-bit floating-point values. */
-interface PackedFloat32Array {
+declare interface PackedFloat32Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: float): boolean;
   /** Appends a {@link PackedFloat32Array} at the end of this array. */
@@ -122,7 +122,7 @@ interface PackedFloat32Array {
   values: never;
 }
 
-interface PackedFloat32ArrayConstructor {
+declare interface PackedFloat32ArrayConstructor {
   /** Constructs an empty {@link PackedFloat32Array}. */
   (): PackedFloat32Array;
   /** Constructs a {@link PackedFloat32Array} as a copy of the given {@link PackedFloat32Array}. */

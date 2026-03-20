@@ -157,6 +157,8 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
     classMemberTypes: new Map(),
     registry: options.registry,
     userClasses,
+    className: '',
+    staticMembers: new Set(),
   };
 
   const code = emitSourceFile(root, ctx);
@@ -185,6 +187,10 @@ interface GdToTsContext {
   userClasses: Map<string, UserClassInfo>;
   /** Current method name (for super() → super.method() resolution) */
   currentMethodName?: string;
+  /** The class name (or '__CLASS__' for anonymous) */
+  className: string;
+  /** Static member names (const + static var) — accessed via ClassName, not this */
+  staticMembers: Set<string>;
 }
 
 /**
@@ -221,6 +227,8 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       const name = child.childForFieldName('name')?.text;
       if (name) {
         ctx.classMembers.add(name);
+        const isStatic = child.childForFieldName('static') !== null;
+        if (isStatic) ctx.staticMembers.add(name);
         const typeNode = child.childForFieldName('type');
         const valueNode = child.childForFieldName('value');
         const inferredType = typeNode ? extractGdTypeName(typeNode) : (valueNode ? inferExprType(valueNode, ctx) : null);
@@ -231,9 +239,15 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       if (name) ctx.classMembers.add(name);
     } else if (isGDNodeType(child, 'const_statement')) {
       const name = child.childForFieldName('name')?.text;
-      if (name) ctx.classMembers.add(name);
+      if (name) {
+        ctx.classMembers.add(name);
+        ctx.staticMembers.add(name);
+      }
     }
   }
+
+  // Set class name in context for static member resolution
+  ctx.className = className || '__CLASS__';
 
   // Add inherited members from registry and user classes
   if (extendsClass) {
@@ -340,7 +354,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
   }
 
   const extendsClause = extendsClass ? ` extends ${extendsClass}` : '';
-  const classHeader = `class ${className || 'MyClass'}${extendsClause} {`;
+  const classHeader = `export default class ${className || '__CLASS__'}${extendsClause} {`;
   return [classHeader, ...memberLines, '}', ''].join('\n');
 }
 
@@ -549,8 +563,8 @@ function emitConstStatement(node: GDNode, ctx: GdToTsContext): string {
   const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode) : '';
   const init = valueNode ? ` = ${emitExpr(valueNode, ctx)}` : '';
 
-  // GDScript const -> TS static readonly (or just a property for simplicity)
-  return `  static ${name}${typeAnnotation}${init};`;
+  // GDScript const -> TS static readonly
+  return `  static readonly ${name}${typeAnnotation}${init};`;
 }
 
 function emitLocalVariable(node: GDNode, ctx: GdToTsContext, indent: string): string {
@@ -942,8 +956,11 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
     if (node.text === 'null') return 'null';
     if (node.text === 'true') return 'true';
     if (node.text === 'false') return 'false';
-    // If identifier is a known class member AND not a local variable, prefix with this.
+    // If identifier is a known class member AND not a local variable, prefix with this/ClassName
     if (ctx.classMembers.has(node.text) && !ctx.localVars.has(node.text)) {
+      if (ctx.staticMembers.has(node.text)) {
+        return `${ctx.className}.${node.text}`;
+      }
       return `this.${node.text}`;
     }
     return node.text;
@@ -1010,14 +1027,29 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
   }
 
   if (isGDNodeType(node, 'dictionary')) {
-    const pairs = node.namedChildren
-      .filter(c => isGDNodeType(c, 'pair'))
-      .map(p => {
+    const pairNodes = node.namedChildren.filter(c => isGDNodeType(c, 'pair'));
+    // Check if any key is an identifier (variable reference, not string/number literal)
+    const hasIdentifierKey = pairNodes.some(p => {
+      const key = p.childForFieldName('left');
+      return key && isGDNodeType(key, 'identifier');
+    });
+    if (hasIdentifierKey) {
+      // Use gd.dict() format for dicts with variable keys
+      const entries = pairNodes.map(p => {
         const key = p.childForFieldName('left');
         const value = p.childForFieldName('value');
-        return `${key ? emitExpr(key, ctx) : ''}: ${value ? emitExpr(value, ctx) : ''}`;
-      })
-      .join(', ');
+        const keyStr = key ? emitExpr(key, ctx) : '';
+        const valStr = value ? emitExpr(value, ctx) : '';
+        return `[${keyStr}, ${valStr}]`;
+      });
+      return `gd.dict([\n${entries.map(e => `      ${e},`).join('\n')}\n    ])`;
+    }
+    // Regular object literal for string/number-keyed dicts
+    const pairs = pairNodes.map(p => {
+      const key = p.childForFieldName('left');
+      const value = p.childForFieldName('value');
+      return `${key ? emitExpr(key, ctx) : ''}: ${value ? emitExpr(value, ctx) : ''}`;
+    }).join(', ');
     return `{${pairs}}`;
   }
 
@@ -1054,7 +1086,14 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
     return emitLambda(node, ctx);
   }
 
-  // Fallback: return raw text
+  // Fallback: return raw text with warning
+  ctx.diagnostics.push({
+    message: `Unhandled GDScript expression: ${node.type}`,
+    severity: 'warning',
+    file: ctx.filePath,
+    line: node.startPosition.row + 1,
+    column: node.startPosition.column,
+  });
   return node.text;
 }
 
@@ -1102,9 +1141,16 @@ function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
   for (let i = 0; i < children.length; i++) {
     const child = children[i]!;
 
-    // `self` at the start of an attribute chain becomes `this`
+    // `self` at the start of an attribute chain becomes `this` (or ClassName for static members)
     if (i === 0 && isGDNodeType(child, 'identifier') && child.text === 'self') {
-      parts.push('this');
+      // Look ahead to see if the next part is a static member
+      const nextChild = children[i + 1];
+      const nextName = nextChild && isGDNodeType(nextChild, 'identifier') ? nextChild.text : '';
+      if (nextName && ctx.staticMembers.has(nextName)) {
+        parts.push(ctx.className);
+      } else {
+        parts.push('this');
+      }
       selfSeen = true;
       continue;
     }
@@ -1116,7 +1162,14 @@ function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
       const args = argsNode
         ? argsNode.namedChildren.map(a => emitExpr(a, ctx)).join(', ')
         : '';
-      parts.push(`${methodName}(${args})`);
+      // .new() -> new ClassName()
+      if (methodName === 'new') {
+        const className = parts.join('.');
+        parts.length = 0;
+        parts.push(`new ${className}(${args})`);
+      } else {
+        parts.push(`${methodName}(${args})`);
+      }
     } else if (isGDNodeType(child, 'attribute_subscript')) {
       const attrName = child.namedChildren.find(c => isGDNodeType(c, 'identifier'))?.text ?? '';
       const argsNode = child.childForFieldName('arguments');
@@ -1130,9 +1183,13 @@ function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
     }
   }
 
-  // If the first part is a known class member and no self was used, prefix with this
+  // If the first part is a known class member and no self was used, prefix with this/ClassName
   if (!selfSeen && parts.length >= 1 && ctx.classMembers.has(parts[0]!)) {
-    parts.unshift('this');
+    if (ctx.staticMembers.has(parts[0]!)) {
+      parts.unshift(ctx.className);
+    } else {
+      parts.unshift('this');
+    }
   }
 
   return parts.join('.');

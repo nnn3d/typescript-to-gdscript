@@ -79,6 +79,15 @@ declare const gd: {
   readonly enum: <const T extends string>(...args: (T | [T, number])[]) => Record<T, number>;
   // `enum` is reserved in TS, so use `enum_` in declaration but map to `enum` in user code
 
+  /**
+   * Create a Dictionary with non-string keys. Transforms to `{key: value, ...}` in GDScript.
+   * Keys must be identifiers (variables) or string/number literals — expressions are not allowed.
+   * @example
+   * gd.dict([[key1, 'value'], [key2, 'value'], ['str_key', 'value']])
+   * // becomes: {key1: "value", key2: "value", "str_key": "value"}
+   */
+  readonly dict: (entries: [unknown, unknown][]) => Dictionary;
+
   /** GDScript `as` operator. Transforms to `value as Type` in GDScript. */
   readonly as: <T, U>(value: T, type: new (...args: any[]) => U) =>
     T extends U ? U : U | null;

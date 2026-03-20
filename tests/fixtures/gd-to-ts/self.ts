@@ -1,4 +1,4 @@
-class Self extends Node {
+export default class Self extends Node {
   print_data() {
     print('data');
   }

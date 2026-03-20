@@ -63,13 +63,18 @@ export interface SourcePosition {
  * Used for verification and for mapping GDScript LSP errors back to TS.
  */
 export class SourceMapReader {
-  private constructor(private consumer: SourceMapConsumer) {}
+  private consumer: SourceMapConsumer;
+
+  private constructor(consumer: SourceMapConsumer) {
+    this.consumer = consumer;
+  }
 
   static async fromJSON(rawMap: RawSourceMap | string): Promise<SourceMapReader> {
     const json = typeof rawMap === 'string' ? JSON.parse(rawMap) as RawSourceMap : rawMap;
     const consumer = await new SourceMapConsumer(json);
     return new SourceMapReader(consumer);
   }
+
 
   /**
    * Given a position in the generated (GDScript) file, find the original (TS) position.

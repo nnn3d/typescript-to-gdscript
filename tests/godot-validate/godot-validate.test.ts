@@ -258,13 +258,13 @@ describe('remapError', () => {
 
 // ─── Real Godot CLI integration tests ─────────────────────────
 
-let godotAvailable = false;
 try {
   await execFileAsync('godot', ['--version'], { timeout: 10000 });
-  godotAvailable = true;
-} catch {}
+} catch {
+  console.error('godot is not found!');
+}
 
-describe.skipIf(!godotAvailable)('Godot CLI integration', () => {
+describe('Godot CLI integration', () => {
   function setupGodotProject(): string {
     const projectDir = join(TMP_DIR, 'godot-project');
     mkdirSync(projectDir, { recursive: true });

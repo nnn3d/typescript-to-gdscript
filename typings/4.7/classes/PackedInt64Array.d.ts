@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A packed array of 64-bit integers. */
-interface PackedInt64Array {
+declare interface PackedInt64Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: int): boolean;
   /** Appends a {@link PackedInt64Array} at the end of this array. */
@@ -109,7 +109,7 @@ interface PackedInt64Array {
   values: never;
 }
 
-interface PackedInt64ArrayConstructor {
+declare interface PackedInt64ArrayConstructor {
   /** Constructs an empty {@link PackedInt64Array}. */
   (): PackedInt64Array;
   /** Constructs a {@link PackedInt64Array} as a copy of the given {@link PackedInt64Array}. */

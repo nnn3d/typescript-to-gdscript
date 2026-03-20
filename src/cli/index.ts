@@ -5,12 +5,11 @@ import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSy
 import { resolve, dirname, relative, extname, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.js';
 import { convertGdToTs } from '../converter/gd-to-ts/index.js';
-import { lintFiles } from '../linter/index.js';
 import { generateClassTypings } from '../typings/classes.js';
 import { generateGodotDocsTypings } from '../typings/godot-docs.js';
 import { parseGodotVersion } from '../typings/godot-registry.js';
 import { Watcher } from '../watcher/index.js';
-import { resolveRegistry, resolveGodotPath } from '../config/index.js';
+import { resolveRegistry, resolveGodotPath, resolveConfig } from '../config/index.js';
 import { validateGdFiles } from '../godot-validate/index.js';
 
 const program = new Command();
@@ -26,20 +25,30 @@ program
   .command('convert')
   .description('Convert TypeScript file(s) to GDScript')
   .argument('<files...>', 'TypeScript files to convert')
-  .option('-o, --output-dir <dir>', 'Output directory')
+  .option('-o, --output-dir <dir>', 'Output directory (alias for --gd-dir)')
+  .option('--ts-dir <dir>', 'TypeScript source directory')
+  .option('--gd-dir <dir>', 'GDScript output directory')
   .option('--source-map', 'Generate source maps', false)
   .option('--root-dir <dir>', 'Root directory', '.')
   .option('--tsconfig <path>', 'Path to tsconfig.json')
   .action((files: string[], opts) => {
-    const rootDir = resolve(opts.rootDir);
+    const cfg = resolveConfig({
+      overrides: {
+        rootDir: opts.rootDir,
+        tsDir: opts.tsDir,
+        gdDir: opts.gdDir ?? opts.outputDir,
+        tsconfig: opts.tsconfig,
+        sourceMap: opts.sourceMap,
+      },
+    });
 
     for (const file of files) {
       const filePath = resolve(file);
       const result = convertTsToGd({
         filePath,
-        rootDir,
-        tsConfigPath: opts.tsconfig ? resolve(opts.tsconfig) : undefined,
-        sourceMap: opts.sourceMap,
+        rootDir: cfg.tsDir,
+        tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
+        sourceMap: cfg.sourceMap,
       });
 
       for (const diag of result.diagnostics) {
@@ -49,9 +58,8 @@ program
 
       if (result.diagnostics.some(d => d.severity === 'error')) continue;
 
-      const outputPath = opts.outputDir
-        ? resolve(opts.outputDir, relative(rootDir, filePath).replace(/\.ts$/, '.gd'))
-        : filePath.replace(/\.ts$/, '.gd');
+      const relPath = relative(cfg.tsDir, filePath);
+      const outputPath = resolve(cfg.gdDir, relPath.replace(/\.ts$/, '.gd'));
 
       mkdirSync(dirname(outputPath), { recursive: true });
       writeFileSync(outputPath, result.code);
@@ -71,10 +79,21 @@ program
   .command('convert-gd')
   .description('Convert GDScript file(s) to TypeScript')
   .argument('<files...>', 'GDScript files to convert')
-  .option('-o, --output-dir <dir>', 'Output directory')
+  .option('-o, --output-dir <dir>', 'Output directory (alias for --ts-dir)')
+  .option('--ts-dir <dir>', 'TypeScript output directory')
+  .option('--gd-dir <dir>', 'GDScript source directory')
+  .option('--root-dir <dir>', 'Root directory', '.')
   .option('--registry <path>', 'Path to godot-class-registry.json (overrides tstogd.json and bundled)')
   .action((files: string[], opts) => {
-    const registry = resolveRegistry({ registryPath: opts.registry });
+    const cfg = resolveConfig({
+      overrides: {
+        rootDir: opts.rootDir,
+        tsDir: opts.tsDir ?? opts.outputDir,
+        gdDir: opts.gdDir,
+        registryPath: opts.registry,
+      },
+    });
+    const registry = resolveRegistry({ registryPath: cfg.registryPath });
 
     for (const file of files) {
       const filePath = resolve(file);
@@ -87,41 +106,13 @@ program
         console.error(`[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`);
       }
 
-      const outputPath = opts.outputDir
-        ? resolve(opts.outputDir, relative('.', filePath).replace(/\.gd$/, '.ts'))
-        : filePath.replace(/\.gd$/, '.ts');
+      const relPath = relative(cfg.gdDir, filePath);
+      const outputPath = resolve(cfg.tsDir, relPath.replace(/\.gd$/, '.ts'));
 
       mkdirSync(dirname(outputPath), { recursive: true });
       writeFileSync(outputPath, result.code);
       console.log(`Written: ${outputPath}`);
     }
-  });
-
-// ─── Lint ───────────────────────────────────────────────────
-
-program
-  .command('lint')
-  .description('Lint TypeScript files for GDScript transformation issues')
-  .argument('<files...>', 'TypeScript files to lint')
-  .option('--root-dir <dir>', 'Root directory', '.')
-  .option('--tsconfig <path>', 'Path to tsconfig.json')
-  .action((files: string[], opts) => {
-    const results = lintFiles({
-      files: files.map(f => resolve(f)),
-      rootDir: resolve(opts.rootDir),
-      tsConfigPath: opts.tsconfig ? resolve(opts.tsconfig) : undefined,
-    });
-
-    let hasErrors = false;
-    for (const result of results) {
-      for (const diag of result.diagnostics) {
-        const prefix = diag.severity === 'error' ? 'ERROR' : diag.severity === 'warning' ? 'WARN' : 'INFO';
-        console.log(`[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`);
-        if (diag.severity === 'error') hasErrors = true;
-      }
-    }
-
-    if (hasErrors) process.exit(1);
   });
 
 // ─── Validate GD ─────────────────────────────────────────────
@@ -162,22 +153,43 @@ program
 program
   .command('watch')
   .description('Watch TypeScript files and convert on change')
-  .option('--root-dir <dir>', 'Root directory to watch', '.')
-  .option('--output-dir <dir>', 'Output directory for GDScript files')
+  .option('--root-dir <dir>', 'Root directory', '.')
+  .option('--ts-dir <dir>', 'TypeScript source directory to watch')
+  .option('--gd-dir <dir>', 'GDScript output directory')
+  .option('--output-dir <dir>', 'Output directory (alias for --gd-dir)')
   .option('--source-map', 'Generate source maps', false)
   .option('--tsconfig <path>', 'Path to tsconfig.json')
-  .option('--class-typings <path>', 'Output path for global class typings')
+  .option('--class-typings <path>', 'Output path for global class typings (deprecated, use --class-typings-path)')
+  .option('--class-typings-path <path>', 'Directory for generated global class typings (relative to rootDir)')
   .option('--godot-path <path>', 'Path to Godot executable (enables GD validation after conversion)')
   .option('--project-root <dir>', 'Godot project root for validation')
   .action((opts) => {
-    const rootDir = resolve(opts.rootDir);
-    const godotPath = opts.godotPath ? resolveGodotPath({ godotPath: opts.godotPath }) : undefined;
+    const cfg = resolveConfig({
+      overrides: {
+        rootDir: opts.rootDir,
+        tsDir: opts.tsDir,
+        gdDir: opts.gdDir ?? opts.outputDir,
+        classTypingsPath: opts.classTypingsPath,
+        tsconfig: opts.tsconfig,
+        sourceMap: opts.sourceMap,
+        godotPath: opts.godotPath,
+      },
+    });
+    const godotPath = cfg.godotPath ? resolveGodotPath({ godotPath: cfg.godotPath }) : undefined;
+
+    // Resolve class typings output path
+    const classTypingsOutput = opts.classTypings
+      ? resolve(opts.classTypings)
+      : resolve(cfg.rootDir, cfg.classTypingsPath, 'globals.d.ts');
+
     const watcher = new Watcher({
-      rootDir,
-      outputDir: opts.outputDir ? resolve(opts.outputDir) : rootDir,
-      tsConfigPath: opts.tsconfig ? resolve(opts.tsconfig) : undefined,
-      sourceMap: opts.sourceMap,
-      classTypingsOutput: opts.classTypings ? resolve(opts.classTypings) : undefined,
+      rootDir: cfg.rootDir,
+      tsDir: cfg.tsDir,
+      gdDir: cfg.gdDir,
+      outputDir: cfg.gdDir,
+      tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
+      sourceMap: cfg.sourceMap,
+      classTypingsOutput,
       godotPath,
       projectRoot: opts.projectRoot ? resolve(opts.projectRoot) : undefined,
     });
@@ -314,17 +326,30 @@ program
   .command('generate-class-typings')
   .description('Generate global class declarations from TS source files')
   .argument('<files...>', 'TypeScript source files')
-  .option('-o, --output <path>', 'Output .d.ts file path', 'globals.d.ts')
+  .option('-o, --output <path>', 'Output .d.ts file path')
+  .option('--class-typings-path <path>', 'Directory for generated global class typings (relative to rootDir)')
   .option('--root-dir <dir>', 'Root directory', '.')
   .option('--tsconfig <path>', 'Path to tsconfig.json')
   .action((files: string[], opts) => {
-    generateClassTypings({
-      rootDir: resolve(opts.rootDir),
-      files: files.map(f => resolve(f)),
-      outputPath: resolve(opts.output),
-      tsConfigPath: opts.tsconfig ? resolve(opts.tsconfig) : undefined,
+    const cfg = resolveConfig({
+      overrides: {
+        rootDir: opts.rootDir,
+        classTypingsPath: opts.classTypingsPath,
+        tsconfig: opts.tsconfig,
+      },
     });
-    console.log(`Generated: ${resolve(opts.output)}`);
+
+    const outputPath = opts.output
+      ? resolve(opts.output)
+      : resolve(cfg.rootDir, cfg.classTypingsPath, 'globals.d.ts');
+
+    generateClassTypings({
+      rootDir: cfg.rootDir,
+      files: files.map(f => resolve(f)),
+      outputPath,
+      tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
+    });
+    console.log(`Generated: ${outputPath}`);
   });
 
 program.parse();

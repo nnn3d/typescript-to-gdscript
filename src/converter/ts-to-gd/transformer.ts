@@ -14,6 +14,7 @@ export class TsToGdTransformer {
   private ctx: TransformContext;
   private emitter: GDScriptEmitter;
   private opts: TransformerOptions;
+  private currentClassName: string = '';
 
   constructor(ctx: TransformContext, opts: TransformerOptions) {
     this.ctx = ctx;
@@ -39,6 +40,15 @@ export class TsToGdTransformer {
   // ─── Source File ─────────────────────────────────────────────
 
   private visitSourceFile(sf: ts.SourceFile): void {
+    // Check single class per file
+    const classDecls = sf.statements.filter(ts.isClassDeclaration);
+    if (classDecls.length > 1) {
+      for (const cls of classDecls.slice(1)) {
+        this.addDiagnostic(cls, 'error',
+          'Only one class per file is allowed (GDScript file structure)');
+      }
+    }
+
     for (const statement of sf.statements) {
       if (ts.isClassDeclaration(statement)) {
         this.visitClassDeclaration(statement);
@@ -49,7 +59,7 @@ export class TsToGdTransformer {
       } else if (ts.isExportDeclaration(statement) || ts.isExportAssignment(statement)) {
         // Exports are TS-only; skip
       } else {
-        this.addDiagnostic(statement, 'warning',
+        this.addDiagnostic(statement, 'error',
           `Top-level statement outside class is not supported: ${ts.SyntaxKind[statement.kind]}`);
       }
     }
@@ -73,10 +83,12 @@ export class TsToGdTransformer {
       }
     }
 
-    // class_name
-    if (node.name) {
+    // class_name (skip for __CLASS__ — anonymous class)
+    const className = node.name?.getText(this.ctx.sourceFile) ?? '';
+    this.currentClassName = className;
+    if (className && className !== '__CLASS__') {
       this.emitter.writeLine(
-        `class_name ${node.name.getText(this.ctx.sourceFile)}`,
+        `class_name ${className}`,
         pos.line, pos.col
       );
     }
@@ -298,17 +310,23 @@ export class TsToGdTransformer {
       this.emitter.writeLine(dec, pos.line, pos.col);
     }
 
-    // Static
+    // Static and readonly
     const isStatic = node.modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword);
-    const staticPrefix = isStatic ? 'static ' : '';
+    const isReadonly = node.modifiers?.some(m => m.kind === ts.SyntaxKind.ReadonlyKeyword);
 
     // Type annotation
     const gdType = tsTypeNodeToGdType(
       node.type, this.ctx.checker, this.ctx.sourceFile
     );
 
-    // Build declaration
-    let decl = `${staticPrefix}var ${name}`;
+    // Build declaration: readonly -> const, static -> static var, else -> var
+    let decl: string;
+    if (isReadonly) {
+      decl = `const ${name}`;
+    } else {
+      const staticPrefix = isStatic ? 'static ' : '';
+      decl = `${staticPrefix}var ${name}`;
+    }
     if (gdType) {
       decl += `: ${gdType}`;
     }
@@ -428,6 +446,9 @@ export class TsToGdTransformer {
       this.emitter.writeLine('continue', pos.line, pos.col);
     } else if (ts.isSwitchStatement(node)) {
       this.visitSwitchStatement(node);
+    } else if (ts.isForInStatement(node)) {
+      this.addDiagnostic(node, 'error',
+        '`for...in` is not supported; use `for...of` instead');
     } else {
       this.addDiagnostic(node, 'warning',
         `Unsupported statement: ${ts.SyntaxKind[node.kind]}`);
@@ -439,6 +460,14 @@ export class TsToGdTransformer {
   private visitVariableStatement(node: ts.VariableStatement): void {
     for (const decl of node.declarationList.declarations) {
       const pos = this.getLineAndCol(decl);
+
+      // Check for destructuring
+      if (ts.isArrayBindingPattern(decl.name) || ts.isObjectBindingPattern(decl.name)) {
+        this.addDiagnostic(decl, 'error',
+          'Destructuring is not supported in GDScript');
+        continue;
+      }
+
       const name = decl.name.getText(this.ctx.sourceFile);
 
       // Check for var restriction (const and let are both allowed)
@@ -725,15 +754,23 @@ export class TsToGdTransformer {
 
     // Object literal -> Dictionary
     if (ts.isObjectLiteralExpression(node)) {
-      const props = node.properties.map(p => {
+      const entries: string[] = [];
+      for (const p of node.properties) {
         if (ts.isPropertyAssignment(p)) {
-          const key = p.name.getText(this.ctx.sourceFile);
+          let key: string;
+          if (ts.isComputedPropertyName(p.name)) {
+            // {[expr]: value} -> expr: value (strip brackets, use raw expression)
+            key = this.emitExpression(p.name.expression);
+          } else {
+            // Regular property: quote the key name
+            key = `"${p.name.getText(this.ctx.sourceFile)}"`;
+          }
           const value = this.emitExpression(p.initializer);
-          return `"${key}": ${value}`;
+          entries.push(`${key}: ${value}`);
         }
-        return '';
-      }).filter(Boolean).join(', ');
-      return `{${props}}`;
+      }
+      if (entries.length === 0) return '{}';
+      return this.emitMultiLineDict(entries);
     }
 
     // Conditional (ternary) -> GDScript ternary
@@ -770,7 +807,15 @@ export class TsToGdTransformer {
       return this.emitExpression(node.expression);
     }
 
-    // Fallback
+    // Yield -> not supported
+    if (ts.isYieldExpression(node)) {
+      this.addDiagnostic(node, 'error', '`yield` is not supported; use `await` instead');
+      return node.getText(this.ctx.sourceFile);
+    }
+
+    // Fallback — unsupported expression
+    this.addDiagnostic(node, 'warning',
+      `Unsupported expression: ${ts.SyntaxKind[node.kind]}`);
     return node.getText(this.ctx.sourceFile);
   }
 
@@ -795,6 +840,15 @@ export class TsToGdTransformer {
   // ─── Property Access ─────────────────────────────────────────
 
   private emitPropertyAccess(node: ts.PropertyAccessExpression): string {
+    // Optional chaining (?.) -> not supported
+    if (node.questionDotToken) {
+      this.addDiagnostic(node, 'error',
+        'Optional chaining (`?.`) is not supported in GDScript');
+    }
+    // ClassName.staticProp -> self.staticProp (when accessing own class)
+    if (ts.isIdentifier(node.expression) && node.expression.text === this.currentClassName) {
+      return `self.${node.name.text}`;
+    }
     const obj = this.emitExpression(node.expression);
     const prop = node.name.text;
     return `${obj}.${prop}`;
@@ -803,6 +857,11 @@ export class TsToGdTransformer {
   // ─── Call Expressions ────────────────────────────────────────
 
   private emitCallExpression(node: ts.CallExpression): string {
+    // Optional chaining on calls (?.) -> not supported
+    if (node.questionDotToken) {
+      this.addDiagnostic(node, 'error',
+        'Optional chaining (`?.`) is not supported in GDScript');
+    }
     const args = node.arguments.map(a => this.emitExpression(a)).join(', ');
 
     // Handle gd.* helper calls
@@ -817,6 +876,11 @@ export class TsToGdTransformer {
           const type = this.emitExpression(node.arguments[1]!);
           return `${value} as ${type}`;
         }
+      }
+
+      // gd.dict([[key, value], ...]) -> {key: value, ...}
+      if (ts.isIdentifier(obj) && obj.text === 'gd' && method === 'dict') {
+        return this.emitGdDict(node);
       }
 
       // gd.ops.add/sub/mul/div/eq/ne/gt/gte/lt/lte/plus/minus -> operator
@@ -910,9 +974,77 @@ export class TsToGdTransformer {
     return `${operands.join(', ')}`;
   }
 
+  // ─── gd.dict() ─────────────────────────────────────────────
+
+  private emitGdDict(node: ts.CallExpression): string {
+    if (node.arguments.length !== 1) {
+      this.addDiagnostic(node, 'error', 'gd.dict() requires exactly one argument (array of [key, value] pairs)');
+      return '{}';
+    }
+
+    const arg = node.arguments[0]!;
+    if (!ts.isArrayLiteralExpression(arg)) {
+      this.addDiagnostic(node, 'error', 'gd.dict() argument must be an array literal of [key, value] pairs');
+      return '{}';
+    }
+
+    const entries: string[] = [];
+    for (const element of arg.elements) {
+      if (!ts.isArrayLiteralExpression(element) || element.elements.length !== 2) {
+        this.addDiagnostic(element, 'error', 'gd.dict() entries must be [key, value] tuples');
+        continue;
+      }
+
+      const keyNode = element.elements[0]!;
+      const valueNode = element.elements[1]!;
+
+      let key: string;
+      if (ts.isStringLiteral(keyNode)) {
+        key = this.emitStringLiteral(keyNode);
+      } else if (ts.isNumericLiteral(keyNode)) {
+        key = keyNode.getText(this.ctx.sourceFile);
+      } else if (ts.isIdentifier(keyNode)) {
+        key = keyNode.text;
+      } else if (ts.isPropertyAccessExpression(keyNode)) {
+        key = this.emitExpression(keyNode);
+      } else {
+        this.addDiagnostic(keyNode, 'error',
+          'gd.dict() keys must be identifiers, property accesses, or string/number literals, not expressions');
+        key = keyNode.getText(this.ctx.sourceFile);
+      }
+
+      const value = this.emitExpression(valueNode);
+      entries.push(`${key}: ${value}`);
+    }
+
+    if (entries.length === 0) {
+      return '{}';
+    }
+
+    return this.emitMultiLineDict(entries);
+  }
+
+  /** Emit a multi-line GDScript dict with proper indentation */
+  private emitMultiLineDict(entries: string[]): string {
+    const innerIndent = this.emitter.getIndentStr(this.emitter.getIndentLevel() + 1);
+    const outerIndent = this.emitter.getIndentStr();
+    const lines = entries.map(e => `${innerIndent}${e},`);
+    return `{\n${lines.join('\n')}\n${outerIndent}}`;
+  }
+
   // ─── Binary Expressions ─────────────────────────────────────
 
   private emitBinaryExpression(node: ts.BinaryExpression): string {
+    // Nullish coalescing (??) -> not supported
+    if (node.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken) {
+      this.addDiagnostic(node, 'error',
+        'Nullish coalescing (`??`) is not supported in GDScript');
+    }
+    // Nullish coalescing assignment (??=) -> not supported
+    if (node.operatorToken.kind === ts.SyntaxKind.QuestionQuestionEqualsToken) {
+      this.addDiagnostic(node, 'error',
+        'Nullish coalescing assignment (`??=`) is not supported in GDScript');
+    }
     const left = this.emitExpression(node.left);
     const right = this.emitExpression(node.right);
     const op = this.binaryOperator(node.operatorToken.kind);

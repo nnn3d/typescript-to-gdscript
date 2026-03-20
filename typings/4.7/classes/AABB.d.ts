@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3D axis-aligned bounding box. */
-interface AABB {
+declare interface AABB {
   /**
    * The ending point. This is usually the corner on the top-right and back of the bounding box, and is equivalent to `position + size`. Setting this point affects the {@link size}.
    */
@@ -163,7 +163,7 @@ interface AABB {
   values: never;
 }
 
-interface AABBConstructor {
+declare interface AABBConstructor {
   /** Constructs an {@link AABB} with its {@link position} and {@link size} set to {@link Vector3.ZERO}. */
   (): AABB;
   /** Constructs an {@link AABB} as a copy of the given {@link AABB}. */
