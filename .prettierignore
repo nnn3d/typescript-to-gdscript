@@ -1,1 +1,6 @@
 **/fixtures/**/*.ts
+/node_modules
+/dist
+.idea
+.claude
+/vendor
