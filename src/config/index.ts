@@ -1,7 +1,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { join, resolve, dirname, relative } from 'path';
 import { fileURLToPath } from 'url';
-import { GodotClassRegistry } from '../typings/godot-registry.js';
+import { GodotClassRegistry } from '../typings/godot-registry.ts';
 
 // ─── Config Types ─────────────────────────────────────────────
 

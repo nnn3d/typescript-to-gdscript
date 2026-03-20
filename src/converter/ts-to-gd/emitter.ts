@@ -1,4 +1,4 @@
-import { SourceMapper, type Mapping } from '../../sourcemap/index.js';
+import { SourceMapper, type Mapping } from '../../sourcemap/index.ts';
 
 /**
  * GDScript code emitter with source map support.

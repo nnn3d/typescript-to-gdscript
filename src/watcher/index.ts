@@ -1,9 +1,9 @@
 import { watch, type FSWatcher } from 'chokidar';
 import { extname, resolve, relative } from 'path';
-import { convertTsToGd } from '../converter/ts-to-gd/index.js';
-import { validateGdFiles } from '../godot-validate/index.js';
-import { generateClassTypings } from '../typings/classes.js';
-import { FileCache } from '../cache/index.js';
+import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
+import { validateGdFiles } from '../godot-validate/index.ts';
+import { generateClassTypings } from '../typings/classes.ts';
+import { FileCache } from '../cache/index.ts';
 import { writeFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 

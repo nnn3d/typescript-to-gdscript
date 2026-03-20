@@ -2,8 +2,8 @@ import { execFile, execFileSync } from 'child_process';
 import { promisify } from 'util';
 import { existsSync, readFileSync } from 'fs';
 import { resolve, basename, dirname, join, relative } from 'path';
-import { SourceMapReader } from '../sourcemap/index.js';
-import type { TransformDiagnostic } from '../converter/common/index.js';
+import { SourceMapReader } from '../sourcemap/index.ts';
+import type { TransformDiagnostic } from '../converter/common/index.ts';
 
 var execFileAsync = promisify(execFile);
 

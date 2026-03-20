@@ -1,6 +1,6 @@
 import Parser from 'tree-sitter';
 import GDScript from 'tree-sitter-gdscript';
-import type { GDNode } from './types.js';
+import type { GDNode } from './types.ts';
 
 export class GDScriptParser {
   private parser: Parser;

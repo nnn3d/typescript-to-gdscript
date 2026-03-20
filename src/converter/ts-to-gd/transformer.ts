@@ -1,7 +1,7 @@
 import ts from 'typescript';
-import type { TransformContext, TransformResult, TransformDiagnostic } from '../common/index.js';
-import { tsTypeNodeToGdType } from '../common/index.js';
-import { GDScriptEmitter } from './emitter.js';
+import type { TransformContext, TransformResult, TransformDiagnostic } from '../common/index.ts';
+import { tsTypeNodeToGdType } from '../common/index.ts';
+import { GDScriptEmitter } from './emitter.ts';
 
 export interface TransformerOptions {
   sourceMap: boolean;

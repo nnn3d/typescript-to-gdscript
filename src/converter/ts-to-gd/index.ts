@@ -1,7 +1,7 @@
 import ts from 'typescript';
-import { createTsProgram } from '../../parser/typescript/index.js';
-import type { TransformResult } from '../common/index.js';
-import { TsToGdTransformer } from './transformer.js';
+import { createTsProgram } from '../../parser/typescript/index.ts';
+import type { TransformResult } from '../common/index.ts';
+import { TsToGdTransformer } from './transformer.ts';
 
 export interface ConvertOptions {
   /** Path to the TypeScript file */

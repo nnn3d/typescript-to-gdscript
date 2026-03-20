@@ -3,14 +3,14 @@
 import { Command } from 'commander';
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync } from 'fs';
 import { resolve, dirname, relative, extname, join } from 'path';
-import { convertTsToGd } from '../converter/ts-to-gd/index.js';
-import { convertGdToTs } from '../converter/gd-to-ts/index.js';
-import { generateClassTypings } from '../typings/classes.js';
-import { generateGodotDocsTypings } from '../typings/godot-docs.js';
-import { parseGodotVersion } from '../typings/godot-registry.js';
-import { Watcher } from '../watcher/index.js';
-import { resolveRegistry, resolveGodotPath, resolveConfig } from '../config/index.js';
-import { validateGdFiles } from '../godot-validate/index.js';
+import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
+import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
+import { generateClassTypings } from '../typings/classes.ts';
+import { generateGodotDocsTypings } from '../typings/godot-docs.ts';
+import { parseGodotVersion } from '../typings/godot-registry.ts';
+import { Watcher } from '../watcher/index.ts';
+import { resolveRegistry, resolveGodotPath, resolveConfig } from '../config/index.ts';
+import { validateGdFiles } from '../godot-validate/index.ts';
 
 const program = new Command();
 

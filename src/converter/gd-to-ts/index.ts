@@ -1,8 +1,8 @@
-import { GDScriptParser } from '../../parser/gdscript/index.js';
-import type { GDNode, GDNodeBase } from '../../parser/gdscript/types.js';
-import { isGDNodeType } from '../../parser/gdscript/types.js';
-import type { TransformResult, TransformDiagnostic } from '../common/index.js';
-import type { GodotClassRegistry } from '../../typings/godot-registry.js';
+import { GDScriptParser } from '../../parser/gdscript/index.ts';
+import type { GDNode, GDNodeBase } from '../../parser/gdscript/types.ts';
+import { isGDNodeType } from '../../parser/gdscript/types.ts';
+import type { TransformResult, TransformDiagnostic } from '../common/index.ts';
+import type { GodotClassRegistry } from '../../typings/godot-registry.ts';
 
 export interface GdToTsOptions {
   /** GDScript source code */

@@ -1,7 +1,7 @@
 import ts from 'typescript';
 import { writeFileSync } from 'fs';
 import { relative, dirname } from 'path';
-import { createTsProgram } from '../parser/typescript/index.js';
+import { createTsProgram } from '../parser/typescript/index.ts';
 
 export interface ClassTypingsOptions {
   /** Root directory containing TS source files */
