@@ -1,18 +1,21 @@
 import { describe, it, expect, afterEach, beforeAll } from 'vitest';
-import { parseGodotErrors, remapError, validateGdFiles, type GodotRawError } from '../../src/godot-validate';
-import { convertTsToGd } from '../../src/converter/ts-to-gd';
+import {
+  parseGodotErrors,
+  remapError,
+  validateGdFiles,
+  type GodotRawError,
+} from '../../src/godot-validate/index.ts';
+import { convertTsToGd } from '../../src/converter/ts-to-gd/index.ts';
 import { writeFileSync, mkdirSync, rmSync } from 'fs';
 import { join, resolve } from 'path';
-import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import ts from 'typescript';
+import { tmpdir } from 'os';
 
 const execFileAsync = promisify(execFile);
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const TMP_DIR = join(__dirname, '__tmp__');
+const TMP_DIR = join(tmpdir(), '__tmp__' + Math.random().toString(36));
 
 afterEach(() => {
   rmSync(TMP_DIR, { recursive: true, force: true });
@@ -24,7 +27,8 @@ describe('parseGodotErrors', () => {
   const projectRoot = '/project';
 
   it('should parse res:// format with line only', () => {
-    const stderr = 'res://scripts/player.gd:15 - Parse Error: Expected ":" after variable name.\n';
+    const stderr =
+      'res://scripts/player.gd:15 - Parse Error: Expected ":" after variable name.\n';
     const errors = parseGodotErrors(stderr, projectRoot);
 
     expect(errors).toHaveLength(1);
@@ -36,7 +40,8 @@ describe('parseGodotErrors', () => {
   });
 
   it('should parse res:// format with line and column', () => {
-    const stderr = 'res://player.gd:10:5 - Compile Error: Unknown identifier.\n';
+    const stderr =
+      'res://player.gd:10:5 - Compile Error: Unknown identifier.\n';
     const errors = parseGodotErrors(stderr, projectRoot);
 
     expect(errors).toHaveLength(1);
@@ -71,7 +76,9 @@ describe('parseGodotErrors', () => {
     expect(errors[0]!.file).toBe(resolve('/project/test_error.gd'));
     expect(errors[0]!.line).toBe(4);
     expect(errors[0]!.errorType).toBe('Parse Error');
-    expect(errors[0]!.message).toBe('Cannot assign a value of type "String" as "int".');
+    expect(errors[0]!.message).toBe(
+      'Cannot assign a value of type "String" as "int".',
+    );
   });
 
   it('should parse real Godot 4.6 multi-error output', () => {
@@ -89,9 +96,13 @@ describe('parseGodotErrors', () => {
 
     // Should get 2 SCRIPT ERRORs, skip the generic "Failed to load script" ERROR
     expect(errors).toHaveLength(2);
-    expect(errors[0]!.message).toBe('Cannot assign a value of type "String" as "int".');
+    expect(errors[0]!.message).toBe(
+      'Cannot assign a value of type "String" as "int".',
+    );
     expect(errors[0]!.line).toBe(4);
-    expect(errors[1]!.message).toBe('Cannot assign a value of type String to variable "test" with specified type int.');
+    expect(errors[1]!.message).toBe(
+      'Cannot assign a value of type String to variable "test" with specified type int.',
+    );
     expect(errors[1]!.line).toBe(4);
   });
 
@@ -139,7 +150,8 @@ describe('parseGodotErrors', () => {
   });
 
   it('should parse absolute path format', () => {
-    const stderr = '/project/scripts/player.gd:20 - Parse Error: Unexpected end of file.\n';
+    const stderr =
+      '/project/scripts/player.gd:20 - Parse Error: Unexpected end of file.\n';
     const errors = parseGodotErrors(stderr, projectRoot);
 
     expect(errors).toHaveLength(1);
@@ -182,7 +194,8 @@ describe('remapError', () => {
 
     // Find the "class_name" line in GD output — it definitely has a mapping
     const gdLines = result.code.split('\n');
-    const classNameLine = gdLines.findIndex(l => l.includes('class_name')) + 1; // 1-based
+    const classNameLine =
+      gdLines.findIndex((l) => l.includes('class_name')) + 1; // 1-based
 
     const rawError: GodotRawError = {
       file: gdPath,
@@ -268,13 +281,16 @@ describe('Godot CLI integration', () => {
   function setupGodotProject(): string {
     const projectDir = join(TMP_DIR, 'godot-project');
     mkdirSync(projectDir, { recursive: true });
-    writeFileSync(join(projectDir, 'project.godot'), [
-      '; Engine configuration file.',
-      'config_version=5',
-      '',
-      '[application]',
-      'config/name="Test"',
-    ].join('\n'));
+    writeFileSync(
+      join(projectDir, 'project.godot'),
+      [
+        '; Engine configuration file.',
+        'config_version=5',
+        '',
+        '[application]',
+        'config/name="Test"',
+      ].join('\n'),
+    );
     return projectDir;
   }
 
@@ -292,12 +308,15 @@ describe('Godot CLI integration', () => {
 
   it('should detect type mismatch: var test: int = ""', async () => {
     const projectDir = setupGodotProject();
-    writeFileSync(join(projectDir, 'type_error.gd'), [
-      'class_name TypeErrorTest',
-      'extends Node',
-      '',
-      'var test: int = ""',
-    ].join('\n'));
+    writeFileSync(
+      join(projectDir, 'type_error.gd'),
+      [
+        'class_name TypeErrorTest',
+        'extends Node',
+        '',
+        'var test: int = ""',
+      ].join('\n'),
+    );
 
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'type_error.gd')],
@@ -307,20 +326,25 @@ describe('Godot CLI integration', () => {
 
     expect(result.godotAvailable).toBe(true);
     expect(result.diagnostics.length).toBeGreaterThan(0);
-    expect(result.diagnostics.some(d =>
-      d.severity === 'error' && d.message.includes('String')
-    )).toBe(true);
+    expect(
+      result.diagnostics.some(
+        (d) => d.severity === 'error' && d.message.includes('String'),
+      ),
+    ).toBe(true);
   });
 
   it('should detect unknown function call', async () => {
     const projectDir = setupGodotProject();
-    writeFileSync(join(projectDir, 'unknown_func.gd'), [
-      'class_name UnknownFuncTest',
-      'extends Node',
-      '',
-      'func _ready() -> void:',
-      '\tvar x = nonexistent_func()',
-    ].join('\n'));
+    writeFileSync(
+      join(projectDir, 'unknown_func.gd'),
+      [
+        'class_name UnknownFuncTest',
+        'extends Node',
+        '',
+        'func _ready() -> void:',
+        '\tvar x = nonexistent_func()',
+      ].join('\n'),
+    );
 
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'unknown_func.gd')],
@@ -329,21 +353,24 @@ describe('Godot CLI integration', () => {
     });
 
     expect(result.diagnostics.length).toBeGreaterThan(0);
-    expect(result.diagnostics.some(d =>
-      d.message.includes('nonexistent_func')
-    )).toBe(true);
+    expect(
+      result.diagnostics.some((d) => d.message.includes('nonexistent_func')),
+    ).toBe(true);
   });
 
   it('should detect syntax error: missing colon after if', async () => {
     const projectDir = setupGodotProject();
-    writeFileSync(join(projectDir, 'syntax_error.gd'), [
-      'class_name SyntaxErrorTest',
-      'extends Node',
-      '',
-      'func _ready() -> void:',
-      '\tif true',
-      '\t\tpass',
-    ].join('\n'));
+    writeFileSync(
+      join(projectDir, 'syntax_error.gd'),
+      [
+        'class_name SyntaxErrorTest',
+        'extends Node',
+        '',
+        'func _ready() -> void:',
+        '\tif true',
+        '\t\tpass',
+      ].join('\n'),
+    );
 
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'syntax_error.gd')],
@@ -357,15 +384,18 @@ describe('Godot CLI integration', () => {
 
   it('should pass for valid script', async () => {
     const projectDir = setupGodotProject();
-    writeFileSync(join(projectDir, 'valid.gd'), [
-      'class_name ValidTest',
-      'extends Node',
-      '',
-      'var health: int = 100',
-      '',
-      'func _ready() -> void:',
-      '\tpass',
-    ].join('\n'));
+    writeFileSync(
+      join(projectDir, 'valid.gd'),
+      [
+        'class_name ValidTest',
+        'extends Node',
+        '',
+        'var health: int = 100',
+        '',
+        'func _ready() -> void:',
+        '\tpass',
+      ].join('\n'),
+    );
 
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'valid.gd')],
@@ -378,14 +408,17 @@ describe('Godot CLI integration', () => {
 
   it('should report correct line number for type error', async () => {
     const projectDir = setupGodotProject();
-    writeFileSync(join(projectDir, 'line_check.gd'), [
-      'class_name LineCheckTest',   // line 1
-      'extends Node',               // line 2
-      '',                            // line 3
-      'var a: int = 1',             // line 4
-      'var b: String = "hello"',    // line 5
-      'var c: int = "wrong"',       // line 6 — error here
-    ].join('\n'));
+    writeFileSync(
+      join(projectDir, 'line_check.gd'),
+      [
+        'class_name LineCheckTest', // line 1
+        'extends Node', // line 2
+        '', // line 3
+        'var a: int = 1', // line 4
+        'var b: String = "hello"', // line 5
+        'var c: int = "wrong"', // line 6 — error here
+      ].join('\n'),
+    );
 
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'line_check.gd')],
@@ -395,7 +428,7 @@ describe('Godot CLI integration', () => {
 
     expect(result.diagnostics.length).toBeGreaterThan(0);
     // Error should point to line 6
-    expect(result.diagnostics.some(d => d.line === 6)).toBe(true);
+    expect(result.diagnostics.some((d) => d.line === 6)).toBe(true);
   });
 
   it('should remap type error to TS source via source map', async () => {
@@ -406,16 +439,17 @@ describe('Godot CLI integration', () => {
     // But we can't actually produce a type error from valid TS conversion,
     // so we'll write a GD file with an error + a source map from a real conversion,
     // and verify the line maps back.
-    const tsCode = [
-      'class RemapTest extends Node {',
-      '  empty() {',
-      '    // empty fn',
-      '  }',
-      '  _ready() {',
-      '    let health: int = "";',
-      '  }',
-      '}',
-    ].join('\n') + '\n';
+    const tsCode =
+      [
+        'class RemapTest extends Node {',
+        '  empty() {',
+        '    // empty fn',
+        '  }',
+        '  _ready() {',
+        '    let health: int = "";',
+        '  }',
+        '}',
+      ].join('\n') + '\n';
 
     const program = createTestProgram(tsPath, tsCode);
     const result = convertTsToGd({
@@ -440,27 +474,32 @@ describe('Godot CLI integration', () => {
     expect(validateResult.diagnostics.length).toBeGreaterThan(0);
 
     // The error should be remapped to the TS file (not pointing to .gd)
-    const remappedDiag = validateResult.diagnostics.find(d => d.file.endsWith('.ts'));
-    expect(remappedDiag, `Expected TS file in diagnostics, got: ${JSON.stringify(validateResult.diagnostics.map(d => ({ file: d.file, line: d.line })))}`).toBeDefined();
+    const remappedDiag = validateResult.diagnostics.find((d) =>
+      d.file.endsWith('.ts'),
+    );
+    expect(
+      remappedDiag,
+      `Expected TS file in diagnostics, got: ${JSON.stringify(validateResult.diagnostics.map((d) => ({ file: d.file, line: d.line })))}`,
+    ).toBeDefined();
     // Should point to TS line 6 (let health: int = "")
     expect(remappedDiag!.line).toBe(6);
-    expect(remappedDiag!.message).toContain('Cannot assign a value of type "String" as "int".');
+    expect(remappedDiag!.message).toContain(
+      'Cannot assign a value of type "String" as "int".',
+    );
   });
 
   it('should validate multiple files', async () => {
     const projectDir = setupGodotProject();
 
-    writeFileSync(join(projectDir, 'good.gd'), [
-      'class_name GoodTest',
-      'extends Node',
-      'var x: int = 1',
-    ].join('\n'));
+    writeFileSync(
+      join(projectDir, 'good.gd'),
+      ['class_name GoodTest', 'extends Node', 'var x: int = 1'].join('\n'),
+    );
 
-    writeFileSync(join(projectDir, 'bad.gd'), [
-      'class_name BadTest',
-      'extends Node',
-      'var x: int = ""',
-    ].join('\n'));
+    writeFileSync(
+      join(projectDir, 'bad.gd'),
+      ['class_name BadTest', 'extends Node', 'var x: int = ""'].join('\n'),
+    );
 
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'good.gd'), join(projectDir, 'bad.gd')],
@@ -470,6 +509,8 @@ describe('Godot CLI integration', () => {
 
     // Only bad.gd should have errors
     expect(result.diagnostics.length).toBeGreaterThan(0);
-    expect(result.diagnostics.every(d => d.file.includes('bad.gd'))).toBe(true);
+    expect(result.diagnostics.every((d) => d.file.includes('bad.gd'))).toBe(
+      true,
+    );
   });
 });

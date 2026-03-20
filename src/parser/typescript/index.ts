@@ -9,11 +9,13 @@ export interface TsProgramOptions {
 
 export function createTsProgram(options: TsProgramOptions): ts.Program {
   if (options.tsConfigPath) {
-    const configFile = ts.readConfigFile(options.tsConfigPath, path => readFileSync(path, 'utf-8'));
+    const configFile = ts.readConfigFile(options.tsConfigPath, (path) =>
+      readFileSync(path, 'utf-8'),
+    );
     const parsedConfig = ts.parseJsonConfigFileContent(
       configFile.config,
       ts.sys,
-      options.rootDir
+      options.rootDir,
     );
     return ts.createProgram(parsedConfig.fileNames, parsedConfig.options);
   }
@@ -34,6 +36,9 @@ export function getTypeChecker(program: ts.Program): ts.TypeChecker {
   return program.getTypeChecker();
 }
 
-export function getSourceFile(program: ts.Program, filePath: string): ts.SourceFile | undefined {
+export function getSourceFile(
+  program: ts.Program,
+  filePath: string,
+): ts.SourceFile | undefined {
   return program.getSourceFile(filePath);
 }

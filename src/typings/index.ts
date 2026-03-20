@@ -1,6 +1,9 @@
 export { generateClassTypings, type ClassTypingsOptions } from './classes.ts';
 export { generateSceneTypings, type SceneTypingsOptions } from './scenes.ts';
-export { generateGodotDocsTypings, type GodotDocsTypingsOptions } from './godot-docs.ts';
+export {
+  generateGodotDocsTypings,
+  type GodotDocsTypingsOptions,
+} from './godot-docs.ts';
 export {
   GodotClassRegistry,
   generateGodotRegistry,

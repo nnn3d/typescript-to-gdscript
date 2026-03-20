@@ -1,8 +1,8 @@
 export default class Animal extends RefCounted {
-  name: string = "";
-  sound: string = "";
+  name: string = '';
+  sound: string = '';
 
   speak(): string {
-    return this.name + " says " + this.sound;
+    return this.name + ' says ' + this.sound;
   }
 }

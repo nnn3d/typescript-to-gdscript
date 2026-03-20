@@ -1,4 +1,9 @@
-import { SourceMapGenerator, SourceMapConsumer, type RawSourceMap, type MappingItem } from 'source-map';
+import {
+  SourceMapGenerator,
+  SourceMapConsumer,
+  type RawSourceMap,
+  type MappingItem,
+} from 'source-map';
 
 export interface Mapping {
   /** Original source file */
@@ -30,7 +35,10 @@ export class SourceMapper {
     this.generator.addMapping({
       source: mapping.source,
       original: { line: mapping.originalLine, column: mapping.originalColumn },
-      generated: { line: mapping.generatedLine, column: mapping.generatedColumn },
+      generated: {
+        line: mapping.generatedLine,
+        column: mapping.generatedColumn,
+      },
       name: mapping.name,
     });
   }
@@ -69,17 +77,24 @@ export class SourceMapReader {
     this.consumer = consumer;
   }
 
-  static async fromJSON(rawMap: RawSourceMap | string): Promise<SourceMapReader> {
-    const json = typeof rawMap === 'string' ? JSON.parse(rawMap) as RawSourceMap : rawMap;
+  static async fromJSON(
+    rawMap: RawSourceMap | string,
+  ): Promise<SourceMapReader> {
+    const json =
+      typeof rawMap === 'string'
+        ? (JSON.parse(rawMap) as RawSourceMap)
+        : rawMap;
     const consumer = await new SourceMapConsumer(json);
     return new SourceMapReader(consumer);
   }
 
-
   /**
    * Given a position in the generated (GDScript) file, find the original (TS) position.
    */
-  originalPositionFor(generatedLine: number, generatedColumn: number): SourcePosition {
+  originalPositionFor(
+    generatedLine: number,
+    generatedColumn: number,
+  ): SourcePosition {
     const result = this.consumer.originalPositionFor({
       line: generatedLine,
       column: generatedColumn,
@@ -95,7 +110,11 @@ export class SourceMapReader {
   /**
    * Given a position in the original (TS) file, find the generated (GDScript) position.
    */
-  generatedPositionFor(source: string, originalLine: number, originalColumn: number): { line: number | null; column: number | null } {
+  generatedPositionFor(
+    source: string,
+    originalLine: number,
+    originalColumn: number,
+  ): { line: number | null; column: number | null } {
     return this.consumer.generatedPositionFor({
       source,
       line: originalLine,
@@ -108,7 +127,7 @@ export class SourceMapReader {
    */
   allMappings(): MappingItem[] {
     const mappings: MappingItem[] = [];
-    this.consumer.eachMapping(m => mappings.push(m));
+    this.consumer.eachMapping((m) => mappings.push(m));
     return mappings;
   }
 

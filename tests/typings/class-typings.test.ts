@@ -58,9 +58,7 @@ describe('Class typings generation', () => {
       });
     } catch (err: any) {
       const output = (err.stdout || '') + (err.stderr || '');
-      expect.fail(
-        `Cross-file type checking failed:\n${output}`
-      );
+      expect.fail(`Cross-file type checking failed:\n${output}`);
     }
   });
 });

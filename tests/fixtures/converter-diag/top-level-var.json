@@ -1,3 +1,1 @@
-[
-  { "message": "Top-level statement", "severity": "error" }
-]
+[{ "message": "Top-level statement", "severity": "error" }]

@@ -39,8 +39,13 @@ export function generateClassTypings(options: ClassTypingsOptions): void {
       if (!ts.isClassDeclaration(statement) || !statement.name) continue;
 
       const className = statement.name.text;
-      const commentPath = relative(options.rootDir, filePath).replace(/\\/g, '/');
-      let importPath = relative(outputDir, filePath).replace(/\\/g, '/').replace(/\.ts$/, '.js');
+      const commentPath = relative(options.rootDir, filePath).replace(
+        /\\/g,
+        '/',
+      );
+      let importPath = relative(outputDir, filePath)
+        .replace(/\\/g, '/')
+        .replace(/\.ts$/, '.js');
       if (!importPath.startsWith('.')) {
         importPath = './' + importPath;
       }

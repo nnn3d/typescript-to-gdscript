@@ -27,6 +27,7 @@ Add to your `tsconfig.json` to get autocomplete for Godot classes, `gd` helpers,
 ```
 
 This provides:
+
 - All Godot engine classes (Node, Sprite2D, Vector2, etc.)
 - Global functions (print, load, range, etc.)
 - `gd` namespace helpers (signals, enums, math, decorators, type casting)
@@ -46,14 +47,14 @@ Create a `tstogd.json` in your project root to configure the converter:
 }
 ```
 
-| Field | Type | Description |
-|-------|------|-------------|
-| `godotVersion` | `string` | Godot version for typings lookup (e.g. `"4.6"`). Defaults to `"latest"`. |
-| `registryPath` | `string` | Path to a custom `godot-class-registry.json`. Overrides `godotVersion`. |
-| `rootDir` | `string` | Root directory for TS source files. |
-| `outputDir` | `string` | Output directory for GDScript files. |
-| `sourceMap` | `boolean` | Generate source maps. |
-| `tsconfig` | `string` | Path to `tsconfig.json`. |
+| Field          | Type      | Description                                                              |
+| -------------- | --------- | ------------------------------------------------------------------------ |
+| `godotVersion` | `string`  | Godot version for typings lookup (e.g. `"4.6"`). Defaults to `"latest"`. |
+| `registryPath` | `string`  | Path to a custom `godot-class-registry.json`. Overrides `godotVersion`.  |
+| `rootDir`      | `string`  | Root directory for TS source files.                                      |
+| `outputDir`    | `string`  | Output directory for GDScript files.                                     |
+| `sourceMap`    | `boolean` | Generate source maps.                                                    |
+| `tsconfig`     | `string`  | Path to `tsconfig.json`.                                                 |
 
 ## CLI Commands
 
@@ -68,6 +69,7 @@ ts2gd convert src/Player.ts -o scripts/ --source-map
 ```
 
 Options:
+
 - `-o, --output-dir <dir>` — Output directory
 - `--source-map` — Generate source maps
 - `--root-dir <dir>` — Root directory (default: `.`)
@@ -82,12 +84,14 @@ ts2gd convert-gd addons/plugin/Plugin.gd -o src/
 ```
 
 Registry resolution order:
+
 1. `--registry` CLI flag (explicit path to `godot-class-registry.json`)
 2. `registryPath` from `tstogd.json` in CWD
 3. `godotVersion` from `tstogd.json` → bundled `typings/<version>/`
 4. Bundled `typings/latest/godot-class-registry.json`
 
 Options:
+
 - `-o, --output-dir <dir>` — Output directory
 - `--registry <path>` — Path to `godot-class-registry.json`
 
@@ -100,6 +104,7 @@ ts2gd watch --root-dir src --output-dir scripts --source-map
 ```
 
 Options:
+
 - `--root-dir <dir>` — Root directory to watch (default: `.`)
 - `--output-dir <dir>` — Output directory for GDScript files
 - `--source-map` — Generate source maps
@@ -115,6 +120,7 @@ ts2gd generate-typings --docs-dir vendor/godot/doc/classes --set-latest
 ```
 
 Options:
+
 - `--docs-dir <dir>` — Godot XML class documentation directory (required)
 - `--typings-dir <dir>` — Root typings directory (default: `typings`)
 - `--patch-dir <dir>` — Directory containing `.patch` files for manual type improvements
@@ -168,7 +174,7 @@ let scaled = gd.ops.mul(position, 2.0);
 ### Type casting (`as`)
 
 ```typescript
-let sprite = gd.as(get_node("Sprite"), Sprite2D);
+let sprite = gd.as(get_node('Sprite'), Sprite2D);
 ```
 
 ### Decorators
@@ -196,25 +202,31 @@ let np = NodePath('Path/To/Node');
 ## Transform Rules
 
 ### File structure
+
 Each `.ts` file must contain exactly one class. Named classes are available globally (generated via `generate-class-typings`).
 
 ### Types
+
 - `int` and `float` are type aliases for `number`. Pure `number` converts to GDScript `float`.
 - `undefined` is restricted — use `null`.
 - `var` is restricted — use `let` or `const` (both convert to GDScript `var`).
 - `TSOnly<T>` wrapper type is stripped during transformation.
 
 ### Constructor
+
 TypeScript `constructor()` maps to GDScript `_init()`.
 
 ### Comments
+
 - `//` → `#`
 - `/** */` → `##`
 
 ### Async/Await
+
 `async` keyword is stripped (GDScript coroutines use `await` without `async`).
 
 ### Self
+
 - TS `this.method()` → GD `method()` (for own/inherited methods)
 - TS `this.property` → GD `property` or `self.property`
 
@@ -252,26 +264,31 @@ Create `eslint.config.js` (ESLint flat config):
 import ts2gd from 'typescript-to-gdscript/eslint';
 import tsParser from '@typescript-eslint/parser';
 
-export default [{
-  files: ['src/**/*.ts'],
-  languageOptions: {
-    parser: tsParser,
-    parserOptions: {
-      ecmaVersion: 2022,
-      sourceType: 'module',
+export default [
+  {
+    files: ['src/**/*.ts'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: 'module',
+      },
+    },
+    plugins: {
+      ts2gd,
+    },
+    rules: {
+      'ts2gd/convert': [
+        'error',
+        {
+          rootDir: '.',
+          godotPath: 'godot', // optional: enables Godot validation
+          projectRoot: '.', // optional: Godot project root (must contain project.godot)
+        },
+      ],
     },
   },
-  plugins: {
-    ts2gd,
-  },
-  rules: {
-    'ts2gd/convert': ['error', {
-      rootDir: '.',
-      godotPath: 'godot',       // optional: enables Godot validation
-      projectRoot: '.',          // optional: Godot project root (must contain project.godot)
-    }],
-  },
-}];
+];
 ```
 
 ### Rule: `ts2gd/convert`
@@ -294,14 +311,14 @@ Converts each TS file to GDScript and reports errors at two levels:
 
 ### Rule options
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `rootDir` | `string` | Root directory for the project |
-| `tsDir` | `string` | TypeScript source directory |
-| `tsconfig` | `string` | Path to tsconfig.json |
-| `godotPath` | `string` | Path to Godot executable (enables Godot validation) |
-| `projectRoot` | `string` | Godot project root (must contain `project.godot`) |
-| `sourceMap` | `boolean` | Generate source maps for error remapping |
+| Option        | Type      | Description                                         |
+| ------------- | --------- | --------------------------------------------------- |
+| `rootDir`     | `string`  | Root directory for the project                      |
+| `tsDir`       | `string`  | TypeScript source directory                         |
+| `tsconfig`    | `string`  | Path to tsconfig.json                               |
+| `godotPath`   | `string`  | Path to Godot executable (enables Godot validation) |
+| `projectRoot` | `string`  | Godot project root (must contain `project.godot`)   |
+| `sourceMap`   | `boolean` | Generate source maps for error remapping            |
 
 ## Development
 
@@ -319,6 +336,7 @@ yarn generate:godot-typings
 ```
 
 ### Requirements
+
 - Node.js >= 20
 - TypeScript >= 5.9
 - Godot >= 4.6 (for typings generation)

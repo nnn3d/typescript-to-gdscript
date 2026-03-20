@@ -56,10 +56,21 @@ export function resolveConfig(options?: {
   const overrides = options?.overrides ?? {};
 
   // Merge: CLI overrides > config > defaults
-  const rootDir = resolve(configDir, overrides.rootDir ?? config?.rootDir ?? '.');
+  const rootDir = resolve(
+    configDir,
+    overrides.rootDir ?? config?.rootDir ?? '.',
+  );
   const tsDir = resolve(rootDir, overrides.tsDir ?? config?.tsDir ?? '.');
-  const gdDir = resolve(rootDir, overrides.gdDir ?? config?.gdDir ?? overrides.outputDir ?? config?.outputDir ?? (relative(rootDir, tsDir) || '.'));
-  const classTypingsPath = overrides.classTypingsPath ?? config?.classTypingsPath ?? '_gdtots';
+  const gdDir = resolve(
+    rootDir,
+    overrides.gdDir ??
+      config?.gdDir ??
+      overrides.outputDir ??
+      config?.outputDir ??
+      (relative(rootDir, tsDir) || '.'),
+  );
+  const classTypingsPath =
+    overrides.classTypingsPath ?? config?.classTypingsPath ?? '_gdtots';
 
   return {
     rootDir,
@@ -122,7 +133,11 @@ function getLatestVersion(): string | null {
 function getBundledRegistryPath(version?: string): string | null {
   const typingsDir = getPackageTypingsDir();
   if (version) {
-    const versionedPath = join(typingsDir, version, 'godot-class-registry.json');
+    const versionedPath = join(
+      typingsDir,
+      version,
+      'godot-class-registry.json',
+    );
     if (existsSync(versionedPath)) return versionedPath;
   }
   // Resolve from latest/ pointer
@@ -180,7 +195,9 @@ export interface ResolveRegistryOptions {
  * 3. godotVersion from tstogd.json → bundled typings/<version>/
  * 4. Bundled typings/latest/
  */
-export function resolveRegistry(options?: ResolveRegistryOptions): GodotClassRegistry {
+export function resolveRegistry(
+  options?: ResolveRegistryOptions,
+): GodotClassRegistry {
   // 1. Explicit CLI path
   if (options?.registryPath) {
     return GodotClassRegistry.fromJsonFile(resolve(options.registryPath));
@@ -190,7 +207,9 @@ export function resolveRegistry(options?: ResolveRegistryOptions): GodotClassReg
   const config = loadConfig(options?.configDir);
   if (config?.registryPath) {
     const configDir = options?.configDir ?? process.cwd();
-    return GodotClassRegistry.fromJsonFile(resolve(configDir, config.registryPath));
+    return GodotClassRegistry.fromJsonFile(
+      resolve(configDir, config.registryPath),
+    );
   }
   if (config?.godotVersion) {
     const path = getBundledRegistryPath(config.godotVersion);
@@ -203,6 +222,6 @@ export function resolveRegistry(options?: ResolveRegistryOptions): GodotClassReg
 
   throw new Error(
     'Could not find Godot class registry. Provide --registry flag, ' +
-    'set godotVersion in tstogd.json, or ensure typings/latest/ exists in the package.'
+      'set godotVersion in tstogd.json, or ensure typings/latest/ exists in the package.',
   );
 }

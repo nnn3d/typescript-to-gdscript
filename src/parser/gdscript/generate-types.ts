@@ -28,7 +28,7 @@ interface NodeTypeEntry {
 function toPascalCase(str: string): string {
   return str
     .split(/[_\s-]+/)
-    .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join('');
 }
 
@@ -42,8 +42,8 @@ function toNodeTypeName(type: string): string {
 
 function generateFieldType(field: NodeField): string {
   const types = field.types
-    .filter(t => t.named)
-    .map(t => toNodeTypeName(t.type));
+    .filter((t) => t.named)
+    .map((t) => toNodeTypeName(t.type));
 
   if (types.length === 0) return 'GDNode';
 
@@ -56,14 +56,20 @@ function generateFieldType(field: NodeField): string {
 }
 
 function generate() {
-  const nodeTypesPath = require.resolve('tree-sitter-gdscript/src/node-types.json');
-  const nodeTypes: NodeTypeEntry[] = JSON.parse(readFileSync(nodeTypesPath, 'utf-8'));
+  const nodeTypesPath = require.resolve(
+    'tree-sitter-gdscript/src/node-types.json',
+  );
+  const nodeTypes: NodeTypeEntry[] = JSON.parse(
+    readFileSync(nodeTypesPath, 'utf-8'),
+  );
 
   const lines: string[] = [];
-  lines.push('// AUTO-GENERATED — do not edit. Run `yarn generate:ast-types` to regenerate.');
+  lines.push(
+    '// AUTO-GENERATED — do not edit. Run `yarn generate:ast-types` to regenerate.',
+  );
   lines.push('// Generated from tree-sitter-gdscript node-types.json');
   lines.push('');
-  lines.push('import type Parser from \'tree-sitter\';');
+  lines.push("import type Parser from 'tree-sitter';");
   lines.push('');
 
   // Base interface
@@ -98,8 +104,8 @@ function generate() {
   lines.push('');
 
   // Separate named types and supertypes
-  const namedTypes = nodeTypes.filter(t => t.named && !t.subtypes);
-  const supertypes = nodeTypes.filter(t => t.named && t.subtypes);
+  const namedTypes = nodeTypes.filter((t) => t.named && !t.subtypes);
+  const supertypes = nodeTypes.filter((t) => t.named && t.subtypes);
 
   // Generate interfaces for each named node type
   for (const entry of namedTypes) {
@@ -123,9 +129,9 @@ function generate() {
   // Generate supertype unions
   for (const entry of supertypes) {
     const typeName = toNodeTypeName(entry.type);
-    const subtypeNames = entry.subtypes!
-      .filter(s => s.named)
-      .map(s => toNodeTypeName(s.type));
+    const subtypeNames = entry
+      .subtypes!.filter((s) => s.named)
+      .map((s) => toNodeTypeName(s.type));
     if (subtypeNames.length > 0) {
       lines.push(`export type ${typeName} = ${subtypeNames.join(' | ')};`);
       lines.push('');
@@ -133,7 +139,7 @@ function generate() {
   }
 
   // Generate the main GDNode union type
-  const allNodeTypes = namedTypes.map(t => toNodeTypeName(t.type));
+  const allNodeTypes = namedTypes.map((t) => toNodeTypeName(t.type));
   lines.push('/** Union of all GDScript AST node types */');
   lines.push(`export type GDNode = ${allNodeTypes.join(' | ')};`);
   lines.push('');

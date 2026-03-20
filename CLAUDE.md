@@ -42,6 +42,7 @@ For features, that unsupported in TS, should be used strongly typed helpers.
 - **Cache**: SHA-256 file hashing
 
 ### Dependencies
+
 - typescript ^5.9.0, tree-sitter ^0.22.0, tree-sitter-gdscript ^6.1.0
 - source-map ^0.7.4, commander ^13.0.0, chokidar ^4.0.0
 - Dev: @types/node ^22.0.0, vitest ^3.0.0
@@ -133,10 +134,13 @@ tests/
 - `ts2gd generate-class-typings <files...>` — Generate global class .d.ts (`-o`, `--root-dir`, `--tsconfig`)
 
 ### Typings usage by consumer projects
+
 Consumer projects add to their `tsconfig.json`:
+
 ```json
 { "compilerOptions": { "types": ["typescript-to-gdscript/typings"] } }
 ```
+
 This loads `typings/index.d.ts` which references `gd-helpers.d.ts` + `latest/godot.d.ts`.
 
 ## Implementation Status
@@ -144,12 +148,12 @@ This loads `typings/index.d.ts` which references `gd-helpers.d.ts` + `latest/god
 - [x] Project setup (package.json, tsconfig, vitest)
 - [x] GDScript parser (tree-sitter wrapper)
 - [x] TS-to-GD converter with 16 fixture tests passing
-  - Classes, extends/class_name, properties (static, decorators), constructor->_init
+  - Classes, extends/class_name, properties (static, decorators), constructor->\_init
   - Methods, signals (gd.signal), enums (gd.enum)
   - Control flow (if/elif/else, for-of->for-in, while, switch->match)
   - Expressions (this->self, ===->==, &&->and, ||->or, !->not)
-  - StringName/NodePath, gd.as, gd.ops.*, lambdas with types
-  - Comments (// -> #, /** */ -> ##), await stripping, new->.new()
+  - StringName/NodePath, gd.as, gd.ops.\*, lambdas with types
+  - Comments (// -> #, /\*\* \*/ -> ##), await stripping, new->.new()
 - [x] Source maps for TS-to-GD (GDScriptEmitter tracks line/col, 9 tests with concrete position checks)
 - [x] GDScript AST types generated from tree-sitter node-types.json (85 typed interfaces with field overloads)
 - [x] GD-to-TS converter with typed AST and 12 fixture tests:
@@ -189,6 +193,7 @@ This loads `typings/index.d.ts` which references `gd-helpers.d.ts` + `latest/god
 ## Features Specification
 
 ### Versions
+
 Minimal officially supported godot version is 4.6. Minimal TS version is 5.9.
 
 ### TS-GD Converter
@@ -214,80 +219,103 @@ Main purpose to convert typescript to gdscript, but also can convert gdscript to
   - should have cache for addon files to not do it every time
 
 #### Unsupported and converted GD features
+
 For most of unsupported GD features, in typescript should be used global `gd` namespace, which contains helper to further transformation. There of course should be global d.ts for it.
 
 IMPORTANT FOR CLAUDE: ask me if you find some other cases with transformation problems
 
 ##### TS file structure
+
 All files in gdscript are files, so there should be only one class in typescript file, with only allowed import for types or type declarations / exports. All other named classes should be available globally, like in gdscript - which should be generated in one `d.ts` file (but not for anonymous classes). All other content should be inside this class.
 
 Source TS files must use `export default class ClassName extends Base { ... }`. The `export default` modifier is stripped during TS-to-GD conversion (GD output is identical). This enables the generated globals `.d.ts` to reference the source class via `import + declare global` pattern without duplicating members.
 
 ##### TS types after transformation
+
 After transformation, only primitive (available in gdscript) types and classes types are saved in code (without generics for classes). There should be special global helper type like `type TSOnly<T> = T`, which contents removes from transformation. If type is union or intersection, or another unsupported by gdscript - it should be removed.
 
 ##### `int` and `float` types
+
 `int` and `float` are just global type aliases for ts `number` type. On transformation, pure `number` type should be converted to gdscript `float` type, but statements with `int` and `float` converts to same as it is write.
 
 ##### TS `undefined`
+
 `undefined` type and value are restricted. Everywhere should be used `null`, and `undefined` type should be `never`, and fail transformation
 
 ##### Enums
+
 There are enums in typescript, but they are not fully compatible with gdscript enums, also they can't be defined inside classes. So for enums should be helper like `gd.enums`. Example in ts class - `NAMED = gd.enum('THING_1', 'THING_2', ['THING_3', -1])` is same as `enum Named {THING_1, THING_2, ANOTHER_THING = -1}`. For anonymous enums there will be no equivalent in ts, but from gdscript to ts it will be converts as constants, eg `enum {UNIT_NEUTRAL, UNIT_ENEMY, UNIT_ALLY}` in gdscript should be `UNIT_NEUTRAL = 0; UNIT_ENEMY = 1; UNIT_ALLY = 2` after transforming to typescript.
 
 ##### Math operations override
+
 There should be helpers for operations like `Vector2(1, 1) + Vector2(1, 1)`. `gd.ops` provides typed operator helpers: `add`, `sub`, `mul`, `div` (binary arithmetic), `eq`, `ne`, `gt`, `gte`, `lt`, `lte` (binary comparison), `plus`, `minus` (unary). Binary ops take exactly 2 args, unary ops take 1. For example `gd.ops.add(Vector2(1, 1), Vector2(1, 2))`. Operator overloads are generated from Godot XML docs using unique symbols (`__add`, `__mul`, etc.) on each class, enabling type inference: `gd.ops.mul(Vector2(...), 2.0)` returns `Vector2`, `gd.ops.mul(Vector2(...), Vector3(...))` is a TS error.
 
 ##### Signals
+
 Signals another helper, like `gd.signal<[...]>()`. Also, there should be type `Signal<[...]>` with generic args for type safety ofcourse.
 
 ##### Gdscript `as`
+
 Since there is exists `as` in typescript, it has another behavior, and for gdscript `as` should be used `gd.as(Value, Type)` helper. For example `gd.as(my_sprite_2d, Node2D)` return type `typeof my_sprite_2d extends typeof Node2D ? typeof Node2D : (typeof Node2D) | null`.
 
 ##### Gdscript `_init()` method
+
 TS `constructor()` used for gdscript `_init()` and vice versa.
 
 ##### Gdscript dicts `{}`
+
 In typescript, default object (`{}`) should have type like gdscript `Dictionary` type, but all other classes (`RefCounted` and so on) should extend another object type, which like gdscript `Object` type - itself it should have `null` prototype in types.
 
 ##### TS var keyword
+
 `var` in typescript is restricted. Use `let` or `const` instead (both convert to GDScript `var`).
 
 ##### Array
+
 Array type in typescript should be same as gdscript array, but with generic types.
 
 ##### Gdscript StringName, NodePath
+
 Global function helpers should be used for this, like `&"..."` in gd -> `StringName('...')` in ts, `^"..."` in gd -> `NodePath('...')` in ts.
 
 ##### GD @export, @export_category, @export_global_file, @onload, @icon, etc
+
 Typescript decorators used for this, but from global `gd` helper - like `@gd.export`.
 Implementation note: `export` is reserved in TS, so decorators are defined in `gd.decorators` sub-namespace (e.g. `gd.decorators.export_`). The transformer maps `@gd.export` directly.
 
 ##### GD self and method / function calls
+
 This is tricky, because in gdscript call function and class method is not the same. Also, in gdscript self method do not require `self.` prefix.
 For transformations from typescript, just convert all `this.` to `self.` (even for self method calls), and by typescript types (from program) check if it method call - then transform to simple call (eg `self.method(arg1, arg2)`), or for function call transform to call (eg `method.call(arg1, arg2)`).
 For transformation from gdscript - get information about all fields from current class and all extended classes - then, if field in this list, use `this.` prefix (eg `this.someSignal`, `this.someMethod()`), otherwise use field as is (eg `someSignal`, `someMethod()`). Also check if variable is not in current context - use as is for this case.
 
 ##### GD comments
+
 For gd `#` use simple `//` comment, for gd `##` use `/** */` comment, and vice versa.
 
 ##### `async` keyword
+
 GDScript has no `async` keyword. The `async` modifier is stripped during TS->GD transformation. GDScript coroutines use `await` without `async`.
 
 ### TS typings generation from classes
+
 This generation should be worked with watch mode, also with once transformation.
 
 #### TS classes
+
 All root named default-exported classes in TS are added to a global declaration file using `import _ClassName from "./path.js"; declare global { class ClassName extends _ClassName {} }` pattern. This makes classes available globally (like GDScript's `class_name`) without duplicating members. Source files must use `export default class`.
 
 #### GD node paths
+
 Check godot files for scripts, and create global declaration merge, to add typings for classes `getNode("...")` function for autocomplete. There is are ready made example in `https://github.com/johnfn/ts2gd`, with this functionality.
 
 ### TS typings from godot docs
+
 There are should be script to generate typings from godot docs. It first generates typings as is (there is are ready made example for generation in `https://github.com/johnfn/ts2gd`). And then applies to them `.patch` files to add more granular manual typings, such as generics.
 There also should be global d.ts file this some hardcoded global types, like `int` or `float` aliases (see above). It changes manually.
 
 ### Linting / Diagnostics
+
 Diagnostics are produced by converters during transformation (no standalone linter). The ESLint plugin (`ts2gd/convert` rule) integrates these:
 
 1. **Converter diagnostics** — produced by `convertTsToGd()` for unsupported TS features:
@@ -301,40 +329,50 @@ Diagnostics are produced by converters during transformation (no standalone lint
    - Errors remapped to TS positions via source maps (sync VLQ decoder for ESLint)
 
 #### ESLint plugin
+
 - Package export: `typescript-to-gdscript/eslint`
 - Single rule: `ts2gd/convert` — hooks into `Program` node, converts file, reports diagnostics
 - Options: `rootDir`, `tsDir`, `tsconfig`, `godotPath`, `projectRoot`, `sourceMap`
 - Flat config compatible (ESLint >= 9)
 
 ### Watch mode
+
 As presented above, it uses from CLI, and watch for TS files for transformation, also for godot scenes to check scripts usage for getNode types generation.
 
 ### Tests
+
 There should be tests for transformations - some for ts -> gd, and some for gd -> ts, to cover all possible cases and errors. Also test for correct source maps. Also for correct linting.
 
 #### TS-to-GD test fixtures (16 paired .ts/.gd files in tests/fixtures/ts-to-gd/)
+
 annotations, arrays-dicts, await-coroutines, classes, comments, constructor, control-flow, enums, functions, lambda, operators, signals, static-members, strings, type-casting, variables
 
 #### GD-to-TS test fixtures (12 paired .gd/.ts files in tests/fixtures/gd-to-ts/)
+
 annotations, comments, constructor, control-flow, enums, expressions, functions, lambda, operators, self, signals, variables
 
 #### Godot registry tests (tests/typings/)
+
 - `godot-registry.test.ts` — XML parsing, registry generation, GodotClassRegistry class, real Godot docs (916 classes)
 - `gd-to-ts-registry.test.ts` — Integration: GD->TS with registry for inherited member resolution
 - `class-typings.test.ts` — Class typings generation: import+declare global pattern, cross-file tsc compilation (Animal→Dog→DogOwner)
 
 #### Converter diagnostics tests (tests/converter/)
+
 - `converter-diag.test.ts` — Fixture-based: paired .ts/.json files in tests/fixtures/converter-diag/
 
 #### ESLint plugin tests (tests/eslint/)
+
 - `eslint.test.ts` — Fixture-based: paired .ts/.json files in tests/eslint/fixtures/
 - Converter diagnostics: valid-code, var-usage, optional-chaining, nullish-coalescing, spread, destructuring, for-in, multiple-classes, undefined-usage, getter-warning
 - Godot validation: godot-unknown-func, godot-type-mismatch, godot-valid-code
 
 #### Godot validation tests (tests/godot-validate/)
+
 - `godot-validate.test.ts` — Error parsing (multiple formats), source map remapping, Godot CLI integration
 
 #### Known transform edge cases resolved
+
 - Numeric literals: use `getText()` to preserve `100.0` (TS parser `node.text` strips trailing `.0`)
 - String literals: use `getText()` to preserve escape sequences
 - `self.method()` call vs `self.callback` reference: only strip `self.` when it's a method call expression, not property access used as argument

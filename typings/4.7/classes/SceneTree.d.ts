@@ -64,7 +64,12 @@ declare class SceneTree extends MainLoop {
   /** Calls `method` on each node in the given `group`. */
   call_group(group: string, method: string, ...args: any[]): void;
   /** Calls `method` on each node in the given `group`, using `flags` to customize behavior. */
-  call_group_flags(flags: int, group: string, method: string, ...args: any[]): void;
+  call_group_flags(
+  flags: int,
+  group: string,
+  method: string,
+  ...args: any[]
+  ): void;
   /**
    * Changes the running scene to the one at the given `path`, after loading it into a {@link PackedScene} and creating a new instance.
    * Returns {@link OK} on success, {@link ERR_CANT_OPEN} if the `path` cannot be loaded into a {@link PackedScene}, or {@link ERR_CANT_CREATE} if that scene cannot be instantiated.

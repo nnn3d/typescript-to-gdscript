@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, existsSync } from 'fs';
+import {
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  readdirSync,
+  statSync,
+  existsSync,
+} from 'fs';
 import { resolve, dirname, relative, extname, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
@@ -9,7 +16,11 @@ import { generateClassTypings } from '../typings/classes.ts';
 import { generateGodotDocsTypings } from '../typings/godot-docs.ts';
 import { parseGodotVersion } from '../typings/godot-registry.ts';
 import { Watcher } from '../watcher/index.ts';
-import { resolveRegistry, resolveGodotPath, resolveConfig } from '../config/index.ts';
+import {
+  resolveRegistry,
+  resolveGodotPath,
+  resolveConfig,
+} from '../config/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
 
 const program = new Command();
@@ -52,11 +63,18 @@ program
       });
 
       for (const diag of result.diagnostics) {
-        const prefix = diag.severity === 'error' ? 'ERROR' : diag.severity === 'warning' ? 'WARN' : 'INFO';
-        console.error(`[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`);
+        const prefix =
+          diag.severity === 'error'
+            ? 'ERROR'
+            : diag.severity === 'warning'
+              ? 'WARN'
+              : 'INFO';
+        console.error(
+          `[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`,
+        );
       }
 
-      if (result.diagnostics.some(d => d.severity === 'error')) continue;
+      if (result.diagnostics.some((d) => d.severity === 'error')) continue;
 
       const relPath = relative(cfg.tsDir, filePath);
       const outputPath = resolve(cfg.gdDir, relPath.replace(/\.ts$/, '.gd'));
@@ -83,7 +101,10 @@ program
   .option('--ts-dir <dir>', 'TypeScript output directory')
   .option('--gd-dir <dir>', 'GDScript source directory')
   .option('--root-dir <dir>', 'Root directory', '.')
-  .option('--registry <path>', 'Path to godot-class-registry.json (overrides tstogd.json and bundled)')
+  .option(
+    '--registry <path>',
+    'Path to godot-class-registry.json (overrides tstogd.json and bundled)',
+  )
   .action((files: string[], opts) => {
     const cfg = resolveConfig({
       overrides: {
@@ -102,8 +123,15 @@ program
       const result = convertGdToTs({ source, filePath, registry });
 
       for (const diag of result.diagnostics) {
-        const prefix = diag.severity === 'error' ? 'ERROR' : diag.severity === 'warning' ? 'WARN' : 'INFO';
-        console.error(`[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`);
+        const prefix =
+          diag.severity === 'error'
+            ? 'ERROR'
+            : diag.severity === 'warning'
+              ? 'WARN'
+              : 'INFO';
+        console.error(
+          `[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`,
+        );
       }
 
       const relPath = relative(cfg.gdDir, filePath);
@@ -119,18 +147,32 @@ program
 
 program
   .command('validate-gd')
-  .description('Validate GDScript files using Godot CLI and remap errors to TypeScript via source maps')
-  .argument('<files...>', 'GDScript or TypeScript files to validate (.ts auto-resolves to .gd)')
+  .description(
+    'Validate GDScript files using Godot CLI and remap errors to TypeScript via source maps',
+  )
+  .argument(
+    '<files...>',
+    'GDScript or TypeScript files to validate (.ts auto-resolves to .gd)',
+  )
   .option('--godot-path <path>', 'Path to Godot executable')
-  .option('--project-root <dir>', 'Godot project root (must contain project.godot)', '.')
-  .option('--source-map-dir <dir>', 'Directory containing .gd.map source map files')
+  .option(
+    '--project-root <dir>',
+    'Godot project root (must contain project.godot)',
+    '.',
+  )
+  .option(
+    '--source-map-dir <dir>',
+    'Directory containing .gd.map source map files',
+  )
   .action(async (files: string[], opts) => {
     const godotPath = resolveGodotPath({ godotPath: opts.godotPath });
     const projectRoot = resolve(opts.projectRoot);
 
-    const gdFiles = files.map(f => {
+    const gdFiles = files.map((f) => {
       const resolved = resolve(f);
-      return resolved.endsWith('.ts') ? resolved.replace(/\.ts$/, '.gd') : resolved;
+      return resolved.endsWith('.ts')
+        ? resolved.replace(/\.ts$/, '.gd')
+        : resolved;
     });
 
     const result = await validateGdFiles({
@@ -141,11 +183,18 @@ program
     });
 
     for (const diag of result.diagnostics) {
-      const prefix = diag.severity === 'error' ? 'ERROR' : diag.severity === 'warning' ? 'WARN' : 'INFO';
-      console.error(`[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`);
+      const prefix =
+        diag.severity === 'error'
+          ? 'ERROR'
+          : diag.severity === 'warning'
+            ? 'WARN'
+            : 'INFO';
+      console.error(
+        `[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`,
+      );
     }
 
-    if (result.diagnostics.some(d => d.severity === 'error')) process.exit(1);
+    if (result.diagnostics.some((d) => d.severity === 'error')) process.exit(1);
   });
 
 // ─── Watch ──────────────────────────────────────────────────
@@ -159,9 +208,18 @@ program
   .option('--output-dir <dir>', 'Output directory (alias for --gd-dir)')
   .option('--source-map', 'Generate source maps', false)
   .option('--tsconfig <path>', 'Path to tsconfig.json')
-  .option('--class-typings <path>', 'Output path for global class typings (deprecated, use --class-typings-path)')
-  .option('--class-typings-path <path>', 'Directory for generated global class typings (relative to rootDir)')
-  .option('--godot-path <path>', 'Path to Godot executable (enables GD validation after conversion)')
+  .option(
+    '--class-typings <path>',
+    'Output path for global class typings (deprecated, use --class-typings-path)',
+  )
+  .option(
+    '--class-typings-path <path>',
+    'Directory for generated global class typings (relative to rootDir)',
+  )
+  .option(
+    '--godot-path <path>',
+    'Path to Godot executable (enables GD validation after conversion)',
+  )
   .option('--project-root <dir>', 'Godot project root for validation')
   .action((opts) => {
     const cfg = resolveConfig({
@@ -175,7 +233,9 @@ program
         godotPath: opts.godotPath,
       },
     });
-    const godotPath = cfg.godotPath ? resolveGodotPath({ godotPath: cfg.godotPath }) : undefined;
+    const godotPath = cfg.godotPath
+      ? resolveGodotPath({ godotPath: cfg.godotPath })
+      : undefined;
 
     // Resolve class typings output path
     const classTypingsOutput = opts.classTypings
@@ -244,11 +304,16 @@ function writeLatestIndexDts(latestDir: string, version: string): void {
 
 program
   .command('generate-typings')
-  .description('Generate TypeScript typings and class registry from Godot docs into versioned typings folder')
+  .description(
+    'Generate TypeScript typings and class registry from Godot docs into versioned typings folder',
+  )
   .option('--docs-dir <dir>', 'Godot XML class documentation directory')
   .option('--typings-dir <dir>', 'Root typings directory', 'typings')
   .option('--override-dir <dir>', 'Directory containing override .d.ts files')
-  .option('--version <ver>', 'Godot version label (auto-detected from vendor/godot/version.py if omitted)')
+  .option(
+    '--version <ver>',
+    'Godot version label (auto-detected from vendor/godot/version.py if omitted)',
+  )
   .option('--set-latest', 'Also update latest/ reference', true)
   .action((opts) => {
     if (!opts.docsDir) {
@@ -261,7 +326,9 @@ program
     const version = opts.version ?? detectGodotVersion(docsDir);
 
     if (!version) {
-      console.error('Could not detect Godot version. Use --version to specify it.');
+      console.error(
+        'Could not detect Godot version. Use --version to specify it.',
+      );
       process.exit(1);
     }
 
@@ -269,7 +336,9 @@ program
     mkdirSync(versionDir, { recursive: true });
 
     const registryPath = join(versionDir, 'godot-class-registry.json');
-    const overrideDir = opts.overrideDir ? resolve(opts.overrideDir) : join(typingsRoot, 'overrides');
+    const overrideDir = opts.overrideDir
+      ? resolve(opts.overrideDir)
+      : join(typingsRoot, 'overrides');
 
     generateGodotDocsTypings({
       classDocsDir: docsDir,
@@ -293,7 +362,9 @@ program
 
 program
   .command('set-latest')
-  .description('Set the "latest" typings to point to an existing version folder')
+  .description(
+    'Set the "latest" typings to point to an existing version folder',
+  )
   .argument('<version>', 'Version folder name to point to (e.g. "4.7")')
   .option('--typings-dir <dir>', 'Root typings directory', 'typings')
   .action((version: string, opts) => {
@@ -303,7 +374,9 @@ program
 
     if (!existsSync(sourceDir)) {
       console.error(`Version folder not found: ${sourceDir}`);
-      console.error(`Available versions: ${getAvailableVersions(typingsRoot).join(', ') || '(none)'}`);
+      console.error(
+        `Available versions: ${getAvailableVersions(typingsRoot).join(', ') || '(none)'}`,
+      );
       process.exit(1);
     }
 
@@ -313,10 +386,15 @@ program
 
 function getAvailableVersions(typingsRoot: string): string[] {
   if (!existsSync(typingsRoot)) return [];
-  return readdirSync(typingsRoot).filter(name => {
-    if (name === 'latest' || name.endsWith('.d.ts') || name.endsWith('.ts')) return false;
+  return readdirSync(typingsRoot).filter((name) => {
+    if (name === 'latest' || name.endsWith('.d.ts') || name.endsWith('.ts'))
+      return false;
     const fullPath = join(typingsRoot, name);
-    return statSync(fullPath).isDirectory() && (existsSync(join(fullPath, 'classes')) || existsSync(join(fullPath, 'godot.d.ts')));
+    return (
+      statSync(fullPath).isDirectory() &&
+      (existsSync(join(fullPath, 'classes')) ||
+        existsSync(join(fullPath, 'godot.d.ts')))
+    );
   });
 }
 
@@ -327,7 +405,10 @@ program
   .description('Generate global class declarations from TS source files')
   .argument('<files...>', 'TypeScript source files')
   .option('-o, --output <path>', 'Output .d.ts file path')
-  .option('--class-typings-path <path>', 'Directory for generated global class typings (relative to rootDir)')
+  .option(
+    '--class-typings-path <path>',
+    'Directory for generated global class typings (relative to rootDir)',
+  )
   .option('--root-dir <dir>', 'Root directory', '.')
   .option('--tsconfig <path>', 'Path to tsconfig.json')
   .action((files: string[], opts) => {
@@ -345,7 +426,7 @@ program
 
     generateClassTypings({
       rootDir: cfg.rootDir,
-      files: files.map(f => resolve(f)),
+      files: files.map((f) => resolve(f)),
       outputPath,
       tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
     });

@@ -111,7 +111,9 @@ describe('Godot Registry: XML Parsing', () => {
 describe('Godot Registry: Registry Generation', () => {
   it('should generate registry data from parsed classes', () => {
     const classes = new Map();
-    classes.set('@GlobalScope', parseClassXml(`
+    classes.set(
+      '@GlobalScope',
+      parseClassXml(`
 <class name="@GlobalScope">
   <methods>
     <method name="print"><return type="void" /></method>
@@ -120,17 +122,23 @@ describe('Godot Registry: Registry Generation', () => {
   <constants>
     <constant name="PI" value="3.14" />
   </constants>
-</class>`)!);
+</class>`)!,
+    );
 
-    classes.set('Object', parseClassXml(`
+    classes.set(
+      'Object',
+      parseClassXml(`
 <class name="Object">
   <methods>
     <method name="free"><return type="void" /></method>
     <method name="get_class"><return type="String" /></method>
   </methods>
-</class>`)!);
+</class>`)!,
+    );
 
-    classes.set('Node', parseClassXml(`
+    classes.set(
+      'Node',
+      parseClassXml(`
 <class name="Node" inherits="Object">
   <methods>
     <method name="add_child"><return type="void" /><param index="0" name="node" type="Node" /></method>
@@ -144,9 +152,12 @@ describe('Godot Registry: Registry Generation', () => {
     <signal name="ready" />
     <signal name="tree_entered" />
   </signals>
-</class>`)!);
+</class>`)!,
+    );
 
-    classes.set('Node2D', parseClassXml(`
+    classes.set(
+      'Node2D',
+      parseClassXml(`
 <class name="Node2D" inherits="Node">
   <methods>
     <method name="rotate"><return type="void" /><param index="0" name="radians" type="float" /></method>
@@ -155,7 +166,8 @@ describe('Godot Registry: Registry Generation', () => {
     <member name="position" type="Vector2" />
     <member name="rotation" type="float" />
   </members>
-</class>`)!);
+</class>`)!,
+    );
 
     const data = generateRegistryData(classes);
 
@@ -188,7 +200,7 @@ describe('Godot Registry: GodotClassRegistry', () => {
     return new GodotClassRegistry({
       version: 'test',
       classes: {
-        'Object': {
+        Object: {
           name: 'Object',
           inherits: null,
           methods: ['free', 'get_class', 'set', 'get', 'notification'],
@@ -197,16 +209,27 @@ describe('Godot Registry: GodotClassRegistry', () => {
           constants: ['NOTIFICATION_POSTINITIALIZE'],
           enums: [],
         },
-        'Node': {
+        Node: {
           name: 'Node',
           inherits: 'Object',
-          methods: ['add_child', 'remove_child', 'get_node', '_ready', '_process'],
+          methods: [
+            'add_child',
+            'remove_child',
+            'get_node',
+            '_ready',
+            '_process',
+          ],
           properties: ['name', 'owner'],
           signals: ['ready', 'tree_entered', 'tree_exited'],
           constants: [],
-          enums: [{ name: 'ProcessMode', values: [{ name: 'PROCESS_MODE_INHERIT', value: '0' }] }],
+          enums: [
+            {
+              name: 'ProcessMode',
+              values: [{ name: 'PROCESS_MODE_INHERIT', value: '0' }],
+            },
+          ],
         },
-        'CanvasItem': {
+        CanvasItem: {
           name: 'CanvasItem',
           inherits: 'Node',
           methods: ['draw', 'update', 'get_global_transform'],
@@ -215,7 +238,7 @@ describe('Godot Registry: GodotClassRegistry', () => {
           constants: [],
           enums: [],
         },
-        'Node2D': {
+        Node2D: {
           name: 'Node2D',
           inherits: 'CanvasItem',
           methods: ['rotate', 'translate', 'look_at'],
@@ -227,7 +250,15 @@ describe('Godot Registry: GodotClassRegistry', () => {
       },
       globalFunctions: ['print', 'abs', 'floor', 'floori', 'str', 'randf'],
       globalConstants: ['PI', 'TAU', 'INF', 'NAN'],
-      globalEnums: [{ name: 'Error', values: [{ name: 'OK', value: '0' }, { name: 'FAILED', value: '1' }] }],
+      globalEnums: [
+        {
+          name: 'Error',
+          values: [
+            { name: 'OK', value: '0' },
+            { name: 'FAILED', value: '1' },
+          ],
+        },
+      ],
       constructors: ['Vector2', 'Vector3', 'Color'],
     });
   }
@@ -235,7 +266,10 @@ describe('Godot Registry: GodotClassRegistry', () => {
   it('should resolve inheritance chain', () => {
     const reg = createTestRegistry();
     expect(reg.getInheritanceChain('Node2D')).toEqual([
-      'Node2D', 'CanvasItem', 'Node', 'Object',
+      'Node2D',
+      'CanvasItem',
+      'Node',
+      'Object',
     ]);
     expect(reg.getInheritanceChain('Object')).toEqual(['Object']);
     expect(reg.getInheritanceChain('Unknown')).toEqual(['Unknown']);
@@ -312,7 +346,9 @@ describe('Godot Registry: GodotClassRegistry', () => {
     const reg = createTestRegistry();
     const json = JSON.stringify(reg.getData());
     const reg2 = GodotClassRegistry.fromJson(json);
-    expect(reg2.getAllMembers('Node2D').size).toBe(reg.getAllMembers('Node2D').size);
+    expect(reg2.getAllMembers('Node2D').size).toBe(
+      reg.getAllMembers('Node2D').size,
+    );
     expect(reg2.isGlobalFunction('print')).toBe(true);
   });
 });

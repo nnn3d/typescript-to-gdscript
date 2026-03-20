@@ -121,9 +121,19 @@ declare class Tween extends RefCounted {
    */
   tween_interval(time: float): IntervalTweener;
   /** Creates and appends a {@link MethodTweener}. Tweens a value from `from_` to `to` over `duration` seconds, calling `method` with the interpolated value each step. */
-  tween_method<T>(method: (value: T) => void, from_: T, to: T, duration: float): MethodTweener;
+  tween_method<T>(
+  method: (value: T) => void,
+  from_: T,
+  to: T,
+  duration: float,
+  ): MethodTweener;
   /** Creates and appends a {@link PropertyTweener}. Tweens `property` of `object` to `final_val` over `duration` seconds. */
-  tween_property<T>(object: GodotObject, property: string, final_val: T, duration: float): PropertyTweener;
+  tween_property<T>(
+  object: GodotObject,
+  property: string,
+  final_val: T,
+  duration: float,
+  ): PropertyTweener;
   /**
    * Creates and appends a {@link SubtweenTweener}. This method can be used to nest `subtween` within this {@link Tween}, allowing for the creation of more complex and composable sequences.
    * **Note:** The methods {@link pause}, {@link stop}, and {@link set_loops} can cause the parent {@link Tween} to get stuck on the subtween step; see the documentation for those methods for more information.

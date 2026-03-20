@@ -1,3 +1,1 @@
-[
-  { "message": "accessor", "severity": "warning" }
-]
+[{ "message": "accessor", "severity": "warning" }]

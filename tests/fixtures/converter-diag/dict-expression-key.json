@@ -1,3 +1,1 @@
-[
-  { "message": "not expressions", "severity": "error" }
-]
+[{ "message": "not expressions", "severity": "error" }]

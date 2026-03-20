@@ -43,22 +43,32 @@ export function parseGdClassInfo(source: string): UserClassInfo | null {
       const typeNode = child.namedChildren[0];
       if (typeNode) {
         extendsClass = isGDNodeType(typeNode, 'type')
-          ? typeNode.namedChildren[0]?.text ?? typeNode.text
+          ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
           : typeNode.text;
       }
     } else if (isGDNodeType(child, 'class_name_statement')) {
       className = child.childForFieldName('name')?.text ?? '';
-    } else if (isGDNodeType(child, 'function_definition') || isGDNodeType(child, 'constructor_definition')) {
+    } else if (
+      isGDNodeType(child, 'function_definition') ||
+      isGDNodeType(child, 'constructor_definition')
+    ) {
       const name = child.childForFieldName('name')?.text ?? '_init';
       members.add(name === '_init' ? 'constructor' : name);
-    } else if (isGDNodeType(child, 'variable_statement') || isGDNodeType(child, 'export_variable_statement') || isGDNodeType(child, 'onready_variable_statement')) {
+    } else if (
+      isGDNodeType(child, 'variable_statement') ||
+      isGDNodeType(child, 'export_variable_statement') ||
+      isGDNodeType(child, 'onready_variable_statement')
+    ) {
       const name = child.childForFieldName('name')?.text;
       if (name) {
         members.add(name);
         const typeNode = child.childForFieldName('type');
         const valueNode = child.childForFieldName('value');
-        const inferredType = typeNode ? extractGdTypeName(typeNode)
-          : (valueNode ? inferExprTypeStatic(valueNode) : null);
+        const inferredType = typeNode
+          ? extractGdTypeName(typeNode)
+          : valueNode
+            ? inferExprTypeStatic(valueNode)
+            : null;
         if (inferredType) memberTypes.set(name, inferredType);
       }
     } else if (isGDNodeType(child, 'signal_statement')) {
@@ -215,15 +225,22 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       const typeNode = child.namedChildren[0];
       if (typeNode) {
         extendsClass = isGDNodeType(typeNode, 'type')
-          ? typeNode.namedChildren[0]?.text ?? typeNode.text
+          ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
           : typeNode.text;
       }
     } else if (isGDNodeType(child, 'class_name_statement')) {
       className = child.childForFieldName('name')?.text ?? '';
-    } else if (isGDNodeType(child, 'function_definition') || isGDNodeType(child, 'constructor_definition')) {
+    } else if (
+      isGDNodeType(child, 'function_definition') ||
+      isGDNodeType(child, 'constructor_definition')
+    ) {
       const name = child.childForFieldName('name')?.text ?? '_init';
       ctx.classMembers.add(name === '_init' ? 'constructor' : name);
-    } else if (isGDNodeType(child, 'variable_statement') || isGDNodeType(child, 'export_variable_statement') || isGDNodeType(child, 'onready_variable_statement')) {
+    } else if (
+      isGDNodeType(child, 'variable_statement') ||
+      isGDNodeType(child, 'export_variable_statement') ||
+      isGDNodeType(child, 'onready_variable_statement')
+    ) {
       const name = child.childForFieldName('name')?.text;
       if (name) {
         ctx.classMembers.add(name);
@@ -231,7 +248,11 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
         if (isStatic) ctx.staticMembers.add(name);
         const typeNode = child.childForFieldName('type');
         const valueNode = child.childForFieldName('value');
-        const inferredType = typeNode ? extractGdTypeName(typeNode) : (valueNode ? inferExprType(valueNode, ctx) : null);
+        const inferredType = typeNode
+          ? extractGdTypeName(typeNode)
+          : valueNode
+            ? inferExprType(valueNode, ctx)
+            : null;
         if (inferredType) ctx.classMemberTypes.set(name, inferredType);
       }
     } else if (isGDNodeType(child, 'signal_statement')) {
@@ -251,12 +272,20 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
 
   // Add inherited members from registry and user classes
   if (extendsClass) {
-    const inherited = resolveAllInheritedMembers(extendsClass, ctx.userClasses, ctx.registry);
+    const inherited = resolveAllInheritedMembers(
+      extendsClass,
+      ctx.userClasses,
+      ctx.registry,
+    );
     for (const name of inherited) {
       ctx.classMembers.add(name);
     }
     // Also inherit member types from user classes
-    resolveInheritedMemberTypes(extendsClass, ctx.userClasses, ctx.classMemberTypes);
+    resolveInheritedMemberTypes(
+      extendsClass,
+      ctx.userClasses,
+      ctx.classMemberTypes,
+    );
   }
 
   // Second pass: emit everything
@@ -264,7 +293,10 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
   let hasNonFunctionMembers = false;
 
   for (const child of root.namedChildren) {
-    if (isGDNodeType(child, 'extends_statement') || isGDNodeType(child, 'class_name_statement')) {
+    if (
+      isGDNodeType(child, 'extends_statement') ||
+      isGDNodeType(child, 'class_name_statement')
+    ) {
       continue; // handled in class header
     }
 
@@ -276,7 +308,9 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       continue;
     }
 
-    const isFunction = isGDNodeType(child, 'function_definition') || isGDNodeType(child, 'constructor_definition');
+    const isFunction =
+      isGDNodeType(child, 'function_definition') ||
+      isGDNodeType(child, 'constructor_definition');
 
     if (isFunction) {
       // Add blank line before first function if there were property members
@@ -299,7 +333,11 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       continue;
     }
 
-    if (isGDNodeType(child, 'variable_statement') || isGDNodeType(child, 'export_variable_statement') || isGDNodeType(child, 'onready_variable_statement')) {
+    if (
+      isGDNodeType(child, 'variable_statement') ||
+      isGDNodeType(child, 'export_variable_statement') ||
+      isGDNodeType(child, 'onready_variable_statement')
+    ) {
       memberLines.push(emitClassVariable(child, ctx));
       hasNonFunctionMembers = true;
       lastWasFunction = false;
@@ -349,7 +387,10 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
   }
 
   // Remove trailing empty lines from members
-  while (memberLines.length > 0 && memberLines[memberLines.length - 1]!.trim() === '') {
+  while (
+    memberLines.length > 0 &&
+    memberLines[memberLines.length - 1]!.trim() === ''
+  ) {
     memberLines.pop();
   }
 
@@ -373,7 +414,7 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext): string {
       const typeNode = child.namedChildren[0];
       if (typeNode) {
         extendsClass = isGDNodeType(typeNode, 'type')
-          ? typeNode.namedChildren[0]?.text ?? typeNode.text
+          ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
           : typeNode.text;
       }
     }
@@ -392,10 +433,16 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext): string {
   // First pass: collect member names from inner class body
   if (bodyNode) {
     for (const child of bodyNode.namedChildren) {
-      if (isGDNodeType(child, 'function_definition') || isGDNodeType(child, 'constructor_definition')) {
+      if (
+        isGDNodeType(child, 'function_definition') ||
+        isGDNodeType(child, 'constructor_definition')
+      ) {
         const name = child.childForFieldName('name')?.text ?? '_init';
         ctx.classMembers.add(name === '_init' ? 'constructor' : name);
-      } else if (isGDNodeType(child, 'variable_statement') || isGDNodeType(child, 'export_variable_statement')) {
+      } else if (
+        isGDNodeType(child, 'variable_statement') ||
+        isGDNodeType(child, 'export_variable_statement')
+      ) {
         const name = child.childForFieldName('name')?.text;
         if (name) ctx.classMembers.add(name);
       } else if (isGDNodeType(child, 'signal_statement')) {
@@ -407,7 +454,11 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext): string {
 
   // Add inherited members from registry and user classes for inner class
   if (extendsClass) {
-    const inherited = resolveAllInheritedMembers(extendsClass, ctx.userClasses, ctx.registry);
+    const inherited = resolveAllInheritedMembers(
+      extendsClass,
+      ctx.userClasses,
+      ctx.registry,
+    );
     for (const name of inherited) {
       ctx.classMembers.add(name);
     }
@@ -425,7 +476,10 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext): string {
         memberLines.push(emitConstructor(child, ctx));
         continue;
       }
-      if (isGDNodeType(child, 'variable_statement') || isGDNodeType(child, 'export_variable_statement')) {
+      if (
+        isGDNodeType(child, 'variable_statement') ||
+        isGDNodeType(child, 'export_variable_statement')
+      ) {
         memberLines.push(emitClassVariable(child, ctx));
         continue;
       }
@@ -444,7 +498,7 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext): string {
   const indentedMembers = memberLines
     .join('\n')
     .split('\n')
-    .map(line => line === '' ? '' : `  ${line}`)
+    .map((line) => (line === '' ? '' : `  ${line}`))
     .join('\n')
     .replace(/\n+$/, '');
 
@@ -500,7 +554,9 @@ function emitEnum(node: GDNode, ctx: GdToTsContext): string {
   const bodyNode = node.childForFieldName('body');
   if (!bodyNode) return '';
 
-  const enumerators = bodyNode.namedChildren.filter(c => isGDNodeType(c, 'enumerator'));
+  const enumerators = bodyNode.namedChildren.filter((c) =>
+    isGDNodeType(c, 'enumerator'),
+  );
 
   if (nameNode) {
     // Named enum -> gd.enum(...)
@@ -567,7 +623,11 @@ function emitConstStatement(node: GDNode, ctx: GdToTsContext): string {
   return `  static readonly ${name}${typeAnnotation}${init};`;
 }
 
-function emitLocalVariable(node: GDNode, ctx: GdToTsContext, indent: string): string {
+function emitLocalVariable(
+  node: GDNode,
+  ctx: GdToTsContext,
+  indent: string,
+): string {
   const name = node.childForFieldName('name')?.text ?? '';
   const typeNode = node.childForFieldName('type');
   const valueNode = node.childForFieldName('value');
@@ -576,7 +636,11 @@ function emitLocalVariable(node: GDNode, ctx: GdToTsContext, indent: string): st
   ctx.localVars.add(name);
 
   // Track variable type from explicit annotation or inferred from initializer
-  const inferredType = typeNode ? extractGdTypeName(typeNode) : (valueNode ? inferExprType(valueNode, ctx) : null);
+  const inferredType = typeNode
+    ? extractGdTypeName(typeNode)
+    : valueNode
+      ? inferExprType(valueNode, ctx)
+      : null;
   if (inferredType) ctx.localVarTypes.set(name, inferredType);
 
   const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode) : '';
@@ -703,13 +767,22 @@ function emitConstructor(node: GDNode, ctx: GdToTsContext): string {
   return `  constructor(${params}) {\n  }`;
 }
 
-function collectParamNames(paramsNode: GDNode | null, ctx: GdToTsContext): void {
+function collectParamNames(
+  paramsNode: GDNode | null,
+  ctx: GdToTsContext,
+): void {
   if (!paramsNode) return;
   for (const child of paramsNode.namedChildren) {
     if (isGDNodeType(child, 'identifier')) {
       ctx.localVars.add(child.text);
-    } else if (isGDNodeType(child, 'typed_parameter') || isGDNodeType(child, 'default_parameter') || isGDNodeType(child, 'typed_default_parameter')) {
-      const name = child.namedChildren.find(c => isGDNodeType(c, 'identifier'))?.text;
+    } else if (
+      isGDNodeType(child, 'typed_parameter') ||
+      isGDNodeType(child, 'default_parameter') ||
+      isGDNodeType(child, 'typed_default_parameter')
+    ) {
+      const name = child.namedChildren.find((c) =>
+        isGDNodeType(c, 'identifier'),
+      )?.text;
       if (name) ctx.localVars.add(name);
     }
   }
@@ -721,17 +794,23 @@ function emitParams(paramsNode: GDNode, ctx: GdToTsContext): string {
     if (isGDNodeType(child, 'identifier')) {
       params.push(child.text);
     } else if (isGDNodeType(child, 'typed_parameter')) {
-      const name = child.namedChildren.find(c => isGDNodeType(c, 'identifier'))?.text ?? '';
+      const name =
+        child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
+        '';
       const typeNode = child.childForFieldName('type');
       const tsType = typeNode ? gdTypeToTs(typeNode.text) : null;
       params.push(tsType ? `${name}: ${tsType}` : name);
     } else if (isGDNodeType(child, 'default_parameter')) {
-      const name = child.namedChildren.find(c => isGDNodeType(c, 'identifier'))?.text ?? '';
+      const name =
+        child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
+        '';
       const value = child.childForFieldName('value');
       const valueStr = value ? emitExpr(value, ctx) : '';
       params.push(`${name} = ${valueStr}`);
     } else if (isGDNodeType(child, 'typed_default_parameter')) {
-      const name = child.namedChildren.find(c => isGDNodeType(c, 'identifier'))?.text ?? '';
+      const name =
+        child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
+        '';
       const typeNode = child.childForFieldName('type');
       const value = child.childForFieldName('value');
       const tsType = typeNode ? gdTypeToTs(typeNode.text) : null;
@@ -781,9 +860,8 @@ function emitBody(node: GDNode, ctx: GdToTsContext, depth: number): string {
 
     if (isGDNodeType(child, 'return_statement')) {
       const value = child.namedChildren[0];
-      lines.push(value
-        ? `${indent}return ${emitExpr(value, ctx)};`
-        : `${indent}return;`
+      lines.push(
+        value ? `${indent}return ${emitExpr(value, ctx)};` : `${indent}return;`,
       );
       continue;
     }
@@ -828,7 +906,9 @@ function emitBody(node: GDNode, ctx: GdToTsContext, depth: number): string {
       continue;
     }
 
-    lines.push(`${indent}/* TODO: ${child.type} */ ${child.text.split('\n')[0]}`);
+    lines.push(
+      `${indent}/* TODO: ${child.type} */ ${child.text.split('\n')[0]}`,
+    );
   }
 
   return lines.join('\n');
@@ -836,7 +916,11 @@ function emitBody(node: GDNode, ctx: GdToTsContext, depth: number): string {
 
 // ─── Control Flow ─────────────────────────────────────────────
 
-function emitIfStatement(node: GDNode, ctx: GdToTsContext, depth: number): string {
+function emitIfStatement(
+  node: GDNode,
+  ctx: GdToTsContext,
+  depth: number,
+): string {
   const indent = '  '.repeat(depth);
   const condition = node.childForFieldName('condition');
   const body = node.childForFieldName('body');
@@ -867,7 +951,11 @@ function emitIfStatement(node: GDNode, ctx: GdToTsContext, depth: number): strin
   return result;
 }
 
-function emitForStatement(node: GDNode, ctx: GdToTsContext, depth: number): string {
+function emitForStatement(
+  node: GDNode,
+  ctx: GdToTsContext,
+  depth: number,
+): string {
   const indent = '  '.repeat(depth);
   const left = node.childForFieldName('left');
   const right = node.childForFieldName('right');
@@ -880,7 +968,11 @@ function emitForStatement(node: GDNode, ctx: GdToTsContext, depth: number): stri
   return `${indent}for (let ${varName} of ${iterable}) {\n${bodyStr}\n${indent}}`;
 }
 
-function emitWhileStatement(node: GDNode, ctx: GdToTsContext, depth: number): string {
+function emitWhileStatement(
+  node: GDNode,
+  ctx: GdToTsContext,
+  depth: number,
+): string {
   const indent = '  '.repeat(depth);
   const condition = node.childForFieldName('condition');
   const body = node.childForFieldName('body');
@@ -891,7 +983,11 @@ function emitWhileStatement(node: GDNode, ctx: GdToTsContext, depth: number): st
   return `${indent}while (${condStr}) {\n${bodyStr}\n${indent}}`;
 }
 
-function emitMatchStatement(node: GDNode, ctx: GdToTsContext, depth: number): string {
+function emitMatchStatement(
+  node: GDNode,
+  ctx: GdToTsContext,
+  depth: number,
+): string {
   const indent = '  '.repeat(depth);
   const value = node.childForFieldName('value');
   const bodyNode = node.childForFieldName('body');
@@ -904,13 +1000,15 @@ function emitMatchStatement(node: GDNode, ctx: GdToTsContext, depth: number): st
       if (isGDNodeType(section, 'pattern_section')) {
         const body = section.childForFieldName('body');
         // Patterns are all named children before 'body'
-        const patterns = section.namedChildren.filter(c => !isGDNodeType(c, 'body'));
+        const patterns = section.namedChildren.filter(
+          (c) => !isGDNodeType(c, 'body'),
+        );
         const isDefault = patterns.length === 1 && patterns[0]?.text === '_';
 
         if (isDefault) {
           result += `${indent}  default: {\n`;
         } else {
-          const patternStr = patterns.map(p => emitExpr(p, ctx)).join(', ');
+          const patternStr = patterns.map((p) => emitExpr(p, ctx)).join(', ');
           result += `${indent}  case ${patternStr}: {\n`;
         }
 
@@ -942,7 +1040,10 @@ function emitAugmentedAssignment(node: GDNode, ctx: GdToTsContext): string {
   const left = node.childForFieldName('left');
   const right = node.childForFieldName('right');
   const opNode = node.childForFieldName('op');
-  const op = opNode?.text ?? node.children.find(c => !c.isNamed && /[+\-*/]=/.test(c.text))?.text ?? '+=';
+  const op =
+    opNode?.text ??
+    node.children.find((c) => !c.isNamed && /[+\-*/]=/.test(c.text))?.text ??
+    '+=';
   const leftStr = left ? emitExpr(left, ctx) : '';
   const rightStr = right ? emitExpr(right, ctx) : '';
   return `${leftStr} ${op} ${rightStr}`;
@@ -995,7 +1096,7 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
   }
 
   if (isGDNodeType(node, 'string_name')) {
-    const strChild = node.namedChildren.find(c => isGDNodeType(c, 'string'));
+    const strChild = node.namedChildren.find((c) => isGDNodeType(c, 'string'));
     if (strChild) {
       // Extract the string content
       const content = strChild.text.slice(1, -1); // remove quotes
@@ -1022,34 +1123,36 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
   }
 
   if (isGDNodeType(node, 'array')) {
-    const elements = node.namedChildren.map(e => emitExpr(e, ctx)).join(', ');
+    const elements = node.namedChildren.map((e) => emitExpr(e, ctx)).join(', ');
     return `[${elements}]`;
   }
 
   if (isGDNodeType(node, 'dictionary')) {
-    const pairNodes = node.namedChildren.filter(c => isGDNodeType(c, 'pair'));
+    const pairNodes = node.namedChildren.filter((c) => isGDNodeType(c, 'pair'));
     // Check if any key is an identifier (variable reference, not string/number literal)
-    const hasIdentifierKey = pairNodes.some(p => {
+    const hasIdentifierKey = pairNodes.some((p) => {
       const key = p.childForFieldName('left');
       return key && isGDNodeType(key, 'identifier');
     });
     if (hasIdentifierKey) {
       // Use gd.dict() format for dicts with variable keys
-      const entries = pairNodes.map(p => {
+      const entries = pairNodes.map((p) => {
         const key = p.childForFieldName('left');
         const value = p.childForFieldName('value');
         const keyStr = key ? emitExpr(key, ctx) : '';
         const valStr = value ? emitExpr(value, ctx) : '';
         return `[${keyStr}, ${valStr}]`;
       });
-      return `gd.dict([\n${entries.map(e => `      ${e},`).join('\n')}\n    ])`;
+      return `gd.dict([\n${entries.map((e) => `      ${e},`).join('\n')}\n    ])`;
     }
     // Regular object literal for string/number-keyed dicts
-    const pairs = pairNodes.map(p => {
-      const key = p.childForFieldName('left');
-      const value = p.childForFieldName('value');
-      return `${key ? emitExpr(key, ctx) : ''}: ${value ? emitExpr(value, ctx) : ''}`;
-    }).join(', ');
+    const pairs = pairNodes
+      .map((p) => {
+        const key = p.childForFieldName('left');
+        const value = p.childForFieldName('value');
+        return `${key ? emitExpr(key, ctx) : ''}: ${value ? emitExpr(value, ctx) : ''}`;
+      })
+      .join(', ');
     return `{${pairs}}`;
   }
 
@@ -1104,7 +1207,7 @@ function emitCall(node: GDNode, ctx: GdToTsContext): string {
   const callee = node.namedChildren[0];
   const argsNode = node.childForFieldName('arguments');
   const args = argsNode
-    ? argsNode.namedChildren.map(a => emitExpr(a, ctx)).join(', ')
+    ? argsNode.namedChildren.map((a) => emitExpr(a, ctx)).join(', ')
     : '';
 
   if (!callee) return `(${args})`;
@@ -1118,7 +1221,11 @@ function emitCall(node: GDNode, ctx: GdToTsContext): string {
   }
 
   // For bare identifier calls: add this. prefix for known class members
-  if (isGDNodeType(callee, 'identifier') && !ctx.localVars.has(callee.text) && !isGlobalName(callee.text, ctx)) {
+  if (
+    isGDNodeType(callee, 'identifier') &&
+    !ctx.localVars.has(callee.text) &&
+    !isGlobalName(callee.text, ctx)
+  ) {
     if (ctx.classMembers.has(callee.text)) {
       return `this.${callee.text}(${args})`;
     }
@@ -1145,7 +1252,10 @@ function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
     if (i === 0 && isGDNodeType(child, 'identifier') && child.text === 'self') {
       // Look ahead to see if the next part is a static member
       const nextChild = children[i + 1];
-      const nextName = nextChild && isGDNodeType(nextChild, 'identifier') ? nextChild.text : '';
+      const nextName =
+        nextChild && isGDNodeType(nextChild, 'identifier')
+          ? nextChild.text
+          : '';
       if (nextName && ctx.staticMembers.has(nextName)) {
         parts.push(ctx.className);
       } else {
@@ -1157,10 +1267,12 @@ function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
 
     if (isGDNodeType(child, 'attribute_call')) {
       // method call on attribute: obj.method(args)
-      const methodName = child.namedChildren.find(c => isGDNodeType(c, 'identifier'))?.text ?? '';
+      const methodName =
+        child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
+        '';
       const argsNode = child.childForFieldName('arguments');
       const args = argsNode
-        ? argsNode.namedChildren.map(a => emitExpr(a, ctx)).join(', ')
+        ? argsNode.namedChildren.map((a) => emitExpr(a, ctx)).join(', ')
         : '';
       // .new() -> new ClassName()
       if (methodName === 'new') {
@@ -1171,7 +1283,9 @@ function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
         parts.push(`${methodName}(${args})`);
       }
     } else if (isGDNodeType(child, 'attribute_subscript')) {
-      const attrName = child.namedChildren.find(c => isGDNodeType(c, 'identifier'))?.text ?? '';
+      const attrName =
+        child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
+        '';
       const argsNode = child.childForFieldName('arguments');
       const key = argsNode?.namedChildren[0];
       parts.push(`${attrName}[${key ? emitExpr(key, ctx) : ''}]`);
@@ -1201,7 +1315,8 @@ function emitBinaryOp(node: GDNode, ctx: GdToTsContext): string {
   const left = node.childForFieldName('left');
   const right = node.childForFieldName('right');
   const opNode = node.childForFieldName('op');
-  const opText = opNode?.text ?? node.children.find(c => !c.isNamed)?.text ?? '??';
+  const opText =
+    opNode?.text ?? node.children.find((c) => !c.isNamed)?.text ?? '??';
 
   // GD `as` -> gd.as()
   if (opText === 'as') {
@@ -1229,9 +1344,9 @@ function emitBinaryOp(node: GDNode, ctx: GdToTsContext): string {
   }
 
   const gdToTsOp: Record<string, string> = {
-    'and': '&&',
-    'or': '||',
-    'not': '!',
+    and: '&&',
+    or: '||',
+    not: '!',
     '==': '===',
     '!=': '!==',
   };
@@ -1245,7 +1360,7 @@ function emitBinaryOp(node: GDNode, ctx: GdToTsContext): string {
 
 function emitUnaryOp(node: GDNode, ctx: GdToTsContext): string {
   const operand = node.namedChildren[0];
-  const op = node.children.find(c => !c.isNamed)?.text ?? '';
+  const op = node.children.find((c) => !c.isNamed)?.text ?? '';
   const tsOp = op === 'not' ? '!' : op;
   return `${tsOp}${operand ? emitExpr(operand, ctx) : ''}`;
 }
@@ -1263,11 +1378,17 @@ function emitLambda(node: GDNode, ctx: GdToTsContext): string {
   // Check if body is a single return expression
   if (bodyNode && bodyNode.namedChildren.length === 1) {
     const stmt = bodyNode.namedChildren[0]!;
-    if (isGDNodeType(stmt, 'return_statement') && stmt.namedChildren.length > 0) {
+    if (
+      isGDNodeType(stmt, 'return_statement') &&
+      stmt.namedChildren.length > 0
+    ) {
       const expr = stmt.namedChildren[0]!;
       return `(${params})${returnType} => ${emitExpr(expr, ctx)}`;
     }
-    if (isGDNodeType(stmt, 'expression_statement') && stmt.namedChildren.length > 0) {
+    if (
+      isGDNodeType(stmt, 'expression_statement') &&
+      stmt.namedChildren.length > 0
+    ) {
       const expr = stmt.namedChildren[0]!;
       return `(${params})${returnType} => { ${emitExpr(expr, ctx)}; }`;
     }
@@ -1294,8 +1415,18 @@ function emitCommentInline(node: GDNode): string {
 
 /** Types that require gd.ops.* wrappers for arithmetic */
 const OPERATOR_OVERLOAD_TYPES = new Set([
-  'Vector2', 'Vector2i', 'Vector3', 'Vector3i', 'Vector4', 'Vector4i',
-  'Color', 'Quaternion', 'Basis', 'Transform2D', 'Transform3D', 'Projection',
+  'Vector2',
+  'Vector2i',
+  'Vector3',
+  'Vector3i',
+  'Vector4',
+  'Vector4i',
+  'Color',
+  'Quaternion',
+  'Basis',
+  'Transform2D',
+  'Transform3D',
+  'Projection',
 ]);
 
 /** Extract raw GD type name from a type node */
@@ -1314,7 +1445,11 @@ function extractGdTypeName(typeNode: GDNode): string | null {
 function inferExprTypeStatic(node: GDNode): string | null {
   if (isGDNodeType(node, 'call')) {
     const callee = node.namedChildren[0];
-    if (callee && isGDNodeType(callee, 'identifier') && OPERATOR_OVERLOAD_TYPES.has(callee.text)) {
+    if (
+      callee &&
+      isGDNodeType(callee, 'identifier') &&
+      OPERATOR_OVERLOAD_TYPES.has(callee.text)
+    ) {
       return callee.text;
     }
   }
@@ -1325,14 +1460,20 @@ function inferExprType(node: GDNode, ctx: GdToTsContext): string | null {
   // Constructor call: Vector2(...), Color(...), etc.
   if (isGDNodeType(node, 'call')) {
     const callee = node.namedChildren[0];
-    if (callee && isGDNodeType(callee, 'identifier') && OPERATOR_OVERLOAD_TYPES.has(callee.text)) {
+    if (
+      callee &&
+      isGDNodeType(callee, 'identifier') &&
+      OPERATOR_OVERLOAD_TYPES.has(callee.text)
+    ) {
       return callee.text;
     }
   }
   // Identifier: look up tracked type (local vars first, then class members)
   if (isGDNodeType(node, 'identifier')) {
-    if (ctx.localVarTypes.has(node.text)) return ctx.localVarTypes.get(node.text)!;
-    if (ctx.classMemberTypes.has(node.text)) return ctx.classMemberTypes.get(node.text)!;
+    if (ctx.localVarTypes.has(node.text))
+      return ctx.localVarTypes.get(node.text)!;
+    if (ctx.classMemberTypes.has(node.text))
+      return ctx.classMemberTypes.get(node.text)!;
   }
   // Binary operator: inherit type from left operand
   if (isGDNodeType(node, 'binary_operator')) {
@@ -1367,15 +1508,24 @@ function containsAwait(node: GDNode): boolean {
 
 function gdTypeToTs(gdType: string): string | null {
   switch (gdType) {
-    case 'int': return 'int';
-    case 'float': return 'float';
-    case 'bool': return 'boolean';
-    case 'String': return 'string';
-    case 'void': return 'void';
-    case 'Array': return 'Array<any>';
-    case 'Dictionary': return 'Dictionary';
-    case 'null': return 'null';
-    case 'Variant': return 'any';
+    case 'int':
+      return 'int';
+    case 'float':
+      return 'float';
+    case 'bool':
+      return 'boolean';
+    case 'String':
+      return 'string';
+    case 'void':
+      return 'void';
+    case 'Array':
+      return 'Array<any>';
+    case 'Dictionary':
+      return 'Dictionary';
+    case 'null':
+      return 'null';
+    case 'Variant':
+      return 'any';
     default:
       // Array[T] -> Array<T>
       if (gdType.startsWith('Array[')) {

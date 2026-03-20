@@ -77,9 +77,17 @@ declare class GodotObject {
    */
   add_user_signal(signal: string, arguments?: Array<unknown>): void;
   /** Calls the `method` on the object and returns the result. Supports variable arguments. */
-  call<N extends string, A extends any[], R>(this: Record<N, (...args: A) => R>, method: N, ...args: A): R;
+  call<N extends string, A extends any[], R>(
+  this: Record<N, (...args: A) => R>,
+  method: N,
+  ...args: A
+  ): R;
   /** Calls the `method` on the object during idle time. Always returns null. */
-  call_deferred<const N extends string, A extends any[], R>(this: Record<N, (...args: A) => R>, method: N, ...args: A): R;
+  call_deferred<const N extends string, A extends any[], R>(
+  this: Record<N, (...args: A) => R>,
+  method: N,
+  ...args: A
+  ): R;
   /**
    * Calls the `method` on the object and returns the result. Unlike {@link call}, this method expects all parameters to be contained inside `arg_array`.
    * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
@@ -106,7 +114,11 @@ declare class GodotObject {
    */
   disconnect(signal: string, callable: Callable): void;
   /** Emits the given `signal` by name with the provided arguments. */
-  emit_signal<const N extends string, A extends any[]>(this: Record<N, Signal<A>>, signal: N, ...args: A): int;
+  emit_signal<const N extends string, A extends any[]>(
+  this: Record<N, Signal<A>>,
+  signal: N,
+  ...args: A
+  ): int;
   /**
    * Deletes the object from memory. Pre-existing references to the object become invalid, and any attempt to access them will result in a runtime error. Checking the references with {@link @GlobalScope.is_instance_valid} will return `false`. This is equivalent to the `memdelete` function in GDExtension C++.
    */

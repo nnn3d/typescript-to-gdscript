@@ -22,7 +22,8 @@ const convertRule: RuleModule = {
   meta: {
     type: 'problem',
     docs: {
-      description: 'Convert TypeScript to GDScript and report transformation errors and Godot validation errors',
+      description:
+        'Convert TypeScript to GDScript and report transformation errors and Godot validation errors',
     },
     schema: [
       {
@@ -57,7 +58,9 @@ const convertRule: RuleModule = {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       Program(_node: any) {
         const cfg = resolveConfig({
-          configDir: options.rootDir ? resolve(options.rootDir) : dirname(filename),
+          configDir: options.rootDir
+            ? resolve(options.rootDir)
+            : dirname(filename),
           overrides: {
             rootDir: options.rootDir,
             tsDir: options.tsDir,
@@ -99,13 +102,17 @@ const convertRule: RuleModule = {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function reportDiagnostics(context: any, diagnostics: TransformDiagnostic[]): boolean {
+function reportDiagnostics(
+  context: any,
+  diagnostics: TransformDiagnostic[],
+): boolean {
   let hasErrors = false;
 
   for (const diag of diagnostics) {
     if (diag.severity === 'info') continue;
 
-    const messageId = diag.severity === 'error' ? 'convertError' : 'convertWarning';
+    const messageId =
+      diag.severity === 'error' ? 'convertError' : 'convertWarning';
     const severity = diag.severity === 'error' ? 2 : 1;
 
     if (diag.severity === 'error') hasErrors = true;
@@ -115,9 +122,13 @@ function reportDiagnostics(context: any, diagnostics: TransformDiagnostic[]): bo
     const contextFile = resolve(context.filename ?? context.getFilename());
     if (diagFile !== contextFile) continue;
 
-    const loc = diag.line > 0
-      ? { start: { line: diag.line, column: diag.column }, end: { line: diag.line, column: diag.column + 100 } }
-      : undefined;
+    const loc =
+      diag.line > 0
+        ? {
+            start: { line: diag.line, column: diag.column },
+            end: { line: diag.line, column: diag.column + 100 },
+          }
+        : undefined;
 
     context.report({
       messageId,
@@ -152,19 +163,25 @@ function runGodotValidation(context: any, params: GodotValidationParams): void {
     writeFileSync(gdAbsPath, params.gdCode);
 
     const validateResult = validateGdFilesSync({
-      gdFiles: [{
-        path: gdAbsPath,
-        sourceMapJson: params.sourceMapJson,
-        tsFilePath: params.tsFilePath,
-      }],
+      gdFiles: [
+        {
+          path: gdAbsPath,
+          sourceMapJson: params.sourceMapJson,
+          tsFilePath: params.tsFilePath,
+        },
+      ],
       projectRoot: params.projectRoot,
       godotPath: params.godotPath,
     });
 
     for (const diag of validateResult.diagnostics) {
-      const loc = diag.line > 0
-        ? { start: { line: diag.line, column: diag.column }, end: { line: diag.line, column: diag.column + 100 } }
-        : undefined;
+      const loc =
+        diag.line > 0
+          ? {
+              start: { line: diag.line, column: diag.column },
+              end: { line: diag.line, column: diag.column + 100 },
+            }
+          : undefined;
 
       context.report({
         messageId: 'godotError',

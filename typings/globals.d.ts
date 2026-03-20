@@ -44,10 +44,20 @@ type Exclude<T, U> = T extends U ? never : T;
 type Extract<T, U> = T extends U ? T : never;
 type Omit<T, K extends PropertyKey> = Pick<T, Exclude<keyof T, K>>;
 type NonNullable<T> = T & {};
-type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any;
-type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never;
-type ConstructorParameters<T extends abstract new (...args: any) => any> = T extends abstract new (...args: infer P) => any ? P : never;
-type InstanceType<T extends abstract new (...args: any) => any> = T extends abstract new (...args: infer R) => any ? R : any;
+type ReturnType<T extends (...args: any) => any> = T extends (
+  ...args: any
+) => infer R
+  ? R
+  : any;
+type Parameters<T extends (...args: any) => any> = T extends (
+  ...args: infer P
+) => any
+  ? P
+  : never;
+type ConstructorParameters<T extends abstract new (...args: any) => any> =
+  T extends abstract new (...args: infer P) => any ? P : never;
+type InstanceType<T extends abstract new (...args: any) => any> =
+  T extends abstract new (...args: infer R) => any ? R : any;
 type NoInfer<T> = intrinsic;
 
 // ─── Template literal support ───────────────────────────────
@@ -83,7 +93,9 @@ interface IteratorReturnResult<TReturn> {
   value: TReturn;
 }
 
-type IteratorResult<T, TReturn = any> = IteratorYieldResult<T> | IteratorReturnResult<TReturn>;
+type IteratorResult<T, TReturn = any> =
+  | IteratorYieldResult<T>
+  | IteratorReturnResult<TReturn>;
 
 interface Iterator<T, TReturn = any, TNext = any> {
   next(...[value]: [] | [TNext]): IteratorResult<T, TReturn>;
@@ -95,7 +107,8 @@ interface Iterable<T, TReturn = any, TNext = any> {
   [Symbol.iterator](): Iterator<T, TReturn, TNext>;
 }
 
-interface IterableIterator<T, TReturn = any, TNext = any> extends Iterator<T, TReturn, TNext> {
+interface IterableIterator<T, TReturn = any, TNext = any>
+  extends Iterator<T, TReturn, TNext> {
   [Symbol.iterator](): IterableIterator<T, TReturn, TNext>;
 }
 
@@ -104,64 +117,68 @@ interface IterableIterator<T, TReturn = any, TNext = any> extends Iterator<T, TR
 interface PromiseLike<T> {
   then<TResult1 = T, TResult2 = never>(
     onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
-    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ): PromiseLike<TResult1 | TResult2>;
 }
 
 interface Promise<T> {
   then<TResult1 = T, TResult2 = never>(
     onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | null,
-    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | null,
   ): Promise<TResult1 | TResult2>;
   catch<TResult = never>(
-    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null
+    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | null,
   ): Promise<T | TResult>;
 }
 
 interface PromiseConstructor {
-  new <T>(executor: (resolve: (value: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void): Promise<T>;
+  new <T>(
+    executor: (
+      resolve: (value: T | PromiseLike<T>) => void,
+      reject: (reason?: any) => void,
+    ) => void,
+  ): Promise<T>;
 }
 declare var Promise: PromiseConstructor;
 
 // ─── Decorator context types (required for TS decorators) ───
 
 interface ClassDecoratorContext {
-  readonly kind: "class";
+  readonly kind: 'class';
   readonly name: string | undefined;
 }
 
 interface ClassMethodDecoratorContext {
-  readonly kind: "method";
+  readonly kind: 'method';
   readonly name: string | symbol;
   readonly static: boolean;
   readonly private: boolean;
 }
 
 interface ClassGetterDecoratorContext {
-  readonly kind: "getter";
+  readonly kind: 'getter';
   readonly name: string | symbol;
   readonly static: boolean;
   readonly private: boolean;
 }
 
 interface ClassSetterDecoratorContext {
-  readonly kind: "setter";
+  readonly kind: 'setter';
   readonly name: string | symbol;
   readonly static: boolean;
   readonly private: boolean;
 }
 
 interface ClassFieldDecoratorContext {
-  readonly kind: "field";
+  readonly kind: 'field';
   readonly name: string | symbol;
   readonly static: boolean;
   readonly private: boolean;
 }
 
 interface ClassAccessorDecoratorContext {
-  readonly kind: "accessor";
+  readonly kind: 'accessor';
   readonly name: string | symbol;
   readonly static: boolean;
   readonly private: boolean;
 }
-

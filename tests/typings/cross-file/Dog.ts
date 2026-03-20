@@ -1,7 +1,7 @@
 export default class Dog extends Animal {
-  breed: string = "";
+  breed: string = '';
 
   bark(): string {
-    return this.speak() + " woof!";
+    return this.speak() + ' woof!';
   }
 }

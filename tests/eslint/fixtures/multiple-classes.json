@@ -1,3 +1,1 @@
-[
-  { "message": "Only one class per file", "severity": 2 }
-]
+[{ "message": "Only one class per file", "severity": 2 }]

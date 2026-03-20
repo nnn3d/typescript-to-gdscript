@@ -15,7 +15,11 @@ interface Array<T = unknown> {
   assign(array: Array<T>): void;
   back(): T;
   bsearch(value: T, before?: boolean): int;
-  bsearch_custom(value: T, func: (a: T, b: T) => boolean, before?: boolean): int;
+  bsearch_custom(
+    value: T,
+    func: (a: T, b: T) => boolean,
+    before?: boolean,
+  ): int;
   count(value: T): int;
   duplicate(deep?: boolean): Array<T>;
   duplicate_deep(deep_subresources_mode?: int): Array<T>;

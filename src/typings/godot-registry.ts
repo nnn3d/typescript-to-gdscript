@@ -108,33 +108,37 @@ function extractDescription(body: string): string | undefined {
  * Strips [code], [b], [i], [url], [param], etc. tags.
  */
 export function gdDocToPlain(text: string): string {
-  return text
-    .replace(/\[codeblock\][\s\S]*?\[\/codeblock\]/g, '') // remove code blocks entirely
-    .replace(/\[codeblocks\][\s\S]*?\[\/codeblocks\]/g, '')
-    .replace(/\[code\](.*?)\[\/code\]/g, '`$1`')
-    .replace(/\[param\s+(\w+)\]/g, '`$1`')
-    .replace(/\[b\](.*?)\[\/b\]/g, '**$1**')
-    .replace(/\[i\](.*?)\[\/i\]/g, '*$1*')
-    .replace(/\[url=([^\]]*)\](.*?)\[\/url\]/g, '$2 ($1)')
-    .replace(/\[([A-Z]\w*)\]/g, '{@link $1}')  // class refs like [Node]
-    .replace(/\[method\s+([^\]]+)\]/g, '{@link $1}')
-    .replace(/\[member\s+([^\]]+)\]/g, '{@link $1}')
-    .replace(/\[signal\s+([^\]]+)\]/g, '{@link $1}')
-    .replace(/\[constant\s+([^\]]+)\]/g, '{@link $1}')
-    .replace(/\[enum\s+([^\]]+)\]/g, '{@link $1}')
-    .replace(/\[kbd\](.*?)\[\/kbd\]/g, '`$1`')
-    .replace(/\[annotation\s+[^\]]+\]/g, '')
-    .replace(/\[theme_item\s+[^\]]+\]/g, '')
-    .replace(/\[color=[^\]]*\](.*?)\[\/color\]/g, '$1')
-    .replace(/\[font=[^\]]*\](.*?)\[\/font\]/g, '$1')
-    .replace(/\[br\]/g, '\n')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&')
-    // Normalize indentation: replace tabs and collapse multi-spaces
-    .split('\n').map(l => l.replace(/\t/g, '').trim()).join('\n')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
+  return (
+    text
+      .replace(/\[codeblock\][\s\S]*?\[\/codeblock\]/g, '') // remove code blocks entirely
+      .replace(/\[codeblocks\][\s\S]*?\[\/codeblocks\]/g, '')
+      .replace(/\[code\](.*?)\[\/code\]/g, '`$1`')
+      .replace(/\[param\s+(\w+)\]/g, '`$1`')
+      .replace(/\[b\](.*?)\[\/b\]/g, '**$1**')
+      .replace(/\[i\](.*?)\[\/i\]/g, '*$1*')
+      .replace(/\[url=([^\]]*)\](.*?)\[\/url\]/g, '$2 ($1)')
+      .replace(/\[([A-Z]\w*)\]/g, '{@link $1}') // class refs like [Node]
+      .replace(/\[method\s+([^\]]+)\]/g, '{@link $1}')
+      .replace(/\[member\s+([^\]]+)\]/g, '{@link $1}')
+      .replace(/\[signal\s+([^\]]+)\]/g, '{@link $1}')
+      .replace(/\[constant\s+([^\]]+)\]/g, '{@link $1}')
+      .replace(/\[enum\s+([^\]]+)\]/g, '{@link $1}')
+      .replace(/\[kbd\](.*?)\[\/kbd\]/g, '`$1`')
+      .replace(/\[annotation\s+[^\]]+\]/g, '')
+      .replace(/\[theme_item\s+[^\]]+\]/g, '')
+      .replace(/\[color=[^\]]*\](.*?)\[\/color\]/g, '$1')
+      .replace(/\[font=[^\]]*\](.*?)\[\/font\]/g, '$1')
+      .replace(/\[br\]/g, '\n')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&amp;/g, '&')
+      // Normalize indentation: replace tabs and collapse multi-spaces
+      .split('\n')
+      .map((l) => l.replace(/\t/g, '').trim())
+      .join('\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
+  );
 }
 
 /**
@@ -149,9 +153,13 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
   const inherits = inheritsMatch?.[1];
 
   // Parse class-level descriptions
-  const briefMatch = /<brief_description>([\s\S]*?)<\/brief_description>/.exec(xmlContent);
+  const briefMatch = /<brief_description>([\s\S]*?)<\/brief_description>/.exec(
+    xmlContent,
+  );
   const briefDescription = briefMatch?.[1]?.trim() || undefined;
-  const classDescMatch = xmlContent.match(/<class[^>]*>[\s\S]*?<description>([\s\S]*?)<\/description>/);
+  const classDescMatch = xmlContent.match(
+    /<class[^>]*>[\s\S]*?<description>([\s\S]*?)<\/description>/,
+  );
   const classDescription = classDescMatch?.[1]?.trim() || undefined;
 
   const methods: GodotMethodXml[] = [];
@@ -171,7 +179,8 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
     const returnType = returnMatch?.[1] ?? 'void';
 
     const params: GodotParamXml[] = [];
-    const paramRegex = /<param index="\d+" name="([^"]+)" type="([^"]+)"(?:\s+default="([^"]*)")?/g;
+    const paramRegex =
+      /<param index="\d+" name="([^"]+)" type="([^"]+)"(?:\s+default="([^"]*)")?/g;
     let paramMatch: RegExpExecArray | null;
     while ((paramMatch = paramRegex.exec(body)) !== null) {
       params.push({
@@ -196,7 +205,8 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
   }
 
   // Parse properties (members) — may have inline text or child <description>
-  const propRegex = /<member name="([^"]+)" type="([^"]+)"(?:\s+setter="([^"]*)")?(?:\s+getter="([^"]*)")?[^>]*(?:\/>|>([\s\S]*?)<\/member>)/g;
+  const propRegex =
+    /<member name="([^"]+)" type="([^"]+)"(?:\s+setter="([^"]*)")?(?:\s+getter="([^"]*)")?[^>]*(?:\/>|>([\s\S]*?)<\/member>)/g;
   while ((match = propRegex.exec(xmlContent)) !== null) {
     const propDesc = match[5]?.trim() || undefined;
     properties.push({
@@ -219,11 +229,16 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
     while ((paramMatch = paramRegex2.exec(body)) !== null) {
       params.push({ name: paramMatch[1]!, type: paramMatch[2]! });
     }
-    signals.push({ name: sigName, parameters: params, description: extractDescription(body) });
+    signals.push({
+      name: sigName,
+      parameters: params,
+      description: extractDescription(body),
+    });
   }
 
   // Parse constants — may have inline text or child content
-  const constRegex = /<constant name="([^"]+)" value="([^"]*)"(?:\s+enum="([^"]*)")?[^>]*(?:\/>|>([\s\S]*?)<\/constant>)/g;
+  const constRegex =
+    /<constant name="([^"]+)" value="([^"]*)"(?:\s+enum="([^"]*)")?[^>]*(?:\/>|>([\s\S]*?)<\/constant>)/g;
   while ((match = constRegex.exec(xmlContent)) !== null) {
     const constContent = match[4]?.trim() || undefined;
     constants.push({
@@ -249,7 +264,8 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
 
   // Parse operators
   const operators: GodotOperatorXml[] = [];
-  const operatorRegex = /<operator name="operator ([^"]+)"[^>]*>([\s\S]*?)<\/operator>/g;
+  const operatorRegex =
+    /<operator name="operator ([^"]+)"[^>]*>([\s\S]*?)<\/operator>/g;
   while ((match = operatorRegex.exec(xmlContent)) !== null) {
     var opName = match[1]!
       .replace(/&amp;/g, '&')
@@ -261,7 +277,9 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
     const returnMatch = /<return type="([^"]*)"/.exec(opBody);
     const returnType = returnMatch?.[1] ?? '';
 
-    const paramMatch = /<param index="0" name="[^"]*" type="([^"]+)"/.exec(opBody);
+    const paramMatch = /<param index="0" name="[^"]*" type="([^"]+)"/.exec(
+      opBody,
+    );
     const rightType = paramMatch?.[1];
 
     operators.push({
@@ -274,13 +292,15 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
 
   // Parse constructors
   const constructorMethods: GodotMethodXml[] = [];
-  const ctorRegex = /<constructor name="([^"]+)"[^>]*>([\s\S]*?)<\/constructor>/g;
+  const ctorRegex =
+    /<constructor name="([^"]+)"[^>]*>([\s\S]*?)<\/constructor>/g;
   while ((match = ctorRegex.exec(xmlContent)) !== null) {
     const ctorBody = match[2]!;
     const returnMatch = /<return type="([^"]*)"/.exec(ctorBody);
     const returnType = returnMatch?.[1] ?? name;
     const params: GodotParamXml[] = [];
-    const paramRegex3 = /<param index="\d+" name="([^"]+)" type="([^"]+)"(?:\s+default="([^"]*)")?/g;
+    const paramRegex3 =
+      /<param index="\d+" name="([^"]+)" type="([^"]+)"(?:\s+default="([^"]*)")?/g;
     let paramMatch: RegExpExecArray | null;
     while ((paramMatch = paramRegex3.exec(ctorBody)) !== null) {
       params.push({
@@ -319,8 +339,10 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
 /**
  * Parses all Godot XML class docs from a directory.
  */
-export function parseAllClassXmls(classDocsDir: string): Map<string, GodotClassXml> {
-  const xmlFiles = readdirSync(classDocsDir).filter(f => f.endsWith('.xml'));
+export function parseAllClassXmls(
+  classDocsDir: string,
+): Map<string, GodotClassXml> {
+  const xmlFiles = readdirSync(classDocsDir).filter((f) => f.endsWith('.xml'));
   const classes = new Map<string, GodotClassXml>();
 
   for (const xmlFile of xmlFiles) {
@@ -338,32 +360,68 @@ export function parseAllClassXmls(classDocsDir: string): Map<string, GodotClassX
 // ─── GDScript-specific builtins not in @GlobalScope XML ──
 
 const GDSCRIPT_BUILTINS = [
-  'range', 'len', 'load', 'preload', 'assert',
-  'int', 'float', 'bool', 'String',
-  'str', 'type_string',
+  'range',
+  'len',
+  'load',
+  'preload',
+  'assert',
+  'int',
+  'float',
+  'bool',
+  'String',
+  'str',
+  'type_string',
   'is_instance_of',
-  'inst_to_dict', 'dict_to_inst',
-  'print_stack', 'get_stack',
+  'inst_to_dict',
+  'dict_to_inst',
+  'print_stack',
+  'get_stack',
 ];
 
 // ─── Known constructor types (value types constructed as functions in GDScript) ──
 
 const CONSTRUCTOR_TYPES = new Set([
-  'Vector2', 'Vector2i', 'Vector3', 'Vector3i', 'Vector4', 'Vector4i',
-  'Color', 'Rect2', 'Rect2i', 'Transform2D', 'Transform3D',
-  'Basis', 'Quaternion', 'AABB', 'Plane', 'Projection',
-  'RID', 'Callable', 'Signal', 'Dictionary', 'Array',
-  'PackedByteArray', 'PackedInt32Array', 'PackedInt64Array',
-  'PackedFloat32Array', 'PackedFloat64Array',
-  'PackedStringArray', 'PackedVector2Array', 'PackedVector3Array',
-  'PackedColorArray', 'PackedVector4Array',
-  'StringName', 'NodePath',
+  'Vector2',
+  'Vector2i',
+  'Vector3',
+  'Vector3i',
+  'Vector4',
+  'Vector4i',
+  'Color',
+  'Rect2',
+  'Rect2i',
+  'Transform2D',
+  'Transform3D',
+  'Basis',
+  'Quaternion',
+  'AABB',
+  'Plane',
+  'Projection',
+  'RID',
+  'Callable',
+  'Signal',
+  'Dictionary',
+  'Array',
+  'PackedByteArray',
+  'PackedInt32Array',
+  'PackedInt64Array',
+  'PackedFloat32Array',
+  'PackedFloat64Array',
+  'PackedStringArray',
+  'PackedVector2Array',
+  'PackedVector3Array',
+  'PackedColorArray',
+  'PackedVector4Array',
+  'StringName',
+  'NodePath',
 ]);
 
 /**
  * Generates the class registry data from parsed XML classes.
  */
-export function generateRegistryData(classes: Map<string, GodotClassXml>): GodotRegistryData {
+export function generateRegistryData(
+  classes: Map<string, GodotClassXml>,
+): GodotRegistryData {
   const registry: GodotRegistryData = {
     version: '',
     classes: {},
@@ -377,12 +435,12 @@ export function generateRegistryData(classes: Map<string, GodotClassXml>): Godot
     // @GlobalScope is special — its members become globals
     if (name === '@GlobalScope') {
       registry.globalFunctions = [
-        ...cls.methods.map(m => m.name),
+        ...cls.methods.map((m) => m.name),
         ...GDSCRIPT_BUILTINS,
       ];
       registry.globalConstants = cls.constants
-        .filter(c => !c.enumName)
-        .map(c => c.name);
+        .filter((c) => !c.enumName)
+        .map((c) => c.name);
       registry.globalEnums = cls.enums;
       continue;
     }
@@ -394,10 +452,10 @@ export function generateRegistryData(classes: Map<string, GodotClassXml>): Godot
       name,
       inherits: cls.inherits ?? null,
       description: cls.briefDescription,
-      methods: cls.methods.map(m => m.name),
-      properties: cls.properties.map(p => p.name),
-      signals: cls.signals.map(s => s.name),
-      constants: cls.constants.filter(c => !c.enumName).map(c => c.name),
+      methods: cls.methods.map((m) => m.name),
+      properties: cls.properties.map((p) => p.name),
+      signals: cls.signals.map((s) => s.name),
+      constants: cls.constants.filter((c) => !c.enumName).map((c) => c.name),
       enums: cls.enums,
     };
   }
@@ -420,7 +478,9 @@ export class GodotClassRegistry {
   }
 
   static fromJsonFile(jsonPath: string): GodotClassRegistry {
-    const data = JSON.parse(readFileSync(jsonPath, 'utf-8')) as GodotRegistryData;
+    const data = JSON.parse(
+      readFileSync(jsonPath, 'utf-8'),
+    ) as GodotRegistryData;
     return new GodotClassRegistry(data);
   }
 
@@ -552,7 +612,9 @@ export interface GenerateRegistryOptions {
 /**
  * Generates the Godot class registry JSON from XML class docs.
  */
-export function generateGodotRegistry(options: GenerateRegistryOptions): GodotClassRegistry {
+export function generateGodotRegistry(
+  options: GenerateRegistryOptions,
+): GodotClassRegistry {
   const classes = parseAllClassXmls(options.classDocsDir);
   const data = generateRegistryData(classes);
   data.version = options.version ?? '';

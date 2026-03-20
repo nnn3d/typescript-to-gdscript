@@ -13,7 +13,11 @@ export class GDScriptEmitter {
   private sourceMapper: SourceMapper | null = null;
   private sourceFile: string;
 
-  constructor(sourceFile: string, generatedFile?: string, enableSourceMap = false) {
+  constructor(
+    sourceFile: string,
+    generatedFile?: string,
+    enableSourceMap = false,
+  ) {
     this.sourceFile = sourceFile;
     if (enableSourceMap && generatedFile) {
       this.sourceMapper = new SourceMapper(sourceFile, generatedFile);
@@ -35,7 +39,11 @@ export class GDScriptEmitter {
    * @param originalColumn Original source column (0-based), for source map
    */
   write(text: string, originalLine?: number, originalColumn?: number): void {
-    if (originalLine !== undefined && originalColumn !== undefined && this.sourceMapper) {
+    if (
+      originalLine !== undefined &&
+      originalColumn !== undefined &&
+      this.sourceMapper
+    ) {
       this.sourceMapper.addMapping({
         source: this.sourceFile,
         originalLine,
@@ -58,7 +66,11 @@ export class GDScriptEmitter {
   }
 
   /** Write text followed by a newline */
-  writeLine(text: string, originalLine?: number, originalColumn?: number): void {
+  writeLine(
+    text: string,
+    originalLine?: number,
+    originalColumn?: number,
+  ): void {
     this.writeIndent();
     this.write(text, originalLine, originalColumn);
     this.write('\n');

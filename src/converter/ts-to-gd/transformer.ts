@@ -1,5 +1,9 @@
 import ts from 'typescript';
-import type { TransformContext, TransformResult, TransformDiagnostic } from '../common/index.ts';
+import type {
+  TransformContext,
+  TransformResult,
+  TransformDiagnostic,
+} from '../common/index.ts';
 import { tsTypeNodeToGdType } from '../common/index.ts';
 import { GDScriptEmitter } from './emitter.ts';
 
@@ -20,7 +24,11 @@ export class TsToGdTransformer {
     this.ctx = ctx;
     this.opts = opts;
     const gdFilePath = ctx.filePath.replace(/\.ts$/, '.gd');
-    this.emitter = new GDScriptEmitter(ctx.filePath, gdFilePath, opts.sourceMap);
+    this.emitter = new GDScriptEmitter(
+      ctx.filePath,
+      gdFilePath,
+      opts.sourceMap,
+    );
   }
 
   transform(): TransformResult {
@@ -44,8 +52,11 @@ export class TsToGdTransformer {
     const classDecls = sf.statements.filter(ts.isClassDeclaration);
     if (classDecls.length > 1) {
       for (const cls of classDecls.slice(1)) {
-        this.addDiagnostic(cls, 'error',
-          'Only one class per file is allowed (GDScript file structure)');
+        this.addDiagnostic(
+          cls,
+          'error',
+          'Only one class per file is allowed (GDScript file structure)',
+        );
       }
     }
 
@@ -54,13 +65,22 @@ export class TsToGdTransformer {
         this.visitClassDeclaration(statement);
       } else if (ts.isImportDeclaration(statement)) {
         // Imports are type-only in this model; skip
-      } else if (ts.isTypeAliasDeclaration(statement) || ts.isInterfaceDeclaration(statement)) {
+      } else if (
+        ts.isTypeAliasDeclaration(statement) ||
+        ts.isInterfaceDeclaration(statement)
+      ) {
         // Type declarations are TS-only; skip
-      } else if (ts.isExportDeclaration(statement) || ts.isExportAssignment(statement)) {
+      } else if (
+        ts.isExportDeclaration(statement) ||
+        ts.isExportAssignment(statement)
+      ) {
         // Exports are TS-only; skip
       } else {
-        this.addDiagnostic(statement, 'error',
-          `Top-level statement outside class is not supported: ${ts.SyntaxKind[statement.kind]}`);
+        this.addDiagnostic(
+          statement,
+          'error',
+          `Top-level statement outside class is not supported: ${ts.SyntaxKind[statement.kind]}`,
+        );
       }
     }
   }
@@ -73,11 +93,15 @@ export class TsToGdTransformer {
     // extends
     if (node.heritageClauses) {
       for (const clause of node.heritageClauses) {
-        if (clause.token === ts.SyntaxKind.ExtendsKeyword && clause.types.length > 0) {
+        if (
+          clause.token === ts.SyntaxKind.ExtendsKeyword &&
+          clause.types.length > 0
+        ) {
           const baseType = clause.types[0]!;
           this.emitter.writeLine(
             `extends ${baseType.expression.getText(this.ctx.sourceFile)}`,
-            pos.line, pos.col
+            pos.line,
+            pos.col,
           );
         }
       }
@@ -87,10 +111,7 @@ export class TsToGdTransformer {
     const className = node.name?.getText(this.ctx.sourceFile) ?? '';
     this.currentClassName = className;
     if (className && className !== '__CLASS__') {
-      this.emitter.writeLine(
-        `class_name ${className}`,
-        pos.line, pos.col
-      );
+      this.emitter.writeLine(`class_name ${className}`, pos.line, pos.col);
     }
 
     this.emitter.writeEmptyLine();
@@ -102,7 +123,9 @@ export class TsToGdTransformer {
     const properties: ts.PropertyDeclaration[] = [];
     const methods: ts.MethodDeclaration[] = [];
     const constructor_: ts.ConstructorDeclaration | undefined =
-      node.members.find(ts.isConstructorDeclaration) as ts.ConstructorDeclaration | undefined;
+      node.members.find(ts.isConstructorDeclaration) as
+        | ts.ConstructorDeclaration
+        | undefined;
 
     for (const member of node.members) {
       if (ts.isPropertyDeclaration(member)) {
@@ -117,8 +140,15 @@ export class TsToGdTransformer {
         methods.push(member);
       } else if (ts.isConstructorDeclaration(member)) {
         // handled separately
-      } else if (ts.isGetAccessorDeclaration(member) || ts.isSetAccessorDeclaration(member)) {
-        this.addDiagnostic(member, 'warning', 'Get/set accessors not yet supported');
+      } else if (
+        ts.isGetAccessorDeclaration(member) ||
+        ts.isSetAccessorDeclaration(member)
+      ) {
+        this.addDiagnostic(
+          member,
+          'warning',
+          'Get/set accessors not yet supported',
+        );
       }
     }
 
@@ -175,7 +205,8 @@ export class TsToGdTransformer {
 
     for (const range of ranges) {
       const commentText = sourceText.slice(range.pos, range.end);
-      const { line, character } = this.ctx.sourceFile.getLineAndCharacterOfPosition(range.pos);
+      const { line, character } =
+        this.ctx.sourceFile.getLineAndCharacterOfPosition(range.pos);
       const origLine = line + 1;
       const origCol = character;
 
@@ -202,7 +233,8 @@ export class TsToGdTransformer {
 
     for (const range of ranges) {
       const commentText = sourceText.slice(range.pos, range.end);
-      const { line, character } = this.ctx.sourceFile.getLineAndCharacterOfPosition(range.pos);
+      const { line, character } =
+        this.ctx.sourceFile.getLineAndCharacterOfPosition(range.pos);
       if (range.kind === ts.SyntaxKind.SingleLineCommentTrivia) {
         const content = commentText.replace(/^\/\/\s?/, '');
         this.emitter.writeLine(`# ${content}`, line + 1, character);
@@ -224,14 +256,16 @@ export class TsToGdTransformer {
     // Extract signal parameters from gd.signal<[...]>() type arguments
     const params = this.extractSignalParams(node);
     if (params.length > 0) {
-      const paramStr = params.map(p => `${p.name}: ${p.type}`).join(', ');
+      const paramStr = params.map((p) => `${p.name}: ${p.type}`).join(', ');
       this.emitter.writeLine(`signal ${name}(${paramStr})`, pos.line, pos.col);
     } else {
       this.emitter.writeLine(`signal ${name}`, pos.line, pos.col);
     }
   }
 
-  private extractSignalParams(node: ts.PropertyDeclaration): { name: string; type: string }[] {
+  private extractSignalParams(
+    node: ts.PropertyDeclaration,
+  ): { name: string; type: string }[] {
     if (!node.initializer || !ts.isCallExpression(node.initializer)) return [];
     const call = node.initializer;
 
@@ -258,7 +292,11 @@ export class TsToGdTransformer {
         typeNode = element;
       }
 
-      var gdType = tsTypeNodeToGdType(typeNode, this.ctx.checker, this.ctx.sourceFile);
+      var gdType = tsTypeNodeToGdType(
+        typeNode,
+        this.ctx.checker,
+        this.ctx.sourceFile,
+      );
       // unknown, non-GDScript types → Variant
       params.push({ name: paramName, type: gdType ?? 'Variant' });
     }
@@ -287,14 +325,17 @@ export class TsToGdTransformer {
       } else if (ts.isArrayLiteralExpression(arg)) {
         const elements = arg.elements;
         if (elements.length >= 2 && ts.isStringLiteral(elements[0]!)) {
-          enumValues.push(`${elements[0]!.text} = ${elements[1]!.getText(this.ctx.sourceFile)}`);
+          enumValues.push(
+            `${elements[0]!.text} = ${elements[1]!.getText(this.ctx.sourceFile)}`,
+          );
         }
       }
     }
 
     this.emitter.writeLine(
       `enum ${this.toPascalCase(name)} {${enumValues.join(', ')}}`,
-      pos.line, pos.col
+      pos.line,
+      pos.col,
     );
   }
 
@@ -311,12 +352,18 @@ export class TsToGdTransformer {
     }
 
     // Static and readonly
-    const isStatic = node.modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword);
-    const isReadonly = node.modifiers?.some(m => m.kind === ts.SyntaxKind.ReadonlyKeyword);
+    const isStatic = node.modifiers?.some(
+      (m) => m.kind === ts.SyntaxKind.StaticKeyword,
+    );
+    const isReadonly = node.modifiers?.some(
+      (m) => m.kind === ts.SyntaxKind.ReadonlyKeyword,
+    );
 
     // Type annotation
     const gdType = tsTypeNodeToGdType(
-      node.type, this.ctx.checker, this.ctx.sourceFile
+      node.type,
+      this.ctx.checker,
+      this.ctx.sourceFile,
     );
 
     // Build declaration: readonly -> const, static -> static var, else -> var
@@ -332,7 +379,11 @@ export class TsToGdTransformer {
     }
 
     // Initializer
-    if (node.initializer && !this.isGdHelperCall(node.initializer, 'signal') && !this.isGdHelperCall(node.initializer, 'enum')) {
+    if (
+      node.initializer &&
+      !this.isGdHelperCall(node.initializer, 'signal') &&
+      !this.isGdHelperCall(node.initializer, 'enum')
+    ) {
       decl += ` = ${this.emitExpression(node.initializer)}`;
     }
 
@@ -369,17 +420,22 @@ export class TsToGdTransformer {
 
     // Return type
     const returnType = tsTypeNodeToGdType(
-      node.type, this.ctx.checker, this.ctx.sourceFile
+      node.type,
+      this.ctx.checker,
+      this.ctx.sourceFile,
     );
     const returnAnnotation = returnType ? ` -> ${returnType}` : '';
 
     // Static (ignore async — GDScript doesn't have it)
-    const isStatic = node.modifiers?.some(m => m.kind === ts.SyntaxKind.StaticKeyword);
+    const isStatic = node.modifiers?.some(
+      (m) => m.kind === ts.SyntaxKind.StaticKeyword,
+    );
     const staticPrefix = isStatic ? 'static ' : '';
 
     this.emitter.writeLine(
       `${staticPrefix}func ${name}(${params})${returnAnnotation}:`,
-      pos.line, pos.col
+      pos.line,
+      pos.col,
     );
 
     this.emitter.indent();
@@ -393,16 +449,24 @@ export class TsToGdTransformer {
 
   // ─── Parameters ──────────────────────────────────────────────
 
-  private emitParameters(params: ts.NodeArray<ts.ParameterDeclaration>): string {
-    return params.map(p => {
-      const name = p.name.getText(this.ctx.sourceFile);
-      const gdType = tsTypeNodeToGdType(p.type, this.ctx.checker, this.ctx.sourceFile);
-      const typeAnnotation = gdType ? `: ${gdType}` : '';
-      const defaultValue = p.initializer
-        ? ` = ${this.emitExpression(p.initializer)}`
-        : '';
-      return `${name}${typeAnnotation}${defaultValue}`;
-    }).join(', ');
+  private emitParameters(
+    params: ts.NodeArray<ts.ParameterDeclaration>,
+  ): string {
+    return params
+      .map((p) => {
+        const name = p.name.getText(this.ctx.sourceFile);
+        const gdType = tsTypeNodeToGdType(
+          p.type,
+          this.ctx.checker,
+          this.ctx.sourceFile,
+        );
+        const typeAnnotation = gdType ? `: ${gdType}` : '';
+        const defaultValue = p.initializer
+          ? ` = ${this.emitExpression(p.initializer)}`
+          : '';
+        return `${name}${typeAnnotation}${defaultValue}`;
+      })
+      .join(', ');
   }
 
   // ─── Statements ──────────────────────────────────────────────
@@ -424,9 +488,15 @@ export class TsToGdTransformer {
     if (ts.isVariableStatement(node)) {
       this.visitVariableStatement(node);
     } else if (ts.isExpressionStatement(node)) {
-      this.emitter.writeLine(this.emitExpression(node.expression), pos.line, pos.col);
+      this.emitter.writeLine(
+        this.emitExpression(node.expression),
+        pos.line,
+        pos.col,
+      );
     } else if (ts.isReturnStatement(node)) {
-      const expr = node.expression ? ` ${this.emitExpression(node.expression)}` : '';
+      const expr = node.expression
+        ? ` ${this.emitExpression(node.expression)}`
+        : '';
       this.emitter.writeLine(`return${expr}`, pos.line, pos.col);
     } else if (ts.isIfStatement(node)) {
       this.visitIfStatement(node);
@@ -447,11 +517,17 @@ export class TsToGdTransformer {
     } else if (ts.isSwitchStatement(node)) {
       this.visitSwitchStatement(node);
     } else if (ts.isForInStatement(node)) {
-      this.addDiagnostic(node, 'error',
-        '`for...in` is not supported; use `for...of` instead');
+      this.addDiagnostic(
+        node,
+        'error',
+        '`for...in` is not supported; use `for...of` instead',
+      );
     } else {
-      this.addDiagnostic(node, 'warning',
-        `Unsupported statement: ${ts.SyntaxKind[node.kind]}`);
+      this.addDiagnostic(
+        node,
+        'warning',
+        `Unsupported statement: ${ts.SyntaxKind[node.kind]}`,
+      );
     }
   }
 
@@ -462,9 +538,15 @@ export class TsToGdTransformer {
       const pos = this.getLineAndCol(decl);
 
       // Check for destructuring
-      if (ts.isArrayBindingPattern(decl.name) || ts.isObjectBindingPattern(decl.name)) {
-        this.addDiagnostic(decl, 'error',
-          'Destructuring is not supported in GDScript');
+      if (
+        ts.isArrayBindingPattern(decl.name) ||
+        ts.isObjectBindingPattern(decl.name)
+      ) {
+        this.addDiagnostic(
+          decl,
+          'error',
+          'Destructuring is not supported in GDScript',
+        );
         continue;
       }
 
@@ -473,13 +555,20 @@ export class TsToGdTransformer {
       // Check for var restriction (const and let are both allowed)
       const flags = node.declarationList.flags;
       if (!(flags & (ts.NodeFlags.Const | ts.NodeFlags.Let))) {
-        this.addDiagnostic(node, 'warning',
-          '`var` is restricted; use `let` or `const` instead. Converting to `var`.');
+        this.addDiagnostic(
+          node,
+          'warning',
+          '`var` is restricted; use `let` or `const` instead. Converting to `var`.',
+        );
       }
 
       // Type
       const typeNode = (decl as ts.VariableDeclaration).type;
-      const gdType = tsTypeNodeToGdType(typeNode, this.ctx.checker, this.ctx.sourceFile);
+      const gdType = tsTypeNodeToGdType(
+        typeNode,
+        this.ctx.checker,
+        this.ctx.sourceFile,
+      );
       const typeAnnotation = gdType ? `: ${gdType}` : '';
 
       // Initializer
@@ -487,7 +576,11 @@ export class TsToGdTransformer {
         ? ` = ${this.emitExpression(decl.initializer)}`
         : '';
 
-      this.emitter.writeLine(`var ${name}${typeAnnotation}${init}`, pos.line, pos.col);
+      this.emitter.writeLine(
+        `var ${name}${typeAnnotation}${init}`,
+        pos.line,
+        pos.col,
+      );
 
       // If the initializer was a block lambda, emit its body after the declaration line
       if (decl.initializer && this.isBlockLambda(decl.initializer)) {
@@ -500,7 +593,11 @@ export class TsToGdTransformer {
 
   private visitIfStatement(node: ts.IfStatement): void {
     const pos = this.getLineAndCol(node);
-    this.emitter.writeLine(`if ${this.emitExpression(node.expression)}:`, pos.line, pos.col);
+    this.emitter.writeLine(
+      `if ${this.emitExpression(node.expression)}:`,
+      pos.line,
+      pos.col,
+    );
 
     this.emitter.indent();
     this.visitStatementBody(node.thenStatement);
@@ -511,7 +608,8 @@ export class TsToGdTransformer {
         const elsePos = this.getLineAndCol(node.elseStatement);
         this.emitter.writeLine(
           `elif ${this.emitExpression(node.elseStatement.expression)}:`,
-          elsePos.line, elsePos.col
+          elsePos.line,
+          elsePos.col,
         );
         this.emitter.indent();
         this.visitStatementBody(node.elseStatement.thenStatement);
@@ -533,7 +631,8 @@ export class TsToGdTransformer {
       const pos = this.getLineAndCol(node);
       this.emitter.writeLine(
         `elif ${this.emitExpression(node.expression)}:`,
-        pos.line, pos.col
+        pos.line,
+        pos.col,
       );
       this.emitter.indent();
       this.visitStatementBody(node.thenStatement);
@@ -554,7 +653,8 @@ export class TsToGdTransformer {
   private visitForOfStatement(node: ts.ForOfStatement): void {
     const pos = this.getLineAndCol(node);
     const varName = ts.isVariableDeclarationList(node.initializer)
-      ? node.initializer.declarations[0]?.name.getText(this.ctx.sourceFile) ?? '_'
+      ? (node.initializer.declarations[0]?.name.getText(this.ctx.sourceFile) ??
+        '_')
       : this.emitExpression(node.initializer as ts.Expression);
     const iterable = this.emitExpression(node.expression);
     this.emitter.writeLine(`for ${varName} in ${iterable}:`, pos.line, pos.col);
@@ -568,13 +668,19 @@ export class TsToGdTransformer {
     if (node.initializer) {
       if (ts.isVariableDeclarationList(node.initializer)) {
         this.visitVariableStatement(
-          ts.factory.createVariableStatement(undefined, node.initializer)
+          ts.factory.createVariableStatement(undefined, node.initializer),
         );
       } else {
-        this.emitter.writeLine(this.emitExpression(node.initializer), pos.line, pos.col);
+        this.emitter.writeLine(
+          this.emitExpression(node.initializer),
+          pos.line,
+          pos.col,
+        );
       }
     }
-    const condition = node.condition ? this.emitExpression(node.condition) : 'true';
+    const condition = node.condition
+      ? this.emitExpression(node.condition)
+      : 'true';
     this.emitter.writeLine(`while ${condition}:`, pos.line, pos.col);
     this.emitter.indent();
     this.visitStatementBody(node.statement);
@@ -588,7 +694,11 @@ export class TsToGdTransformer {
 
   private visitWhileStatement(node: ts.WhileStatement): void {
     const pos = this.getLineAndCol(node);
-    this.emitter.writeLine(`while ${this.emitExpression(node.expression)}:`, pos.line, pos.col);
+    this.emitter.writeLine(
+      `while ${this.emitExpression(node.expression)}:`,
+      pos.line,
+      pos.col,
+    );
     this.emitter.indent();
     this.visitStatementBody(node.statement);
     this.emitter.dedent();
@@ -600,7 +710,8 @@ export class TsToGdTransformer {
     const pos = this.getLineAndCol(node);
     this.emitter.writeLine(
       `match ${this.emitExpression(node.expression)}:`,
-      pos.line, pos.col
+      pos.line,
+      pos.col,
     );
     this.emitter.indent();
 
@@ -608,7 +719,7 @@ export class TsToGdTransformer {
       if (ts.isCaseClause(clause)) {
         this.emitter.writeLine(`${this.emitExpression(clause.expression)}:`);
         this.emitter.indent();
-        const stmts = clause.statements.filter(s => !ts.isBreakStatement(s));
+        const stmts = clause.statements.filter((s) => !ts.isBreakStatement(s));
         if (stmts.length === 0) {
           this.emitter.writeLine('pass');
         } else {
@@ -620,7 +731,7 @@ export class TsToGdTransformer {
       } else {
         this.emitter.writeLine('_:');
         this.emitter.indent();
-        const stmts = clause.statements.filter(s => !ts.isBreakStatement(s));
+        const stmts = clause.statements.filter((s) => !ts.isBreakStatement(s));
         if (stmts.length === 0) {
           this.emitter.writeLine('pass');
         } else {
@@ -659,7 +770,11 @@ export class TsToGdTransformer {
     if (ts.isIdentifier(node)) {
       const text = node.text;
       if (text === 'undefined') {
-        this.addDiagnostic(node, 'error', '`undefined` is restricted; use `null`');
+        this.addDiagnostic(
+          node,
+          'error',
+          '`undefined` is restricted; use `null`',
+        );
         return 'null';
       }
       if (text === 'null') return 'null';
@@ -714,7 +829,8 @@ export class TsToGdTransformer {
     // New expression -> ClassName.new()
     if (ts.isNewExpression(node)) {
       const className = this.emitExpression(node.expression);
-      const args = node.arguments?.map(a => this.emitExpression(a)).join(', ') ?? '';
+      const args =
+        node.arguments?.map((a) => this.emitExpression(a)).join(', ') ?? '';
       return `${className}.new(${args})`;
     }
 
@@ -748,7 +864,9 @@ export class TsToGdTransformer {
 
     // Array literal
     if (ts.isArrayLiteralExpression(node)) {
-      const elements = node.elements.map(e => this.emitExpression(e)).join(', ');
+      const elements = node.elements
+        .map((e) => this.emitExpression(e))
+        .join(', ');
       return `[${elements}]`;
     }
 
@@ -803,19 +921,30 @@ export class TsToGdTransformer {
 
     // Spread -> not supported
     if (ts.isSpreadElement(node)) {
-      this.addDiagnostic(node, 'error', 'Spread operator is not supported in GDScript');
+      this.addDiagnostic(
+        node,
+        'error',
+        'Spread operator is not supported in GDScript',
+      );
       return this.emitExpression(node.expression);
     }
 
     // Yield -> not supported
     if (ts.isYieldExpression(node)) {
-      this.addDiagnostic(node, 'error', '`yield` is not supported; use `await` instead');
+      this.addDiagnostic(
+        node,
+        'error',
+        '`yield` is not supported; use `await` instead',
+      );
       return node.getText(this.ctx.sourceFile);
     }
 
     // Fallback — unsupported expression
-    this.addDiagnostic(node, 'warning',
-      `Unsupported expression: ${ts.SyntaxKind[node.kind]}`);
+    this.addDiagnostic(
+      node,
+      'warning',
+      `Unsupported expression: ${ts.SyntaxKind[node.kind]}`,
+    );
     return node.getText(this.ctx.sourceFile);
   }
 
@@ -842,11 +971,17 @@ export class TsToGdTransformer {
   private emitPropertyAccess(node: ts.PropertyAccessExpression): string {
     // Optional chaining (?.) -> not supported
     if (node.questionDotToken) {
-      this.addDiagnostic(node, 'error',
-        'Optional chaining (`?.`) is not supported in GDScript');
+      this.addDiagnostic(
+        node,
+        'error',
+        'Optional chaining (`?.`) is not supported in GDScript',
+      );
     }
     // ClassName.staticProp -> self.staticProp (when accessing own class)
-    if (ts.isIdentifier(node.expression) && node.expression.text === this.currentClassName) {
+    if (
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === this.currentClassName
+    ) {
       return `self.${node.name.text}`;
     }
     const obj = this.emitExpression(node.expression);
@@ -859,10 +994,13 @@ export class TsToGdTransformer {
   private emitCallExpression(node: ts.CallExpression): string {
     // Optional chaining on calls (?.) -> not supported
     if (node.questionDotToken) {
-      this.addDiagnostic(node, 'error',
-        'Optional chaining (`?.`) is not supported in GDScript');
+      this.addDiagnostic(
+        node,
+        'error',
+        'Optional chaining (`?.`) is not supported in GDScript',
+      );
     }
-    const args = node.arguments.map(a => this.emitExpression(a)).join(', ');
+    const args = node.arguments.map((a) => this.emitExpression(a)).join(', ');
 
     // Handle gd.* helper calls
     if (ts.isPropertyAccessExpression(node.expression)) {
@@ -911,15 +1049,27 @@ export class TsToGdTransformer {
     }
 
     // StringName('...') -> &"..."
-    if (ts.isIdentifier(node.expression) && node.expression.text === 'StringName') {
-      if (node.arguments.length === 1 && ts.isStringLiteral(node.arguments[0]!)) {
+    if (
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === 'StringName'
+    ) {
+      if (
+        node.arguments.length === 1 &&
+        ts.isStringLiteral(node.arguments[0]!)
+      ) {
         return `&"${node.arguments[0]!.text}"`;
       }
     }
 
     // NodePath('...') -> ^"..."
-    if (ts.isIdentifier(node.expression) && node.expression.text === 'NodePath') {
-      if (node.arguments.length === 1 && ts.isStringLiteral(node.arguments[0]!)) {
+    if (
+      ts.isIdentifier(node.expression) &&
+      node.expression.text === 'NodePath'
+    ) {
+      if (
+        node.arguments.length === 1 &&
+        ts.isStringLiteral(node.arguments[0]!)
+      ) {
         return `^"${node.arguments[0]!.text}"`;
       }
     }
@@ -937,7 +1087,10 @@ export class TsToGdTransformer {
           // Local variables and parameters holding callables need .call()
           if (ts.isVariableDeclaration(decl) || ts.isParameter(decl)) {
             const type = this.ctx.checker.getTypeAtLocation(node.expression);
-            if (type.getCallSignatures().length > 0 && !type.getConstructSignatures().length) {
+            if (
+              type.getCallSignatures().length > 0 &&
+              !type.getConstructSignatures().length
+            ) {
               return `${callee}.call(${args})`;
             }
           }
@@ -955,8 +1108,11 @@ export class TsToGdTransformer {
 
   // ─── Operator Helpers ────────────────────────────────────────
 
-  private emitOpsHelper(method: string, args: ts.NodeArray<ts.Expression>): string {
-    const operands = args.map(a => this.emitExpression(a));
+  private emitOpsHelper(
+    method: string,
+    args: ts.NodeArray<ts.Expression>,
+  ): string {
+    const operands = args.map((a) => this.emitExpression(a));
 
     // Unary operators (1 arg)
     if (method === 'plus' && operands.length === 1) return `+${operands[0]}`;
@@ -964,8 +1120,16 @@ export class TsToGdTransformer {
 
     // Binary operators (2 args)
     const binaryOpMap: Record<string, string> = {
-      add: ' + ', sub: ' - ', mul: ' * ', div: ' / ',
-      eq: ' == ', ne: ' != ', gt: ' > ', gte: ' >= ', lt: ' < ', lte: ' <= ',
+      add: ' + ',
+      sub: ' - ',
+      mul: ' * ',
+      div: ' / ',
+      eq: ' == ',
+      ne: ' != ',
+      gt: ' > ',
+      gte: ' >= ',
+      lt: ' < ',
+      lte: ' <= ',
     };
     const op = binaryOpMap[method];
     if (op && operands.length === 2) {
@@ -978,20 +1142,35 @@ export class TsToGdTransformer {
 
   private emitGdDict(node: ts.CallExpression): string {
     if (node.arguments.length !== 1) {
-      this.addDiagnostic(node, 'error', 'gd.dict() requires exactly one argument (array of [key, value] pairs)');
+      this.addDiagnostic(
+        node,
+        'error',
+        'gd.dict() requires exactly one argument (array of [key, value] pairs)',
+      );
       return '{}';
     }
 
     const arg = node.arguments[0]!;
     if (!ts.isArrayLiteralExpression(arg)) {
-      this.addDiagnostic(node, 'error', 'gd.dict() argument must be an array literal of [key, value] pairs');
+      this.addDiagnostic(
+        node,
+        'error',
+        'gd.dict() argument must be an array literal of [key, value] pairs',
+      );
       return '{}';
     }
 
     const entries: string[] = [];
     for (const element of arg.elements) {
-      if (!ts.isArrayLiteralExpression(element) || element.elements.length !== 2) {
-        this.addDiagnostic(element, 'error', 'gd.dict() entries must be [key, value] tuples');
+      if (
+        !ts.isArrayLiteralExpression(element) ||
+        element.elements.length !== 2
+      ) {
+        this.addDiagnostic(
+          element,
+          'error',
+          'gd.dict() entries must be [key, value] tuples',
+        );
         continue;
       }
 
@@ -1008,8 +1187,11 @@ export class TsToGdTransformer {
       } else if (ts.isPropertyAccessExpression(keyNode)) {
         key = this.emitExpression(keyNode);
       } else {
-        this.addDiagnostic(keyNode, 'error',
-          'gd.dict() keys must be identifiers, property accesses, or string/number literals, not expressions');
+        this.addDiagnostic(
+          keyNode,
+          'error',
+          'gd.dict() keys must be identifiers, property accesses, or string/number literals, not expressions',
+        );
         key = keyNode.getText(this.ctx.sourceFile);
       }
 
@@ -1026,9 +1208,11 @@ export class TsToGdTransformer {
 
   /** Emit a multi-line GDScript dict with proper indentation */
   private emitMultiLineDict(entries: string[]): string {
-    const innerIndent = this.emitter.getIndentStr(this.emitter.getIndentLevel() + 1);
+    const innerIndent = this.emitter.getIndentStr(
+      this.emitter.getIndentLevel() + 1,
+    );
     const outerIndent = this.emitter.getIndentStr();
-    const lines = entries.map(e => `${innerIndent}${e},`);
+    const lines = entries.map((e) => `${innerIndent}${e},`);
     return `{\n${lines.join('\n')}\n${outerIndent}}`;
   }
 
@@ -1037,13 +1221,19 @@ export class TsToGdTransformer {
   private emitBinaryExpression(node: ts.BinaryExpression): string {
     // Nullish coalescing (??) -> not supported
     if (node.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken) {
-      this.addDiagnostic(node, 'error',
-        'Nullish coalescing (`??`) is not supported in GDScript');
+      this.addDiagnostic(
+        node,
+        'error',
+        'Nullish coalescing (`??`) is not supported in GDScript',
+      );
     }
     // Nullish coalescing assignment (??=) -> not supported
     if (node.operatorToken.kind === ts.SyntaxKind.QuestionQuestionEqualsToken) {
-      this.addDiagnostic(node, 'error',
-        'Nullish coalescing assignment (`??=`) is not supported in GDScript');
+      this.addDiagnostic(
+        node,
+        'error',
+        'Nullish coalescing assignment (`??=`) is not supported in GDScript',
+      );
     }
     const left = this.emitExpression(node.left);
     const right = this.emitExpression(node.right);
@@ -1053,45 +1243,79 @@ export class TsToGdTransformer {
 
   private binaryOperator(kind: ts.SyntaxKind): string {
     switch (kind) {
-      case ts.SyntaxKind.PlusToken: return '+';
-      case ts.SyntaxKind.MinusToken: return '-';
-      case ts.SyntaxKind.AsteriskToken: return '*';
-      case ts.SyntaxKind.SlashToken: return '/';
-      case ts.SyntaxKind.PercentToken: return '%';
-      case ts.SyntaxKind.AsteriskAsteriskToken: return '**';
-      case ts.SyntaxKind.EqualsEqualsEqualsToken: return '==';
-      case ts.SyntaxKind.ExclamationEqualsEqualsToken: return '!=';
-      case ts.SyntaxKind.EqualsEqualsToken: return '==';
-      case ts.SyntaxKind.ExclamationEqualsToken: return '!=';
-      case ts.SyntaxKind.LessThanToken: return '<';
-      case ts.SyntaxKind.LessThanEqualsToken: return '<=';
-      case ts.SyntaxKind.GreaterThanToken: return '>';
-      case ts.SyntaxKind.GreaterThanEqualsToken: return '>=';
-      case ts.SyntaxKind.AmpersandAmpersandToken: return 'and';
-      case ts.SyntaxKind.BarBarToken: return 'or';
-      case ts.SyntaxKind.EqualsToken: return '=';
-      case ts.SyntaxKind.PlusEqualsToken: return '+=';
-      case ts.SyntaxKind.MinusEqualsToken: return '-=';
-      case ts.SyntaxKind.AsteriskEqualsToken: return '*=';
-      case ts.SyntaxKind.SlashEqualsToken: return '/=';
-      case ts.SyntaxKind.PercentEqualsToken: return '%=';
-      case ts.SyntaxKind.AmpersandToken: return '&';
-      case ts.SyntaxKind.BarToken: return '|';
-      case ts.SyntaxKind.CaretToken: return '^';
-      case ts.SyntaxKind.LessThanLessThanToken: return '<<';
-      case ts.SyntaxKind.GreaterThanGreaterThanToken: return '>>';
-      case ts.SyntaxKind.InKeyword: return 'in';
-      default: return '??';
+      case ts.SyntaxKind.PlusToken:
+        return '+';
+      case ts.SyntaxKind.MinusToken:
+        return '-';
+      case ts.SyntaxKind.AsteriskToken:
+        return '*';
+      case ts.SyntaxKind.SlashToken:
+        return '/';
+      case ts.SyntaxKind.PercentToken:
+        return '%';
+      case ts.SyntaxKind.AsteriskAsteriskToken:
+        return '**';
+      case ts.SyntaxKind.EqualsEqualsEqualsToken:
+        return '==';
+      case ts.SyntaxKind.ExclamationEqualsEqualsToken:
+        return '!=';
+      case ts.SyntaxKind.EqualsEqualsToken:
+        return '==';
+      case ts.SyntaxKind.ExclamationEqualsToken:
+        return '!=';
+      case ts.SyntaxKind.LessThanToken:
+        return '<';
+      case ts.SyntaxKind.LessThanEqualsToken:
+        return '<=';
+      case ts.SyntaxKind.GreaterThanToken:
+        return '>';
+      case ts.SyntaxKind.GreaterThanEqualsToken:
+        return '>=';
+      case ts.SyntaxKind.AmpersandAmpersandToken:
+        return 'and';
+      case ts.SyntaxKind.BarBarToken:
+        return 'or';
+      case ts.SyntaxKind.EqualsToken:
+        return '=';
+      case ts.SyntaxKind.PlusEqualsToken:
+        return '+=';
+      case ts.SyntaxKind.MinusEqualsToken:
+        return '-=';
+      case ts.SyntaxKind.AsteriskEqualsToken:
+        return '*=';
+      case ts.SyntaxKind.SlashEqualsToken:
+        return '/=';
+      case ts.SyntaxKind.PercentEqualsToken:
+        return '%=';
+      case ts.SyntaxKind.AmpersandToken:
+        return '&';
+      case ts.SyntaxKind.BarToken:
+        return '|';
+      case ts.SyntaxKind.CaretToken:
+        return '^';
+      case ts.SyntaxKind.LessThanLessThanToken:
+        return '<<';
+      case ts.SyntaxKind.GreaterThanGreaterThanToken:
+        return '>>';
+      case ts.SyntaxKind.InKeyword:
+        return 'in';
+      default:
+        return '??';
     }
   }
 
   private unaryOperator(op: ts.PrefixUnaryOperator): string {
     switch (op) {
-      case ts.SyntaxKind.ExclamationToken: return 'not ';
-      case ts.SyntaxKind.MinusToken: return '-';
-      case ts.SyntaxKind.PlusToken: return '+';
-      case ts.SyntaxKind.TildeToken: return '~';
-      default: return '';
+      case ts.SyntaxKind.ExclamationToken:
+        return 'not ';
+      case ts.SyntaxKind.MinusToken:
+        return '-';
+      case ts.SyntaxKind.PlusToken:
+        return '+';
+      case ts.SyntaxKind.TildeToken:
+        return '~';
+      default:
+        return '';
     }
   }
 
@@ -1116,7 +1340,9 @@ export class TsToGdTransformer {
 
     // Return type
     const returnType = tsTypeNodeToGdType(
-      node.type, this.ctx.checker, this.ctx.sourceFile
+      node.type,
+      this.ctx.checker,
+      this.ctx.sourceFile,
     );
     const returnAnnotation = returnType ? ` -> ${returnType}` : '';
 
@@ -1133,8 +1359,13 @@ export class TsToGdTransformer {
   /**
    * Check if an expression is a block-body lambda (arrow function or function expression with a block body).
    */
-  private isBlockLambda(node: ts.Expression): node is (ts.ArrowFunction | ts.FunctionExpression) {
-    return (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) && ts.isBlock(node.body);
+  private isBlockLambda(
+    node: ts.Expression,
+  ): node is ts.ArrowFunction | ts.FunctionExpression {
+    return (
+      (ts.isArrowFunction(node) || ts.isFunctionExpression(node)) &&
+      ts.isBlock(node.body)
+    );
   }
 
   /**
@@ -1165,7 +1396,9 @@ export class TsToGdTransformer {
           const obj = callExpr.expression.expression;
           const method = callExpr.expression.name.text;
           if (ts.isIdentifier(obj) && obj.text === 'gd') {
-            const args = callExpr.arguments.map(a => this.emitExpression(a)).join(', ');
+            const args = callExpr.arguments
+              .map((a) => this.emitExpression(a))
+              .join(', ');
             if (args) {
               result.push(`@${method}(${args})`);
             } else {
@@ -1190,15 +1423,26 @@ export class TsToGdTransformer {
     if (!ts.isCallExpression(node)) return false;
     if (!ts.isPropertyAccessExpression(node.expression)) return false;
     const obj = node.expression.expression;
-    return ts.isIdentifier(obj) && obj.text === 'gd' && node.expression.name.text === methodName;
+    return (
+      ts.isIdentifier(obj) &&
+      obj.text === 'gd' &&
+      node.expression.name.text === methodName
+    );
   }
 
   private getLineAndCol(node: ts.Node): { line: number; col: number } {
-    const { line, character } = this.ctx.sourceFile.getLineAndCharacterOfPosition(node.getStart(this.ctx.sourceFile));
+    const { line, character } =
+      this.ctx.sourceFile.getLineAndCharacterOfPosition(
+        node.getStart(this.ctx.sourceFile),
+      );
     return { line: line + 1, col: character };
   }
 
-  private addDiagnostic(node: ts.Node, severity: TransformDiagnostic['severity'], message: string): void {
+  private addDiagnostic(
+    node: ts.Node,
+    severity: TransformDiagnostic['severity'],
+    message: string,
+  ): void {
     const { line, col } = this.getLineAndCol(node);
     this.ctx.diagnostics.push({
       message,
@@ -1211,8 +1455,8 @@ export class TsToGdTransformer {
 
   private toPascalCase(str: string): string {
     return str
-      .replace(/^[A-Z]+/, m => m.charAt(0) + m.slice(1).toLowerCase())
+      .replace(/^[A-Z]+/, (m) => m.charAt(0) + m.slice(1).toLowerCase())
       .replace(/_([a-zA-Z])/g, (_, c: string) => c.toUpperCase())
-      .replace(/^[a-z]/, c => c.toUpperCase());
+      .replace(/^[a-z]/, (c) => c.toUpperCase());
   }
 }

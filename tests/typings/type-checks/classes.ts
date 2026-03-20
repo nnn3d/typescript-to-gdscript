@@ -33,8 +33,8 @@ class NodeMethodsTest extends Node {
     let child = new Node();
     this.add_child(child);
     this.remove_child(child);
-    let found: Node = this.get_node("Path/To/Node");
-    let maybe: Node | null = this.get_node_or_null("Maybe");
+    let found: Node = this.get_node('Path/To/Node');
+    let maybe: Node | null = this.get_node_or_null('Maybe');
     let count: int = this.get_child_count();
     let parent: Node = this.get_parent();
     let path: string = this.get_path();
@@ -92,7 +92,7 @@ class CallableTest extends Node {
     let is_valid: boolean = c.is_valid();
 
     // Static factory
-    let created: Callable = Callable.create(this, "method_name");
+    let created: Callable = Callable.create(this, 'method_name');
   }
 
   test_function_interface() {
@@ -150,13 +150,13 @@ class GlobalFunctionsTest extends Node {
     let h: int = clampi(5, 0, 3);
 
     // Print functions
-    print("hello");
-    print("a", "b", "c");
-    printerr("error");
-    prints("spaced", "output");
+    print('hello');
+    print('a', 'b', 'c');
+    printerr('error');
+    prints('spaced', 'output');
 
     // Utility
-    let hashed: int = hash("test");
+    let hashed: int = hash('test');
     let type: string = type_string(0);
     let valid: boolean = is_instance_valid(this);
   }

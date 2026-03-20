@@ -17,7 +17,7 @@ class SignalTest extends Node {
     this.health_changed.emit(10);
 
     // @ts-expect-error — wrong arg type
-    this.health_changed.emit("a", "b");
+    this.health_changed.emit('a', 'b');
 
     // Connect with typed callback
     this.health_changed.connect((old_hp: int, new_hp: int) => {});
@@ -105,7 +105,7 @@ class DecoratorTest extends Node {
   @gd.onready
   sprite: Sprite2D = null!;
 
-  @gd.export_category("Movement")
+  @gd.export_category('Movement')
   @gd.export
   max_speed: float = 200.0;
 }
@@ -114,8 +114,8 @@ class DecoratorTest extends Node {
 
 class StringNameTest extends Node {
   test_string_helpers() {
-    let sn: string = StringName("my_name");
-    let np: string = NodePath("Path/To/Node");
+    let sn: string = StringName('my_name');
+    let np: string = NodePath('Path/To/Node');
 
     // @ts-expect-error — StringName requires a string argument
     let bad1 = StringName(123);
@@ -144,15 +144,15 @@ class TypeAliasTest extends Node {
 
 class TypeDictTest extends Node {
   test_dict() {
-    const key1 = "key";
+    const key1 = 'key';
     const key2 = Vector2.DOWN;
     const key3 = new Node2D();
 
     const dict = gd.dict([
-      [key1, "value"],
-      [key2, "value"],
-      [key3, "value"],
-      ["key", "value"],
+      [key1, 'value'],
+      [key2, 'value'],
+      [key3, 'value'],
+      ['key', 'value'],
     ]);
   }
 }

@@ -17,35 +17,42 @@ export interface ConvertOptions {
 }
 
 export function convertTsToGd(options: ConvertOptions): TransformResult {
-  const program = options.program ?? createTsProgram({
-    rootDir: options.rootDir,
-    files: [options.filePath],
-    tsConfigPath: options.tsConfigPath,
-  });
+  const program =
+    options.program ??
+    createTsProgram({
+      rootDir: options.rootDir,
+      files: [options.filePath],
+      tsConfigPath: options.tsConfigPath,
+    });
 
   const sourceFile = program.getSourceFile(options.filePath);
   if (!sourceFile) {
     return {
       code: '',
-      diagnostics: [{
-        message: `File not found: ${options.filePath}`,
-        severity: 'error',
-        file: options.filePath,
-        line: 0,
-        column: 0,
-      }],
+      diagnostics: [
+        {
+          message: `File not found: ${options.filePath}`,
+          severity: 'error',
+          file: options.filePath,
+          line: 0,
+          column: 0,
+        },
+      ],
     };
   }
 
-  const transformer = new TsToGdTransformer({
-    program,
-    checker: program.getTypeChecker(),
-    sourceFile,
-    filePath: options.filePath,
-    diagnostics: [],
-  }, {
-    sourceMap: options.sourceMap ?? false,
-  });
+  const transformer = new TsToGdTransformer(
+    {
+      program,
+      checker: program.getTypeChecker(),
+      sourceFile,
+      filePath: options.filePath,
+      diagnostics: [],
+    },
+    {
+      sourceMap: options.sourceMap ?? false,
+    },
+  );
 
   return transformer.transform();
 }

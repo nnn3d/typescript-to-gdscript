@@ -1,6 +1,9 @@
 **/fixtures/**/*.ts
-/node_modules
-/dist
+node_modules
+dist
 .idea
 .claude
-/vendor
+vendor
+typings
+!typings/overrides
+!typings/*.ts

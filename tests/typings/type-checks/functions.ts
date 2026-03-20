@@ -33,7 +33,7 @@ class FunctionTest extends Node {
     // Typed call — checks argument types
     fn.call('', 0);
     // @ts-expect-error — wrong arguments
-    fn.call()
+    fn.call();
 
     // bind: 1 arg from end — removes last param, checks bound arg type
     fn.bind(0).call('');
@@ -68,7 +68,14 @@ class FunctionTest extends Node {
     fn5.bind('', 0, true, 1.0, 'e').call();
 
     // 6+ args — fallback to untyped Callable
-    let fn6 = (a: string, b: int, c: boolean, d: float, e: string, f: int) => {};
+    let fn6 = (
+      a: string,
+      b: int,
+      c: boolean,
+      d: float,
+      e: string,
+      f: int,
+    ) => {};
     let fallback: Callable = fn6.bind('', 0, true, 1.0, 'e', 0);
   }
 
@@ -120,7 +127,7 @@ class FunctionTest extends Node {
     let valid: boolean = c.is_valid();
 
     // Callable.create() factory
-    let created: Callable = Callable.create(this, "some_method");
+    let created: Callable = Callable.create(this, 'some_method');
     let method: string = created.get_method();
   }
 

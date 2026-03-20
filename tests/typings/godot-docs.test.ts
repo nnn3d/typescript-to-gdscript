@@ -28,7 +28,10 @@ describe('Godot Docs: typings generation', () => {
 
       // Compare each file
       for (const file of expectedFiles) {
-        const generated = readFileSync(join(generatedClassesDir, file), 'utf-8');
+        const generated = readFileSync(
+          join(generatedClassesDir, file),
+          'utf-8',
+        );
         const expected = readFileSync(join(VERSION_CLASSES_DIR, file), 'utf-8');
 
         const generatedLines = generated.split('\n');
@@ -41,8 +44,8 @@ describe('Godot Docs: typings generation', () => {
           if (gen !== exp) {
             expect.fail(
               `${file} line ${i + 1} mismatch:\n` +
-              `  Expected: ${JSON.stringify(exp)}\n` +
-              `  Got:      ${JSON.stringify(gen)}`
+                `  Expected: ${JSON.stringify(exp)}\n` +
+                `  Got:      ${JSON.stringify(gen)}`,
             );
           }
         }

@@ -19,7 +19,11 @@ declare interface Array<T = unknown> {
   assign(array: Array<T>): void;
   back(): T;
   bsearch(value: T, before?: boolean): int;
-  bsearch_custom(value: T, func: (a: T, b: T) => boolean, before?: boolean): int;
+  bsearch_custom(
+  value: T,
+  func: (a: T, b: T) => boolean,
+  before?: boolean,
+  ): int;
   /** Removes all elements from the array. This is equivalent to using {@link resize} with a size of `0`. */
   clear(): void;
   count(value: T): int;

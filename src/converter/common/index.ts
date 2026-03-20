@@ -53,7 +53,10 @@ export function isFloatType(type: ts.Type, checker: ts.TypeChecker): boolean {
  * Converts a TypeScript type to its GDScript type annotation string.
  * Returns null if the type should be omitted.
  */
-export function tsTypeToGdType(type: ts.Type, checker: ts.TypeChecker): string | null {
+export function tsTypeToGdType(
+  type: ts.Type,
+  checker: ts.TypeChecker,
+): string | null {
   // Check for int/float aliases
   if (isIntType(type, checker)) return 'int';
   if (isFloatType(type, checker)) return 'float';
@@ -84,7 +87,10 @@ export function tsTypeToGdType(type: ts.Type, checker: ts.TypeChecker): string |
   }
 
   // Function/callable types
-  if (type.getCallSignatures().length > 0 && !type.getConstructSignatures().length) {
+  if (
+    type.getCallSignatures().length > 0 &&
+    !type.getConstructSignatures().length
+  ) {
     const symbol = type.getSymbol();
     if (!symbol || symbol.getName() === '__type') return 'Callable';
   }
@@ -112,7 +118,7 @@ export function tsTypeToGdType(type: ts.Type, checker: ts.TypeChecker): string |
 export function tsTypeNodeToGdType(
   typeNode: ts.TypeNode | undefined,
   checker: ts.TypeChecker,
-  sourceFile: ts.SourceFile
+  sourceFile: ts.SourceFile,
 ): string | null {
   if (!typeNode) return null;
 
@@ -148,7 +154,11 @@ export function tsTypeNodeToGdType(
 
   // Array type: T[] -> Array[T]
   if (ts.isArrayTypeNode(typeNode)) {
-    const elementType = tsTypeNodeToGdType(typeNode.elementType, checker, sourceFile);
+    const elementType = tsTypeNodeToGdType(
+      typeNode.elementType,
+      checker,
+      sourceFile,
+    );
     return elementType ? `Array[${elementType}]` : 'Array';
   }
 

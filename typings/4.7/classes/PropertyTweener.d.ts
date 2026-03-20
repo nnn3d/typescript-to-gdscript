@@ -18,7 +18,9 @@ declare class PropertyTweener extends Tweener {
    */
   from_current(): PropertyTweener;
   /** Sets a custom interpolation function. `interpolator_method` receives a value from 0.0 to 1.0 and should return a value in the same range. */
-  set_custom_interpolator(interpolator_method: (value: float) => float): PropertyTweener;
+  set_custom_interpolator(
+  interpolator_method: (value: float) => float,
+  ): PropertyTweener;
   /**
    * Sets the time in seconds after which the {@link PropertyTweener} will start interpolating. By default there's no delay.
    */

@@ -1,15 +1,12 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { convertTsToGd } from '../../src/converter/ts-to-gd';
-import { SourceMapReader } from '../../src/sourcemap';
+import { convertTsToGd } from '../../src/converter/ts-to-gd/index.ts';
+import { SourceMapReader } from '../../src/sourcemap/index.ts';
 import { writeFileSync, mkdirSync, rmSync } from 'fs';
 import { join } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import ts from 'typescript';
+import { tmpdir } from 'os';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const TMP_DIR = join(__dirname, '__tmp__');
+const TMP_DIR = join(tmpdir(), '__tmp__' + Math.random().toString(36));
 
 function createProgram(filePath: string, code: string): ts.Program {
   mkdirSync(TMP_DIR, { recursive: true });
@@ -383,13 +380,13 @@ describe('Source Map: TS-to-GD mappings', () => {
 
   it('should map all entries and cover every GD output line with a statement', async () => {
     const code = [
-      'class Full extends Node {',       // Line 1
-      '  hp: int = 10;',                 // Line 2
-      '  run() {',                        // Line 3
-      '    let x: int = 1;',             // Line 4
-      '    return x;',                    // Line 5
-      '  }',                              // Line 6
-      '}',                                // Line 7
+      'class Full extends Node {', // Line 1
+      '  hp: int = 10;', // Line 2
+      '  run() {', // Line 3
+      '    let x: int = 1;', // Line 4
+      '    return x;', // Line 5
+      '  }', // Line 6
+      '}', // Line 7
       '',
     ].join('\n');
 

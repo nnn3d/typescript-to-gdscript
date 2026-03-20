@@ -16,16 +16,14 @@ describe('Typings: type checks', () => {
       });
     } catch (err: any) {
       const output = (err.stdout || '') + (err.stderr || '');
-      expect.fail(
-        `TypeScript type checks failed:\n${output}`
-      );
+      expect.fail(`TypeScript type checks failed:\n${output}`);
     }
   });
 
   it('should have type-check files covering key areas', () => {
     const files = readdirSync(TYPE_CHECKS_DIR)
-      .filter(f => f.endsWith('.ts'))
-      .map(f => f.replace('.ts', ''));
+      .filter((f) => f.endsWith('.ts'))
+      .map((f) => f.replace('.ts', ''));
 
     expect(files).toContain('gd-helpers');
     expect(files).toContain('arrays');

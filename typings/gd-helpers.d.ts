@@ -76,7 +76,9 @@ declare const gd: {
    * MY_ENUM = gd.enum('VALUE_1', 'VALUE_2', ['VALUE_3', -1])
    * // becomes: enum MyEnum {VALUE_1, VALUE_2, VALUE_3 = -1}
    */
-  readonly enum: <const T extends string>(...args: (T | [T, number])[]) => Record<T, number>;
+  readonly enum: <const T extends string>(
+    ...args: (T | [T, number])[]
+  ) => Record<T, number>;
   // `enum` is reserved in TS, so use `enum_` in declaration but map to `enum` in user code
 
   /**
@@ -89,35 +91,101 @@ declare const gd: {
   readonly dict: (entries: [unknown, unknown][]) => Dictionary;
 
   /** GDScript `as` operator. Transforms to `value as Type` in GDScript. */
-  readonly as: <T, U>(value: T, type: new (...args: any[]) => U) =>
-    T extends U ? U : U | null;
+  readonly as: <T, U>(
+    value: T,
+    type: new (...args: any[]) => U,
+  ) => T extends U ? U : U | null;
 
   readonly ops: {
     /** Transforms to `a + b` in GDScript */
-    readonly add: <L extends Record<typeof __add, any>, R extends OpRight<typeof __add, L>>(a: L, b: R) => OpResult<typeof __add, L, R>;
+    readonly add: <
+      L extends Record<typeof __add, any>,
+      R extends OpRight<typeof __add, L>,
+    >(
+      a: L,
+      b: R,
+    ) => OpResult<typeof __add, L, R>;
     /** Transforms to `a - b` in GDScript */
-    readonly sub: <L extends Record<typeof __sub, any>, R extends OpRight<typeof __sub, L>>(a: L, b: R) => OpResult<typeof __sub, L, R>;
+    readonly sub: <
+      L extends Record<typeof __sub, any>,
+      R extends OpRight<typeof __sub, L>,
+    >(
+      a: L,
+      b: R,
+    ) => OpResult<typeof __sub, L, R>;
     /** Transforms to `a * b` in GDScript */
-    readonly mul: <L extends Record<typeof __mul, any>, R extends OpRight<typeof __mul, L>>(a: L, b: R) => OpResult<typeof __mul, L, R>;
+    readonly mul: <
+      L extends Record<typeof __mul, any>,
+      R extends OpRight<typeof __mul, L>,
+    >(
+      a: L,
+      b: R,
+    ) => OpResult<typeof __mul, L, R>;
     /** Transforms to `a / b` in GDScript */
-    readonly div: <L extends Record<typeof __div, any>, R extends OpRight<typeof __div, L>>(a: L, b: R) => OpResult<typeof __div, L, R>;
+    readonly div: <
+      L extends Record<typeof __div, any>,
+      R extends OpRight<typeof __div, L>,
+    >(
+      a: L,
+      b: R,
+    ) => OpResult<typeof __div, L, R>;
     /** Transforms to `a == b` in GDScript */
-    readonly eq: <L extends Record<typeof __eq, any>, R extends OpRight<typeof __eq, L>>(a: L, b: R) => OpResult<typeof __eq, L, R>;
+    readonly eq: <
+      L extends Record<typeof __eq, any>,
+      R extends OpRight<typeof __eq, L>,
+    >(
+      a: L,
+      b: R,
+    ) => OpResult<typeof __eq, L, R>;
     /** Transforms to `a != b` in GDScript */
-    readonly ne: <L extends Record<typeof __ne, any>, R extends OpRight<typeof __ne, L>>(a: L, b: R) => OpResult<typeof __ne, L, R>;
+    readonly ne: <
+      L extends Record<typeof __ne, any>,
+      R extends OpRight<typeof __ne, L>,
+    >(
+      a: L,
+      b: R,
+    ) => OpResult<typeof __ne, L, R>;
     /** Transforms to `a > b` in GDScript */
-    readonly gt: <L extends Record<typeof __gt, any>, R extends OpRight<typeof __gt, L>>(a: L, b: R) => OpResult<typeof __gt, L, R>;
+    readonly gt: <
+      L extends Record<typeof __gt, any>,
+      R extends OpRight<typeof __gt, L>,
+    >(
+      a: L,
+      b: R,
+    ) => OpResult<typeof __gt, L, R>;
     /** Transforms to `a >= b` in GDScript */
-    readonly gte: <L extends Record<typeof __gte, any>, R extends OpRight<typeof __gte, L>>(a: L, b: R) => OpResult<typeof __gte, L, R>;
+    readonly gte: <
+      L extends Record<typeof __gte, any>,
+      R extends OpRight<typeof __gte, L>,
+    >(
+      a: L,
+      b: R,
+    ) => OpResult<typeof __gte, L, R>;
     /** Transforms to `a < b` in GDScript */
-    readonly lt: <L extends Record<typeof __lt, any>, R extends OpRight<typeof __lt, L>>(a: L, b: R) => OpResult<typeof __lt, L, R>;
+    readonly lt: <
+      L extends Record<typeof __lt, any>,
+      R extends OpRight<typeof __lt, L>,
+    >(
+      a: L,
+      b: R,
+    ) => OpResult<typeof __lt, L, R>;
     /** Transforms to `a <= b` in GDScript */
-    readonly lte: <L extends Record<typeof __lte, any>, R extends OpRight<typeof __lte, L>>(a: L, b: R) => OpResult<typeof __lte, L, R>;
+    readonly lte: <
+      L extends Record<typeof __lte, any>,
+      R extends OpRight<typeof __lte, L>,
+    >(
+      a: L,
+      b: R,
+    ) => OpResult<typeof __lte, L, R>;
     /** Transforms to `+a` in GDScript (unary plus) */
-    readonly plus: <T extends Record<typeof __plus, any>>(a: T) => UnaryOpResult<typeof __plus, T>;
+    readonly plus: <T extends Record<typeof __plus, any>>(
+      a: T,
+    ) => UnaryOpResult<typeof __plus, T>;
     /** Transforms to `-a` in GDScript (unary minus) */
-    readonly minus: <T extends Record<typeof __minus, any>>(a: T) => UnaryOpResult<typeof __minus, T>;
-  }
+    readonly minus: <T extends Record<typeof __minus, any>>(
+      a: T,
+    ) => UnaryOpResult<typeof __minus, T>;
+  };
 
   // Decorators
 
@@ -125,9 +193,13 @@ declare const gd: {
   // Since `export` is a reserved word in TS, decorators are defined via
   // the `decorators` sub-namespace. The transformer maps `@gd.export` directly.
   readonly export: (target: any, context: any) => void;
-  readonly export_category: (category: string) => (target: any, context: any) => void;
-  readonly export_global_file: (...filters: string[]) => (target: any, context: any) => void;
+  readonly export_category: (
+    category: string,
+  ) => (target: any, context: any) => void;
+  readonly export_global_file: (
+    ...filters: string[]
+  ) => (target: any, context: any) => void;
   readonly onready: (target: any, context: any) => void;
   readonly icon: (path: string) => (target: any, context: any) => void;
   readonly tool: (target: any, context: any) => void;
-}
+};

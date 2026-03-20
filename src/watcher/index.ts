@@ -45,7 +45,7 @@ export class Watcher {
     this.tsDir = options.tsDir ?? options.rootDir;
     this.gdDir = options.gdDir ?? options.outputDir ?? this.tsDir;
     this.cache = new FileCache(
-      options.cacheDir ?? resolve(options.rootDir, '.ts2gd-cache')
+      options.cacheDir ?? resolve(options.rootDir, '.ts2gd-cache'),
     );
   }
 
@@ -56,12 +56,7 @@ export class Watcher {
     ];
 
     this.fsWatcher = watch(patterns, {
-      ignored: [
-        /(^|[\/\\])\../,
-        /node_modules/,
-        /\.d\.ts$/,
-        /dist\//,
-      ],
+      ignored: [/(^|[\/\\])\../, /node_modules/, /\.d\.ts$/, /dist\//],
       persistent: true,
       ignoreInitial: false,
     });
@@ -85,7 +80,7 @@ export class Watcher {
 
     if (ext === '.ts' && !filePath.endsWith('.d.ts')) {
       this.tsFiles.add(filePath);
-      this.convertFile(filePath).catch(err => {
+      this.convertFile(filePath).catch((err) => {
         this.log(filePath, `Unexpected error: ${err.message}`, 'error');
       });
       this.regenerateClassTypings();
@@ -109,7 +104,11 @@ export class Watcher {
 
     // Check if output was modified externally
     if (this.cache.outputModified(filePath)) {
-      this.log(filePath, 'WARNING: Output file was modified externally. Skipping.', 'warning');
+      this.log(
+        filePath,
+        'WARNING: Output file was modified externally. Skipping.',
+        'warning',
+      );
       return;
     }
 
@@ -122,10 +121,14 @@ export class Watcher {
     });
 
     for (const d of result.diagnostics) {
-      this.log(d.file, `[${d.severity}] ${d.message} (${d.line}:${d.column})`, d.severity);
+      this.log(
+        d.file,
+        `[${d.severity}] ${d.message} (${d.line}:${d.column})`,
+        d.severity,
+      );
     }
 
-    if (result.diagnostics.some(d => d.severity === 'error')) {
+    if (result.diagnostics.some((d) => d.severity === 'error')) {
       return;
     }
 
@@ -143,7 +146,11 @@ export class Watcher {
     this.cache.update(filePath, outputPath);
     this.cache.save();
 
-    this.log(filePath, `Converted -> ${relative(this.options.rootDir, outputPath) || outputPath}`, 'info');
+    this.log(
+      filePath,
+      `Converted -> ${relative(this.options.rootDir, outputPath) || outputPath}`,
+      'info',
+    );
 
     // Validate with Godot if configured
     if (this.options.godotPath) {
@@ -154,7 +161,11 @@ export class Watcher {
         godotPath: this.options.godotPath,
       });
       for (const d of validateResult.diagnostics) {
-        this.log(d.file || filePath, `[${d.severity}] ${d.message} (${d.line}:${d.column})`, d.severity);
+        this.log(
+          d.file || filePath,
+          `[${d.severity}] ${d.message} (${d.line}:${d.column})`,
+          d.severity,
+        );
       }
     }
   }
@@ -174,8 +185,15 @@ export class Watcher {
     if (this.options.onDiagnostic) {
       this.options.onDiagnostic(file, message, severity);
     } else {
-      const prefix = severity === 'error' ? 'ERROR' : severity === 'warning' ? 'WARN' : 'INFO';
-      console.log(`[${prefix}] ${relative(this.options.rootDir, file)}: ${message}`);
+      const prefix =
+        severity === 'error'
+          ? 'ERROR'
+          : severity === 'warning'
+            ? 'WARN'
+            : 'INFO';
+      console.log(
+        `[${prefix}] ${relative(this.options.rootDir, file)}: ${message}`,
+      );
     }
   }
 }

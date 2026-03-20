@@ -1,4 +1,10 @@
 [
-  { "message": "Cannot assign a value of type \"String\" as \"int\"", "severity": 2 },
-  { "message": "Cannot assign a value of type String to variable \"x\" with specified type int.", "severity": 2 }
+  {
+    "message": "Cannot assign a value of type \"String\" as \"int\"",
+    "severity": 2
+  },
+  {
+    "message": "Cannot assign a value of type String to variable \"x\" with specified type int.",
+    "severity": 2
+  }
 ]

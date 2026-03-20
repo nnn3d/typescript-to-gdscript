@@ -4,7 +4,10 @@
 
 class TSOnlyTest extends Node {
   // TSOnly wraps a type that gets erased during transformation
-  metadata: TSOnly<{ debug: boolean; version: string }> = { debug: true, version: "1.0" };
+  metadata: TSOnly<{ debug: boolean; version: string }> = {
+    debug: true,
+    version: '1.0',
+  };
 
   test_tsonly() {
     // Should still be usable as the inner type in TS
@@ -24,7 +27,7 @@ class SignalTypeTest extends Node {
     this.damage_dealt.emit(10.0, this);
 
     // @ts-expect-error — wrong param types
-    this.damage_dealt.emit("not a number", "not a node");
+    this.damage_dealt.emit('not a number', 'not a node');
 
     // Connect with correct callback signature
     this.damage_dealt.connect((amount: float, source: Node) => {
@@ -45,16 +48,16 @@ class RenamedClassTest extends Node {
     // GodotObject is available directly
     let obj = new GodotObject();
     obj.get_class();
-    obj.has_method("test");
+    obj.has_method('test');
 
     // Global Object = GodotObject
     let obj2 = new Object();
     obj2.get_class();
-    obj2.has_method("test");
+    obj2.has_method('test');
 
     // GodotArray is the untyped array class
     let arr = new GodotArray();
-    arr.append("value");
+    arr.append('value');
     arr.size();
 
     // Array<T> is the generic GDScript array
@@ -77,7 +80,7 @@ class PackedArrayTest extends Node {
     // These should have their own methods
     bytes.append(0);
     bytes.size();
-    strings.append("hello");
+    strings.append('hello');
     vectors.append(Vector2());
   }
 }
@@ -105,8 +108,8 @@ class EnumConstTest extends Node {
 class ResourceTest extends Resource {
   test_resource() {
     // Resource properties
-    this.resource_name = "test";
-    this.resource_path = "res://test.tres";
+    this.resource_name = 'test';
+    this.resource_path = 'res://test.tres';
     let path: string = this.resource_path;
 
     // Inherited from RefCounted
@@ -120,7 +123,7 @@ class ResourceTest extends Resource {
     this.add_child(new Node());
 
     // @ts-expect-error — Resource is not a Node, no get_node
-    this.get_node("path");
+    this.get_node('path');
 
     // @ts-expect-error — Resource is not a Node, no _ready
     this._ready();
@@ -165,11 +168,11 @@ class OpsEdgeCases extends Node {
 
 class GetNodeTest extends Node {
   test_get_node() {
-    let child: Node = this.get_node("Child");
-    let maybe: Node | null = this.get_node_or_null("Maybe");
+    let child: Node = this.get_node('Child');
+    let maybe: Node | null = this.get_node_or_null('Maybe');
 
     // Can add retrieved nodes
-    let other: Node = this.get_node("Other");
+    let other: Node = this.get_node('Other');
     this.add_child(other);
   }
 }

@@ -1,7 +1,11 @@
 import { describe, it, expect } from 'vitest';
 import { join } from 'path';
 import { convertGdToTs } from '../../src/converter/gd-to-ts/index.js';
-import { GodotClassRegistry, parseAllClassXmls, generateRegistryData } from '../../src/typings/godot-registry.js';
+import {
+  GodotClassRegistry,
+  parseAllClassXmls,
+  generateRegistryData,
+} from '../../src/typings/godot-registry.js';
 
 const GODOT_DOCS_DIR = join(__dirname, '../../vendor/godot/doc/classes');
 
@@ -29,12 +33,12 @@ func _ready():
     const lines = result.code.split('\n');
 
     // add_child is inherited from Node — should get this.
-    expect(lines.some(l => l.includes('this.add_child('))).toBe(true);
+    expect(lines.some((l) => l.includes('this.add_child('))).toBe(true);
     // get_node is inherited from Node — should get this.
-    expect(lines.some(l => l.includes('this.get_node('))).toBe(true);
+    expect(lines.some((l) => l.includes('this.get_node('))).toBe(true);
     // print is a global function — should NOT get this.
-    expect(lines.some(l => l.includes('print("ready")'))).toBe(true);
-    expect(lines.some(l => l.includes('this.print('))).toBe(false);
+    expect(lines.some((l) => l.includes('print("ready")'))).toBe(true);
+    expect(lines.some((l) => l.includes('this.print('))).toBe(false);
   });
 
   it('should resolve inherited properties as this. in identifiers', () => {
@@ -52,9 +56,11 @@ func update_pos():
     const lines = result.code.split('\n');
 
     // position is inherited from Node2D
-    expect(lines.some(l => l.includes('this.position = Vector2(10, 20)'))).toBe(true);
+    expect(
+      lines.some((l) => l.includes('this.position = Vector2(10, 20)')),
+    ).toBe(true);
     // visible is inherited from CanvasItem
-    expect(lines.some(l => l.includes('this.visible = true'))).toBe(true);
+    expect(lines.some((l) => l.includes('this.visible = true'))).toBe(true);
   });
 
   it('should not add this. to global functions even when registry is provided', () => {
@@ -108,11 +114,13 @@ class Inner extends Sprite2D:
     const lines = result.code.split('\n');
 
     // Outer: add_child from Node
-    expect(lines.some(l => l.includes('this.add_child('))).toBe(true);
+    expect(lines.some((l) => l.includes('this.add_child('))).toBe(true);
     // Inner: position from Node2D (via Sprite2D)
-    expect(lines.some(l => l.includes('this.position = Vector2.ZERO'))).toBe(true);
+    expect(lines.some((l) => l.includes('this.position = Vector2.ZERO'))).toBe(
+      true,
+    );
     // Inner: get_node from Node
-    expect(lines.some(l => l.includes('this.get_node("Child")'))).toBe(true);
+    expect(lines.some((l) => l.includes('this.get_node("Child")'))).toBe(true);
   });
 
   it('should resolve class-specific members vs unknown bare calls', () => {
@@ -125,7 +133,11 @@ func run():
     some_unknown_func()
 `;
 
-    const result = convertGdToTs({ source, filePath: 'ResolutionTest.gd', registry });
+    const result = convertGdToTs({
+      source,
+      filePath: 'ResolutionTest.gd',
+      registry,
+    });
     const code = result.code;
 
     // add_child is inherited from Node — should get this.

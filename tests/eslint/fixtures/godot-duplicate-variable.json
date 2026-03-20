@@ -1,3 +1,6 @@
 [
-  {"message": "Variable \"health\" has the same name as a previously declared variable.", "severity": 2}
+  {
+    "message": "Variable \"health\" has the same name as a previously declared variable.",
+    "severity": 2
+  }
 ]

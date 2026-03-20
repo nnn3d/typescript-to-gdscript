@@ -8,7 +8,11 @@ declare class ClassDB extends GodotObject {
    */
   can_instantiate(class_: string): boolean;
   /** Calls a static method on a class. */
-  static class_call_static<R = unknown>(class_: string, method: string, ...args: any[]): R;
+  static class_call_static<R = unknown>(
+  class_: string,
+  method: string,
+  ...args: any[]
+  ): R;
   /** Returns whether the specified `class` is available or not. */
   class_exists(class_: string): boolean;
   /** Returns the API type of the specified `class`. */
@@ -35,9 +39,15 @@ declare class ClassDB extends GodotObject {
    */
   class_get_method_list(class_: string, no_inheritance?: boolean): Dictionary;
   /** Returns the value of `property` of `object` or its ancestry. */
-  static class_get_property<V = unknown>(object: GodotObject, property: string): V;
+  static class_get_property<V = unknown>(
+  object: GodotObject,
+  property: string,
+  ): V;
   /** Returns the default value of `property` of `class_` or its ancestor classes. */
-  static class_get_property_default_value<V = unknown>(class_: string, property: string): V;
+  static class_get_property_default_value<V = unknown>(
+  class_: string,
+  property: string,
+  ): V;
   /** Returns the getter method name of `property` of `class`. */
   class_get_property_getter(class_: string, property: string): string;
   /** Returns an array with all the properties of `class` or its ancestry if `no_inheritance` is `false`. */

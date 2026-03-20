@@ -4,10 +4,10 @@ class DictionaryTest extends Node {
   test_dictionary_class() {
     // Dictionary as a class
     let dict = new Dictionary();
-    dict.has("key");
-    dict.get("key");
-    dict.set("key", "value");
-    dict.erase("key");
+    dict.has('key');
+    dict.get('key');
+    dict.set('key', 'value');
+    dict.erase('key');
     dict.clear();
     let s: int = dict.size();
     let empty: boolean = dict.is_empty();
@@ -25,10 +25,10 @@ class DictionaryTest extends Node {
   test_dictionary_literal() {
     // With noLib, {} literals inherit Object interface = Dictionary methods
     let dict = {};
-    dict.has("key");
-    dict.get("key");
-    dict.set("key", "value");
-    dict.erase("key");
+    dict.has('key');
+    dict.get('key');
+    dict.set('key', 'value');
+    dict.erase('key');
     dict.clear();
     let s: int = dict.size();
     let empty: boolean = dict.is_empty();
@@ -45,7 +45,7 @@ class DictionaryTest extends Node {
     // Global let Object = typeof GodotObject
     let obj = new Object();
     obj.get_class();
-    obj.has_method("test");
+    obj.has_method('test');
     obj.get_instance_id();
     obj._get_property_list();
     // @ts-expect-error — keys() is Dictionary-only, overridden with never on GodotObject
@@ -57,7 +57,7 @@ class DictionaryTest extends Node {
 
     let obj = new Test();
     obj.get_class();
-    obj.has_method("test");
+    obj.has_method('test');
     obj.get_instance_id();
     obj._get_property_list();
     // @ts-expect-error — values() is Dictionary-only, overridden with never on GodotObject
@@ -78,15 +78,15 @@ class GodotObjectMethodsTest extends RefCounted {
   test_refcounted_has_godot_object_methods() {
     // RefCounted extends GodotObject — has GodotObject methods
     let cls: string = this.get_class();
-    let has: boolean = this.has_method("test");
-    let has_sig: boolean = this.has_signal("my_signal");
-    this.set("property", 42);
-    let val: unknown = this.get("property");
-    this.connect("signal_name", new Callable());
-    this.disconnect("signal_name", new Callable());
+    let has: boolean = this.has_method('test');
+    let has_sig: boolean = this.has_signal('my_signal');
+    this.set('property', 42);
+    let val: unknown = this.get('property');
+    this.connect('signal_name', new Callable());
+    this.disconnect('signal_name', new Callable());
     let id: int = this.get_instance_id();
-    this.set_meta("key", "value");
-    let meta: unknown = this.get_meta("key");
+    this.set_meta('key', 'value');
+    let meta: unknown = this.get_meta('key');
     this.notification(0);
     let script: unknown = this.get_script();
     let str: string = this.to_string();
@@ -112,7 +112,7 @@ class GodotObjectMethodsTest extends RefCounted {
     this.merged(new Dictionary());
 
     // @ts-expect-error — find_key() is never
-    this.find_key("value");
+    this.find_key('value');
   }
 
   test_node_specific_methods_not_on_refcounted() {
@@ -121,7 +121,7 @@ class GodotObjectMethodsTest extends RefCounted {
     this.add_child(new Node());
 
     // @ts-expect-error — no get_node
-    this.get_node("path");
+    this.get_node('path');
 
     // @ts-expect-error — no _ready
     this._ready();

@@ -55,7 +55,10 @@ function resolveResPath(resPath: string, projectRoot: string): string {
  * Parses Godot CLI stderr output into structured error objects.
  * Handles multiple known Godot error output formats.
  */
-export function parseGodotErrors(stderr: string, projectRoot: string): GodotRawError[] {
+export function parseGodotErrors(
+  stderr: string,
+  projectRoot: string,
+): GodotRawError[] {
   var errors: GodotRawError[] = [];
   var lines = stderr.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
 
@@ -65,7 +68,7 @@ export function parseGodotErrors(stderr: string, projectRoot: string): GodotRawE
     // Format 1: "res://path.gd:15 - Parse Error: message"
     // Format 1b: "res://path.gd:15:3 - Parse Error: message"
     var resMatch = line.match(
-      /^\s*res:\/\/(.+?):(\d+)(?::(\d+))?\s*-\s*((?:Parse|Compile|Script)\s+Error):\s*(.+)$/
+      /^\s*res:\/\/(.+?):(\d+)(?::(\d+))?\s*-\s*((?:Parse|Compile|Script)\s+Error):\s*(.+)$/,
     );
     if (resMatch) {
       errors.push({
@@ -81,14 +84,14 @@ export function parseGodotErrors(stderr: string, projectRoot: string): GodotRawE
     // Format 2: "SCRIPT ERROR: Parse Error: message"
     // followed by "   at: res://path.gd:15" or "   at: GDScript::reload (res://path.gd:15)"
     var scriptErrorMatch = line.match(
-      /^\s*SCRIPT ERROR:\s*((?:Parse|Compile|Script)\s+Error):\s*(.+)$/
+      /^\s*SCRIPT ERROR:\s*((?:Parse|Compile|Script)\s+Error):\s*(.+)$/,
     );
     if (scriptErrorMatch) {
       var nextLine = lines[i + 1];
       if (nextLine) {
         // Match both "at: res://file.gd:15" and "at: GDScript::reload (res://file.gd:15)"
         var atMatch = nextLine.match(
-          /^\s*at:\s*(?:\S+\s+\()?res:\/\/(.+?):(\d+)(?::(\d+))?\)?/
+          /^\s*at:\s*(?:\S+\s+\()?res:\/\/(.+?):(\d+)(?::(\d+))?\)?/,
         );
         if (atMatch) {
           errors.push({
@@ -113,7 +116,7 @@ export function parseGodotErrors(stderr: string, projectRoot: string): GodotRawE
 
     // Format 3: Absolute/relative path "path/file.gd:15 - Parse Error: message"
     var absMatch = line.match(
-      /^\s*(.+\.gd):(\d+)(?::(\d+))?\s*-\s*((?:Parse|Compile|Script)\s+Error):\s*(.+)$/
+      /^\s*(.+\.gd):(\d+)(?::(\d+))?\s*-\s*((?:Parse|Compile|Script)\s+Error):\s*(.+)$/,
     );
     if (absMatch) {
       errors.push({
@@ -152,8 +155,14 @@ export async function remapError(
       // If column 0 has no mapping (e.g. indentation), find the first mapping on this line
       if (!original.source || original.line == null) {
         var allMappings = reader.allMappings();
-        var lineMapping = allMappings.find(m => m.generatedLine === error.line);
-        if (lineMapping && lineMapping.originalLine != null && lineMapping.source != null) {
+        var lineMapping = allMappings.find(
+          (m) => m.generatedLine === error.line,
+        );
+        if (
+          lineMapping &&
+          lineMapping.originalLine != null &&
+          lineMapping.source != null
+        ) {
           original = {
             source: lineMapping.source,
             line: lineMapping.originalLine,
@@ -193,20 +202,25 @@ export async function remapError(
  * Validates GDScript files using the Godot CLI and remaps errors
  * back to TypeScript positions via source maps.
  */
-export async function validateGdFiles(options: GodotValidateOptions): Promise<GodotValidateResult> {
+export async function validateGdFiles(
+  options: GodotValidateOptions,
+): Promise<GodotValidateResult> {
   // Check Godot availability
   try {
     await execFileAsync(options.godotPath, ['--version'], { timeout: 10000 });
   } catch {
     return {
-      diagnostics: [{
-        message: `Godot executable not found at "${options.godotPath}". ` +
-          'Set --godot-path, godotPath in tstogd.json, or GODOT_PATH env variable.',
-        severity: 'warning',
-        file: '',
-        line: 0,
-        column: 0,
-      }],
+      diagnostics: [
+        {
+          message:
+            `Godot executable not found at "${options.godotPath}". ` +
+            'Set --godot-path, godotPath in tstogd.json, or GODOT_PATH env variable.',
+          severity: 'warning',
+          file: '',
+          line: 0,
+          column: 0,
+        },
+      ],
       godotAvailable: false,
     };
   }
@@ -228,19 +242,28 @@ export async function validateGdFiles(options: GodotValidateOptions): Promise<Go
     }
 
     // Convert to res:// path for Godot CLI
-    var relToProject = relative(options.projectRoot, resolvedFile).replace(/\\/g, '/');
+    var relToProject = relative(options.projectRoot, resolvedFile).replace(
+      /\\/g,
+      '/',
+    );
     var resPath = `res://${relToProject}`;
 
     try {
-      await execFileAsync(options.godotPath, [
-        '--headless',
-        '--check-only',
-        '--path', options.projectRoot,
-        '--script', resPath,
-      ], {
-        timeout: 30000,
-        cwd: options.projectRoot,
-      });
+      await execFileAsync(
+        options.godotPath,
+        [
+          '--headless',
+          '--check-only',
+          '--path',
+          options.projectRoot,
+          '--script',
+          resPath,
+        ],
+        {
+          timeout: 30000,
+          cwd: options.projectRoot,
+        },
+      );
       // Exit code 0 = no errors
     } catch (err: any) {
       var stderr: string = err.stderr ?? '';
@@ -251,7 +274,10 @@ export async function validateGdFiles(options: GodotValidateOptions): Promise<Go
 
       if (rawErrors.length === 0 && output.trim()) {
         // Unparsed error output — report first meaningful line
-        var firstLine = output.trim().split('\n').find(l => l.trim().length > 0);
+        var firstLine = output
+          .trim()
+          .split('\n')
+          .find((l) => l.trim().length > 0);
         if (firstLine) {
           allDiagnostics.push({
             message: `[Godot] ${firstLine.trim()}`,
@@ -275,7 +301,8 @@ export async function validateGdFiles(options: GodotValidateOptions): Promise<Go
 
 // ─── VLQ Decoding for Sync Source Map Remapping ───────────────
 
-const VLQ_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+const VLQ_CHARS =
+  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 function decodeVlq(encoded: string): number[] {
   var result: number[] = [];
@@ -316,7 +343,10 @@ interface LineMapping {
  * Parses source map JSON mappings into a flat array of line mappings.
  * Lightweight sync alternative to SourceMapConsumer.
  */
-function parseSourceMapMappings(rawMap: string): { mappings: LineMapping[]; sources: string[] } {
+function parseSourceMapMappings(rawMap: string): {
+  mappings: LineMapping[];
+  sources: string[];
+} {
   var map = JSON.parse(rawMap);
   var sources: string[] = map.sources ?? [];
   var segments: string[] = (map.mappings ?? '').split(';');
@@ -369,10 +399,11 @@ export function remapErrorSync(
       var { mappings } = parseSourceMapMappings(sourceMapJson);
 
       // Find the first mapping on the error line
-      var lineMapping = mappings.find(m => m.generatedLine === error.line);
+      var lineMapping = mappings.find((m) => m.generatedLine === error.line);
       // Try exact match first
       var exactMapping = mappings.find(
-        m => m.generatedLine === error.line && m.generatedColumn <= error.column
+        (m) =>
+          m.generatedLine === error.line && m.generatedColumn <= error.column,
       );
       var bestMapping = exactMapping ?? lineMapping;
 
@@ -418,20 +449,25 @@ export interface GodotValidateSyncOptions {
  * Synchronous version of validateGdFiles for use in ESLint rules.
  * Uses execFileSync and sync source map remapping.
  */
-export function validateGdFilesSync(options: GodotValidateSyncOptions): GodotValidateResult {
+export function validateGdFilesSync(
+  options: GodotValidateSyncOptions,
+): GodotValidateResult {
   // Check Godot availability
   try {
     execFileSync(options.godotPath, ['--version'], { timeout: 10000 });
   } catch {
     return {
-      diagnostics: [{
-        message: `Godot executable not found at "${options.godotPath}". ` +
-          'Set godotPath in tstogd.json or GODOT_PATH env variable.',
-        severity: 'warning',
-        file: '',
-        line: 0,
-        column: 0,
-      }],
+      diagnostics: [
+        {
+          message:
+            `Godot executable not found at "${options.godotPath}". ` +
+            'Set godotPath in tstogd.json or GODOT_PATH env variable.',
+          severity: 'warning',
+          file: '',
+          line: 0,
+          column: 0,
+        },
+      ],
       godotAvailable: false,
     };
   }
@@ -452,31 +488,47 @@ export function validateGdFilesSync(options: GodotValidateSyncOptions): GodotVal
       continue;
     }
 
-    var relToProject = relative(options.projectRoot, resolvedFile).replace(/\\/g, '/');
+    var relToProject = relative(options.projectRoot, resolvedFile).replace(
+      /\\/g,
+      '/',
+    );
     var resPath = `res://${relToProject}`;
 
     try {
-      execFileSync(options.godotPath, [
-        '--headless',
-        '--check-only',
-        '--path', options.projectRoot,
-        '--script', resPath,
-      ], {
-        timeout: 30000,
-        cwd: options.projectRoot,
-      });
+      execFileSync(
+        options.godotPath,
+        [
+          '--headless',
+          '--check-only',
+          '--path',
+          options.projectRoot,
+          '--script',
+          resPath,
+        ],
+        {
+          timeout: 30000,
+          cwd: options.projectRoot,
+        },
+      );
     } catch (err: any) {
       var stderr: string = '';
       var stdout: string = '';
 
-      if (err.stderr) stderr = err.stderr instanceof Buffer ? err.stderr.toString() : err.stderr;
-      if (err.stdout) stdout = err.stdout instanceof Buffer ? err.stdout.toString() : err.stdout;
+      if (err.stderr)
+        stderr =
+          err.stderr instanceof Buffer ? err.stderr.toString() : err.stderr;
+      if (err.stdout)
+        stdout =
+          err.stdout instanceof Buffer ? err.stdout.toString() : err.stdout;
 
       var output = stderr + '\n' + stdout;
       var rawErrors = parseGodotErrors(output, options.projectRoot);
 
       if (rawErrors.length === 0 && output.trim()) {
-        var firstLine = output.trim().split('\n').find(l => l.trim().length > 0);
+        var firstLine = output
+          .trim()
+          .split('\n')
+          .find((l) => l.trim().length > 0);
         if (firstLine) {
           allDiagnostics.push({
             message: `[Godot] ${firstLine.trim()}`,
@@ -490,7 +542,7 @@ export function validateGdFilesSync(options: GodotValidateSyncOptions): GodotVal
 
       for (var rawError of rawErrors) {
         allDiagnostics.push(
-          remapErrorSync(rawError, gdFile.sourceMapJson, gdFile.tsFilePath)
+          remapErrorSync(rawError, gdFile.sourceMapJson, gdFile.tsFilePath),
         );
       }
     }

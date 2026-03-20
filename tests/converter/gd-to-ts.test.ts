@@ -9,7 +9,14 @@ import { dirname } from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const FIXTURES_DIR = join(__dirname, '..', 'fixtures', 'gd-to-ts');
-const REGISTRY_PATH = join(__dirname, '..', '..', 'typings', '4.7', 'godot-class-registry.json');
+const REGISTRY_PATH = join(
+  __dirname,
+  '..',
+  '..',
+  'typings',
+  '4.7',
+  'godot-class-registry.json',
+);
 const registry = GodotClassRegistry.fromJsonFile(REGISTRY_PATH);
 
 /**
@@ -22,23 +29,23 @@ function normalize(code: string): string {
   return code
     .replace(/\r\n/g, '\n')
     .split('\n')
-    .map(line => line.trimEnd())
+    .map((line) => line.trimEnd())
     .join('\n')
     .replace(/\n+$/, '')
     .trim();
 }
 
 // Discover all fixture pairs: *.gd files that have a matching *.ts file
-const allGdFiles = readdirSync(FIXTURES_DIR).filter(f => f.endsWith('.gd'));
+const allGdFiles = readdirSync(FIXTURES_DIR).filter((f) => f.endsWith('.gd'));
 const fixtureFiles = allGdFiles
-  .filter(f => {
+  .filter((f) => {
     const tsFile = f.replace(/\.gd$/, '.ts');
     return readdirSync(FIXTURES_DIR).includes(tsFile);
   })
-  .map(f => f.replace(/\.gd$/, ''));
+  .map((f) => f.replace(/\.gd$/, ''));
 
 // Build project sources from all GD fixtures (for user class resolution)
-const projectSources = allGdFiles.map(f => ({
+const projectSources = allGdFiles.map((f) => ({
   source: readFileSync(join(FIXTURES_DIR, f), 'utf-8'),
   filePath: join(FIXTURES_DIR, f),
 }));
@@ -49,7 +56,8 @@ describe('GD to TS: Fixture-based tests', () => {
       const gdFilePath = join(FIXTURES_DIR, `${fixtureName}.gd`);
       const gdSource = readFileSync(gdFilePath, 'utf-8');
       const expectedTs = readFileSync(
-        join(FIXTURES_DIR, `${fixtureName}.ts`), 'utf-8'
+        join(FIXTURES_DIR, `${fixtureName}.ts`),
+        'utf-8',
       );
 
       const result = convertGdToTs({
@@ -62,7 +70,9 @@ describe('GD to TS: Fixture-based tests', () => {
       // Log diagnostics for debugging
       if (result.diagnostics.length > 0) {
         for (const d of result.diagnostics) {
-          console.log(`  [${d.severity}] ${d.message} (${d.file}:${d.line}:${d.column})`);
+          console.log(
+            `  [${d.severity}] ${d.message} (${d.file}:${d.line}:${d.column})`,
+          );
         }
       }
 
@@ -73,14 +83,18 @@ describe('GD to TS: Fixture-based tests', () => {
       const actualLines = normalizedActual.split('\n');
       const expectedLines = normalizedExpected.split('\n');
 
-      for (let i = 0; i < Math.max(actualLines.length, expectedLines.length); i++) {
+      for (
+        let i = 0;
+        i < Math.max(actualLines.length, expectedLines.length);
+        i++
+      ) {
         const actual = actualLines[i] ?? '<missing>';
         const expected = expectedLines[i] ?? '<missing>';
         if (actual !== expected) {
           expect.fail(
             `Line ${i + 1} mismatch in ${fixtureName}:\n` +
-            `  Expected: ${JSON.stringify(expected)}\n` +
-            `  Actual:   ${JSON.stringify(actual)}`
+              `  Expected: ${JSON.stringify(expected)}\n` +
+              `  Actual:   ${JSON.stringify(actual)}`,
           );
         }
       }

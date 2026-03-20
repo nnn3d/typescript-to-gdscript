@@ -42,13 +42,14 @@ function parseScene(filePath: string): SceneInfo | null {
 
   // Parse root node type from [node name="Root" type="Node2D"]
   // The root node has no parent attribute
-  const rootNode = nodes.find(n => n.parent === '.');
+  const rootNode = nodes.find((n) => n.parent === '.');
   if (rootNode) {
     rootType = rootNode.type;
   }
 
   // Parse script reference
-  const scriptRegex = /\[ext_resource\s+[^\]]*path="([^"]+\.gd)"[^\]]*type="Script"/;
+  const scriptRegex =
+    /\[ext_resource\s+[^\]]*path="([^"]+\.gd)"[^\]]*type="Script"/;
   const scriptMatch = scriptRegex.exec(content);
   if (scriptMatch) {
     scriptPath = scriptMatch[1];
@@ -77,7 +78,7 @@ function buildNodePaths(nodes: SceneNode[]): Map<string, string> {
   const paths = new Map<string, string>();
 
   // Build parent-child relationships
-  const rootNodes = nodes.filter(n => n.parent === '.');
+  const rootNodes = nodes.filter((n) => n.parent === '.');
   for (const root of rootNodes) {
     paths.set(root.name, root.name);
   }
@@ -121,7 +122,7 @@ export function generateSceneTypings(options: SceneTypingsOptions): string {
 
     const relPath = relative(options.scenesDir, scenePath).replace(/\\/g, '/');
     const className = scene.scriptPath
-      ? options.scriptClassMap?.get(scene.scriptPath) ?? scene.rootType
+      ? (options.scriptClassMap?.get(scene.scriptPath) ?? scene.rootType)
       : scene.rootType;
 
     if (scene.nodes.length === 0) continue;
@@ -134,9 +135,8 @@ export function generateSceneTypings(options: SceneTypingsOptions): string {
     for (const node of scene.nodes) {
       if (node.parent === '.') continue; // skip root
 
-      const path = node.parent === '.'
-        ? node.name
-        : `${node.parent}/${node.name}`;
+      const path =
+        node.parent === '.' ? node.name : `${node.parent}/${node.name}`;
 
       lines.push(`    getNode(path: "${path}"): ${node.type};`);
     }
