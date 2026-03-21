@@ -1,5 +1,5 @@
 import { defineConfig } from 'eslint/config';
-import { dirname, join } from 'path';
+import { dirname, join, resolve } from 'path';
 
 import tsParser from '@typescript-eslint/parser';
 import plugin from '../../src/eslint/plugin.ts';
@@ -27,7 +27,7 @@ export default defineConfig([
         'error',
         {
           rootDir: FIXTURES_DIR,
-          godotPath: 'godot',
+          godotPath: resolve(__dirname, '../../vendor/godot.exe'),
           projectRoot: FIXTURES_DIR,
         },
       ],

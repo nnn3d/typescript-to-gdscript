@@ -39,6 +39,9 @@ export function generateClassTypings(options: ClassTypingsOptions): void {
       if (!ts.isClassDeclaration(statement) || !statement.name) continue;
 
       const className = statement.name.text;
+      // Skip anonymous scripts (__CLASS__ convention) — they have no class_name in GDScript
+      // and would collide if multiple files export __CLASS__
+      if (className === '__CLASS__') continue;
       const commentPath = relative(options.rootDir, filePath).replace(
         /\\/g,
         '/',

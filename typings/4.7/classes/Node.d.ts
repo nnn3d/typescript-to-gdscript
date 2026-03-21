@@ -294,7 +294,7 @@ declare class Node extends GodotObject {
    */
   get_multiplayer_authority(): int;
   /** Fetches a node by {@link NodePath}. The path can be absolute or relative. */
-  get_node<T extends Node = Node>(path: string): T;
+  get_node(path: string): Node;
   /**
    * Fetches a node and its most nested resource as specified by the {@link NodePath}'s subname. Returns an {@link Array} of size `3` where:
    * - Element `0` is the {@link Node}, or `null` if not found;
@@ -304,7 +304,7 @@ declare class Node extends GodotObject {
    */
   get_node_and_resource(path: string): Array<unknown>;
   /** Fetches a node by {@link NodePath}. Returns `null` if the path does not point to a valid node. */
-  get_node_or_null<T extends Node = Node>(path: string): T | null;
+  get_node_or_null(path: string): Node | null;
   /**
    * Returns a {@link Dictionary} mapping method names to their RPC configuration defined for this node using {@link rpc_config}.
    * **Note:** This method only returns the RPC configuration assigned via {@link rpc_config}. See {@link Script.get_rpc_config} to retrieve the RPCs defined by the {@link Script}.

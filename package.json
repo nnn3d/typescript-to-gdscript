@@ -32,9 +32,9 @@
     "test": "vitest",
     "test:run": "vitest run",
     "lint": "tsc --noEmit",
-    "generate:ast-types": "node src/parser/gdscript/generate-types.ts",
-    "generate:godot-typings": "node src/cli/index.ts generate-typings --docs-dir vendor/godot/doc/classes --typings-dir typings --set-latest",
-    "set-latest": "node src/cli/index.ts set-latest"
+    "generate:ast-types": "tsx src/parser/gdscript/generate-types.ts",
+    "generate:godot-typings": "tsx src/cli/index.ts generate-typings --docs-dir vendor/godot/doc/classes --typings-dir typings --set-latest",
+    "set-latest": "tsx src/cli/index.ts set-latest"
   },
   "prettier": {
     "trailingComma": "all",

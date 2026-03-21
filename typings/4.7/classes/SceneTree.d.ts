@@ -70,11 +70,8 @@ declare class SceneTree extends MainLoop {
   method: string,
   ...args: any[]
   ): void;
-  /**
-   * Changes the running scene to the one at the given `path`, after loading it into a {@link PackedScene} and creating a new instance.
-   * Returns {@link OK} on success, {@link ERR_CANT_OPEN} if the `path` cannot be loaded into a {@link PackedScene}, or {@link ERR_CANT_CREATE} if that scene cannot be instantiated.
-   * **Note:** See {@link change_scene_to_node} for details on the order of operations.
-   */
+  /** Changes the running scene to the one at the given path. Accepts known scene paths from GodotResources. */
+  change_scene_to_file(path: GodotScenePaths): int;
   change_scene_to_file(path: string): int;
   /**
    * Changes the running scene to the provided {@link Node}. Useful when you want to set up the new scene before changing.

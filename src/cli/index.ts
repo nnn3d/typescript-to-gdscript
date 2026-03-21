@@ -96,6 +96,7 @@ function generateAllTypings(cfg: {
     scenesDir: cfg.scenesDir,
     outputPath: sceneTypingsOutput,
     scriptClassMap,
+    rootDir: cfg.rootDir,
   });
   console.log(`Generated: ${sceneTypingsOutput}`);
 }

@@ -790,12 +790,24 @@ function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
   lines.push(
     'declare function range(begin: int, end: int, step: int): Array<int>;',
   );
-  lines.push('/** Loads a resource from the given path. */');
-  lines.push('declare function load<T = unknown>(path: string): T;');
   lines.push(
-    '/** Returns a resource from the filesystem that is loaded during script parsing. */',
+    '/** Loads a resource from the given path. Returns the registered type from GodotResources if the path is known. */',
   );
-  lines.push('declare function preload<T = unknown>(path: string): T;');
+  lines.push(
+    'declare function load<P extends keyof GodotResources>(path: P): GodotResources[P];',
+  );
+  lines.push(
+    'declare function load(path: string): Resource;',
+  );
+  lines.push(
+    '/** Returns a resource from the filesystem that is loaded during script parsing. Returns the registered type from GodotResources if the path is known. */',
+  );
+  lines.push(
+    'declare function preload<P extends keyof GodotResources>(path: P): GodotResources[P];',
+  );
+  lines.push(
+    'declare function preload(path: string): Resource;',
+  );
   lines.push(
     '/** Asserts that the condition is true. If the condition is false in debug builds, execution is halted. */',
   );
@@ -922,9 +934,18 @@ function loadOverrides(overrideDir: string): Map<string, ParsedOverride> {
           .trim();
       } else if (ts.isClassDeclaration(stmt) && stmt.name) {
         name = stmt.name.text;
-        // For class overrides, don't replace header (preserve extends clause etc.)
-        // Only interface overrides need header replacement (for adding generics to built-in types)
-        header = undefined;
+        // Extract class header only when it has generics (e.g. PackedScene<T extends Node = Node>)
+        // Otherwise keep the generated header to preserve extends clause
+        if (stmt.typeParameters && stmt.typeParameters.length > 0) {
+          const headerEnd = stmt.members.pos;
+          header = content
+            .substring(stmt.pos, headerEnd)
+            .trim()
+            .replace(/\{$/, '')
+            .trim();
+        } else {
+          header = undefined;
+        }
       }
 
       if (!name || !(stmt as any).members) continue;
@@ -1011,7 +1032,18 @@ function applyOverride(generated: string, override: ParsedOverride): string {
           headerLines[hi] = 'declare ' + headerLines[hi];
         }
       }
-      lines.splice(headerIdx, 1, ...headerLines);
+      // If the override header includes JSDoc, remove existing JSDoc before the header line
+      const overrideHasJsDoc = headerLines.some((l) => l.trim().startsWith('/**'));
+      let removeFrom = headerIdx;
+      if (overrideHasJsDoc) {
+        // Walk backwards to find the start of the existing JSDoc block
+        let j = headerIdx - 1;
+        while (j >= 0 && (lines[j].trim().startsWith('*') || lines[j].trim().startsWith('/**') || lines[j].trim() === '*/')) {
+          j--;
+        }
+        removeFrom = j + 1;
+      }
+      lines.splice(removeFrom, headerIdx - removeFrom + 1, ...headerLines);
     }
   }
 

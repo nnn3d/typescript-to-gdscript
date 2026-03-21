@@ -3,6 +3,25 @@
  * These helpers are transformed into native GDScript constructs during conversion.
  */
 
+/**
+ * Maps `res://` resource paths to their loaded types.
+ * Populated by the scene typings generator (`ts2gd generate-typings`).
+ * Consumer projects extend this via generated `scene-typings.d.ts`.
+ * @example
+ * // After generation, contains entries like:
+ * // "res://scenes/Player.tscn": PackedScene<Player>
+ * // "res://assets/music.ogg": AudioStreamWAV
+ */
+interface GodotResources {}
+
+/**
+ * Union of all scene file paths (keys in GodotResources whose value is a PackedScene).
+ * Used to type-check `SceneTree.change_scene_to_file()`.
+ */
+type GodotScenePaths = {
+  [K in keyof GodotResources]: GodotResources[K] extends PackedScene<any> ? K : never;
+}[keyof GodotResources];
+
 /** Type that gets removed during transformation — for TS-only type info */
 type TSOnly<T> = T;
 

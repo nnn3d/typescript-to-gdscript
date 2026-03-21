@@ -1,7 +1,6 @@
 // AUTO-GENERATED from Godot class documentation.
 // Manual overrides applied from typings/overrides/*.d.ts
 
-/** A built-in data structure that holds a sequence of elements. */
 /**
  * Override: Array<T> — adds generic type parameter to GDScript Array.
  *

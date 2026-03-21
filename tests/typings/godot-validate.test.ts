@@ -16,6 +16,7 @@ import { tmpdir } from 'os';
 
 const execFileAsync = promisify(execFile);
 const TMP_DIR = join(tmpdir(), '__tmp__' + Math.random().toString(36));
+const GODOT_PATH = resolve(__dirname, '../../vendor/godot.exe');
 
 afterEach(() => {
   rmSync(TMP_DIR, { recursive: true, force: true });
@@ -321,7 +322,7 @@ describe('Godot CLI integration', () => {
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'type_error.gd')],
       projectRoot: projectDir,
-      godotPath: 'godot',
+      godotPath: GODOT_PATH,
     });
 
     expect(result.godotAvailable).toBe(true);
@@ -349,7 +350,7 @@ describe('Godot CLI integration', () => {
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'unknown_func.gd')],
       projectRoot: projectDir,
-      godotPath: 'godot',
+      godotPath: GODOT_PATH,
     });
 
     expect(result.diagnostics.length).toBeGreaterThan(0);
@@ -375,7 +376,7 @@ describe('Godot CLI integration', () => {
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'syntax_error.gd')],
       projectRoot: projectDir,
-      godotPath: 'godot',
+      godotPath: GODOT_PATH,
     });
 
     expect(result.diagnostics.length).toBeGreaterThan(0);
@@ -400,7 +401,7 @@ describe('Godot CLI integration', () => {
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'valid.gd')],
       projectRoot: projectDir,
-      godotPath: 'godot',
+      godotPath: GODOT_PATH,
     });
 
     expect(result.diagnostics).toHaveLength(0);
@@ -423,7 +424,7 @@ describe('Godot CLI integration', () => {
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'line_check.gd')],
       projectRoot: projectDir,
-      godotPath: 'godot',
+      godotPath: GODOT_PATH,
     });
 
     expect(result.diagnostics.length).toBeGreaterThan(0);
@@ -468,7 +469,7 @@ describe('Godot CLI integration', () => {
     const validateResult = await validateGdFiles({
       gdFiles: [gdPath],
       projectRoot: projectDir,
-      godotPath: 'godot',
+      godotPath: GODOT_PATH,
     });
 
     expect(validateResult.diagnostics.length).toBeGreaterThan(0);
@@ -504,7 +505,7 @@ describe('Godot CLI integration', () => {
     const result = await validateGdFiles({
       gdFiles: [join(projectDir, 'good.gd'), join(projectDir, 'bad.gd')],
       projectRoot: projectDir,
-      godotPath: 'godot',
+      godotPath: GODOT_PATH,
     });
 
     // Only bad.gd should have errors

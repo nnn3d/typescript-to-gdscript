@@ -1890,9 +1890,11 @@ declare function len(value: unknown): int;
 declare function range(end: int): Array<int>;
 declare function range(begin: int, end: int): Array<int>;
 declare function range(begin: int, end: int, step: int): Array<int>;
-/** Loads a resource from the given path. */
-declare function load<T = unknown>(path: string): T;
-/** Returns a resource from the filesystem that is loaded during script parsing. */
-declare function preload<T = unknown>(path: string): T;
+/** Loads a resource from the given path. Returns the registered type from GodotResources if the path is known. */
+declare function load<P extends keyof GodotResources>(path: P): GodotResources[P];
+declare function load(path: string): Resource;
+/** Returns a resource from the filesystem that is loaded during script parsing. Returns the registered type from GodotResources if the path is known. */
+declare function preload<P extends keyof GodotResources>(path: P): GodotResources[P];
+declare function preload(path: string): Resource;
 /** Asserts that the condition is true. If the condition is false in debug builds, execution is halted. */
 declare function assert(condition: boolean, message?: string): void;

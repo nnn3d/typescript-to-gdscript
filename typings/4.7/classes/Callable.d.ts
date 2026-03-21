@@ -1,7 +1,6 @@
 // AUTO-GENERATED from Godot class documentation.
 // Manual overrides applied from typings/overrides/*.d.ts
 
-/** A built-in type representing a method or a standalone function. */
 /**
  * Override: Function — untyped base for bare Callable/Function variables.
  *
