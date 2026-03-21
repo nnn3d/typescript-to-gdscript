@@ -3,11 +3,6 @@ import { writeFileSync } from 'fs';
 import { relative, dirname } from 'path';
 import { createTsProgram } from '../parser/typescript/index.ts';
 
-export interface SceneNodeOverload {
-  path: string;
-  type: string;
-}
-
 export interface ClassTypingsOptions {
   /** Root directory containing TS source files */
   rootDir: string;
@@ -56,7 +51,7 @@ export function generateClassTypings(options: ClassTypingsOptions): void {
       }
 
       const alias = `_${className}`;
-      imports.push(`import ${alias} from "${importPath}";`);
+      imports.push(`import { ${className} as ${alias} } from "${importPath}";`);
       declarations.push(`  // From: ${commentPath}`);
       declarations.push(`  class ${className} extends ${alias} {}`);
     }

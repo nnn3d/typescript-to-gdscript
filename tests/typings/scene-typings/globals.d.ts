@@ -6,16 +6,7 @@ import { Player as _Player } from "./Player.js";
 
 declare global {
   // From: Player.ts
-  class Player extends _Player {
-    get_node(path: "Sprite2D"): Sprite2D;
-    get_node_or_null(path: "Sprite2D"): Sprite2D;
-    get_node(path: "CollisionShape2D"): CollisionShape2D;
-    get_node_or_null(path: "CollisionShape2D"): CollisionShape2D;
-    get_node(path: "Sprite2D/AnimationPlayer"): AnimationPlayer;
-    get_node_or_null(path: "Sprite2D/AnimationPlayer"): AnimationPlayer;
-    get_node(path: string): Node;
-    get_node_or_null(path: string): Node | null;
-  }
+  class Player extends _Player {}
 }
 
 export {};

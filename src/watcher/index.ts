@@ -1,10 +1,10 @@
 import { watch, type FSWatcher } from 'chokidar';
-import { extname, resolve, relative } from 'path';
+import { extname, resolve, relative, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
 import { generateClassTypings } from '../typings/classes.ts';
 import {
-  collectSceneOverloads,
+  generateSceneTypings,
   buildScriptClassMap,
 } from '../typings/scenes.ts';
 import { FileCache } from '../cache/index.ts';
@@ -182,27 +182,31 @@ export class Watcher {
 
     const files = [...this.tsFiles];
     const scenesDir = this.options.scenesDir ?? this.options.rootDir;
+    const typingsDir = dirname(this.options.classTypingsOutput);
 
-    // Collect scene overloads from .tscn files
-    const scriptClassMap = buildScriptClassMap({
-      files,
-      rootDir: this.options.rootDir,
-      tsDir: this.tsDir,
-      gdDir: this.gdDir,
-      sceneTypingsDir: dirname(this.options.classTypingsOutput),
-      tsConfigPath: this.options.tsConfigPath,
-    });
-    const sceneOverloads = collectSceneOverloads({
-      scenesDir,
-      scriptClassMap,
-    });
-
+    // Generate globals.d.ts (global class declarations)
     generateClassTypings({
       rootDir: this.options.rootDir,
       files,
       outputPath: this.options.classTypingsOutput,
       tsConfigPath: this.options.tsConfigPath,
-      sceneOverloads,
+    });
+
+    // Generate scene-typings.d.ts (module augmentation for get_node overloads)
+    const scriptClassMap = buildScriptClassMap({
+      files,
+      rootDir: this.options.rootDir,
+      tsDir: this.tsDir,
+      gdDir: this.gdDir,
+      sceneTypingsDir: typingsDir,
+      tsConfigPath: this.options.tsConfigPath,
+    });
+
+    const sceneTypingsOutput = join(typingsDir, 'scene-typings.d.ts');
+    generateSceneTypings({
+      scenesDir,
+      outputPath: sceneTypingsOutput,
+      scriptClassMap,
     });
   }
 

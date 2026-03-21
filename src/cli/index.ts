@@ -14,7 +14,7 @@ import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
 import { generateClassTypings } from '../typings/classes.ts';
 import {
-  collectSceneOverloads,
+  generateSceneTypings,
   buildScriptClassMap,
 } from '../typings/scenes.ts';
 import { generateGodotDocsTypings } from '../typings/godot-docs.ts';
@@ -53,7 +53,7 @@ function findTsFiles(dir: string): string[] {
   return results;
 }
 
-/** Generate class typings (globals.d.ts) with scene overloads included */
+/** Generate class typings (globals.d.ts) and scene typings (scene-typings.d.ts) */
 function generateAllTypings(cfg: {
   rootDir: string;
   tsDir: string;
@@ -66,35 +66,38 @@ function generateAllTypings(cfg: {
   const tsFiles = cfg.tsFiles ?? findTsFiles(cfg.tsDir);
   if (tsFiles.length === 0) return;
 
-  const classTypingsOutput = resolve(
-    cfg.rootDir,
-    cfg.classTypingsPath,
-    'globals.d.ts',
-  );
-  mkdirSync(dirname(classTypingsOutput), { recursive: true });
+  const typingsDir = resolve(cfg.rootDir, cfg.classTypingsPath);
+  mkdirSync(typingsDir, { recursive: true });
 
-  // Collect scene overloads from .tscn files
+  const classTypingsOutput = join(typingsDir, 'globals.d.ts');
+  const sceneTypingsOutput = join(typingsDir, 'scene-typings.d.ts');
+  const tsconfigPath = cfg.tsconfig ? resolve(cfg.tsconfig) : undefined;
+
+  // Generate globals.d.ts (global class declarations)
+  generateClassTypings({
+    rootDir: cfg.rootDir,
+    files: tsFiles,
+    outputPath: classTypingsOutput,
+    tsConfigPath: tsconfigPath,
+  });
+  console.log(`Generated: ${classTypingsOutput}`);
+
+  // Generate scene-typings.d.ts (module augmentation for get_node overloads)
   const scriptClassMap = buildScriptClassMap({
     files: tsFiles,
     rootDir: cfg.rootDir,
     tsDir: cfg.tsDir,
     gdDir: cfg.gdDir,
-    sceneTypingsDir: dirname(classTypingsOutput),
-    tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
-  });
-  const sceneOverloads = collectSceneOverloads({
-    scenesDir: cfg.scenesDir,
-    scriptClassMap,
+    sceneTypingsDir: typingsDir,
+    tsConfigPath: tsconfigPath,
   });
 
-  generateClassTypings({
-    rootDir: cfg.rootDir,
-    files: tsFiles,
-    outputPath: classTypingsOutput,
-    tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
-    sceneOverloads,
+  generateSceneTypings({
+    scenesDir: cfg.scenesDir,
+    outputPath: sceneTypingsOutput,
+    scriptClassMap,
   });
-  console.log(`Generated: ${classTypingsOutput}`);
+  console.log(`Generated: ${sceneTypingsOutput}`);
 }
 
 // ─── Convert TS -> GD ──────────────────────────────────────

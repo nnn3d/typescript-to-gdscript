@@ -1,12 +1,13 @@
 export {
   generateClassTypings,
   type ClassTypingsOptions,
-  type SceneNodeOverload as ClassSceneNodeOverload,
 } from './classes.ts';
 export {
   collectSceneOverloads,
+  generateSceneTypings,
   buildScriptClassMap,
   type SceneTypingsOptions,
+  type GenerateSceneTypingsOptions,
   type SceneNodeOverload,
   type BuildScriptClassMapOptions,
   type ScriptClassInfo,
