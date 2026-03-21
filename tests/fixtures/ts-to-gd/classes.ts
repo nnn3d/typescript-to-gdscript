@@ -1,4 +1,4 @@
-export default class Animal extends RefCounted {
+export class Animal extends RefCounted {
   name: string = "";
   sound: string = "";
 

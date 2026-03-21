@@ -1,4 +1,4 @@
-export default class ConstClass extends Node {
+export class ConstClass extends Node {
   static readonly MAX_HP = 100;
 
   get_health() {

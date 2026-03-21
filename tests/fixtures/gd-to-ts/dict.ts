@@ -1,4 +1,4 @@
-export default class MyClass extends Node {
+export class MyClass extends Node {
   test_dict() {
     let key1 = "key";
     let key2 = Vector2.DOWN;

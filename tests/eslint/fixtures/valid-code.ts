@@ -1,4 +1,4 @@
-export default class __CLASS__ extends Node {
+export class __CLASS__ extends Node {
   health: int = 100;
 
   get_health(): int {

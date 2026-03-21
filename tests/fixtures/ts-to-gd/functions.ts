@@ -1,4 +1,4 @@
-export default class MyClass extends Node {
+export class MyClass extends Node {
   // Method with no return
   say_hello() {
     print("Hello!");

@@ -1,4 +1,4 @@
-export default class Operators extends Node {
+export class Operators extends Node {
   v1 = Vector2(1, 2);
   v2 = Vector2(3, 4);
   i1 = 1;

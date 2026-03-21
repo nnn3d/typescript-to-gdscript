@@ -1,4 +1,4 @@
-export default class Dog extends Animal {
+export class Dog extends Animal {
   breed: string = '';
 
   bark(): string {

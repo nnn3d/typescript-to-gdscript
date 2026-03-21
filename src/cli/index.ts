@@ -13,6 +13,10 @@ import { resolve, dirname, relative, extname, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
 import { generateClassTypings } from '../typings/classes.ts';
+import {
+  collectSceneOverloads,
+  buildScriptClassMap,
+} from '../typings/scenes.ts';
 import { generateGodotDocsTypings } from '../typings/godot-docs.ts';
 import { parseGodotVersion } from '../typings/godot-registry.ts';
 import { Watcher } from '../watcher/index.ts';
@@ -29,6 +33,69 @@ program
   .name('ts2gd')
   .description('Convert TypeScript to GDScript and back')
   .version('0.1.0');
+
+/** Recursively find all .ts files (excluding .d.ts, node_modules, hidden dirs) */
+function findTsFiles(dir: string): string[] {
+  const results: string[] = [];
+  try {
+    for (const entry of readdirSync(dir)) {
+      if (entry.startsWith('.') || entry === 'node_modules') continue;
+      const fullPath = join(dir, entry);
+      if (statSync(fullPath).isDirectory()) {
+        results.push(...findTsFiles(fullPath));
+      } else if (entry.endsWith('.ts') && !entry.endsWith('.d.ts')) {
+        results.push(fullPath);
+      }
+    }
+  } catch {
+    // skip inaccessible
+  }
+  return results;
+}
+
+/** Generate class typings (globals.d.ts) with scene overloads included */
+function generateAllTypings(cfg: {
+  rootDir: string;
+  tsDir: string;
+  gdDir: string;
+  classTypingsPath: string;
+  scenesDir: string;
+  tsconfig?: string;
+  tsFiles?: string[];
+}): void {
+  const tsFiles = cfg.tsFiles ?? findTsFiles(cfg.tsDir);
+  if (tsFiles.length === 0) return;
+
+  const classTypingsOutput = resolve(
+    cfg.rootDir,
+    cfg.classTypingsPath,
+    'globals.d.ts',
+  );
+  mkdirSync(dirname(classTypingsOutput), { recursive: true });
+
+  // Collect scene overloads from .tscn files
+  const scriptClassMap = buildScriptClassMap({
+    files: tsFiles,
+    rootDir: cfg.rootDir,
+    tsDir: cfg.tsDir,
+    gdDir: cfg.gdDir,
+    sceneTypingsDir: dirname(classTypingsOutput),
+    tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
+  });
+  const sceneOverloads = collectSceneOverloads({
+    scenesDir: cfg.scenesDir,
+    scriptClassMap,
+  });
+
+  generateClassTypings({
+    rootDir: cfg.rootDir,
+    files: tsFiles,
+    outputPath: classTypingsOutput,
+    tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
+    sceneOverloads,
+  });
+  console.log(`Generated: ${classTypingsOutput}`);
+}
 
 // ─── Convert TS -> GD ──────────────────────────────────────
 
@@ -89,6 +156,12 @@ program
         console.log(`Written: ${mapPath}`);
       }
     }
+
+    // Generate class typings + scene typings
+    generateAllTypings({
+      ...cfg,
+      tsFiles: files.map((f) => resolve(f)),
+    });
   });
 
 // ─── Convert GD -> TS ──────────────────────────────────────
@@ -115,6 +188,7 @@ program
       },
     });
     const registry = resolveRegistry({ registryPath: cfg.registryPath });
+    const tsOutputFiles: string[] = [];
 
     for (const file of files) {
       const filePath = resolve(file);
@@ -140,7 +214,14 @@ program
       mkdirSync(dirname(outputPath), { recursive: true });
       writeFileSync(outputPath, result.code);
       console.log(`Written: ${outputPath}`);
+      tsOutputFiles.push(outputPath);
     }
+
+    // Generate class typings + scene typings from the converted TS files
+    generateAllTypings({
+      ...cfg,
+      tsFiles: tsOutputFiles,
+    });
   });
 
 // ─── Validate GD ─────────────────────────────────────────────
@@ -250,6 +331,7 @@ program
       tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
       sourceMap: cfg.sourceMap,
       classTypingsOutput,
+      scenesDir: cfg.scenesDir,
       godotPath,
       projectRoot: opts.projectRoot ? resolve(opts.projectRoot) : undefined,
     });

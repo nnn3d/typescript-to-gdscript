@@ -1,4 +1,4 @@
-export default class MyClass extends Node2D {
+export class MyClass extends Node2D {
   @gd.export
   speed: float = 100.0;
 

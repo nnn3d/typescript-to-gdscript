@@ -1,3 +1,3 @@
-export default class extends Node {
+export class extends Node {
   _ready() {}
 }

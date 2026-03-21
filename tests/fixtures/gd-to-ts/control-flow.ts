@@ -1,4 +1,4 @@
-export default class ControlFlow extends Node {
+export class ControlFlow extends Node {
   test_if() {
     if (health > 50) {
       print("healthy");

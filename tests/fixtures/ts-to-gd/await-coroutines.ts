@@ -1,4 +1,4 @@
-export default class MyClass extends Node {
+export class MyClass extends Node {
   async do_something() {
     print("Start");
     await this.get_tree().create_timer(1.0).timeout;

@@ -1,5 +1,16 @@
-export { generateClassTypings, type ClassTypingsOptions } from './classes.ts';
-export { generateSceneTypings, type SceneTypingsOptions } from './scenes.ts';
+export {
+  generateClassTypings,
+  type ClassTypingsOptions,
+  type SceneNodeOverload as ClassSceneNodeOverload,
+} from './classes.ts';
+export {
+  collectSceneOverloads,
+  buildScriptClassMap,
+  type SceneTypingsOptions,
+  type SceneNodeOverload,
+  type BuildScriptClassMapOptions,
+  type ScriptClassInfo,
+} from './scenes.ts';
 export {
   generateGodotDocsTypings,
   type GodotDocsTypingsOptions,

@@ -2,7 +2,7 @@ type SomeObject = {
   key: 'value'
 }
 
-export default class MyClass extends Node {
+export class MyClass extends Node {
   health_changed = gd.signal<[from: int, to: int]>();
   mana_changed = gd.signal<[int, int]>();
   stamina_changed = gd.signal<[number, unknown, SomeObject]>();

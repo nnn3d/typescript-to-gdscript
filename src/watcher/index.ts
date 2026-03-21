@@ -3,6 +3,10 @@ import { extname, resolve, relative } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
 import { generateClassTypings } from '../typings/classes.ts';
+import {
+  collectSceneOverloads,
+  buildScriptClassMap,
+} from '../typings/scenes.ts';
 import { FileCache } from '../cache/index.ts';
 import { writeFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
@@ -20,8 +24,10 @@ export interface WatcherOptions {
   tsConfigPath?: string;
   /** Enable source maps */
   sourceMap?: boolean;
-  /** Path to global class typings output */
+  /** Path to global class typings output (includes scene overloads) */
   classTypingsOutput?: string;
+  /** Directory to scan for .tscn files. Defaults to rootDir. */
+  scenesDir?: string;
   /** Cache directory */
   cacheDir?: string;
   /** Callback for diagnostics */
@@ -85,8 +91,9 @@ export class Watcher {
       });
       this.regenerateClassTypings();
     } else if (ext === '.tscn') {
-      // Scene file changed — regenerate scene typings
+      // Scene file changed — regenerate class typings (includes scene overloads)
       this.log(filePath, 'Scene changed, regenerating typings', 'info');
+      this.regenerateClassTypings();
     }
   }
 
@@ -173,11 +180,29 @@ export class Watcher {
   private regenerateClassTypings(): void {
     if (!this.options.classTypingsOutput) return;
 
+    const files = [...this.tsFiles];
+    const scenesDir = this.options.scenesDir ?? this.options.rootDir;
+
+    // Collect scene overloads from .tscn files
+    const scriptClassMap = buildScriptClassMap({
+      files,
+      rootDir: this.options.rootDir,
+      tsDir: this.tsDir,
+      gdDir: this.gdDir,
+      sceneTypingsDir: dirname(this.options.classTypingsOutput),
+      tsConfigPath: this.options.tsConfigPath,
+    });
+    const sceneOverloads = collectSceneOverloads({
+      scenesDir,
+      scriptClassMap,
+    });
+
     generateClassTypings({
       rootDir: this.options.rootDir,
-      files: [...this.tsFiles],
+      files,
       outputPath: this.options.classTypingsOutput,
       tsConfigPath: this.options.tsConfigPath,
+      sceneOverloads,
     });
   }
 

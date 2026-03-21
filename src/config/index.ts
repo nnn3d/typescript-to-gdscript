@@ -20,6 +20,10 @@ export interface TsToGdConfig {
   gdDir?: string;
   /** Directory for generated global class typings (relative to rootDir). Defaults to "_gdtots". */
   classTypingsPath?: string;
+  /** Directory for generated scene typings (relative to rootDir). Defaults to classTypingsPath. */
+  sceneTypingsPath?: string;
+  /** Directory to scan for .tscn scene files (relative to rootDir). Defaults to rootDir. */
+  scenesDir?: string;
   /** Path to tsconfig.json */
   tsconfig?: string;
   /** Generate source maps */
@@ -35,6 +39,8 @@ export interface ResolvedConfig {
   tsDir: string;
   gdDir: string;
   classTypingsPath: string;
+  sceneTypingsPath: string;
+  scenesDir: string;
   tsconfig?: string;
   sourceMap?: boolean;
   godotVersion?: string;
@@ -71,12 +77,20 @@ export function resolveConfig(options?: {
   );
   const classTypingsPath =
     overrides.classTypingsPath ?? config?.classTypingsPath ?? '_gdtots';
+  const sceneTypingsPath =
+    overrides.sceneTypingsPath ?? config?.sceneTypingsPath ?? classTypingsPath;
+  const scenesDir = resolve(
+    rootDir,
+    overrides.scenesDir ?? config?.scenesDir ?? '.',
+  );
 
   return {
     rootDir,
     tsDir,
     gdDir,
     classTypingsPath,
+    sceneTypingsPath,
+    scenesDir,
     tsconfig: overrides.tsconfig ?? config?.tsconfig,
     sourceMap: overrides.sourceMap ?? config?.sourceMap,
     godotVersion: overrides.godotVersion ?? config?.godotVersion,

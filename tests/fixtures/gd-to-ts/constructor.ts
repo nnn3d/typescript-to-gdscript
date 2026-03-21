@@ -1,4 +1,4 @@
-export default class Constructor extends RefCounted {
+export class Constructor extends RefCounted {
   name: string;
   hp: int;
 

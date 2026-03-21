@@ -1,4 +1,4 @@
-export default class Expressions extends Node {
+export class Expressions extends Node {
   test_expressions() {
     let arr = [1, 2, 3];
     let dict = {"key": "value", "num": 42};

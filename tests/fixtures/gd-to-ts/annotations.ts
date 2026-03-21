@@ -1,4 +1,4 @@
-export default class Annotations extends Node {
+export class Annotations extends Node {
   @gd.export
   health: int = 100;
   @gd.export

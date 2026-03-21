@@ -1,4 +1,4 @@
-export default class Self extends ColorPicker {
+export class Self extends ColorPicker {
   print_data() {
     print('data');
   }

@@ -1,4 +1,4 @@
-export default class MyClass extends Node {
+export class MyClass extends Node {
   test_casting() {
     let node: Node = this;
     let sprite = gd.as(node, Sprite2D);

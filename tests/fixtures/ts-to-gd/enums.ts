@@ -1,4 +1,4 @@
-export default class MyClass extends Node {
+export class MyClass extends Node {
   Direction = gd.enum("UP", "DOWN", "LEFT", "RIGHT");
   State = gd.enum("IDLE", "WALKING", ["RUNNING", 5]);
 

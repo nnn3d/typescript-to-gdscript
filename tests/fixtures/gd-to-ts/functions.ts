@@ -1,4 +1,4 @@
-export default class Functions extends RefCounted {
+export class Functions extends RefCounted {
   no_args() {
   }
 

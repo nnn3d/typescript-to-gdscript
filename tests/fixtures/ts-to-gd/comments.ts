@@ -1,4 +1,4 @@
-export default class MyClass extends Node {
+export class MyClass extends Node {
   // This is a single line comment
   speed: float = 10.0;
 

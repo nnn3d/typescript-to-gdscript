@@ -1,4 +1,4 @@
-export default class Enums extends Node {
+export class Enums extends Node {
   Direction = gd.enum('UP', 'DOWN', 'LEFT', 'RIGHT');
   Status = gd.enum('IDLE', 'RUNNING', ['JUMPING', 10]);
   UNIT_NEUTRAL: int = 0;

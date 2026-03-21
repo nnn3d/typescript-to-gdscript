@@ -1,3 +1,3 @@
-export default class __CLASS__ extends RefCounted {
+export class __CLASS__ extends RefCounted {
   name: string = '';
 }

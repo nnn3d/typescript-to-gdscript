@@ -228,7 +228,7 @@ IMPORTANT FOR CLAUDE: ask me if you find some other cases with transformation pr
 
 All files in gdscript are files, so there should be only one class in typescript file, with only allowed import for types or type declarations / exports. All other named classes should be available globally, like in gdscript - which should be generated in one `d.ts` file (but not for anonymous classes). All other content should be inside this class.
 
-Source TS files must use `export default class ClassName extends Base { ... }`. The `export default` modifier is stripped during TS-to-GD conversion (GD output is identical). This enables the generated globals `.d.ts` to reference the source class via `import + declare global` pattern without duplicating members.
+Source TS files must use `export class ClassName extends Base { ... }`. The `export` modifier is stripped during TS-to-GD conversion (GD output is identical). This enables the generated globals `.d.ts` to reference the source class via named import + `declare global` pattern without duplicating members, and allows module augmentation for scene typings (`get_node`/`get_node_or_null` overloads).
 
 ##### TS types after transformation
 
@@ -303,7 +303,7 @@ This generation should be worked with watch mode, also with once transformation.
 
 #### TS classes
 
-All root named default-exported classes in TS are added to a global declaration file using `import _ClassName from "./path.js"; declare global { class ClassName extends _ClassName {} }` pattern. This makes classes available globally (like GDScript's `class_name`) without duplicating members. Source files must use `export default class`.
+All root named exported classes in TS are added to a global declaration file using `import { ClassName as _ClassName } from "./path.js"; declare global { class ClassName extends _ClassName {} }` pattern. This makes classes available globally (like GDScript's `class_name`) without duplicating members. Source files must use `export class`.
 
 #### GD node paths
 
@@ -383,5 +383,5 @@ annotations, comments, constructor, control-flow, enums, expressions, functions,
 - GD-to-TS `self.` resolution: registry always required, only known class members (own + inherited from Godot classes) get `this.` prefix; user-defined parent classes not in registry won't resolve inherited members
 - `tstogd.json` config: consumer project config file for registry resolution (godotVersion, registryPath, rootDir, outputDir, etc.)
 - GD-to-TS multi-line lambda body: `emitLambda()` returns header only, `emitLambdaBody()` emits indented body separately
-- `export default class`: TS parses as ClassDeclaration with ExportKeyword+DefaultKeyword modifiers; transformer ignores these modifiers transparently, GD output is identical
-- Cross-file class visibility: generated globals `.d.ts` uses `import _Name from "./path.js"` + `declare global { class Name extends _Name {} }` pattern; `import()` type in extends clause doesn't work (TS treats it as dynamic import returning Promise)
+- `export class`: TS parses as ClassDeclaration with ExportKeyword modifier; transformer ignores this modifier transparently, GD output is identical. Named exports (not default) enable module augmentation for scene typings.
+- Cross-file class visibility: generated globals `.d.ts` uses `import { Name as _Name } from "./path.js"` + `declare global { class Name extends _Name {} }` pattern; `import()` type in extends clause doesn't work (TS treats it as dynamic import returning Promise)

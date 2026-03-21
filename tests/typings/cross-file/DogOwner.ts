@@ -1,4 +1,4 @@
-export default class DogOwner extends Node {
+export class DogOwner extends Node {
   owner_name: string = '';
   dog: Dog = null!;
 

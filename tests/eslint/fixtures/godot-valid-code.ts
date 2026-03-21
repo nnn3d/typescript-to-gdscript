@@ -1,4 +1,4 @@
-export default class ValidGodot extends Node {
+export class ValidGodot extends Node {
   health: int = 100;
 
   _ready() {

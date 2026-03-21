@@ -1,4 +1,4 @@
-export default class MyClass extends Node {
+export class MyClass extends Node {
   test_lambda() {
     let double = (x: int): int => x * 2;
 

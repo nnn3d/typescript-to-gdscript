@@ -401,7 +401,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
   }
 
   const extendsClause = extendsClass ? ` extends ${extendsClass}` : '';
-  const classHeader = `export default class ${className || '__CLASS__'}${extendsClause} {`;
+  const classHeader = `export class ${className || '__CLASS__'}${extendsClause} {`;
   return [classHeader, ...memberLines, '}', ''].join('\n');
 }
 

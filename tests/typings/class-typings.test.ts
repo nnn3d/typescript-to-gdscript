@@ -25,9 +25,13 @@ describe('Class typings generation', () => {
     const content = readFileSync(OUTPUT_PATH, 'utf-8');
 
     // Should have imports for each class
-    expect(content).toContain('import _Animal from "./Animal.js";');
-    expect(content).toContain('import _Dog from "./Dog.js";');
-    expect(content).toContain('import _DogOwner from "./DogOwner.js";');
+    expect(content).toContain(
+      'import { Animal as _Animal } from "./Animal.js";',
+    );
+    expect(content).toContain('import { Dog as _Dog } from "./Dog.js";');
+    expect(content).toContain(
+      'import { DogOwner as _DogOwner } from "./DogOwner.js";',
+    );
 
     // Should have declare global block with class declarations
     expect(content).toContain('declare global {');
