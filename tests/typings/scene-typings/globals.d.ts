@@ -94,7 +94,4 @@ declare global {
   const GameManager: _GameManager;
 }
 
-// Scene path union for change_scene_to_file()
-type GodotScenePaths = "res://Anonym.tscn" | "res://Anonym2.tscn" | "res://nested/Anonym.tscn" | "res://Player.tscn";
-
 export {};

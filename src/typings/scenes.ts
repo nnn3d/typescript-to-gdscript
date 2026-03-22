@@ -448,14 +448,6 @@ export function generateSceneTypings(options: GenerateSceneTypingsOptions): stri
     lines.push('');
   }
 
-  // GodotScenePaths type (union of all known scene paths)
-  const scenePaths = resourceEntries.map((e) => e.resPath);
-  if (scenePaths.length > 0) {
-    lines.push('// Scene path union for change_scene_to_file()');
-    lines.push(`type GodotScenePaths = ${scenePaths.map((p) => `"${p}"`).join(' | ')};`);
-    lines.push('');
-  }
-
   // export {} makes this a module file, required for declare module with relative paths
   lines.push('export {};');
   lines.push('');
@@ -740,14 +732,6 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     }
 
     lines.push('}');
-    lines.push('');
-  }
-
-  // GodotScenePaths type
-  const scenePaths = resourceEntries.map((e) => e.resPath);
-  if (scenePaths.length > 0) {
-    lines.push('// Scene path union for change_scene_to_file()');
-    lines.push(`type GodotScenePaths = ${scenePaths.map((p) => `"${p}"`).join(' | ')};`);
     lines.push('');
   }
 

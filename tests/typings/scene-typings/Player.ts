@@ -23,6 +23,8 @@ export class Player extends CharacterBody2D {
     // Unknown path for get_node returns Node
     let unknown: Node = this.get_node('Unknown');
 
+    this.get_tree().change_scene_to_file('res://Anonym.tscn');
+
     // Autoload global singleton — GameManager is declared globally from project.godot [autoload]
     let manager: GameManagerType = GameManager;
     manager.reset_game();
