@@ -17,6 +17,9 @@ interface __CLASS__SceneNodes {
   "Sprite2D": Sprite2D;
   "CollisionShape2D": CollisionShape2D;
   "Sprite2D/AnimationPlayer": AnimationPlayer;
+  "Sprite2D": Sprite2D;
+  "CollisionShape2D": CollisionShape2D;
+  "Sprite2D/AnimationPlayer": AnimationPlayer;
 }
 
 declare module "./Anonym.ts" {
@@ -49,6 +52,7 @@ declare global {
   interface GodotResources {
     "res://Anonym.tscn": PackedScene<_Anonym>;
     "res://Anonym2.tscn": PackedScene<_Anonym2>;
+    "res://nested/Anonym.tscn": PackedScene<_nested_Anonym>;
     "res://Player.tscn": PackedScene<_Player>;
     "res://Anonym.gd": _Anonym;
     "res://Anonym2.gd": _Anonym2;
@@ -62,6 +66,6 @@ declare global {
 }
 
 // Scene path union for change_scene_to_file()
-type GodotScenePaths = "res://Anonym.tscn" | "res://Anonym2.tscn" | "res://Player.tscn";
+type GodotScenePaths = "res://Anonym.tscn" | "res://Anonym2.tscn" | "res://nested/Anonym.tscn" | "res://Player.tscn";
 
 export {};
