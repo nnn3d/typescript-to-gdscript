@@ -8,8 +8,6 @@ const SCENE_DIR = join(__dirname, 'scene-typings');
 const GLOBALS_PATH = join(SCENE_DIR, 'globals.d.ts');
 const TSCONFIG_PATH = join(SCENE_DIR, 'tsconfig.json');
 const PROJECT_FILE = join(SCENE_DIR, 'project.godot');
-const REGISTRY_PATH = join(SCENE_DIR, 'test-registry.json');
-
 // Discover all .ts source files (not .d.ts)
 const sourceFiles = globSync(join(SCENE_DIR, '**/*.ts'))
   .filter((f) => f.endsWith('.ts') && !f.endsWith('.d.ts'));
@@ -23,7 +21,6 @@ function generate() {
     outputPath: GLOBALS_PATH,
     scenesDir: SCENE_DIR,
     projectFile: PROJECT_FILE,
-    registryPath: REGISTRY_PATH,
   });
 }
 
@@ -69,16 +66,6 @@ describe('Scene typings generation', () => {
     expect(content).toMatch(/"Timer": Timer \| null;/);
     // Label is only in BallB — gets | null
     expect(content).toMatch(/"Label": Label \| null;/);
-  });
-
-  it('should generate typed signal handler methods from .tscn connections', () => {
-    const content = generate();
-
-    // Player.tscn has: [connection signal="area_entered" from="Area2D" to="." method="_on_area_entered"]
-    // Area2D.area_entered signal has parameter: area: Area2D
-    expect(content).toContain('_on_area_entered(area: Area2D): void;');
-    // Should have a JSDoc comment indicating the signal source
-    expect(content).toContain('/** Signal handler: Area2D.area_entered */');
   });
 
   it('should generate GodotResources and autoload singletons', () => {

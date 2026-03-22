@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A singleton for managing {@link PhysicsServer2D} implementations. */
-declare class PhysicsServer2DManager extends GodotObject {
+declare interface PhysicsServer2DManager extends GodotObject {
   /**
    * Register a {@link PhysicsServer2D} implementation by passing a `name` and a {@link Callable} that returns a {@link PhysicsServer2D} object.
    */
@@ -12,3 +12,5 @@ declare class PhysicsServer2DManager extends GodotObject {
    */
   set_default_server(name: string, priority: int): void;
 }
+declare const PhysicsServer2DManager: PhysicsServer2DManager;
+

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Data transformation (marshaling) and encoding helpers. */
-declare class Marshalls extends GodotObject {
+declare interface Marshalls extends GodotObject {
   /** Returns a decoded {@link PackedByteArray} corresponding to the Base64-encoded string `base64_str`. */
   base64_to_raw(base64_str: string): PackedByteArray;
   /** Returns a decoded string corresponding to the Base64-encoded string `base64_str`. */
@@ -23,3 +23,5 @@ declare class Marshalls extends GodotObject {
    */
   variant_to_base64(variant: unknown, full_objects?: boolean): string;
 }
+declare const Marshalls: Marshalls;
+

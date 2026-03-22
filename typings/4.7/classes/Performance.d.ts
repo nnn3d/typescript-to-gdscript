@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Exposes performance-related data. */
-declare class Performance extends GodotObject {
+declare interface Performance extends GodotObject {
   /**
    * Adds a custom monitor with the name `id`. You can specify the category of the monitor using slash delimiters in `id` (for example: `"Game/NumberOfNPCs"`). If there is more than one slash delimiter, then the default category is used. The default category is `"Custom"`. Prints an error if given `id` is already present.
    * The debugger calls the callable to get the value of custom monitor. The callable must return a zero or positive integer or floating-point number.
@@ -35,193 +35,195 @@ declare class Performance extends GodotObject {
   /**
    * The number of frames rendered in the last second. This metric is only updated once per second, even if queried more often. *Higher is better.*
    */
-  static readonly TIME_FPS: int;
+  readonly TIME_FPS: int;
   /** Time it took to complete one frame, in seconds. *Lower is better.* */
-  static readonly TIME_PROCESS: int;
+  readonly TIME_PROCESS: int;
   /** Time it took to complete one physics frame, in seconds. *Lower is better.* */
-  static readonly TIME_PHYSICS_PROCESS: int;
+  readonly TIME_PHYSICS_PROCESS: int;
   /**
    * Time it took to complete one navigation step, in seconds. This includes navigation map updates as well as agent avoidance calculations. *Lower is better.*
    */
-  static readonly TIME_NAVIGATION_PROCESS: int;
+  readonly TIME_NAVIGATION_PROCESS: int;
   /** Static memory currently used, in bytes. Not available in release builds. *Lower is better.* */
-  static readonly MEMORY_STATIC: int;
+  readonly MEMORY_STATIC: int;
   /** Available static memory. Not available in release builds. *Lower is better.* */
-  static readonly MEMORY_STATIC_MAX: int;
+  readonly MEMORY_STATIC_MAX: int;
   /**
    * Largest amount of memory the message queue buffer has used, in bytes. The message queue is used for deferred functions calls and notifications. *Lower is better.*
    */
-  static readonly MEMORY_MESSAGE_BUFFER_MAX: int;
+  readonly MEMORY_MESSAGE_BUFFER_MAX: int;
   /** Number of objects currently instantiated (including nodes). *Lower is better.* */
-  static readonly OBJECT_COUNT: int;
+  readonly OBJECT_COUNT: int;
   /** Number of resources currently used. *Lower is better.* */
-  static readonly OBJECT_RESOURCE_COUNT: int;
+  readonly OBJECT_RESOURCE_COUNT: int;
   /**
    * Number of nodes currently instantiated in the scene tree. This also includes the root node. *Lower is better.*
    */
-  static readonly OBJECT_NODE_COUNT: int;
+  readonly OBJECT_NODE_COUNT: int;
   /**
    * Number of orphan nodes, i.e. nodes which are not parented to a node of the scene tree. *Lower is better.*
    * **Note:** This is only available in debug mode and will always return `0` when used in a project exported in release mode.
    */
-  static readonly OBJECT_ORPHAN_NODE_COUNT: int;
+  readonly OBJECT_ORPHAN_NODE_COUNT: int;
   /**
    * The total number of objects in the last rendered frame. This metric doesn't include culled objects (either via hiding nodes, frustum culling or occlusion culling). *Lower is better.*
    */
-  static readonly RENDER_TOTAL_OBJECTS_IN_FRAME: int;
+  readonly RENDER_TOTAL_OBJECTS_IN_FRAME: int;
   /**
    * The total number of vertices or indices rendered in the last rendered frame. This metric doesn't include primitives from culled objects (either via hiding nodes, frustum culling or occlusion culling). Due to the depth prepass and shadow passes, the number of primitives is always higher than the actual number of vertices in the scene (typically double or triple the original vertex count). *Lower is better.*
    */
-  static readonly RENDER_TOTAL_PRIMITIVES_IN_FRAME: int;
+  readonly RENDER_TOTAL_PRIMITIVES_IN_FRAME: int;
   /**
    * The total number of draw calls performed in the last rendered frame. This metric doesn't include culled objects (either via hiding nodes, frustum culling or occlusion culling), since they do not result in draw calls. *Lower is better.*
    */
-  static readonly RENDER_TOTAL_DRAW_CALLS_IN_FRAME: int;
+  readonly RENDER_TOTAL_DRAW_CALLS_IN_FRAME: int;
   /**
    * The amount of video memory used (texture and vertex memory combined, in bytes). Since this metric also includes miscellaneous allocations, this value is always greater than the sum of {@link RENDER_TEXTURE_MEM_USED} and {@link RENDER_BUFFER_MEM_USED}. *Lower is better.*
    */
-  static readonly RENDER_VIDEO_MEM_USED: int;
+  readonly RENDER_VIDEO_MEM_USED: int;
   /** The amount of texture memory used (in bytes). *Lower is better.* */
-  static readonly RENDER_TEXTURE_MEM_USED: int;
+  readonly RENDER_TEXTURE_MEM_USED: int;
   /** The amount of render buffer memory used (in bytes). *Lower is better.* */
-  static readonly RENDER_BUFFER_MEM_USED: int;
+  readonly RENDER_BUFFER_MEM_USED: int;
   /** Number of active {@link RigidBody2D} nodes in the game. *Lower is better.* */
-  static readonly PHYSICS_2D_ACTIVE_OBJECTS: int;
+  readonly PHYSICS_2D_ACTIVE_OBJECTS: int;
   /** Number of collision pairs in the 2D physics engine. *Lower is better.* */
-  static readonly PHYSICS_2D_COLLISION_PAIRS: int;
+  readonly PHYSICS_2D_COLLISION_PAIRS: int;
   /** Number of islands in the 2D physics engine. *Lower is better.* */
-  static readonly PHYSICS_2D_ISLAND_COUNT: int;
+  readonly PHYSICS_2D_ISLAND_COUNT: int;
   /**
    * Number of active {@link RigidBody3D} and {@link VehicleBody3D} nodes in the game. *Lower is better.*
    */
-  static readonly PHYSICS_3D_ACTIVE_OBJECTS: int;
+  readonly PHYSICS_3D_ACTIVE_OBJECTS: int;
   /** Number of collision pairs in the 3D physics engine. *Lower is better.* */
-  static readonly PHYSICS_3D_COLLISION_PAIRS: int;
+  readonly PHYSICS_3D_COLLISION_PAIRS: int;
   /** Number of islands in the 3D physics engine. *Lower is better.* */
-  static readonly PHYSICS_3D_ISLAND_COUNT: int;
+  readonly PHYSICS_3D_ISLAND_COUNT: int;
   /**
    * Output latency of the {@link AudioServer}. Equivalent to calling {@link AudioServer.get_output_latency}, it is not recommended to call this every frame.
    */
-  static readonly AUDIO_OUTPUT_LATENCY: int;
+  readonly AUDIO_OUTPUT_LATENCY: int;
   /**
    * Number of active navigation maps in {@link NavigationServer2D} and {@link NavigationServer3D}. This also includes the empty default navigation maps created by {@link World2D} and {@link World3D} instances.
    */
-  static readonly NAVIGATION_ACTIVE_MAPS: int;
+  readonly NAVIGATION_ACTIVE_MAPS: int;
   /** Number of active navigation regions in {@link NavigationServer2D} and {@link NavigationServer3D}. */
-  static readonly NAVIGATION_REGION_COUNT: int;
+  readonly NAVIGATION_REGION_COUNT: int;
   /**
    * Number of active navigation agents processing avoidance in {@link NavigationServer2D} and {@link NavigationServer3D}.
    */
-  static readonly NAVIGATION_AGENT_COUNT: int;
+  readonly NAVIGATION_AGENT_COUNT: int;
   /** Number of active navigation links in {@link NavigationServer2D} and {@link NavigationServer3D}. */
-  static readonly NAVIGATION_LINK_COUNT: int;
+  readonly NAVIGATION_LINK_COUNT: int;
   /** Number of navigation mesh polygons in {@link NavigationServer2D} and {@link NavigationServer3D}. */
-  static readonly NAVIGATION_POLYGON_COUNT: int;
+  readonly NAVIGATION_POLYGON_COUNT: int;
   /**
    * Number of navigation mesh polygon edges in {@link NavigationServer2D} and {@link NavigationServer3D}.
    */
-  static readonly NAVIGATION_EDGE_COUNT: int;
+  readonly NAVIGATION_EDGE_COUNT: int;
   /**
    * Number of navigation mesh polygon edges that were merged due to edge key overlap in {@link NavigationServer2D} and {@link NavigationServer3D}.
    */
-  static readonly NAVIGATION_EDGE_MERGE_COUNT: int;
+  readonly NAVIGATION_EDGE_MERGE_COUNT: int;
   /**
    * Number of polygon edges that are considered connected by edge proximity {@link NavigationServer2D} and {@link NavigationServer3D}.
    */
-  static readonly NAVIGATION_EDGE_CONNECTION_COUNT: int;
+  readonly NAVIGATION_EDGE_CONNECTION_COUNT: int;
   /**
    * Number of navigation mesh polygon edges that could not be merged in {@link NavigationServer2D} and {@link NavigationServer3D}. The edges still may be connected by edge proximity or with links.
    */
-  static readonly NAVIGATION_EDGE_FREE_COUNT: int;
+  readonly NAVIGATION_EDGE_FREE_COUNT: int;
   /**
    * Number of active navigation obstacles in the {@link NavigationServer2D} and {@link NavigationServer3D}.
    */
-  static readonly NAVIGATION_OBSTACLE_COUNT: int;
+  readonly NAVIGATION_OBSTACLE_COUNT: int;
   /** Number of pipeline compilations that were triggered by the 2D canvas renderer. */
-  static readonly PIPELINE_COMPILATIONS_CANVAS: int;
+  readonly PIPELINE_COMPILATIONS_CANVAS: int;
   /**
    * Number of pipeline compilations that were triggered by loading meshes. These compilations will show up as longer loading times the first time a user runs the game and the pipeline is required.
    */
-  static readonly PIPELINE_COMPILATIONS_MESH: int;
+  readonly PIPELINE_COMPILATIONS_MESH: int;
   /**
    * Number of pipeline compilations that were triggered by building the surface cache before rendering the scene. These compilations will show up as a stutter when loading a scene the first time a user runs the game and the pipeline is required.
    */
-  static readonly PIPELINE_COMPILATIONS_SURFACE: int;
+  readonly PIPELINE_COMPILATIONS_SURFACE: int;
   /**
    * Number of pipeline compilations that were triggered while drawing the scene. These compilations will show up as stutters during gameplay the first time a user runs the game and the pipeline is required.
    */
-  static readonly PIPELINE_COMPILATIONS_DRAW: int;
+  readonly PIPELINE_COMPILATIONS_DRAW: int;
   /**
    * Number of pipeline compilations that were triggered to optimize the current scene. These compilations are done in the background and should not cause any stutters whatsoever.
    */
-  static readonly PIPELINE_COMPILATIONS_SPECIALIZATION: int;
+  readonly PIPELINE_COMPILATIONS_SPECIALIZATION: int;
   /**
    * Number of active navigation maps in the {@link NavigationServer2D}. This also includes the empty default navigation maps created by {@link World2D} instances.
    */
-  static readonly NAVIGATION_2D_ACTIVE_MAPS: int;
+  readonly NAVIGATION_2D_ACTIVE_MAPS: int;
   /** Number of active navigation regions in the {@link NavigationServer2D}. */
-  static readonly NAVIGATION_2D_REGION_COUNT: int;
+  readonly NAVIGATION_2D_REGION_COUNT: int;
   /** Number of active navigation agents processing avoidance in the {@link NavigationServer2D}. */
-  static readonly NAVIGATION_2D_AGENT_COUNT: int;
+  readonly NAVIGATION_2D_AGENT_COUNT: int;
   /** Number of active navigation links in the {@link NavigationServer2D}. */
-  static readonly NAVIGATION_2D_LINK_COUNT: int;
+  readonly NAVIGATION_2D_LINK_COUNT: int;
   /** Number of navigation mesh polygons in the {@link NavigationServer2D}. */
-  static readonly NAVIGATION_2D_POLYGON_COUNT: int;
+  readonly NAVIGATION_2D_POLYGON_COUNT: int;
   /** Number of navigation mesh polygon edges in the {@link NavigationServer2D}. */
-  static readonly NAVIGATION_2D_EDGE_COUNT: int;
+  readonly NAVIGATION_2D_EDGE_COUNT: int;
   /**
    * Number of navigation mesh polygon edges that were merged due to edge key overlap in the {@link NavigationServer2D}.
    */
-  static readonly NAVIGATION_2D_EDGE_MERGE_COUNT: int;
+  readonly NAVIGATION_2D_EDGE_MERGE_COUNT: int;
   /** Number of polygon edges that are considered connected by edge proximity {@link NavigationServer2D}. */
-  static readonly NAVIGATION_2D_EDGE_CONNECTION_COUNT: int;
+  readonly NAVIGATION_2D_EDGE_CONNECTION_COUNT: int;
   /**
    * Number of navigation mesh polygon edges that could not be merged in the {@link NavigationServer2D}. The edges still may be connected by edge proximity or with links.
    */
-  static readonly NAVIGATION_2D_EDGE_FREE_COUNT: int;
+  readonly NAVIGATION_2D_EDGE_FREE_COUNT: int;
   /** Number of active navigation obstacles in the {@link NavigationServer2D}. */
-  static readonly NAVIGATION_2D_OBSTACLE_COUNT: int;
+  readonly NAVIGATION_2D_OBSTACLE_COUNT: int;
   /**
    * Number of active navigation maps in the {@link NavigationServer3D}. This also includes the empty default navigation maps created by {@link World3D} instances.
    */
-  static readonly NAVIGATION_3D_ACTIVE_MAPS: int;
+  readonly NAVIGATION_3D_ACTIVE_MAPS: int;
   /** Number of active navigation regions in the {@link NavigationServer3D}. */
-  static readonly NAVIGATION_3D_REGION_COUNT: int;
+  readonly NAVIGATION_3D_REGION_COUNT: int;
   /** Number of active navigation agents processing avoidance in the {@link NavigationServer3D}. */
-  static readonly NAVIGATION_3D_AGENT_COUNT: int;
+  readonly NAVIGATION_3D_AGENT_COUNT: int;
   /** Number of active navigation links in the {@link NavigationServer3D}. */
-  static readonly NAVIGATION_3D_LINK_COUNT: int;
+  readonly NAVIGATION_3D_LINK_COUNT: int;
   /** Number of navigation mesh polygons in the {@link NavigationServer3D}. */
-  static readonly NAVIGATION_3D_POLYGON_COUNT: int;
+  readonly NAVIGATION_3D_POLYGON_COUNT: int;
   /** Number of navigation mesh polygon edges in the {@link NavigationServer3D}. */
-  static readonly NAVIGATION_3D_EDGE_COUNT: int;
+  readonly NAVIGATION_3D_EDGE_COUNT: int;
   /**
    * Number of navigation mesh polygon edges that were merged due to edge key overlap in the {@link NavigationServer3D}.
    */
-  static readonly NAVIGATION_3D_EDGE_MERGE_COUNT: int;
+  readonly NAVIGATION_3D_EDGE_MERGE_COUNT: int;
   /** Number of polygon edges that are considered connected by edge proximity {@link NavigationServer3D}. */
-  static readonly NAVIGATION_3D_EDGE_CONNECTION_COUNT: int;
+  readonly NAVIGATION_3D_EDGE_CONNECTION_COUNT: int;
   /**
    * Number of navigation mesh polygon edges that could not be merged in the {@link NavigationServer3D}. The edges still may be connected by edge proximity or with links.
    */
-  static readonly NAVIGATION_3D_EDGE_FREE_COUNT: int;
+  readonly NAVIGATION_3D_EDGE_FREE_COUNT: int;
   /** Number of active navigation obstacles in the {@link NavigationServer3D}. */
-  static readonly NAVIGATION_3D_OBSTACLE_COUNT: int;
+  readonly NAVIGATION_3D_OBSTACLE_COUNT: int;
   /** Represents the size of the {@link Monitor} enum. */
-  static readonly MONITOR_MAX: int;
+  readonly MONITOR_MAX: int;
   // enum MonitorType
   /** Monitor output is formatted as an integer value. */
-  static readonly MONITOR_TYPE_QUANTITY: int;
+  readonly MONITOR_TYPE_QUANTITY: int;
   /**
    * Monitor output is formatted as computer memory. Submitted values should represent a number of bytes.
    */
-  static readonly MONITOR_TYPE_MEMORY: int;
+  readonly MONITOR_TYPE_MEMORY: int;
   /**
    * Monitor output is formatted as time in milliseconds. Submitted values should represent a time in seconds (not milliseconds).
    */
-  static readonly MONITOR_TYPE_TIME: int;
+  readonly MONITOR_TYPE_TIME: int;
   /**
    * Monitor output is formatted as a percentage. Submitted values should represent a fractional value rather than the percentage directly, e.g. `0.5` for `50.00%`.
    */
-  static readonly MONITOR_TYPE_PERCENTAGE: int;
+  readonly MONITOR_TYPE_PERCENTAGE: int;
 }
+declare const Performance: Performance;
+

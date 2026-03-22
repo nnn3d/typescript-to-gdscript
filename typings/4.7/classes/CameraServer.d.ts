@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Server keeping track of different cameras accessible in Godot. */
-declare class CameraServer extends GodotObject {
+declare interface CameraServer extends GodotObject {
   /**
    * If `true`, the server is actively monitoring available camera feeds.
    * This has a performance cost, so only set it to `true` when you're actively accessing the camera.
@@ -30,11 +30,13 @@ declare class CameraServer extends GodotObject {
 
   // enum FeedImage
   /** The RGBA camera image. */
-  static readonly FEED_RGBA_IMAGE: int;
+  readonly FEED_RGBA_IMAGE: int;
   /** The YCbCr (https://en.wikipedia.org/wiki/YCbCr) camera image. */
-  static readonly FEED_YCBCR_IMAGE: int;
+  readonly FEED_YCBCR_IMAGE: int;
   /** The Y component camera image. */
-  static readonly FEED_Y_IMAGE: int;
+  readonly FEED_Y_IMAGE: int;
   /** The CbCr component camera image. */
-  static readonly FEED_CBCR_IMAGE: int;
+  readonly FEED_CBCR_IMAGE: int;
 }
+declare const CameraServer: CameraServer;
+

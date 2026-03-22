@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Stores globally-accessible variables. */
-declare class ProjectSettings extends GodotObject {
+declare interface ProjectSettings extends GodotObject {
   /**
    * Accessibility driver:
    * -**accesskit** (default): AccessKit driver.
@@ -3802,3 +3802,5 @@ declare class ProjectSettings extends GodotObject {
   /** Emitted when any setting is changed, up to once per process frame. */
   settings_changed: Signal<[]>;
 }
+declare const ProjectSettings: ProjectSettings;
+

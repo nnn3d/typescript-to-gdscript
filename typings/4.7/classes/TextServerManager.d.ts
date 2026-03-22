@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A singleton for managing {@link TextServer} implementations. */
-declare class TextServerManager extends GodotObject {
+declare interface TextServerManager extends GodotObject {
   /** Registers a {@link TextServer} interface. */
   add_interface(interface_: TextServer): void;
   /** Finds an interface by its `name`. */
@@ -27,3 +27,5 @@ declare class TextServerManager extends GodotObject {
   /** Emitted when an interface is removed. */
   interface_removed: Signal<[string]>;
 }
+declare const TextServerManager: TextServerManager;
+

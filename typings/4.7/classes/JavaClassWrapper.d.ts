@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Provides access to the Java Native Interface. */
-declare class JavaClassWrapper extends GodotObject {
+declare interface JavaClassWrapper extends GodotObject {
   /**
    * Returns the Java exception from the last call into a Java class. If there was no exception, it will return `null`.
    * **Note:** This method only works on Android. On every other platform, this method will always return `null`.
@@ -16,3 +16,5 @@ declare class JavaClassWrapper extends GodotObject {
    */
   wrap(name: string): JavaClass;
 }
+declare const JavaClassWrapper: JavaClassWrapper;
+

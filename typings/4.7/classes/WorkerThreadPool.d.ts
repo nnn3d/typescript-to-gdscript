@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A singleton that allocates some {@link Thread}s on startup, used to offload tasks to these threads. */
-declare class WorkerThreadPool extends GodotObject {
+declare interface WorkerThreadPool extends GodotObject {
   /**
    * Adds `action` as a group task to be executed by the worker threads. The {@link Callable} will be called a number of times based on `elements`, with the first thread calling it with the value `0` as a parameter, and each consecutive execution incrementing this value by 1 until it reaches `element - 1`.
    * The number of threads the task is distributed to is defined by `tasks_needed`, where the default value `-1` means it is distributed to all worker threads. `high_priority` determines if the task has a high priority or a low priority (default). You can optionally provide a `description` to help with debugging.
@@ -51,3 +51,5 @@ declare class WorkerThreadPool extends GodotObject {
    */
   wait_for_task_completion(task_id: int): int;
 }
+declare const WorkerThreadPool: WorkerThreadPool;
+

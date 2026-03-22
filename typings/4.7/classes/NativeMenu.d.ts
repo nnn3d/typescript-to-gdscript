@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A server interface for OS native menus. */
-declare class NativeMenu extends GodotObject {
+declare interface NativeMenu extends GodotObject {
   /**
    * Adds a new checkable item with text `label` to the global menu `rid`.
    * Returns index of the inserted item, it's not guaranteed to be the same as `index` value.
@@ -397,30 +397,32 @@ declare class NativeMenu extends GodotObject {
 
   // enum Feature
   /** {@link NativeMenu} supports native global main menu. */
-  static readonly FEATURE_GLOBAL_MENU: int;
+  readonly FEATURE_GLOBAL_MENU: int;
   /** {@link NativeMenu} supports native popup menus. */
-  static readonly FEATURE_POPUP_MENU: int;
+  readonly FEATURE_POPUP_MENU: int;
   /** {@link NativeMenu} supports menu open and close callbacks. */
-  static readonly FEATURE_OPEN_CLOSE_CALLBACK: int;
+  readonly FEATURE_OPEN_CLOSE_CALLBACK: int;
   /** {@link NativeMenu} supports menu item hover callback. */
-  static readonly FEATURE_HOVER_CALLBACK: int;
+  readonly FEATURE_HOVER_CALLBACK: int;
   /** {@link NativeMenu} supports menu item accelerator/key callback. */
-  static readonly FEATURE_KEY_CALLBACK: int;
+  readonly FEATURE_KEY_CALLBACK: int;
   // enum SystemMenus
   /** Invalid special system menu ID. */
-  static readonly INVALID_MENU_ID: int;
+  readonly INVALID_MENU_ID: int;
   /** Global main menu ID. */
-  static readonly MAIN_MENU_ID: int;
+  readonly MAIN_MENU_ID: int;
   /** Application (first menu after "Apple" menu on macOS) menu ID. */
-  static readonly APPLICATION_MENU_ID: int;
+  readonly APPLICATION_MENU_ID: int;
   /**
    * "Window" menu ID (on macOS this menu includes standard window control items and a list of open windows).
    */
-  static readonly WINDOW_MENU_ID: int;
+  readonly WINDOW_MENU_ID: int;
   /** "Help" menu ID (on macOS this menu includes help search bar). */
-  static readonly HELP_MENU_ID: int;
+  readonly HELP_MENU_ID: int;
   /**
    * Dock icon right-click menu ID (on macOS this menu include standard application control items and a list of open windows).
    */
-  static readonly DOCK_MENU_ID: int;
+  readonly DOCK_MENU_ID: int;
 }
+declare const NativeMenu: NativeMenu;
+

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Exposes the internal debugger. */
-declare class EngineDebugger extends GodotObject {
+declare interface EngineDebugger extends GodotObject {
   /** Clears all breakpoints. */
   clear_breakpoints(): void;
   /**
@@ -62,3 +62,5 @@ declare class EngineDebugger extends GodotObject {
   /** Unregisters a profiler with given `name`. */
   unregister_profiler(name: string): void;
 }
+declare const EngineDebugger: EngineDebugger;
+

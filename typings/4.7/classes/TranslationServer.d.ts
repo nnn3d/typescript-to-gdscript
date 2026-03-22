@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** The server responsible for language translations. */
-declare class TranslationServer extends GodotObject {
+declare interface TranslationServer extends GodotObject {
   /**
    * If `true`, enables the use of pseudolocalization on the main translation domain. See {@link ProjectSettings.internationalization/pseudolocalization/use_pseudolocalization} for details.
    */
@@ -111,3 +111,5 @@ declare class TranslationServer extends GodotObject {
    */
   translate_plural(message: string, plural_message: string, n: int, context?: string): string;
 }
+declare const TranslationServer: TranslationServer;
+

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Provides methods for some common 2D geometric operations. */
-declare class Geometry2D extends GodotObject {
+declare interface Geometry2D extends GodotObject {
   /**
    * Returns the Bresenham line (https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm) between the `from` and `to` points. A Bresenham line is a series of pixels that draws a line and is always 1-pixel thick on every row and column of the drawing (never more, never less).
    * Example code to draw a line between two {@link Marker2D} nodes using a series of {@link CanvasItem.draw_rect} calls:
@@ -113,33 +113,35 @@ declare class Geometry2D extends GodotObject {
 
   // enum PolyBooleanOperation
   /** Create regions where either subject or clip polygons (or both) are filled. */
-  static readonly OPERATION_UNION: int;
+  readonly OPERATION_UNION: int;
   /** Create regions where subject polygons are filled except where clip polygons are filled. */
-  static readonly OPERATION_DIFFERENCE: int;
+  readonly OPERATION_DIFFERENCE: int;
   /** Create regions where both subject and clip polygons are filled. */
-  static readonly OPERATION_INTERSECTION: int;
+  readonly OPERATION_INTERSECTION: int;
   /** Create regions where either subject or clip polygons are filled but not where both are filled. */
-  static readonly OPERATION_XOR: int;
+  readonly OPERATION_XOR: int;
   // enum PolyJoinType
   /** Squaring is applied uniformally at all convex edge joins at `1 * delta`. */
-  static readonly JOIN_SQUARE: int;
+  readonly JOIN_SQUARE: int;
   /**
    * While flattened paths can never perfectly trace an arc, they are approximated by a series of arc chords.
    */
-  static readonly JOIN_ROUND: int;
+  readonly JOIN_ROUND: int;
   /**
    * There's a necessary limit to mitered joins since offsetting edges that join at very acute angles will produce excessively long and narrow "spikes". For any given edge join, when miter offsetting would exceed that maximum distance, "square" joining is applied.
    */
-  static readonly JOIN_MITER: int;
+  readonly JOIN_MITER: int;
   // enum PolyEndType
   /** Endpoints are joined using the {@link PolyJoinType} value and the path filled as a polygon. */
-  static readonly END_POLYGON: int;
+  readonly END_POLYGON: int;
   /** Endpoints are joined using the {@link PolyJoinType} value and the path filled as a polyline. */
-  static readonly END_JOINED: int;
+  readonly END_JOINED: int;
   /** Endpoints are squared off with no extension. */
-  static readonly END_BUTT: int;
+  readonly END_BUTT: int;
   /** Endpoints are squared off and extended by `delta` units. */
-  static readonly END_SQUARE: int;
+  readonly END_SQUARE: int;
   /** Endpoints are rounded off and extended by `delta` units. */
-  static readonly END_ROUND: int;
+  readonly END_ROUND: int;
 }
+declare const Geometry2D: Geometry2D;
+

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A server interface for low-level 3D navigation access. */
-declare class NavigationServer3D extends GodotObject {
+declare interface NavigationServer3D extends GodotObject {
   /** Creates the agent. */
   agent_create(): RID;
   /** Returns `true` if the provided `agent` has avoidance enabled. */
@@ -469,29 +469,31 @@ declare class NavigationServer3D extends GodotObject {
 
   // enum ProcessInfo
   /** Constant to get the number of active navigation maps. */
-  static readonly INFO_ACTIVE_MAPS: int;
+  readonly INFO_ACTIVE_MAPS: int;
   /** Constant to get the number of active navigation regions. */
-  static readonly INFO_REGION_COUNT: int;
+  readonly INFO_REGION_COUNT: int;
   /** Constant to get the number of active navigation agents processing avoidance. */
-  static readonly INFO_AGENT_COUNT: int;
+  readonly INFO_AGENT_COUNT: int;
   /** Constant to get the number of active navigation links. */
-  static readonly INFO_LINK_COUNT: int;
+  readonly INFO_LINK_COUNT: int;
   /** Constant to get the number of navigation mesh polygons. */
-  static readonly INFO_POLYGON_COUNT: int;
+  readonly INFO_POLYGON_COUNT: int;
   /** Constant to get the number of navigation mesh polygon edges. */
-  static readonly INFO_EDGE_COUNT: int;
+  readonly INFO_EDGE_COUNT: int;
   /**
    * Constant to get the number of navigation mesh polygon edges that were merged due to edge key overlap.
    */
-  static readonly INFO_EDGE_MERGE_COUNT: int;
+  readonly INFO_EDGE_MERGE_COUNT: int;
   /**
    * Constant to get the number of navigation mesh polygon edges that are considered connected by edge proximity.
    */
-  static readonly INFO_EDGE_CONNECTION_COUNT: int;
+  readonly INFO_EDGE_CONNECTION_COUNT: int;
   /**
    * Constant to get the number of navigation mesh polygon edges that could not be merged but may be still connected by edge proximity or with links.
    */
-  static readonly INFO_EDGE_FREE_COUNT: int;
+  readonly INFO_EDGE_FREE_COUNT: int;
   /** Constant to get the number of active navigation obstacles. */
-  static readonly INFO_OBSTACLE_COUNT: int;
+  readonly INFO_OBSTACLE_COUNT: int;
 }
+declare const NavigationServer3D: NavigationServer3D;
+

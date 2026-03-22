@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Provides access to engine properties. */
-declare class Engine extends GodotObject {
+declare interface Engine extends GodotObject {
   /**
    * The maximum number of frames that can be rendered every second (FPS). A value of `0` means the framerate is uncapped.
    * Limiting the FPS can be useful to reduce the host machine's power consumption, which reduces heat, noise emissions, and improves battery life.
@@ -184,3 +184,5 @@ declare class Engine extends GodotObject {
    */
   unregister_singleton(name: string): void;
 }
+declare const Engine: Engine;
+

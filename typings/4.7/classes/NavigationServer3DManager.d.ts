@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A singleton for managing {@link NavigationServer3D} implementations. */
-declare class NavigationServer3DManager extends GodotObject {
+declare interface NavigationServer3DManager extends GodotObject {
   /**
    * Registers a {@link NavigationServer3D} implementation by passing a `name` and a {@link Callable} that returns a {@link NavigationServer3D} object.
    */
@@ -12,3 +12,5 @@ declare class NavigationServer3DManager extends GodotObject {
    */
   set_default_server(name: string, priority: int): void;
 }
+declare const NavigationServer3DManager: NavigationServer3DManager;
+

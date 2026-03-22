@@ -37,12 +37,16 @@ function normalize(code: string): string {
 
 // Discover all fixture pairs: *.gd files that have a matching *.ts file
 const allGdFiles = readdirSync(FIXTURES_DIR).filter((f) => f.endsWith('.gd'));
+// Fixtures that require special options (excluded from auto-discovery)
+const SPECIAL_FIXTURES = new Set(['signal-handlers']);
+
 const fixtureFiles = allGdFiles
   .filter((f) => {
     const tsFile = f.replace(/\.gd$/, '.ts');
     return readdirSync(FIXTURES_DIR).includes(tsFile);
   })
-  .map((f) => f.replace(/\.gd$/, ''));
+  .map((f) => f.replace(/\.gd$/, ''))
+  .filter((f) => !SPECIAL_FIXTURES.has(f));
 
 // Build project sources from all GD fixtures (for user class resolution)
 const projectSources = allGdFiles.map((f) => ({
@@ -102,4 +106,58 @@ describe('GD to TS: Fixture-based tests', () => {
       expect(actualLines.length).toBe(expectedLines.length);
     });
   }
+});
+
+describe('GD to TS: Signal handler typing', () => {
+  it('should type untyped params from signal handler info', () => {
+    const gdFilePath = join(FIXTURES_DIR, 'signal-handlers.gd');
+    const gdSource = readFileSync(gdFilePath, 'utf-8');
+    const expectedTs = readFileSync(
+      join(FIXTURES_DIR, 'signal-handlers.ts'),
+      'utf-8',
+    );
+
+    // Simulate signal handler info resolved from .tscn connections
+    const signalHandlers = new Map([
+      ['_on_area_entered', {
+        params: [{ name: 'area', gdType: 'Area2D' }],
+      }],
+      ['_on_body_shape_entered', {
+        params: [
+          { name: 'body_rid', gdType: 'RID' },
+          { name: 'body', gdType: 'Node2D' },
+          { name: 'body_shape_index', gdType: 'int' },
+          { name: 'local_shape_index', gdType: 'int' },
+        ],
+      }],
+      ['_on_timer_timeout', {
+        params: [],
+      }],
+    ]);
+
+    const result = convertGdToTs({
+      source: gdSource,
+      filePath: gdFilePath,
+      registry,
+      projectSources,
+      signalHandlers,
+    });
+
+    const normalizedActual = normalize(result.code);
+    const normalizedExpected = normalize(expectedTs);
+
+    const actualLines = normalizedActual.split('\n');
+    const expectedLines = normalizedExpected.split('\n');
+
+    for (
+      let i = 0;
+      i < Math.max(actualLines.length, expectedLines.length);
+      i++
+    ) {
+      const actual = actualLines[i] ?? '(missing)';
+      const expected = expectedLines[i] ?? '(missing)';
+      expect(actual, `Line ${i + 1} mismatch:\n  Expected: ${JSON.stringify(expected)}\n  Actual:   ${JSON.stringify(actual)}`).toBe(expected);
+    }
+    expect(actualLines.length).toBe(expectedLines.length);
+  });
 });

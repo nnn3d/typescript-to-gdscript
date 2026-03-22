@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Server interface for low-level audio access. */
-declare class AudioServer extends GodotObject {
+declare interface AudioServer extends GodotObject {
   /** Number of available audio buses. */
   bus_count: int;
   /**
@@ -164,26 +164,28 @@ declare class AudioServer extends GodotObject {
 
   // enum SpeakerMode
   /** Two or fewer speakers were detected. */
-  static readonly SPEAKER_MODE_STEREO: int;
+  readonly SPEAKER_MODE_STEREO: int;
   /** A 3.1 channel surround setup was detected. */
-  static readonly SPEAKER_SURROUND_31: int;
+  readonly SPEAKER_SURROUND_31: int;
   /** A 5.1 channel surround setup was detected. */
-  static readonly SPEAKER_SURROUND_51: int;
+  readonly SPEAKER_SURROUND_51: int;
   /** A 7.1 channel surround setup was detected. */
-  static readonly SPEAKER_SURROUND_71: int;
+  readonly SPEAKER_SURROUND_71: int;
   // enum PlaybackType
   /**
    * The playback will be considered of the type declared at {@link ProjectSettings.audio/general/default_playback_type}.
    */
-  static readonly PLAYBACK_TYPE_DEFAULT: int;
+  readonly PLAYBACK_TYPE_DEFAULT: int;
   /** Force the playback to be considered as a stream. */
-  static readonly PLAYBACK_TYPE_STREAM: int;
+  readonly PLAYBACK_TYPE_STREAM: int;
   /**
    * Force the playback to be considered as a sample. This can provide lower latency and more stable playback (with less risk of audio crackling), at the cost of having less flexibility.
    * **Note:** Only currently supported on the web platform.
    * **Note:** {@link AudioEffect}s are not supported when playback is considered as a sample.
    */
-  static readonly PLAYBACK_TYPE_SAMPLE: int;
+  readonly PLAYBACK_TYPE_SAMPLE: int;
   /** Represents the size of the {@link PlaybackType} enum. */
-  static readonly PLAYBACK_TYPE_MAX: int;
+  readonly PLAYBACK_TYPE_MAX: int;
 }
+declare const AudioServer: AudioServer;
+

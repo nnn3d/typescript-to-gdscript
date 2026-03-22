@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Provides access to common operating system functionalities. */
-declare class OS extends GodotObject {
+declare interface OS extends GodotObject {
   /**
    * If `true`, the engine filters the time delta measured between each frame, and attempts to compensate for random variation. This only works on systems where V-Sync is active.
    * **Note:** On start-up, this is the same as {@link ProjectSettings.application/run/delta_smoothing}.
@@ -502,47 +502,49 @@ declare class OS extends GodotObject {
   /**
    * The Vulkan rendering driver. It requires Vulkan 1.0 support and automatically uses features from Vulkan 1.1, 1.2, and 1.3 if available.
    */
-  static readonly RENDERING_DRIVER_VULKAN: int;
+  readonly RENDERING_DRIVER_VULKAN: int;
   /**
    * The OpenGL 3 rendering driver. It uses OpenGL 3.3 Core Profile on desktop platforms, OpenGL ES 3.0 on mobile devices, and WebGL 2.0 on Web.
    */
-  static readonly RENDERING_DRIVER_OPENGL3: int;
+  readonly RENDERING_DRIVER_OPENGL3: int;
   /** The Direct3D 12 rendering driver. It requires the 12_0 feature level and Shader Model 6.0 support. */
-  static readonly RENDERING_DRIVER_D3D12: int;
+  readonly RENDERING_DRIVER_D3D12: int;
   /** The Metal rendering driver. */
-  static readonly RENDERING_DRIVER_METAL: int;
+  readonly RENDERING_DRIVER_METAL: int;
   // enum SystemDir
   /** Refers to the Desktop directory path. */
-  static readonly SYSTEM_DIR_DESKTOP: int;
+  readonly SYSTEM_DIR_DESKTOP: int;
   /** Refers to the DCIM (Digital Camera Images) directory path. */
-  static readonly SYSTEM_DIR_DCIM: int;
+  readonly SYSTEM_DIR_DCIM: int;
   /** Refers to the Documents directory path. */
-  static readonly SYSTEM_DIR_DOCUMENTS: int;
+  readonly SYSTEM_DIR_DOCUMENTS: int;
   /** Refers to the Downloads directory path. */
-  static readonly SYSTEM_DIR_DOWNLOADS: int;
+  readonly SYSTEM_DIR_DOWNLOADS: int;
   /** Refers to the Movies (or Videos) directory path. */
-  static readonly SYSTEM_DIR_MOVIES: int;
+  readonly SYSTEM_DIR_MOVIES: int;
   /** Refers to the Music directory path. */
-  static readonly SYSTEM_DIR_MUSIC: int;
+  readonly SYSTEM_DIR_MUSIC: int;
   /** Refers to the Pictures directory path. */
-  static readonly SYSTEM_DIR_PICTURES: int;
+  readonly SYSTEM_DIR_PICTURES: int;
   /** Refers to the Ringtones directory path. */
-  static readonly SYSTEM_DIR_RINGTONES: int;
+  readonly SYSTEM_DIR_RINGTONES: int;
   // enum StdHandleType
   /** Standard I/O device is invalid. No data can be received from or sent to these standard I/O devices. */
-  static readonly STD_HANDLE_INVALID: int;
+  readonly STD_HANDLE_INVALID: int;
   /**
    * Standard I/O device is a console. This typically occurs when Godot is run from a terminal with no redirection. This is also used for all standard I/O devices when running Godot from the editor, at least on desktop platforms.
    */
-  static readonly STD_HANDLE_CONSOLE: int;
+  readonly STD_HANDLE_CONSOLE: int;
   /**
    * Standard I/O device is a regular file. This typically occurs with redirection from a terminal, e.g. `godot > stdout.txt`, `godot < stdin.txt` or `godot > stdout_stderr.txt 2>&1`.
    */
-  static readonly STD_HANDLE_FILE: int;
+  readonly STD_HANDLE_FILE: int;
   /**
    * Standard I/O device is a FIFO/pipe. This typically occurs with pipe usage from a terminal, e.g. `echo "Hello" | godot`.
    */
-  static readonly STD_HANDLE_PIPE: int;
+  readonly STD_HANDLE_PIPE: int;
   /** Standard I/O device type is unknown. */
-  static readonly STD_HANDLE_UNKNOWN: int;
+  readonly STD_HANDLE_UNKNOWN: int;
 }
+declare const OS: OS;
+

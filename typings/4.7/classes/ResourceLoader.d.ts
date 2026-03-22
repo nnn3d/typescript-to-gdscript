@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A singleton for loading resource files. */
-declare class ResourceLoader extends GodotObject {
+declare interface ResourceLoader extends GodotObject {
   /**
    * Registers a new {@link ResourceFormatLoader}. The ResourceLoader will use the ResourceFormatLoader as described in {@link load}.
    * This method is performed implicitly for ResourceFormatLoaders written in GDScript (see {@link ResourceFormatLoader} for more information).
@@ -73,32 +73,34 @@ declare class ResourceLoader extends GodotObject {
 
   // enum ThreadLoadStatus
   /** The resource is invalid, or has not been loaded with {@link load_threaded_request}. */
-  static readonly THREAD_LOAD_INVALID_RESOURCE: int;
+  readonly THREAD_LOAD_INVALID_RESOURCE: int;
   /** The resource is still being loaded. */
-  static readonly THREAD_LOAD_IN_PROGRESS: int;
+  readonly THREAD_LOAD_IN_PROGRESS: int;
   /** Some error occurred during loading and it failed. */
-  static readonly THREAD_LOAD_FAILED: int;
+  readonly THREAD_LOAD_FAILED: int;
   /** The resource was loaded successfully and can be accessed via {@link load_threaded_get}. */
-  static readonly THREAD_LOAD_LOADED: int;
+  readonly THREAD_LOAD_LOADED: int;
   // enum CacheMode
   /**
    * Neither the main resource (the one requested to be loaded) nor any of its subresources are retrieved from cache nor stored into it. Dependencies (external resources) are loaded with {@link CACHE_MODE_REUSE}.
    */
-  static readonly CACHE_MODE_IGNORE: int;
+  readonly CACHE_MODE_IGNORE: int;
   /**
    * The main resource (the one requested to be loaded), its subresources, and its dependencies (external resources) are retrieved from cache if present, instead of loaded. Those not cached are loaded and then stored into the cache. The same rules are propagated recursively down the tree of dependencies (external resources).
    */
-  static readonly CACHE_MODE_REUSE: int;
+  readonly CACHE_MODE_REUSE: int;
   /**
    * Like {@link CACHE_MODE_REUSE}, but the cache is checked for the main resource (the one requested to be loaded) as well as for each of its subresources. Those already in the cache, as long as the loaded and cached types match, have their data refreshed from storage into the already existing instances. Otherwise, they are recreated as completely new objects.
    */
-  static readonly CACHE_MODE_REPLACE: int;
+  readonly CACHE_MODE_REPLACE: int;
   /**
    * Like {@link CACHE_MODE_IGNORE}, but propagated recursively down the tree of dependencies (external resources).
    */
-  static readonly CACHE_MODE_IGNORE_DEEP: int;
+  readonly CACHE_MODE_IGNORE_DEEP: int;
   /**
    * Like {@link CACHE_MODE_REPLACE}, but propagated recursively down the tree of dependencies (external resources).
    */
-  static readonly CACHE_MODE_REPLACE_DEEP: int;
+  readonly CACHE_MODE_REPLACE_DEEP: int;
 }
+declare const ResourceLoader: ResourceLoader;
+

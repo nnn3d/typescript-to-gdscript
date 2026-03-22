@@ -54078,5 +54078,171 @@
     "PackedVector4Array",
     "StringName",
     "NodePath"
+  ],
+  "singletons": [
+    {
+      "name": "AccessibilityServer",
+      "type": "AccessibilityServer"
+    },
+    {
+      "name": "AudioServer",
+      "type": "AudioServer"
+    },
+    {
+      "name": "CameraServer",
+      "type": "CameraServer"
+    },
+    {
+      "name": "ClassDB",
+      "type": "ClassDB"
+    },
+    {
+      "name": "DisplayServer",
+      "type": "DisplayServer"
+    },
+    {
+      "name": "EditorInterface",
+      "type": "EditorInterface"
+    },
+    {
+      "name": "Engine",
+      "type": "Engine"
+    },
+    {
+      "name": "EngineDebugger",
+      "type": "EngineDebugger"
+    },
+    {
+      "name": "GDExtensionManager",
+      "type": "GDExtensionManager"
+    },
+    {
+      "name": "GDScriptLanguageProtocol",
+      "type": "GDScriptLanguageProtocol"
+    },
+    {
+      "name": "Geometry2D",
+      "type": "Geometry2D"
+    },
+    {
+      "name": "Geometry3D",
+      "type": "Geometry3D"
+    },
+    {
+      "name": "IP",
+      "type": "IP"
+    },
+    {
+      "name": "Input",
+      "type": "Input"
+    },
+    {
+      "name": "InputMap",
+      "type": "InputMap"
+    },
+    {
+      "name": "JavaClassWrapper",
+      "type": "JavaClassWrapper"
+    },
+    {
+      "name": "JavaScriptBridge",
+      "type": "JavaScriptBridge"
+    },
+    {
+      "name": "Marshalls",
+      "type": "Marshalls"
+    },
+    {
+      "name": "NativeMenu",
+      "type": "NativeMenu"
+    },
+    {
+      "name": "NavigationMeshGenerator",
+      "type": "NavigationMeshGenerator"
+    },
+    {
+      "name": "NavigationServer2D",
+      "type": "NavigationServer2D"
+    },
+    {
+      "name": "NavigationServer2DManager",
+      "type": "NavigationServer2DManager"
+    },
+    {
+      "name": "NavigationServer3D",
+      "type": "NavigationServer3D"
+    },
+    {
+      "name": "NavigationServer3DManager",
+      "type": "NavigationServer3DManager"
+    },
+    {
+      "name": "OS",
+      "type": "OS"
+    },
+    {
+      "name": "Performance",
+      "type": "Performance"
+    },
+    {
+      "name": "PhysicsServer2D",
+      "type": "PhysicsServer2D"
+    },
+    {
+      "name": "PhysicsServer2DManager",
+      "type": "PhysicsServer2DManager"
+    },
+    {
+      "name": "PhysicsServer3D",
+      "type": "PhysicsServer3D"
+    },
+    {
+      "name": "PhysicsServer3DManager",
+      "type": "PhysicsServer3DManager"
+    },
+    {
+      "name": "ProjectSettings",
+      "type": "ProjectSettings"
+    },
+    {
+      "name": "RenderingServer",
+      "type": "RenderingServer"
+    },
+    {
+      "name": "ResourceLoader",
+      "type": "ResourceLoader"
+    },
+    {
+      "name": "ResourceSaver",
+      "type": "ResourceSaver"
+    },
+    {
+      "name": "ResourceUID",
+      "type": "ResourceUID"
+    },
+    {
+      "name": "TextServerManager",
+      "type": "TextServerManager"
+    },
+    {
+      "name": "ThemeDB",
+      "type": "ThemeDB"
+    },
+    {
+      "name": "Time",
+      "type": "Time"
+    },
+    {
+      "name": "TranslationServer",
+      "type": "TranslationServer"
+    },
+    {
+      "name": "WorkerThreadPool",
+      "type": "WorkerThreadPool"
+    },
+    {
+      "name": "XRServer",
+      "type": "XRServer"
+    }
   ]
 }

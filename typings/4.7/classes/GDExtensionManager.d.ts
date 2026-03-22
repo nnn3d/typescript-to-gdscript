@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Provides access to GDExtension functionality. */
-declare class GDExtensionManager extends GodotObject {
+declare interface GDExtensionManager extends GodotObject {
   /**
    * Returns the {@link GDExtension} at the given file `path`, or `null` if it has not been loaded or does not exist.
    */
@@ -46,13 +46,15 @@ declare class GDExtensionManager extends GodotObject {
 
   // enum LoadStatus
   /** The extension has loaded successfully. */
-  static readonly LOAD_STATUS_OK: int;
+  readonly LOAD_STATUS_OK: int;
   /** The extension has failed to load, possibly because it does not exist or has missing dependencies. */
-  static readonly LOAD_STATUS_FAILED: int;
+  readonly LOAD_STATUS_FAILED: int;
   /** The extension has already been loaded. */
-  static readonly LOAD_STATUS_ALREADY_LOADED: int;
+  readonly LOAD_STATUS_ALREADY_LOADED: int;
   /** The extension has not been loaded. */
-  static readonly LOAD_STATUS_NOT_LOADED: int;
+  readonly LOAD_STATUS_NOT_LOADED: int;
   /** The extension requires the application to restart to fully load. */
-  static readonly LOAD_STATUS_NEEDS_RESTART: int;
+  readonly LOAD_STATUS_NEEDS_RESTART: int;
 }
+declare const GDExtensionManager: GDExtensionManager;
+

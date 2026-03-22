@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A singleton that manages all {@link InputEventAction}s. */
-declare class InputMap extends GodotObject {
+declare interface InputMap extends GodotObject {
   /** Adds an {@link InputEvent} to an action. This {@link InputEvent} will trigger the action. */
   action_add_event(action: string, event: InputEvent): void;
   /** Removes an {@link InputEvent} from an action. */
@@ -46,3 +46,5 @@ declare class InputMap extends GodotObject {
   /** Emitted when the {@link ProjectSettings} {@link InputMap} has been loaded. */
   project_settings_loaded: Signal<[]>;
 }
+declare const InputMap: InputMap;
+

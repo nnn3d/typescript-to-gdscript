@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A server interface for low-level 3D physics access. */
-declare class PhysicsServer3D extends GodotObject {
+declare interface PhysicsServer3D extends GodotObject {
   /**
    * Adds a shape to the area, along with a transform matrix. Shapes are usually referenced by their index, so you should track which shape has a given index.
    */
@@ -541,483 +541,488 @@ declare class PhysicsServer3D extends GodotObject {
 
   // enum JointType
   /** The {@link Joint3D} is a {@link PinJoint3D}. */
-  static readonly JOINT_TYPE_PIN: int;
+  readonly JOINT_TYPE_PIN: int;
   /** The {@link Joint3D} is a {@link HingeJoint3D}. */
-  static readonly JOINT_TYPE_HINGE: int;
+  readonly JOINT_TYPE_HINGE: int;
   /** The {@link Joint3D} is a {@link SliderJoint3D}. */
-  static readonly JOINT_TYPE_SLIDER: int;
+  readonly JOINT_TYPE_SLIDER: int;
   /** The {@link Joint3D} is a {@link ConeTwistJoint3D}. */
-  static readonly JOINT_TYPE_CONE_TWIST: int;
+  readonly JOINT_TYPE_CONE_TWIST: int;
   /** The {@link Joint3D} is a {@link Generic6DOFJoint3D}. */
-  static readonly JOINT_TYPE_6DOF: int;
+  readonly JOINT_TYPE_6DOF: int;
   /** Represents the size of the {@link JointType} enum. */
-  static readonly JOINT_TYPE_MAX: int;
+  readonly JOINT_TYPE_MAX: int;
   // enum PinJointParam
   /**
    * The strength with which the pinned objects try to stay in positional relation to each other. The higher, the stronger.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly PIN_JOINT_BIAS: int;
+  readonly PIN_JOINT_BIAS: int;
   /**
    * The strength with which the pinned objects try to stay in velocity relation to each other. The higher, the stronger.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly PIN_JOINT_DAMPING: int;
+  readonly PIN_JOINT_DAMPING: int;
   /**
    * If above 0, this value is the maximum value for an impulse that this Joint3D puts on its ends.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly PIN_JOINT_IMPULSE_CLAMP: int;
+  readonly PIN_JOINT_IMPULSE_CLAMP: int;
   // enum HingeJointParam
   /**
    * The speed with which the two bodies get pulled together when they move in different directions.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly HINGE_JOINT_BIAS: int;
+  readonly HINGE_JOINT_BIAS: int;
   /** The maximum rotation across the Hinge. */
-  static readonly HINGE_JOINT_LIMIT_UPPER: int;
+  readonly HINGE_JOINT_LIMIT_UPPER: int;
   /** The minimum rotation across the Hinge. */
-  static readonly HINGE_JOINT_LIMIT_LOWER: int;
+  readonly HINGE_JOINT_LIMIT_LOWER: int;
   /**
    * The speed with which the rotation across the axis perpendicular to the hinge gets corrected.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly HINGE_JOINT_LIMIT_BIAS: int;
+  readonly HINGE_JOINT_LIMIT_BIAS: int;
   /**
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly HINGE_JOINT_LIMIT_SOFTNESS: int;
+  readonly HINGE_JOINT_LIMIT_SOFTNESS: int;
   /**
    * The lower this value, the more the rotation gets slowed down.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly HINGE_JOINT_LIMIT_RELAXATION: int;
+  readonly HINGE_JOINT_LIMIT_RELAXATION: int;
   /** Target speed for the motor. */
-  static readonly HINGE_JOINT_MOTOR_TARGET_VELOCITY: int;
+  readonly HINGE_JOINT_MOTOR_TARGET_VELOCITY: int;
   /** Maximum acceleration for the motor. */
-  static readonly HINGE_JOINT_MOTOR_MAX_IMPULSE: int;
+  readonly HINGE_JOINT_MOTOR_MAX_IMPULSE: int;
   // enum HingeJointFlag
   /** If `true`, the Hinge has a maximum and a minimum rotation. */
-  static readonly HINGE_JOINT_FLAG_USE_LIMIT: int;
+  readonly HINGE_JOINT_FLAG_USE_LIMIT: int;
   /** If `true`, a motor turns the Hinge. */
-  static readonly HINGE_JOINT_FLAG_ENABLE_MOTOR: int;
+  readonly HINGE_JOINT_FLAG_ENABLE_MOTOR: int;
   // enum SliderJointParam
   /** The maximum difference between the pivot points on their X axis before damping happens. */
-  static readonly SLIDER_JOINT_LINEAR_LIMIT_UPPER: int;
+  readonly SLIDER_JOINT_LINEAR_LIMIT_UPPER: int;
   /** The minimum difference between the pivot points on their X axis before damping happens. */
-  static readonly SLIDER_JOINT_LINEAR_LIMIT_LOWER: int;
+  readonly SLIDER_JOINT_LINEAR_LIMIT_LOWER: int;
   /**
    * A factor applied to the movement across the slider axis once the limits get surpassed. The lower, the slower the movement.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_LINEAR_LIMIT_SOFTNESS: int;
+  readonly SLIDER_JOINT_LINEAR_LIMIT_SOFTNESS: int;
   /**
    * The amount of restitution once the limits are surpassed. The lower, the more velocity-energy gets lost.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_LINEAR_LIMIT_RESTITUTION: int;
+  readonly SLIDER_JOINT_LINEAR_LIMIT_RESTITUTION: int;
   /**
    * The amount of damping once the slider limits are surpassed.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_LINEAR_LIMIT_DAMPING: int;
+  readonly SLIDER_JOINT_LINEAR_LIMIT_DAMPING: int;
   /**
    * A factor applied to the movement across the slider axis as long as the slider is in the limits. The lower, the slower the movement.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_LINEAR_MOTION_SOFTNESS: int;
+  readonly SLIDER_JOINT_LINEAR_MOTION_SOFTNESS: int;
   /**
    * The amount of restitution inside the slider limits.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_LINEAR_MOTION_RESTITUTION: int;
+  readonly SLIDER_JOINT_LINEAR_MOTION_RESTITUTION: int;
   /**
    * The amount of damping inside the slider limits.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_LINEAR_MOTION_DAMPING: int;
+  readonly SLIDER_JOINT_LINEAR_MOTION_DAMPING: int;
   /**
    * A factor applied to the movement across axes orthogonal to the slider.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_LINEAR_ORTHOGONAL_SOFTNESS: int;
+  readonly SLIDER_JOINT_LINEAR_ORTHOGONAL_SOFTNESS: int;
   /**
    * The amount of restitution when movement is across axes orthogonal to the slider.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_LINEAR_ORTHOGONAL_RESTITUTION: int;
+  readonly SLIDER_JOINT_LINEAR_ORTHOGONAL_RESTITUTION: int;
   /**
    * The amount of damping when movement is across axes orthogonal to the slider.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_LINEAR_ORTHOGONAL_DAMPING: int;
+  readonly SLIDER_JOINT_LINEAR_ORTHOGONAL_DAMPING: int;
   /**
    * The upper limit of rotation in the slider.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_ANGULAR_LIMIT_UPPER: int;
+  readonly SLIDER_JOINT_ANGULAR_LIMIT_UPPER: int;
   /**
    * The lower limit of rotation in the slider.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_ANGULAR_LIMIT_LOWER: int;
+  readonly SLIDER_JOINT_ANGULAR_LIMIT_LOWER: int;
   /**
    * A factor applied to the all rotation once the limit is surpassed.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_ANGULAR_LIMIT_SOFTNESS: int;
+  readonly SLIDER_JOINT_ANGULAR_LIMIT_SOFTNESS: int;
   /**
    * The amount of restitution of the rotation when the limit is surpassed.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_ANGULAR_LIMIT_RESTITUTION: int;
+  readonly SLIDER_JOINT_ANGULAR_LIMIT_RESTITUTION: int;
   /**
    * The amount of damping of the rotation when the limit is surpassed.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_ANGULAR_LIMIT_DAMPING: int;
+  readonly SLIDER_JOINT_ANGULAR_LIMIT_DAMPING: int;
   /**
    * A factor that gets applied to the all rotation in the limits.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_ANGULAR_MOTION_SOFTNESS: int;
+  readonly SLIDER_JOINT_ANGULAR_MOTION_SOFTNESS: int;
   /**
    * The amount of restitution of the rotation in the limits.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_ANGULAR_MOTION_RESTITUTION: int;
+  readonly SLIDER_JOINT_ANGULAR_MOTION_RESTITUTION: int;
   /**
    * The amount of damping of the rotation in the limits.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_ANGULAR_MOTION_DAMPING: int;
+  readonly SLIDER_JOINT_ANGULAR_MOTION_DAMPING: int;
   /**
    * A factor that gets applied to the all rotation across axes orthogonal to the slider.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_ANGULAR_ORTHOGONAL_SOFTNESS: int;
+  readonly SLIDER_JOINT_ANGULAR_ORTHOGONAL_SOFTNESS: int;
   /**
    * The amount of restitution of the rotation across axes orthogonal to the slider.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_ANGULAR_ORTHOGONAL_RESTITUTION: int;
+  readonly SLIDER_JOINT_ANGULAR_ORTHOGONAL_RESTITUTION: int;
   /**
    * The amount of damping of the rotation across axes orthogonal to the slider.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SLIDER_JOINT_ANGULAR_ORTHOGONAL_DAMPING: int;
+  readonly SLIDER_JOINT_ANGULAR_ORTHOGONAL_DAMPING: int;
   /** Represents the size of the {@link SliderJointParam} enum. */
-  static readonly SLIDER_JOINT_MAX: int;
+  readonly SLIDER_JOINT_MAX: int;
   // enum ConeTwistJointParam
   /**
    * Swing is rotation from side to side, around the axis perpendicular to the twist axis.
    * The swing span defines, how much rotation will not get corrected along the swing axis.
    * Could be defined as looseness in the {@link ConeTwistJoint3D}. If below 0.05, this behavior is locked.
    */
-  static readonly CONE_TWIST_JOINT_SWING_SPAN: int;
+  readonly CONE_TWIST_JOINT_SWING_SPAN: int;
   /**
    * Twist is the rotation around the twist axis, this value defined how far the joint can twist. Twist is locked if below 0.05.
    */
-  static readonly CONE_TWIST_JOINT_TWIST_SPAN: int;
+  readonly CONE_TWIST_JOINT_TWIST_SPAN: int;
   /**
    * The speed with which the swing or twist will take place. The higher, the faster.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly CONE_TWIST_JOINT_BIAS: int;
+  readonly CONE_TWIST_JOINT_BIAS: int;
   /**
    * The ease with which the Joint3D twists, if it's too low, it takes more force to twist the joint.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly CONE_TWIST_JOINT_SOFTNESS: int;
+  readonly CONE_TWIST_JOINT_SOFTNESS: int;
   /**
    * Defines, how fast the swing- and twist-speed-difference on both sides gets synced.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly CONE_TWIST_JOINT_RELAXATION: int;
+  readonly CONE_TWIST_JOINT_RELAXATION: int;
   // enum G6DOFJointAxisParam
   /** The minimum difference between the pivot points' axes. */
-  static readonly G6DOF_JOINT_LINEAR_LOWER_LIMIT: int;
+  readonly G6DOF_JOINT_LINEAR_LOWER_LIMIT: int;
   /** The maximum difference between the pivot points' axes. */
-  static readonly G6DOF_JOINT_LINEAR_UPPER_LIMIT: int;
+  readonly G6DOF_JOINT_LINEAR_UPPER_LIMIT: int;
   /**
    * A factor that gets applied to the movement across the axes. The lower, the slower the movement.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly G6DOF_JOINT_LINEAR_LIMIT_SOFTNESS: int;
+  readonly G6DOF_JOINT_LINEAR_LIMIT_SOFTNESS: int;
   /**
    * The amount of restitution on the axes movement. The lower, the more velocity-energy gets lost.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly G6DOF_JOINT_LINEAR_RESTITUTION: int;
+  readonly G6DOF_JOINT_LINEAR_RESTITUTION: int;
   /**
    * The amount of damping that happens at the linear motion across the axes.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly G6DOF_JOINT_LINEAR_DAMPING: int;
+  readonly G6DOF_JOINT_LINEAR_DAMPING: int;
   /** The velocity that the joint's linear motor will attempt to reach. */
-  static readonly G6DOF_JOINT_LINEAR_MOTOR_TARGET_VELOCITY: int;
+  readonly G6DOF_JOINT_LINEAR_MOTOR_TARGET_VELOCITY: int;
   /** The maximum force that the linear motor can apply while trying to reach the target velocity. */
-  static readonly G6DOF_JOINT_LINEAR_MOTOR_FORCE_LIMIT: int;
-  static readonly G6DOF_JOINT_LINEAR_SPRING_STIFFNESS: int;
-  static readonly G6DOF_JOINT_LINEAR_SPRING_DAMPING: int;
-  static readonly G6DOF_JOINT_LINEAR_SPRING_EQUILIBRIUM_POINT: int;
+  readonly G6DOF_JOINT_LINEAR_MOTOR_FORCE_LIMIT: int;
+  readonly G6DOF_JOINT_LINEAR_SPRING_STIFFNESS: int;
+  readonly G6DOF_JOINT_LINEAR_SPRING_DAMPING: int;
+  readonly G6DOF_JOINT_LINEAR_SPRING_EQUILIBRIUM_POINT: int;
   /** The minimum rotation in negative direction to break loose and rotate around the axes. */
-  static readonly G6DOF_JOINT_ANGULAR_LOWER_LIMIT: int;
+  readonly G6DOF_JOINT_ANGULAR_LOWER_LIMIT: int;
   /** The minimum rotation in positive direction to break loose and rotate around the axes. */
-  static readonly G6DOF_JOINT_ANGULAR_UPPER_LIMIT: int;
+  readonly G6DOF_JOINT_ANGULAR_UPPER_LIMIT: int;
   /**
    * A factor that gets multiplied onto all rotations across the axes.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly G6DOF_JOINT_ANGULAR_LIMIT_SOFTNESS: int;
+  readonly G6DOF_JOINT_ANGULAR_LIMIT_SOFTNESS: int;
   /**
    * The amount of rotational damping across the axes. The lower, the more damping occurs.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly G6DOF_JOINT_ANGULAR_DAMPING: int;
+  readonly G6DOF_JOINT_ANGULAR_DAMPING: int;
   /**
    * The amount of rotational restitution across the axes. The lower, the more restitution occurs.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly G6DOF_JOINT_ANGULAR_RESTITUTION: int;
+  readonly G6DOF_JOINT_ANGULAR_RESTITUTION: int;
   /**
    * The maximum amount of force that can occur, when rotating around the axes.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly G6DOF_JOINT_ANGULAR_FORCE_LIMIT: int;
+  readonly G6DOF_JOINT_ANGULAR_FORCE_LIMIT: int;
   /**
    * When correcting the crossing of limits in rotation across the axes, this error tolerance factor defines how much the correction gets slowed down. The lower, the slower.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly G6DOF_JOINT_ANGULAR_ERP: int;
+  readonly G6DOF_JOINT_ANGULAR_ERP: int;
   /** Target speed for the motor at the axes. */
-  static readonly G6DOF_JOINT_ANGULAR_MOTOR_TARGET_VELOCITY: int;
+  readonly G6DOF_JOINT_ANGULAR_MOTOR_TARGET_VELOCITY: int;
   /** Maximum acceleration for the motor at the axes. */
-  static readonly G6DOF_JOINT_ANGULAR_MOTOR_FORCE_LIMIT: int;
-  static readonly G6DOF_JOINT_ANGULAR_SPRING_STIFFNESS: int;
-  static readonly G6DOF_JOINT_ANGULAR_SPRING_DAMPING: int;
-  static readonly G6DOF_JOINT_ANGULAR_SPRING_EQUILIBRIUM_POINT: int;
+  readonly G6DOF_JOINT_ANGULAR_MOTOR_FORCE_LIMIT: int;
+  readonly G6DOF_JOINT_ANGULAR_SPRING_STIFFNESS: int;
+  readonly G6DOF_JOINT_ANGULAR_SPRING_DAMPING: int;
+  readonly G6DOF_JOINT_ANGULAR_SPRING_EQUILIBRIUM_POINT: int;
   /** Represents the size of the {@link G6DOFJointAxisParam} enum. */
-  static readonly G6DOF_JOINT_MAX: int;
+  readonly G6DOF_JOINT_MAX: int;
   // enum G6DOFJointAxisFlag
   /** If set, linear motion is possible within the given limits. */
-  static readonly G6DOF_JOINT_FLAG_ENABLE_LINEAR_LIMIT: int;
+  readonly G6DOF_JOINT_FLAG_ENABLE_LINEAR_LIMIT: int;
   /** If set, rotational motion is possible. */
-  static readonly G6DOF_JOINT_FLAG_ENABLE_ANGULAR_LIMIT: int;
-  static readonly G6DOF_JOINT_FLAG_ENABLE_ANGULAR_SPRING: int;
-  static readonly G6DOF_JOINT_FLAG_ENABLE_LINEAR_SPRING: int;
+  readonly G6DOF_JOINT_FLAG_ENABLE_ANGULAR_LIMIT: int;
+  readonly G6DOF_JOINT_FLAG_ENABLE_ANGULAR_SPRING: int;
+  readonly G6DOF_JOINT_FLAG_ENABLE_LINEAR_SPRING: int;
   /** If set, there is a rotational motor across these axes. */
-  static readonly G6DOF_JOINT_FLAG_ENABLE_MOTOR: int;
+  readonly G6DOF_JOINT_FLAG_ENABLE_MOTOR: int;
   /** If set, there is a linear motor on this axis that targets a specific velocity. */
-  static readonly G6DOF_JOINT_FLAG_ENABLE_LINEAR_MOTOR: int;
+  readonly G6DOF_JOINT_FLAG_ENABLE_LINEAR_MOTOR: int;
   /** Represents the size of the {@link G6DOFJointAxisFlag} enum. */
-  static readonly G6DOF_JOINT_FLAG_MAX: int;
+  readonly G6DOF_JOINT_FLAG_MAX: int;
   // enum ShapeType
   /** Constant for creating a world boundary shape (used by the {@link WorldBoundaryShape3D} resource). */
-  static readonly SHAPE_WORLD_BOUNDARY: int;
+  readonly SHAPE_WORLD_BOUNDARY: int;
   /** Constant for creating a separation ray shape (used by the {@link SeparationRayShape3D} resource). */
-  static readonly SHAPE_SEPARATION_RAY: int;
+  readonly SHAPE_SEPARATION_RAY: int;
   /** Constant for creating a sphere shape (used by the {@link SphereShape3D} resource). */
-  static readonly SHAPE_SPHERE: int;
+  readonly SHAPE_SPHERE: int;
   /** Constant for creating a box shape (used by the {@link BoxShape3D} resource). */
-  static readonly SHAPE_BOX: int;
+  readonly SHAPE_BOX: int;
   /** Constant for creating a capsule shape (used by the {@link CapsuleShape3D} resource). */
-  static readonly SHAPE_CAPSULE: int;
+  readonly SHAPE_CAPSULE: int;
   /** Constant for creating a cylinder shape (used by the {@link CylinderShape3D} resource). */
-  static readonly SHAPE_CYLINDER: int;
+  readonly SHAPE_CYLINDER: int;
   /** Constant for creating a convex polygon shape (used by the {@link ConvexPolygonShape3D} resource). */
-  static readonly SHAPE_CONVEX_POLYGON: int;
+  readonly SHAPE_CONVEX_POLYGON: int;
   /**
    * Constant for creating a concave polygon (trimesh) shape (used by the {@link ConcavePolygonShape3D} resource).
    */
-  static readonly SHAPE_CONCAVE_POLYGON: int;
+  readonly SHAPE_CONCAVE_POLYGON: int;
   /** Constant for creating a heightmap shape (used by the {@link HeightMapShape3D} resource). */
-  static readonly SHAPE_HEIGHTMAP: int;
+  readonly SHAPE_HEIGHTMAP: int;
   /**
    * Constant used internally for a soft body shape. Any attempt to create this kind of shape results in an error.
    */
-  static readonly SHAPE_SOFT_BODY: int;
+  readonly SHAPE_SOFT_BODY: int;
   /**
    * Constant used internally for a custom shape. Any attempt to create this kind of shape results in an error when using Godot Physics or Jolt Physics.
    */
-  static readonly SHAPE_CUSTOM: int;
+  readonly SHAPE_CUSTOM: int;
   // enum AreaParameter
   /**
    * Constant to set/get gravity override mode in an area. See {@link AreaSpaceOverrideMode} for possible values.
    */
-  static readonly AREA_PARAM_GRAVITY_OVERRIDE_MODE: int;
+  readonly AREA_PARAM_GRAVITY_OVERRIDE_MODE: int;
   /** Constant to set/get gravity strength in an area. */
-  static readonly AREA_PARAM_GRAVITY: int;
+  readonly AREA_PARAM_GRAVITY: int;
   /** Constant to set/get gravity vector/center in an area. */
-  static readonly AREA_PARAM_GRAVITY_VECTOR: int;
+  readonly AREA_PARAM_GRAVITY_VECTOR: int;
   /** Constant to set/get whether the gravity vector of an area is a direction, or a center point. */
-  static readonly AREA_PARAM_GRAVITY_IS_POINT: int;
+  readonly AREA_PARAM_GRAVITY_IS_POINT: int;
   /**
    * Constant to set/get the distance at which the gravity strength is equal to the gravity controlled by {@link AREA_PARAM_GRAVITY}. For example, on a planet 100 meters in radius with a surface gravity of 4.0 m/s², set the gravity to 4.0 and the unit distance to 100.0. The gravity will have falloff according to the inverse square law, so in the example, at 200 meters from the center the gravity will be 1.0 m/s² (twice the distance, 1/4th the gravity), at 50 meters it will be 16.0 m/s² (half the distance, 4x the gravity), and so on.
    * The above is true only when the unit distance is a positive number. When this is set to 0.0, the gravity will be constant regardless of distance.
    */
-  static readonly AREA_PARAM_GRAVITY_POINT_UNIT_DISTANCE: int;
+  readonly AREA_PARAM_GRAVITY_POINT_UNIT_DISTANCE: int;
   /**
    * Constant to set/get linear damping override mode in an area. See {@link AreaSpaceOverrideMode} for possible values.
    */
-  static readonly AREA_PARAM_LINEAR_DAMP_OVERRIDE_MODE: int;
+  readonly AREA_PARAM_LINEAR_DAMP_OVERRIDE_MODE: int;
   /** Constant to set/get the linear damping factor of an area. */
-  static readonly AREA_PARAM_LINEAR_DAMP: int;
+  readonly AREA_PARAM_LINEAR_DAMP: int;
   /**
    * Constant to set/get angular damping override mode in an area. See {@link AreaSpaceOverrideMode} for possible values.
    */
-  static readonly AREA_PARAM_ANGULAR_DAMP_OVERRIDE_MODE: int;
+  readonly AREA_PARAM_ANGULAR_DAMP_OVERRIDE_MODE: int;
   /** Constant to set/get the angular damping factor of an area. */
-  static readonly AREA_PARAM_ANGULAR_DAMP: int;
+  readonly AREA_PARAM_ANGULAR_DAMP: int;
   /** Constant to set/get the priority (order of processing) of an area. */
-  static readonly AREA_PARAM_PRIORITY: int;
+  readonly AREA_PARAM_PRIORITY: int;
   /**
    * Constant to set/get the magnitude of area-specific wind force. This wind force only applies to {@link SoftBody3D} nodes. Other physics bodies are currently not affected by wind.
    */
-  static readonly AREA_PARAM_WIND_FORCE_MAGNITUDE: int;
+  readonly AREA_PARAM_WIND_FORCE_MAGNITUDE: int;
   /** Constant to set/get the 3D vector that specifies the origin from which an area-specific wind blows. */
-  static readonly AREA_PARAM_WIND_SOURCE: int;
+  readonly AREA_PARAM_WIND_SOURCE: int;
   /**
    * Constant to set/get the 3D vector that specifies the direction in which an area-specific wind blows.
    */
-  static readonly AREA_PARAM_WIND_DIRECTION: int;
+  readonly AREA_PARAM_WIND_DIRECTION: int;
   /**
    * Constant to set/get the exponential rate at which wind force decreases with distance from its origin.
    */
-  static readonly AREA_PARAM_WIND_ATTENUATION_FACTOR: int;
+  readonly AREA_PARAM_WIND_ATTENUATION_FACTOR: int;
   // enum AreaSpaceOverrideMode
   /**
    * This area does not affect gravity/damp. These are generally areas that exist only to detect collisions, and objects entering or exiting them.
    */
-  static readonly AREA_SPACE_OVERRIDE_DISABLED: int;
+  readonly AREA_SPACE_OVERRIDE_DISABLED: int;
   /**
    * This area adds its gravity/damp values to whatever has been calculated so far. This way, many overlapping areas can combine their physics to make interesting effects.
    */
-  static readonly AREA_SPACE_OVERRIDE_COMBINE: int;
+  readonly AREA_SPACE_OVERRIDE_COMBINE: int;
   /**
    * This area adds its gravity/damp values to whatever has been calculated so far. Then stops taking into account the rest of the areas, even the default one.
    */
-  static readonly AREA_SPACE_OVERRIDE_COMBINE_REPLACE: int;
+  readonly AREA_SPACE_OVERRIDE_COMBINE_REPLACE: int;
   /**
    * This area replaces any gravity/damp, even the default one, and stops taking into account the rest of the areas.
    */
-  static readonly AREA_SPACE_OVERRIDE_REPLACE: int;
+  readonly AREA_SPACE_OVERRIDE_REPLACE: int;
   /**
    * This area replaces any gravity/damp calculated so far, but keeps calculating the rest of the areas, down to the default one.
    */
-  static readonly AREA_SPACE_OVERRIDE_REPLACE_COMBINE: int;
+  readonly AREA_SPACE_OVERRIDE_REPLACE_COMBINE: int;
   // enum BodyMode
   /**
    * Constant for static bodies. In this mode, a body can be only moved by user code and doesn't collide with other bodies along its path when moved.
    */
-  static readonly BODY_MODE_STATIC: int;
+  readonly BODY_MODE_STATIC: int;
   /**
    * Constant for kinematic bodies. In this mode, a body can be only moved by user code and collides with other bodies along its path.
    */
-  static readonly BODY_MODE_KINEMATIC: int;
+  readonly BODY_MODE_KINEMATIC: int;
   /**
    * Constant for rigid bodies. In this mode, a body can be pushed by other bodies and has forces applied.
    */
-  static readonly BODY_MODE_RIGID: int;
+  readonly BODY_MODE_RIGID: int;
   /**
    * Constant for linear rigid bodies. In this mode, a body can not rotate, and only its linear velocity is affected by external forces.
    */
-  static readonly BODY_MODE_RIGID_LINEAR: int;
+  readonly BODY_MODE_RIGID_LINEAR: int;
   // enum BodyParameter
   /** Constant to set/get a body's bounce factor. */
-  static readonly BODY_PARAM_BOUNCE: int;
+  readonly BODY_PARAM_BOUNCE: int;
   /** Constant to set/get a body's friction. */
-  static readonly BODY_PARAM_FRICTION: int;
+  readonly BODY_PARAM_FRICTION: int;
   /** Constant to set/get a body's mass. */
-  static readonly BODY_PARAM_MASS: int;
+  readonly BODY_PARAM_MASS: int;
   /** Constant to set/get a body's inertia. */
-  static readonly BODY_PARAM_INERTIA: int;
+  readonly BODY_PARAM_INERTIA: int;
   /** Constant to set/get a body's center of mass position in the body's local coordinate system. */
-  static readonly BODY_PARAM_CENTER_OF_MASS: int;
+  readonly BODY_PARAM_CENTER_OF_MASS: int;
   /** Constant to set/get a body's gravity multiplier. */
-  static readonly BODY_PARAM_GRAVITY_SCALE: int;
+  readonly BODY_PARAM_GRAVITY_SCALE: int;
   /** Constant to set/get a body's linear damping mode. See {@link BodyDampMode} for possible values. */
-  static readonly BODY_PARAM_LINEAR_DAMP_MODE: int;
+  readonly BODY_PARAM_LINEAR_DAMP_MODE: int;
   /** Constant to set/get a body's angular damping mode. See {@link BodyDampMode} for possible values. */
-  static readonly BODY_PARAM_ANGULAR_DAMP_MODE: int;
+  readonly BODY_PARAM_ANGULAR_DAMP_MODE: int;
   /** Constant to set/get a body's linear damping factor. */
-  static readonly BODY_PARAM_LINEAR_DAMP: int;
+  readonly BODY_PARAM_LINEAR_DAMP: int;
   /** Constant to set/get a body's angular damping factor. */
-  static readonly BODY_PARAM_ANGULAR_DAMP: int;
+  readonly BODY_PARAM_ANGULAR_DAMP: int;
   /** Represents the size of the {@link BodyParameter} enum. */
-  static readonly BODY_PARAM_MAX: int;
+  readonly BODY_PARAM_MAX: int;
   // enum BodyDampMode
   /** The body's damping value is added to any value set in areas or the default value. */
-  static readonly BODY_DAMP_MODE_COMBINE: int;
+  readonly BODY_DAMP_MODE_COMBINE: int;
   /** The body's damping value replaces any value set in areas or the default value. */
-  static readonly BODY_DAMP_MODE_REPLACE: int;
+  readonly BODY_DAMP_MODE_REPLACE: int;
   // enum BodyState
   /** Constant to set/get the current transform matrix of the body. */
-  static readonly BODY_STATE_TRANSFORM: int;
+  readonly BODY_STATE_TRANSFORM: int;
   /** Constant to set/get the current linear velocity of the body. */
-  static readonly BODY_STATE_LINEAR_VELOCITY: int;
+  readonly BODY_STATE_LINEAR_VELOCITY: int;
   /** Constant to set/get the current angular velocity of the body. */
-  static readonly BODY_STATE_ANGULAR_VELOCITY: int;
+  readonly BODY_STATE_ANGULAR_VELOCITY: int;
   /** Constant to sleep/wake up a body, or to get whether it is sleeping. */
-  static readonly BODY_STATE_SLEEPING: int;
+  readonly BODY_STATE_SLEEPING: int;
   /** Constant to set/get whether the body can sleep. */
-  static readonly BODY_STATE_CAN_SLEEP: int;
+  readonly BODY_STATE_CAN_SLEEP: int;
   // enum AreaBodyStatus
   /**
    * The value of the first parameter and area callback function receives, when an object enters one of its shapes.
    */
-  static readonly AREA_BODY_ADDED: int;
+  readonly AREA_BODY_ADDED: int;
   /**
    * The value of the first parameter and area callback function receives, when an object exits one of its shapes.
    */
-  static readonly AREA_BODY_REMOVED: int;
+  readonly AREA_BODY_REMOVED: int;
   // enum ProcessInfo
   /** Constant to get the number of objects that are not sleeping. */
-  static readonly INFO_ACTIVE_OBJECTS: int;
+  readonly INFO_ACTIVE_OBJECTS: int;
   /** Constant to get the number of possible collisions. */
-  static readonly INFO_COLLISION_PAIRS: int;
+  readonly INFO_COLLISION_PAIRS: int;
   /** Constant to get the number of space regions where a collision could occur. */
-  static readonly INFO_ISLAND_COUNT: int;
+  readonly INFO_ISLAND_COUNT: int;
   // enum SpaceParameter
   /**
    * Constant to set/get the maximum distance a pair of bodies has to move before their collision status has to be recalculated.
    */
-  static readonly SPACE_PARAM_CONTACT_RECYCLE_RADIUS: int;
+  readonly SPACE_PARAM_CONTACT_RECYCLE_RADIUS: int;
   /**
    * Constant to set/get the maximum distance a shape can be from another before they are considered separated and the contact is discarded.
    */
-  static readonly SPACE_PARAM_CONTACT_MAX_SEPARATION: int;
+  readonly SPACE_PARAM_CONTACT_MAX_SEPARATION: int;
   /**
    * Constant to set/get the maximum distance a shape can penetrate another shape before it is considered a collision.
    */
-  static readonly SPACE_PARAM_CONTACT_MAX_ALLOWED_PENETRATION: int;
+  readonly SPACE_PARAM_CONTACT_MAX_ALLOWED_PENETRATION: int;
   /**
    * Constant to set/get the default solver bias for all physics contacts. A solver bias is a factor controlling how much two objects "rebound", after overlapping, to avoid leaving them in that state because of numerical imprecision.
    */
-  static readonly SPACE_PARAM_CONTACT_DEFAULT_BIAS: int;
+  readonly SPACE_PARAM_CONTACT_DEFAULT_BIAS: int;
   /**
    * Constant to set/get the threshold linear velocity of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after the time given.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD: int;
+  readonly SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD: int;
   /**
    * Constant to set/get the threshold angular velocity of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after the time given.
    * **Note:** Only supported when using GodotPhysics3D. This parameter is ignored when using Jolt Physics.
    */
-  static readonly SPACE_PARAM_BODY_ANGULAR_VELOCITY_SLEEP_THRESHOLD: int;
+  readonly SPACE_PARAM_BODY_ANGULAR_VELOCITY_SLEEP_THRESHOLD: int;
   /**
    * Constant to set/get the maximum time of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after this time.
    */
-  static readonly SPACE_PARAM_BODY_TIME_TO_SLEEP: int;
+  readonly SPACE_PARAM_BODY_TIME_TO_SLEEP: int;
   /**
    * Constant to set/get the number of solver iterations for contacts and constraints. The greater the number of iterations, the more accurate the collisions and constraints will be. However, a greater number of iterations requires more CPU power, which can decrease performance.
    */
-  static readonly SPACE_PARAM_SOLVER_ITERATIONS: int;
+  readonly SPACE_PARAM_SOLVER_ITERATIONS: int;
   // enum BodyAxis
-  static readonly BODY_AXIS_LINEAR_X: int;
-  static readonly BODY_AXIS_LINEAR_Y: int;
-  static readonly BODY_AXIS_LINEAR_Z: int;
-  static readonly BODY_AXIS_ANGULAR_X: int;
-  static readonly BODY_AXIS_ANGULAR_Y: int;
-  static readonly BODY_AXIS_ANGULAR_Z: int;
+  readonly BODY_AXIS_LINEAR_X: int;
+  readonly BODY_AXIS_LINEAR_Y: int;
+  readonly BODY_AXIS_LINEAR_Z: int;
+  readonly BODY_AXIS_ANGULAR_X: int;
+  readonly BODY_AXIS_ANGULAR_Y: int;
+  readonly BODY_AXIS_ANGULAR_Z: int;
 }
+declare var PhysicsServer3D: PhysicsServer3D & {
+  new(): PhysicsServer3D;
+  readonly prototype: PhysicsServer3D;
+};
+

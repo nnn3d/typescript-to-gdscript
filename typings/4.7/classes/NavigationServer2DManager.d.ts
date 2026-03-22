@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A singleton for managing {@link NavigationServer2D} implementations. */
-declare class NavigationServer2DManager extends GodotObject {
+declare interface NavigationServer2DManager extends GodotObject {
   /**
    * Registers a {@link NavigationServer2D} implementation by passing a `name` and a {@link Callable} that returns a {@link NavigationServer2D} object.
    */
@@ -12,3 +12,5 @@ declare class NavigationServer2DManager extends GodotObject {
    */
   set_default_server(name: string, priority: int): void;
 }
+declare const NavigationServer2DManager: NavigationServer2DManager;
+

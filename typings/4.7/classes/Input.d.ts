@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A singleton for handling inputs. */
-declare class Input extends GodotObject {
+declare interface Input extends GodotObject {
   /**
    * If `true`, sends mouse input events when tapping or swiping on the touchscreen. See also {@link ProjectSettings.input_devices/pointing/emulate_mouse_from_touch}.
    */
@@ -417,76 +417,78 @@ declare class Input extends GodotObject {
 
   // enum MouseMode
   /** Makes the mouse cursor visible if it is hidden. */
-  static readonly MOUSE_MODE_VISIBLE: int;
+  readonly MOUSE_MODE_VISIBLE: int;
   /** Makes the mouse cursor hidden if it is visible. */
-  static readonly MOUSE_MODE_HIDDEN: int;
+  readonly MOUSE_MODE_HIDDEN: int;
   /**
    * Captures the mouse. The mouse will be hidden and its position locked at the center of the window manager's window.
    * **Note:** If you want to process the mouse's movement in this mode, you need to use {@link InputEventMouseMotion.relative}.
    */
-  static readonly MOUSE_MODE_CAPTURED: int;
+  readonly MOUSE_MODE_CAPTURED: int;
   /** Confines the mouse cursor to the game window, and make it visible. */
-  static readonly MOUSE_MODE_CONFINED: int;
+  readonly MOUSE_MODE_CONFINED: int;
   /** Confines the mouse cursor to the game window, and make it hidden. */
-  static readonly MOUSE_MODE_CONFINED_HIDDEN: int;
+  readonly MOUSE_MODE_CONFINED_HIDDEN: int;
   /** Max value of the {@link MouseMode}. */
-  static readonly MOUSE_MODE_MAX: int;
+  readonly MOUSE_MODE_MAX: int;
   // enum CursorShape
   /** Arrow cursor. Standard, default pointing cursor. */
-  static readonly CURSOR_ARROW: int;
+  readonly CURSOR_ARROW: int;
   /** I-beam cursor. Usually used to show where the text cursor will appear when the mouse is clicked. */
-  static readonly CURSOR_IBEAM: int;
+  readonly CURSOR_IBEAM: int;
   /**
    * Pointing hand cursor. Usually used to indicate the pointer is over a link or other interactable item.
    */
-  static readonly CURSOR_POINTING_HAND: int;
+  readonly CURSOR_POINTING_HAND: int;
   /**
    * Cross cursor. Typically appears over regions in which a drawing operation can be performed or for selections.
    */
-  static readonly CURSOR_CROSS: int;
+  readonly CURSOR_CROSS: int;
   /**
    * Wait cursor. Indicates that the application is busy performing an operation, and that it cannot be used during the operation (e.g. something is blocking its main thread).
    */
-  static readonly CURSOR_WAIT: int;
+  readonly CURSOR_WAIT: int;
   /**
    * Busy cursor. Indicates that the application is busy performing an operation, and that it is still usable during the operation.
    */
-  static readonly CURSOR_BUSY: int;
+  readonly CURSOR_BUSY: int;
   /**
    * Drag cursor. Usually displayed when dragging something.
    * **Note:** Windows lacks a dragging cursor, so {@link CURSOR_DRAG} is the same as {@link CURSOR_MOVE} for this platform.
    */
-  static readonly CURSOR_DRAG: int;
+  readonly CURSOR_DRAG: int;
   /**
    * Can drop cursor. Usually displayed when dragging something to indicate that it can be dropped at the current position.
    */
-  static readonly CURSOR_CAN_DROP: int;
+  readonly CURSOR_CAN_DROP: int;
   /**
    * Forbidden cursor. Indicates that the current action is forbidden (for example, when dragging something) or that the control at a position is disabled.
    */
-  static readonly CURSOR_FORBIDDEN: int;
+  readonly CURSOR_FORBIDDEN: int;
   /**
    * Vertical resize mouse cursor. A double-headed vertical arrow. It tells the user they can resize the window or the panel vertically.
    */
-  static readonly CURSOR_VSIZE: int;
+  readonly CURSOR_VSIZE: int;
   /**
    * Horizontal resize mouse cursor. A double-headed horizontal arrow. It tells the user they can resize the window or the panel horizontally.
    */
-  static readonly CURSOR_HSIZE: int;
+  readonly CURSOR_HSIZE: int;
   /**
    * Window resize mouse cursor. The cursor is a double-headed arrow that goes from the bottom left to the top right. It tells the user they can resize the window or the panel both horizontally and vertically.
    */
-  static readonly CURSOR_BDIAGSIZE: int;
+  readonly CURSOR_BDIAGSIZE: int;
   /**
    * Window resize mouse cursor. The cursor is a double-headed arrow that goes from the top left to the bottom right, the opposite of {@link CURSOR_BDIAGSIZE}. It tells the user they can resize the window or the panel both horizontally and vertically.
    */
-  static readonly CURSOR_FDIAGSIZE: int;
+  readonly CURSOR_FDIAGSIZE: int;
   /** Move cursor. Indicates that something can be moved. */
-  static readonly CURSOR_MOVE: int;
+  readonly CURSOR_MOVE: int;
   /** Vertical split mouse cursor. On Windows, it's the same as {@link CURSOR_VSIZE}. */
-  static readonly CURSOR_VSPLIT: int;
+  readonly CURSOR_VSPLIT: int;
   /** Horizontal split mouse cursor. On Windows, it's the same as {@link CURSOR_HSIZE}. */
-  static readonly CURSOR_HSPLIT: int;
+  readonly CURSOR_HSPLIT: int;
   /** Help cursor. Usually a question mark. */
-  static readonly CURSOR_HELP: int;
+  readonly CURSOR_HELP: int;
 }
+declare const Input: Input;
+

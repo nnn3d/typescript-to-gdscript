@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A singleton that manages the unique identifiers of all resources within a project. */
-declare class ResourceUID extends GodotObject {
+declare interface ResourceUID extends GodotObject {
   /**
    * Adds a new UID value which is mapped to the given resource path.
    * Fails with an error if the UID already exists, so be sure to check {@link has_id} beforehand, or use {@link set_id} instead.
@@ -20,7 +20,7 @@ declare class ResourceUID extends GodotObject {
   /**
    * Returns a path, converting `path_or_uid` if necessary. Fails and returns an empty string if an invalid UID is provided.
    */
-  static ensure_path(path_or_uid: string): string;
+  ensure_path(path_or_uid: string): string;
   /**
    * Returns the path that the given UID value refers to.
    * Fails with an error if the UID does not exist, so be sure to check {@link has_id} beforehand.
@@ -33,7 +33,7 @@ declare class ResourceUID extends GodotObject {
   /**
    * Converts the provided resource `path` to a UID. Returns the unchanged path if it has no associated UID.
    */
-  static path_to_uid(path: string): string;
+  path_to_uid(path: string): string;
   /**
    * Removes a loaded UID value from the cache.
    * Fails with an error if the UID does not exist, so be sure to check {@link has_id} beforehand.
@@ -47,11 +47,13 @@ declare class ResourceUID extends GodotObject {
   /** Extracts the UID value from the given `uid://` string. */
   text_to_id(text_id: string): int;
   /** Converts the provided `uid` to a path. Prints an error if the UID is invalid. */
-  static uid_to_path(uid: string): string;
+  uid_to_path(uid: string): string;
 
   /**
    * The value to use for an invalid UID, for example if the resource could not be loaded.
    * Its text representation is `uid://<invalid>`.
    */
-  static readonly INVALID_ID: int;
+  readonly INVALID_ID: int;
 }
+declare const ResourceUID: ResourceUID;
+

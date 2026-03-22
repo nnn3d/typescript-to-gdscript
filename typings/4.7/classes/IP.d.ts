@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Internet protocol (IP) support functions such as DNS resolution. */
-declare class IP extends GodotObject {
+declare interface IP extends GodotObject {
   /**
    * Removes all of a `hostname`'s cached references. If no `hostname` is given, all cached IP addresses are removed.
    */
@@ -43,27 +43,29 @@ declare class IP extends GodotObject {
 
   // enum ResolverStatus
   /** DNS hostname resolver status: No status. */
-  static readonly RESOLVER_STATUS_NONE: int;
+  readonly RESOLVER_STATUS_NONE: int;
   /** DNS hostname resolver status: Waiting. */
-  static readonly RESOLVER_STATUS_WAITING: int;
+  readonly RESOLVER_STATUS_WAITING: int;
   /** DNS hostname resolver status: Done. */
-  static readonly RESOLVER_STATUS_DONE: int;
+  readonly RESOLVER_STATUS_DONE: int;
   /** DNS hostname resolver status: Error. */
-  static readonly RESOLVER_STATUS_ERROR: int;
+  readonly RESOLVER_STATUS_ERROR: int;
   // enum Type
   /** Address type: None. */
-  static readonly TYPE_NONE: int;
+  readonly TYPE_NONE: int;
   /** Address type: Internet protocol version 4 (IPv4). */
-  static readonly TYPE_IPV4: int;
+  readonly TYPE_IPV4: int;
   /** Address type: Internet protocol version 6 (IPv6). */
-  static readonly TYPE_IPV6: int;
+  readonly TYPE_IPV6: int;
   /** Address type: Any. */
-  static readonly TYPE_ANY: int;
+  readonly TYPE_ANY: int;
 
   /**
    * Maximum number of concurrent DNS resolver queries allowed, {@link RESOLVER_INVALID_ID} is returned if exceeded.
    */
-  static readonly RESOLVER_MAX_QUERIES: int;
+  readonly RESOLVER_MAX_QUERIES: int;
   /** Invalid ID constant. Returned if {@link RESOLVER_MAX_QUERIES} is exceeded. */
-  static readonly RESOLVER_INVALID_ID: int;
+  readonly RESOLVER_INVALID_ID: int;
 }
+declare const IP: IP;
+

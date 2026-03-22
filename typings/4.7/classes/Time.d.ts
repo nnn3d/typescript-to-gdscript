@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A singleton for working with time data. */
-declare class Time extends GodotObject {
+declare interface Time extends GodotObject {
   /**
    * Returns the current date as a dictionary of keys: `year`, `month`, `day`, and `weekday`.
    * The returned values are in the system's local time when `utc` is `false`, otherwise they are in UTC.
@@ -106,42 +106,44 @@ declare class Time extends GodotObject {
 
   // enum Month
   /** The month of January, represented numerically as `01`. */
-  static readonly MONTH_JANUARY: int;
+  readonly MONTH_JANUARY: int;
   /** The month of February, represented numerically as `02`. */
-  static readonly MONTH_FEBRUARY: int;
+  readonly MONTH_FEBRUARY: int;
   /** The month of March, represented numerically as `03`. */
-  static readonly MONTH_MARCH: int;
+  readonly MONTH_MARCH: int;
   /** The month of April, represented numerically as `04`. */
-  static readonly MONTH_APRIL: int;
+  readonly MONTH_APRIL: int;
   /** The month of May, represented numerically as `05`. */
-  static readonly MONTH_MAY: int;
+  readonly MONTH_MAY: int;
   /** The month of June, represented numerically as `06`. */
-  static readonly MONTH_JUNE: int;
+  readonly MONTH_JUNE: int;
   /** The month of July, represented numerically as `07`. */
-  static readonly MONTH_JULY: int;
+  readonly MONTH_JULY: int;
   /** The month of August, represented numerically as `08`. */
-  static readonly MONTH_AUGUST: int;
+  readonly MONTH_AUGUST: int;
   /** The month of September, represented numerically as `09`. */
-  static readonly MONTH_SEPTEMBER: int;
+  readonly MONTH_SEPTEMBER: int;
   /** The month of October, represented numerically as `10`. */
-  static readonly MONTH_OCTOBER: int;
+  readonly MONTH_OCTOBER: int;
   /** The month of November, represented numerically as `11`. */
-  static readonly MONTH_NOVEMBER: int;
+  readonly MONTH_NOVEMBER: int;
   /** The month of December, represented numerically as `12`. */
-  static readonly MONTH_DECEMBER: int;
+  readonly MONTH_DECEMBER: int;
   // enum Weekday
   /** The day of the week Sunday, represented numerically as `0`. */
-  static readonly WEEKDAY_SUNDAY: int;
+  readonly WEEKDAY_SUNDAY: int;
   /** The day of the week Monday, represented numerically as `1`. */
-  static readonly WEEKDAY_MONDAY: int;
+  readonly WEEKDAY_MONDAY: int;
   /** The day of the week Tuesday, represented numerically as `2`. */
-  static readonly WEEKDAY_TUESDAY: int;
+  readonly WEEKDAY_TUESDAY: int;
   /** The day of the week Wednesday, represented numerically as `3`. */
-  static readonly WEEKDAY_WEDNESDAY: int;
+  readonly WEEKDAY_WEDNESDAY: int;
   /** The day of the week Thursday, represented numerically as `4`. */
-  static readonly WEEKDAY_THURSDAY: int;
+  readonly WEEKDAY_THURSDAY: int;
   /** The day of the week Friday, represented numerically as `5`. */
-  static readonly WEEKDAY_FRIDAY: int;
+  readonly WEEKDAY_FRIDAY: int;
   /** The day of the week Saturday, represented numerically as `6`. */
-  static readonly WEEKDAY_SATURDAY: int;
+  readonly WEEKDAY_SATURDAY: int;
 }
+declare const Time: Time;
+

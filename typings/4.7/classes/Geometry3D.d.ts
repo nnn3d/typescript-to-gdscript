@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Provides methods for some common 3D geometric operations. */
-declare class Geometry3D extends GodotObject {
+declare interface Geometry3D extends GodotObject {
   /**
    * Returns an array with 6 {@link Plane}s that describe the sides of a box centered at the origin. The box size is defined by `extents`, which represents one (positive) corner of the box (i.e. half its actual size).
    */
@@ -63,3 +63,5 @@ declare class Geometry3D extends GodotObject {
    */
   tetrahedralize_delaunay(points: PackedVector3Array): PackedInt32Array;
 }
+declare const Geometry3D: Geometry3D;
+

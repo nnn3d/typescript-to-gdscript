@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A singleton for saving {@link Resource}s to the filesystem. */
-declare class ResourceSaver extends GodotObject {
+declare interface ResourceSaver extends GodotObject {
   /**
    * Registers a new {@link ResourceFormatSaver}. The ResourceSaver will use the ResourceFormatSaver as described in {@link save}.
    * This method is performed implicitly for ResourceFormatSavers written in GDScript (see {@link ResourceFormatSaver} for more information).
@@ -31,21 +31,23 @@ declare class ResourceSaver extends GodotObject {
 
   // enum SaverFlags
   /** No resource saving option. */
-  static readonly FLAG_NONE: int;
+  readonly FLAG_NONE: int;
   /** Save the resource with a path relative to the scene which uses it. */
-  static readonly FLAG_RELATIVE_PATHS: int;
+  readonly FLAG_RELATIVE_PATHS: int;
   /** Bundles external resources. */
-  static readonly FLAG_BUNDLE_RESOURCES: int;
+  readonly FLAG_BUNDLE_RESOURCES: int;
   /** Changes the {@link Resource.resource_path} of the saved resource to match its new location. */
-  static readonly FLAG_CHANGE_PATH: int;
+  readonly FLAG_CHANGE_PATH: int;
   /** Do not save editor-specific metadata (identified by their `__editor` prefix). */
-  static readonly FLAG_OMIT_EDITOR_PROPERTIES: int;
+  readonly FLAG_OMIT_EDITOR_PROPERTIES: int;
   /** Save as big endian (see {@link FileAccess.big_endian}). */
-  static readonly FLAG_SAVE_BIG_ENDIAN: int;
+  readonly FLAG_SAVE_BIG_ENDIAN: int;
   /**
    * Compress the resource on save using {@link FileAccess.COMPRESSION_ZSTD}. Only available for binary resource types.
    */
-  static readonly FLAG_COMPRESS: int;
+  readonly FLAG_COMPRESS: int;
   /** Take over the paths of the saved subresources (see {@link Resource.take_over_path}). */
-  static readonly FLAG_REPLACE_SUBRESOURCE_PATHS: int;
+  readonly FLAG_REPLACE_SUBRESOURCE_PATHS: int;
 }
+declare const ResourceSaver: ResourceSaver;
+

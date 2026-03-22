@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A server interface for low-level window management. */
-declare class DisplayServer extends GodotObject {
+declare interface DisplayServer extends GodotObject {
   /**
    * Creates a new, empty accessibility element resource.
    * **Note:** An accessibility element is created and freed automatically for each {@link Node}. In general, this function should not be called manually.
@@ -1402,273 +1402,273 @@ declare class DisplayServer extends GodotObject {
   /**
    * Display server supports global menu. This allows the application to display its menu items in the operating system's top bar. **macOS**
    */
-  static readonly FEATURE_GLOBAL_MENU: int;
+  readonly FEATURE_GLOBAL_MENU: int;
   /**
    * Display server supports multiple windows that can be moved outside of the main window. **Windows, macOS, Linux (X11)**
    */
-  static readonly FEATURE_SUBWINDOWS: int;
+  readonly FEATURE_SUBWINDOWS: int;
   /** Display server supports touchscreen input. **Windows, Linux (X11), Android, iOS, Web** */
-  static readonly FEATURE_TOUCHSCREEN: int;
+  readonly FEATURE_TOUCHSCREEN: int;
   /** Display server supports mouse input. **Windows, macOS, Linux (X11/Wayland), Android, Web** */
-  static readonly FEATURE_MOUSE: int;
+  readonly FEATURE_MOUSE: int;
   /**
    * Display server supports warping mouse coordinates to keep the mouse cursor constrained within an area, but looping when one of the edges is reached. **Windows, macOS, Linux (X11/Wayland)**
    */
-  static readonly FEATURE_MOUSE_WARP: int;
+  readonly FEATURE_MOUSE_WARP: int;
   /**
    * Display server supports setting and getting clipboard data. See also {@link FEATURE_CLIPBOARD_PRIMARY}. **Windows, macOS, Linux (X11/Wayland), Android, iOS, Web**
    */
-  static readonly FEATURE_CLIPBOARD: int;
+  readonly FEATURE_CLIPBOARD: int;
   /**
    * Display server supports popping up a virtual keyboard when requested to input text without a physical keyboard. **Android, iOS, Web**
    */
-  static readonly FEATURE_VIRTUAL_KEYBOARD: int;
+  readonly FEATURE_VIRTUAL_KEYBOARD: int;
   /**
    * Display server supports setting the mouse cursor shape to be different from the default. **Windows, macOS, Linux (X11/Wayland), Android, Web**
    */
-  static readonly FEATURE_CURSOR_SHAPE: int;
+  readonly FEATURE_CURSOR_SHAPE: int;
   /**
    * Display server supports setting the mouse cursor shape to a custom image. **Windows, macOS, Linux (X11/Wayland), Web**
    */
-  static readonly FEATURE_CUSTOM_CURSOR_SHAPE: int;
+  readonly FEATURE_CUSTOM_CURSOR_SHAPE: int;
   /**
    * Display server supports spawning text dialogs using the operating system's native look-and-feel. See {@link dialog_show}. **Windows, macOS**
    */
-  static readonly FEATURE_NATIVE_DIALOG: int;
+  readonly FEATURE_NATIVE_DIALOG: int;
   /**
    * Display server supports Input Method Editor (https://en.wikipedia.org/wiki/Input_method), which is commonly used for inputting Chinese/Japanese/Korean text. This is handled by the operating system, rather than by Godot. **Windows, macOS, Linux (X11)**
    */
-  static readonly FEATURE_IME: int;
+  readonly FEATURE_IME: int;
   /**
    * Display server supports windows can use per-pixel transparency to make windows behind them partially or fully visible. **Windows, macOS, Linux (X11/Wayland), Android**
    */
-  static readonly FEATURE_WINDOW_TRANSPARENCY: int;
+  readonly FEATURE_WINDOW_TRANSPARENCY: int;
   /**
    * Display server supports querying the operating system's display scale factor. This allows automatically detecting the hiDPI display *reliably*, instead of guessing based on the screen resolution and the display's reported DPI (which might be unreliable due to broken monitor EDID). **Windows, Linux (Wayland), macOS**
    */
-  static readonly FEATURE_HIDPI: int;
+  readonly FEATURE_HIDPI: int;
   /**
    * Display server supports changing the window icon (usually displayed in the top-left corner). **Windows, macOS, Linux (X11/Wayland)**
    * **Note:** Use on Wayland requires the compositor to implement the xdg_toplevel_icon_v1 (https://wayland.app/protocols/xdg-toplevel-icon-v1#xdg_toplevel_icon_v1) protocol, which not all compositors do. See xdg_toplevel_icon_v1#compositor-support (https://wayland.app/protocols/xdg-toplevel-icon-v1#compositor-support) for more information on individual compositor support.
    */
-  static readonly FEATURE_ICON: int;
+  readonly FEATURE_ICON: int;
   /**
    * Display server supports changing the window icon (usually displayed in the top-left corner). **Windows, macOS**
    */
-  static readonly FEATURE_NATIVE_ICON: int;
+  readonly FEATURE_NATIVE_ICON: int;
   /** Display server supports changing the screen orientation. **Android, iOS** */
-  static readonly FEATURE_ORIENTATION: int;
+  readonly FEATURE_ORIENTATION: int;
   /**
    * Display server supports V-Sync status can be changed from the default (which is forced to be enabled platforms not supporting this feature). **Windows, macOS, Linux (X11/Wayland)**
    */
-  static readonly FEATURE_SWAP_BUFFERS: int;
+  readonly FEATURE_SWAP_BUFFERS: int;
   /**
    * Display server supports Primary clipboard can be used. This is a different clipboard from {@link FEATURE_CLIPBOARD}. **Linux (X11/Wayland)**
    */
-  static readonly FEATURE_CLIPBOARD_PRIMARY: int;
+  readonly FEATURE_CLIPBOARD_PRIMARY: int;
   /**
    * Display server supports text-to-speech. See `tts_*` methods. **Windows, macOS, Linux (X11/Wayland), Android, iOS, Web**
    */
-  static readonly FEATURE_TEXT_TO_SPEECH: int;
+  readonly FEATURE_TEXT_TO_SPEECH: int;
   /**
    * Display server supports expanding window content to the title. See {@link WINDOW_FLAG_EXTEND_TO_TITLE}. **macOS**
    */
-  static readonly FEATURE_EXTEND_TO_TITLE: int;
+  readonly FEATURE_EXTEND_TO_TITLE: int;
   /** Display server supports reading screen pixels. See {@link screen_get_pixel}. */
-  static readonly FEATURE_SCREEN_CAPTURE: int;
+  readonly FEATURE_SCREEN_CAPTURE: int;
   /** Display server supports application status indicators. */
-  static readonly FEATURE_STATUS_INDICATOR: int;
+  readonly FEATURE_STATUS_INDICATOR: int;
   /** Display server supports native help system search callbacks. See {@link help_set_search_callbacks}. */
-  static readonly FEATURE_NATIVE_HELP: int;
+  readonly FEATURE_NATIVE_HELP: int;
   /**
    * Display server supports spawning text input dialogs using the operating system's native look-and-feel. See {@link dialog_input_text}. **Windows, macOS**
    */
-  static readonly FEATURE_NATIVE_DIALOG_INPUT: int;
+  readonly FEATURE_NATIVE_DIALOG_INPUT: int;
   /**
    * Display server supports spawning dialogs for selecting files or directories using the operating system's native look-and-feel. See {@link file_dialog_show}. **Windows, macOS, Linux (X11/Wayland), Android**
    */
-  static readonly FEATURE_NATIVE_DIALOG_FILE: int;
+  readonly FEATURE_NATIVE_DIALOG_FILE: int;
   /**
    * The display server supports all features of {@link FEATURE_NATIVE_DIALOG_FILE}, with the added functionality of Options and native dialog file access to `res://` and `user://` paths. See {@link file_dialog_show} and {@link file_dialog_with_options_show}. **Windows, macOS, Linux (X11/Wayland)**
    */
-  static readonly FEATURE_NATIVE_DIALOG_FILE_EXTRA: int;
+  readonly FEATURE_NATIVE_DIALOG_FILE_EXTRA: int;
   /**
    * The display server supports initiating window drag and resize operations on demand. See {@link window_start_drag} and {@link window_start_resize}.
    */
-  static readonly FEATURE_WINDOW_DRAG: int;
+  readonly FEATURE_WINDOW_DRAG: int;
   /** Display server supports {@link WINDOW_FLAG_EXCLUDE_FROM_CAPTURE} window flag. **Windows, macOS** */
-  static readonly FEATURE_SCREEN_EXCLUDE_FROM_CAPTURE: int;
+  readonly FEATURE_SCREEN_EXCLUDE_FROM_CAPTURE: int;
   /** Display server supports embedding a window from another process. **Windows, Linux (X11), macOS** */
-  static readonly FEATURE_WINDOW_EMBEDDING: int;
+  readonly FEATURE_WINDOW_EMBEDDING: int;
   /** Native file selection dialog supports MIME types as filters. */
-  static readonly FEATURE_NATIVE_DIALOG_FILE_MIME: int;
+  readonly FEATURE_NATIVE_DIALOG_FILE_MIME: int;
   /** Display server supports system emoji and symbol picker. **Windows, macOS** */
-  static readonly FEATURE_EMOJI_AND_SYMBOL_PICKER: int;
+  readonly FEATURE_EMOJI_AND_SYMBOL_PICKER: int;
   /** Display server supports native color picker. **Linux (X11/Wayland)** */
-  static readonly FEATURE_NATIVE_COLOR_PICKER: int;
+  readonly FEATURE_NATIVE_COLOR_PICKER: int;
   /**
    * Display server automatically fits popups according to the screen boundaries. Window nodes should not attempt to do that themselves.
    */
-  static readonly FEATURE_SELF_FITTING_WINDOWS: int;
+  readonly FEATURE_SELF_FITTING_WINDOWS: int;
   /**
    * Display server supports interaction with screen reader or Braille display. **Linux (X11/Wayland), macOS, Windows**
    */
-  static readonly FEATURE_ACCESSIBILITY_SCREEN_READER: int;
+  readonly FEATURE_ACCESSIBILITY_SCREEN_READER: int;
   /** Display server supports HDR output. **macOS, iOS, visionOS, Windows** */
-  static readonly FEATURE_HDR_OUTPUT: int;
+  readonly FEATURE_HDR_OUTPUT: int;
   /** Display server supports putting the application in picture-in-picture mode. **Android** */
-  static readonly FEATURE_PIP_MODE: int;
+  readonly FEATURE_PIP_MODE: int;
   // enum AccessibilityRole
   /** Unknown or custom role. */
-  static readonly ROLE_UNKNOWN: int;
+  readonly ROLE_UNKNOWN: int;
   /** Default dialog button element. */
-  static readonly ROLE_DEFAULT_BUTTON: int;
+  readonly ROLE_DEFAULT_BUTTON: int;
   /** Audio player element. */
-  static readonly ROLE_AUDIO: int;
+  readonly ROLE_AUDIO: int;
   /** Video player element. */
-  static readonly ROLE_VIDEO: int;
+  readonly ROLE_VIDEO: int;
   /** Non-editable text label. */
-  static readonly ROLE_STATIC_TEXT: int;
+  readonly ROLE_STATIC_TEXT: int;
   /**
    * Container element. Elements with this role are used for internal structure and ignored by screen readers.
    */
-  static readonly ROLE_CONTAINER: int;
+  readonly ROLE_CONTAINER: int;
   /** Panel container element. */
-  static readonly ROLE_PANEL: int;
+  readonly ROLE_PANEL: int;
   /** Button element. */
-  static readonly ROLE_BUTTON: int;
+  readonly ROLE_BUTTON: int;
   /** Link element. */
-  static readonly ROLE_LINK: int;
+  readonly ROLE_LINK: int;
   /** Check box element. */
-  static readonly ROLE_CHECK_BOX: int;
+  readonly ROLE_CHECK_BOX: int;
   /** Radio button element. */
-  static readonly ROLE_RADIO_BUTTON: int;
+  readonly ROLE_RADIO_BUTTON: int;
   /** Check button element. */
-  static readonly ROLE_CHECK_BUTTON: int;
+  readonly ROLE_CHECK_BUTTON: int;
   /** Scroll bar element. */
-  static readonly ROLE_SCROLL_BAR: int;
+  readonly ROLE_SCROLL_BAR: int;
   /** Scroll container element. */
-  static readonly ROLE_SCROLL_VIEW: int;
+  readonly ROLE_SCROLL_VIEW: int;
   /** Container splitter handle element. */
-  static readonly ROLE_SPLITTER: int;
+  readonly ROLE_SPLITTER: int;
   /** Slider element. */
-  static readonly ROLE_SLIDER: int;
+  readonly ROLE_SLIDER: int;
   /** Spin box element. */
-  static readonly ROLE_SPIN_BUTTON: int;
+  readonly ROLE_SPIN_BUTTON: int;
   /** Progress indicator element. */
-  static readonly ROLE_PROGRESS_INDICATOR: int;
+  readonly ROLE_PROGRESS_INDICATOR: int;
   /** Editable text field element. */
-  static readonly ROLE_TEXT_FIELD: int;
+  readonly ROLE_TEXT_FIELD: int;
   /** Multiline editable text field element. */
-  static readonly ROLE_MULTILINE_TEXT_FIELD: int;
+  readonly ROLE_MULTILINE_TEXT_FIELD: int;
   /** Color picker element. */
-  static readonly ROLE_COLOR_PICKER: int;
+  readonly ROLE_COLOR_PICKER: int;
   /** Table element. */
-  static readonly ROLE_TABLE: int;
+  readonly ROLE_TABLE: int;
   /** Table/tree cell element. */
-  static readonly ROLE_CELL: int;
+  readonly ROLE_CELL: int;
   /** Table/tree row element. */
-  static readonly ROLE_ROW: int;
+  readonly ROLE_ROW: int;
   /** Table/tree row group element. */
-  static readonly ROLE_ROW_GROUP: int;
+  readonly ROLE_ROW_GROUP: int;
   /** Table/tree row header element. */
-  static readonly ROLE_ROW_HEADER: int;
+  readonly ROLE_ROW_HEADER: int;
   /** Table/tree column header element. */
-  static readonly ROLE_COLUMN_HEADER: int;
+  readonly ROLE_COLUMN_HEADER: int;
   /** Tree view element. */
-  static readonly ROLE_TREE: int;
+  readonly ROLE_TREE: int;
   /** Tree view item element. */
-  static readonly ROLE_TREE_ITEM: int;
+  readonly ROLE_TREE_ITEM: int;
   /** List element. */
-  static readonly ROLE_LIST: int;
+  readonly ROLE_LIST: int;
   /** List item element. */
-  static readonly ROLE_LIST_ITEM: int;
+  readonly ROLE_LIST_ITEM: int;
   /** List view element. */
-  static readonly ROLE_LIST_BOX: int;
+  readonly ROLE_LIST_BOX: int;
   /** List view item element. */
-  static readonly ROLE_LIST_BOX_OPTION: int;
+  readonly ROLE_LIST_BOX_OPTION: int;
   /** Tab bar element. */
-  static readonly ROLE_TAB_BAR: int;
+  readonly ROLE_TAB_BAR: int;
   /** Tab bar item element. */
-  static readonly ROLE_TAB: int;
+  readonly ROLE_TAB: int;
   /** Tab panel element. */
-  static readonly ROLE_TAB_PANEL: int;
+  readonly ROLE_TAB_PANEL: int;
   /** Menu bar element. */
-  static readonly ROLE_MENU_BAR: int;
+  readonly ROLE_MENU_BAR: int;
   /** Popup menu element. */
-  static readonly ROLE_MENU: int;
+  readonly ROLE_MENU: int;
   /** Popup menu item element. */
-  static readonly ROLE_MENU_ITEM: int;
+  readonly ROLE_MENU_ITEM: int;
   /** Popup menu check button item element. */
-  static readonly ROLE_MENU_ITEM_CHECK_BOX: int;
+  readonly ROLE_MENU_ITEM_CHECK_BOX: int;
   /** Popup menu radio button item element. */
-  static readonly ROLE_MENU_ITEM_RADIO: int;
+  readonly ROLE_MENU_ITEM_RADIO: int;
   /** Image element. */
-  static readonly ROLE_IMAGE: int;
+  readonly ROLE_IMAGE: int;
   /** Window element. */
-  static readonly ROLE_WINDOW: int;
+  readonly ROLE_WINDOW: int;
   /** Embedded window title bar element. */
-  static readonly ROLE_TITLE_BAR: int;
+  readonly ROLE_TITLE_BAR: int;
   /** Dialog window element. */
-  static readonly ROLE_DIALOG: int;
+  readonly ROLE_DIALOG: int;
   /** Tooltip element. */
-  static readonly ROLE_TOOLTIP: int;
+  readonly ROLE_TOOLTIP: int;
   /** Region/landmark element. Screen readers can navigate between regions using landmark navigation. */
-  static readonly ROLE_REGION: int;
+  readonly ROLE_REGION: int;
   /**
    * Unifor text run.
    * Note: This role is used for internal text elements, and should not be assigned to nodes.
    */
-  static readonly ROLE_TEXT_RUN: int;
+  readonly ROLE_TEXT_RUN: int;
   // enum AccessibilityPopupType
   /** Popup menu. */
-  static readonly POPUP_MENU: int;
+  readonly POPUP_MENU: int;
   /** Popup list. */
-  static readonly POPUP_LIST: int;
+  readonly POPUP_LIST: int;
   /** Popup tree view. */
-  static readonly POPUP_TREE: int;
+  readonly POPUP_TREE: int;
   /** Popup dialog. */
-  static readonly POPUP_DIALOG: int;
+  readonly POPUP_DIALOG: int;
   // enum AccessibilityFlags
   /** Element is hidden for accessibility tools. */
-  static readonly FLAG_HIDDEN: int;
+  readonly FLAG_HIDDEN: int;
   /** Element supports multiple item selection. */
-  static readonly FLAG_MULTISELECTABLE: int;
+  readonly FLAG_MULTISELECTABLE: int;
   /** Element require user input. */
-  static readonly FLAG_REQUIRED: int;
+  readonly FLAG_REQUIRED: int;
   /** Element is a visited link. */
-  static readonly FLAG_VISITED: int;
+  readonly FLAG_VISITED: int;
   /** Element content is not ready (e.g. loading). */
-  static readonly FLAG_BUSY: int;
+  readonly FLAG_BUSY: int;
   /** Element is modal window. */
-  static readonly FLAG_MODAL: int;
+  readonly FLAG_MODAL: int;
   /** Element allows touches to be passed through when a screen reader is in touch exploration mode. */
-  static readonly FLAG_TOUCH_PASSTHROUGH: int;
+  readonly FLAG_TOUCH_PASSTHROUGH: int;
   /** Element is text field with selectable but read-only text. */
-  static readonly FLAG_READONLY: int;
+  readonly FLAG_READONLY: int;
   /** Element is disabled. */
-  static readonly FLAG_DISABLED: int;
+  readonly FLAG_DISABLED: int;
   /** Element clips children. */
-  static readonly FLAG_CLIPS_CHILDREN: int;
+  readonly FLAG_CLIPS_CHILDREN: int;
   // enum AccessibilityAction
   /** Single click action, callback argument is not set. */
-  static readonly ACTION_CLICK: int;
+  readonly ACTION_CLICK: int;
   /** Focus action, callback argument is not set. */
-  static readonly ACTION_FOCUS: int;
+  readonly ACTION_FOCUS: int;
   /** Blur action, callback argument is not set. */
-  static readonly ACTION_BLUR: int;
+  readonly ACTION_BLUR: int;
   /** Collapse action, callback argument is not set. */
-  static readonly ACTION_COLLAPSE: int;
+  readonly ACTION_COLLAPSE: int;
   /** Expand action, callback argument is not set. */
-  static readonly ACTION_EXPAND: int;
+  readonly ACTION_EXPAND: int;
   /** Decrement action, callback argument is not set. */
-  static readonly ACTION_DECREMENT: int;
+  readonly ACTION_DECREMENT: int;
   /** Increment action, callback argument is not set. */
-  static readonly ACTION_INCREMENT: int;
+  readonly ACTION_INCREMENT: int;
   /** Hide tooltip action, callback argument is not set. */
-  static readonly ACTION_HIDE_TOOLTIP: int;
+  readonly ACTION_HIDE_TOOLTIP: int;
   /** Show tooltip action, callback argument is not set. */
-  static readonly ACTION_SHOW_TOOLTIP: int;
+  readonly ACTION_SHOW_TOOLTIP: int;
   /**
    * Set text selection action, callback argument is set to {@link Dictionary} with the following keys:
    * - `"start_element"` accessibility element of the selection start.
@@ -1676,210 +1676,210 @@ declare class DisplayServer extends GodotObject {
    * - `"end_element"` accessibility element of the selection end.
    * - `"end_char"` character offset relative to the accessibility element of the selection end.
    */
-  static readonly ACTION_SET_TEXT_SELECTION: int;
+  readonly ACTION_SET_TEXT_SELECTION: int;
   /** Replace text action, callback argument is set to {@link String} with the replacement text. */
-  static readonly ACTION_REPLACE_SELECTED_TEXT: int;
+  readonly ACTION_REPLACE_SELECTED_TEXT: int;
   /** Scroll backward action, callback argument is not set. */
-  static readonly ACTION_SCROLL_BACKWARD: int;
+  readonly ACTION_SCROLL_BACKWARD: int;
   /** Scroll down action, callback argument is set to {@link AccessibilityScrollUnit}. */
-  static readonly ACTION_SCROLL_DOWN: int;
+  readonly ACTION_SCROLL_DOWN: int;
   /** Scroll forward action, callback argument is not set. */
-  static readonly ACTION_SCROLL_FORWARD: int;
+  readonly ACTION_SCROLL_FORWARD: int;
   /** Scroll left action, callback argument is set to {@link AccessibilityScrollUnit}. */
-  static readonly ACTION_SCROLL_LEFT: int;
+  readonly ACTION_SCROLL_LEFT: int;
   /** Scroll right action, callback argument is set to {@link AccessibilityScrollUnit}. */
-  static readonly ACTION_SCROLL_RIGHT: int;
+  readonly ACTION_SCROLL_RIGHT: int;
   /** Scroll up action, callback argument is set to {@link AccessibilityScrollUnit}. */
-  static readonly ACTION_SCROLL_UP: int;
+  readonly ACTION_SCROLL_UP: int;
   /** Scroll into view action, callback argument is set to {@link AccessibilityScrollHint}. */
-  static readonly ACTION_SCROLL_INTO_VIEW: int;
+  readonly ACTION_SCROLL_INTO_VIEW: int;
   /**
    * Scroll to point action, callback argument is set to {@link Vector2} with the relative point coordinates.
    */
-  static readonly ACTION_SCROLL_TO_POINT: int;
+  readonly ACTION_SCROLL_TO_POINT: int;
   /** Set scroll offset action, callback argument is set to {@link Vector2} with the scroll offset. */
-  static readonly ACTION_SET_SCROLL_OFFSET: int;
+  readonly ACTION_SET_SCROLL_OFFSET: int;
   /** Set value action, callback argument is set to {@link String} or number with the new value. */
-  static readonly ACTION_SET_VALUE: int;
+  readonly ACTION_SET_VALUE: int;
   /** Show context menu action, callback argument is not set. */
-  static readonly ACTION_SHOW_CONTEXT_MENU: int;
+  readonly ACTION_SHOW_CONTEXT_MENU: int;
   /** Custom action, callback argument is set to the integer action ID. */
-  static readonly ACTION_CUSTOM: int;
+  readonly ACTION_CUSTOM: int;
   // enum AccessibilityLiveMode
   /** Indicates that updates to the live region should not be presented. */
-  static readonly LIVE_OFF: int;
+  readonly LIVE_OFF: int;
   /**
    * Indicates that updates to the live region should be presented at the next opportunity (for example at the end of speaking the current sentence).
    */
-  static readonly LIVE_POLITE: int;
+  readonly LIVE_POLITE: int;
   /**
    * Indicates that updates to the live region have the highest priority and should be presented immediately.
    */
-  static readonly LIVE_ASSERTIVE: int;
+  readonly LIVE_ASSERTIVE: int;
   // enum AccessibilityScrollUnit
   /** The amount by which to scroll. A single item of a list, line of text. */
-  static readonly SCROLL_UNIT_ITEM: int;
+  readonly SCROLL_UNIT_ITEM: int;
   /** The amount by which to scroll. A single page. */
-  static readonly SCROLL_UNIT_PAGE: int;
+  readonly SCROLL_UNIT_PAGE: int;
   // enum AccessibilityScrollHint
   /** A preferred position for the node scrolled into view. Top-left edge of the scroll container. */
-  static readonly SCROLL_HINT_TOP_LEFT: int;
+  readonly SCROLL_HINT_TOP_LEFT: int;
   /** A preferred position for the node scrolled into view. Bottom-right edge of the scroll container. */
-  static readonly SCROLL_HINT_BOTTOM_RIGHT: int;
+  readonly SCROLL_HINT_BOTTOM_RIGHT: int;
   /** A preferred position for the node scrolled into view. Top edge of the scroll container. */
-  static readonly SCROLL_HINT_TOP_EDGE: int;
+  readonly SCROLL_HINT_TOP_EDGE: int;
   /** A preferred position for the node scrolled into view. Bottom edge of the scroll container. */
-  static readonly SCROLL_HINT_BOTTOM_EDGE: int;
+  readonly SCROLL_HINT_BOTTOM_EDGE: int;
   /** A preferred position for the node scrolled into view. Left edge of the scroll container. */
-  static readonly SCROLL_HINT_LEFT_EDGE: int;
+  readonly SCROLL_HINT_LEFT_EDGE: int;
   /** A preferred position for the node scrolled into view. Right edge of the scroll container. */
-  static readonly SCROLL_HINT_RIGHT_EDGE: int;
+  readonly SCROLL_HINT_RIGHT_EDGE: int;
   // enum MouseMode
   /** Makes the mouse cursor visible if it is hidden. */
-  static readonly MOUSE_MODE_VISIBLE: int;
+  readonly MOUSE_MODE_VISIBLE: int;
   /** Makes the mouse cursor hidden if it is visible. */
-  static readonly MOUSE_MODE_HIDDEN: int;
+  readonly MOUSE_MODE_HIDDEN: int;
   /**
    * Captures the mouse. The mouse will be hidden and its position locked at the center of the window manager's window.
    * **Note:** If you want to process the mouse's movement in this mode, you need to use {@link InputEventMouseMotion.relative}.
    */
-  static readonly MOUSE_MODE_CAPTURED: int;
+  readonly MOUSE_MODE_CAPTURED: int;
   /** Confines the mouse cursor to the game window, and make it visible. */
-  static readonly MOUSE_MODE_CONFINED: int;
+  readonly MOUSE_MODE_CONFINED: int;
   /** Confines the mouse cursor to the game window, and make it hidden. */
-  static readonly MOUSE_MODE_CONFINED_HIDDEN: int;
+  readonly MOUSE_MODE_CONFINED_HIDDEN: int;
   /** Max value of the {@link MouseMode}. */
-  static readonly MOUSE_MODE_MAX: int;
+  readonly MOUSE_MODE_MAX: int;
   // enum ScreenOrientation
   /** Default landscape orientation. */
-  static readonly SCREEN_LANDSCAPE: int;
+  readonly SCREEN_LANDSCAPE: int;
   /** Default portrait orientation. */
-  static readonly SCREEN_PORTRAIT: int;
+  readonly SCREEN_PORTRAIT: int;
   /** Reverse landscape orientation (upside down). */
-  static readonly SCREEN_REVERSE_LANDSCAPE: int;
+  readonly SCREEN_REVERSE_LANDSCAPE: int;
   /** Reverse portrait orientation (upside down). */
-  static readonly SCREEN_REVERSE_PORTRAIT: int;
+  readonly SCREEN_REVERSE_PORTRAIT: int;
   /** Automatic landscape orientation (default or reverse depending on sensor). */
-  static readonly SCREEN_SENSOR_LANDSCAPE: int;
+  readonly SCREEN_SENSOR_LANDSCAPE: int;
   /** Automatic portrait orientation (default or reverse depending on sensor). */
-  static readonly SCREEN_SENSOR_PORTRAIT: int;
+  readonly SCREEN_SENSOR_PORTRAIT: int;
   /** Automatic landscape or portrait orientation (default or reverse depending on sensor). */
-  static readonly SCREEN_SENSOR: int;
+  readonly SCREEN_SENSOR: int;
   // enum VirtualKeyboardType
   /** Default text virtual keyboard. */
-  static readonly KEYBOARD_TYPE_DEFAULT: int;
+  readonly KEYBOARD_TYPE_DEFAULT: int;
   /** Multiline virtual keyboard. */
-  static readonly KEYBOARD_TYPE_MULTILINE: int;
+  readonly KEYBOARD_TYPE_MULTILINE: int;
   /** Virtual number keypad, useful for PIN entry. */
-  static readonly KEYBOARD_TYPE_NUMBER: int;
+  readonly KEYBOARD_TYPE_NUMBER: int;
   /** Virtual number keypad, useful for entering fractional numbers. */
-  static readonly KEYBOARD_TYPE_NUMBER_DECIMAL: int;
+  readonly KEYBOARD_TYPE_NUMBER_DECIMAL: int;
   /** Virtual phone number keypad. */
-  static readonly KEYBOARD_TYPE_PHONE: int;
+  readonly KEYBOARD_TYPE_PHONE: int;
   /** Virtual keyboard with additional keys to assist with typing email addresses. */
-  static readonly KEYBOARD_TYPE_EMAIL_ADDRESS: int;
+  readonly KEYBOARD_TYPE_EMAIL_ADDRESS: int;
   /**
    * Virtual keyboard for entering a password. On most platforms, this should disable autocomplete and autocapitalization.
    * **Note:** This is not supported on Web. Instead, this behaves identically to {@link KEYBOARD_TYPE_DEFAULT}.
    */
-  static readonly KEYBOARD_TYPE_PASSWORD: int;
+  readonly KEYBOARD_TYPE_PASSWORD: int;
   /** Virtual keyboard with additional keys to assist with typing URLs. */
-  static readonly KEYBOARD_TYPE_URL: int;
+  readonly KEYBOARD_TYPE_URL: int;
   // enum CursorShape
   /**
    * Arrow cursor shape. This is the default when not pointing anything that overrides the mouse cursor, such as a {@link LineEdit} or {@link TextEdit}.
    */
-  static readonly CURSOR_ARROW: int;
+  readonly CURSOR_ARROW: int;
   /**
    * I-beam cursor shape. This is used by default when hovering a control that accepts text input, such as {@link LineEdit} or {@link TextEdit}.
    */
-  static readonly CURSOR_IBEAM: int;
+  readonly CURSOR_IBEAM: int;
   /**
    * Pointing hand cursor shape. This is used by default when hovering a {@link LinkButton} or a URL tag in a {@link RichTextLabel}.
    */
-  static readonly CURSOR_POINTING_HAND: int;
+  readonly CURSOR_POINTING_HAND: int;
   /**
    * Crosshair cursor. This is intended to be displayed when the user needs precise aim over an element, such as a rectangle selection tool or a color picker.
    */
-  static readonly CURSOR_CROSS: int;
+  readonly CURSOR_CROSS: int;
   /**
    * Wait cursor. On most cursor themes, this displays a spinning icon *besides* the arrow. Intended to be used for non-blocking operations (when the user can do something else at the moment). See also {@link CURSOR_BUSY}.
    */
-  static readonly CURSOR_WAIT: int;
+  readonly CURSOR_WAIT: int;
   /**
    * Wait cursor. On most cursor themes, this *replaces* the arrow with a spinning icon. Intended to be used for blocking operations (when the user can't do anything else at the moment). See also {@link CURSOR_WAIT}.
    */
-  static readonly CURSOR_BUSY: int;
+  readonly CURSOR_BUSY: int;
   /**
    * Dragging hand cursor. This is displayed during drag-and-drop operations. See also {@link CURSOR_CAN_DROP}.
    */
-  static readonly CURSOR_DRAG: int;
+  readonly CURSOR_DRAG: int;
   /**
    * "Can drop" cursor. This is displayed during drag-and-drop operations if hovering over a {@link Control} that can accept the drag-and-drop event. On most cursor themes, this displays a dragging hand with an arrow symbol besides it. See also {@link CURSOR_DRAG}.
    */
-  static readonly CURSOR_CAN_DROP: int;
+  readonly CURSOR_CAN_DROP: int;
   /**
    * Forbidden cursor. This is displayed during drag-and-drop operations if the hovered {@link Control} can't accept the drag-and-drop event.
    */
-  static readonly CURSOR_FORBIDDEN: int;
+  readonly CURSOR_FORBIDDEN: int;
   /**
    * Vertical resize cursor. Intended to be displayed when the hovered {@link Control} can be vertically resized using the mouse. See also {@link CURSOR_VSPLIT}.
    */
-  static readonly CURSOR_VSIZE: int;
+  readonly CURSOR_VSIZE: int;
   /**
    * Horizontal resize cursor. Intended to be displayed when the hovered {@link Control} can be horizontally resized using the mouse. See also {@link CURSOR_HSPLIT}.
    */
-  static readonly CURSOR_HSIZE: int;
+  readonly CURSOR_HSIZE: int;
   /**
    * Secondary diagonal resize cursor (top-right/bottom-left). Intended to be displayed when the hovered {@link Control} can be resized on both axes at once using the mouse.
    */
-  static readonly CURSOR_BDIAGSIZE: int;
+  readonly CURSOR_BDIAGSIZE: int;
   /**
    * Main diagonal resize cursor (top-left/bottom-right). Intended to be displayed when the hovered {@link Control} can be resized on both axes at once using the mouse.
    */
-  static readonly CURSOR_FDIAGSIZE: int;
+  readonly CURSOR_FDIAGSIZE: int;
   /**
    * Move cursor. Intended to be displayed when the hovered {@link Control} can be moved using the mouse.
    */
-  static readonly CURSOR_MOVE: int;
+  readonly CURSOR_MOVE: int;
   /**
    * Vertical split cursor. This is displayed when hovering a {@link Control} with splits that can be vertically resized using the mouse, such as {@link VSplitContainer}. On some cursor themes, this cursor may have the same appearance as {@link CURSOR_VSIZE}.
    */
-  static readonly CURSOR_VSPLIT: int;
+  readonly CURSOR_VSPLIT: int;
   /**
    * Horizontal split cursor. This is displayed when hovering a {@link Control} with splits that can be horizontally resized using the mouse, such as {@link HSplitContainer}. On some cursor themes, this cursor may have the same appearance as {@link CURSOR_HSIZE}.
    */
-  static readonly CURSOR_HSPLIT: int;
+  readonly CURSOR_HSPLIT: int;
   /**
    * Help cursor. On most cursor themes, this displays a question mark icon instead of the mouse cursor. Intended to be used when the user has requested help on the next element that will be clicked.
    */
-  static readonly CURSOR_HELP: int;
+  readonly CURSOR_HELP: int;
   /** Represents the size of the {@link CursorShape} enum. */
-  static readonly CURSOR_MAX: int;
+  readonly CURSOR_MAX: int;
   // enum FileDialogMode
   /** The native file dialog allows selecting one, and only one file. */
-  static readonly FILE_DIALOG_MODE_OPEN_FILE: int;
+  readonly FILE_DIALOG_MODE_OPEN_FILE: int;
   /** The native file dialog allows selecting multiple files. */
-  static readonly FILE_DIALOG_MODE_OPEN_FILES: int;
+  readonly FILE_DIALOG_MODE_OPEN_FILES: int;
   /** The native file dialog only allows selecting a directory, disallowing the selection of any file. */
-  static readonly FILE_DIALOG_MODE_OPEN_DIR: int;
+  readonly FILE_DIALOG_MODE_OPEN_DIR: int;
   /** The native file dialog allows selecting one file or directory. */
-  static readonly FILE_DIALOG_MODE_OPEN_ANY: int;
+  readonly FILE_DIALOG_MODE_OPEN_ANY: int;
   /** The native file dialog will warn when a file exists. */
-  static readonly FILE_DIALOG_MODE_SAVE_FILE: int;
+  readonly FILE_DIALOG_MODE_SAVE_FILE: int;
   // enum WindowMode
   /**
    * Windowed mode, i.e. {@link Window} doesn't occupy the whole screen (unless set to the size of the screen).
    */
-  static readonly WINDOW_MODE_WINDOWED: int;
+  readonly WINDOW_MODE_WINDOWED: int;
   /**
    * Minimized window mode, i.e. {@link Window} is not visible and available on window manager's window list. Normally happens when the minimize button is pressed.
    */
-  static readonly WINDOW_MODE_MINIMIZED: int;
+  readonly WINDOW_MODE_MINIMIZED: int;
   /**
    * Maximized window mode, i.e. {@link Window} will occupy whole screen area except task bar and still display its borders. Normally happens when the maximize button is pressed.
    */
-  static readonly WINDOW_MODE_MAXIMIZED: int;
+  readonly WINDOW_MODE_MAXIMIZED: int;
   /**
    * Full screen mode with full multi-window support.
    * Full screen window covers the entire display area of a screen and has no decorations. The display's video mode is not changed.
@@ -1887,7 +1887,7 @@ declare class DisplayServer extends GodotObject {
    * **On macOS:** A new desktop is used to display the running project.
    * **Note:** Regardless of the platform, enabling full screen will change the window size to match the monitor's size. Therefore, make sure your project supports multiple resolutions ($DOCS_URL/tutorials/rendering/multiple_resolutions.html) when enabling full screen mode.
    */
-  static readonly WINDOW_MODE_FULLSCREEN: int;
+  readonly WINDOW_MODE_FULLSCREEN: int;
   /**
    * A single window full screen mode. This mode has less overhead, but only one window can be open on a given screen at a time (opening a child window or application switching will trigger a full screen transition).
    * Full screen window covers the entire display area of a screen and has no border or decorations. The display's video mode is not changed.
@@ -1899,155 +1899,155 @@ declare class DisplayServer extends GodotObject {
    * **On Linux (Wayland):** Equivalent to {@link WINDOW_MODE_FULLSCREEN}.
    * **Note:** Regardless of the platform, enabling full screen will change the window size to match the monitor's size. Therefore, make sure your project supports multiple resolutions ($DOCS_URL/tutorials/rendering/multiple_resolutions.html) when enabling full screen mode.
    */
-  static readonly WINDOW_MODE_EXCLUSIVE_FULLSCREEN: int;
+  readonly WINDOW_MODE_EXCLUSIVE_FULLSCREEN: int;
   // enum ProgressState
   /** Stops displaying progress and returns the button to its normal state. */
-  static readonly PROGRESS_STATE_NOPROGRESS: int;
+  readonly PROGRESS_STATE_NOPROGRESS: int;
   /**
    * The progress indicator shows an indeterminate progress.
    * On Windows, the progress indicator does not grow in size, but cycles repeatedly along the length of the taskbar button by default.
    */
-  static readonly PROGRESS_STATE_INDETERMINATE: int;
+  readonly PROGRESS_STATE_INDETERMINATE: int;
   /** The progress indicator shows progress normally. */
-  static readonly PROGRESS_STATE_NORMAL: int;
+  readonly PROGRESS_STATE_NORMAL: int;
   /**
    * The progress indicator shows that an error has occurred.
    * On Windows, the progress indicator turns red by default to show that an error has occurred in one of the windows that is broadcasting progress.
    */
-  static readonly PROGRESS_STATE_ERROR: int;
+  readonly PROGRESS_STATE_ERROR: int;
   /**
    * The progress indicator shows it was paused.
    * On Windows, the progress indicator turns yellow by default to show that progress is currently stopped in one of the windows but can be resumed by the user.
    */
-  static readonly PROGRESS_STATE_PAUSED: int;
+  readonly PROGRESS_STATE_PAUSED: int;
   // enum WindowFlags
   /**
    * The window can't be resized by dragging its resize grip. It's still possible to resize the window using {@link window_set_size}. This flag is ignored for full screen windows.
    */
-  static readonly WINDOW_FLAG_RESIZE_DISABLED: int;
+  readonly WINDOW_FLAG_RESIZE_DISABLED: int;
   /**
    * The window do not have native title bar and other decorations. This flag is ignored for full-screen windows.
    */
-  static readonly WINDOW_FLAG_BORDERLESS: int;
+  readonly WINDOW_FLAG_BORDERLESS: int;
   /** The window is floating on top of all other windows. This flag is ignored for full-screen windows. */
-  static readonly WINDOW_FLAG_ALWAYS_ON_TOP: int;
+  readonly WINDOW_FLAG_ALWAYS_ON_TOP: int;
   /**
    * The window background can be transparent.
    * **Note:** This flag has no effect if {@link is_window_transparency_available} returns `false`.
    * **Note:** Transparency support is implemented on Linux (X11/Wayland), macOS, and Windows, but availability might vary depending on GPU driver, display manager, and compositor capabilities.
    * **Note:** Transparency support is implemented on Android, but can only be enabled via {@link ProjectSettings.display/window/per_pixel_transparency/allowed}. This flag has no effect on Android.
    */
-  static readonly WINDOW_FLAG_TRANSPARENT: int;
+  readonly WINDOW_FLAG_TRANSPARENT: int;
   /** The window can't be focused. No-focus window will ignore all input, except mouse clicks. */
-  static readonly WINDOW_FLAG_NO_FOCUS: int;
+  readonly WINDOW_FLAG_NO_FOCUS: int;
   /**
    * Window is part of menu or {@link OptionButton} dropdown. This flag can't be changed when the window is visible. An active popup window will exclusively receive all input, without stealing focus from its parent. Popup windows are automatically closed when uses click outside it, or when an application is switched. Popup window must have transient parent set (see {@link window_set_transient}).
    */
-  static readonly WINDOW_FLAG_POPUP: int;
+  readonly WINDOW_FLAG_POPUP: int;
   /**
    * Window content is expanded to the full size of the window. Unlike borderless window, the frame is left intact and can be used to resize the window, title bar is transparent, but have minimize/maximize/close buttons.
    * Use {@link window_set_window_buttons_offset} to adjust minimize/maximize/close buttons offset.
    * Use {@link window_get_safe_title_margins} to determine area under the title bar that is not covered by decorations.
    * **Note:** This flag is implemented only on macOS.
    */
-  static readonly WINDOW_FLAG_EXTEND_TO_TITLE: int;
+  readonly WINDOW_FLAG_EXTEND_TO_TITLE: int;
   /** All mouse events are passed to the underlying window of the same application. */
-  static readonly WINDOW_FLAG_MOUSE_PASSTHROUGH: int;
+  readonly WINDOW_FLAG_MOUSE_PASSTHROUGH: int;
   /**
    * Window style is overridden, forcing sharp corners.
    * **Note:** This flag is implemented only on Windows (11).
    */
-  static readonly WINDOW_FLAG_SHARP_CORNERS: int;
+  readonly WINDOW_FLAG_SHARP_CORNERS: int;
   /**
    * Window is excluded from screenshots taken by {@link screen_get_image}, {@link screen_get_image_rect}, and {@link screen_get_pixel}.
    * **Note:** This flag is implemented on macOS and Windows (10, 20H1).
    * **Note:** Setting this flag will prevent standard screenshot methods from capturing a window image, but does **NOT** guarantee that other apps won't be able to capture an image. It should not be used as a DRM or security measure.
    */
-  static readonly WINDOW_FLAG_EXCLUDE_FROM_CAPTURE: int;
+  readonly WINDOW_FLAG_EXCLUDE_FROM_CAPTURE: int;
   /**
    * Signals the window manager that this window is supposed to be an implementation-defined "popup" (usually a floating, borderless, untileable and immovable child window).
    */
-  static readonly WINDOW_FLAG_POPUP_WM_HINT: int;
+  readonly WINDOW_FLAG_POPUP_WM_HINT: int;
   /**
    * Window minimize button is disabled.
    * **Note:** This flag is implemented on macOS and Windows.
    */
-  static readonly WINDOW_FLAG_MINIMIZE_DISABLED: int;
+  readonly WINDOW_FLAG_MINIMIZE_DISABLED: int;
   /**
    * Window maximize button is disabled.
    * **Note:** This flag is implemented on macOS and Windows.
    */
-  static readonly WINDOW_FLAG_MAXIMIZE_DISABLED: int;
+  readonly WINDOW_FLAG_MAXIMIZE_DISABLED: int;
   /** Represents the size of the {@link WindowFlags} enum. */
-  static readonly WINDOW_FLAG_MAX: int;
+  readonly WINDOW_FLAG_MAX: int;
   // enum WindowEvent
   /** Sent when the mouse pointer enters the window. */
-  static readonly WINDOW_EVENT_MOUSE_ENTER: int;
+  readonly WINDOW_EVENT_MOUSE_ENTER: int;
   /** Sent when the mouse pointer exits the window. */
-  static readonly WINDOW_EVENT_MOUSE_EXIT: int;
+  readonly WINDOW_EVENT_MOUSE_EXIT: int;
   /** Sent when the window grabs focus. */
-  static readonly WINDOW_EVENT_FOCUS_IN: int;
+  readonly WINDOW_EVENT_FOCUS_IN: int;
   /** Sent when the window loses focus. */
-  static readonly WINDOW_EVENT_FOCUS_OUT: int;
+  readonly WINDOW_EVENT_FOCUS_OUT: int;
   /** Sent when the user has attempted to close the window (e.g. close button is pressed). */
-  static readonly WINDOW_EVENT_CLOSE_REQUEST: int;
+  readonly WINDOW_EVENT_CLOSE_REQUEST: int;
   /**
    * Sent when the device "Back" button is pressed.
    * **Note:** This event is implemented only on Android.
    */
-  static readonly WINDOW_EVENT_GO_BACK_REQUEST: int;
+  readonly WINDOW_EVENT_GO_BACK_REQUEST: int;
   /**
    * Sent when the window is moved to the display with different DPI, or display DPI is changed.
    * **Note:** This flag is implemented only on macOS and Linux (Wayland).
    */
-  static readonly WINDOW_EVENT_DPI_CHANGE: int;
+  readonly WINDOW_EVENT_DPI_CHANGE: int;
   /**
    * Sent when the window title bar decoration is changed (e.g. {@link WINDOW_FLAG_EXTEND_TO_TITLE} is set or window entered/exited full screen mode).
    * **Note:** This flag is implemented only on macOS.
    */
-  static readonly WINDOW_EVENT_TITLEBAR_CHANGE: int;
+  readonly WINDOW_EVENT_TITLEBAR_CHANGE: int;
   /**
    * Sent when the window has been forcibly closed by the display server. The window will immediately hide and clean any internal rendering references.
    * **Note:** This flag is implemented only on Linux (Wayland).
    */
-  static readonly WINDOW_EVENT_FORCE_CLOSE: int;
+  readonly WINDOW_EVENT_FORCE_CLOSE: int;
   // enum WindowResizeEdge
   /** Top-left edge of a window. */
-  static readonly WINDOW_EDGE_TOP_LEFT: int;
+  readonly WINDOW_EDGE_TOP_LEFT: int;
   /** Top edge of a window. */
-  static readonly WINDOW_EDGE_TOP: int;
+  readonly WINDOW_EDGE_TOP: int;
   /** Top-right edge of a window. */
-  static readonly WINDOW_EDGE_TOP_RIGHT: int;
+  readonly WINDOW_EDGE_TOP_RIGHT: int;
   /** Left edge of a window. */
-  static readonly WINDOW_EDGE_LEFT: int;
+  readonly WINDOW_EDGE_LEFT: int;
   /** Right edge of a window. */
-  static readonly WINDOW_EDGE_RIGHT: int;
+  readonly WINDOW_EDGE_RIGHT: int;
   /** Bottom-left edge of a window. */
-  static readonly WINDOW_EDGE_BOTTOM_LEFT: int;
+  readonly WINDOW_EDGE_BOTTOM_LEFT: int;
   /** Bottom edge of a window. */
-  static readonly WINDOW_EDGE_BOTTOM: int;
+  readonly WINDOW_EDGE_BOTTOM: int;
   /** Bottom-right edge of a window. */
-  static readonly WINDOW_EDGE_BOTTOM_RIGHT: int;
+  readonly WINDOW_EDGE_BOTTOM_RIGHT: int;
   /** Represents the size of the {@link WindowResizeEdge} enum. */
-  static readonly WINDOW_EDGE_MAX: int;
+  readonly WINDOW_EDGE_MAX: int;
   // enum VSyncMode
   /**
    * No vertical synchronization, which means the engine will display frames as fast as possible (tearing may be visible). Framerate is unlimited (regardless of {@link Engine.max_fps}).
    */
-  static readonly VSYNC_DISABLED: int;
+  readonly VSYNC_DISABLED: int;
   /**
    * Default vertical synchronization mode, the image is displayed only on vertical blanking intervals (no tearing is visible). Framerate is limited by the monitor refresh rate (regardless of {@link Engine.max_fps}).
    */
-  static readonly VSYNC_ENABLED: int;
+  readonly VSYNC_ENABLED: int;
   /**
    * Behaves like {@link VSYNC_DISABLED} when the framerate drops below the screen's refresh rate to reduce stuttering (tearing may be visible). Otherwise, vertical synchronization is enabled to avoid tearing. Framerate is limited by the monitor refresh rate (regardless of {@link Engine.max_fps}). Behaves like {@link VSYNC_ENABLED} when using the Compatibility rendering method.
    */
-  static readonly VSYNC_ADAPTIVE: int;
+  readonly VSYNC_ADAPTIVE: int;
   /**
    * Displays the most recent image in the queue on vertical blanking intervals, while rendering to the other images (no tearing is visible). Framerate is unlimited (regardless of {@link Engine.max_fps}).
    * Although not guaranteed, the images can be rendered as fast as possible, which may reduce input lag (also called "Fast" V-Sync mode). {@link VSYNC_MAILBOX} works best when at least twice as many frames as the display refresh rate are rendered. Behaves like {@link VSYNC_ENABLED} when using the Compatibility rendering method.
    */
-  static readonly VSYNC_MAILBOX: int;
+  readonly VSYNC_MAILBOX: int;
   // enum HandleType
   /**
    * Display handle:
@@ -2055,7 +2055,7 @@ declare class DisplayServer extends GodotObject {
    * - Linux (Wayland): `wl_display` for the display.
    * - Android: `EGLDisplay` for the display.
    */
-  static readonly DISPLAY_HANDLE: int;
+  readonly DISPLAY_HANDLE: int;
   /**
    * Window handle:
    * - Windows: `HWND` for the window.
@@ -2065,14 +2065,14 @@ declare class DisplayServer extends GodotObject {
    * - iOS: `UIViewController*` for the view controller.
    * - Android: `jObject` for the activity.
    */
-  static readonly WINDOW_HANDLE: int;
+  readonly WINDOW_HANDLE: int;
   /**
    * Window view:
    * - Windows: `HDC` for the window (only with the Compatibility renderer).
    * - macOS: `NSView*` for the window main view.
    * - iOS: `UIView*` for the window main view.
    */
-  static readonly WINDOW_VIEW: int;
+  readonly WINDOW_VIEW: int;
   /**
    * OpenGL context (only with the Compatibility renderer):
    * - Windows: `HGLRC` for the window (native GL), or `EGLContext` for the window (ANGLE).
@@ -2081,71 +2081,73 @@ declare class DisplayServer extends GodotObject {
    * - macOS: `NSOpenGLContext*` for the window (native GL), or `EGLContext` for the window (ANGLE).
    * - Android: `EGLContext` for the window.
    */
-  static readonly OPENGL_CONTEXT: int;
+  readonly OPENGL_CONTEXT: int;
   /**
    * - Windows: `EGLDisplay` for the window (ANGLE).
    * - macOS: `EGLDisplay` for the window (ANGLE).
    * - Linux (Wayland): `EGLDisplay` for the window.
    */
-  static readonly EGL_DISPLAY: int;
+  readonly EGL_DISPLAY: int;
   /**
    * - Windows: `EGLConfig` for the window (ANGLE).
    * - macOS: `EGLConfig` for the window (ANGLE).
    * - Linux (Wayland): `EGLConfig` for the window.
    */
-  static readonly EGL_CONFIG: int;
+  readonly EGL_CONFIG: int;
   /**
    * The GLX `VisualID` for the window.
    * **Note:** Only available on Linux when using X11.
    */
-  static readonly GLX_VISUALID: int;
+  readonly GLX_VISUALID: int;
   /**
    * The `GLXFBConfig` for the window.
    * **Note:** Only available on Linux when using X11.
    */
-  static readonly GLX_FBCONFIG: int;
+  readonly GLX_FBCONFIG: int;
   // enum TTSUtteranceEvent
   /** Utterance has begun to be spoken. */
-  static readonly TTS_UTTERANCE_STARTED: int;
+  readonly TTS_UTTERANCE_STARTED: int;
   /** Utterance was successfully finished. */
-  static readonly TTS_UTTERANCE_ENDED: int;
+  readonly TTS_UTTERANCE_ENDED: int;
   /** Utterance was canceled, or TTS service was unable to process it. */
-  static readonly TTS_UTTERANCE_CANCELED: int;
+  readonly TTS_UTTERANCE_CANCELED: int;
   /** Utterance reached a word or sentence boundary. */
-  static readonly TTS_UTTERANCE_BOUNDARY: int;
+  readonly TTS_UTTERANCE_BOUNDARY: int;
 
   /**
    * The ID that refers to a screen that does not exist. This is returned by some {@link DisplayServer} methods if no screen matches the requested result.
    */
-  static readonly INVALID_SCREEN: int;
+  readonly INVALID_SCREEN: int;
   /**
    * Represents the screen containing the mouse pointer.
    * **Note:** On Android, iOS, Web, and Linux (Wayland), this constant always represents the screen at index `0`.
    */
-  static readonly SCREEN_WITH_MOUSE_FOCUS: int;
+  readonly SCREEN_WITH_MOUSE_FOCUS: int;
   /**
    * Represents the screen containing the window with the keyboard focus.
    * **Note:** On Android, iOS, Web, and Linux (Wayland), this constant always represents the screen at index `0`.
    */
-  static readonly SCREEN_WITH_KEYBOARD_FOCUS: int;
+  readonly SCREEN_WITH_KEYBOARD_FOCUS: int;
   /**
    * Represents the primary screen.
    * **Note:** On Android, iOS, Web, and Linux (Wayland), this constant always represents the screen at index `0`.
    */
-  static readonly SCREEN_PRIMARY: int;
+  readonly SCREEN_PRIMARY: int;
   /**
    * Represents the screen where the main window is located. This is usually the default value in functions that allow specifying one of several screens.
    * **Note:** On Android, iOS, Web, and Linux (Wayland), this constant always represents the screen at index `0`.
    */
-  static readonly SCREEN_OF_MAIN_WINDOW: int;
+  readonly SCREEN_OF_MAIN_WINDOW: int;
   /**
    * The ID of the main window spawned by the engine, which can be passed to methods expecting a `window_id`.
    */
-  static readonly MAIN_WINDOW_ID: int;
+  readonly MAIN_WINDOW_ID: int;
   /**
    * The ID that refers to a nonexistent window. This is returned by some {@link DisplayServer} methods if no window matches the requested result.
    */
-  static readonly INVALID_WINDOW_ID: int;
+  readonly INVALID_WINDOW_ID: int;
   /** The ID that refers to a nonexistent application status indicator. */
-  static readonly INVALID_INDICATOR_ID: int;
+  readonly INVALID_INDICATOR_ID: int;
 }
+declare const DisplayServer: DisplayServer;
+

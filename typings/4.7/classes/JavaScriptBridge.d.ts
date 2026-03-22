@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Singleton that connects the engine with the browser's JavaScript context in Web export. */
-declare class JavaScriptBridge extends GodotObject {
+declare interface JavaScriptBridge extends GodotObject {
   /**
    * Creates a reference to a {@link Callable} that can be used as a callback by JavaScript. The reference must be kept until the callback happens, or it won't be called at all. See {@link JavaScriptObject} for usage.
    * **Note:** The callback function must take exactly one {@link Array} argument, which is going to be the JavaScript arguments object (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments) converted to an array.
@@ -58,3 +58,5 @@ declare class JavaScriptBridge extends GodotObject {
    */
   pwa_update_available: Signal<[]>;
 }
+declare const JavaScriptBridge: JavaScriptBridge;
+

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Server for anything visible. */
-declare class RenderingServer extends GodotObject {
+declare interface RenderingServer extends GodotObject {
   /**
    * If `false`, disables rendering completely, but the engine logic is still being processed. You can call {@link force_draw} to draw a frame even with rendering disabled.
    */
@@ -2017,1481 +2017,1483 @@ declare class RenderingServer extends GodotObject {
 
   // enum TextureType
   /** 2D texture. */
-  static readonly TEXTURE_TYPE_2D: int;
+  readonly TEXTURE_TYPE_2D: int;
   /** Layered texture. */
-  static readonly TEXTURE_TYPE_LAYERED: int;
+  readonly TEXTURE_TYPE_LAYERED: int;
   /** 3D texture. */
-  static readonly TEXTURE_TYPE_3D: int;
+  readonly TEXTURE_TYPE_3D: int;
   // enum TextureLayeredType
   /** Array of 2-dimensional textures (see {@link Texture2DArray}). */
-  static readonly TEXTURE_LAYERED_2D_ARRAY: int;
+  readonly TEXTURE_LAYERED_2D_ARRAY: int;
   /** Cubemap texture (see {@link Cubemap}). */
-  static readonly TEXTURE_LAYERED_CUBEMAP: int;
+  readonly TEXTURE_LAYERED_CUBEMAP: int;
   /** Array of cubemap textures (see {@link CubemapArray}). */
-  static readonly TEXTURE_LAYERED_CUBEMAP_ARRAY: int;
+  readonly TEXTURE_LAYERED_CUBEMAP_ARRAY: int;
   // enum CubeMapLayer
   /** Left face of a {@link Cubemap}. */
-  static readonly CUBEMAP_LAYER_LEFT: int;
+  readonly CUBEMAP_LAYER_LEFT: int;
   /** Right face of a {@link Cubemap}. */
-  static readonly CUBEMAP_LAYER_RIGHT: int;
+  readonly CUBEMAP_LAYER_RIGHT: int;
   /** Bottom face of a {@link Cubemap}. */
-  static readonly CUBEMAP_LAYER_BOTTOM: int;
+  readonly CUBEMAP_LAYER_BOTTOM: int;
   /** Top face of a {@link Cubemap}. */
-  static readonly CUBEMAP_LAYER_TOP: int;
+  readonly CUBEMAP_LAYER_TOP: int;
   /** Front face of a {@link Cubemap}. */
-  static readonly CUBEMAP_LAYER_FRONT: int;
+  readonly CUBEMAP_LAYER_FRONT: int;
   /** Back face of a {@link Cubemap}. */
-  static readonly CUBEMAP_LAYER_BACK: int;
+  readonly CUBEMAP_LAYER_BACK: int;
   // enum TextureDrawableFormat
   /** OpenGL texture format RGBA with four components, each with a bitdepth of 8. */
-  static readonly TEXTURE_DRAWABLE_FORMAT_RGBA8: int;
+  readonly TEXTURE_DRAWABLE_FORMAT_RGBA8: int;
   /**
    * OpenGL texture format RGBA with four components, each with a bitdepth of 8.
    * When drawn to, an sRGB to linear color space conversion is performed.
    */
-  static readonly TEXTURE_DRAWABLE_FORMAT_RGBA8_SRGB: int;
+  readonly TEXTURE_DRAWABLE_FORMAT_RGBA8_SRGB: int;
   /**
    * OpenGL texture format GL_RGBA16F where there are four components, each a 16-bit "half-precision" floating-point value.
    */
-  static readonly TEXTURE_DRAWABLE_FORMAT_RGBAH: int;
+  readonly TEXTURE_DRAWABLE_FORMAT_RGBAH: int;
   /**
    * OpenGL texture format GL_RGBA32F where there are four components, each a 32-bit floating-point value.
    */
-  static readonly TEXTURE_DRAWABLE_FORMAT_RGBAF: int;
+  readonly TEXTURE_DRAWABLE_FORMAT_RGBAF: int;
   // enum ShaderMode
   /** Shader is a 3D shader. */
-  static readonly SHADER_SPATIAL: int;
+  readonly SHADER_SPATIAL: int;
   /** Shader is a 2D shader. */
-  static readonly SHADER_CANVAS_ITEM: int;
+  readonly SHADER_CANVAS_ITEM: int;
   /** Shader is a particle shader (can be used in both 2D and 3D). */
-  static readonly SHADER_PARTICLES: int;
+  readonly SHADER_PARTICLES: int;
   /** Shader is a 3D sky shader. */
-  static readonly SHADER_SKY: int;
+  readonly SHADER_SKY: int;
   /** Shader is a 3D fog shader. */
-  static readonly SHADER_FOG: int;
+  readonly SHADER_FOG: int;
   /** Shader is a texture_blit shader. */
-  static readonly SHADER_TEXTURE_BLIT: int;
+  readonly SHADER_TEXTURE_BLIT: int;
   /** Represents the size of the {@link ShaderMode} enum. */
-  static readonly SHADER_MAX: int;
+  readonly SHADER_MAX: int;
   // enum ArrayType
   /** Array is a vertex position array. */
-  static readonly ARRAY_VERTEX: int;
+  readonly ARRAY_VERTEX: int;
   /** Array is a normal array. */
-  static readonly ARRAY_NORMAL: int;
+  readonly ARRAY_NORMAL: int;
   /** Array is a tangent array. */
-  static readonly ARRAY_TANGENT: int;
+  readonly ARRAY_TANGENT: int;
   /** Array is a vertex color array. */
-  static readonly ARRAY_COLOR: int;
+  readonly ARRAY_COLOR: int;
   /** Array is a UV coordinates array. */
-  static readonly ARRAY_TEX_UV: int;
+  readonly ARRAY_TEX_UV: int;
   /** Array is a UV coordinates array for the second set of UV coordinates. */
-  static readonly ARRAY_TEX_UV2: int;
+  readonly ARRAY_TEX_UV2: int;
   /** Array is a custom data array for the first set of custom data. */
-  static readonly ARRAY_CUSTOM0: int;
+  readonly ARRAY_CUSTOM0: int;
   /** Array is a custom data array for the second set of custom data. */
-  static readonly ARRAY_CUSTOM1: int;
+  readonly ARRAY_CUSTOM1: int;
   /** Array is a custom data array for the third set of custom data. */
-  static readonly ARRAY_CUSTOM2: int;
+  readonly ARRAY_CUSTOM2: int;
   /** Array is a custom data array for the fourth set of custom data. */
-  static readonly ARRAY_CUSTOM3: int;
+  readonly ARRAY_CUSTOM3: int;
   /** Array contains bone information. */
-  static readonly ARRAY_BONES: int;
+  readonly ARRAY_BONES: int;
   /** Array is weight information. */
-  static readonly ARRAY_WEIGHTS: int;
+  readonly ARRAY_WEIGHTS: int;
   /** Array is an index array. */
-  static readonly ARRAY_INDEX: int;
+  readonly ARRAY_INDEX: int;
   /** Represents the size of the {@link ArrayType} enum. */
-  static readonly ARRAY_MAX: int;
+  readonly ARRAY_MAX: int;
   // enum ArrayCustomFormat
   /**
    * Custom data array contains 8-bit-per-channel red/green/blue/alpha color data. Values are normalized, unsigned floating-point in the `[0.0, 1.0]` range.
    */
-  static readonly ARRAY_CUSTOM_RGBA8_UNORM: int;
+  readonly ARRAY_CUSTOM_RGBA8_UNORM: int;
   /**
    * Custom data array contains 8-bit-per-channel red/green/blue/alpha color data. Values are normalized, signed floating-point in the `[-1.0, 1.0]` range.
    */
-  static readonly ARRAY_CUSTOM_RGBA8_SNORM: int;
+  readonly ARRAY_CUSTOM_RGBA8_SNORM: int;
   /**
    * Custom data array contains 16-bit-per-channel red/green color data. Values are floating-point in half precision.
    */
-  static readonly ARRAY_CUSTOM_RG_HALF: int;
+  readonly ARRAY_CUSTOM_RG_HALF: int;
   /**
    * Custom data array contains 16-bit-per-channel red/green/blue/alpha color data. Values are floating-point in half precision.
    */
-  static readonly ARRAY_CUSTOM_RGBA_HALF: int;
+  readonly ARRAY_CUSTOM_RGBA_HALF: int;
   /**
    * Custom data array contains 32-bit-per-channel red color data. Values are floating-point in single precision.
    */
-  static readonly ARRAY_CUSTOM_R_FLOAT: int;
+  readonly ARRAY_CUSTOM_R_FLOAT: int;
   /**
    * Custom data array contains 32-bit-per-channel red/green color data. Values are floating-point in single precision.
    */
-  static readonly ARRAY_CUSTOM_RG_FLOAT: int;
+  readonly ARRAY_CUSTOM_RG_FLOAT: int;
   /**
    * Custom data array contains 32-bit-per-channel red/green/blue color data. Values are floating-point in single precision.
    */
-  static readonly ARRAY_CUSTOM_RGB_FLOAT: int;
+  readonly ARRAY_CUSTOM_RGB_FLOAT: int;
   /**
    * Custom data array contains 32-bit-per-channel red/green/blue/alpha color data. Values are floating-point in single precision.
    */
-  static readonly ARRAY_CUSTOM_RGBA_FLOAT: int;
+  readonly ARRAY_CUSTOM_RGBA_FLOAT: int;
   /** Represents the size of the {@link ArrayCustomFormat} enum. */
-  static readonly ARRAY_CUSTOM_MAX: int;
+  readonly ARRAY_CUSTOM_MAX: int;
   // enum ArrayFormat
   /** Flag used to mark a vertex position array. */
-  static readonly ARRAY_FORMAT_VERTEX: int;
+  readonly ARRAY_FORMAT_VERTEX: int;
   /** Flag used to mark a normal array. */
-  static readonly ARRAY_FORMAT_NORMAL: int;
+  readonly ARRAY_FORMAT_NORMAL: int;
   /** Flag used to mark a tangent array. */
-  static readonly ARRAY_FORMAT_TANGENT: int;
+  readonly ARRAY_FORMAT_TANGENT: int;
   /** Flag used to mark a vertex color array. */
-  static readonly ARRAY_FORMAT_COLOR: int;
+  readonly ARRAY_FORMAT_COLOR: int;
   /** Flag used to mark a UV coordinates array. */
-  static readonly ARRAY_FORMAT_TEX_UV: int;
+  readonly ARRAY_FORMAT_TEX_UV: int;
   /** Flag used to mark a UV coordinates array for the second UV coordinates. */
-  static readonly ARRAY_FORMAT_TEX_UV2: int;
+  readonly ARRAY_FORMAT_TEX_UV2: int;
   /** Flag used to mark an array of custom per-vertex data for the first set of custom data. */
-  static readonly ARRAY_FORMAT_CUSTOM0: int;
+  readonly ARRAY_FORMAT_CUSTOM0: int;
   /** Flag used to mark an array of custom per-vertex data for the second set of custom data. */
-  static readonly ARRAY_FORMAT_CUSTOM1: int;
+  readonly ARRAY_FORMAT_CUSTOM1: int;
   /** Flag used to mark an array of custom per-vertex data for the third set of custom data. */
-  static readonly ARRAY_FORMAT_CUSTOM2: int;
+  readonly ARRAY_FORMAT_CUSTOM2: int;
   /** Flag used to mark an array of custom per-vertex data for the fourth set of custom data. */
-  static readonly ARRAY_FORMAT_CUSTOM3: int;
+  readonly ARRAY_FORMAT_CUSTOM3: int;
   /** Flag used to mark a bone information array. */
-  static readonly ARRAY_FORMAT_BONES: int;
+  readonly ARRAY_FORMAT_BONES: int;
   /** Flag used to mark a weights array. */
-  static readonly ARRAY_FORMAT_WEIGHTS: int;
+  readonly ARRAY_FORMAT_WEIGHTS: int;
   /** Flag used to mark an index array. */
-  static readonly ARRAY_FORMAT_INDEX: int;
+  readonly ARRAY_FORMAT_INDEX: int;
   /** Mask of mesh channels permitted in blend shapes. */
-  static readonly ARRAY_FORMAT_BLEND_SHAPE_MASK: int;
+  readonly ARRAY_FORMAT_BLEND_SHAPE_MASK: int;
   /** Shift of first custom channel. */
-  static readonly ARRAY_FORMAT_CUSTOM_BASE: int;
+  readonly ARRAY_FORMAT_CUSTOM_BASE: int;
   /** Number of format bits per custom channel. See {@link ArrayCustomFormat}. */
-  static readonly ARRAY_FORMAT_CUSTOM_BITS: int;
+  readonly ARRAY_FORMAT_CUSTOM_BITS: int;
   /** Amount to shift {@link ArrayCustomFormat} for custom channel index 0. */
-  static readonly ARRAY_FORMAT_CUSTOM0_SHIFT: int;
+  readonly ARRAY_FORMAT_CUSTOM0_SHIFT: int;
   /** Amount to shift {@link ArrayCustomFormat} for custom channel index 1. */
-  static readonly ARRAY_FORMAT_CUSTOM1_SHIFT: int;
+  readonly ARRAY_FORMAT_CUSTOM1_SHIFT: int;
   /** Amount to shift {@link ArrayCustomFormat} for custom channel index 2. */
-  static readonly ARRAY_FORMAT_CUSTOM2_SHIFT: int;
+  readonly ARRAY_FORMAT_CUSTOM2_SHIFT: int;
   /** Amount to shift {@link ArrayCustomFormat} for custom channel index 3. */
-  static readonly ARRAY_FORMAT_CUSTOM3_SHIFT: int;
+  readonly ARRAY_FORMAT_CUSTOM3_SHIFT: int;
   /**
    * Mask of custom format bits per custom channel. Must be shifted by one of the SHIFT constants. See {@link ArrayCustomFormat}.
    */
-  static readonly ARRAY_FORMAT_CUSTOM_MASK: int;
+  readonly ARRAY_FORMAT_CUSTOM_MASK: int;
   /**
    * Shift of first compress flag. Compress flags should be passed to {@link ArrayMesh.add_surface_from_arrays} and {@link SurfaceTool.commit}.
    */
-  static readonly ARRAY_COMPRESS_FLAGS_BASE: int;
+  readonly ARRAY_COMPRESS_FLAGS_BASE: int;
   /** Flag used to mark that the array contains 2D vertices. */
-  static readonly ARRAY_FLAG_USE_2D_VERTICES: int;
+  readonly ARRAY_FLAG_USE_2D_VERTICES: int;
   /** Flag used to mark that the mesh data will use `GL_DYNAMIC_DRAW` on GLES. Unused on Vulkan. */
-  static readonly ARRAY_FLAG_USE_DYNAMIC_UPDATE: int;
+  readonly ARRAY_FLAG_USE_DYNAMIC_UPDATE: int;
   /** Flag used to mark that the array uses 8 bone weights instead of 4. */
-  static readonly ARRAY_FLAG_USE_8_BONE_WEIGHTS: int;
+  readonly ARRAY_FLAG_USE_8_BONE_WEIGHTS: int;
   /**
    * Flag used to mark that the mesh does not have a vertex array and instead will infer vertex positions in the shader using indices and other information.
    */
-  static readonly ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY: int;
+  readonly ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY: int;
   /**
    * Flag used to mark that a mesh is using compressed attributes (vertices, normals, tangents, UVs). When this form of compression is enabled, vertex positions will be packed into an RGBA16UNORM attribute and scaled in the vertex shader. The normal and tangent will be packed into an RG16UNORM representing an axis, and a 16-bit float stored in the A-channel of the vertex. UVs will use 16-bit normalized floats instead of full 32-bit signed floats. When using this compression mode you must use either vertices, normals, and tangents or only vertices. You cannot use normals without tangents. Importers will automatically enable this compression if they can.
    */
-  static readonly ARRAY_FLAG_COMPRESS_ATTRIBUTES: int;
+  readonly ARRAY_FLAG_COMPRESS_ATTRIBUTES: int;
   /** Flag used to mark the start of the bits used to store the mesh version. */
-  static readonly ARRAY_FLAG_FORMAT_VERSION_BASE: int;
+  readonly ARRAY_FLAG_FORMAT_VERSION_BASE: int;
   /** Flag used to shift a mesh format int to bring the version into the lowest digits. */
-  static readonly ARRAY_FLAG_FORMAT_VERSION_SHIFT: int;
+  readonly ARRAY_FLAG_FORMAT_VERSION_SHIFT: int;
   /** Flag used to record the format used by prior mesh versions before the introduction of a version. */
-  static readonly ARRAY_FLAG_FORMAT_VERSION_1: int;
+  readonly ARRAY_FLAG_FORMAT_VERSION_1: int;
   /**
    * Flag used to record the second iteration of the mesh version flag. The primary difference between this and {@link ARRAY_FLAG_FORMAT_VERSION_1} is that this version supports {@link ARRAY_FLAG_COMPRESS_ATTRIBUTES} and in this version vertex positions are de-interleaved from normals and tangents.
    */
-  static readonly ARRAY_FLAG_FORMAT_VERSION_2: int;
+  readonly ARRAY_FLAG_FORMAT_VERSION_2: int;
   /**
    * Flag used to record the current version that the engine expects. Currently this is the same as {@link ARRAY_FLAG_FORMAT_VERSION_2}.
    */
-  static readonly ARRAY_FLAG_FORMAT_CURRENT_VERSION: int;
+  readonly ARRAY_FLAG_FORMAT_CURRENT_VERSION: int;
   /**
    * Flag used to isolate the bits used for mesh version after using {@link ARRAY_FLAG_FORMAT_VERSION_SHIFT} to shift them into place.
    */
-  static readonly ARRAY_FLAG_FORMAT_VERSION_MASK: int;
+  readonly ARRAY_FLAG_FORMAT_VERSION_MASK: int;
   // enum PrimitiveType
   /** Primitive to draw consists of points. */
-  static readonly PRIMITIVE_POINTS: int;
+  readonly PRIMITIVE_POINTS: int;
   /** Primitive to draw consists of lines. */
-  static readonly PRIMITIVE_LINES: int;
+  readonly PRIMITIVE_LINES: int;
   /** Primitive to draw consists of a line strip from start to end. */
-  static readonly PRIMITIVE_LINE_STRIP: int;
+  readonly PRIMITIVE_LINE_STRIP: int;
   /** Primitive to draw consists of triangles. */
-  static readonly PRIMITIVE_TRIANGLES: int;
+  readonly PRIMITIVE_TRIANGLES: int;
   /**
    * Primitive to draw consists of a triangle strip (the last 3 vertices are always combined to make a triangle).
    */
-  static readonly PRIMITIVE_TRIANGLE_STRIP: int;
+  readonly PRIMITIVE_TRIANGLE_STRIP: int;
   /** Represents the size of the {@link PrimitiveType} enum. */
-  static readonly PRIMITIVE_MAX: int;
+  readonly PRIMITIVE_MAX: int;
   // enum BlendShapeMode
   /** Blend shapes are normalized. */
-  static readonly BLEND_SHAPE_MODE_NORMALIZED: int;
+  readonly BLEND_SHAPE_MODE_NORMALIZED: int;
   /** Blend shapes are relative to base weight. */
-  static readonly BLEND_SHAPE_MODE_RELATIVE: int;
+  readonly BLEND_SHAPE_MODE_RELATIVE: int;
   // enum MultimeshTransformFormat
   /** Use {@link Transform2D} to store MultiMesh transform. */
-  static readonly MULTIMESH_TRANSFORM_2D: int;
+  readonly MULTIMESH_TRANSFORM_2D: int;
   /** Use {@link Transform3D} to store MultiMesh transform. */
-  static readonly MULTIMESH_TRANSFORM_3D: int;
+  readonly MULTIMESH_TRANSFORM_3D: int;
   // enum MultimeshPhysicsInterpolationQuality
   /** MultiMesh physics interpolation favors speed over quality. */
-  static readonly MULTIMESH_INTERP_QUALITY_FAST: int;
+  readonly MULTIMESH_INTERP_QUALITY_FAST: int;
   /** MultiMesh physics interpolation favors quality over speed. */
-  static readonly MULTIMESH_INTERP_QUALITY_HIGH: int;
+  readonly MULTIMESH_INTERP_QUALITY_HIGH: int;
   // enum LightProjectorFilter
   /**
    * Nearest-neighbor filter for light projectors (use for pixel art light projectors). No mipmaps are used for rendering, which means light projectors at a distance will look sharp but grainy. This has roughly the same performance cost as using mipmaps.
    */
-  static readonly LIGHT_PROJECTOR_FILTER_NEAREST: int;
+  readonly LIGHT_PROJECTOR_FILTER_NEAREST: int;
   /**
    * Linear filter for light projectors (use for non-pixel art light projectors). No mipmaps are used for rendering, which means light projectors at a distance will look smooth but blurry. This has roughly the same performance cost as using mipmaps.
    */
-  static readonly LIGHT_PROJECTOR_FILTER_LINEAR: int;
+  readonly LIGHT_PROJECTOR_FILTER_LINEAR: int;
   /**
    * Nearest-neighbor filter for light projectors (use for pixel art light projectors). Isotropic mipmaps are used for rendering, which means light projectors at a distance will look smooth but blurry. This has roughly the same performance cost as not using mipmaps.
    */
-  static readonly LIGHT_PROJECTOR_FILTER_NEAREST_MIPMAPS: int;
+  readonly LIGHT_PROJECTOR_FILTER_NEAREST_MIPMAPS: int;
   /**
    * Linear filter for light projectors (use for non-pixel art light projectors). Isotropic mipmaps are used for rendering, which means light projectors at a distance will look smooth but blurry. This has roughly the same performance cost as not using mipmaps.
    */
-  static readonly LIGHT_PROJECTOR_FILTER_LINEAR_MIPMAPS: int;
+  readonly LIGHT_PROJECTOR_FILTER_LINEAR_MIPMAPS: int;
   /**
    * Nearest-neighbor filter for light projectors (use for pixel art light projectors). Anisotropic mipmaps are used for rendering, which means light projectors at a distance will look smooth and sharp when viewed from oblique angles. This looks better compared to isotropic mipmaps, but is slower. The level of anisotropic filtering is defined by {@link ProjectSettings.rendering/textures/default_filters/anisotropic_filtering_level}.
    */
-  static readonly LIGHT_PROJECTOR_FILTER_NEAREST_MIPMAPS_ANISOTROPIC: int;
+  readonly LIGHT_PROJECTOR_FILTER_NEAREST_MIPMAPS_ANISOTROPIC: int;
   /**
    * Linear filter for light projectors (use for non-pixel art light projectors). Anisotropic mipmaps are used for rendering, which means light projectors at a distance will look smooth and sharp when viewed from oblique angles. This looks better compared to isotropic mipmaps, but is slower. The level of anisotropic filtering is defined by {@link ProjectSettings.rendering/textures/default_filters/anisotropic_filtering_level}.
    */
-  static readonly LIGHT_PROJECTOR_FILTER_LINEAR_MIPMAPS_ANISOTROPIC: int;
+  readonly LIGHT_PROJECTOR_FILTER_LINEAR_MIPMAPS_ANISOTROPIC: int;
   // enum LightType
   /** Directional (sun/moon) light (see {@link DirectionalLight3D}). */
-  static readonly LIGHT_DIRECTIONAL: int;
+  readonly LIGHT_DIRECTIONAL: int;
   /** Omni light (see {@link OmniLight3D}). */
-  static readonly LIGHT_OMNI: int;
+  readonly LIGHT_OMNI: int;
   /** Spot light (see {@link SpotLight3D}). */
-  static readonly LIGHT_SPOT: int;
+  readonly LIGHT_SPOT: int;
   // enum LightParam
   /** The light's energy multiplier. */
-  static readonly LIGHT_PARAM_ENERGY: int;
+  readonly LIGHT_PARAM_ENERGY: int;
   /**
    * The light's indirect energy multiplier (final indirect energy is {@link LIGHT_PARAM_ENERGY} * {@link LIGHT_PARAM_INDIRECT_ENERGY}).
    */
-  static readonly LIGHT_PARAM_INDIRECT_ENERGY: int;
+  readonly LIGHT_PARAM_INDIRECT_ENERGY: int;
   /**
    * The light's volumetric fog energy multiplier (final volumetric fog energy is {@link LIGHT_PARAM_ENERGY} * {@link LIGHT_PARAM_VOLUMETRIC_FOG_ENERGY}).
    */
-  static readonly LIGHT_PARAM_VOLUMETRIC_FOG_ENERGY: int;
+  readonly LIGHT_PARAM_VOLUMETRIC_FOG_ENERGY: int;
   /** The light's influence on specularity. */
-  static readonly LIGHT_PARAM_SPECULAR: int;
+  readonly LIGHT_PARAM_SPECULAR: int;
   /** The light's range. */
-  static readonly LIGHT_PARAM_RANGE: int;
+  readonly LIGHT_PARAM_RANGE: int;
   /**
    * The size of the light when using spot light or omni light. The angular size of the light when using directional light.
    */
-  static readonly LIGHT_PARAM_SIZE: int;
+  readonly LIGHT_PARAM_SIZE: int;
   /** The light's attenuation. */
-  static readonly LIGHT_PARAM_ATTENUATION: int;
+  readonly LIGHT_PARAM_ATTENUATION: int;
   /** The spotlight's angle. */
-  static readonly LIGHT_PARAM_SPOT_ANGLE: int;
+  readonly LIGHT_PARAM_SPOT_ANGLE: int;
   /** The spotlight's attenuation. */
-  static readonly LIGHT_PARAM_SPOT_ATTENUATION: int;
+  readonly LIGHT_PARAM_SPOT_ATTENUATION: int;
   /**
    * The maximum distance for shadow splits. Increasing this value will make directional shadows visible from further away, at the cost of lower overall shadow detail and performance (since more objects need to be included in the directional shadow rendering).
    */
-  static readonly LIGHT_PARAM_SHADOW_MAX_DISTANCE: int;
+  readonly LIGHT_PARAM_SHADOW_MAX_DISTANCE: int;
   /** Proportion of shadow atlas occupied by the first split. */
-  static readonly LIGHT_PARAM_SHADOW_SPLIT_1_OFFSET: int;
+  readonly LIGHT_PARAM_SHADOW_SPLIT_1_OFFSET: int;
   /** Proportion of shadow atlas occupied by the second split. */
-  static readonly LIGHT_PARAM_SHADOW_SPLIT_2_OFFSET: int;
+  readonly LIGHT_PARAM_SHADOW_SPLIT_2_OFFSET: int;
   /** Proportion of shadow atlas occupied by the third split. The fourth split occupies the rest. */
-  static readonly LIGHT_PARAM_SHADOW_SPLIT_3_OFFSET: int;
+  readonly LIGHT_PARAM_SHADOW_SPLIT_3_OFFSET: int;
   /** Proportion of shadow max distance where the shadow will start to fade out. */
-  static readonly LIGHT_PARAM_SHADOW_FADE_START: int;
+  readonly LIGHT_PARAM_SHADOW_FADE_START: int;
   /**
    * Normal bias used to offset shadow lookup by object normal. Can be used to fix self-shadowing artifacts.
    */
-  static readonly LIGHT_PARAM_SHADOW_NORMAL_BIAS: int;
+  readonly LIGHT_PARAM_SHADOW_NORMAL_BIAS: int;
   /** Bias for the shadow lookup to fix self-shadowing artifacts. */
-  static readonly LIGHT_PARAM_SHADOW_BIAS: int;
+  readonly LIGHT_PARAM_SHADOW_BIAS: int;
   /**
    * Sets the size of the directional shadow pancake. The pancake offsets the start of the shadow's camera frustum to provide a higher effective depth resolution for the shadow. However, a high pancake size can cause artifacts in the shadows of large objects that are close to the edge of the frustum. Reducing the pancake size can help. Setting the size to `0` turns off the pancaking effect.
    */
-  static readonly LIGHT_PARAM_SHADOW_PANCAKE_SIZE: int;
+  readonly LIGHT_PARAM_SHADOW_PANCAKE_SIZE: int;
   /**
    * The light's shadow opacity. Values lower than `1.0` make the light appear through shadows. This can be used to fake global illumination at a low performance cost.
    */
-  static readonly LIGHT_PARAM_SHADOW_OPACITY: int;
+  readonly LIGHT_PARAM_SHADOW_OPACITY: int;
   /**
    * Blurs the edges of the shadow. Can be used to hide pixel artifacts in low resolution shadow maps. A high value can make shadows appear grainy and can cause other unwanted artifacts. Try to keep as near default as possible.
    */
-  static readonly LIGHT_PARAM_SHADOW_BLUR: int;
-  static readonly LIGHT_PARAM_TRANSMITTANCE_BIAS: int;
+  readonly LIGHT_PARAM_SHADOW_BLUR: int;
+  readonly LIGHT_PARAM_TRANSMITTANCE_BIAS: int;
   /**
    * Constant representing the intensity of the light, measured in Lumens when dealing with a {@link SpotLight3D} or {@link OmniLight3D}, or measured in Lux with a {@link DirectionalLight3D}. Only used when {@link ProjectSettings.rendering/lights_and_shadows/use_physical_light_units} is `true`.
    */
-  static readonly LIGHT_PARAM_INTENSITY: int;
+  readonly LIGHT_PARAM_INTENSITY: int;
   /** Represents the size of the {@link LightParam} enum. */
-  static readonly LIGHT_PARAM_MAX: int;
+  readonly LIGHT_PARAM_MAX: int;
   // enum LightBakeMode
   /**
    * Light is ignored when baking. This is the fastest mode, but the light will be taken into account when baking global illumination. This mode should generally be used for dynamic lights that change quickly, as the effect of global illumination is less noticeable on those lights.
    */
-  static readonly LIGHT_BAKE_DISABLED: int;
+  readonly LIGHT_BAKE_DISABLED: int;
   /**
    * Light is taken into account in static baking ({@link VoxelGI}, {@link LightmapGI}, SDFGI ({@link Environment.sdfgi_enabled})). The light can be moved around or modified, but its global illumination will not update in real-time. This is suitable for subtle changes (such as flickering torches), but generally not large changes such as toggling a light on and off.
    */
-  static readonly LIGHT_BAKE_STATIC: int;
+  readonly LIGHT_BAKE_STATIC: int;
   /**
    * Light is taken into account in dynamic baking ({@link VoxelGI} and SDFGI ({@link Environment.sdfgi_enabled}) only). The light can be moved around or modified with global illumination updating in real-time. The light's global illumination appearance will be slightly different compared to {@link LIGHT_BAKE_STATIC}. This has a greater performance cost compared to {@link LIGHT_BAKE_STATIC}. When using SDFGI, the update speed of dynamic lights is affected by {@link ProjectSettings.rendering/global_illumination/sdfgi/frames_to_update_lights}.
    */
-  static readonly LIGHT_BAKE_DYNAMIC: int;
+  readonly LIGHT_BAKE_DYNAMIC: int;
   // enum LightOmniShadowMode
   /** Use a dual paraboloid shadow map for omni lights. */
-  static readonly LIGHT_OMNI_SHADOW_DUAL_PARABOLOID: int;
+  readonly LIGHT_OMNI_SHADOW_DUAL_PARABOLOID: int;
   /** Use a cubemap shadow map for omni lights. Slower but better quality than dual paraboloid. */
-  static readonly LIGHT_OMNI_SHADOW_CUBE: int;
+  readonly LIGHT_OMNI_SHADOW_CUBE: int;
   // enum LightDirectionalShadowMode
   /** Use orthogonal shadow projection for directional light. */
-  static readonly LIGHT_DIRECTIONAL_SHADOW_ORTHOGONAL: int;
+  readonly LIGHT_DIRECTIONAL_SHADOW_ORTHOGONAL: int;
   /** Use 2 splits for shadow projection when using directional light. */
-  static readonly LIGHT_DIRECTIONAL_SHADOW_PARALLEL_2_SPLITS: int;
+  readonly LIGHT_DIRECTIONAL_SHADOW_PARALLEL_2_SPLITS: int;
   /** Use 4 splits for shadow projection when using directional light. */
-  static readonly LIGHT_DIRECTIONAL_SHADOW_PARALLEL_4_SPLITS: int;
+  readonly LIGHT_DIRECTIONAL_SHADOW_PARALLEL_4_SPLITS: int;
   // enum LightDirectionalSkyMode
   /** Use DirectionalLight3D in both sky rendering and scene lighting. */
-  static readonly LIGHT_DIRECTIONAL_SKY_MODE_LIGHT_AND_SKY: int;
+  readonly LIGHT_DIRECTIONAL_SKY_MODE_LIGHT_AND_SKY: int;
   /** Only use DirectionalLight3D in scene lighting. */
-  static readonly LIGHT_DIRECTIONAL_SKY_MODE_LIGHT_ONLY: int;
+  readonly LIGHT_DIRECTIONAL_SKY_MODE_LIGHT_ONLY: int;
   /** Only use DirectionalLight3D in sky rendering. */
-  static readonly LIGHT_DIRECTIONAL_SKY_MODE_SKY_ONLY: int;
+  readonly LIGHT_DIRECTIONAL_SKY_MODE_SKY_ONLY: int;
   // enum ShadowQuality
   /**
    * Lowest shadow filtering quality (fastest). Soft shadows are not available with this quality setting, which means the {@link Light3D.shadow_blur} property is ignored if {@link Light3D.light_size} and {@link Light3D.light_angular_distance} is `0.0`.
    * **Note:** The variable shadow blur performed by {@link Light3D.light_size} and {@link Light3D.light_angular_distance} is still effective when using hard shadow filtering. In this case, {@link Light3D.shadow_blur} *is* taken into account. However, the results will not be blurred, instead the blur amount is treated as a maximum radius for the penumbra.
    */
-  static readonly SHADOW_QUALITY_HARD: int;
+  readonly SHADOW_QUALITY_HARD: int;
   /**
    * Very low shadow filtering quality (faster). When using this quality setting, {@link Light3D.shadow_blur} is automatically multiplied by 0.75× to avoid introducing too much noise. This division only applies to lights whose {@link Light3D.light_size} or {@link Light3D.light_angular_distance} is `0.0`).
    */
-  static readonly SHADOW_QUALITY_SOFT_VERY_LOW: int;
+  readonly SHADOW_QUALITY_SOFT_VERY_LOW: int;
   /** Low shadow filtering quality (fast). */
-  static readonly SHADOW_QUALITY_SOFT_LOW: int;
+  readonly SHADOW_QUALITY_SOFT_LOW: int;
   /** Medium low shadow filtering quality (average). */
-  static readonly SHADOW_QUALITY_SOFT_MEDIUM: int;
+  readonly SHADOW_QUALITY_SOFT_MEDIUM: int;
   /**
    * High low shadow filtering quality (slow). When using this quality setting, {@link Light3D.shadow_blur} is automatically multiplied by 1.5× to better make use of the high sample count. This increased blur also improves the stability of dynamic object shadows. This multiplier only applies to lights whose {@link Light3D.light_size} or {@link Light3D.light_angular_distance} is `0.0`).
    */
-  static readonly SHADOW_QUALITY_SOFT_HIGH: int;
+  readonly SHADOW_QUALITY_SOFT_HIGH: int;
   /**
    * Highest low shadow filtering quality (slowest). When using this quality setting, {@link Light3D.shadow_blur} is automatically multiplied by 2× to better make use of the high sample count. This increased blur also improves the stability of dynamic object shadows. This multiplier only applies to lights whose {@link Light3D.light_size} or {@link Light3D.light_angular_distance} is `0.0`).
    */
-  static readonly SHADOW_QUALITY_SOFT_ULTRA: int;
+  readonly SHADOW_QUALITY_SOFT_ULTRA: int;
   /** Represents the size of the {@link ShadowQuality} enum. */
-  static readonly SHADOW_QUALITY_MAX: int;
+  readonly SHADOW_QUALITY_MAX: int;
   // enum ReflectionProbeUpdateMode
   /** Reflection probe will update reflections once and then stop. */
-  static readonly REFLECTION_PROBE_UPDATE_ONCE: int;
+  readonly REFLECTION_PROBE_UPDATE_ONCE: int;
   /** Reflection probe will update each frame. This mode is necessary to capture moving objects. */
-  static readonly REFLECTION_PROBE_UPDATE_ALWAYS: int;
+  readonly REFLECTION_PROBE_UPDATE_ALWAYS: int;
   // enum ReflectionProbeAmbientMode
   /** Do not apply any ambient lighting inside the reflection probe's box defined by its size. */
-  static readonly REFLECTION_PROBE_AMBIENT_DISABLED: int;
+  readonly REFLECTION_PROBE_AMBIENT_DISABLED: int;
   /**
    * Apply automatically-sourced environment lighting inside the reflection probe's box defined by its size.
    */
-  static readonly REFLECTION_PROBE_AMBIENT_ENVIRONMENT: int;
+  readonly REFLECTION_PROBE_AMBIENT_ENVIRONMENT: int;
   /**
    * Apply custom ambient lighting inside the reflection probe's box defined by its size. See {@link reflection_probe_set_ambient_color} and {@link reflection_probe_set_ambient_energy}.
    */
-  static readonly REFLECTION_PROBE_AMBIENT_COLOR: int;
+  readonly REFLECTION_PROBE_AMBIENT_COLOR: int;
   // enum DecalTexture
   /** Albedo texture slot in a decal ({@link Decal.texture_albedo}). */
-  static readonly DECAL_TEXTURE_ALBEDO: int;
+  readonly DECAL_TEXTURE_ALBEDO: int;
   /** Normal map texture slot in a decal ({@link Decal.texture_normal}). */
-  static readonly DECAL_TEXTURE_NORMAL: int;
+  readonly DECAL_TEXTURE_NORMAL: int;
   /** Occlusion/Roughness/Metallic texture slot in a decal ({@link Decal.texture_orm}). */
-  static readonly DECAL_TEXTURE_ORM: int;
+  readonly DECAL_TEXTURE_ORM: int;
   /** Emission texture slot in a decal ({@link Decal.texture_emission}). */
-  static readonly DECAL_TEXTURE_EMISSION: int;
+  readonly DECAL_TEXTURE_EMISSION: int;
   /** Represents the size of the {@link DecalTexture} enum. */
-  static readonly DECAL_TEXTURE_MAX: int;
+  readonly DECAL_TEXTURE_MAX: int;
   // enum DecalFilter
   /**
    * Nearest-neighbor filter for decals (use for pixel art decals). No mipmaps are used for rendering, which means decals at a distance will look sharp but grainy. This has roughly the same performance cost as using mipmaps.
    */
-  static readonly DECAL_FILTER_NEAREST: int;
+  readonly DECAL_FILTER_NEAREST: int;
   /**
    * Linear filter for decals (use for non-pixel art decals). No mipmaps are used for rendering, which means decals at a distance will look smooth but blurry. This has roughly the same performance cost as using mipmaps.
    */
-  static readonly DECAL_FILTER_LINEAR: int;
+  readonly DECAL_FILTER_LINEAR: int;
   /**
    * Nearest-neighbor filter for decals (use for pixel art decals). Isotropic mipmaps are used for rendering, which means decals at a distance will look smooth but blurry. This has roughly the same performance cost as not using mipmaps.
    */
-  static readonly DECAL_FILTER_NEAREST_MIPMAPS: int;
+  readonly DECAL_FILTER_NEAREST_MIPMAPS: int;
   /**
    * Linear filter for decals (use for non-pixel art decals). Isotropic mipmaps are used for rendering, which means decals at a distance will look smooth but blurry. This has roughly the same performance cost as not using mipmaps.
    */
-  static readonly DECAL_FILTER_LINEAR_MIPMAPS: int;
+  readonly DECAL_FILTER_LINEAR_MIPMAPS: int;
   /**
    * Nearest-neighbor filter for decals (use for pixel art decals). Anisotropic mipmaps are used for rendering, which means decals at a distance will look smooth and sharp when viewed from oblique angles. This looks better compared to isotropic mipmaps, but is slower. The level of anisotropic filtering is defined by {@link ProjectSettings.rendering/textures/default_filters/anisotropic_filtering_level}.
    */
-  static readonly DECAL_FILTER_NEAREST_MIPMAPS_ANISOTROPIC: int;
+  readonly DECAL_FILTER_NEAREST_MIPMAPS_ANISOTROPIC: int;
   /**
    * Linear filter for decals (use for non-pixel art decals). Anisotropic mipmaps are used for rendering, which means decals at a distance will look smooth and sharp when viewed from oblique angles. This looks better compared to isotropic mipmaps, but is slower. The level of anisotropic filtering is defined by {@link ProjectSettings.rendering/textures/default_filters/anisotropic_filtering_level}.
    */
-  static readonly DECAL_FILTER_LINEAR_MIPMAPS_ANISOTROPIC: int;
+  readonly DECAL_FILTER_LINEAR_MIPMAPS_ANISOTROPIC: int;
   // enum VoxelGIQuality
   /** Low {@link VoxelGI} rendering quality using 4 cones. */
-  static readonly VOXEL_GI_QUALITY_LOW: int;
+  readonly VOXEL_GI_QUALITY_LOW: int;
   /** High {@link VoxelGI} rendering quality using 6 cones. */
-  static readonly VOXEL_GI_QUALITY_HIGH: int;
+  readonly VOXEL_GI_QUALITY_HIGH: int;
   // enum ParticlesMode
   /** 2D particles. */
-  static readonly PARTICLES_MODE_2D: int;
+  readonly PARTICLES_MODE_2D: int;
   /** 3D particles. */
-  static readonly PARTICLES_MODE_3D: int;
+  readonly PARTICLES_MODE_3D: int;
   // enum ParticlesTransformAlign
   /** Do not align particle transforms relative to the camera or velocity. */
-  static readonly PARTICLES_TRANSFORM_ALIGN_DISABLED: int;
+  readonly PARTICLES_TRANSFORM_ALIGN_DISABLED: int;
   /** Align each particle's Z axis to face the camera. */
-  static readonly PARTICLES_TRANSFORM_ALIGN_Z_BILLBOARD: int;
+  readonly PARTICLES_TRANSFORM_ALIGN_Z_BILLBOARD: int;
   /** Align each particle's Y axis to the velocity vector. */
-  static readonly PARTICLES_TRANSFORM_ALIGN_Y_TO_VELOCITY: int;
+  readonly PARTICLES_TRANSFORM_ALIGN_Y_TO_VELOCITY: int;
   /** Align each particle's Z axis to face the camera and Y axis to the velocity vector. */
-  static readonly PARTICLES_TRANSFORM_ALIGN_Z_BILLBOARD_Y_TO_VELOCITY: int;
+  readonly PARTICLES_TRANSFORM_ALIGN_Z_BILLBOARD_Y_TO_VELOCITY: int;
   // enum ParticlesDrawOrder
   /** Draw particles in the order that they appear in the particles array. */
-  static readonly PARTICLES_DRAW_ORDER_INDEX: int;
+  readonly PARTICLES_DRAW_ORDER_INDEX: int;
   /**
    * Sort particles based on their lifetime. In other words, the particle with the highest lifetime is drawn at the front.
    */
-  static readonly PARTICLES_DRAW_ORDER_LIFETIME: int;
+  readonly PARTICLES_DRAW_ORDER_LIFETIME: int;
   /**
    * Sort particles based on the inverse of their lifetime. In other words, the particle with the lowest lifetime is drawn at the front.
    */
-  static readonly PARTICLES_DRAW_ORDER_REVERSE_LIFETIME: int;
+  readonly PARTICLES_DRAW_ORDER_REVERSE_LIFETIME: int;
   /** Sort particles based on their distance to the camera. */
-  static readonly PARTICLES_DRAW_ORDER_VIEW_DEPTH: int;
+  readonly PARTICLES_DRAW_ORDER_VIEW_DEPTH: int;
   // enum ParticlesCollisionType
   /** Sphere attractor type for {@link GPUParticles3D} (see {@link GPUParticlesAttractorSphere3D}). */
-  static readonly PARTICLES_COLLISION_TYPE_SPHERE_ATTRACT: int;
+  readonly PARTICLES_COLLISION_TYPE_SPHERE_ATTRACT: int;
   /** Box attractor type for {@link GPUParticles3D} (see {@link GPUParticlesAttractorBox3D}). */
-  static readonly PARTICLES_COLLISION_TYPE_BOX_ATTRACT: int;
+  readonly PARTICLES_COLLISION_TYPE_BOX_ATTRACT: int;
   /**
    * Vector field attractor type for {@link GPUParticles3D} (see {@link GPUParticlesAttractorVectorField3D}).
    */
-  static readonly PARTICLES_COLLISION_TYPE_VECTOR_FIELD_ATTRACT: int;
+  readonly PARTICLES_COLLISION_TYPE_VECTOR_FIELD_ATTRACT: int;
   /** Sphere collision type for {@link GPUParticles3D} (see {@link GPUParticlesCollisionSphere3D}). */
-  static readonly PARTICLES_COLLISION_TYPE_SPHERE_COLLIDE: int;
+  readonly PARTICLES_COLLISION_TYPE_SPHERE_COLLIDE: int;
   /** Box collision type for {@link GPUParticles3D} (see {@link GPUParticlesCollisionBox3D}). */
-  static readonly PARTICLES_COLLISION_TYPE_BOX_COLLIDE: int;
+  readonly PARTICLES_COLLISION_TYPE_BOX_COLLIDE: int;
   /**
    * Signed distance field collision type for {@link GPUParticles3D} (see {@link GPUParticlesCollisionSDF3D}).
    */
-  static readonly PARTICLES_COLLISION_TYPE_SDF_COLLIDE: int;
+  readonly PARTICLES_COLLISION_TYPE_SDF_COLLIDE: int;
   /**
    * Heightfield collision type for {@link GPUParticles3D} (see {@link GPUParticlesCollisionHeightField3D}).
    */
-  static readonly PARTICLES_COLLISION_TYPE_HEIGHTFIELD_COLLIDE: int;
+  readonly PARTICLES_COLLISION_TYPE_HEIGHTFIELD_COLLIDE: int;
   // enum ParticlesCollisionHeightfieldResolution
   /** 256×256 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
-  static readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_256: int;
+  readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_256: int;
   /** 512×512 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
-  static readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_512: int;
+  readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_512: int;
   /** 1024×1024 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
-  static readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_1024: int;
+  readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_1024: int;
   /** 2048×2048 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
-  static readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_2048: int;
+  readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_2048: int;
   /** 4096×4096 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
-  static readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_4096: int;
+  readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_4096: int;
   /** 8192×8192 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
-  static readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_8192: int;
+  readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_8192: int;
   /** Represents the size of the {@link ParticlesCollisionHeightfieldResolution} enum. */
-  static readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_MAX: int;
+  readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_MAX: int;
   // enum FogVolumeShape
   /** {@link FogVolume} will be shaped like an ellipsoid (stretched sphere). */
-  static readonly FOG_VOLUME_SHAPE_ELLIPSOID: int;
+  readonly FOG_VOLUME_SHAPE_ELLIPSOID: int;
   /**
    * {@link FogVolume} will be shaped like a cone pointing upwards (in local coordinates). The cone's angle is set automatically to fill the size. The cone will be adjusted to fit within the size. Rotate the {@link FogVolume} node to reorient the cone. Non-uniform scaling via size is not supported (scale the {@link FogVolume} node instead).
    */
-  static readonly FOG_VOLUME_SHAPE_CONE: int;
+  readonly FOG_VOLUME_SHAPE_CONE: int;
   /**
    * {@link FogVolume} will be shaped like an upright cylinder (in local coordinates). Rotate the {@link FogVolume} node to reorient the cylinder. The cylinder will be adjusted to fit within the size. Non-uniform scaling via size is not supported (scale the {@link FogVolume} node instead).
    */
-  static readonly FOG_VOLUME_SHAPE_CYLINDER: int;
+  readonly FOG_VOLUME_SHAPE_CYLINDER: int;
   /** {@link FogVolume} will be shaped like a box. */
-  static readonly FOG_VOLUME_SHAPE_BOX: int;
+  readonly FOG_VOLUME_SHAPE_BOX: int;
   /** {@link FogVolume} will have no shape, will cover the whole world and will not be culled. */
-  static readonly FOG_VOLUME_SHAPE_WORLD: int;
+  readonly FOG_VOLUME_SHAPE_WORLD: int;
   /** Represents the size of the {@link FogVolumeShape} enum. */
-  static readonly FOG_VOLUME_SHAPE_MAX: int;
+  readonly FOG_VOLUME_SHAPE_MAX: int;
   // enum ViewportScaling3DMode
   /**
    * Use bilinear scaling for the viewport's 3D buffer. The amount of scaling can be set using {@link Viewport.scaling_3d_scale}. Values less than `1.0` will result in undersampling while values greater than `1.0` will result in supersampling. A value of `1.0` disables scaling.
    */
-  static readonly VIEWPORT_SCALING_3D_MODE_BILINEAR: int;
+  readonly VIEWPORT_SCALING_3D_MODE_BILINEAR: int;
   /**
    * Use AMD FidelityFX Super Resolution 1.0 upscaling for the viewport's 3D buffer. The amount of scaling can be set using {@link Viewport.scaling_3d_scale}. Values less than `1.0` will result in the viewport being upscaled using FSR. Values greater than `1.0` are not supported and bilinear downsampling will be used instead. A value of `1.0` disables scaling.
    */
-  static readonly VIEWPORT_SCALING_3D_MODE_FSR: int;
+  readonly VIEWPORT_SCALING_3D_MODE_FSR: int;
   /**
    * Use AMD FidelityFX Super Resolution 2.2 upscaling for the viewport's 3D buffer. The amount of scaling can be set using {@link Viewport.scaling_3d_scale}. Values less than `1.0` will result in the viewport being upscaled using FSR2. Values greater than `1.0` are not supported and bilinear downsampling will be used instead. A value of `1.0` will use FSR2 at native resolution as a TAA solution.
    */
-  static readonly VIEWPORT_SCALING_3D_MODE_FSR2: int;
+  readonly VIEWPORT_SCALING_3D_MODE_FSR2: int;
   /**
    * Use MetalFX spatial upscaling for the viewport's 3D buffer. The amount of scaling can be set using {@link Viewport.scaling_3d_scale}. Values less than `1.0` will result in the viewport being upscaled using MetalFX. Values greater than `1.0` are not supported and bilinear downsampling will be used instead. A value of `1.0` disables scaling.
    * **Note:** Only supported when the Metal rendering driver is in use, which limits this scaling mode to macOS and iOS.
    */
-  static readonly VIEWPORT_SCALING_3D_MODE_METALFX_SPATIAL: int;
+  readonly VIEWPORT_SCALING_3D_MODE_METALFX_SPATIAL: int;
   /**
    * Use MetalFX temporal upscaling for the viewport's 3D buffer. The amount of scaling can be set using {@link Viewport.scaling_3d_scale}. Values less than `1.0` will result in the viewport being upscaled using MetalFX. Values greater than `1.0` are not supported and bilinear downsampling will be used instead. A value of `1.0` will use MetalFX at native resolution as a TAA solution.
    * **Note:** Only supported when the Metal rendering driver is in use, which limits this scaling mode to macOS and iOS.
    */
-  static readonly VIEWPORT_SCALING_3D_MODE_METALFX_TEMPORAL: int;
+  readonly VIEWPORT_SCALING_3D_MODE_METALFX_TEMPORAL: int;
   /** Represents the size of the {@link ViewportScaling3DMode} enum. */
-  static readonly VIEWPORT_SCALING_3D_MODE_MAX: int;
+  readonly VIEWPORT_SCALING_3D_MODE_MAX: int;
   // enum ViewportUpdateMode
   /** Do not update the viewport's render target. */
-  static readonly VIEWPORT_UPDATE_DISABLED: int;
+  readonly VIEWPORT_UPDATE_DISABLED: int;
   /** Update the viewport's render target once, then switch to {@link VIEWPORT_UPDATE_DISABLED}. */
-  static readonly VIEWPORT_UPDATE_ONCE: int;
+  readonly VIEWPORT_UPDATE_ONCE: int;
   /** Update the viewport's render target only when it is visible. This is the default value. */
-  static readonly VIEWPORT_UPDATE_WHEN_VISIBLE: int;
+  readonly VIEWPORT_UPDATE_WHEN_VISIBLE: int;
   /** Update the viewport's render target only when its parent is visible. */
-  static readonly VIEWPORT_UPDATE_WHEN_PARENT_VISIBLE: int;
+  readonly VIEWPORT_UPDATE_WHEN_PARENT_VISIBLE: int;
   /** Always update the viewport's render target. */
-  static readonly VIEWPORT_UPDATE_ALWAYS: int;
+  readonly VIEWPORT_UPDATE_ALWAYS: int;
   // enum ViewportClearMode
   /** Always clear the viewport's render target before drawing. */
-  static readonly VIEWPORT_CLEAR_ALWAYS: int;
+  readonly VIEWPORT_CLEAR_ALWAYS: int;
   /** Never clear the viewport's render target. */
-  static readonly VIEWPORT_CLEAR_NEVER: int;
+  readonly VIEWPORT_CLEAR_NEVER: int;
   /** Clear the viewport's render target on the next frame, then switch to {@link VIEWPORT_CLEAR_NEVER}. */
-  static readonly VIEWPORT_CLEAR_ONLY_NEXT_FRAME: int;
+  readonly VIEWPORT_CLEAR_ONLY_NEXT_FRAME: int;
   // enum ViewportEnvironmentMode
   /** Disable rendering of 3D environment over 2D canvas. */
-  static readonly VIEWPORT_ENVIRONMENT_DISABLED: int;
+  readonly VIEWPORT_ENVIRONMENT_DISABLED: int;
   /** Enable rendering of 3D environment over 2D canvas. */
-  static readonly VIEWPORT_ENVIRONMENT_ENABLED: int;
+  readonly VIEWPORT_ENVIRONMENT_ENABLED: int;
   /**
    * Inherit enable/disable value from parent. If the topmost parent is also set to {@link VIEWPORT_ENVIRONMENT_INHERIT}, then this has the same behavior as {@link VIEWPORT_ENVIRONMENT_ENABLED}.
    */
-  static readonly VIEWPORT_ENVIRONMENT_INHERIT: int;
+  readonly VIEWPORT_ENVIRONMENT_INHERIT: int;
   /** Represents the size of the {@link ViewportEnvironmentMode} enum. */
-  static readonly VIEWPORT_ENVIRONMENT_MAX: int;
+  readonly VIEWPORT_ENVIRONMENT_MAX: int;
   // enum ViewportSDFOversize
   /**
    * Do not oversize the 2D signed distance field. Occluders may disappear when touching the viewport's edges, and {@link GPUParticles3D} collision may stop working earlier than intended. This has the lowest GPU requirements.
    */
-  static readonly VIEWPORT_SDF_OVERSIZE_100_PERCENT: int;
+  readonly VIEWPORT_SDF_OVERSIZE_100_PERCENT: int;
   /**
    * 2D signed distance field covers 20% of the viewport's size outside the viewport on each side (top, right, bottom, left).
    */
-  static readonly VIEWPORT_SDF_OVERSIZE_120_PERCENT: int;
+  readonly VIEWPORT_SDF_OVERSIZE_120_PERCENT: int;
   /**
    * 2D signed distance field covers 50% of the viewport's size outside the viewport on each side (top, right, bottom, left).
    */
-  static readonly VIEWPORT_SDF_OVERSIZE_150_PERCENT: int;
+  readonly VIEWPORT_SDF_OVERSIZE_150_PERCENT: int;
   /**
    * 2D signed distance field covers 100% of the viewport's size outside the viewport on each side (top, right, bottom, left). This has the highest GPU requirements.
    */
-  static readonly VIEWPORT_SDF_OVERSIZE_200_PERCENT: int;
+  readonly VIEWPORT_SDF_OVERSIZE_200_PERCENT: int;
   /** Represents the size of the {@link ViewportSDFOversize} enum. */
-  static readonly VIEWPORT_SDF_OVERSIZE_MAX: int;
+  readonly VIEWPORT_SDF_OVERSIZE_MAX: int;
   // enum ViewportSDFScale
   /** Full resolution 2D signed distance field scale. This has the highest GPU requirements. */
-  static readonly VIEWPORT_SDF_SCALE_100_PERCENT: int;
+  readonly VIEWPORT_SDF_SCALE_100_PERCENT: int;
   /** Half resolution 2D signed distance field scale on each axis (25% of the viewport pixel count). */
-  static readonly VIEWPORT_SDF_SCALE_50_PERCENT: int;
+  readonly VIEWPORT_SDF_SCALE_50_PERCENT: int;
   /**
    * Quarter resolution 2D signed distance field scale on each axis (6.25% of the viewport pixel count). This has the lowest GPU requirements.
    */
-  static readonly VIEWPORT_SDF_SCALE_25_PERCENT: int;
+  readonly VIEWPORT_SDF_SCALE_25_PERCENT: int;
   /** Represents the size of the {@link ViewportSDFScale} enum. */
-  static readonly VIEWPORT_SDF_SCALE_MAX: int;
+  readonly VIEWPORT_SDF_SCALE_MAX: int;
   // enum ViewportMSAA
   /**
    * Multisample antialiasing for 3D is disabled. This is the default value, and also the fastest setting.
    */
-  static readonly VIEWPORT_MSAA_DISABLED: int;
+  readonly VIEWPORT_MSAA_DISABLED: int;
   /**
    * Multisample antialiasing uses 2 samples per pixel for 3D. This has a moderate impact on performance.
    */
-  static readonly VIEWPORT_MSAA_2X: int;
+  readonly VIEWPORT_MSAA_2X: int;
   /** Multisample antialiasing uses 4 samples per pixel for 3D. This has a high impact on performance. */
-  static readonly VIEWPORT_MSAA_4X: int;
+  readonly VIEWPORT_MSAA_4X: int;
   /**
    * Multisample antialiasing uses 8 samples per pixel for 3D. This has a very high impact on performance. Likely unsupported on low-end and older hardware.
    */
-  static readonly VIEWPORT_MSAA_8X: int;
+  readonly VIEWPORT_MSAA_8X: int;
   /** Represents the size of the {@link ViewportMSAA} enum. */
-  static readonly VIEWPORT_MSAA_MAX: int;
+  readonly VIEWPORT_MSAA_MAX: int;
   // enum ViewportAnisotropicFiltering
   /** Anisotropic filtering is disabled. */
-  static readonly VIEWPORT_ANISOTROPY_DISABLED: int;
+  readonly VIEWPORT_ANISOTROPY_DISABLED: int;
   /** Use 2× anisotropic filtering. */
-  static readonly VIEWPORT_ANISOTROPY_2X: int;
+  readonly VIEWPORT_ANISOTROPY_2X: int;
   /** Use 4× anisotropic filtering. This is the default value. */
-  static readonly VIEWPORT_ANISOTROPY_4X: int;
+  readonly VIEWPORT_ANISOTROPY_4X: int;
   /** Use 8× anisotropic filtering. */
-  static readonly VIEWPORT_ANISOTROPY_8X: int;
+  readonly VIEWPORT_ANISOTROPY_8X: int;
   /** Use 16× anisotropic filtering. */
-  static readonly VIEWPORT_ANISOTROPY_16X: int;
+  readonly VIEWPORT_ANISOTROPY_16X: int;
   /** Represents the size of the {@link ViewportAnisotropicFiltering} enum. */
-  static readonly VIEWPORT_ANISOTROPY_MAX: int;
+  readonly VIEWPORT_ANISOTROPY_MAX: int;
   // enum ViewportScreenSpaceAA
   /** Do not perform any antialiasing in the full screen post-process. */
-  static readonly VIEWPORT_SCREEN_SPACE_AA_DISABLED: int;
+  readonly VIEWPORT_SCREEN_SPACE_AA_DISABLED: int;
   /**
    * Use fast approximate antialiasing. FXAA is a popular screen-space antialiasing method, which is fast but will make the image look blurry, especially at lower resolutions. It can still work relatively well at large resolutions such as 1440p and 4K.
    */
-  static readonly VIEWPORT_SCREEN_SPACE_AA_FXAA: int;
+  readonly VIEWPORT_SCREEN_SPACE_AA_FXAA: int;
   /**
    * Use subpixel morphological antialiasing. SMAA may produce clearer results than FXAA, but at a slightly higher performance cost.
    */
-  static readonly VIEWPORT_SCREEN_SPACE_AA_SMAA: int;
+  readonly VIEWPORT_SCREEN_SPACE_AA_SMAA: int;
   /** Represents the size of the {@link ViewportScreenSpaceAA} enum. */
-  static readonly VIEWPORT_SCREEN_SPACE_AA_MAX: int;
+  readonly VIEWPORT_SCREEN_SPACE_AA_MAX: int;
   // enum ViewportOcclusionCullingBuildQuality
   /**
    * Low occlusion culling BVH build quality (as defined by Embree). Results in the lowest CPU usage, but least effective culling.
    */
-  static readonly VIEWPORT_OCCLUSION_BUILD_QUALITY_LOW: int;
+  readonly VIEWPORT_OCCLUSION_BUILD_QUALITY_LOW: int;
   /** Medium occlusion culling BVH build quality (as defined by Embree). */
-  static readonly VIEWPORT_OCCLUSION_BUILD_QUALITY_MEDIUM: int;
+  readonly VIEWPORT_OCCLUSION_BUILD_QUALITY_MEDIUM: int;
   /**
    * High occlusion culling BVH build quality (as defined by Embree). Results in the highest CPU usage, but most effective culling.
    */
-  static readonly VIEWPORT_OCCLUSION_BUILD_QUALITY_HIGH: int;
+  readonly VIEWPORT_OCCLUSION_BUILD_QUALITY_HIGH: int;
   // enum ViewportRenderInfo
   /** Number of objects drawn in a single frame. */
-  static readonly VIEWPORT_RENDER_INFO_OBJECTS_IN_FRAME: int;
+  readonly VIEWPORT_RENDER_INFO_OBJECTS_IN_FRAME: int;
   /** Number of points, lines, or triangles drawn in a single frame. */
-  static readonly VIEWPORT_RENDER_INFO_PRIMITIVES_IN_FRAME: int;
+  readonly VIEWPORT_RENDER_INFO_PRIMITIVES_IN_FRAME: int;
   /** Number of draw calls during this frame. */
-  static readonly VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME: int;
+  readonly VIEWPORT_RENDER_INFO_DRAW_CALLS_IN_FRAME: int;
   /** Represents the size of the {@link ViewportRenderInfo} enum. */
-  static readonly VIEWPORT_RENDER_INFO_MAX: int;
+  readonly VIEWPORT_RENDER_INFO_MAX: int;
   // enum ViewportRenderInfoType
   /** Visible render pass (excluding shadows). */
-  static readonly VIEWPORT_RENDER_INFO_TYPE_VISIBLE: int;
+  readonly VIEWPORT_RENDER_INFO_TYPE_VISIBLE: int;
   /**
    * Shadow render pass. Objects will be rendered several times depending on the number of amounts of lights with shadows and the number of directional shadow splits.
    */
-  static readonly VIEWPORT_RENDER_INFO_TYPE_SHADOW: int;
+  readonly VIEWPORT_RENDER_INFO_TYPE_SHADOW: int;
   /** Canvas item rendering. This includes all 2D rendering. */
-  static readonly VIEWPORT_RENDER_INFO_TYPE_CANVAS: int;
+  readonly VIEWPORT_RENDER_INFO_TYPE_CANVAS: int;
   /** Represents the size of the {@link ViewportRenderInfoType} enum. */
-  static readonly VIEWPORT_RENDER_INFO_TYPE_MAX: int;
+  readonly VIEWPORT_RENDER_INFO_TYPE_MAX: int;
   // enum ViewportDebugDraw
   /** Debug draw is disabled. Default setting. */
-  static readonly VIEWPORT_DEBUG_DRAW_DISABLED: int;
+  readonly VIEWPORT_DEBUG_DRAW_DISABLED: int;
   /** Objects are displayed without light information. */
-  static readonly VIEWPORT_DEBUG_DRAW_UNSHADED: int;
+  readonly VIEWPORT_DEBUG_DRAW_UNSHADED: int;
   /**
    * Objects are displayed with only light information.
    * **Note:** When using this debug draw mode, custom shaders are ignored since all materials in the scene temporarily use a debug material. This means the result from custom shader functions (such as vertex displacement) won't be visible anymore when using this debug draw mode.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_LIGHTING: int;
+  readonly VIEWPORT_DEBUG_DRAW_LIGHTING: int;
   /**
    * Objects are displayed semi-transparent with additive blending so you can see where they are drawing over top of one another. A higher overdraw (represented by brighter colors) means you are wasting performance on drawing pixels that are being hidden behind others.
    * **Note:** When using this debug draw mode, custom shaders are ignored since all materials in the scene temporarily use a debug material. This means the result from custom shader functions (such as vertex displacement) won't be visible anymore when using this debug draw mode.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_OVERDRAW: int;
+  readonly VIEWPORT_DEBUG_DRAW_OVERDRAW: int;
   /**
    * Debug draw draws objects in wireframe.
    * **Note:** {@link set_debug_generate_wireframes} must be called before loading any meshes for wireframes to be visible when using the Compatibility renderer.
    * **Note:** In the Compatibility renderer, backfaces are always visible when using wireframe rendering. In the Forward+ and Mobile renderers, wireframes follow the material's backface culling properties instead.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_WIREFRAME: int;
+  readonly VIEWPORT_DEBUG_DRAW_WIREFRAME: int;
   /**
    * Normal buffer is drawn instead of regular scene so you can see the per-pixel normals that will be used by post-processing effects.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_NORMAL_BUFFER: int;
+  readonly VIEWPORT_DEBUG_DRAW_NORMAL_BUFFER: int;
   /**
    * Objects are displayed with only the albedo value from {@link VoxelGI}s. Requires at least one visible {@link VoxelGI} node that has been baked to have a visible effect.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_VOXEL_GI_ALBEDO: int;
+  readonly VIEWPORT_DEBUG_DRAW_VOXEL_GI_ALBEDO: int;
   /**
    * Objects are displayed with only the lighting value from {@link VoxelGI}s. Requires at least one visible {@link VoxelGI} node that has been baked to have a visible effect.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_VOXEL_GI_LIGHTING: int;
+  readonly VIEWPORT_DEBUG_DRAW_VOXEL_GI_LIGHTING: int;
   /**
    * Objects are displayed with only the emission color from {@link VoxelGI}s. Requires at least one visible {@link VoxelGI} node that has been baked to have a visible effect.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_VOXEL_GI_EMISSION: int;
+  readonly VIEWPORT_DEBUG_DRAW_VOXEL_GI_EMISSION: int;
   /**
    * Draws the shadow atlas that stores shadows from {@link OmniLight3D}s and {@link SpotLight3D}s in the upper left quadrant of the {@link Viewport}.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_SHADOW_ATLAS: int;
+  readonly VIEWPORT_DEBUG_DRAW_SHADOW_ATLAS: int;
   /**
    * Draws the shadow atlas that stores shadows from {@link DirectionalLight3D}s in the upper left quadrant of the {@link Viewport}.
    * The slice of the camera frustum related to the shadow map cascade is superimposed to visualize coverage. The color of each slice matches the colors used for {@link VIEWPORT_DEBUG_DRAW_PSSM_SPLITS}. When shadow cascades are blended the overlap is taken into account when drawing the frustum slices.
    * The last cascade shows all frustum slices to illustrate the coverage of all slices.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_DIRECTIONAL_SHADOW_ATLAS: int;
+  readonly VIEWPORT_DEBUG_DRAW_DIRECTIONAL_SHADOW_ATLAS: int;
   /**
    * Draws the estimated scene luminance. This is a 1×1 texture that is generated when autoexposure is enabled to control the scene's exposure.
    * **Note:** Only supported when using the Forward+ or Mobile rendering methods.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_SCENE_LUMINANCE: int;
+  readonly VIEWPORT_DEBUG_DRAW_SCENE_LUMINANCE: int;
   /**
    * Draws the screen space ambient occlusion texture instead of the scene so that you can clearly see how it is affecting objects. In order for this display mode to work, you must have {@link Environment.ssao_enabled} set in your {@link WorldEnvironment}.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_SSAO: int;
+  readonly VIEWPORT_DEBUG_DRAW_SSAO: int;
   /**
    * Draws the screen space indirect lighting texture instead of the scene so that you can clearly see how it is affecting objects. In order for this display mode to work, you must have {@link Environment.ssil_enabled} set in your {@link WorldEnvironment}.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_SSIL: int;
+  readonly VIEWPORT_DEBUG_DRAW_SSIL: int;
   /**
    * Colors each PSSM split for the {@link DirectionalLight3D}s in the scene a different color so you can see where the splits are. In order (from closest to furthest from the camera), they are colored red, green, blue, and yellow.
    * **Note:** When using this debug draw mode, custom shaders are ignored since all materials in the scene temporarily use a debug material. This means the result from custom shader functions (such as vertex displacement) won't be visible anymore when using this debug draw mode.
    * **Note:** Only supported when using the Forward+ or Mobile rendering methods.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_PSSM_SPLITS: int;
+  readonly VIEWPORT_DEBUG_DRAW_PSSM_SPLITS: int;
   /**
    * Draws the decal atlas that stores decal textures from {@link Decal}s.
    * **Note:** Only supported when using the Forward+ or Mobile rendering methods.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_DECAL_ATLAS: int;
+  readonly VIEWPORT_DEBUG_DRAW_DECAL_ATLAS: int;
   /**
    * Draws SDFGI cascade data. This is the data structure that is used to bounce lighting against and create reflections.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_SDFGI: int;
+  readonly VIEWPORT_DEBUG_DRAW_SDFGI: int;
   /**
    * Draws SDFGI probe data. This is the data structure that is used to give indirect lighting dynamic objects moving within the scene.
    * When in the editor, left-clicking a probe will display additional bright dots that show its occlusion information. A white dot means the light is not occluded at all at the dot's position, while a red dot means the light is fully occluded. Intermediate values are possible.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_SDFGI_PROBES: int;
+  readonly VIEWPORT_DEBUG_DRAW_SDFGI_PROBES: int;
   /**
    * Draws the global illumination buffer from {@link VoxelGI} or SDFGI. Requires {@link VoxelGI} (at least one visible baked VoxelGI node) or SDFGI ({@link Environment.sdfgi_enabled}) to be enabled to have a visible effect.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_GI_BUFFER: int;
+  readonly VIEWPORT_DEBUG_DRAW_GI_BUFFER: int;
   /** Disable mesh LOD. All meshes are drawn with full detail, which can be used to compare performance. */
-  static readonly VIEWPORT_DEBUG_DRAW_DISABLE_LOD: int;
+  readonly VIEWPORT_DEBUG_DRAW_DISABLE_LOD: int;
   /**
    * Draws the {@link OmniLight3D} cluster. Clustering determines where lights are positioned in screen-space, which allows the engine to only process these portions of the screen for lighting.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_CLUSTER_OMNI_LIGHTS: int;
+  readonly VIEWPORT_DEBUG_DRAW_CLUSTER_OMNI_LIGHTS: int;
   /**
    * Draws the {@link SpotLight3D} cluster. Clustering determines where lights are positioned in screen-space, which allows the engine to only process these portions of the screen for lighting.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_CLUSTER_SPOT_LIGHTS: int;
+  readonly VIEWPORT_DEBUG_DRAW_CLUSTER_SPOT_LIGHTS: int;
   /**
    * Draws the {@link Decal} cluster. Clustering determines where decals are positioned in screen-space, which allows the engine to only process these portions of the screen for decals.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_CLUSTER_DECALS: int;
+  readonly VIEWPORT_DEBUG_DRAW_CLUSTER_DECALS: int;
   /**
    * Draws the {@link ReflectionProbe} cluster. Clustering determines where reflection probes are positioned in screen-space, which allows the engine to only process these portions of the screen for reflection probes.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_CLUSTER_REFLECTION_PROBES: int;
+  readonly VIEWPORT_DEBUG_DRAW_CLUSTER_REFLECTION_PROBES: int;
   /**
    * Draws the occlusion culling buffer. This low-resolution occlusion culling buffer is rasterized on the CPU and is used to check whether instances are occluded by other objects.
    * **Note:** Only supported when using the Forward+ or Mobile rendering methods.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_OCCLUDERS: int;
+  readonly VIEWPORT_DEBUG_DRAW_OCCLUDERS: int;
   /**
    * Draws the motion vectors buffer. This is used by temporal antialiasing to correct for motion that occurs during gameplay.
    * **Note:** Only supported when using the Forward+ rendering method.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_MOTION_VECTORS: int;
+  readonly VIEWPORT_DEBUG_DRAW_MOTION_VECTORS: int;
   /**
    * Internal buffer is drawn instead of regular scene so you can see the per-pixel output that will be used by post-processing effects.
    * **Note:** Only supported when using the Forward+ or Mobile rendering methods.
    */
-  static readonly VIEWPORT_DEBUG_DRAW_INTERNAL_BUFFER: int;
+  readonly VIEWPORT_DEBUG_DRAW_INTERNAL_BUFFER: int;
   // enum ViewportVRSMode
   /** Variable rate shading is disabled. */
-  static readonly VIEWPORT_VRS_DISABLED: int;
+  readonly VIEWPORT_VRS_DISABLED: int;
   /**
    * Variable rate shading uses a texture. Note, for stereoscopic use a texture atlas with a texture for each view.
    */
-  static readonly VIEWPORT_VRS_TEXTURE: int;
+  readonly VIEWPORT_VRS_TEXTURE: int;
   /**
    * Variable rate shading texture is supplied by the primary {@link XRInterface}. Note that this may override the update mode.
    */
-  static readonly VIEWPORT_VRS_XR: int;
+  readonly VIEWPORT_VRS_XR: int;
   /** Represents the size of the {@link ViewportVRSMode} enum. */
-  static readonly VIEWPORT_VRS_MAX: int;
+  readonly VIEWPORT_VRS_MAX: int;
   // enum ViewportVRSUpdateMode
   /** The input texture for variable rate shading will not be processed. */
-  static readonly VIEWPORT_VRS_UPDATE_DISABLED: int;
+  readonly VIEWPORT_VRS_UPDATE_DISABLED: int;
   /** The input texture for variable rate shading will be processed once. */
-  static readonly VIEWPORT_VRS_UPDATE_ONCE: int;
+  readonly VIEWPORT_VRS_UPDATE_ONCE: int;
   /** The input texture for variable rate shading will be processed each frame. */
-  static readonly VIEWPORT_VRS_UPDATE_ALWAYS: int;
+  readonly VIEWPORT_VRS_UPDATE_ALWAYS: int;
   /** Represents the size of the {@link ViewportVRSUpdateMode} enum. */
-  static readonly VIEWPORT_VRS_UPDATE_MAX: int;
+  readonly VIEWPORT_VRS_UPDATE_MAX: int;
   // enum SkyMode
   /**
    * Automatically selects the appropriate process mode based on your sky shader. If your shader uses `TIME` or `POSITION`, this will use {@link SKY_MODE_REALTIME}. If your shader uses any of the `LIGHT_*` variables or any custom uniforms, this uses {@link SKY_MODE_INCREMENTAL}. Otherwise, this defaults to {@link SKY_MODE_QUALITY}.
    */
-  static readonly SKY_MODE_AUTOMATIC: int;
+  readonly SKY_MODE_AUTOMATIC: int;
   /**
    * Uses high quality importance sampling to process the radiance map. In general, this results in much higher quality than {@link SKY_MODE_REALTIME} but takes much longer to generate. This should not be used if you plan on changing the sky at runtime. If you are finding that the reflection is not blurry enough and is showing sparkles or fireflies, try increasing {@link ProjectSettings.rendering/reflections/sky_reflections/ggx_samples}.
    */
-  static readonly SKY_MODE_QUALITY: int;
+  readonly SKY_MODE_QUALITY: int;
   /**
    * Uses the same high quality importance sampling to process the radiance map as {@link SKY_MODE_QUALITY}, but updates over several frames. The number of frames is determined by {@link ProjectSettings.rendering/reflections/sky_reflections/roughness_layers}. Use this when you need highest quality radiance maps, but have a sky that updates slowly.
    */
-  static readonly SKY_MODE_INCREMENTAL: int;
+  readonly SKY_MODE_INCREMENTAL: int;
   /**
    * Uses the fast filtering algorithm to process the radiance map. In general this results in lower quality, but substantially faster run times. If you need better quality, but still need to update the sky every frame, consider turning on {@link ProjectSettings.rendering/reflections/sky_reflections/fast_filter_high_quality}.
    * **Note:** The fast filtering algorithm is limited to 256×256 cubemaps, so {@link sky_set_radiance_size} must be set to `256`. Otherwise, a warning is printed and the overridden radiance size is ignored.
    */
-  static readonly SKY_MODE_REALTIME: int;
+  readonly SKY_MODE_REALTIME: int;
   // enum CompositorEffectFlags
   /** The rendering effect requires the color buffer to be resolved if MSAA is enabled. */
-  static readonly COMPOSITOR_EFFECT_FLAG_ACCESS_RESOLVED_COLOR: int;
+  readonly COMPOSITOR_EFFECT_FLAG_ACCESS_RESOLVED_COLOR: int;
   /** The rendering effect requires the depth buffer to be resolved if MSAA is enabled. */
-  static readonly COMPOSITOR_EFFECT_FLAG_ACCESS_RESOLVED_DEPTH: int;
+  readonly COMPOSITOR_EFFECT_FLAG_ACCESS_RESOLVED_DEPTH: int;
   /** The rendering effect requires motion vectors to be produced. */
-  static readonly COMPOSITOR_EFFECT_FLAG_NEEDS_MOTION_VECTORS: int;
+  readonly COMPOSITOR_EFFECT_FLAG_NEEDS_MOTION_VECTORS: int;
   /** The rendering effect requires normals and roughness g-buffer to be produced (Forward+ only). */
-  static readonly COMPOSITOR_EFFECT_FLAG_NEEDS_ROUGHNESS: int;
+  readonly COMPOSITOR_EFFECT_FLAG_NEEDS_ROUGHNESS: int;
   /** The rendering effect requires specular data to be separated out (Forward+ only). */
-  static readonly COMPOSITOR_EFFECT_FLAG_NEEDS_SEPARATE_SPECULAR: int;
+  readonly COMPOSITOR_EFFECT_FLAG_NEEDS_SEPARATE_SPECULAR: int;
   // enum CompositorEffectCallbackType
   /** The callback is called before our opaque rendering pass, but after depth prepass (if applicable). */
-  static readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_PRE_OPAQUE: int;
+  readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_PRE_OPAQUE: int;
   /** The callback is called after our opaque rendering pass, but before our sky is rendered. */
-  static readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_POST_OPAQUE: int;
+  readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_POST_OPAQUE: int;
   /**
    * The callback is called after our sky is rendered, but before our back buffers are created (and if enabled, before subsurface scattering and/or screen space reflections).
    */
-  static readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_POST_SKY: int;
+  readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_POST_SKY: int;
   /**
    * The callback is called before our transparent rendering pass, but after our sky is rendered and we've created our back buffers.
    */
-  static readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_PRE_TRANSPARENT: int;
+  readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_PRE_TRANSPARENT: int;
   /**
    * The callback is called after our transparent rendering pass, but before any built-in post-processing effects and output to our render target.
    */
-  static readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_POST_TRANSPARENT: int;
-  static readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_ANY: int;
+  readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_POST_TRANSPARENT: int;
+  readonly COMPOSITOR_EFFECT_CALLBACK_TYPE_ANY: int;
   // enum EnvironmentBG
   /** Use the clear color as background. */
-  static readonly ENV_BG_CLEAR_COLOR: int;
+  readonly ENV_BG_CLEAR_COLOR: int;
   /** Use a specified color as the background. */
-  static readonly ENV_BG_COLOR: int;
+  readonly ENV_BG_COLOR: int;
   /** Use a sky resource for the background. */
-  static readonly ENV_BG_SKY: int;
+  readonly ENV_BG_SKY: int;
   /**
    * Use a specified canvas layer as the background. This can be useful for instantiating a 2D scene in a 3D world.
    */
-  static readonly ENV_BG_CANVAS: int;
+  readonly ENV_BG_CANVAS: int;
   /** Do not clear the background, use whatever was rendered last frame as the background. */
-  static readonly ENV_BG_KEEP: int;
+  readonly ENV_BG_KEEP: int;
   /** Displays a camera feed in the background. */
-  static readonly ENV_BG_CAMERA_FEED: int;
+  readonly ENV_BG_CAMERA_FEED: int;
   /** Represents the size of the {@link EnvironmentBG} enum. */
-  static readonly ENV_BG_MAX: int;
+  readonly ENV_BG_MAX: int;
   // enum EnvironmentAmbientSource
   /** Gather ambient light from whichever source is specified as the background. */
-  static readonly ENV_AMBIENT_SOURCE_BG: int;
+  readonly ENV_AMBIENT_SOURCE_BG: int;
   /** Disable ambient light. */
-  static readonly ENV_AMBIENT_SOURCE_DISABLED: int;
+  readonly ENV_AMBIENT_SOURCE_DISABLED: int;
   /** Specify a specific {@link Color} for ambient light. */
-  static readonly ENV_AMBIENT_SOURCE_COLOR: int;
+  readonly ENV_AMBIENT_SOURCE_COLOR: int;
   /** Gather ambient light from the {@link Sky} regardless of what the background is. */
-  static readonly ENV_AMBIENT_SOURCE_SKY: int;
+  readonly ENV_AMBIENT_SOURCE_SKY: int;
   // enum EnvironmentReflectionSource
   /** Use the background for reflections. */
-  static readonly ENV_REFLECTION_SOURCE_BG: int;
+  readonly ENV_REFLECTION_SOURCE_BG: int;
   /** Disable reflections. */
-  static readonly ENV_REFLECTION_SOURCE_DISABLED: int;
+  readonly ENV_REFLECTION_SOURCE_DISABLED: int;
   /** Use the {@link Sky} for reflections regardless of what the background is. */
-  static readonly ENV_REFLECTION_SOURCE_SKY: int;
+  readonly ENV_REFLECTION_SOURCE_SKY: int;
   // enum EnvironmentGlowBlendMode
   /** Adds the glow effect to the scene. */
-  static readonly ENV_GLOW_BLEND_MODE_ADDITIVE: int;
+  readonly ENV_GLOW_BLEND_MODE_ADDITIVE: int;
   /**
    * Adds the glow effect to the scene after modifying the glow influence based on the scene value; dark values will be highly influenced by glow and bright values will not be influenced by glow. This approach avoids bright values becoming overly bright from the glow effect. {@link Environment.tonemap_white} is used to determine the maximum scene value where the glow should have no influence. When {@link Environment.tonemap_mode} is set to {@link Environment.TONE_MAPPER_LINEAR} and {@link Viewport.use_hdr_2d} is `true`, the parent window's {@link Window.get_output_max_linear_value} will be used as the maximum scene value.
    */
-  static readonly ENV_GLOW_BLEND_MODE_SCREEN: int;
+  readonly ENV_GLOW_BLEND_MODE_SCREEN: int;
   /**
    * Adds the glow effect to the tonemapped image after modifying the glow influence based on the image value; dark values and bright values will not be influenced by glow and mid-range values will be highly influenced by glow. This approach avoids bright values becoming overly bright from the glow effect. The glow will have the largest influence on image values of `0.25` and will have no influence when applied to image values greater than `1.0`.
    * **Note:** This blend mode does not support HDR output because expects a maximum output value of `1.0`. It is recommended to use a different blend mode when rendering to an HDR screen.
    */
-  static readonly ENV_GLOW_BLEND_MODE_SOFTLIGHT: int;
+  readonly ENV_GLOW_BLEND_MODE_SOFTLIGHT: int;
   /**
    * Replaces all pixels' color by the glow effect. This can be used to simulate a full-screen blur effect by tweaking the glow parameters to match the original image's brightness or to preview glow configuration in the editor.
    */
-  static readonly ENV_GLOW_BLEND_MODE_REPLACE: int;
+  readonly ENV_GLOW_BLEND_MODE_REPLACE: int;
   /**
    * Mixes the glow image with the scene image. Best used with {@link Environment.glow_bloom} to avoid darkening the scene.
    */
-  static readonly ENV_GLOW_BLEND_MODE_MIX: int;
+  readonly ENV_GLOW_BLEND_MODE_MIX: int;
   // enum EnvironmentFogMode
   /** Use a physically-based fog model defined primarily by fog density. */
-  static readonly ENV_FOG_MODE_EXPONENTIAL: int;
+  readonly ENV_FOG_MODE_EXPONENTIAL: int;
   /**
    * Use a simple fog model defined by start and end positions and a custom curve. While not physically accurate, this model can be useful when you need more artistic control.
    */
-  static readonly ENV_FOG_MODE_DEPTH: int;
+  readonly ENV_FOG_MODE_DEPTH: int;
   // enum EnvironmentToneMapper
   /**
    * Does not modify color data, resulting in a linear tonemapping curve which unnaturally clips bright values, causing bright lighting to look blown out. The simplest and fastest tonemapper.
    */
-  static readonly ENV_TONE_MAPPER_LINEAR: int;
+  readonly ENV_TONE_MAPPER_LINEAR: int;
   /**
    * A simple tonemapping curve that rolls off bright values to prevent clipping. This results in an image that can appear dull and low contrast. Slower than {@link ENV_TONE_MAPPER_LINEAR}.
    * **Note:** When {@link Environment.tonemap_white} is left at the default value of `1.0`, {@link ENV_TONE_MAPPER_REINHARD} produces an identical image to {@link ENV_TONE_MAPPER_LINEAR}.
    */
-  static readonly ENV_TONE_MAPPER_REINHARD: int;
+  readonly ENV_TONE_MAPPER_REINHARD: int;
   /**
    * Uses a film-like tonemapping curve to prevent clipping of bright values and provide better contrast than {@link ENV_TONE_MAPPER_REINHARD}. Slightly slower than {@link ENV_TONE_MAPPER_REINHARD}.
    * **Note:** This tonemapper does not support HDR output because it produces output in the SDR range. It is recommended to use a different tonemapper when rendering to an HDR screen.
    */
-  static readonly ENV_TONE_MAPPER_FILMIC: int;
+  readonly ENV_TONE_MAPPER_FILMIC: int;
   /**
    * Uses a high-contrast film-like tonemapping curve and desaturates bright values for a more realistic appearance. Slightly slower than {@link ENV_TONE_MAPPER_FILMIC}.
    * **Note:** This tonemapping operator is called "ACES Fitted" in Godot 3.x.
    * **Note:** This tonemapper does not support HDR output because it produces output in the SDR range. It is recommended to use a different tonemapper when rendering to an HDR screen.
    */
-  static readonly ENV_TONE_MAPPER_ACES: int;
+  readonly ENV_TONE_MAPPER_ACES: int;
   /**
    * Uses an adjustable film-like tonemapping curve and desaturates bright values for a more realistic appearance. Better than other tonemappers at maintaining the hue of colors as they become brighter. The slowest tonemapping option.
    */
-  static readonly ENV_TONE_MAPPER_AGX: int;
+  readonly ENV_TONE_MAPPER_AGX: int;
   // enum EnvironmentSSRRoughnessQuality
   /**
    * Lowest quality of roughness filter for screen-space reflections. Rough materials will not have blurrier screen-space reflections compared to smooth (non-rough) materials. This is the fastest option.
    */
-  static readonly ENV_SSR_ROUGHNESS_QUALITY_DISABLED: int;
+  readonly ENV_SSR_ROUGHNESS_QUALITY_DISABLED: int;
   /** Low quality of roughness filter for screen-space reflections. */
-  static readonly ENV_SSR_ROUGHNESS_QUALITY_LOW: int;
+  readonly ENV_SSR_ROUGHNESS_QUALITY_LOW: int;
   /** Medium quality of roughness filter for screen-space reflections. */
-  static readonly ENV_SSR_ROUGHNESS_QUALITY_MEDIUM: int;
+  readonly ENV_SSR_ROUGHNESS_QUALITY_MEDIUM: int;
   /** High quality of roughness filter for screen-space reflections. This is the slowest option. */
-  static readonly ENV_SSR_ROUGHNESS_QUALITY_HIGH: int;
+  readonly ENV_SSR_ROUGHNESS_QUALITY_HIGH: int;
   // enum EnvironmentSSAOQuality
   /** Lowest quality of screen-space ambient occlusion. */
-  static readonly ENV_SSAO_QUALITY_VERY_LOW: int;
+  readonly ENV_SSAO_QUALITY_VERY_LOW: int;
   /** Low quality screen-space ambient occlusion. */
-  static readonly ENV_SSAO_QUALITY_LOW: int;
+  readonly ENV_SSAO_QUALITY_LOW: int;
   /** Medium quality screen-space ambient occlusion. */
-  static readonly ENV_SSAO_QUALITY_MEDIUM: int;
+  readonly ENV_SSAO_QUALITY_MEDIUM: int;
   /** High quality screen-space ambient occlusion. */
-  static readonly ENV_SSAO_QUALITY_HIGH: int;
+  readonly ENV_SSAO_QUALITY_HIGH: int;
   /**
    * Highest quality screen-space ambient occlusion. Uses the adaptive target setting which can be dynamically adjusted to smoothly balance performance and visual quality.
    */
-  static readonly ENV_SSAO_QUALITY_ULTRA: int;
+  readonly ENV_SSAO_QUALITY_ULTRA: int;
   // enum EnvironmentSSILQuality
   /** Lowest quality of screen-space indirect lighting. */
-  static readonly ENV_SSIL_QUALITY_VERY_LOW: int;
+  readonly ENV_SSIL_QUALITY_VERY_LOW: int;
   /** Low quality screen-space indirect lighting. */
-  static readonly ENV_SSIL_QUALITY_LOW: int;
+  readonly ENV_SSIL_QUALITY_LOW: int;
   /** High quality screen-space indirect lighting. */
-  static readonly ENV_SSIL_QUALITY_MEDIUM: int;
+  readonly ENV_SSIL_QUALITY_MEDIUM: int;
   /** High quality screen-space indirect lighting. */
-  static readonly ENV_SSIL_QUALITY_HIGH: int;
+  readonly ENV_SSIL_QUALITY_HIGH: int;
   /**
    * Highest quality screen-space indirect lighting. Uses the adaptive target setting which can be dynamically adjusted to smoothly balance performance and visual quality.
    */
-  static readonly ENV_SSIL_QUALITY_ULTRA: int;
+  readonly ENV_SSIL_QUALITY_ULTRA: int;
   // enum EnvironmentSDFGIYScale
   /**
    * Use 50% scale for SDFGI on the Y (vertical) axis. SDFGI cells will be twice as short as they are wide. This allows providing increased GI detail and reduced light leaking with thin floors and ceilings. This is usually the best choice for scenes that don't feature much verticality.
    */
-  static readonly ENV_SDFGI_Y_SCALE_50_PERCENT: int;
+  readonly ENV_SDFGI_Y_SCALE_50_PERCENT: int;
   /**
    * Use 75% scale for SDFGI on the Y (vertical) axis. This is a balance between the 50% and 100% SDFGI Y scales.
    */
-  static readonly ENV_SDFGI_Y_SCALE_75_PERCENT: int;
+  readonly ENV_SDFGI_Y_SCALE_75_PERCENT: int;
   /**
    * Use 100% scale for SDFGI on the Y (vertical) axis. SDFGI cells will be as tall as they are wide. This is usually the best choice for highly vertical scenes. The downside is that light leaking may become more noticeable with thin floors and ceilings.
    */
-  static readonly ENV_SDFGI_Y_SCALE_100_PERCENT: int;
+  readonly ENV_SDFGI_Y_SCALE_100_PERCENT: int;
   // enum EnvironmentSDFGIRayCount
   /**
    * Throw 4 rays per frame when converging SDFGI. This has the lowest GPU requirements, but creates the most noisy result.
    */
-  static readonly ENV_SDFGI_RAY_COUNT_4: int;
+  readonly ENV_SDFGI_RAY_COUNT_4: int;
   /** Throw 8 rays per frame when converging SDFGI. */
-  static readonly ENV_SDFGI_RAY_COUNT_8: int;
+  readonly ENV_SDFGI_RAY_COUNT_8: int;
   /** Throw 16 rays per frame when converging SDFGI. */
-  static readonly ENV_SDFGI_RAY_COUNT_16: int;
+  readonly ENV_SDFGI_RAY_COUNT_16: int;
   /** Throw 32 rays per frame when converging SDFGI. */
-  static readonly ENV_SDFGI_RAY_COUNT_32: int;
+  readonly ENV_SDFGI_RAY_COUNT_32: int;
   /** Throw 64 rays per frame when converging SDFGI. */
-  static readonly ENV_SDFGI_RAY_COUNT_64: int;
+  readonly ENV_SDFGI_RAY_COUNT_64: int;
   /** Throw 96 rays per frame when converging SDFGI. This has high GPU requirements. */
-  static readonly ENV_SDFGI_RAY_COUNT_96: int;
+  readonly ENV_SDFGI_RAY_COUNT_96: int;
   /**
    * Throw 128 rays per frame when converging SDFGI. This has very high GPU requirements, but creates the least noisy result.
    */
-  static readonly ENV_SDFGI_RAY_COUNT_128: int;
+  readonly ENV_SDFGI_RAY_COUNT_128: int;
   /** Represents the size of the {@link EnvironmentSDFGIRayCount} enum. */
-  static readonly ENV_SDFGI_RAY_COUNT_MAX: int;
+  readonly ENV_SDFGI_RAY_COUNT_MAX: int;
   // enum EnvironmentSDFGIFramesToConverge
   /**
    * Converge SDFGI over 5 frames. This is the most responsive, but creates the most noisy result with a given ray count.
    */
-  static readonly ENV_SDFGI_CONVERGE_IN_5_FRAMES: int;
+  readonly ENV_SDFGI_CONVERGE_IN_5_FRAMES: int;
   /** Configure SDFGI to fully converge over 10 frames. */
-  static readonly ENV_SDFGI_CONVERGE_IN_10_FRAMES: int;
+  readonly ENV_SDFGI_CONVERGE_IN_10_FRAMES: int;
   /** Configure SDFGI to fully converge over 15 frames. */
-  static readonly ENV_SDFGI_CONVERGE_IN_15_FRAMES: int;
+  readonly ENV_SDFGI_CONVERGE_IN_15_FRAMES: int;
   /** Configure SDFGI to fully converge over 20 frames. */
-  static readonly ENV_SDFGI_CONVERGE_IN_20_FRAMES: int;
+  readonly ENV_SDFGI_CONVERGE_IN_20_FRAMES: int;
   /** Configure SDFGI to fully converge over 25 frames. */
-  static readonly ENV_SDFGI_CONVERGE_IN_25_FRAMES: int;
+  readonly ENV_SDFGI_CONVERGE_IN_25_FRAMES: int;
   /**
    * Configure SDFGI to fully converge over 30 frames. This is the least responsive, but creates the least noisy result with a given ray count.
    */
-  static readonly ENV_SDFGI_CONVERGE_IN_30_FRAMES: int;
+  readonly ENV_SDFGI_CONVERGE_IN_30_FRAMES: int;
   /** Represents the size of the {@link EnvironmentSDFGIFramesToConverge} enum. */
-  static readonly ENV_SDFGI_CONVERGE_MAX: int;
+  readonly ENV_SDFGI_CONVERGE_MAX: int;
   // enum EnvironmentSDFGIFramesToUpdateLight
   /**
    * Update indirect light from dynamic lights in SDFGI over 1 frame. This is the most responsive, but has the highest GPU requirements.
    */
-  static readonly ENV_SDFGI_UPDATE_LIGHT_IN_1_FRAME: int;
+  readonly ENV_SDFGI_UPDATE_LIGHT_IN_1_FRAME: int;
   /** Update indirect light from dynamic lights in SDFGI over 2 frames. */
-  static readonly ENV_SDFGI_UPDATE_LIGHT_IN_2_FRAMES: int;
+  readonly ENV_SDFGI_UPDATE_LIGHT_IN_2_FRAMES: int;
   /** Update indirect light from dynamic lights in SDFGI over 4 frames. */
-  static readonly ENV_SDFGI_UPDATE_LIGHT_IN_4_FRAMES: int;
+  readonly ENV_SDFGI_UPDATE_LIGHT_IN_4_FRAMES: int;
   /** Update indirect light from dynamic lights in SDFGI over 8 frames. */
-  static readonly ENV_SDFGI_UPDATE_LIGHT_IN_8_FRAMES: int;
+  readonly ENV_SDFGI_UPDATE_LIGHT_IN_8_FRAMES: int;
   /**
    * Update indirect light from dynamic lights in SDFGI over 16 frames. This is the least responsive, but has the lowest GPU requirements.
    */
-  static readonly ENV_SDFGI_UPDATE_LIGHT_IN_16_FRAMES: int;
+  readonly ENV_SDFGI_UPDATE_LIGHT_IN_16_FRAMES: int;
   /** Represents the size of the {@link EnvironmentSDFGIFramesToUpdateLight} enum. */
-  static readonly ENV_SDFGI_UPDATE_LIGHT_MAX: int;
+  readonly ENV_SDFGI_UPDATE_LIGHT_MAX: int;
   // enum SubSurfaceScatteringQuality
   /**
    * Disables subsurface scattering entirely, even on materials that have {@link BaseMaterial3D.subsurf_scatter_enabled} set to `true`. This has the lowest GPU requirements.
    */
-  static readonly SUB_SURFACE_SCATTERING_QUALITY_DISABLED: int;
+  readonly SUB_SURFACE_SCATTERING_QUALITY_DISABLED: int;
   /** Low subsurface scattering quality. */
-  static readonly SUB_SURFACE_SCATTERING_QUALITY_LOW: int;
+  readonly SUB_SURFACE_SCATTERING_QUALITY_LOW: int;
   /** Medium subsurface scattering quality. */
-  static readonly SUB_SURFACE_SCATTERING_QUALITY_MEDIUM: int;
+  readonly SUB_SURFACE_SCATTERING_QUALITY_MEDIUM: int;
   /** High subsurface scattering quality. This has the highest GPU requirements. */
-  static readonly SUB_SURFACE_SCATTERING_QUALITY_HIGH: int;
+  readonly SUB_SURFACE_SCATTERING_QUALITY_HIGH: int;
   // enum DOFBokehShape
   /**
    * Calculate the DOF blur using a box filter. The fastest option, but results in obvious lines in blur pattern.
    */
-  static readonly DOF_BOKEH_BOX: int;
+  readonly DOF_BOKEH_BOX: int;
   /** Calculates DOF blur using a hexagon shaped filter. */
-  static readonly DOF_BOKEH_HEXAGON: int;
+  readonly DOF_BOKEH_HEXAGON: int;
   /**
    * Calculates DOF blur using a circle shaped filter. Best quality and most realistic, but slowest. Use only for areas where a lot of performance can be dedicated to post-processing (e.g. cutscenes).
    */
-  static readonly DOF_BOKEH_CIRCLE: int;
+  readonly DOF_BOKEH_CIRCLE: int;
   // enum DOFBlurQuality
   /**
    * Lowest quality DOF blur. This is the fastest setting, but you may be able to see filtering artifacts.
    */
-  static readonly DOF_BLUR_QUALITY_VERY_LOW: int;
+  readonly DOF_BLUR_QUALITY_VERY_LOW: int;
   /** Low quality DOF blur. */
-  static readonly DOF_BLUR_QUALITY_LOW: int;
+  readonly DOF_BLUR_QUALITY_LOW: int;
   /** Medium quality DOF blur. */
-  static readonly DOF_BLUR_QUALITY_MEDIUM: int;
+  readonly DOF_BLUR_QUALITY_MEDIUM: int;
   /**
    * Highest quality DOF blur. Results in the smoothest looking blur by taking the most samples, but is also significantly slower.
    */
-  static readonly DOF_BLUR_QUALITY_HIGH: int;
+  readonly DOF_BLUR_QUALITY_HIGH: int;
   // enum InstanceType
   /** The instance does not have a type. */
-  static readonly INSTANCE_NONE: int;
+  readonly INSTANCE_NONE: int;
   /** The instance is a mesh. */
-  static readonly INSTANCE_MESH: int;
+  readonly INSTANCE_MESH: int;
   /** The instance is a multimesh. */
-  static readonly INSTANCE_MULTIMESH: int;
+  readonly INSTANCE_MULTIMESH: int;
   /** The instance is a particle emitter. */
-  static readonly INSTANCE_PARTICLES: int;
+  readonly INSTANCE_PARTICLES: int;
   /** The instance is a GPUParticles collision shape. */
-  static readonly INSTANCE_PARTICLES_COLLISION: int;
+  readonly INSTANCE_PARTICLES_COLLISION: int;
   /** The instance is a light. */
-  static readonly INSTANCE_LIGHT: int;
+  readonly INSTANCE_LIGHT: int;
   /** The instance is a reflection probe. */
-  static readonly INSTANCE_REFLECTION_PROBE: int;
+  readonly INSTANCE_REFLECTION_PROBE: int;
   /** The instance is a decal. */
-  static readonly INSTANCE_DECAL: int;
+  readonly INSTANCE_DECAL: int;
   /** The instance is a VoxelGI. */
-  static readonly INSTANCE_VOXEL_GI: int;
+  readonly INSTANCE_VOXEL_GI: int;
   /** The instance is a lightmap. */
-  static readonly INSTANCE_LIGHTMAP: int;
+  readonly INSTANCE_LIGHTMAP: int;
   /** The instance is an occlusion culling occluder. */
-  static readonly INSTANCE_OCCLUDER: int;
+  readonly INSTANCE_OCCLUDER: int;
   /** The instance is a visible on-screen notifier. */
-  static readonly INSTANCE_VISIBLITY_NOTIFIER: int;
+  readonly INSTANCE_VISIBLITY_NOTIFIER: int;
   /** The instance is a fog volume. */
-  static readonly INSTANCE_FOG_VOLUME: int;
+  readonly INSTANCE_FOG_VOLUME: int;
   /** Represents the size of the {@link InstanceType} enum. */
-  static readonly INSTANCE_MAX: int;
+  readonly INSTANCE_MAX: int;
   /** A combination of the flags of geometry instances (mesh, multimesh, immediate and particles). */
-  static readonly INSTANCE_GEOMETRY_MASK: int;
+  readonly INSTANCE_GEOMETRY_MASK: int;
   // enum InstanceFlags
   /** Allows the instance to be used in baked lighting. */
-  static readonly INSTANCE_FLAG_USE_BAKED_LIGHT: int;
+  readonly INSTANCE_FLAG_USE_BAKED_LIGHT: int;
   /** Allows the instance to be used with dynamic global illumination. */
-  static readonly INSTANCE_FLAG_USE_DYNAMIC_GI: int;
+  readonly INSTANCE_FLAG_USE_DYNAMIC_GI: int;
   /** When set, manually requests to draw geometry on next frame. */
-  static readonly INSTANCE_FLAG_DRAW_NEXT_FRAME_IF_VISIBLE: int;
+  readonly INSTANCE_FLAG_DRAW_NEXT_FRAME_IF_VISIBLE: int;
   /**
    * Always draw, even if the instance would be culled by occlusion culling. Does not affect view frustum culling.
    */
-  static readonly INSTANCE_FLAG_IGNORE_OCCLUSION_CULLING: int;
+  readonly INSTANCE_FLAG_IGNORE_OCCLUSION_CULLING: int;
   /** Represents the size of the {@link InstanceFlags} enum. */
-  static readonly INSTANCE_FLAG_MAX: int;
+  readonly INSTANCE_FLAG_MAX: int;
   // enum ShadowCastingSetting
   /** Disable shadows from this instance. */
-  static readonly SHADOW_CASTING_SETTING_OFF: int;
+  readonly SHADOW_CASTING_SETTING_OFF: int;
   /** Cast shadows from this instance. */
-  static readonly SHADOW_CASTING_SETTING_ON: int;
+  readonly SHADOW_CASTING_SETTING_ON: int;
   /**
    * Disable backface culling when rendering the shadow of the object. This is slightly slower but may result in more correct shadows.
    */
-  static readonly SHADOW_CASTING_SETTING_DOUBLE_SIDED: int;
+  readonly SHADOW_CASTING_SETTING_DOUBLE_SIDED: int;
   /** Only render the shadows from the object. The object itself will not be drawn. */
-  static readonly SHADOW_CASTING_SETTING_SHADOWS_ONLY: int;
+  readonly SHADOW_CASTING_SETTING_SHADOWS_ONLY: int;
   // enum VisibilityRangeFadeMode
   /** Disable visibility range fading for the given instance. */
-  static readonly VISIBILITY_RANGE_FADE_DISABLED: int;
+  readonly VISIBILITY_RANGE_FADE_DISABLED: int;
   /** Fade-out the given instance when it approaches its visibility range limits. */
-  static readonly VISIBILITY_RANGE_FADE_SELF: int;
+  readonly VISIBILITY_RANGE_FADE_SELF: int;
   /** Fade-in the given instance's dependencies when reaching its visibility range limits. */
-  static readonly VISIBILITY_RANGE_FADE_DEPENDENCIES: int;
+  readonly VISIBILITY_RANGE_FADE_DEPENDENCIES: int;
   // enum BakeChannels
   /**
    * Index of {@link Image} in array of {@link Image}s returned by {@link bake_render_uv2}. Image uses {@link Image.FORMAT_RGBA8} and contains albedo color in the `.rgb` channels and alpha in the `.a` channel.
    */
-  static readonly BAKE_CHANNEL_ALBEDO_ALPHA: int;
+  readonly BAKE_CHANNEL_ALBEDO_ALPHA: int;
   /**
    * Index of {@link Image} in array of {@link Image}s returned by {@link bake_render_uv2}. Image uses {@link Image.FORMAT_RGBA8} and contains the per-pixel normal of the object in the `.rgb` channels and nothing in the `.a` channel. The per-pixel normal is encoded as `normal * 0.5 + 0.5`.
    */
-  static readonly BAKE_CHANNEL_NORMAL: int;
+  readonly BAKE_CHANNEL_NORMAL: int;
   /**
    * Index of {@link Image} in array of {@link Image}s returned by {@link bake_render_uv2}. Image uses {@link Image.FORMAT_RGBA8} and contains ambient occlusion (from material and decals only) in the `.r` channel, roughness in the `.g` channel, metallic in the `.b` channel and sub surface scattering amount in the `.a` channel.
    */
-  static readonly BAKE_CHANNEL_ORM: int;
+  readonly BAKE_CHANNEL_ORM: int;
   /**
    * Index of {@link Image} in array of {@link Image}s returned by {@link bake_render_uv2}. Image uses {@link Image.FORMAT_RGBAH} and contains emission color in the `.rgb` channels and nothing in the `.a` channel.
    */
-  static readonly BAKE_CHANNEL_EMISSION: int;
+  readonly BAKE_CHANNEL_EMISSION: int;
   // enum CanvasTextureChannel
   /** Diffuse canvas texture ({@link CanvasTexture.diffuse_texture}). */
-  static readonly CANVAS_TEXTURE_CHANNEL_DIFFUSE: int;
+  readonly CANVAS_TEXTURE_CHANNEL_DIFFUSE: int;
   /** Normal map canvas texture ({@link CanvasTexture.normal_texture}). */
-  static readonly CANVAS_TEXTURE_CHANNEL_NORMAL: int;
+  readonly CANVAS_TEXTURE_CHANNEL_NORMAL: int;
   /** Specular map canvas texture ({@link CanvasTexture.specular_texture}). */
-  static readonly CANVAS_TEXTURE_CHANNEL_SPECULAR: int;
+  readonly CANVAS_TEXTURE_CHANNEL_SPECULAR: int;
   // enum NinePatchAxisMode
   /** The nine patch gets stretched where needed. */
-  static readonly NINE_PATCH_STRETCH: int;
+  readonly NINE_PATCH_STRETCH: int;
   /** The nine patch gets filled with tiles where needed. */
-  static readonly NINE_PATCH_TILE: int;
+  readonly NINE_PATCH_TILE: int;
   /** The nine patch gets filled with tiles where needed and stretches them a bit if needed. */
-  static readonly NINE_PATCH_TILE_FIT: int;
+  readonly NINE_PATCH_TILE_FIT: int;
   // enum CanvasItemTextureFilter
   /** Uses the default filter mode for this {@link Viewport}. */
-  static readonly CANVAS_ITEM_TEXTURE_FILTER_DEFAULT: int;
+  readonly CANVAS_ITEM_TEXTURE_FILTER_DEFAULT: int;
   /**
    * The texture filter reads from the nearest pixel only. This makes the texture look pixelated from up close, and grainy from a distance (due to mipmaps not being sampled).
    */
-  static readonly CANVAS_ITEM_TEXTURE_FILTER_NEAREST: int;
+  readonly CANVAS_ITEM_TEXTURE_FILTER_NEAREST: int;
   /**
    * The texture filter blends between the nearest 4 pixels. This makes the texture look smooth from up close, and grainy from a distance (due to mipmaps not being sampled).
    */
-  static readonly CANVAS_ITEM_TEXTURE_FILTER_LINEAR: int;
+  readonly CANVAS_ITEM_TEXTURE_FILTER_LINEAR: int;
   /**
    * The texture filter reads from the nearest pixel and blends between the nearest 2 mipmaps (or uses the nearest mipmap if {@link ProjectSettings.rendering/textures/default_filters/use_nearest_mipmap_filter} is `true`). This makes the texture look pixelated from up close, and smooth from a distance.
    * Use this for non-pixel art textures that may be viewed at a low scale (e.g. due to {@link Camera2D} zoom or sprite scaling), as mipmaps are important to smooth out pixels that are smaller than on-screen pixels.
    */
-  static readonly CANVAS_ITEM_TEXTURE_FILTER_NEAREST_WITH_MIPMAPS: int;
+  readonly CANVAS_ITEM_TEXTURE_FILTER_NEAREST_WITH_MIPMAPS: int;
   /**
    * The texture filter blends between the nearest 4 pixels and between the nearest 2 mipmaps (or uses the nearest mipmap if {@link ProjectSettings.rendering/textures/default_filters/use_nearest_mipmap_filter} is `true`). This makes the texture look smooth from up close, and smooth from a distance.
    * Use this for non-pixel art textures that may be viewed at a low scale (e.g. due to {@link Camera2D} zoom or sprite scaling), as mipmaps are important to smooth out pixels that are smaller than on-screen pixels.
    */
-  static readonly CANVAS_ITEM_TEXTURE_FILTER_LINEAR_WITH_MIPMAPS: int;
+  readonly CANVAS_ITEM_TEXTURE_FILTER_LINEAR_WITH_MIPMAPS: int;
   /**
    * The texture filter reads from the nearest pixel and blends between 2 mipmaps (or uses the nearest mipmap if {@link ProjectSettings.rendering/textures/default_filters/use_nearest_mipmap_filter} is `true`) based on the angle between the surface and the camera view. This makes the texture look pixelated from up close, and smooth from a distance. Anisotropic filtering improves texture quality on surfaces that are almost in line with the camera, but is slightly slower. The anisotropic filtering level can be changed by adjusting {@link ProjectSettings.rendering/textures/default_filters/anisotropic_filtering_level}.
    * **Note:** This texture filter is rarely useful in 2D projects. {@link CANVAS_ITEM_TEXTURE_FILTER_NEAREST_WITH_MIPMAPS} is usually more appropriate in this case.
    */
-  static readonly CANVAS_ITEM_TEXTURE_FILTER_NEAREST_WITH_MIPMAPS_ANISOTROPIC: int;
+  readonly CANVAS_ITEM_TEXTURE_FILTER_NEAREST_WITH_MIPMAPS_ANISOTROPIC: int;
   /**
    * The texture filter blends between the nearest 4 pixels and blends between 2 mipmaps (or uses the nearest mipmap if {@link ProjectSettings.rendering/textures/default_filters/use_nearest_mipmap_filter} is `true`) based on the angle between the surface and the camera view. This makes the texture look smooth from up close, and smooth from a distance. Anisotropic filtering improves texture quality on surfaces that are almost in line with the camera, but is slightly slower. The anisotropic filtering level can be changed by adjusting {@link ProjectSettings.rendering/textures/default_filters/anisotropic_filtering_level}.
    * **Note:** This texture filter is rarely useful in 2D projects. {@link CANVAS_ITEM_TEXTURE_FILTER_LINEAR_WITH_MIPMAPS} is usually more appropriate in this case.
    */
-  static readonly CANVAS_ITEM_TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC: int;
+  readonly CANVAS_ITEM_TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC: int;
   /** Max value for {@link CanvasItemTextureFilter} enum. */
-  static readonly CANVAS_ITEM_TEXTURE_FILTER_MAX: int;
+  readonly CANVAS_ITEM_TEXTURE_FILTER_MAX: int;
   // enum CanvasItemTextureRepeat
   /** Uses the default repeat mode for this {@link Viewport}. */
-  static readonly CANVAS_ITEM_TEXTURE_REPEAT_DEFAULT: int;
+  readonly CANVAS_ITEM_TEXTURE_REPEAT_DEFAULT: int;
   /**
    * Disables textures repeating. Instead, when reading UVs outside the 0-1 range, the value will be clamped to the edge of the texture, resulting in a stretched out look at the borders of the texture.
    */
-  static readonly CANVAS_ITEM_TEXTURE_REPEAT_DISABLED: int;
+  readonly CANVAS_ITEM_TEXTURE_REPEAT_DISABLED: int;
   /**
    * Enables the texture to repeat when UV coordinates are outside the 0-1 range. If using one of the linear filtering modes, this can result in artifacts at the edges of a texture when the sampler filters across the edges of the texture.
    */
-  static readonly CANVAS_ITEM_TEXTURE_REPEAT_ENABLED: int;
+  readonly CANVAS_ITEM_TEXTURE_REPEAT_ENABLED: int;
   /** Flip the texture when repeating so that the edge lines up instead of abruptly changing. */
-  static readonly CANVAS_ITEM_TEXTURE_REPEAT_MIRROR: int;
+  readonly CANVAS_ITEM_TEXTURE_REPEAT_MIRROR: int;
   /** Max value for {@link CanvasItemTextureRepeat} enum. */
-  static readonly CANVAS_ITEM_TEXTURE_REPEAT_MAX: int;
+  readonly CANVAS_ITEM_TEXTURE_REPEAT_MAX: int;
   // enum CanvasGroupMode
   /** Child draws over parent and is not clipped. */
-  static readonly CANVAS_GROUP_MODE_DISABLED: int;
+  readonly CANVAS_GROUP_MODE_DISABLED: int;
   /**
    * Parent is used for the purposes of clipping only. Child is clipped to the parent's visible area, parent is not drawn.
    */
-  static readonly CANVAS_GROUP_MODE_CLIP_ONLY: int;
+  readonly CANVAS_GROUP_MODE_CLIP_ONLY: int;
   /**
    * Parent is used for clipping child, but parent is also drawn underneath child as normal before clipping child to its visible area.
    */
-  static readonly CANVAS_GROUP_MODE_CLIP_AND_DRAW: int;
-  static readonly CANVAS_GROUP_MODE_TRANSPARENT: int;
+  readonly CANVAS_GROUP_MODE_CLIP_AND_DRAW: int;
+  readonly CANVAS_GROUP_MODE_TRANSPARENT: int;
   // enum CanvasLightMode
   /** 2D point light (see {@link PointLight2D}). */
-  static readonly CANVAS_LIGHT_MODE_POINT: int;
+  readonly CANVAS_LIGHT_MODE_POINT: int;
   /** 2D directional (sun/moon) light (see {@link DirectionalLight2D}). */
-  static readonly CANVAS_LIGHT_MODE_DIRECTIONAL: int;
+  readonly CANVAS_LIGHT_MODE_DIRECTIONAL: int;
   // enum CanvasLightBlendMode
   /** Adds light color additive to the canvas. */
-  static readonly CANVAS_LIGHT_BLEND_MODE_ADD: int;
+  readonly CANVAS_LIGHT_BLEND_MODE_ADD: int;
   /** Adds light color subtractive to the canvas. */
-  static readonly CANVAS_LIGHT_BLEND_MODE_SUB: int;
+  readonly CANVAS_LIGHT_BLEND_MODE_SUB: int;
   /** The light adds color depending on transparency. */
-  static readonly CANVAS_LIGHT_BLEND_MODE_MIX: int;
+  readonly CANVAS_LIGHT_BLEND_MODE_MIX: int;
   // enum CanvasLightShadowFilter
   /** Do not apply a filter to canvas light shadows. */
-  static readonly CANVAS_LIGHT_FILTER_NONE: int;
+  readonly CANVAS_LIGHT_FILTER_NONE: int;
   /** Use PCF5 filtering to filter canvas light shadows. */
-  static readonly CANVAS_LIGHT_FILTER_PCF5: int;
+  readonly CANVAS_LIGHT_FILTER_PCF5: int;
   /** Use PCF13 filtering to filter canvas light shadows. */
-  static readonly CANVAS_LIGHT_FILTER_PCF13: int;
+  readonly CANVAS_LIGHT_FILTER_PCF13: int;
   /** Max value of the {@link CanvasLightShadowFilter} enum. */
-  static readonly CANVAS_LIGHT_FILTER_MAX: int;
+  readonly CANVAS_LIGHT_FILTER_MAX: int;
   // enum CanvasOccluderPolygonCullMode
   /** Culling of the canvas occluder is disabled. */
-  static readonly CANVAS_OCCLUDER_POLYGON_CULL_DISABLED: int;
+  readonly CANVAS_OCCLUDER_POLYGON_CULL_DISABLED: int;
   /** Culling of the canvas occluder is clockwise. */
-  static readonly CANVAS_OCCLUDER_POLYGON_CULL_CLOCKWISE: int;
+  readonly CANVAS_OCCLUDER_POLYGON_CULL_CLOCKWISE: int;
   /** Culling of the canvas occluder is counterclockwise. */
-  static readonly CANVAS_OCCLUDER_POLYGON_CULL_COUNTER_CLOCKWISE: int;
+  readonly CANVAS_OCCLUDER_POLYGON_CULL_COUNTER_CLOCKWISE: int;
   // enum GlobalShaderParameterType
   /** Boolean global shader parameter (`global uniform bool ...`). */
-  static readonly GLOBAL_VAR_TYPE_BOOL: int;
+  readonly GLOBAL_VAR_TYPE_BOOL: int;
   /** 2-dimensional boolean vector global shader parameter (`global uniform bvec2 ...`). */
-  static readonly GLOBAL_VAR_TYPE_BVEC2: int;
+  readonly GLOBAL_VAR_TYPE_BVEC2: int;
   /** 3-dimensional boolean vector global shader parameter (`global uniform bvec3 ...`). */
-  static readonly GLOBAL_VAR_TYPE_BVEC3: int;
+  readonly GLOBAL_VAR_TYPE_BVEC3: int;
   /** 4-dimensional boolean vector global shader parameter (`global uniform bvec4 ...`). */
-  static readonly GLOBAL_VAR_TYPE_BVEC4: int;
+  readonly GLOBAL_VAR_TYPE_BVEC4: int;
   /** Integer global shader parameter (`global uniform int ...`). */
-  static readonly GLOBAL_VAR_TYPE_INT: int;
+  readonly GLOBAL_VAR_TYPE_INT: int;
   /** 2-dimensional integer vector global shader parameter (`global uniform ivec2 ...`). */
-  static readonly GLOBAL_VAR_TYPE_IVEC2: int;
+  readonly GLOBAL_VAR_TYPE_IVEC2: int;
   /** 3-dimensional integer vector global shader parameter (`global uniform ivec3 ...`). */
-  static readonly GLOBAL_VAR_TYPE_IVEC3: int;
+  readonly GLOBAL_VAR_TYPE_IVEC3: int;
   /** 4-dimensional integer vector global shader parameter (`global uniform ivec4 ...`). */
-  static readonly GLOBAL_VAR_TYPE_IVEC4: int;
+  readonly GLOBAL_VAR_TYPE_IVEC4: int;
   /**
    * 2-dimensional integer rectangle global shader parameter (`global uniform ivec4 ...`). Equivalent to {@link GLOBAL_VAR_TYPE_IVEC4} in shader code, but exposed as a {@link Rect2i} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_RECT2I: int;
+  readonly GLOBAL_VAR_TYPE_RECT2I: int;
   /** Unsigned integer global shader parameter (`global uniform uint ...`). */
-  static readonly GLOBAL_VAR_TYPE_UINT: int;
+  readonly GLOBAL_VAR_TYPE_UINT: int;
   /** 2-dimensional unsigned integer vector global shader parameter (`global uniform uvec2 ...`). */
-  static readonly GLOBAL_VAR_TYPE_UVEC2: int;
+  readonly GLOBAL_VAR_TYPE_UVEC2: int;
   /** 3-dimensional unsigned integer vector global shader parameter (`global uniform uvec3 ...`). */
-  static readonly GLOBAL_VAR_TYPE_UVEC3: int;
+  readonly GLOBAL_VAR_TYPE_UVEC3: int;
   /** 4-dimensional unsigned integer vector global shader parameter (`global uniform uvec4 ...`). */
-  static readonly GLOBAL_VAR_TYPE_UVEC4: int;
+  readonly GLOBAL_VAR_TYPE_UVEC4: int;
   /** Single-precision floating-point global shader parameter (`global uniform float ...`). */
-  static readonly GLOBAL_VAR_TYPE_FLOAT: int;
+  readonly GLOBAL_VAR_TYPE_FLOAT: int;
   /** 2-dimensional floating-point vector global shader parameter (`global uniform vec2 ...`). */
-  static readonly GLOBAL_VAR_TYPE_VEC2: int;
+  readonly GLOBAL_VAR_TYPE_VEC2: int;
   /** 3-dimensional floating-point vector global shader parameter (`global uniform vec3 ...`). */
-  static readonly GLOBAL_VAR_TYPE_VEC3: int;
+  readonly GLOBAL_VAR_TYPE_VEC3: int;
   /** 4-dimensional floating-point vector global shader parameter (`global uniform vec4 ...`). */
-  static readonly GLOBAL_VAR_TYPE_VEC4: int;
+  readonly GLOBAL_VAR_TYPE_VEC4: int;
   /**
    * Color global shader parameter (`global uniform vec4 ...`). Equivalent to {@link GLOBAL_VAR_TYPE_VEC4} in shader code, but exposed as a {@link Color} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_COLOR: int;
+  readonly GLOBAL_VAR_TYPE_COLOR: int;
   /**
    * 2-dimensional floating-point rectangle global shader parameter (`global uniform vec4 ...`). Equivalent to {@link GLOBAL_VAR_TYPE_VEC4} in shader code, but exposed as a {@link Rect2} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_RECT2: int;
+  readonly GLOBAL_VAR_TYPE_RECT2: int;
   /**
    * 2×2 matrix global shader parameter (`global uniform mat2 ...`). Exposed as a {@link PackedInt32Array} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_MAT2: int;
+  readonly GLOBAL_VAR_TYPE_MAT2: int;
   /**
    * 3×3 matrix global shader parameter (`global uniform mat3 ...`). Exposed as a {@link Basis} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_MAT3: int;
+  readonly GLOBAL_VAR_TYPE_MAT3: int;
   /**
    * 4×4 matrix global shader parameter (`global uniform mat4 ...`). Exposed as a {@link Projection} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_MAT4: int;
+  readonly GLOBAL_VAR_TYPE_MAT4: int;
   /**
    * 2-dimensional transform global shader parameter (`global uniform mat2x3 ...`). Exposed as a {@link Transform2D} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_TRANSFORM_2D: int;
+  readonly GLOBAL_VAR_TYPE_TRANSFORM_2D: int;
   /**
    * 3-dimensional transform global shader parameter (`global uniform mat3x4 ...`). Exposed as a {@link Transform3D} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_TRANSFORM: int;
+  readonly GLOBAL_VAR_TYPE_TRANSFORM: int;
   /**
    * 2D sampler global shader parameter (`global uniform sampler2D ...`). Exposed as a {@link Texture2D} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_SAMPLER2D: int;
+  readonly GLOBAL_VAR_TYPE_SAMPLER2D: int;
   /**
    * 2D sampler array global shader parameter (`global uniform sampler2DArray ...`). Exposed as a {@link Texture2DArray} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_SAMPLER2DARRAY: int;
+  readonly GLOBAL_VAR_TYPE_SAMPLER2DARRAY: int;
   /**
    * 3D sampler global shader parameter (`global uniform sampler3D ...`). Exposed as a {@link Texture3D} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_SAMPLER3D: int;
+  readonly GLOBAL_VAR_TYPE_SAMPLER3D: int;
   /**
    * Cubemap sampler global shader parameter (`global uniform samplerCube ...`). Exposed as a {@link Cubemap} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_SAMPLERCUBE: int;
+  readonly GLOBAL_VAR_TYPE_SAMPLERCUBE: int;
   /**
    * External sampler global shader parameter (`global uniform samplerExternalOES ...`). Exposed as an {@link ExternalTexture} in the editor UI.
    */
-  static readonly GLOBAL_VAR_TYPE_SAMPLEREXT: int;
+  readonly GLOBAL_VAR_TYPE_SAMPLEREXT: int;
   /** Represents the size of the {@link GlobalShaderParameterType} enum. */
-  static readonly GLOBAL_VAR_TYPE_MAX: int;
+  readonly GLOBAL_VAR_TYPE_MAX: int;
   // enum RenderingInfo
   /**
    * Number of objects rendered in the current 3D scene. This varies depending on camera position and rotation.
    */
-  static readonly RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME: int;
+  readonly RENDERING_INFO_TOTAL_OBJECTS_IN_FRAME: int;
   /**
    * Number of points, lines, or triangles rendered in the current 3D scene. This varies depending on camera position and rotation.
    */
-  static readonly RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME: int;
+  readonly RENDERING_INFO_TOTAL_PRIMITIVES_IN_FRAME: int;
   /**
    * Number of draw calls performed to render in the current 3D scene. This varies depending on camera position and rotation.
    */
-  static readonly RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME: int;
+  readonly RENDERING_INFO_TOTAL_DRAW_CALLS_IN_FRAME: int;
   /** Texture memory used (in bytes). */
-  static readonly RENDERING_INFO_TEXTURE_MEM_USED: int;
+  readonly RENDERING_INFO_TEXTURE_MEM_USED: int;
   /**
    * Buffer memory used (in bytes). This includes vertex data, uniform buffers, and many miscellaneous buffer types used internally.
    */
-  static readonly RENDERING_INFO_BUFFER_MEM_USED: int;
+  readonly RENDERING_INFO_BUFFER_MEM_USED: int;
   /**
    * Video memory used (in bytes). When using the Forward+ or Mobile renderers, this is always greater than the sum of {@link RENDERING_INFO_TEXTURE_MEM_USED} and {@link RENDERING_INFO_BUFFER_MEM_USED}, since there is miscellaneous data not accounted for by those two metrics. When using the Compatibility renderer, this is equal to the sum of {@link RENDERING_INFO_TEXTURE_MEM_USED} and {@link RENDERING_INFO_BUFFER_MEM_USED}.
    */
-  static readonly RENDERING_INFO_VIDEO_MEM_USED: int;
+  readonly RENDERING_INFO_VIDEO_MEM_USED: int;
   /** Number of pipeline compilations that were triggered by the 2D canvas renderer. */
-  static readonly RENDERING_INFO_PIPELINE_COMPILATIONS_CANVAS: int;
+  readonly RENDERING_INFO_PIPELINE_COMPILATIONS_CANVAS: int;
   /**
    * Number of pipeline compilations that were triggered by loading meshes. These compilations will show up as longer loading times the first time a user runs the game and the pipeline is required.
    */
-  static readonly RENDERING_INFO_PIPELINE_COMPILATIONS_MESH: int;
+  readonly RENDERING_INFO_PIPELINE_COMPILATIONS_MESH: int;
   /**
    * Number of pipeline compilations that were triggered by building the surface cache before rendering the scene. These compilations will show up as a stutter when loading a scene the first time a user runs the game and the pipeline is required.
    */
-  static readonly RENDERING_INFO_PIPELINE_COMPILATIONS_SURFACE: int;
+  readonly RENDERING_INFO_PIPELINE_COMPILATIONS_SURFACE: int;
   /**
    * Number of pipeline compilations that were triggered while drawing the scene. These compilations will show up as stutters during gameplay the first time a user runs the game and the pipeline is required.
    */
-  static readonly RENDERING_INFO_PIPELINE_COMPILATIONS_DRAW: int;
+  readonly RENDERING_INFO_PIPELINE_COMPILATIONS_DRAW: int;
   /**
    * Number of pipeline compilations that were triggered to optimize the current scene. These compilations are done in the background and should not cause any stutters whatsoever.
    */
-  static readonly RENDERING_INFO_PIPELINE_COMPILATIONS_SPECIALIZATION: int;
+  readonly RENDERING_INFO_PIPELINE_COMPILATIONS_SPECIALIZATION: int;
   // enum PipelineSource
   /** Pipeline compilation that was triggered by the 2D canvas renderer. */
-  static readonly PIPELINE_SOURCE_CANVAS: int;
+  readonly PIPELINE_SOURCE_CANVAS: int;
   /** Pipeline compilation that was triggered by loading a mesh. */
-  static readonly PIPELINE_SOURCE_MESH: int;
+  readonly PIPELINE_SOURCE_MESH: int;
   /** Pipeline compilation that was triggered by building the surface cache before rendering the scene. */
-  static readonly PIPELINE_SOURCE_SURFACE: int;
+  readonly PIPELINE_SOURCE_SURFACE: int;
   /** Pipeline compilation that was triggered while drawing the scene. */
-  static readonly PIPELINE_SOURCE_DRAW: int;
+  readonly PIPELINE_SOURCE_DRAW: int;
   /** Pipeline compilation that was triggered to optimize the current scene. */
-  static readonly PIPELINE_SOURCE_SPECIALIZATION: int;
+  readonly PIPELINE_SOURCE_SPECIALIZATION: int;
   /** Represents the size of the {@link PipelineSource} enum. */
-  static readonly PIPELINE_SOURCE_MAX: int;
+  readonly PIPELINE_SOURCE_MAX: int;
   // enum SplashStretchMode
   /** No stretching is applied. */
-  static readonly SPLASH_STRETCH_MODE_DISABLED: int;
+  readonly SPLASH_STRETCH_MODE_DISABLED: int;
   /** Stretches image to fullscreen while preserving aspect ratio. */
-  static readonly SPLASH_STRETCH_MODE_KEEP: int;
+  readonly SPLASH_STRETCH_MODE_KEEP: int;
   /** Stretches the height of the image based on the width of the screen. */
-  static readonly SPLASH_STRETCH_MODE_KEEP_WIDTH: int;
+  readonly SPLASH_STRETCH_MODE_KEEP_WIDTH: int;
   /** Stretches the width of the image based on the height of the screen. */
-  static readonly SPLASH_STRETCH_MODE_KEEP_HEIGHT: int;
+  readonly SPLASH_STRETCH_MODE_KEEP_HEIGHT: int;
   /** Stretches the image to cover the entire screen while preserving aspect ratio. */
-  static readonly SPLASH_STRETCH_MODE_COVER: int;
+  readonly SPLASH_STRETCH_MODE_COVER: int;
   /** Stretches the image to cover the entire screen but doesn't preserve aspect ratio. */
-  static readonly SPLASH_STRETCH_MODE_IGNORE: int;
+  readonly SPLASH_STRETCH_MODE_IGNORE: int;
   // enum Features
-  static readonly FEATURE_SHADERS: int;
-  static readonly FEATURE_MULTITHREADED: int;
+  readonly FEATURE_SHADERS: int;
+  readonly FEATURE_MULTITHREADED: int;
 
   /** Marks an error that shows that the index array is empty. */
-  static readonly NO_INDEX_ARRAY: int;
+  readonly NO_INDEX_ARRAY: int;
   /** Number of weights/bones per vertex. */
-  static readonly ARRAY_WEIGHTS_SIZE: int;
+  readonly ARRAY_WEIGHTS_SIZE: int;
   /** The minimum Z-layer for canvas items. */
-  static readonly CANVAS_ITEM_Z_MIN: int;
+  readonly CANVAS_ITEM_Z_MIN: int;
   /** The maximum Z-layer for canvas items. */
-  static readonly CANVAS_ITEM_Z_MAX: int;
+  readonly CANVAS_ITEM_Z_MAX: int;
   /** The minimum canvas layer. */
-  static readonly CANVAS_LAYER_MIN: int;
+  readonly CANVAS_LAYER_MIN: int;
   /** The maximum canvas layer. */
-  static readonly CANVAS_LAYER_MAX: int;
+  readonly CANVAS_LAYER_MAX: int;
   /** The maximum number of glow levels that can be used with the glow post-processing effect. */
-  static readonly MAX_GLOW_LEVELS: int;
-  static readonly MAX_CURSORS: int;
+  readonly MAX_GLOW_LEVELS: int;
+  readonly MAX_CURSORS: int;
   /** The maximum number of directional lights that can be rendered at a given time in 2D. */
-  static readonly MAX_2D_DIRECTIONAL_LIGHTS: int;
+  readonly MAX_2D_DIRECTIONAL_LIGHTS: int;
   /** The maximum number of surfaces a mesh can have. */
-  static readonly MAX_MESH_SURFACES: int;
+  readonly MAX_MESH_SURFACES: int;
   /** The minimum renderpriority of all materials. */
-  static readonly MATERIAL_RENDER_PRIORITY_MIN: int;
+  readonly MATERIAL_RENDER_PRIORITY_MIN: int;
   /** The maximum renderpriority of all materials. */
-  static readonly MATERIAL_RENDER_PRIORITY_MAX: int;
+  readonly MATERIAL_RENDER_PRIORITY_MAX: int;
   /**
    * The number of custom data arrays available ({@link ARRAY_CUSTOM0}, {@link ARRAY_CUSTOM1}, {@link ARRAY_CUSTOM2}, {@link ARRAY_CUSTOM3}).
    */
-  static readonly ARRAY_CUSTOM_COUNT: int;
+  readonly ARRAY_CUSTOM_COUNT: int;
   /** Particle starts at the specified position. */
-  static readonly PARTICLES_EMIT_FLAG_POSITION: int;
+  readonly PARTICLES_EMIT_FLAG_POSITION: int;
   /** Particle starts with specified rotation and scale. */
-  static readonly PARTICLES_EMIT_FLAG_ROTATION_SCALE: int;
+  readonly PARTICLES_EMIT_FLAG_ROTATION_SCALE: int;
   /** Particle starts with the specified velocity vector, which defines the emission direction and speed. */
-  static readonly PARTICLES_EMIT_FLAG_VELOCITY: int;
+  readonly PARTICLES_EMIT_FLAG_VELOCITY: int;
   /** Particle starts with specified color. */
-  static readonly PARTICLES_EMIT_FLAG_COLOR: int;
+  readonly PARTICLES_EMIT_FLAG_COLOR: int;
   /** Particle starts with specified `CUSTOM` data. */
-  static readonly PARTICLES_EMIT_FLAG_CUSTOM: int;
+  readonly PARTICLES_EMIT_FLAG_CUSTOM: int;
 }
+declare const RenderingServer: RenderingServer;
+

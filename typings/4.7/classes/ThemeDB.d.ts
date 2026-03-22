@@ -4,7 +4,7 @@
 /**
  * A singleton that provides access to static information about {@link Theme} resources used by the engine and by your project.
  */
-declare class ThemeDB extends GodotObject {
+declare interface ThemeDB extends GodotObject {
   /**
    * The fallback base scale factor of every {@link Control} node and {@link Theme} resource. Used when no other value is available to the control.
    * See also {@link Theme.default_base_scale}.
@@ -44,3 +44,5 @@ declare class ThemeDB extends GodotObject {
    */
   fallback_changed: Signal<[]>;
 }
+declare const ThemeDB: ThemeDB;
+

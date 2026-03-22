@@ -762,6 +762,9 @@ function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
     }
   }
 
+  // Singleton instances are emitted in per-class .d.ts files
+  // (as `declare interface` + `declare const`), not here.
+
   // GDScript built-in constants and functions (from @GDScript, not in @GlobalScope XML docs)
   lines.push('');
   lines.push('// @GDScript — built-in constants and functions');
@@ -1190,6 +1193,21 @@ export function generateGodotDocsTypings(
   // Track generated files for the index
   const generatedFiles: string[] = [];
 
+  // Build set of singleton class names (from @GlobalScope properties)
+  const globalScope = classes.get('@GlobalScope');
+  const singletonClassNames = new Set<string>(
+    globalScope?.properties.map((p) => p.type) ?? [],
+  );
+
+  // Find singletons that are extended by other classes —
+  // these need `declare var` with `new()` instead of `declare const`
+  const extendedSingletons = new Set<string>();
+  for (const [, cls] of classes) {
+    if (cls.inherits && singletonClassNames.has(cls.inherits)) {
+      extendedSingletons.add(cls.inherits);
+    }
+  }
+
   // Sort class names for deterministic output
   const sortedNames = [...classes.keys()].sort();
 
@@ -1325,6 +1343,29 @@ export function generateGodotDocsTypings(
     const classOverride = overrides.get(className);
     if (classOverride) {
       classDecl = applyOverride(classDecl, classOverride);
+    }
+
+    // Singleton classes: convert to interface + global instance value.
+    // Interfaces can't have `static` members, so strip the `static` keyword.
+    if (singletonClassNames.has(name)) {
+      // Replace `declare class` with `declare interface`
+      classDecl = classDecl.replace(
+        /^declare class /m,
+        'declare interface ',
+      );
+      // Strip `static` keyword from members (interfaces don't support it;
+      // all members become instance members accessible via the global const/var).
+      classDecl = classDecl.replace(/^(\s+)static readonly /gm, '$1readonly ');
+      classDecl = classDecl.replace(/^(\s+)static /gm, '$1');
+
+      if (extendedSingletons.has(name)) {
+        // Singletons extended by other classes: use `declare var` with `new()`
+        // so TS treats the name as a constructor type for `extends` clauses.
+        classDecl += `\ndeclare var ${className}: ${className} & {\n  new(): ${className};\n  readonly prototype: ${className};\n};\n`;
+      } else {
+        // Singletons NOT extended: use `declare const` (can't construct).
+        classDecl += `\ndeclare const ${className}: ${className};\n`;
+      }
     }
 
     const fileName = `${name}.d.ts`;

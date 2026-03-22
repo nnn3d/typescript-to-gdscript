@@ -2,13 +2,13 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A class information repository. */
-declare class ClassDB extends GodotObject {
+declare interface ClassDB extends GodotObject {
   /**
    * Returns `true` if objects can be instantiated from the specified `class`, otherwise returns `false`.
    */
   can_instantiate(class_: string): boolean;
   /** Calls a static method on a class. */
-  static class_call_static<R = unknown>(
+  class_call_static<R = unknown>(
   class_: string,
   method: string,
   ...args: any[]
@@ -39,12 +39,12 @@ declare class ClassDB extends GodotObject {
    */
   class_get_method_list(class_: string, no_inheritance?: boolean): Dictionary;
   /** Returns the value of `property` of `object` or its ancestry. */
-  static class_get_property<V = unknown>(
+  class_get_property<V = unknown>(
   object: GodotObject,
   property: string,
   ): V;
   /** Returns the default value of `property` of `class_` or its ancestor classes. */
-  static class_get_property_default_value<V = unknown>(
+  class_get_property_default_value<V = unknown>(
   class_: string,
   property: string,
   ): V;
@@ -84,7 +84,7 @@ declare class ClassDB extends GodotObject {
   /** Returns the parent class of `class`. */
   get_parent_class(class_: string): string;
   /** Creates an instance of `class_`. */
-  static instantiate<T extends GodotObject = GodotObject>(class_: string): T;
+  instantiate<T extends GodotObject = GodotObject>(class_: string): T;
   /** Returns whether this `class` is enabled or not. */
   is_class_enabled(class_: string): boolean;
   /**
@@ -96,13 +96,15 @@ declare class ClassDB extends GodotObject {
 
   // enum APIType
   /** Native Core class type. */
-  static readonly API_CORE: int;
+  readonly API_CORE: int;
   /** Native Editor class type. */
-  static readonly API_EDITOR: int;
+  readonly API_EDITOR: int;
   /** GDExtension class type. */
-  static readonly API_EXTENSION: int;
+  readonly API_EXTENSION: int;
   /** GDExtension Editor class type. */
-  static readonly API_EDITOR_EXTENSION: int;
+  readonly API_EDITOR_EXTENSION: int;
   /** Unknown class type. */
-  static readonly API_NONE: int;
+  readonly API_NONE: int;
 }
+declare const ClassDB: ClassDB;
+

@@ -38,6 +38,8 @@ export interface GodotRegistryData {
   globalEnums: GodotEnumInfo[];
   /** Constructors like Vector2, Color etc */
   constructors: string[];
+  /** Global singleton instances from @GlobalScope (e.g. Engine, Input, ProjectSettings) */
+  singletons: Array<{ name: string; type: string }>;
 }
 
 // ─── XML Parsing ──────────────────────────────────────────────
@@ -440,6 +442,7 @@ export function generateRegistryData(
     globalConstants: [],
     globalEnums: [],
     constructors: [...CONSTRUCTOR_TYPES],
+    singletons: [],
   };
 
   for (const [name, cls] of classes) {
@@ -453,6 +456,11 @@ export function generateRegistryData(
         .filter((c) => !c.enumName)
         .map((c) => c.name);
       registry.globalEnums = cls.enums;
+      // Properties are global singletons (Engine, Input, ProjectSettings, etc.)
+      registry.singletons = cls.properties.map((p) => ({
+        name: p.name,
+        type: p.type,
+      }));
       continue;
     }
 
@@ -484,11 +492,13 @@ export class GodotClassRegistry {
   private allMembersCache = new Map<string, Set<string>>();
   private globalFunctionsSet: Set<string>;
   private constructorsSet: Set<string>;
+  private singletonsSet: Set<string>;
 
   constructor(data: GodotRegistryData) {
     this.data = data;
     this.globalFunctionsSet = new Set(data.globalFunctions);
     this.constructorsSet = new Set(data.constructors);
+    this.singletonsSet = new Set((data.singletons ?? []).map((s) => s.name));
   }
 
   static fromJsonFile(jsonPath: string): GodotClassRegistry {
@@ -536,9 +546,14 @@ export class GodotClassRegistry {
     return this.constructorsSet.has(name);
   }
 
-  /** Check if a name should not get `this.` prefix (global function OR constructor) */
+  /** Check if a name is a global singleton instance (Engine, Input, ProjectSettings, etc.) */
+  isSingleton(name: string): boolean {
+    return this.singletonsSet.has(name);
+  }
+
+  /** Check if a name should not get `this.` prefix (global function, constructor, or singleton) */
   isGlobal(name: string): boolean {
-    return this.globalFunctionsSet.has(name) || this.constructorsSet.has(name);
+    return this.globalFunctionsSet.has(name) || this.constructorsSet.has(name) || this.singletonsSet.has(name);
   }
 
   /** Get the inheritance chain for a class (including itself) */

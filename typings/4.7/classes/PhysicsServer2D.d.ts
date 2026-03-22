@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A server interface for low-level 2D physics access. */
-declare class PhysicsServer2D extends GodotObject {
+declare interface PhysicsServer2D extends GodotObject {
   /**
    * Adds a shape to the area, with the given local transform. The shape (together with its `transform` and `disabled` properties) is added to an array of shapes, and the shapes of an area are usually referenced by their index in this array.
    */
@@ -449,286 +449,291 @@ declare class PhysicsServer2D extends GodotObject {
   /**
    * Constant to set/get the maximum distance a pair of bodies has to move before their collision status has to be recalculated. The default value of this parameter is {@link ProjectSettings.physics/2d/solver/contact_recycle_radius}.
    */
-  static readonly SPACE_PARAM_CONTACT_RECYCLE_RADIUS: int;
+  readonly SPACE_PARAM_CONTACT_RECYCLE_RADIUS: int;
   /**
    * Constant to set/get the maximum distance a shape can be from another before they are considered separated and the contact is discarded. The default value of this parameter is {@link ProjectSettings.physics/2d/solver/contact_max_separation}.
    */
-  static readonly SPACE_PARAM_CONTACT_MAX_SEPARATION: int;
+  readonly SPACE_PARAM_CONTACT_MAX_SEPARATION: int;
   /**
    * Constant to set/get the maximum distance a shape can penetrate another shape before it is considered a collision. The default value of this parameter is {@link ProjectSettings.physics/2d/solver/contact_max_allowed_penetration}.
    */
-  static readonly SPACE_PARAM_CONTACT_MAX_ALLOWED_PENETRATION: int;
+  readonly SPACE_PARAM_CONTACT_MAX_ALLOWED_PENETRATION: int;
   /**
    * Constant to set/get the default solver bias for all physics contacts. A solver bias is a factor controlling how much two objects "rebound", after overlapping, to avoid leaving them in that state because of numerical imprecision. The default value of this parameter is {@link ProjectSettings.physics/2d/solver/default_contact_bias}.
    */
-  static readonly SPACE_PARAM_CONTACT_DEFAULT_BIAS: int;
+  readonly SPACE_PARAM_CONTACT_DEFAULT_BIAS: int;
   /**
    * Constant to set/get the threshold linear velocity of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after the time given. The default value of this parameter is {@link ProjectSettings.physics/2d/sleep_threshold_linear}.
    */
-  static readonly SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD: int;
+  readonly SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD: int;
   /**
    * Constant to set/get the threshold angular velocity of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after the time given. The default value of this parameter is {@link ProjectSettings.physics/2d/sleep_threshold_angular}.
    */
-  static readonly SPACE_PARAM_BODY_ANGULAR_VELOCITY_SLEEP_THRESHOLD: int;
+  readonly SPACE_PARAM_BODY_ANGULAR_VELOCITY_SLEEP_THRESHOLD: int;
   /**
    * Constant to set/get the maximum time of activity. A body marked as potentially inactive for both linear and angular velocity will be put to sleep after this time. The default value of this parameter is {@link ProjectSettings.physics/2d/time_before_sleep}.
    */
-  static readonly SPACE_PARAM_BODY_TIME_TO_SLEEP: int;
+  readonly SPACE_PARAM_BODY_TIME_TO_SLEEP: int;
   /**
    * Constant to set/get the default solver bias for all physics constraints. A solver bias is a factor controlling how much two objects "rebound", after violating a constraint, to avoid leaving them in that state because of numerical imprecision. The default value of this parameter is {@link ProjectSettings.physics/2d/solver/default_constraint_bias}.
    */
-  static readonly SPACE_PARAM_CONSTRAINT_DEFAULT_BIAS: int;
+  readonly SPACE_PARAM_CONSTRAINT_DEFAULT_BIAS: int;
   /**
    * Constant to set/get the number of solver iterations for all contacts and constraints. The greater the number of iterations, the more accurate the collisions will be. However, a greater number of iterations requires more CPU power, which can decrease performance. The default value of this parameter is {@link ProjectSettings.physics/2d/solver/solver_iterations}.
    */
-  static readonly SPACE_PARAM_SOLVER_ITERATIONS: int;
+  readonly SPACE_PARAM_SOLVER_ITERATIONS: int;
   // enum ShapeType
   /**
    * This is the constant for creating world boundary shapes. A world boundary shape is an *infinite* line with an origin point, and a normal. Thus, it can be used for front/behind checks.
    */
-  static readonly SHAPE_WORLD_BOUNDARY: int;
+  readonly SHAPE_WORLD_BOUNDARY: int;
   /**
    * This is the constant for creating separation ray shapes. A separation ray is defined by a length and separates itself from what is touching its far endpoint. Useful for character controllers.
    */
-  static readonly SHAPE_SEPARATION_RAY: int;
+  readonly SHAPE_SEPARATION_RAY: int;
   /**
    * This is the constant for creating segment shapes. A segment shape is a *finite* line from a point A to a point B. It can be checked for intersections.
    */
-  static readonly SHAPE_SEGMENT: int;
+  readonly SHAPE_SEGMENT: int;
   /**
    * This is the constant for creating circle shapes. A circle shape only has a radius. It can be used for intersections and inside/outside checks.
    */
-  static readonly SHAPE_CIRCLE: int;
+  readonly SHAPE_CIRCLE: int;
   /**
    * This is the constant for creating rectangle shapes. A rectangle shape is defined by a width and a height. It can be used for intersections and inside/outside checks.
    */
-  static readonly SHAPE_RECTANGLE: int;
+  readonly SHAPE_RECTANGLE: int;
   /**
    * This is the constant for creating capsule shapes. A capsule shape is defined by a radius and a length. It can be used for intersections and inside/outside checks.
    */
-  static readonly SHAPE_CAPSULE: int;
+  readonly SHAPE_CAPSULE: int;
   /**
    * This is the constant for creating convex polygon shapes. A polygon is defined by a list of points. It can be used for intersections and inside/outside checks.
    */
-  static readonly SHAPE_CONVEX_POLYGON: int;
+  readonly SHAPE_CONVEX_POLYGON: int;
   /**
    * This is the constant for creating concave polygon shapes. A polygon is defined by a list of points. It can be used for intersections checks, but not for inside/outside checks.
    */
-  static readonly SHAPE_CONCAVE_POLYGON: int;
+  readonly SHAPE_CONCAVE_POLYGON: int;
   /**
    * This constant is used internally by the engine. Any attempt to create this kind of shape results in an error.
    */
-  static readonly SHAPE_CUSTOM: int;
+  readonly SHAPE_CUSTOM: int;
   // enum AreaParameter
   /**
    * Constant to set/get gravity override mode in an area. See {@link AreaSpaceOverrideMode} for possible values. The default value of this parameter is {@link AREA_SPACE_OVERRIDE_DISABLED}.
    */
-  static readonly AREA_PARAM_GRAVITY_OVERRIDE_MODE: int;
+  readonly AREA_PARAM_GRAVITY_OVERRIDE_MODE: int;
   /** Constant to set/get gravity strength in an area. The default value of this parameter is `9.80665`. */
-  static readonly AREA_PARAM_GRAVITY: int;
+  readonly AREA_PARAM_GRAVITY: int;
   /**
    * Constant to set/get gravity vector/center in an area. The default value of this parameter is `Vector2(0, -1)`.
    */
-  static readonly AREA_PARAM_GRAVITY_VECTOR: int;
+  readonly AREA_PARAM_GRAVITY_VECTOR: int;
   /**
    * Constant to set/get whether the gravity vector of an area is a direction, or a center point. The default value of this parameter is `false`.
    */
-  static readonly AREA_PARAM_GRAVITY_IS_POINT: int;
+  readonly AREA_PARAM_GRAVITY_IS_POINT: int;
   /**
    * Constant to set/get the distance at which the gravity strength is equal to the gravity controlled by {@link AREA_PARAM_GRAVITY}. For example, on a planet 100 pixels in radius with a surface gravity of 4.0 px/s², set the gravity to 4.0 and the unit distance to 100.0. The gravity will have falloff according to the inverse square law, so in the example, at 200 pixels from the center the gravity will be 1.0 px/s² (twice the distance, 1/4th the gravity), at 50 pixels it will be 16.0 px/s² (half the distance, 4x the gravity), and so on.
    * The above is true only when the unit distance is a positive number. When the unit distance is set to 0.0, the gravity will be constant regardless of distance. The default value of this parameter is `0.0`.
    */
-  static readonly AREA_PARAM_GRAVITY_POINT_UNIT_DISTANCE: int;
+  readonly AREA_PARAM_GRAVITY_POINT_UNIT_DISTANCE: int;
   /**
    * Constant to set/get linear damping override mode in an area. See {@link AreaSpaceOverrideMode} for possible values. The default value of this parameter is {@link AREA_SPACE_OVERRIDE_DISABLED}.
    */
-  static readonly AREA_PARAM_LINEAR_DAMP_OVERRIDE_MODE: int;
+  readonly AREA_PARAM_LINEAR_DAMP_OVERRIDE_MODE: int;
   /**
    * Constant to set/get the linear damping factor of an area. The default value of this parameter is `0.1`.
    */
-  static readonly AREA_PARAM_LINEAR_DAMP: int;
+  readonly AREA_PARAM_LINEAR_DAMP: int;
   /**
    * Constant to set/get angular damping override mode in an area. See {@link AreaSpaceOverrideMode} for possible values. The default value of this parameter is {@link AREA_SPACE_OVERRIDE_DISABLED}.
    */
-  static readonly AREA_PARAM_ANGULAR_DAMP_OVERRIDE_MODE: int;
+  readonly AREA_PARAM_ANGULAR_DAMP_OVERRIDE_MODE: int;
   /**
    * Constant to set/get the angular damping factor of an area. The default value of this parameter is `1.0`.
    */
-  static readonly AREA_PARAM_ANGULAR_DAMP: int;
+  readonly AREA_PARAM_ANGULAR_DAMP: int;
   /**
    * Constant to set/get the priority (order of processing) of an area. The default value of this parameter is `0`.
    */
-  static readonly AREA_PARAM_PRIORITY: int;
+  readonly AREA_PARAM_PRIORITY: int;
   // enum AreaSpaceOverrideMode
   /**
    * This area does not affect gravity/damp. These are generally areas that exist only to detect collisions, and objects entering or exiting them.
    */
-  static readonly AREA_SPACE_OVERRIDE_DISABLED: int;
+  readonly AREA_SPACE_OVERRIDE_DISABLED: int;
   /**
    * This area adds its gravity/damp values to whatever has been calculated so far. This way, many overlapping areas can combine their physics to make interesting effects.
    */
-  static readonly AREA_SPACE_OVERRIDE_COMBINE: int;
+  readonly AREA_SPACE_OVERRIDE_COMBINE: int;
   /**
    * This area adds its gravity/damp values to whatever has been calculated so far. Then stops taking into account the rest of the areas, even the default one.
    */
-  static readonly AREA_SPACE_OVERRIDE_COMBINE_REPLACE: int;
+  readonly AREA_SPACE_OVERRIDE_COMBINE_REPLACE: int;
   /**
    * This area replaces any gravity/damp, even the default one, and stops taking into account the rest of the areas.
    */
-  static readonly AREA_SPACE_OVERRIDE_REPLACE: int;
+  readonly AREA_SPACE_OVERRIDE_REPLACE: int;
   /**
    * This area replaces any gravity/damp calculated so far, but keeps calculating the rest of the areas, down to the default one.
    */
-  static readonly AREA_SPACE_OVERRIDE_REPLACE_COMBINE: int;
+  readonly AREA_SPACE_OVERRIDE_REPLACE_COMBINE: int;
   // enum BodyMode
   /**
    * Constant for static bodies. In this mode, a body can be only moved by user code and doesn't collide with other bodies along its path when moved.
    */
-  static readonly BODY_MODE_STATIC: int;
+  readonly BODY_MODE_STATIC: int;
   /**
    * Constant for kinematic bodies. In this mode, a body can be only moved by user code and collides with other bodies along its path.
    */
-  static readonly BODY_MODE_KINEMATIC: int;
+  readonly BODY_MODE_KINEMATIC: int;
   /**
    * Constant for rigid bodies. In this mode, a body can be pushed by other bodies and has forces applied.
    */
-  static readonly BODY_MODE_RIGID: int;
+  readonly BODY_MODE_RIGID: int;
   /**
    * Constant for linear rigid bodies. In this mode, a body can not rotate, and only its linear velocity is affected by external forces.
    */
-  static readonly BODY_MODE_RIGID_LINEAR: int;
+  readonly BODY_MODE_RIGID_LINEAR: int;
   // enum BodyParameter
   /** Constant to set/get a body's bounce factor. The default value of this parameter is `0.0`. */
-  static readonly BODY_PARAM_BOUNCE: int;
+  readonly BODY_PARAM_BOUNCE: int;
   /** Constant to set/get a body's friction. The default value of this parameter is `1.0`. */
-  static readonly BODY_PARAM_FRICTION: int;
+  readonly BODY_PARAM_FRICTION: int;
   /**
    * Constant to set/get a body's mass. The default value of this parameter is `1.0`. If the body's mode is set to {@link BODY_MODE_RIGID}, then setting this parameter will have the following additional effects:
    * - If the parameter {@link BODY_PARAM_CENTER_OF_MASS} has never been set explicitly, then the value of that parameter will be recalculated based on the body's shapes.
    * - If the parameter {@link BODY_PARAM_INERTIA} is set to a value `<= 0.0`, then the value of that parameter will be recalculated based on the body's shapes, mass, and center of mass.
    */
-  static readonly BODY_PARAM_MASS: int;
+  readonly BODY_PARAM_MASS: int;
   /**
    * Constant to set/get a body's inertia. The default value of this parameter is `0.0`. If the body's inertia is set to a value `<= 0.0`, then the inertia will be recalculated based on the body's shapes, mass, and center of mass.
    */
-  static readonly BODY_PARAM_INERTIA: int;
+  readonly BODY_PARAM_INERTIA: int;
   /**
    * Constant to set/get a body's center of mass position in the body's local coordinate system. The default value of this parameter is `Vector2(0, 0)`. If this parameter is never set explicitly, then it is recalculated based on the body's shapes when setting the parameter {@link BODY_PARAM_MASS} or when calling {@link body_set_space}.
    */
-  static readonly BODY_PARAM_CENTER_OF_MASS: int;
+  readonly BODY_PARAM_CENTER_OF_MASS: int;
   /** Constant to set/get a body's gravity multiplier. The default value of this parameter is `1.0`. */
-  static readonly BODY_PARAM_GRAVITY_SCALE: int;
+  readonly BODY_PARAM_GRAVITY_SCALE: int;
   /**
    * Constant to set/get a body's linear damping mode. See {@link BodyDampMode} for possible values. The default value of this parameter is {@link BODY_DAMP_MODE_COMBINE}.
    */
-  static readonly BODY_PARAM_LINEAR_DAMP_MODE: int;
+  readonly BODY_PARAM_LINEAR_DAMP_MODE: int;
   /**
    * Constant to set/get a body's angular damping mode. See {@link BodyDampMode} for possible values. The default value of this parameter is {@link BODY_DAMP_MODE_COMBINE}.
    */
-  static readonly BODY_PARAM_ANGULAR_DAMP_MODE: int;
+  readonly BODY_PARAM_ANGULAR_DAMP_MODE: int;
   /** Constant to set/get a body's linear damping factor. The default value of this parameter is `0.0`. */
-  static readonly BODY_PARAM_LINEAR_DAMP: int;
+  readonly BODY_PARAM_LINEAR_DAMP: int;
   /** Constant to set/get a body's angular damping factor. The default value of this parameter is `0.0`. */
-  static readonly BODY_PARAM_ANGULAR_DAMP: int;
+  readonly BODY_PARAM_ANGULAR_DAMP: int;
   /** Represents the size of the {@link BodyParameter} enum. */
-  static readonly BODY_PARAM_MAX: int;
+  readonly BODY_PARAM_MAX: int;
   // enum BodyDampMode
   /** The body's damping value is added to any value set in areas or the default value. */
-  static readonly BODY_DAMP_MODE_COMBINE: int;
+  readonly BODY_DAMP_MODE_COMBINE: int;
   /** The body's damping value replaces any value set in areas or the default value. */
-  static readonly BODY_DAMP_MODE_REPLACE: int;
+  readonly BODY_DAMP_MODE_REPLACE: int;
   // enum BodyState
   /** Constant to set/get the current transform matrix of the body. */
-  static readonly BODY_STATE_TRANSFORM: int;
+  readonly BODY_STATE_TRANSFORM: int;
   /** Constant to set/get the current linear velocity of the body. */
-  static readonly BODY_STATE_LINEAR_VELOCITY: int;
+  readonly BODY_STATE_LINEAR_VELOCITY: int;
   /** Constant to set/get the current angular velocity of the body. */
-  static readonly BODY_STATE_ANGULAR_VELOCITY: int;
+  readonly BODY_STATE_ANGULAR_VELOCITY: int;
   /** Constant to sleep/wake up a body, or to get whether it is sleeping. */
-  static readonly BODY_STATE_SLEEPING: int;
+  readonly BODY_STATE_SLEEPING: int;
   /** Constant to set/get whether the body can sleep. */
-  static readonly BODY_STATE_CAN_SLEEP: int;
+  readonly BODY_STATE_CAN_SLEEP: int;
   // enum JointType
   /** Constant to create pin joints. */
-  static readonly JOINT_TYPE_PIN: int;
+  readonly JOINT_TYPE_PIN: int;
   /** Constant to create groove joints. */
-  static readonly JOINT_TYPE_GROOVE: int;
+  readonly JOINT_TYPE_GROOVE: int;
   /** Constant to create damped spring joints. */
-  static readonly JOINT_TYPE_DAMPED_SPRING: int;
+  readonly JOINT_TYPE_DAMPED_SPRING: int;
   /** Represents the size of the {@link JointType} enum. */
-  static readonly JOINT_TYPE_MAX: int;
+  readonly JOINT_TYPE_MAX: int;
   // enum JointParam
   /**
    * Constant to set/get how fast the joint pulls the bodies back to satisfy the joint constraint. The lower the value, the more the two bodies can pull on the joint. The default value of this parameter is `0.0`.
    * **Note:** In Godot Physics, this parameter is only used for pin joints and groove joints.
    */
-  static readonly JOINT_PARAM_BIAS: int;
+  readonly JOINT_PARAM_BIAS: int;
   /**
    * Constant to set/get the maximum speed with which the joint can apply corrections. The default value of this parameter is `3.40282e+38`.
    * **Note:** In Godot Physics, this parameter is only used for groove joints.
    */
-  static readonly JOINT_PARAM_MAX_BIAS: int;
+  readonly JOINT_PARAM_MAX_BIAS: int;
   /**
    * Constant to set/get the maximum force that the joint can use to act on the two bodies. The default value of this parameter is `3.40282e+38`.
    * **Note:** In Godot Physics, this parameter is only used for groove joints.
    */
-  static readonly JOINT_PARAM_MAX_FORCE: int;
+  readonly JOINT_PARAM_MAX_FORCE: int;
   // enum PinJointParam
   /**
    * Constant to set/get a how much the bond of the pin joint can flex. The default value of this parameter is `0.0`.
    */
-  static readonly PIN_JOINT_SOFTNESS: int;
+  readonly PIN_JOINT_SOFTNESS: int;
   /** The maximum rotation around the pin. */
-  static readonly PIN_JOINT_LIMIT_UPPER: int;
+  readonly PIN_JOINT_LIMIT_UPPER: int;
   /** The minimum rotation around the pin. */
-  static readonly PIN_JOINT_LIMIT_LOWER: int;
+  readonly PIN_JOINT_LIMIT_LOWER: int;
   /** Target speed for the motor. In radians per second. */
-  static readonly PIN_JOINT_MOTOR_TARGET_VELOCITY: int;
+  readonly PIN_JOINT_MOTOR_TARGET_VELOCITY: int;
   // enum PinJointFlag
   /** If `true`, the pin has a maximum and a minimum rotation. */
-  static readonly PIN_JOINT_FLAG_ANGULAR_LIMIT_ENABLED: int;
+  readonly PIN_JOINT_FLAG_ANGULAR_LIMIT_ENABLED: int;
   /** If `true`, a motor turns the pin. */
-  static readonly PIN_JOINT_FLAG_MOTOR_ENABLED: int;
+  readonly PIN_JOINT_FLAG_MOTOR_ENABLED: int;
   // enum DampedSpringParam
   /**
    * Sets the resting length of the spring joint. The joint will always try to go to back this length when pulled apart. The default value of this parameter is the distance between the joint's anchor points.
    */
-  static readonly DAMPED_SPRING_REST_LENGTH: int;
+  readonly DAMPED_SPRING_REST_LENGTH: int;
   /**
    * Sets the stiffness of the spring joint. The joint applies a force equal to the stiffness times the distance from its resting length. The default value of this parameter is `20.0`.
    */
-  static readonly DAMPED_SPRING_STIFFNESS: int;
+  readonly DAMPED_SPRING_STIFFNESS: int;
   /**
    * Sets the damping ratio of the spring joint. A value of 0 indicates an undamped spring, while 1 causes the system to reach equilibrium as fast as possible (critical damping). The default value of this parameter is `1.5`.
    */
-  static readonly DAMPED_SPRING_DAMPING: int;
+  readonly DAMPED_SPRING_DAMPING: int;
   // enum CCDMode
   /**
    * Disables continuous collision detection. This is the fastest way to detect body collisions, but it can miss small and/or fast-moving objects.
    */
-  static readonly CCD_MODE_DISABLED: int;
+  readonly CCD_MODE_DISABLED: int;
   /**
    * Enables continuous collision detection by raycasting. It is faster than shapecasting, but less precise.
    */
-  static readonly CCD_MODE_CAST_RAY: int;
+  readonly CCD_MODE_CAST_RAY: int;
   /**
    * Enables continuous collision detection by shapecasting. It is the slowest CCD method, and the most precise.
    */
-  static readonly CCD_MODE_CAST_SHAPE: int;
+  readonly CCD_MODE_CAST_SHAPE: int;
   // enum AreaBodyStatus
   /**
    * The value of the first parameter and area callback function receives, when an object enters one of its shapes.
    */
-  static readonly AREA_BODY_ADDED: int;
+  readonly AREA_BODY_ADDED: int;
   /**
    * The value of the first parameter and area callback function receives, when an object exits one of its shapes.
    */
-  static readonly AREA_BODY_REMOVED: int;
+  readonly AREA_BODY_REMOVED: int;
   // enum ProcessInfo
   /** Constant to get the number of objects that are not sleeping. */
-  static readonly INFO_ACTIVE_OBJECTS: int;
+  readonly INFO_ACTIVE_OBJECTS: int;
   /** Constant to get the number of possible collisions. */
-  static readonly INFO_COLLISION_PAIRS: int;
+  readonly INFO_COLLISION_PAIRS: int;
   /** Constant to get the number of space regions where a collision could occur. */
-  static readonly INFO_ISLAND_COUNT: int;
+  readonly INFO_ISLAND_COUNT: int;
 }
+declare var PhysicsServer2D: PhysicsServer2D & {
+  new(): PhysicsServer2D;
+  readonly prototype: PhysicsServer2D;
+};
+

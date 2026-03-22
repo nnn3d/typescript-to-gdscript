@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A server interface for screen reader support. */
-declare class AccessibilityServer extends GodotObject {
+declare interface AccessibilityServer extends GodotObject {
   /**
    * Creates a new, empty accessibility element resource.
    * **Note:** An accessibility element is created and freed automatically for each {@link Node}. In general, this function should not be called manually.
@@ -186,155 +186,155 @@ declare class AccessibilityServer extends GodotObject {
 
   // enum AccessibilityRole
   /** Unknown or custom role. */
-  static readonly ROLE_UNKNOWN: int;
+  readonly ROLE_UNKNOWN: int;
   /** Default dialog button element. */
-  static readonly ROLE_DEFAULT_BUTTON: int;
+  readonly ROLE_DEFAULT_BUTTON: int;
   /** Audio player element. */
-  static readonly ROLE_AUDIO: int;
+  readonly ROLE_AUDIO: int;
   /** Video player element. */
-  static readonly ROLE_VIDEO: int;
+  readonly ROLE_VIDEO: int;
   /** Non-editable text label. */
-  static readonly ROLE_STATIC_TEXT: int;
+  readonly ROLE_STATIC_TEXT: int;
   /**
    * Container element. Elements with this role are used for internal structure and ignored by screen readers.
    */
-  static readonly ROLE_CONTAINER: int;
+  readonly ROLE_CONTAINER: int;
   /** Panel container element. */
-  static readonly ROLE_PANEL: int;
+  readonly ROLE_PANEL: int;
   /** Button element. */
-  static readonly ROLE_BUTTON: int;
+  readonly ROLE_BUTTON: int;
   /** Link element. */
-  static readonly ROLE_LINK: int;
+  readonly ROLE_LINK: int;
   /** Check box element. */
-  static readonly ROLE_CHECK_BOX: int;
+  readonly ROLE_CHECK_BOX: int;
   /** Radio button element. */
-  static readonly ROLE_RADIO_BUTTON: int;
+  readonly ROLE_RADIO_BUTTON: int;
   /** Check button element. */
-  static readonly ROLE_CHECK_BUTTON: int;
+  readonly ROLE_CHECK_BUTTON: int;
   /** Scroll bar element. */
-  static readonly ROLE_SCROLL_BAR: int;
+  readonly ROLE_SCROLL_BAR: int;
   /** Scroll container element. */
-  static readonly ROLE_SCROLL_VIEW: int;
+  readonly ROLE_SCROLL_VIEW: int;
   /** Container splitter handle element. */
-  static readonly ROLE_SPLITTER: int;
+  readonly ROLE_SPLITTER: int;
   /** Slider element. */
-  static readonly ROLE_SLIDER: int;
+  readonly ROLE_SLIDER: int;
   /** Spin box element. */
-  static readonly ROLE_SPIN_BUTTON: int;
+  readonly ROLE_SPIN_BUTTON: int;
   /** Progress indicator element. */
-  static readonly ROLE_PROGRESS_INDICATOR: int;
+  readonly ROLE_PROGRESS_INDICATOR: int;
   /** Editable text field element. */
-  static readonly ROLE_TEXT_FIELD: int;
+  readonly ROLE_TEXT_FIELD: int;
   /** Multiline editable text field element. */
-  static readonly ROLE_MULTILINE_TEXT_FIELD: int;
+  readonly ROLE_MULTILINE_TEXT_FIELD: int;
   /** Color picker element. */
-  static readonly ROLE_COLOR_PICKER: int;
+  readonly ROLE_COLOR_PICKER: int;
   /** Table element. */
-  static readonly ROLE_TABLE: int;
+  readonly ROLE_TABLE: int;
   /** Table/tree cell element. */
-  static readonly ROLE_CELL: int;
+  readonly ROLE_CELL: int;
   /** Table/tree row element. */
-  static readonly ROLE_ROW: int;
+  readonly ROLE_ROW: int;
   /** Table/tree row group element. */
-  static readonly ROLE_ROW_GROUP: int;
+  readonly ROLE_ROW_GROUP: int;
   /** Table/tree row header element. */
-  static readonly ROLE_ROW_HEADER: int;
+  readonly ROLE_ROW_HEADER: int;
   /** Table/tree column header element. */
-  static readonly ROLE_COLUMN_HEADER: int;
+  readonly ROLE_COLUMN_HEADER: int;
   /** Tree view element. */
-  static readonly ROLE_TREE: int;
+  readonly ROLE_TREE: int;
   /** Tree view item element. */
-  static readonly ROLE_TREE_ITEM: int;
+  readonly ROLE_TREE_ITEM: int;
   /** List element. */
-  static readonly ROLE_LIST: int;
+  readonly ROLE_LIST: int;
   /** List item element. */
-  static readonly ROLE_LIST_ITEM: int;
+  readonly ROLE_LIST_ITEM: int;
   /** List view element. */
-  static readonly ROLE_LIST_BOX: int;
+  readonly ROLE_LIST_BOX: int;
   /** List view item element. */
-  static readonly ROLE_LIST_BOX_OPTION: int;
+  readonly ROLE_LIST_BOX_OPTION: int;
   /** Tab bar element. */
-  static readonly ROLE_TAB_BAR: int;
+  readonly ROLE_TAB_BAR: int;
   /** Tab bar item element. */
-  static readonly ROLE_TAB: int;
+  readonly ROLE_TAB: int;
   /** Tab panel element. */
-  static readonly ROLE_TAB_PANEL: int;
+  readonly ROLE_TAB_PANEL: int;
   /** Menu bar element. */
-  static readonly ROLE_MENU_BAR: int;
+  readonly ROLE_MENU_BAR: int;
   /** Popup menu element. */
-  static readonly ROLE_MENU: int;
+  readonly ROLE_MENU: int;
   /** Popup menu item element. */
-  static readonly ROLE_MENU_ITEM: int;
+  readonly ROLE_MENU_ITEM: int;
   /** Popup menu check button item element. */
-  static readonly ROLE_MENU_ITEM_CHECK_BOX: int;
+  readonly ROLE_MENU_ITEM_CHECK_BOX: int;
   /** Popup menu radio button item element. */
-  static readonly ROLE_MENU_ITEM_RADIO: int;
+  readonly ROLE_MENU_ITEM_RADIO: int;
   /** Image element. */
-  static readonly ROLE_IMAGE: int;
+  readonly ROLE_IMAGE: int;
   /** Window element. */
-  static readonly ROLE_WINDOW: int;
+  readonly ROLE_WINDOW: int;
   /** Embedded window title bar element. */
-  static readonly ROLE_TITLE_BAR: int;
+  readonly ROLE_TITLE_BAR: int;
   /** Dialog window element. */
-  static readonly ROLE_DIALOG: int;
+  readonly ROLE_DIALOG: int;
   /** Tooltip element. */
-  static readonly ROLE_TOOLTIP: int;
+  readonly ROLE_TOOLTIP: int;
   /** Region/landmark element. Screen readers can navigate between regions using landmark navigation. */
-  static readonly ROLE_REGION: int;
+  readonly ROLE_REGION: int;
   /**
    * Unifor text run.
    * Note: This role is used for internal text elements, and should not be assigned to nodes.
    */
-  static readonly ROLE_TEXT_RUN: int;
+  readonly ROLE_TEXT_RUN: int;
   // enum AccessibilityPopupType
   /** Popup menu. */
-  static readonly POPUP_MENU: int;
+  readonly POPUP_MENU: int;
   /** Popup list. */
-  static readonly POPUP_LIST: int;
+  readonly POPUP_LIST: int;
   /** Popup tree view. */
-  static readonly POPUP_TREE: int;
+  readonly POPUP_TREE: int;
   /** Popup dialog. */
-  static readonly POPUP_DIALOG: int;
+  readonly POPUP_DIALOG: int;
   // enum AccessibilityFlags
   /** Element is hidden for accessibility tools. */
-  static readonly FLAG_HIDDEN: int;
+  readonly FLAG_HIDDEN: int;
   /** Element supports multiple item selection. */
-  static readonly FLAG_MULTISELECTABLE: int;
+  readonly FLAG_MULTISELECTABLE: int;
   /** Element require user input. */
-  static readonly FLAG_REQUIRED: int;
+  readonly FLAG_REQUIRED: int;
   /** Element is a visited link. */
-  static readonly FLAG_VISITED: int;
+  readonly FLAG_VISITED: int;
   /** Element content is not ready (e.g. loading). */
-  static readonly FLAG_BUSY: int;
+  readonly FLAG_BUSY: int;
   /** Element is modal window. */
-  static readonly FLAG_MODAL: int;
+  readonly FLAG_MODAL: int;
   /** Element allows touches to be passed through when a screen reader is in touch exploration mode. */
-  static readonly FLAG_TOUCH_PASSTHROUGH: int;
+  readonly FLAG_TOUCH_PASSTHROUGH: int;
   /** Element is text field with selectable but read-only text. */
-  static readonly FLAG_READONLY: int;
+  readonly FLAG_READONLY: int;
   /** Element is disabled. */
-  static readonly FLAG_DISABLED: int;
+  readonly FLAG_DISABLED: int;
   /** Element clips children. */
-  static readonly FLAG_CLIPS_CHILDREN: int;
+  readonly FLAG_CLIPS_CHILDREN: int;
   // enum AccessibilityAction
   /** Single click action, callback argument is not set. */
-  static readonly ACTION_CLICK: int;
+  readonly ACTION_CLICK: int;
   /** Focus action, callback argument is not set. */
-  static readonly ACTION_FOCUS: int;
+  readonly ACTION_FOCUS: int;
   /** Blur action, callback argument is not set. */
-  static readonly ACTION_BLUR: int;
+  readonly ACTION_BLUR: int;
   /** Collapse action, callback argument is not set. */
-  static readonly ACTION_COLLAPSE: int;
+  readonly ACTION_COLLAPSE: int;
   /** Expand action, callback argument is not set. */
-  static readonly ACTION_EXPAND: int;
+  readonly ACTION_EXPAND: int;
   /** Decrement action, callback argument is not set. */
-  static readonly ACTION_DECREMENT: int;
+  readonly ACTION_DECREMENT: int;
   /** Increment action, callback argument is not set. */
-  static readonly ACTION_INCREMENT: int;
+  readonly ACTION_INCREMENT: int;
   /** Hide tooltip action, callback argument is not set. */
-  static readonly ACTION_HIDE_TOOLTIP: int;
+  readonly ACTION_HIDE_TOOLTIP: int;
   /** Show tooltip action, callback argument is not set. */
-  static readonly ACTION_SHOW_TOOLTIP: int;
+  readonly ACTION_SHOW_TOOLTIP: int;
   /**
    * Set text selection action, callback argument is set to {@link Dictionary} with the following keys:
    * - `"start_element"` accessibility element of the selection start.
@@ -342,62 +342,64 @@ declare class AccessibilityServer extends GodotObject {
    * - `"end_element"` accessibility element of the selection end.
    * - `"end_char"` character offset relative to the accessibility element of the selection end.
    */
-  static readonly ACTION_SET_TEXT_SELECTION: int;
+  readonly ACTION_SET_TEXT_SELECTION: int;
   /** Replace text action, callback argument is set to {@link String} with the replacement text. */
-  static readonly ACTION_REPLACE_SELECTED_TEXT: int;
+  readonly ACTION_REPLACE_SELECTED_TEXT: int;
   /** Scroll backward action, callback argument is not set. */
-  static readonly ACTION_SCROLL_BACKWARD: int;
+  readonly ACTION_SCROLL_BACKWARD: int;
   /** Scroll down action, callback argument is set to {@link AccessibilityScrollUnit}. */
-  static readonly ACTION_SCROLL_DOWN: int;
+  readonly ACTION_SCROLL_DOWN: int;
   /** Scroll forward action, callback argument is not set. */
-  static readonly ACTION_SCROLL_FORWARD: int;
+  readonly ACTION_SCROLL_FORWARD: int;
   /** Scroll left action, callback argument is set to {@link AccessibilityScrollUnit}. */
-  static readonly ACTION_SCROLL_LEFT: int;
+  readonly ACTION_SCROLL_LEFT: int;
   /** Scroll right action, callback argument is set to {@link AccessibilityScrollUnit}. */
-  static readonly ACTION_SCROLL_RIGHT: int;
+  readonly ACTION_SCROLL_RIGHT: int;
   /** Scroll up action, callback argument is set to {@link AccessibilityScrollUnit}. */
-  static readonly ACTION_SCROLL_UP: int;
+  readonly ACTION_SCROLL_UP: int;
   /** Scroll into view action, callback argument is set to {@link AccessibilityScrollHint}. */
-  static readonly ACTION_SCROLL_INTO_VIEW: int;
+  readonly ACTION_SCROLL_INTO_VIEW: int;
   /**
    * Scroll to point action, callback argument is set to {@link Vector2} with the relative point coordinates.
    */
-  static readonly ACTION_SCROLL_TO_POINT: int;
+  readonly ACTION_SCROLL_TO_POINT: int;
   /** Set scroll offset action, callback argument is set to {@link Vector2} with the scroll offset. */
-  static readonly ACTION_SET_SCROLL_OFFSET: int;
+  readonly ACTION_SET_SCROLL_OFFSET: int;
   /** Set value action, callback argument is set to {@link String} or number with the new value. */
-  static readonly ACTION_SET_VALUE: int;
+  readonly ACTION_SET_VALUE: int;
   /** Show context menu action, callback argument is not set. */
-  static readonly ACTION_SHOW_CONTEXT_MENU: int;
+  readonly ACTION_SHOW_CONTEXT_MENU: int;
   /** Custom action, callback argument is set to the integer action ID. */
-  static readonly ACTION_CUSTOM: int;
+  readonly ACTION_CUSTOM: int;
   // enum AccessibilityLiveMode
   /** Indicates that updates to the live region should not be presented. */
-  static readonly LIVE_OFF: int;
+  readonly LIVE_OFF: int;
   /**
    * Indicates that updates to the live region should be presented at the next opportunity (for example at the end of speaking the current sentence).
    */
-  static readonly LIVE_POLITE: int;
+  readonly LIVE_POLITE: int;
   /**
    * Indicates that updates to the live region have the highest priority and should be presented immediately.
    */
-  static readonly LIVE_ASSERTIVE: int;
+  readonly LIVE_ASSERTIVE: int;
   // enum AccessibilityScrollUnit
   /** The amount by which to scroll. A single item of a list, line of text. */
-  static readonly SCROLL_UNIT_ITEM: int;
+  readonly SCROLL_UNIT_ITEM: int;
   /** The amount by which to scroll. A single page. */
-  static readonly SCROLL_UNIT_PAGE: int;
+  readonly SCROLL_UNIT_PAGE: int;
   // enum AccessibilityScrollHint
   /** A preferred position for the node scrolled into view. Top-left edge of the scroll container. */
-  static readonly SCROLL_HINT_TOP_LEFT: int;
+  readonly SCROLL_HINT_TOP_LEFT: int;
   /** A preferred position for the node scrolled into view. Bottom-right edge of the scroll container. */
-  static readonly SCROLL_HINT_BOTTOM_RIGHT: int;
+  readonly SCROLL_HINT_BOTTOM_RIGHT: int;
   /** A preferred position for the node scrolled into view. Top edge of the scroll container. */
-  static readonly SCROLL_HINT_TOP_EDGE: int;
+  readonly SCROLL_HINT_TOP_EDGE: int;
   /** A preferred position for the node scrolled into view. Bottom edge of the scroll container. */
-  static readonly SCROLL_HINT_BOTTOM_EDGE: int;
+  readonly SCROLL_HINT_BOTTOM_EDGE: int;
   /** A preferred position for the node scrolled into view. Left edge of the scroll container. */
-  static readonly SCROLL_HINT_LEFT_EDGE: int;
+  readonly SCROLL_HINT_LEFT_EDGE: int;
   /** A preferred position for the node scrolled into view. Right edge of the scroll container. */
-  static readonly SCROLL_HINT_RIGHT_EDGE: int;
+  readonly SCROLL_HINT_RIGHT_EDGE: int;
 }
+declare const AccessibilityServer: AccessibilityServer;
+

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Helper class for creating and clearing navigation meshes. */
-declare class NavigationMeshGenerator extends GodotObject {
+declare interface NavigationMeshGenerator extends GodotObject {
   /** Bakes the `navigation_mesh` with source geometry collected starting from the `root_node`. */
   bake(navigation_mesh: NavigationMesh, root_node: Node): void;
   /**
@@ -18,3 +18,5 @@ declare class NavigationMeshGenerator extends GodotObject {
    */
   parse_source_geometry_data(navigation_mesh: NavigationMesh, source_geometry_data: NavigationMeshSourceGeometryData3D, root_node: Node, callback?: Callable): void;
 }
+declare const NavigationMeshGenerator: NavigationMeshGenerator;
+

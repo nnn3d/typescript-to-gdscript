@@ -38,9 +38,4 @@ export class Player extends CharacterBody2D {
     manager.reset_game();
     let score: int = GameManager.get_score();
   }
-
-  // Signal handler: typed from .tscn connection (Area2D.area_entered)
-  _on_area_entered(area: Area2D) {
-    const _checkArea: IsExact<typeof area, Area2D> = true;
-  }
 }

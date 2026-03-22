@@ -15,6 +15,13 @@ export interface GdToTsOptions {
   registry: GodotClassRegistry;
   /** Additional GD source files in the project (for resolving user-defined class inheritance) */
   projectSources?: Array<{ source: string; filePath: string }>;
+  /**
+   * Signal handler type info resolved from .tscn scene connections.
+   * Maps method name → array of typed parameters (Godot type names).
+   * When a GDScript function matches a handler name and has untyped params,
+   * the signal's parameter types are used instead.
+   */
+  signalHandlers?: Map<string, { params: Array<{ name: string; gdType: string }> }>;
 }
 
 /** Lightweight class info extracted from a GD source file */
@@ -169,6 +176,7 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
     userClasses,
     className: '',
     staticMembers: new Set(),
+    signalHandlers: options.signalHandlers ?? new Map(),
   };
 
   const code = emitSourceFile(root, ctx);
@@ -201,6 +209,8 @@ interface GdToTsContext {
   className: string;
   /** Static member names (const + static var) — accessed via ClassName, not this */
   staticMembers: Set<string>;
+  /** Signal handler type info from .tscn connections (method name → param types) */
+  signalHandlers: Map<string, { params: Array<{ name: string; gdType: string }> }>;
 }
 
 /**
@@ -795,10 +805,24 @@ function collectParamNames(
 }
 
 function emitParams(paramsNode: GDNode, ctx: GdToTsContext): string {
+  // Look up signal handler info for the current method (if any)
+  const handlerInfo = ctx.currentMethodName
+    ? ctx.signalHandlers.get(ctx.currentMethodName)
+    : undefined;
+
   const params: string[] = [];
+  let paramIndex = 0;
   for (const child of paramsNode.namedChildren) {
     if (isGDNodeType(child, 'identifier')) {
-      params.push(child.text);
+      // Untyped param — use signal handler type if available
+      if (handlerInfo && paramIndex < handlerInfo.params.length) {
+        const sigParam = handlerInfo.params[paramIndex]!;
+        const tsType = gdTypeToTs(sigParam.gdType);
+        params.push(tsType ? `${child.text}: ${tsType}` : child.text);
+      } else {
+        params.push(child.text);
+      }
+      paramIndex++;
     } else if (isGDNodeType(child, 'typed_parameter')) {
       const name =
         child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
@@ -806,6 +830,7 @@ function emitParams(paramsNode: GDNode, ctx: GdToTsContext): string {
       const typeNode = child.childForFieldName('type');
       const tsType = typeNode ? gdTypeToTs(typeNode.text) : null;
       params.push(tsType ? `${name}: ${tsType}` : name);
+      paramIndex++;
     } else if (isGDNodeType(child, 'default_parameter')) {
       const name =
         child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
@@ -813,6 +838,7 @@ function emitParams(paramsNode: GDNode, ctx: GdToTsContext): string {
       const value = child.childForFieldName('value');
       const valueStr = value ? emitExpr(value, ctx) : '';
       params.push(`${name} = ${valueStr}`);
+      paramIndex++;
     } else if (isGDNodeType(child, 'typed_default_parameter')) {
       const name =
         child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
@@ -823,6 +849,7 @@ function emitParams(paramsNode: GDNode, ctx: GdToTsContext): string {
       const valueStr = value ? emitExpr(value, ctx) : '';
       const typeStr = tsType ? `: ${tsType}` : '';
       params.push(`${name}${typeStr} = ${valueStr}`);
+      paramIndex++;
     }
   }
   return params.join(', ');

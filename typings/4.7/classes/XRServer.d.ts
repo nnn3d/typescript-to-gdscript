@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Server for AR and VR features. */
-declare class XRServer extends GodotObject {
+declare interface XRServer extends GodotObject {
   /**
    * If set to `true`, the scene will be rendered as if the camera is locked to the {@link XROrigin3D}.
    * **Note:** This doesn't provide a very comfortable experience for users. This setting exists for doing benchmarking or automated testing, where you want to control what is rendered via code.
@@ -87,34 +87,36 @@ declare class XRServer extends GodotObject {
   /**
    * The tracker tracks the location of the player's head. This is usually a location centered between the player's eyes. Note that for handheld AR devices this can be the current location of the device.
    */
-  static readonly TRACKER_HEAD: int;
+  readonly TRACKER_HEAD: int;
   /** The tracker tracks the location of a controller. */
-  static readonly TRACKER_CONTROLLER: int;
+  readonly TRACKER_CONTROLLER: int;
   /** The tracker tracks the location of a base station. */
-  static readonly TRACKER_BASESTATION: int;
+  readonly TRACKER_BASESTATION: int;
   /** The tracker tracks the location and size of an AR anchor. */
-  static readonly TRACKER_ANCHOR: int;
+  readonly TRACKER_ANCHOR: int;
   /** The tracker tracks the location and joints of a hand. */
-  static readonly TRACKER_HAND: int;
+  readonly TRACKER_HAND: int;
   /** The tracker tracks the location and joints of a body. */
-  static readonly TRACKER_BODY: int;
+  readonly TRACKER_BODY: int;
   /** The tracker tracks the expressions of a face. */
-  static readonly TRACKER_FACE: int;
+  readonly TRACKER_FACE: int;
   /** Used internally to filter trackers of any known type. */
-  static readonly TRACKER_ANY_KNOWN: int;
+  readonly TRACKER_ANY_KNOWN: int;
   /** Used internally if we haven't set the tracker type yet. */
-  static readonly TRACKER_UNKNOWN: int;
+  readonly TRACKER_UNKNOWN: int;
   /** Used internally to select all trackers. */
-  static readonly TRACKER_ANY: int;
+  readonly TRACKER_ANY: int;
   // enum RotationMode
   /**
    * Fully reset the orientation of the HMD. Regardless of what direction the user is looking to in the real world. The user will look dead ahead in the virtual world.
    */
-  static readonly RESET_FULL_ROTATION: int;
+  readonly RESET_FULL_ROTATION: int;
   /**
    * Resets the orientation but keeps the tilt of the device. So if we're looking down, we keep looking down but heading will be reset.
    */
-  static readonly RESET_BUT_KEEP_TILT: int;
+  readonly RESET_BUT_KEEP_TILT: int;
   /** Does not reset the orientation of the HMD, only the position of the player gets centered. */
-  static readonly DONT_RESET_ROTATION: int;
+  readonly DONT_RESET_ROTATION: int;
 }
+declare const XRServer: XRServer;
+

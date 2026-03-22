@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Godot editor's interface. */
-declare class EditorInterface extends GodotObject {
+declare interface EditorInterface extends GodotObject {
   /**
    * If `true`, enables distraction-free mode which hides side docks to increase the space available for the main view.
    */
@@ -246,3 +246,5 @@ declare class EditorInterface extends GodotObject {
   /** Stops the scene that is currently playing. */
   stop_playing_scene(): void;
 }
+declare const EditorInterface: EditorInterface;
+

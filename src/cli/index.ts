@@ -14,7 +14,11 @@ import { resolve, dirname, relative, extname, join } from 'path';
 import { globSync } from 'glob';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
-import { generateTypings } from '../typings/scenes.ts';
+import {
+  generateTypings,
+  resolveSignalHandlers,
+  findSceneFiles,
+} from '../typings/scenes.ts';
 import { generateGodotDocsTypings } from '../typings/godot-docs.ts';
 import { parseGodotVersion } from '../typings/godot-registry.ts';
 import { Watcher } from '../watcher/index.ts';
@@ -277,10 +281,23 @@ program
     const registry = resolveRegistry({ registryPath: cfg.registryPath });
     const tsOutputFiles: string[] = [];
 
+    // Find .tscn scene files for signal handler resolution
+    const sceneFiles = findSceneFiles(
+      cfg.scenesDir,
+      cfg.rootDir,
+      cfg.ignore,
+    );
+
     for (const filePath of resolvedFiles) {
       const source = readFileSync(filePath, 'utf-8');
 
-      const result = convertGdToTs({ source, filePath, registry });
+      // Resolve signal handler types from .tscn connections
+      const scriptResPath = `res://${relative(cfg.rootDir, filePath).replace(/\\/g, '/')}`;
+      const signalHandlers = sceneFiles.length > 0
+        ? resolveSignalHandlers(scriptResPath, sceneFiles, registry)
+        : undefined;
+
+      const result = convertGdToTs({ source, filePath, registry, signalHandlers });
 
       for (const diag of result.diagnostics) {
         const prefix =
