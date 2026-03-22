@@ -15,13 +15,21 @@ export class Player extends CharacterBody2D {
   PlayerPackedScene: PackedScene<Player> = load('res://Player.tscn');
 
   _ready() {
-    // get_node_or_null normally returns T | null, but scene overload returns Sprite2D directly
-    let sprite: Sprite2D | null = this.get_node_or_null('Sprite2D');
-    let node_or_null: Node | null = this.get_node_or_null('Unknown');
-    // get_node also has typed overload
-    let collision: CollisionShape2D = this.get_node('CollisionShape2D');
-    // Unknown path for get_node returns Node
-    let unknown: Node = this.get_node('Unknown');
+    // get_node_or_null: known path → exact type | null (not just Node | null)
+    let sprite = this.get_node_or_null('Sprite2D');
+    const _checkSprite: IsExact<typeof sprite, Sprite2D | null> = true;
+
+    // get_node_or_null: unknown path → Node | null
+    let node_or_null = this.get_node_or_null('Unknown');
+    const _checkNodeOrNull: IsExact<typeof node_or_null, Node | null> = true;
+
+    // get_node: known path → exact type (no null)
+    let collision = this.get_node('CollisionShape2D');
+    const _checkCollision: IsExact<typeof collision, CollisionShape2D> = true;
+
+    // get_node: unknown path → Node
+    let unknown = this.get_node('Unknown');
+    const _checkUnknown: IsExact<typeof unknown, Node> = true;
 
     this.get_tree().change_scene_to_file('res://Anonym.tscn');
 
