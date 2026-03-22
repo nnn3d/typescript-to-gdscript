@@ -28,7 +28,11 @@ interface ScriptNodeInfo {
  */
 function parseScene(
   filePath: string,
-): { filePath: string; scripts: ScriptNodeInfo[] } | null {
+): {
+  filePath: string;
+  scripts: ScriptNodeInfo[];
+  rootScript?: { scriptResPath: string };
+} | null {
   const content = readFileSync(filePath, 'utf-8');
   const extResources = new Map<string, { path: string; type: string }>();
   const nodes: SceneNode[] = [];

@@ -8,8 +8,10 @@ import {
   readdirSync,
   statSync,
   existsSync,
+  rmSync,
 } from 'fs';
 import { resolve, dirname, relative, extname, join } from 'path';
+import { globSync } from 'glob';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
 import { generateClassTypings } from '../typings/classes.ts';
@@ -26,7 +28,10 @@ import {
   resolveConfig,
   shouldIgnore,
 } from '../config/index.ts';
-import { validateGdFiles } from '../godot-validate/index.ts';
+import {
+  validateGdFiles,
+  validateGdFilesSync,
+} from '../godot-validate/index.ts';
 
 const program = new Command();
 
@@ -57,6 +62,62 @@ function findTsFiles(
     // skip inaccessible
   }
   return results;
+}
+
+/** Recursively find all .gd files (excluding node_modules, hidden dirs, and ignored patterns) */
+function findGdFiles(
+  dir: string,
+  rootDir: string,
+  ignore: string[],
+): string[] {
+  const results: string[] = [];
+  try {
+    for (const entry of readdirSync(dir)) {
+      if (entry.startsWith('.') || entry === 'node_modules') continue;
+      const fullPath = join(dir, entry);
+      if (shouldIgnore(fullPath, rootDir, ignore)) continue;
+      if (statSync(fullPath).isDirectory()) {
+        results.push(...findGdFiles(fullPath, rootDir, ignore));
+      } else if (entry.endsWith('.gd')) {
+        results.push(fullPath);
+      }
+    }
+  } catch {
+    // skip inaccessible
+  }
+  return results;
+}
+
+/**
+ * Resolve file arguments: if patterns are provided, expand them via glob;
+ * otherwise return all files of the given extension in the source directory.
+ */
+function resolveFiles(
+  patterns: string[] | undefined,
+  ext: '.ts' | '.gd',
+  sourceDir: string,
+  rootDir: string,
+  ignore: string[],
+): string[] {
+  if (patterns && patterns.length > 0) {
+    // Expand glob patterns
+    const files: string[] = [];
+    for (const pattern of patterns) {
+      const matches = globSync(pattern, { cwd: process.cwd(), absolute: true });
+      for (const match of matches) {
+        const m = match.replace(/\\/g, '/');
+        if (ext === '.ts' && m.endsWith('.d.ts')) continue;
+        if (m.endsWith(ext) && !shouldIgnore(resolve(m), rootDir, ignore)) {
+          files.push(resolve(m));
+        }
+      }
+    }
+    return files;
+  }
+  // Default: find all files in sourceDir
+  return ext === '.ts'
+    ? findTsFiles(sourceDir, rootDir, ignore)
+    : findGdFiles(sourceDir, rootDir, ignore);
 }
 
 /** Generate class typings (globals.d.ts) and scene typings (scene-typings.d.ts) */
@@ -113,8 +174,10 @@ function generateAllTypings(cfg: {
 
 program
   .command('convert')
-  .description('Convert TypeScript file(s) to GDScript')
-  .argument('<files...>', 'TypeScript files to convert')
+  .description(
+    'Convert TypeScript file(s) to GDScript. If no files given, converts all .ts files in tsDir.',
+  )
+  .argument('[files...]', 'TypeScript files or glob patterns to convert')
   .option('-o, --output-dir <dir>', 'Output directory (alias for --gd-dir)')
   .option('--ts-dir <dir>', 'TypeScript source directory')
   .option('--gd-dir <dir>', 'GDScript output directory')
@@ -132,12 +195,22 @@ program
       },
     });
 
-    for (const file of files) {
-      const filePath = resolve(file);
-      if (shouldIgnore(filePath, cfg.rootDir, cfg.ignore)) {
-        console.log(`Ignored: ${filePath}`);
-        continue;
-      }
+    const resolvedFiles = resolveFiles(
+      files.length > 0 ? files : undefined,
+      '.ts',
+      cfg.tsDir,
+      cfg.rootDir,
+      cfg.ignore,
+    );
+
+    if (resolvedFiles.length === 0) {
+      console.log('No TypeScript files found to convert.');
+      return;
+    }
+
+    console.log(`Converting ${resolvedFiles.length} file(s)...`);
+
+    for (const filePath of resolvedFiles) {
       const result = convertTsToGd({
         filePath,
         rootDir: cfg.tsDir,
@@ -176,7 +249,7 @@ program
     // Generate class typings + scene typings
     generateAllTypings({
       ...cfg,
-      tsFiles: files.map((f) => resolve(f)),
+      tsFiles: resolvedFiles,
     });
   });
 
@@ -184,8 +257,10 @@ program
 
 program
   .command('convert-gd')
-  .description('Convert GDScript file(s) to TypeScript')
-  .argument('<files...>', 'GDScript files to convert')
+  .description(
+    'Convert GDScript file(s) to TypeScript. If no files given, converts all .gd files in gdDir.',
+  )
+  .argument('[files...]', 'GDScript files or glob patterns to convert')
   .option('-o, --output-dir <dir>', 'Output directory (alias for --ts-dir)')
   .option('--ts-dir <dir>', 'TypeScript output directory')
   .option('--gd-dir <dir>', 'GDScript source directory')
@@ -203,15 +278,26 @@ program
         registryPath: opts.registry,
       },
     });
+
+    const resolvedFiles = resolveFiles(
+      files.length > 0 ? files : undefined,
+      '.gd',
+      cfg.gdDir,
+      cfg.rootDir,
+      cfg.ignore,
+    );
+
+    if (resolvedFiles.length === 0) {
+      console.log('No GDScript files found to convert.');
+      return;
+    }
+
+    console.log(`Converting ${resolvedFiles.length} file(s)...`);
+
     const registry = resolveRegistry({ registryPath: cfg.registryPath });
     const tsOutputFiles: string[] = [];
 
-    for (const file of files) {
-      const filePath = resolve(file);
-      if (shouldIgnore(filePath, cfg.rootDir, cfg.ignore)) {
-        console.log(`Ignored: ${filePath}`);
-        continue;
-      }
+    for (const filePath of resolvedFiles) {
       const source = readFileSync(filePath, 'utf-8');
 
       const result = convertGdToTs({ source, filePath, registry });
@@ -496,8 +582,10 @@ function getAvailableVersions(typingsRoot: string): string[] {
 
 program
   .command('generate-class-typings')
-  .description('Generate global class declarations from TS source files')
-  .argument('<files...>', 'TypeScript source files')
+  .description(
+    'Generate global class declarations from TS source files. If no files given, scans tsDir.',
+  )
+  .argument('[files...]', 'TypeScript source files or glob patterns')
   .option('-o, --output <path>', 'Output .d.ts file path')
   .option(
     '--typings-dir <path>',
@@ -514,17 +602,169 @@ program
       },
     });
 
+    const resolvedFiles = resolveFiles(
+      files.length > 0 ? files : undefined,
+      '.ts',
+      cfg.tsDir,
+      cfg.rootDir,
+      cfg.ignore,
+    );
+
+    if (resolvedFiles.length === 0) {
+      console.log('No TypeScript files found.');
+      return;
+    }
+
     const outputPath = opts.output
       ? resolve(opts.output)
       : join(cfg.typingsDir, 'globals.d.ts');
 
     generateClassTypings({
       rootDir: cfg.rootDir,
-      files: files.map((f) => resolve(f)),
+      files: resolvedFiles,
       outputPath,
       tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
     });
     console.log(`Generated: ${outputPath}`);
+  });
+
+// ─── Lint ──────────────────────────────────────────────────
+
+program
+  .command('lint')
+  .description(
+    'Lint TypeScript files by converting to GDScript and reporting diagnostics. If no files given, lints all .ts files in tsDir.',
+  )
+  .argument('[files...]', 'TypeScript files or glob patterns to lint')
+  .option('--root-dir <dir>', 'Root directory', '.')
+  .option('--ts-dir <dir>', 'TypeScript source directory')
+  .option('--tsconfig <path>', 'Path to tsconfig.json')
+  .option(
+    '--godot-path <path>',
+    'Path to Godot executable (enables GDScript validation)',
+  )
+  .option('--project-root <dir>', 'Godot project root for validation')
+  .action((files: string[], opts) => {
+    const cfg = resolveConfig({
+      overrides: {
+        rootDir: opts.rootDir,
+        tsDir: opts.tsDir,
+        tsconfig: opts.tsconfig,
+        godotPath: opts.godotPath,
+      },
+    });
+
+    const resolvedFiles = resolveFiles(
+      files.length > 0 ? files : undefined,
+      '.ts',
+      cfg.tsDir,
+      cfg.rootDir,
+      cfg.ignore,
+    );
+
+    if (resolvedFiles.length === 0) {
+      console.log('No TypeScript files found to lint.');
+      return;
+    }
+
+    const godotPath = cfg.godotPath
+      ? resolveGodotPath({ godotPath: cfg.godotPath })
+      : undefined;
+    const projectRoot = opts.projectRoot
+      ? resolve(opts.projectRoot)
+      : cfg.rootDir;
+
+    let totalErrors = 0;
+    let totalWarnings = 0;
+
+    for (const filePath of resolvedFiles) {
+      // Skip .d.ts files
+      if (filePath.endsWith('.d.ts')) continue;
+
+      // Step 1: Convert TS to GD and collect diagnostics
+      const result = convertTsToGd({
+        filePath,
+        rootDir: cfg.tsDir,
+        tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
+        sourceMap: true, // Always generate source map for Godot error remapping
+      });
+
+      let fileHasErrors = false;
+
+      // Step 2: Report converter diagnostics
+      for (const diag of result.diagnostics) {
+        if (diag.severity === 'info') continue;
+        const prefix = diag.severity === 'error' ? 'ERROR' : 'WARN';
+        if (diag.severity === 'error') {
+          totalErrors++;
+          fileHasErrors = true;
+        } else {
+          totalWarnings++;
+        }
+        console.error(
+          `[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`,
+        );
+      }
+
+      // Step 3: If no converter errors and godotPath configured, run Godot validation
+      if (!fileHasErrors && godotPath) {
+        const relPath = relative(cfg.tsDir, filePath);
+        const gdRelPath = relPath.replace(/\.ts$/, '.gd');
+        const gdAbsPath = resolve(projectRoot, gdRelPath);
+        const gdDir = dirname(gdAbsPath);
+
+        try {
+          mkdirSync(gdDir, { recursive: true });
+          writeFileSync(gdAbsPath, result.code);
+
+          const validateResult = validateGdFilesSync({
+            gdFiles: [
+              {
+                path: gdAbsPath,
+                sourceMapJson: result.sourceMap,
+                tsFilePath: filePath,
+              },
+            ],
+            projectRoot,
+            godotPath,
+          });
+
+          for (const diag of validateResult.diagnostics) {
+            const prefix = diag.severity === 'error' ? 'ERROR' : 'WARN';
+            if (diag.severity === 'error') {
+              totalErrors++;
+            } else {
+              totalWarnings++;
+            }
+            console.error(
+              `[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`,
+            );
+          }
+        } finally {
+          // Clean up temp GD file
+          try {
+            if (existsSync(gdAbsPath)) rmSync(gdAbsPath);
+            const mapPath = gdAbsPath + '.map';
+            if (existsSync(mapPath)) rmSync(mapPath);
+          } catch {
+            // Ignore cleanup errors
+          }
+        }
+      }
+    }
+
+    // Summary
+    if (totalErrors > 0 || totalWarnings > 0) {
+      console.log(
+        `\nLint complete: ${totalErrors} error(s), ${totalWarnings} warning(s)`,
+      );
+    } else {
+      console.log(
+        `\nLint complete: ${resolvedFiles.length} file(s) checked, no issues found.`,
+      );
+    }
+
+    if (totalErrors > 0) process.exit(1);
   });
 
 program.parse();
