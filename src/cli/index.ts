@@ -14,11 +14,7 @@ import { resolve, dirname, relative, extname, join } from 'path';
 import { globSync } from 'glob';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
-import { generateClassTypings } from '../typings/classes.ts';
-import {
-  generateSceneTypings,
-  buildScriptClassMap,
-} from '../typings/scenes.ts';
+import { generateTypings } from '../typings/scenes.ts';
 import { generateGodotDocsTypings } from '../typings/godot-docs.ts';
 import { parseGodotVersion } from '../typings/godot-registry.ts';
 import { Watcher } from '../watcher/index.ts';
@@ -138,38 +134,20 @@ function generateAllTypings(cfg: {
 
   mkdirSync(cfg.typingsDir, { recursive: true });
 
-  const classTypingsOutput = join(cfg.typingsDir, 'globals.d.ts');
-  const sceneTypingsOutput = join(cfg.typingsDir, 'scene-typings.d.ts');
-  const tsconfigPath = cfg.tsconfig ? resolve(cfg.tsconfig) : undefined;
+  const outputPath = join(cfg.typingsDir, 'globals.d.ts');
 
-  // Generate globals.d.ts (global class declarations)
-  generateClassTypings({
-    rootDir: cfg.rootDir,
-    files: tsFiles,
-    outputPath: classTypingsOutput,
-    tsConfigPath: tsconfigPath,
-  });
-  console.log(`Generated: ${classTypingsOutput}`);
-
-  // Generate scene-typings.d.ts (module augmentation for get_node overloads + autoloads)
-  const scriptClassMap = buildScriptClassMap({
-    files: tsFiles,
+  generateTypings({
     rootDir: cfg.rootDir,
     tsDir: cfg.tsDir,
     gdDir: cfg.gdDir,
-    sceneTypingsDir: cfg.typingsDir,
-    tsConfigPath: tsconfigPath,
-  });
-
-  generateSceneTypings({
+    files: tsFiles,
+    outputPath,
     scenesDir: cfg.scenesDir,
-    outputPath: sceneTypingsOutput,
-    scriptClassMap,
-    rootDir: cfg.rootDir,
+    tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
     ignore: cfg.ignore,
     projectFile: cfg.projectFile,
   });
-  console.log(`Generated: ${sceneTypingsOutput}`);
+  console.log(`Generated: ${outputPath}`);
 }
 
 // ─── Convert TS -> GD ──────────────────────────────────────
@@ -486,7 +464,7 @@ function writeLatestIndexDts(latestDir: string, version: string): void {
 }
 
 program
-  .command('generate-typings')
+  .command('generate-gdscript-global-typings')
   .description(
     'Generate TypeScript typings and class registry from Godot docs into versioned typings folder',
   )
@@ -581,12 +559,12 @@ function getAvailableVersions(typingsRoot: string): string[] {
   });
 }
 
-// ─── Generate Class Typings ────────────────────────────────
+// ─── Generate Typings ──────────────────────────────────────
 
 program
-  .command('generate-class-typings')
+  .command('generate-typings')
   .description(
-    'Generate global class declarations from TS source files. If no files given, scans tsDir.',
+    'Generate globals.d.ts with class declarations, scene overloads, GodotResources, and autoloads. If no files given, scans tsDir.',
   )
   .argument('[files...]', 'TypeScript source files or glob patterns')
   .option('-o, --output <path>', 'Output .d.ts file path')
@@ -618,15 +596,22 @@ program
       return;
     }
 
+    mkdirSync(cfg.typingsDir, { recursive: true });
+
     const outputPath = opts.output
       ? resolve(opts.output)
       : join(cfg.typingsDir, 'globals.d.ts');
 
-    generateClassTypings({
+    generateTypings({
       rootDir: cfg.rootDir,
+      tsDir: cfg.tsDir,
+      gdDir: cfg.gdDir,
       files: resolvedFiles,
       outputPath,
+      scenesDir: cfg.scenesDir,
       tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
+      ignore: cfg.ignore,
+      projectFile: cfg.projectFile,
     });
     console.log(`Generated: ${outputPath}`);
   });

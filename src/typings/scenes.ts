@@ -525,6 +525,240 @@ export function buildScriptClassMap(
   return map;
 }
 
+// ─── Combined Typings Generator ─────────────────────────────
+
+export interface GenerateTypingsOptions {
+  /** Root directory of the project (base for res:// paths) */
+  rootDir: string;
+  /** TypeScript source directory */
+  tsDir: string;
+  /** GDScript output directory */
+  gdDir: string;
+  /** TS source files to scan for class declarations */
+  files: string[];
+  /** Output path for the generated globals.d.ts file */
+  outputPath: string;
+  /** Directory containing .tscn scene files */
+  scenesDir: string;
+  /** Path to tsconfig.json */
+  tsConfigPath?: string;
+  /** Glob patterns for files/folders to ignore */
+  ignore?: string[];
+  /** Path to project.godot file (for autoload singleton detection) */
+  projectFile?: string;
+}
+
+/**
+ * Generates a single globals.d.ts containing:
+ * - Global class declarations (named classes available globally like GDScript class_name)
+ * - Scene node interfaces and module augmentation (typed get_node/get_node_or_null)
+ * - GodotResources interface (typed load/preload)
+ * - Autoload singletons from project.godot
+ * - GodotScenePaths type union
+ */
+export function generateTypings(options: GenerateTypingsOptions): string {
+  const outputDir = dirname(options.outputPath);
+
+  // Build script class map (scans all TS files for class declarations)
+  const scriptClassMap = buildScriptClassMap({
+    files: options.files,
+    rootDir: options.rootDir,
+    tsDir: options.tsDir,
+    gdDir: options.gdDir,
+    sceneTypingsDir: outputDir,
+    tsConfigPath: options.tsConfigPath,
+  });
+
+  // Build unique import aliases for each script class (handles duplicate class names like __CLASS__)
+  // resPath → { alias, className, tsModulePath }
+  const aliasMap = new Map<string, { alias: string; className: string; tsModulePath: string }>();
+  const usedAliases = new Set<string>();
+  for (const [resPath, info] of scriptClassMap) {
+    let alias = '_' + resPath.replace(/^res:\/\//, '').replace(/\.[^.]+$/, '').replace(/\//g, '_');
+    let base = alias;
+    let i = 2;
+    while (usedAliases.has(alias)) {
+      alias = `${base}_${i++}`;
+    }
+    usedAliases.add(alias);
+    aliasMap.set(resPath, { alias, className: info.className, tsModulePath: info.tsModulePath });
+  }
+
+  // Find scene files and collect per-script scene node data
+  const scenes = findSceneFiles(
+    options.scenesDir,
+    options.rootDir,
+    options.ignore ?? [],
+  );
+
+  const scriptData = new Map<
+    string,
+    { alias: string; tsModulePath: string; className: string; children: Array<{ path: string; type: string }> }
+  >();
+
+  const resourceEntries: Array<{ resPath: string; alias?: string }> = [];
+
+  for (const scenePath of scenes) {
+    const scene = parseScene(scenePath);
+    if (!scene) {
+      const resPath = `res://${relative(options.rootDir, scenePath).replace(/\\/g, '/')}`;
+      resourceEntries.push({ resPath });
+      continue;
+    }
+
+    const resPath = `res://${relative(options.rootDir, scenePath).replace(/\\/g, '/')}`;
+
+    let rootAlias: string | undefined;
+    if (scene.rootScript) {
+      const aliasEntry = aliasMap.get(scene.rootScript.scriptResPath);
+      if (aliasEntry) {
+        rootAlias = aliasEntry.alias;
+      }
+    }
+    resourceEntries.push({ resPath, alias: rootAlias });
+
+    for (const script of scene.scripts) {
+      const classInfo = scriptClassMap.get(script.scriptResPath);
+      if (!classInfo) continue;
+      if (script.children.length === 0) continue;
+
+      const aliasEntry = aliasMap.get(script.scriptResPath);
+      if (!aliasEntry) continue;
+
+      let data = scriptData.get(script.scriptResPath);
+      if (!data) {
+        data = {
+          alias: aliasEntry.alias,
+          tsModulePath: classInfo.tsModulePath,
+          className: classInfo.className,
+          children: [],
+        };
+        scriptData.set(script.scriptResPath, data);
+      }
+      data.children.push(...script.children);
+    }
+  }
+
+  // Parse autoloads from project.godot
+  const autoloads = options.projectFile ? parseAutoloads(options.projectFile) : [];
+  const autoloadDecls: Array<{ name: string; type: string }> = [];
+  for (const autoload of autoloads) {
+    if (autoload.resPath.endsWith('.gd')) {
+      const aliasEntry = aliasMap.get(autoload.resPath);
+      autoloadDecls.push({ name: autoload.name, type: aliasEntry ? aliasEntry.alias : 'Node' });
+    } else if (autoload.resPath.endsWith('.tscn')) {
+      const sceneEntry = resourceEntries.find((e) => e.resPath === autoload.resPath);
+      autoloadDecls.push({ name: autoload.name, type: sceneEntry?.alias ?? 'Node' });
+    } else {
+      autoloadDecls.push({ name: autoload.name, type: 'Node' });
+    }
+  }
+
+  // Collect named classes for global declarations (skip __CLASS__)
+  const globalClasses: Array<{ className: string; alias: string; commentPath: string }> = [];
+  for (const [resPath, entry] of aliasMap) {
+    if (entry.className === '__CLASS__') continue;
+    const commentPath = resPath.replace(/^res:\/\//, '').replace(/\.gd$/, '.ts');
+    globalClasses.push({ className: entry.className, alias: entry.alias, commentPath });
+  }
+
+  // ─── Emit globals.d.ts ───────────────────────────────────
+
+  const lines: string[] = [];
+  lines.push('// AUTO-GENERATED — do not edit manually.');
+  lines.push('// Generated by ts2gd from TypeScript source files and .tscn scene files.');
+  lines.push('// Provides global class declarations, get_node overloads, GodotResources, and autoloads.');
+  lines.push('');
+
+  // Import all script classes with unique aliases
+  for (const [, entry] of aliasMap) {
+    lines.push(`import type { ${entry.className} as ${entry.alias} } from "${entry.tsModulePath}";`);
+  }
+  if (aliasMap.size > 0) {
+    lines.push('');
+  }
+
+  // Scene node interfaces + module augmentations (outside declare global)
+  for (const [, data] of scriptData) {
+    const nodesInterface = `${data.alias}SceneNodes`;
+
+    lines.push(`// Scene nodes for: ${data.alias}`);
+    lines.push(`interface ${nodesInterface} {`);
+    for (const child of data.children) {
+      lines.push(`  "${child.path}": ${child.type};`);
+    }
+    lines.push('}');
+    lines.push('');
+
+    lines.push(`declare module "${data.tsModulePath}" {`);
+    lines.push(`  interface ${data.className} {`);
+    lines.push(`    get_node<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P];`);
+    lines.push(`    get_node(path: string): Node;`);
+    lines.push(`    get_node_or_null<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P] | null;`);
+    lines.push(`    get_node_or_null(path: string): Node | null;`);
+    lines.push('  }');
+    lines.push('}');
+    lines.push('');
+  }
+
+  // declare global block: class declarations + GodotResources + autoloads
+  const hasResources = resourceEntries.length > 0 || aliasMap.size > 0;
+  const hasAutoloads = autoloadDecls.length > 0;
+  if (globalClasses.length > 0 || hasResources || hasAutoloads) {
+    lines.push('declare global {');
+
+    // Global class declarations
+    if (globalClasses.length > 0) {
+      for (const cls of globalClasses) {
+        lines.push(`  // From: ${cls.commentPath}`);
+        lines.push(`  class ${cls.className} extends ${cls.alias} {}`);
+      }
+    }
+
+    // GodotResources interface
+    if (hasResources) {
+      lines.push('  interface GodotResources {');
+      for (const entry of resourceEntries) {
+        if (entry.alias) {
+          lines.push(`    "${entry.resPath}": PackedScene<${entry.alias}>;`);
+        } else {
+          lines.push(`    "${entry.resPath}": PackedScene;`);
+        }
+      }
+      for (const [resPath, aliasEntry] of aliasMap) {
+        lines.push(`    "${resPath}": ${aliasEntry.alias};`);
+      }
+      lines.push('  }');
+    }
+
+    // Autoload singletons
+    if (hasAutoloads) {
+      lines.push('  // Autoload singletons from project.godot');
+      for (const decl of autoloadDecls) {
+        lines.push(`  const ${decl.name}: ${decl.type};`);
+      }
+    }
+
+    lines.push('}');
+    lines.push('');
+  }
+
+  // GodotScenePaths type
+  const scenePaths = resourceEntries.map((e) => e.resPath);
+  if (scenePaths.length > 0) {
+    lines.push('// Scene path union for change_scene_to_file()');
+    lines.push(`type GodotScenePaths = ${scenePaths.map((p) => `"${p}"`).join(' | ')};`);
+    lines.push('');
+  }
+
+  lines.push('export {};');
+  lines.push('');
+
+  const content = lines.join('\n');
+  writeFileSync(options.outputPath, content);
+  return content;
+}
+
 function findSceneFiles(
   dir: string,
   rootDir: string,

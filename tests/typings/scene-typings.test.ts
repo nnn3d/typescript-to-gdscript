@@ -1,17 +1,11 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { execSync } from 'child_process';
 import { join, resolve } from 'path';
-import { readFileSync, writeFileSync, globSync } from 'fs';
-import { convertTsToGd } from '../../src/converter/ts-to-gd/index.js';
-import { generateClassTypings } from '../../src/typings/classes.js';
-import {
-  buildScriptClassMap,
-  generateSceneTypings,
-} from '../../src/typings/scenes.js';
+import { readFileSync, globSync } from 'fs';
+import { generateTypings } from '../../src/typings/scenes.js';
 
 const SCENE_DIR = join(__dirname, 'scene-typings');
 const GLOBALS_PATH = join(SCENE_DIR, 'globals.d.ts');
-const SCENE_TYPINGS_PATH = join(SCENE_DIR, 'scene-typings.d.ts');
 const TSCONFIG_PATH = join(SCENE_DIR, 'tsconfig.json');
 const PROJECT_FILE = join(SCENE_DIR, 'project.godot');
 
@@ -19,94 +13,69 @@ const PROJECT_FILE = join(SCENE_DIR, 'project.godot');
 const sourceFiles = globSync(join(SCENE_DIR, '**/*.ts'))
   .filter((f) => f.endsWith('.ts') && !f.endsWith('.d.ts'));
 
-
-// Build script class map from real file structure
-function getScriptClassMap() {
-  return buildScriptClassMap({
-    files: sourceFiles,
+function generate() {
+  return generateTypings({
     rootDir: SCENE_DIR,
     tsDir: SCENE_DIR,
     gdDir: SCENE_DIR,
-    sceneTypingsDir: SCENE_DIR,
+    files: sourceFiles,
+    outputPath: GLOBALS_PATH,
+    scenesDir: SCENE_DIR,
+    projectFile: PROJECT_FILE,
   });
 }
 
 describe('Scene typings generation', () => {
-  it('should generate globals.d.ts with named imports (excluding __CLASS__)', () => {
-    generateClassTypings({
-      rootDir: SCENE_DIR,
-      files: sourceFiles,
-      outputPath: GLOBALS_PATH,
-    });
+  it('should generate globals.d.ts with named class declarations (excluding __CLASS__)', () => {
+    const content = generate();
 
-    const globals = readFileSync(GLOBALS_PATH, 'utf-8');
-    // Named classes should be global
-    expect(globals).toContain(
-      'import { Player as _Player } from "./Player.js";',
-    );
-    expect(globals).toContain('class Player extends _Player {}');
-    expect(globals).toContain(
-      'import { Ball as _Ball } from "./Ball.js";',
-    );
-    expect(globals).toContain('class Ball extends _Ball {}');
+    // Named classes should be declared globally
+    expect(content).toContain('class Player extends _Player {}');
+    expect(content).toContain('class Ball extends _Ball {}');
 
-    // __CLASS__ should NOT be in globals (anonymous scripts)
-    expect(globals).not.toContain('__CLASS__');
+    // __CLASS__ should NOT be in global class declarations
+    expect(content).not.toMatch(/class __CLASS__/);
+    // But __CLASS__ should still be imported (for GodotResources, autoloads, etc.)
+    expect(content).toContain('__CLASS__ as _Anonym');
+    expect(content).toContain('__CLASS__ as _GameManager');
   });
 
-  it('should generate scene-typings.d.ts with module augmentation and autoloads', () => {
-    const scriptClassMap = getScriptClassMap();
-    const sceneTypings = generateSceneTypings({
-      scenesDir: SCENE_DIR,
-      outputPath: SCENE_TYPINGS_PATH,
-      scriptClassMap,
-      rootDir: SCENE_DIR,
-      projectFile: PROJECT_FILE,
-    });
+  it('should generate scene node overloads with module augmentation', () => {
+    const content = generate();
 
     // Per-script scene nodes interface (uses alias to avoid __CLASS__ collisions)
-    expect(sceneTypings).toContain('interface _PlayerSceneNodes');
-    expect(sceneTypings).toContain('"Sprite2D": Sprite2D;');
-    expect(sceneTypings).toContain('"CollisionShape2D": CollisionShape2D;');
+    expect(content).toContain('interface _PlayerSceneNodes');
+    expect(content).toContain('"Sprite2D": Sprite2D;');
+    expect(content).toContain('"CollisionShape2D": CollisionShape2D;');
 
-    // Module augmentation with conditional types + autocomplete
-    expect(sceneTypings).toContain('declare module "./Player.ts"');
-    expect(sceneTypings).toContain('interface Player');
-    expect(sceneTypings).toContain('keyof _PlayerSceneNodes');
-    expect(sceneTypings).toContain('get_node<P extends keyof _PlayerSceneNodes');
-    expect(sceneTypings).toContain('get_node_or_null<P extends keyof _PlayerSceneNodes');
-
-    // GodotResources entries (using import aliases)
-    expect(sceneTypings).toContain('interface GodotResources');
-    expect(sceneTypings).toContain('"res://Player.tscn": PackedScene<_Player>');
-
-    // Script class entries in GodotResources (aliased)
-    expect(sceneTypings).toContain('"res://Player.gd": _Player;');
-    expect(sceneTypings).toContain('"res://Ball.gd": _Ball;');
-    expect(sceneTypings).toContain('"res://Anonym.gd": _Anonym;');
-    expect(sceneTypings).toContain('"res://Anonym2.gd": _Anonym2;');
-    expect(sceneTypings).toContain('"res://GameManager.gd": _GameManager;');
-
-    // Autoload singletons from project.godot
-    expect(sceneTypings).toContain('Autoload singletons from project.godot');
-    expect(sceneTypings).toContain('const GameManager: _GameManager;');
+    // Module augmentation with typed overloads
+    expect(content).toContain('declare module "./Player.ts"');
+    expect(content).toContain('interface Player');
+    expect(content).toContain('get_node<P extends keyof _PlayerSceneNodes');
+    expect(content).toContain('get_node_or_null<P extends keyof _PlayerSceneNodes');
   });
 
-  it('should compile all .ts files with scene typings (typed get_node, load, preload, autoloads)', () => {
-    generateClassTypings({
-      rootDir: SCENE_DIR,
-      files: sourceFiles,
-      outputPath: GLOBALS_PATH,
-    });
+  it('should generate GodotResources and autoload singletons', () => {
+    const content = generate();
 
-    const scriptClassMap = getScriptClassMap();
-    generateSceneTypings({
-      scenesDir: SCENE_DIR,
-      outputPath: SCENE_TYPINGS_PATH,
-      scriptClassMap,
-      rootDir: SCENE_DIR,
-      projectFile: PROJECT_FILE,
-    });
+    // GodotResources entries (using import aliases)
+    expect(content).toContain('interface GodotResources');
+    expect(content).toContain('"res://Player.tscn": PackedScene<_Player>');
+
+    // Script class entries in GodotResources (aliased)
+    expect(content).toContain('"res://Player.gd": _Player;');
+    expect(content).toContain('"res://Ball.gd": _Ball;');
+    expect(content).toContain('"res://Anonym.gd": _Anonym;');
+    expect(content).toContain('"res://Anonym2.gd": _Anonym2;');
+    expect(content).toContain('"res://GameManager.gd": _GameManager;');
+
+    // Autoload singletons from project.godot
+    expect(content).toContain('Autoload singletons from project.godot');
+    expect(content).toContain('const GameManager: _GameManager;');
+  });
+
+  it('should compile all .ts files with generated typings (typed get_node, load, preload, autoloads)', () => {
+    generate();
 
     // Run tsc — should compile without errors.
     // Tests that:

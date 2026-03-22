@@ -5,12 +5,16 @@ export {
 export {
   collectSceneOverloads,
   generateSceneTypings,
+  generateTypings,
   buildScriptClassMap,
+  parseAutoloads,
   type SceneTypingsOptions,
   type GenerateSceneTypingsOptions,
+  type GenerateTypingsOptions,
   type SceneNodeOverload,
   type BuildScriptClassMapOptions,
   type ScriptClassInfo,
+  type AutoloadEntry,
 } from './scenes.ts';
 export {
   generateGodotDocsTypings,

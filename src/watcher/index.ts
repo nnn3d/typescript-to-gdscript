@@ -2,11 +2,7 @@ import { watch, type FSWatcher } from 'chokidar';
 import { extname, resolve, relative, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
-import { generateClassTypings } from '../typings/classes.ts';
-import {
-  generateSceneTypings,
-  buildScriptClassMap,
-} from '../typings/scenes.ts';
+import { generateTypings } from '../typings/scenes.ts';
 import { shouldIgnore } from '../config/index.ts';
 import { FileCache } from '../cache/index.ts';
 import { writeFileSync, mkdirSync } from 'fs';
@@ -187,37 +183,19 @@ export class Watcher {
     if (!this.options.typingsDir) return;
 
     const files = [...this.tsFiles];
-    const scenesDir = this.options.scenesDir ?? this.options.rootDir;
     const typingsDir = this.options.typingsDir;
 
     mkdirSync(typingsDir, { recursive: true });
 
-    const classTypingsOutput = join(typingsDir, 'globals.d.ts');
-    const sceneTypingsOutput = join(typingsDir, 'scene-typings.d.ts');
-
-    // Generate globals.d.ts (global class declarations)
-    generateClassTypings({
-      rootDir: this.options.rootDir,
-      files,
-      outputPath: classTypingsOutput,
-      tsConfigPath: this.options.tsConfigPath,
-    });
-
-    // Generate scene-typings.d.ts (module augmentation for get_node overloads)
-    const scriptClassMap = buildScriptClassMap({
-      files,
+    generateTypings({
       rootDir: this.options.rootDir,
       tsDir: this.tsDir,
       gdDir: this.gdDir,
-      sceneTypingsDir: typingsDir,
+      files,
+      outputPath: join(typingsDir, 'globals.d.ts'),
+      scenesDir: this.options.scenesDir ?? this.options.rootDir,
       tsConfigPath: this.options.tsConfigPath,
-    });
-
-    generateSceneTypings({
-      scenesDir,
-      outputPath: sceneTypingsOutput,
-      scriptClassMap,
-      rootDir: this.options.rootDir,
+      ignore: this.options.ignore,
       projectFile: this.options.projectFile,
     });
   }
