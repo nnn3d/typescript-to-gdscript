@@ -12,8 +12,6 @@ export interface TsToGdConfig {
   registryPath?: string;
   /** Root directory (base for relative paths). Defaults to config file directory or CWD. */
   rootDir?: string;
-  /** Output directory for GDScript files (deprecated, use gdDir) */
-  outputDir?: string;
   /** TypeScript source directory (relative to rootDir or absolute). Defaults to rootDir. */
   tsDir?: string;
   /** GDScript output directory (relative to rootDir or absolute). Defaults to tsDir. */
@@ -69,11 +67,7 @@ export function resolveConfig(options?: {
   const tsDir = resolve(rootDir, overrides.tsDir ?? config?.tsDir ?? '.');
   const gdDir = resolve(
     rootDir,
-    overrides.gdDir ??
-      config?.gdDir ??
-      overrides.outputDir ??
-      config?.outputDir ??
-      (relative(rootDir, tsDir) || '.'),
+    overrides.gdDir ?? config?.gdDir ?? (relative(rootDir, tsDir) || '.'),
   );
   const classTypingsPath =
     overrides.classTypingsPath ?? config?.classTypingsPath ?? '_gdtots';

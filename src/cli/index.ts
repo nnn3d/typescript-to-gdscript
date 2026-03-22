@@ -118,7 +118,7 @@ program
       overrides: {
         rootDir: opts.rootDir,
         tsDir: opts.tsDir,
-        gdDir: opts.gdDir ?? opts.outputDir,
+        gdDir: opts.gdDir,
         tsconfig: opts.tsconfig,
         sourceMap: opts.sourceMap,
       },
@@ -186,7 +186,7 @@ program
     const cfg = resolveConfig({
       overrides: {
         rootDir: opts.rootDir,
-        tsDir: opts.tsDir ?? opts.outputDir,
+        tsDir: opts.tsDir,
         gdDir: opts.gdDir,
         registryPath: opts.registry,
       },
@@ -311,7 +311,7 @@ program
       overrides: {
         rootDir: opts.rootDir,
         tsDir: opts.tsDir,
-        gdDir: opts.gdDir ?? opts.outputDir,
+        gdDir: opts.gdDir,
         classTypingsPath: opts.classTypingsPath,
         tsconfig: opts.tsconfig,
         sourceMap: opts.sourceMap,
