@@ -4,5 +4,5 @@ export class Annotations extends Node {
   @gd.export
   speed: float = 5.0;
   @gd.onready
-  label: Label = this.getNode("Label");
+  label: Label = this.get_node("Label");
 }

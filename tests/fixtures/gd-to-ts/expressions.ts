@@ -5,7 +5,7 @@ export class Expressions extends Node {
     let sn = StringName('my_name');
     let np = NodePath('path/to/node');
     let result = health > 0 ? 42 : -1;
-    let node = gd.as(this.getNode("Label"), Label);
-    let child = this.getNode("Path/To/Node");
+    let node = gd.as(this.get_node("Label"), Label);
+    let child = this.get_node("Path/To/Node");
   }
 }

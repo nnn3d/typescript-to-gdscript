@@ -1121,11 +1121,11 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
   }
 
   if (isGDNodeType(node, 'get_node')) {
-    // $Path -> this.getNode("Path")
-    // $"Path/To/Node" -> this.getNode("Path/To/Node")
+    // $Path -> this.get_node("Path")
+    // $"Path/To/Node" -> this.get_node("Path/To/Node")
     const text = node.text;
     const path = text.startsWith('$"') ? text.slice(2, -1) : text.slice(1);
-    return `this.getNode("${path}")`;
+    return `this.get_node("${path}")`;
   }
 
   if (isGDNodeType(node, 'array')) {

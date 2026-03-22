@@ -12,7 +12,7 @@ This project is for converting typescript code to gdscript code for godot game e
     - This convertation should not give same result as initial typescript for double convertation
     - Also used for godot addons to create typings
 - Generate TS typings for global class usage from ts files
-  - Generate typings for godot scenes, to have autocomplete for "getNode()" and other functions
+  - Generate typings for godot scenes, to have autocomplete for "get_node()" and other functions
 - Generate TS typings from Godot docs (classes and global values) and improve them
 - Lint ts files for transformation errors (like unsupported TS features) and gdscript errors from godot LSP
 - Watch mode, with transformations and linting
@@ -89,7 +89,7 @@ src/
     godot-registry.ts  # GodotClassRegistry + XML parsing + version detection from version.py
     godot-docs.ts      # generateGodotDocsTypings: generates godot.d.ts + optional registry JSON
     classes.ts         # generateClassTypings: scans TS files, outputs global .d.ts
-    scenes.ts          # generateSceneTypings: parses .tscn for getNode() overloads
+    scenes.ts          # generateSceneTypings: parses .tscn for get_node() overloads
     index.ts           # Barrel exports for all typings modules
   eslint/
     plugin.ts          # ESLint plugin: eslint-plugin-ts2gd
@@ -165,7 +165,7 @@ This loads `typings/index.d.ts` which references `gd-helpers.d.ts` + `latest/god
   - Annotations (@export → @gd.export, @onready → @gd.onready, etc.)
   - Control flow: if/elif/else, for_statement, while_statement, match → switch
   - Expressions: call, attribute, binary/unary operators, assignment, augmented assignment
-  - Special: `self` → `this`, `$Path` → `this.getNode("Path")`, `&"..."` → `StringName()`, `^"..."` → `NodePath()`
+  - Special: `self` → `this`, `$Path` → `this.get_node("Path")`, `&"..."` → `StringName()`, `^"..."` → `NodePath()`
   - `as` operator → `gd.as()`, `is` → `instanceof`, `and/or/not/==/!=` → `&&/||/!/===/!==`
   - Lambda, await, conditional expression, array, dictionary, subscript, parenthesized
   - Local scope tracking: function params and local vars shadow class members for `this.` resolution
@@ -307,7 +307,7 @@ All root named exported classes in TS are added to a global declaration file usi
 
 #### GD node paths
 
-Check godot files for scripts, and create global declaration merge, to add typings for classes `getNode("...")` function for autocomplete. There is are ready made example in `https://github.com/johnfn/ts2gd`, with this functionality.
+Check godot files for scripts, and create global declaration merge, to add typings for classes `get_node("...")` function for autocomplete. There is are ready made example in `https://github.com/johnfn/ts2gd`, with this functionality.
 
 ### TS typings from godot docs
 
@@ -337,7 +337,7 @@ Diagnostics are produced by converters during transformation (no standalone lint
 
 ### Watch mode
 
-As presented above, it uses from CLI, and watch for TS files for transformation, also for godot scenes to check scripts usage for getNode types generation.
+As presented above, it uses from CLI, and watch for TS files for transformation, also for godot scenes to check scripts usage for get_node types generation.
 
 ### Tests
 
