@@ -128,6 +128,7 @@ function generateAllTypings(cfg: {
   typingsDir: string;
   scenesDir: string;
   ignore: string[];
+  projectFile: string;
   tsconfig?: string;
   tsFiles?: string[];
 }): void {
@@ -150,7 +151,7 @@ function generateAllTypings(cfg: {
   });
   console.log(`Generated: ${classTypingsOutput}`);
 
-  // Generate scene-typings.d.ts (module augmentation for get_node overloads)
+  // Generate scene-typings.d.ts (module augmentation for get_node overloads + autoloads)
   const scriptClassMap = buildScriptClassMap({
     files: tsFiles,
     rootDir: cfg.rootDir,
@@ -166,6 +167,7 @@ function generateAllTypings(cfg: {
     scriptClassMap,
     rootDir: cfg.rootDir,
     ignore: cfg.ignore,
+    projectFile: cfg.projectFile,
   });
   console.log(`Generated: ${sceneTypingsOutput}`);
 }
@@ -430,6 +432,7 @@ program
       typingsDir: cfg.typingsDir,
       scenesDir: cfg.scenesDir,
       ignore: cfg.ignore,
+      projectFile: cfg.projectFile,
       godotPath,
       projectRoot: opts.projectRoot ? resolve(opts.projectRoot) : undefined,
     });

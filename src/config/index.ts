@@ -29,6 +29,8 @@ export interface TsToGdConfig {
   godotPath?: string;
   /** Glob patterns for files/folders to ignore in all conversions and typings generation. */
   ignore?: string[];
+  /** Path to project.godot file (relative to rootDir). Defaults to "project.godot". */
+  projectFile?: string;
 }
 
 // ─── Resolved Config ─────────────────────────────────────────
@@ -47,6 +49,8 @@ export interface ResolvedConfig {
   godotPath?: string;
   /** Glob patterns for files/folders to ignore. */
   ignore: string[];
+  /** Absolute path to project.godot file. */
+  projectFile: string;
 }
 
 /**
@@ -82,6 +86,10 @@ export function resolveConfig(options?: {
   );
 
   const ignore = overrides.ignore ?? config?.ignore ?? [];
+  const projectFile = resolve(
+    rootDir,
+    overrides.projectFile ?? config?.projectFile ?? 'project.godot',
+  );
 
   return {
     rootDir,
@@ -90,6 +98,7 @@ export function resolveConfig(options?: {
     typingsDir,
     scenesDir,
     ignore,
+    projectFile,
     tsconfig: overrides.tsconfig ?? config?.tsconfig,
     sourceMap: overrides.sourceMap ?? config?.sourceMap,
     godotVersion: overrides.godotVersion ?? config?.godotVersion,

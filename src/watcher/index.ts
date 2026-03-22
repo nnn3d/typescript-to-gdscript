@@ -39,6 +39,8 @@ export interface WatcherOptions {
   projectRoot?: string;
   /** Glob patterns for files/folders to ignore. */
   ignore?: string[];
+  /** Path to project.godot file (for autoload singleton detection). */
+  projectFile?: string;
 }
 
 export class Watcher {
@@ -216,6 +218,7 @@ export class Watcher {
       outputPath: sceneTypingsOutput,
       scriptClassMap,
       rootDir: this.options.rootDir,
+      projectFile: this.options.projectFile,
     });
   }
 

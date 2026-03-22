@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
+import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from 'fs';
 import { join, relative, extname, dirname } from 'path';
 import { createTsProgram } from '../parser/typescript/index.ts';
 import { shouldIgnore } from '../config/index.ts';
@@ -142,6 +142,50 @@ function extractAttr(attrs: string, name: string): string | undefined {
   return match?.[1];
 }
 
+export interface AutoloadEntry {
+  /** Global singleton name (e.g. "Globals", "LevelTransition") */
+  name: string;
+  /** Resource path (e.g. "res://Scripts/Globals.gd" or "res://level_transition.tscn") */
+  resPath: string;
+}
+
+/**
+ * Parses the [autoload] section from a project.godot file.
+ * Autoload entries look like: `Name="*res://path.gd"` or `Name="*res://path.tscn"`
+ * The `*` prefix means the autoload is enabled.
+ */
+export function parseAutoloads(projectFilePath: string): AutoloadEntry[] {
+  if (!existsSync(projectFilePath)) return [];
+
+  const content = readFileSync(projectFilePath, 'utf-8');
+  const entries: AutoloadEntry[] = [];
+
+  // Find [autoload] section
+  const autoloadMatch = /^\[autoload\]\s*$/m.exec(content);
+  if (!autoloadMatch) return entries;
+
+  // Extract lines after [autoload] until next section or end of file
+  const afterAutoload = content.slice(autoloadMatch.index + autoloadMatch[0].length);
+  const nextSection = /^\[/m.exec(afterAutoload);
+  const autoloadBlock = nextSection
+    ? afterAutoload.slice(0, nextSection.index)
+    : afterAutoload;
+
+  // Parse each line: Name="*res://path"
+  const lineRegex = /^(\w+)="(\*?)([^"]+)"$/gm;
+  let lineMatch: RegExpExecArray | null;
+  while ((lineMatch = lineRegex.exec(autoloadBlock)) !== null) {
+    const name = lineMatch[1]!;
+    const enabled = lineMatch[2] === '*';
+    const resPath = lineMatch[3]!;
+    if (enabled) {
+      entries.push({ name, resPath });
+    }
+  }
+
+  return entries;
+}
+
 export interface ScriptClassInfo {
   className: string;
   tsModulePath: string;
@@ -221,6 +265,8 @@ export interface GenerateSceneTypingsOptions {
   rootDir: string;
   /** Glob patterns for files/folders to ignore. */
   ignore?: string[];
+  /** Path to project.godot file (for autoload singleton detection). */
+  projectFile?: string;
 }
 
 /**
@@ -340,29 +386,69 @@ export function generateSceneTypings(options: GenerateSceneTypingsOptions): stri
     lines.push('');
   }
 
-  // GodotResources interface augmentation (must be global scope)
+  // Parse autoloads from project.godot
+  const autoloads = options.projectFile ? parseAutoloads(options.projectFile) : [];
+
+  // Resolve autoload types: script → alias, scene → root script alias, fallback → Node
+  const autoloadDecls: Array<{ name: string; type: string }> = [];
+  for (const autoload of autoloads) {
+    if (autoload.resPath.endsWith('.gd')) {
+      // Script autoload — look up in aliasMap
+      const aliasEntry = aliasMap.get(autoload.resPath);
+      autoloadDecls.push({ name: autoload.name, type: aliasEntry ? aliasEntry.alias : 'Node' });
+    } else if (autoload.resPath.endsWith('.tscn')) {
+      // Scene autoload — find the scene and get its root script alias
+      const sceneEntry = resourceEntries.find((e) => e.resPath === autoload.resPath);
+      autoloadDecls.push({ name: autoload.name, type: sceneEntry?.alias ?? 'Node' });
+    } else {
+      autoloadDecls.push({ name: autoload.name, type: 'Node' });
+    }
+  }
+
+  // GodotResources interface augmentation + autoload globals (must be global scope)
   const hasScriptEntries = aliasMap.size > 0;
-  if (resourceEntries.length > 0 || hasScriptEntries) {
+  const hasAutoloads = autoloadDecls.length > 0;
+  if (resourceEntries.length > 0 || hasScriptEntries || hasAutoloads) {
     lines.push('// Resource path → type mappings for load()/preload()');
     lines.push('declare global {');
-    lines.push('  interface GodotResources {');
 
-    // Scene paths → PackedScene<Alias> or PackedScene
-    for (const entry of resourceEntries) {
-      if (entry.alias) {
-        lines.push(`    "${entry.resPath}": PackedScene<${entry.alias}>;`);
-      } else {
-        lines.push(`    "${entry.resPath}": PackedScene;`);
+    if (resourceEntries.length > 0 || hasScriptEntries) {
+      lines.push('  interface GodotResources {');
+
+      // Scene paths → PackedScene<Alias> or PackedScene
+      for (const entry of resourceEntries) {
+        if (entry.alias) {
+          lines.push(`    "${entry.resPath}": PackedScene<${entry.alias}>;`);
+        } else {
+          lines.push(`    "${entry.resPath}": PackedScene;`);
+        }
+      }
+
+      // Script paths → class types (for load/preload of .gd scripts)
+      for (const [resPath, aliasEntry] of aliasMap) {
+        lines.push(`    "${resPath}": ${aliasEntry.alias};`);
+      }
+
+      lines.push('  }');
+    }
+
+    // Autoload singletons as global constants
+    if (hasAutoloads) {
+      lines.push('  // Autoload singletons from project.godot');
+      for (const decl of autoloadDecls) {
+        lines.push(`  const ${decl.name}: ${decl.type};`);
       }
     }
 
-    // Script paths → class types (for load/preload of .gd scripts)
-    for (const [resPath, aliasEntry] of aliasMap) {
-      lines.push(`    "${resPath}": ${aliasEntry.alias};`);
-    }
-
-    lines.push('  }');
     lines.push('}');
+    lines.push('');
+  }
+
+  // GodotScenePaths type (union of all known scene paths)
+  const scenePaths = resourceEntries.map((e) => e.resPath);
+  if (scenePaths.length > 0) {
+    lines.push('// Scene path union for change_scene_to_file()');
+    lines.push(`type GodotScenePaths = ${scenePaths.map((p) => `"${p}"`).join(' | ')};`);
     lines.push('');
   }
 

@@ -5,8 +5,28 @@
 import type { __CLASS__ as _Anonym } from "./Anonym.ts";
 import type { __CLASS__ as _Anonym2 } from "./Anonym2.ts";
 import type { Ball as _Ball } from "./Ball.ts";
+import type { __CLASS__ as _GameManager } from "./GameManager.ts";
 import type { Player as _Player } from "./Player.ts";
 import type { __CLASS__ as _nested_Anonym } from "./nested/Anonym.ts";
+
+// Scene nodes for: __CLASS__
+interface __CLASS__SceneNodes {
+  "Sprite2D": Sprite2D;
+  "CollisionShape2D": CollisionShape2D;
+  "Sprite2D/AnimationPlayer": AnimationPlayer;
+  "Sprite2D": Sprite2D;
+  "CollisionShape2D": CollisionShape2D;
+  "Sprite2D/AnimationPlayer": AnimationPlayer;
+}
+
+declare module "./Anonym.ts" {
+  interface __CLASS__ {
+    get_node<P extends keyof __CLASS__SceneNodes>(path: P): __CLASS__SceneNodes[P];
+    get_node(path: string): Node;
+    get_node_or_null<P extends keyof __CLASS__SceneNodes>(path: P): __CLASS__SceneNodes[P] | null;
+    get_node_or_null(path: string): Node | null;
+  }
+}
 
 // Scene nodes for: Player
 interface PlayerSceneNodes {
@@ -27,13 +47,21 @@ declare module "./Player.ts" {
 // Resource path → type mappings for load()/preload()
 declare global {
   interface GodotResources {
+    "res://Anonym.tscn": PackedScene<_Anonym>;
+    "res://Anonym2.tscn": PackedScene<_Anonym2>;
     "res://Player.tscn": PackedScene<_Player>;
     "res://Anonym.gd": _Anonym;
     "res://Anonym2.gd": _Anonym2;
     "res://Ball.gd": _Ball;
+    "res://GameManager.gd": _GameManager;
     "res://Player.gd": _Player;
     "res://nested/Anonym.gd": _nested_Anonym;
   }
+  // Autoload singletons from project.godot
+  const GameManager: _GameManager;
 }
+
+// Scene path union for change_scene_to_file()
+type GodotScenePaths = "res://Anonym.tscn" | "res://Anonym2.tscn" | "res://Player.tscn";
 
 export {};

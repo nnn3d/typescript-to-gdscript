@@ -13,6 +13,7 @@ const SCENE_DIR = join(__dirname, 'scene-typings');
 const GLOBALS_PATH = join(SCENE_DIR, 'globals.d.ts');
 const SCENE_TYPINGS_PATH = join(SCENE_DIR, 'scene-typings.d.ts');
 const TSCONFIG_PATH = join(SCENE_DIR, 'tsconfig.json');
+const PROJECT_FILE = join(SCENE_DIR, 'project.godot');
 
 // Discover all .ts source files (not .d.ts)
 const sourceFiles = globSync(join(SCENE_DIR, '**/*.ts'))
@@ -53,13 +54,14 @@ describe('Scene typings generation', () => {
     expect(globals).not.toContain('__CLASS__');
   });
 
-  it('should generate scene-typings.d.ts with module augmentation', () => {
+  it('should generate scene-typings.d.ts with module augmentation and autoloads', () => {
     const scriptClassMap = getScriptClassMap();
     const sceneTypings = generateSceneTypings({
       scenesDir: SCENE_DIR,
       outputPath: SCENE_TYPINGS_PATH,
       scriptClassMap,
       rootDir: SCENE_DIR,
+      projectFile: PROJECT_FILE,
     });
 
     // Per-class scene nodes interface
@@ -83,9 +85,14 @@ describe('Scene typings generation', () => {
     expect(sceneTypings).toContain('"res://Ball.gd": _Ball;');
     expect(sceneTypings).toContain('"res://Anonym.gd": _Anonym;');
     expect(sceneTypings).toContain('"res://Anonym2.gd": _Anonym2;');
+    expect(sceneTypings).toContain('"res://GameManager.gd": _GameManager;');
+
+    // Autoload singletons from project.godot
+    expect(sceneTypings).toContain('Autoload singletons from project.godot');
+    expect(sceneTypings).toContain('const GameManager: _GameManager;');
   });
 
-  it('should compile all .ts files with scene typings (typed get_node, load, preload)', () => {
+  it('should compile all .ts files with scene typings (typed get_node, load, preload, autoloads)', () => {
     generateClassTypings({
       rootDir: SCENE_DIR,
       files: sourceFiles,
@@ -98,6 +105,7 @@ describe('Scene typings generation', () => {
       outputPath: SCENE_TYPINGS_PATH,
       scriptClassMap,
       rootDir: SCENE_DIR,
+      projectFile: PROJECT_FILE,
     });
 
     // Run tsc — should compile without errors.
@@ -105,6 +113,8 @@ describe('Scene typings generation', () => {
     //   - get_node_or_null("Sprite2D") returns Sprite2D (not Node | null)
     //   - load("res://Anonym.gd") returns __CLASS__ (not Resource)
     //   - preload("res://Player.gd") returns Player (not Resource)
+    //   - GameManager autoload global is typed correctly
+    //   - GameManager.reset_game() and GameManager.get_score() are valid
     try {
       execSync(`npx tsc -p "${TSCONFIG_PATH}"`, {
         cwd: resolve(__dirname, '../..'),

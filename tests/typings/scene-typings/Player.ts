@@ -1,6 +1,7 @@
 import type { __CLASS__ as Anonym } from './Anonym.ts';
 import type { __CLASS__ as Anonym2 } from './Anonym2.ts';
 import type { __CLASS__ as AnonymNested } from './nested/Anonym.ts';
+import type { __CLASS__ as GameManagerType } from './GameManager.ts';
 
 export class Player extends CharacterBody2D {
   AnonymField: Anonym = load('res://Anonym.gd');
@@ -21,5 +22,10 @@ export class Player extends CharacterBody2D {
     let collision: CollisionShape2D = this.get_node('CollisionShape2D');
     // Unknown path for get_node returns Node
     let unknown: Node = this.get_node('Unknown');
+
+    // Autoload global singleton — GameManager is declared globally from project.godot [autoload]
+    let manager: GameManagerType = GameManager;
+    manager.reset_game();
+    let score: int = GameManager.get_score();
   }
 }

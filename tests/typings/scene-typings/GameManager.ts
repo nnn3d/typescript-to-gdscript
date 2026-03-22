@@ -1,0 +1,7 @@
+export class __CLASS__ extends Node {
+  score: int = 0;
+  level: int = 1;
+
+  reset_game() {}
+  get_score(): int { return this.score; }
+}
