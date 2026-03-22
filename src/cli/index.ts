@@ -288,16 +288,20 @@ program
       cfg.ignore,
     );
 
-    for (const filePath of resolvedFiles) {
-      const source = readFileSync(filePath, 'utf-8');
+    // Build project sources for user-defined class inheritance resolution
+    const projectSources = resolvedFiles.map((f) => ({
+      source: readFileSync(f, 'utf-8'),
+      filePath: f,
+    }));
 
+    for (const { source, filePath } of projectSources) {
       // Resolve signal handler types from .tscn connections
       const scriptResPath = `res://${relative(cfg.rootDir, filePath).replace(/\\/g, '/')}`;
       const signalHandlers = sceneFiles.length > 0
         ? resolveSignalHandlers(scriptResPath, sceneFiles, registry)
         : undefined;
 
-      const result = convertGdToTs({ source, filePath, registry, signalHandlers });
+      const result = convertGdToTs({ source, filePath, registry, projectSources, signalHandlers });
 
       for (const diag of result.diagnostics) {
         const prefix =
