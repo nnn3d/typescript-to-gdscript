@@ -5,6 +5,8 @@
 declare class BlitMaterial extends Material {
   /** The manner in which the newly blitted texture is blended with the original DrawableTexture. */
   blend_mode: int;
+  set_blend_mode(value: int): void;
+  get_blend_mode(): int;
 
   // enum BlendMode
   /** Mix blending mode. Colors are assumed to be independent of the alpha (opacity) value. */

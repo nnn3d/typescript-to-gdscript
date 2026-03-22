@@ -13,6 +13,10 @@ declare class AudioEffectSpectrumAnalyzer extends AudioEffect {
    * The size of the Fast Fourier transform (https://en.wikipedia.org/wiki/Fast_Fourier_transform) buffer. Higher values smooth out the spectrum analysis over time, but have greater latency. The effects of this higher latency are especially noticeable with sudden amplitude changes.
    */
   fft_size: int;
+  set_buffer_length(value: float): void;
+  get_buffer_length(): float;
+  set_fft_size(value: int): void;
+  get_fft_size(): int;
 
   // enum FFTSize
   /**

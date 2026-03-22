@@ -15,6 +15,10 @@ declare class Material extends Resource {
    * **Note:** This will not impact how transparent objects are sorted relative to opaque objects or how dynamic meshes will be sorted relative to other opaque meshes. This is because all transparent objects are drawn after all opaque objects and all dynamic opaque meshes are drawn before other opaque meshes.
    */
   render_priority: int;
+  set_next_pass(value: Material): void;
+  get_next_pass(): Material;
+  set_render_priority(value: int): void;
+  get_render_priority(): int;
 
   /**
    * Only exposed for the purpose of overriding. You cannot call this function directly. Used internally to determine if {@link next_pass} should be shown in the editor or not.

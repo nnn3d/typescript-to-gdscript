@@ -60,6 +60,12 @@ declare class AudioEffectChorus extends AudioEffect {
   voice_count: int;
   /** The volume ratio of all voices. Value can range from 0 to 1. */
   wet: float;
+  set_dry(value: float): void;
+  get_dry(): float;
+  set_voice_count(value: int): void;
+  get_voice_count(): int;
+  set_wet(value: float): void;
+  get_wet(): float;
 
   /**
    * Returns the frequency threshold of a given `voice_idx`'s low-pass filter in Hz. Frequencies above this value are removed from the voice.

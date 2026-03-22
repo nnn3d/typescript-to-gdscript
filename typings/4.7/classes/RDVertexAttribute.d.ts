@@ -20,4 +20,16 @@ declare class RDVertexAttribute extends RefCounted {
   offset: int;
   /** The number of bytes between the starts of consecutive instances of this attribute. */
   stride: int;
+  set_binding(value: int): void;
+  get_binding(): int;
+  set_format(value: int): void;
+  get_format(): int;
+  set_frequency(value: int): void;
+  get_frequency(): int;
+  set_location(value: int): void;
+  get_location(): int;
+  set_offset(value: int): void;
+  get_offset(): int;
+  set_stride(value: int): void;
+  get_stride(): int;
 }

@@ -70,6 +70,28 @@ declare class Decal extends VisualInstance3D {
    * Sets the curve over which the decal will fade as the surface gets further from the center of the {@link AABB}. Only positive values are valid (negative values will be clamped to `0.0`). See also {@link lower_fade}.
    */
   upper_fade: float;
+  set_albedo_mix(value: float): void;
+  get_albedo_mix(): float;
+  set_cull_mask(value: int): void;
+  get_cull_mask(): int;
+  set_distance_fade_begin(value: float): void;
+  get_distance_fade_begin(): float;
+  set_enable_distance_fade(value: boolean): void;
+  is_distance_fade_enabled(): boolean;
+  set_distance_fade_length(value: float): void;
+  get_distance_fade_length(): float;
+  set_emission_energy(value: float): void;
+  get_emission_energy(): float;
+  set_lower_fade(value: float): void;
+  get_lower_fade(): float;
+  set_modulate(value: Color): void;
+  get_modulate(): Color;
+  set_normal_fade(value: float): void;
+  get_normal_fade(): float;
+  set_size(value: Vector3): void;
+  get_size(): Vector3;
+  set_upper_fade(value: float): void;
+  get_upper_fade(): float;
 
   /**
    * Returns the {@link Texture2D} associated with the specified {@link DecalTexture}. This is a convenience method, in most cases you should access the texture directly.

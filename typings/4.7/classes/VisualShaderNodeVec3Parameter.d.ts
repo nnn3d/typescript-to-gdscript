@@ -7,4 +7,8 @@ declare class VisualShaderNodeVec3Parameter extends VisualShaderNodeParameter {
   default_value: Vector3;
   /** Enables usage of the {@link default_value}. */
   default_value_enabled: boolean;
+  set_default_value(value: Vector3): void;
+  get_default_value(): Vector3;
+  set_default_value_enabled(value: boolean): void;
+  is_default_value_enabled(): boolean;
 }

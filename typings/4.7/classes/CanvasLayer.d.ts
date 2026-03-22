@@ -35,6 +35,24 @@ declare class CanvasLayer extends Node {
    * Unlike {@link CanvasItem.visible}, visibility of a {@link CanvasLayer} isn't propagated to underlying layers.
    */
   visible: boolean;
+  set_custom_viewport(value: Node): void;
+  get_custom_viewport(): Node;
+  set_follow_viewport(value: boolean): void;
+  is_following_viewport(): boolean;
+  set_follow_viewport_scale(value: float): void;
+  get_follow_viewport_scale(): float;
+  set_layer(value: int): void;
+  get_layer(): int;
+  set_offset(value: Vector2): void;
+  get_offset(): Vector2;
+  set_rotation(value: float): void;
+  get_rotation(): float;
+  set_scale(value: Vector2): void;
+  get_scale(): Vector2;
+  set_transform(value: Transform2D): void;
+  get_transform(): Transform2D;
+  set_visible(value: boolean): void;
+  is_visible(): boolean;
 
   /** Returns the RID of the canvas used by this layer. */
   get_canvas(): RID;

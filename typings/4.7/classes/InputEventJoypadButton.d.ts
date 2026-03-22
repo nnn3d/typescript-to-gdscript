@@ -8,4 +8,9 @@ declare class InputEventJoypadButton extends InputEvent {
   /** If `true`, the button's state is pressed. If `false`, the button's state is released. */
   pressed: boolean;
   pressure: float;
+  set_button_index(value: int): void;
+  get_button_index(): int;
+  set_pressed(value: boolean): void;
+  set_pressure(value: float): void;
+  get_pressure(): float;
 }

@@ -9,6 +9,10 @@ declare class BackBufferCopy extends Node2D {
    * The area covered by the {@link BackBufferCopy}. Only used if {@link copy_mode} is {@link COPY_MODE_RECT}.
    */
   rect: Rect2;
+  set_copy_mode(value: int): void;
+  get_copy_mode(): int;
+  set_rect(value: Rect2): void;
+  get_rect(): Rect2;
 
   // enum CopyMode
   /**

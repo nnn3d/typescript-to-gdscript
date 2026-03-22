@@ -13,6 +13,12 @@ declare class XRVRS extends GodotObject {
    * The strength used to calculate the VRS density map. The greater this value, the more noticeable VRS is.
    */
   vrs_strength: float;
+  set_vrs_min_radius(value: float): void;
+  get_vrs_min_radius(): float;
+  set_vrs_render_region(value: Rect2i): void;
+  get_vrs_render_region(): Rect2i;
+  set_vrs_strength(value: float): void;
+  get_vrs_strength(): float;
 
   /**
    * Generates the VRS texture based on a render `target_size` adjusted by our VRS tile size. For each eyes focal point passed in `eye_foci` a layer is created. Focal point should be in NDC.

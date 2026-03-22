@@ -9,6 +9,10 @@ declare class XRPositionalTracker extends XRTracker {
    * The profile associated with this tracker, interface dependent but will indicate the type of controller being tracked.
    */
   profile: string;
+  set_tracker_hand(value: int): void;
+  get_tracker_hand(): int;
+  set_tracker_profile(value: string): void;
+  get_tracker_profile(): string;
 
   /**
    * Returns an input for this tracker. It can return a boolean, float or {@link Vector2} value depending on whether the input is a button, trigger or thumbstick/thumbpad.

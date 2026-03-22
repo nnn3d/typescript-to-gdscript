@@ -8,4 +8,6 @@ declare class ViewportTexture extends Texture2D {
    * **Note:** In the editor, this path is automatically updated when the target viewport or one of its ancestors is renamed or moved. At runtime, this path may not automatically update if the scene root cannot be found.
    */
   viewport_path: string;
+  set_viewport_path_in_scene(value: string): void;
+  get_viewport_path_in_scene(): string;
 }

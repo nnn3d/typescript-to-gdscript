@@ -9,6 +9,10 @@ declare class VisualShaderNodeBillboard extends VisualShaderNode {
    * If `true`, the shader will keep the scale set for the mesh. Otherwise, the scale is lost when billboarding.
    */
   keep_scale: boolean;
+  set_billboard_type(value: int): void;
+  get_billboard_type(): int;
+  set_keep_scale_enabled(value: boolean): void;
+  is_keep_scale_enabled(): boolean;
 
   // enum BillboardType
   /** Billboarding is disabled and the node does nothing. */

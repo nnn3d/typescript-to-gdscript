@@ -5,6 +5,8 @@
 declare class GodotJSON extends Resource {
   /** Contains the parsed JSON data in {@link Variant} form. */
   data: unknown;
+  set_data(value: unknown): void;
+  get_data(): unknown;
 
   /**
    * Converts a native engine type to a JSON-compliant value.

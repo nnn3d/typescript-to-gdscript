@@ -21,6 +21,18 @@ declare class RibbonTrailMesh extends PrimitiveMesh {
    * The baseline size of the ribbon. The size of a particular section segment is obtained by multiplying this size by the value of the {@link curve} at the given distance.
    */
   size: float;
+  set_curve(value: Curve): void;
+  get_curve(): Curve;
+  set_section_length(value: float): void;
+  get_section_length(): float;
+  set_section_segments(value: int): void;
+  get_section_segments(): int;
+  set_sections(value: int): void;
+  get_sections(): int;
+  set_shape(value: int): void;
+  get_shape(): int;
+  set_size(value: float): void;
+  get_size(): float;
 
   // enum Shape
   /** Gives the mesh a single flat face. */

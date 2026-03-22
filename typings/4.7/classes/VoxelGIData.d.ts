@@ -31,6 +31,20 @@ declare class VoxelGIData extends Resource {
    * If `true`, performs two bounces of indirect lighting instead of one. This makes indirect lighting look more natural and brighter at a small performance cost. The second bounce is also visible in reflections. If the scene appears too bright after enabling {@link use_two_bounces}, adjust {@link propagation} and {@link energy}.
    */
   use_two_bounces: boolean;
+  set_bias(value: float): void;
+  get_bias(): float;
+  set_dynamic_range(value: float): void;
+  get_dynamic_range(): float;
+  set_energy(value: float): void;
+  get_energy(): float;
+  set_interior(value: boolean): void;
+  is_interior(): boolean;
+  set_normal_bias(value: float): void;
+  get_normal_bias(): float;
+  set_propagation(value: float): void;
+  get_propagation(): float;
+  set_use_two_bounces(value: boolean): void;
+  is_using_two_bounces(): boolean;
 
   /**
    * Initializes this {@link VoxelGIData} with the specified data. `octree_cells` must be a multiple of 32. `octree_cells` must be double the size of `data_cells`. The allocated data can be retrieved later using the various getter methods.

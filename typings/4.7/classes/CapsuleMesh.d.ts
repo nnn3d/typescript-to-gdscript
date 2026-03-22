@@ -17,4 +17,12 @@ declare class CapsuleMesh extends PrimitiveMesh {
   radius: float;
   /** Number of rings along the height of the capsule. */
   rings: int;
+  set_height(value: float): void;
+  get_height(): float;
+  set_radial_segments(value: int): void;
+  get_radial_segments(): int;
+  set_radius(value: float): void;
+  get_radius(): float;
+  set_rings(value: int): void;
+  get_rings(): int;
 }

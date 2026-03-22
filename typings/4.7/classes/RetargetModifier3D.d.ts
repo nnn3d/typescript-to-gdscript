@@ -19,6 +19,12 @@ declare class RetargetModifier3D extends SkeletonModifier3D {
    * This is useful for using dummy bone with length `0` to match postures when retargeting between models with different number of bones.
    */
   use_global_pose: boolean;
+  set_enable_flags(value: int): void;
+  get_enable_flags(): int;
+  set_profile(value: SkeletonProfile): void;
+  get_profile(): SkeletonProfile;
+  set_use_global_pose(value: boolean): void;
+  is_using_global_pose(): boolean;
 
   /** Returns `true` if {@link enable} has {@link TRANSFORM_FLAG_POSITION}. */
   is_position_enabled(): boolean;

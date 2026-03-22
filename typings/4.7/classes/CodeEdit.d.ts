@@ -79,6 +79,48 @@ declare class CodeEdit extends TextEdit {
   /** If `true`, the {@link symbol_hovered} signal is emitted when hovering over a word. */
   symbol_tooltip_on_hover: boolean;
   text_direction: int;
+  set_auto_brace_completion_enabled(value: boolean): void;
+  is_auto_brace_completion_enabled(): boolean;
+  set_highlight_matching_braces_enabled(value: boolean): void;
+  is_highlight_matching_braces_enabled(): boolean;
+  set_auto_brace_completion_pairs(value: Dictionary): void;
+  get_auto_brace_completion_pairs(): Dictionary;
+  set_code_completion_enabled(value: boolean): void;
+  is_code_completion_enabled(): boolean;
+  set_code_completion_prefixes(value: unknown): void;
+  get_code_completion_prefixes(): unknown;
+  set_comment_delimiters(value: unknown): void;
+  get_comment_delimiters(): unknown;
+  set_string_delimiters(value: unknown): void;
+  get_string_delimiters(): unknown;
+  set_draw_bookmarks_gutter(value: boolean): void;
+  is_drawing_bookmarks_gutter(): boolean;
+  set_draw_breakpoints_gutter(value: boolean): void;
+  is_drawing_breakpoints_gutter(): boolean;
+  set_draw_executing_lines_gutter(value: boolean): void;
+  is_drawing_executing_lines_gutter(): boolean;
+  set_draw_fold_gutter(value: boolean): void;
+  is_drawing_fold_gutter(): boolean;
+  set_draw_line_numbers(value: boolean): void;
+  is_draw_line_numbers_enabled(): boolean;
+  set_line_numbers_min_digits(value: int): void;
+  get_line_numbers_min_digits(): int;
+  set_line_numbers_zero_padded(value: boolean): void;
+  is_line_numbers_zero_padded(): boolean;
+  set_auto_indent_enabled(value: boolean): void;
+  is_auto_indent_enabled(): boolean;
+  set_auto_indent_prefixes(value: unknown): void;
+  get_auto_indent_prefixes(): unknown;
+  set_indent_size(value: int): void;
+  get_indent_size(): int;
+  set_indent_using_spaces(value: boolean): void;
+  is_indent_using_spaces(): boolean;
+  set_line_length_guidelines(value: unknown): void;
+  get_line_length_guidelines(): unknown;
+  set_symbol_lookup_on_click_enabled(value: boolean): void;
+  is_symbol_lookup_on_click_enabled(): boolean;
+  set_symbol_tooltip_on_hover_enabled(value: boolean): void;
+  is_symbol_tooltip_on_hover_enabled(): boolean;
 
   /**
    * Override this method to define how the selected entry should be inserted. If `replace` is `true`, any existing text should be replaced.

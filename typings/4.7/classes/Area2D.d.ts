@@ -48,6 +48,36 @@ declare class Area2D extends CollisionObject2D {
    * The area's priority. Higher priority areas are processed first. The {@link World2D}'s physics is always processed last, after all areas.
    */
   priority: int;
+  set_angular_damp(value: float): void;
+  get_angular_damp(): float;
+  set_angular_damp_space_override_mode(value: int): void;
+  get_angular_damp_space_override_mode(): int;
+  set_audio_bus_name(value: string): void;
+  get_audio_bus_name(): string;
+  set_audio_bus_override(value: boolean): void;
+  is_overriding_audio_bus(): boolean;
+  set_gravity(value: float): void;
+  get_gravity(): float;
+  set_gravity_direction(value: Vector2): void;
+  get_gravity_direction(): Vector2;
+  set_gravity_is_point(value: boolean): void;
+  is_gravity_a_point(): boolean;
+  set_gravity_point_center(value: Vector2): void;
+  get_gravity_point_center(): Vector2;
+  set_gravity_point_unit_distance(value: float): void;
+  get_gravity_point_unit_distance(): float;
+  set_gravity_space_override_mode(value: int): void;
+  get_gravity_space_override_mode(): int;
+  set_linear_damp(value: float): void;
+  get_linear_damp(): float;
+  set_linear_damp_space_override_mode(value: int): void;
+  get_linear_damp_space_override_mode(): int;
+  set_monitorable(value: boolean): void;
+  is_monitorable(): boolean;
+  set_monitoring(value: boolean): void;
+  is_monitoring(): boolean;
+  set_priority(value: int): void;
+  get_priority(): int;
 
   /**
    * Returns a list of intersecting {@link Area2D}s. The overlapping area's {@link CollisionObject2D.collision_layer} must be part of this area's {@link CollisionObject2D.collision_mask} in order to be detected.

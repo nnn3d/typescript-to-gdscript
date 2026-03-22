@@ -7,6 +7,8 @@
 declare class AStar3D extends RefCounted {
   /** If `true` enables the filtering of neighbors via {@link _filter_neighbor}. */
   neighbor_filter_enabled: boolean;
+  set_neighbor_filter_enabled(value: boolean): void;
+  is_neighbor_filter_enabled(): boolean;
 
   /**
    * Called when computing the cost between two connected points.

@@ -5,6 +5,8 @@
 declare class VisualShader extends Shader {
   /** Deprecated. */
   graph_offset: Vector2;
+  set_graph_offset(value: Vector2): void;
+  get_graph_offset(): Vector2;
 
   /** Adds the specified `node` to the shader. */
   add_node(type_: int, node: VisualShaderNode, position: Vector2, id: int): void;

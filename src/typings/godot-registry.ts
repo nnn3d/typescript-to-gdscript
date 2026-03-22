@@ -467,11 +467,23 @@ export function generateRegistryData(
     // Skip other @-prefixed special docs
     if (name.startsWith('@')) continue;
 
+    // Collect explicit method names + implicit setter/getter methods from properties
+    const methodNames = cls.methods.map((m) => m.name);
+    const explicitMethodSet = new Set(methodNames);
+    for (const prop of cls.properties) {
+      if (prop.setter && !explicitMethodSet.has(prop.setter)) {
+        methodNames.push(prop.setter);
+      }
+      if (prop.getter && !explicitMethodSet.has(prop.getter)) {
+        methodNames.push(prop.getter);
+      }
+    }
+
     registry.classes[name] = {
       name,
       inherits: cls.inherits ?? null,
       description: cls.briefDescription,
-      methods: cls.methods.map((m) => m.name),
+      methods: methodNames,
       properties: cls.properties.map((p) => p.name),
       signals: cls.signals.map((s) => ({
         name: s.name,

@@ -5,6 +5,8 @@
 declare class VisualShaderNodeStep extends VisualShaderNode {
   /** A type of operands and returned value. */
   op_type: int;
+  set_op_type(value: int): void;
+  get_op_type(): int;
 
   // enum OpType
   /** A floating-point scalar type. */

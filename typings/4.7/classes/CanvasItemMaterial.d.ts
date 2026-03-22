@@ -27,6 +27,18 @@ declare class CanvasItemMaterial extends Material {
    * This property (and other `particles_anim_*` properties that depend on it) has no effect on other types of nodes.
    */
   particles_animation: boolean;
+  set_blend_mode(value: int): void;
+  get_blend_mode(): int;
+  set_light_mode(value: int): void;
+  get_light_mode(): int;
+  set_particles_anim_h_frames(value: int): void;
+  get_particles_anim_h_frames(): int;
+  set_particles_anim_loop(value: boolean): void;
+  get_particles_anim_loop(): boolean;
+  set_particles_anim_v_frames(value: int): void;
+  get_particles_anim_v_frames(): int;
+  set_particles_animation(value: boolean): void;
+  get_particles_animation(): boolean;
 
   // enum BlendMode
   /** Mix blending mode. Colors are assumed to be independent of the alpha (opacity) value. */

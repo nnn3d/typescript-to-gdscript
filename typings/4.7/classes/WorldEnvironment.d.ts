@@ -13,4 +13,10 @@ declare class WorldEnvironment extends Node {
    * The {@link Environment} resource used by this {@link WorldEnvironment}, defining the default properties.
    */
   environment: Environment;
+  set_camera_attributes(value: CameraAttributes): void;
+  get_camera_attributes(): CameraAttributes;
+  set_compositor(value: Compositor): void;
+  get_compositor(): Compositor;
+  set_environment(value: Environment): void;
+  get_environment(): Environment;
 }

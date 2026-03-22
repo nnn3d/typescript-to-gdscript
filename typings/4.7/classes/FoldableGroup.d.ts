@@ -6,6 +6,8 @@ declare class FoldableGroup extends Resource {
   /** If `true`, it is possible to fold all containers in this FoldableGroup. */
   allow_folding_all: boolean;
   resource_local_to_scene: boolean;
+  set_allow_folding_all(value: boolean): void;
+  is_allow_folding_all(): boolean;
 
   /**
    * Returns an {@link Array} of {@link FoldableContainer}s that have this as their FoldableGroup (see {@link FoldableContainer.foldable_group}). This is equivalent to {@link ButtonGroup} but for FoldableContainers.

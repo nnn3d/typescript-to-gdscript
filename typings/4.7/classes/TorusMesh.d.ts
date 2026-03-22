@@ -11,4 +11,12 @@ declare class TorusMesh extends PrimitiveMesh {
   ring_segments: int;
   /** The number of slices the torus is constructed of. */
   rings: int;
+  set_inner_radius(value: float): void;
+  get_inner_radius(): float;
+  set_outer_radius(value: float): void;
+  get_outer_radius(): float;
+  set_ring_segments(value: int): void;
+  get_ring_segments(): int;
+  set_rings(value: int): void;
+  get_rings(): int;
 }

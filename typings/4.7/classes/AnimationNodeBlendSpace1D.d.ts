@@ -20,6 +20,18 @@ declare class AnimationNodeBlendSpace1D extends AnimationRootNode {
   sync: boolean;
   /** Label of the virtual axis of the blend space. */
   value_label: string;
+  set_blend_mode(value: int): void;
+  get_blend_mode(): int;
+  set_max_space(value: float): void;
+  get_max_space(): float;
+  set_min_space(value: float): void;
+  get_min_space(): float;
+  set_snap(value: float): void;
+  get_snap(): float;
+  set_use_sync(value: boolean): void;
+  is_using_sync(): boolean;
+  set_value_label(value: string): void;
+  get_value_label(): string;
 
   /**
    * Adds a new point with `name` that represents a `node` on the virtual axis at a given position set by `pos`. You can insert it at a specific index using the `at_index` argument. If you use the default value for `at_index`, the point is inserted at the end of the blend points array.

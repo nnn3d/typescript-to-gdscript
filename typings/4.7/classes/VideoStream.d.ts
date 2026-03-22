@@ -8,6 +8,8 @@ declare class VideoStream extends Resource {
    * For {@link VideoStreamTheora}, this filename should be an Ogg Theora video file with the `.ogv` extension.
    */
   file: string;
+  set_file(value: string): void;
+  get_file(): string;
 
   /**
    * Called when the video starts playing, to initialize and return a subclass of {@link VideoStreamPlayback}.

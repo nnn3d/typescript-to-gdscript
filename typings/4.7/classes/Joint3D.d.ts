@@ -20,6 +20,14 @@ declare class Joint3D extends Node3D {
    * **Note:** Only supported when using GodotPhysics3D. This property is ignored when using Jolt Physics.
    */
   solver_priority: int;
+  set_exclude_nodes_from_collision(value: boolean): void;
+  get_exclude_nodes_from_collision(): boolean;
+  set_node_a(value: string): void;
+  get_node_a(): string;
+  set_node_b(value: string): void;
+  get_node_b(): string;
+  set_solver_priority(value: int): void;
+  get_solver_priority(): int;
 
   /** Returns the joint's internal {@link RID} from the {@link PhysicsServer3D}. */
   get_rid(): RID;

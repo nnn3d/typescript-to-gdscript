@@ -7,6 +7,8 @@ declare class UDPServer extends RefCounted {
    * Define the maximum number of pending connections, during {@link poll}, any new pending connection exceeding that value will be automatically dropped. Setting this value to `0` effectively prevents any new pending connection to be accepted (e.g. when all your players have connected).
    */
   max_pending_connections: int;
+  set_max_pending_connections(value: int): void;
+  get_max_pending_connections(): int;
 
   /** Returns the local port this server is listening to. */
   get_local_port(): int;

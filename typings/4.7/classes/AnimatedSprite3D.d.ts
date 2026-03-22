@@ -26,6 +26,18 @@ declare class AnimatedSprite3D extends SpriteBase3D {
    * The {@link SpriteFrames} resource containing the animation(s). Allows you the option to load, edit, clear, make unique and save the states of the {@link SpriteFrames} resource.
    */
   sprite_frames: SpriteFrames;
+  set_animation(value: string): void;
+  get_animation(): string;
+  set_autoplay(value: string): void;
+  get_autoplay(): string;
+  set_frame(value: int): void;
+  get_frame(): int;
+  set_frame_progress(value: float): void;
+  get_frame_progress(): float;
+  set_speed_scale(value: float): void;
+  get_speed_scale(): float;
+  set_sprite_frames(value: SpriteFrames): void;
+  get_sprite_frames(): SpriteFrames;
 
   /**
    * Returns the actual playing speed of current animation or `0` if not playing. This speed is the {@link speed_scale} property multiplied by `custom_speed` argument specified when calling the {@link play} method.

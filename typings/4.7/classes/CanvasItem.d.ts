@@ -62,6 +62,36 @@ declare class CanvasItem extends Node {
    * **Note:** The Z index does **not** affect the order in which {@link CanvasItem} nodes are processed or the way input events are handled. This is especially important to keep in mind for {@link Control} nodes.
    */
   z_index: int;
+  set_clip_children_mode(value: int): void;
+  get_clip_children_mode(): int;
+  set_light_mask(value: int): void;
+  get_light_mask(): int;
+  set_material(value: Material): void;
+  get_material(): Material;
+  set_modulate(value: Color): void;
+  get_modulate(): Color;
+  set_self_modulate(value: Color): void;
+  get_self_modulate(): Color;
+  set_draw_behind_parent(value: boolean): void;
+  is_draw_behind_parent_enabled(): boolean;
+  set_texture_filter(value: int): void;
+  get_texture_filter(): int;
+  set_texture_repeat(value: int): void;
+  get_texture_repeat(): int;
+  set_as_top_level(value: boolean): void;
+  is_set_as_top_level(): boolean;
+  set_use_parent_material(value: boolean): void;
+  get_use_parent_material(): boolean;
+  set_visibility_layer(value: int): void;
+  get_visibility_layer(): int;
+  set_visible(value: boolean): void;
+  is_visible(): boolean;
+  set_y_sort_enabled(value: boolean): void;
+  is_y_sort_enabled(): boolean;
+  set_z_as_relative(value: boolean): void;
+  is_z_relative(): boolean;
+  set_z_index(value: int): void;
+  get_z_index(): int;
 
   /**
    * Called when {@link CanvasItem} has been requested to redraw (after {@link queue_redraw} is called, either manually or by the engine).

@@ -23,6 +23,14 @@ declare class SpringArm3D extends Node3D {
    * To know more about how to perform a shape cast or a ray cast, please consult the {@link PhysicsDirectSpaceState3D} documentation.
    */
   spring_length: float;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  set_margin(value: float): void;
+  get_margin(): float;
+  set_shape(value: Shape3D): void;
+  get_shape(): Shape3D;
+  set_length(value: float): void;
+  get_length(): float;
 
   /**
    * Adds the {@link PhysicsBody3D} object with the given {@link RID} to the list of {@link PhysicsBody3D} objects excluded from the collision check.

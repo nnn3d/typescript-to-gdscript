@@ -37,4 +37,32 @@ declare class ProceduralSkyMaterial extends Material {
    * If `true`, enables debanding. Debanding adds a small amount of noise which helps reduce banding that appears from the smooth changes in color in the sky.
    */
   use_debanding: boolean;
+  set_energy_multiplier(value: float): void;
+  get_energy_multiplier(): float;
+  set_ground_bottom_color(value: Color): void;
+  get_ground_bottom_color(): Color;
+  set_ground_curve(value: float): void;
+  get_ground_curve(): float;
+  set_ground_energy_multiplier(value: float): void;
+  get_ground_energy_multiplier(): float;
+  set_ground_horizon_color(value: Color): void;
+  get_ground_horizon_color(): Color;
+  set_sky_cover(value: Texture2D): void;
+  get_sky_cover(): Texture2D;
+  set_sky_cover_modulate(value: Color): void;
+  get_sky_cover_modulate(): Color;
+  set_sky_curve(value: float): void;
+  get_sky_curve(): float;
+  set_sky_energy_multiplier(value: float): void;
+  get_sky_energy_multiplier(): float;
+  set_sky_horizon_color(value: Color): void;
+  get_sky_horizon_color(): Color;
+  set_sky_top_color(value: Color): void;
+  get_sky_top_color(): Color;
+  set_sun_angle_max(value: float): void;
+  get_sun_angle_max(): float;
+  set_sun_curve(value: float): void;
+  get_sun_curve(): float;
+  set_use_debanding(value: boolean): void;
+  get_use_debanding(): boolean;
 }

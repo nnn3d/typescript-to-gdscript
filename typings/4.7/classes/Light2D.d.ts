@@ -40,6 +40,36 @@ declare class Light2D extends Node2D {
    * The shadow mask. Used with {@link LightOccluder2D} to cast shadows. Only occluders with a matching {@link CanvasItem.light_mask} will cast shadows. See also {@link range_item_cull_mask}, which affects which objects can *receive* the light.
    */
   shadow_item_cull_mask: int;
+  set_blend_mode(value: int): void;
+  get_blend_mode(): int;
+  set_color(value: Color): void;
+  get_color(): Color;
+  set_editor_only(value: boolean): void;
+  is_editor_only(): boolean;
+  set_enabled(value: boolean): void;
+  is_enabled(): boolean;
+  set_energy(value: float): void;
+  get_energy(): float;
+  set_item_cull_mask(value: int): void;
+  get_item_cull_mask(): int;
+  set_layer_range_max(value: int): void;
+  get_layer_range_max(): int;
+  set_layer_range_min(value: int): void;
+  get_layer_range_min(): int;
+  set_z_range_max(value: int): void;
+  get_z_range_max(): int;
+  set_z_range_min(value: int): void;
+  get_z_range_min(): int;
+  set_shadow_color(value: Color): void;
+  get_shadow_color(): Color;
+  set_shadow_enabled(value: boolean): void;
+  is_shadow_enabled(): boolean;
+  set_shadow_filter(value: int): void;
+  get_shadow_filter(): int;
+  set_shadow_smooth(value: float): void;
+  get_shadow_smooth(): float;
+  set_item_shadow_cull_mask(value: int): void;
+  get_item_shadow_cull_mask(): int;
 
   /**
    * Returns the light's height, which is used in 2D normal mapping. See {@link PointLight2D.height} and {@link DirectionalLight2D.height}.

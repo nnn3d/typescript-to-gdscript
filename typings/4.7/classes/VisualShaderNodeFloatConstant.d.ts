@@ -5,4 +5,6 @@
 declare class VisualShaderNodeFloatConstant extends VisualShaderNodeConstant {
   /** A floating-point constant which represents a state of this node. */
   constant: float;
+  set_constant(value: float): void;
+  get_constant(): float;
 }

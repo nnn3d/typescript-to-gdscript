@@ -8,6 +8,8 @@ declare class InputEvent extends Resource {
    * **Note:** {@link device} can be negative for special use cases that don't refer to devices physically present on the system. See {@link DEVICE_ID_EMULATION}.
    */
   device: int;
+  set_device(value: int): void;
+  get_device(): int;
 
   /**
    * Returns `true` if the given input event and this input event can be added together (only for events of type {@link InputEventMouseMotion}).

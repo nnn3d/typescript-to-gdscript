@@ -19,6 +19,18 @@ declare class Curve extends Resource {
   min_value: float;
   /** The number of points describing the curve. */
   point_count: int;
+  set_bake_resolution(value: int): void;
+  get_bake_resolution(): int;
+  set_max_domain(value: float): void;
+  get_max_domain(): float;
+  set_max_value(value: float): void;
+  get_max_value(): float;
+  set_min_domain(value: float): void;
+  get_min_domain(): float;
+  set_min_value(value: float): void;
+  get_min_value(): float;
+  set_point_count(value: int): void;
+  get_point_count(): int;
 
   /**
    * Adds a point to the curve. For each side, if the `*_mode` is {@link TANGENT_LINEAR}, the `*_tangent` angle (in degrees) uses the slope of the curve halfway to the adjacent point. Allows custom assignments to the `*_tangent` angle if `*_mode` is set to {@link TANGENT_FREE}.

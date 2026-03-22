@@ -18,6 +18,12 @@ declare interface OS extends GodotObject {
    * **Note:** On start-up, this is the same as {@link ProjectSettings.application/run/low_processor_mode_sleep_usec}.
    */
   low_processor_usage_mode_sleep_usec: int;
+  set_delta_smoothing(value: boolean): void;
+  is_delta_smoothing_enabled(): boolean;
+  set_low_processor_usage_mode(value: boolean): void;
+  is_in_low_processor_usage_mode(): boolean;
+  set_low_processor_usage_mode_sleep_usec(value: int): void;
+  get_low_processor_usage_mode_sleep_usec(): int;
 
   /** Add a custom logger to intercept the internal message stream. */
   add_logger(logger: Logger): void;

@@ -17,4 +17,14 @@ declare class StyleBoxLine extends StyleBox {
   thickness: int;
   /** If `true`, the line will be vertical. If `false`, the line will be horizontal. */
   vertical: boolean;
+  set_color(value: Color): void;
+  get_color(): Color;
+  set_grow_begin(value: float): void;
+  get_grow_begin(): float;
+  set_grow_end(value: float): void;
+  get_grow_end(): float;
+  set_thickness(value: int): void;
+  get_thickness(): int;
+  set_vertical(value: boolean): void;
+  is_vertical(): boolean;
 }

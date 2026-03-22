@@ -11,6 +11,12 @@ declare class HTTPClient extends RefCounted {
    * The size of the buffer used and maximum bytes to read per iteration. See {@link read_response_body_chunk}.
    */
   read_chunk_size: int;
+  set_blocking_mode(value: boolean): void;
+  is_blocking_mode_enabled(): boolean;
+  set_connection(value: StreamPeer): void;
+  get_connection(): StreamPeer;
+  set_read_chunk_size(value: int): void;
+  get_read_chunk_size(): int;
 
   /** Closes the current connection, allowing reuse of this {@link HTTPClient}. */
   close(): void;

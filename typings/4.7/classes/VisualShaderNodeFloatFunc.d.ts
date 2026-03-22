@@ -5,6 +5,8 @@
 declare class VisualShaderNodeFloatFunc extends VisualShaderNode {
   /** A function to be applied to the scalar. */
   function: int;
+  set_function(value: int): void;
+  get_function(): int;
 
   // enum Function
   /** Returns the sine of the parameter. Translates to `sin(x)` in the Godot Shader Language. */

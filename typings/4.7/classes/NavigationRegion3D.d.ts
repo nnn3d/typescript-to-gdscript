@@ -23,6 +23,18 @@ declare class NavigationRegion3D extends Node3D {
    * If enabled the navigation region will use edge connections to connect with other navigation regions within proximity of the navigation map edge connection margin.
    */
   use_edge_connections: boolean;
+  set_enabled(value: boolean): void;
+  is_enabled(): boolean;
+  set_enter_cost(value: float): void;
+  get_enter_cost(): float;
+  set_navigation_layers(value: int): void;
+  get_navigation_layers(): int;
+  set_navigation_mesh(value: NavigationMesh): void;
+  get_navigation_mesh(): NavigationMesh;
+  set_travel_cost(value: float): void;
+  get_travel_cost(): float;
+  set_use_edge_connections(value: boolean): void;
+  get_use_edge_connections(): boolean;
 
   /**
    * Bakes the {@link NavigationMesh}. If `on_thread` is set to `true` (default), the baking is done on a separate thread. Baking on separate thread is useful because navigation baking is not a cheap operation. When it is completed, it automatically sets the new {@link NavigationMesh}. Please note that baking on separate thread may be very slow if geometry is parsed from meshes as async access to each mesh involves heavy synchronization. Also, please note that baking on a separate thread is automatically disabled on operating systems that cannot use threads (such as Web with threads disabled).

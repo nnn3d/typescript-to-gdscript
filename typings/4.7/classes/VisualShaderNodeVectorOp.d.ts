@@ -5,6 +5,8 @@
 declare class VisualShaderNodeVectorOp extends VisualShaderNodeVectorBase {
   /** The operator to be used. */
   operator: int;
+  set_operator(value: int): void;
+  get_operator(): int;
 
   // enum Operator
   /** Adds two vectors. */

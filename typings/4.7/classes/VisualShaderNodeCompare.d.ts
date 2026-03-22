@@ -9,6 +9,12 @@ declare class VisualShaderNodeCompare extends VisualShaderNode {
   function: int;
   /** The type to be used in the comparison. */
   type: int;
+  set_condition(value: int): void;
+  get_condition(): int;
+  set_function(value: int): void;
+  get_function(): int;
+  set_comparison_type(value: int): void;
+  get_comparison_type(): int;
 
   // enum ComparisonType
   /** A floating-point scalar. */

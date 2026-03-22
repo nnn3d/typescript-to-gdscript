@@ -41,4 +41,26 @@ declare class PhysicalSkyMaterial extends Material {
    * If `true`, enables debanding. Debanding adds a small amount of noise which helps reduce banding that appears from the smooth changes in color in the sky.
    */
   use_debanding: boolean;
+  set_energy_multiplier(value: float): void;
+  get_energy_multiplier(): float;
+  set_ground_color(value: Color): void;
+  get_ground_color(): Color;
+  set_mie_coefficient(value: float): void;
+  get_mie_coefficient(): float;
+  set_mie_color(value: Color): void;
+  get_mie_color(): Color;
+  set_mie_eccentricity(value: float): void;
+  get_mie_eccentricity(): float;
+  set_night_sky(value: Texture2D): void;
+  get_night_sky(): Texture2D;
+  set_rayleigh_coefficient(value: float): void;
+  get_rayleigh_coefficient(): float;
+  set_rayleigh_color(value: Color): void;
+  get_rayleigh_color(): Color;
+  set_sun_disk_scale(value: float): void;
+  get_sun_disk_scale(): float;
+  set_turbidity(value: float): void;
+  get_turbidity(): float;
+  set_use_debanding(value: boolean): void;
+  get_use_debanding(): boolean;
 }

@@ -31,4 +31,20 @@ declare class TubeTrailMesh extends PrimitiveMesh {
   section_rings: int;
   /** The total number of sections on the tube. */
   sections: int;
+  set_cap_bottom(value: boolean): void;
+  is_cap_bottom(): boolean;
+  set_cap_top(value: boolean): void;
+  is_cap_top(): boolean;
+  set_curve(value: Curve): void;
+  get_curve(): Curve;
+  set_radial_steps(value: int): void;
+  get_radial_steps(): int;
+  set_radius(value: float): void;
+  get_radius(): float;
+  set_section_length(value: float): void;
+  get_section_length(): float;
+  set_section_rings(value: int): void;
+  get_section_rings(): int;
+  set_sections(value: int): void;
+  get_sections(): int;
 }

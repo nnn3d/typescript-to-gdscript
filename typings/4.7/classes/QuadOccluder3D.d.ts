@@ -5,4 +5,6 @@
 declare class QuadOccluder3D extends Occluder3D {
   /** The quad's size in 3D units. */
   size: Vector2;
+  set_size(value: Vector2): void;
+  get_size(): Vector2;
 }

@@ -5,6 +5,8 @@
 declare class VisualShaderNodeVectorBase extends VisualShaderNode {
   /** A vector type that this operation is performed on. */
   op_type: int;
+  set_op_type(value: int): void;
+  get_op_type(): int;
 
   // enum OpType
   /** A 2D vector type. */

@@ -39,6 +39,22 @@ declare class AnimationNodeAnimation extends AnimationRootNode {
    * If `true`, {@link AnimationNode} provides an animation based on the {@link Animation} resource with some parameters adjusted.
    */
   use_custom_timeline: boolean;
+  set_advance_on_start(value: boolean): void;
+  is_advance_on_start(): boolean;
+  set_animation(value: string): void;
+  get_animation(): string;
+  set_loop_mode(value: int): void;
+  get_loop_mode(): int;
+  set_play_mode(value: int): void;
+  get_play_mode(): int;
+  set_start_offset(value: float): void;
+  get_start_offset(): float;
+  set_stretch_time_scale(value: boolean): void;
+  is_stretching_time_scale(): boolean;
+  set_timeline_length(value: float): void;
+  get_timeline_length(): float;
+  set_use_custom_timeline(value: boolean): void;
+  is_using_custom_timeline(): boolean;
 
   // enum PlayMode
   /** Plays animation in forward direction. */

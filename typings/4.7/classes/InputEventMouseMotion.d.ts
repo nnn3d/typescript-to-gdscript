@@ -37,4 +37,18 @@ declare class InputEventMouseMotion extends InputEventMouse {
    * **Note:** Use {@link screen_relative} for mouse aiming using the {@link Input.MOUSE_MODE_CAPTURED} mouse mode.
    */
   velocity: Vector2;
+  set_pen_inverted(value: boolean): void;
+  get_pen_inverted(): boolean;
+  set_pressure(value: float): void;
+  get_pressure(): float;
+  set_relative(value: Vector2): void;
+  get_relative(): Vector2;
+  set_screen_relative(value: Vector2): void;
+  get_screen_relative(): Vector2;
+  set_screen_velocity(value: Vector2): void;
+  get_screen_velocity(): Vector2;
+  set_tilt(value: Vector2): void;
+  get_tilt(): Vector2;
+  set_velocity(value: Vector2): void;
+  get_velocity(): Vector2;
 }

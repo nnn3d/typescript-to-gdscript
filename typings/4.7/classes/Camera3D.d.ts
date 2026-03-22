@@ -64,6 +64,36 @@ declare class Camera3D extends Node3D {
   size: float;
   /** The vertical (Y) offset of the camera viewport. */
   v_offset: float;
+  set_attributes(value: CameraAttributes): void;
+  get_attributes(): CameraAttributes;
+  set_compositor(value: Compositor): void;
+  get_compositor(): Compositor;
+  set_cull_mask(value: int): void;
+  get_cull_mask(): int;
+  set_current(value: boolean): void;
+  is_current(): boolean;
+  set_doppler_tracking(value: int): void;
+  get_doppler_tracking(): int;
+  set_environment(value: Environment): void;
+  get_environment(): Environment;
+  set_far(value: float): void;
+  get_far(): float;
+  set_fov(value: float): void;
+  get_fov(): float;
+  set_frustum_offset(value: Vector2): void;
+  get_frustum_offset(): Vector2;
+  set_h_offset(value: float): void;
+  get_h_offset(): float;
+  set_keep_aspect_mode(value: int): void;
+  get_keep_aspect_mode(): int;
+  set_near(value: float): void;
+  get_near(): float;
+  set_projection(value: int): void;
+  get_projection(): int;
+  set_size(value: float): void;
+  get_size(): float;
+  set_v_offset(value: float): void;
+  get_v_offset(): float;
 
   /**
    * If this is the current camera, remove it from being current. If `enable_next` is `true`, request to make the next camera current, if any.

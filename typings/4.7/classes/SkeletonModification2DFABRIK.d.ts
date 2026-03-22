@@ -9,6 +9,10 @@ declare class SkeletonModification2DFABRIK extends SkeletonModification2D {
    * The NodePath to the node that is the target for the FABRIK modification. This node is what the FABRIK chain will attempt to rotate the bone chain to.
    */
   target_nodepath: string;
+  set_fabrik_data_chain_length(value: int): void;
+  get_fabrik_data_chain_length(): int;
+  set_target_node(value: string): void;
+  get_target_node(): string;
 
   /** Returns the {@link Bone2D} node assigned to the FABRIK joint at `joint_idx`. */
   get_fabrik_joint_bone2d_node(joint_idx: int): string;

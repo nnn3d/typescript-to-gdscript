@@ -16,6 +16,14 @@ declare class TextureRect extends Control {
   mouse_filter: int;
   /** The node's {@link Texture2D} resource. */
   texture: Texture2D;
+  set_expand_mode(value: int): void;
+  get_expand_mode(): int;
+  set_flip_h(value: boolean): void;
+  is_flipped_h(): boolean;
+  set_flip_v(value: boolean): void;
+  is_flipped_v(): boolean;
+  set_texture(value: Texture2D): void;
+  get_texture(): Texture2D;
 
   // enum ExpandMode
   /**

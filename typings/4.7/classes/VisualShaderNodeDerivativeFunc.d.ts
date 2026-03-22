@@ -11,6 +11,12 @@ declare class VisualShaderNodeDerivativeFunc extends VisualShaderNode {
    * Sets the level of precision to use for the derivative function. When using the Compatibility renderer, this setting has no effect.
    */
   precision: int;
+  set_function(value: int): void;
+  get_function(): int;
+  set_op_type(value: int): void;
+  get_op_type(): int;
+  set_precision(value: int): void;
+  get_precision(): int;
 
   // enum OpType
   /** A floating-point scalar. */

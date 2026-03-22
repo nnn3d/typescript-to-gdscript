@@ -43,4 +43,22 @@ declare class CameraAttributesPractical extends CameraAttributes {
    * When positive, distance over which blur effect will scale from 0 to {@link dof_blur_amount}, ending at {@link dof_blur_near_distance}. When negative, uses physically-based scaling so depth of field effect will scale from 0 at {@link dof_blur_near_distance} and will increase in a physically accurate way as objects get closer to the {@link Camera3D}.
    */
   dof_blur_near_transition: float;
+  set_auto_exposure_max_sensitivity(value: float): void;
+  get_auto_exposure_max_sensitivity(): float;
+  set_auto_exposure_min_sensitivity(value: float): void;
+  get_auto_exposure_min_sensitivity(): float;
+  set_dof_blur_amount(value: float): void;
+  get_dof_blur_amount(): float;
+  set_dof_blur_far_distance(value: float): void;
+  get_dof_blur_far_distance(): float;
+  set_dof_blur_far_enabled(value: boolean): void;
+  is_dof_blur_far_enabled(): boolean;
+  set_dof_blur_far_transition(value: float): void;
+  get_dof_blur_far_transition(): float;
+  set_dof_blur_near_distance(value: float): void;
+  get_dof_blur_near_distance(): float;
+  set_dof_blur_near_enabled(value: boolean): void;
+  is_dof_blur_near_enabled(): boolean;
+  set_dof_blur_near_transition(value: float): void;
+  get_dof_blur_near_transition(): float;
 }

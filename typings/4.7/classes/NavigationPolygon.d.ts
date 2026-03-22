@@ -39,6 +39,26 @@ declare class NavigationPolygon extends Resource {
   source_geometry_group_name: string;
   /** The source of the geometry used when baking. */
   source_geometry_mode: int;
+  set_agent_radius(value: float): void;
+  get_agent_radius(): float;
+  set_baking_rect(value: Rect2): void;
+  get_baking_rect(): Rect2;
+  set_baking_rect_offset(value: Vector2): void;
+  get_baking_rect_offset(): Vector2;
+  set_border_size(value: float): void;
+  get_border_size(): float;
+  set_cell_size(value: float): void;
+  get_cell_size(): float;
+  set_parsed_collision_mask(value: int): void;
+  get_parsed_collision_mask(): int;
+  set_parsed_geometry_type(value: int): void;
+  get_parsed_geometry_type(): int;
+  set_sample_partition_type(value: int): void;
+  get_sample_partition_type(): int;
+  set_source_geometry_group_name(value: string): void;
+  get_source_geometry_group_name(): string;
+  set_source_geometry_mode(value: int): void;
+  get_source_geometry_mode(): int;
 
   /**
    * Appends a {@link PackedVector2Array} that contains the vertices of an outline to the internal array that contains all the outlines.

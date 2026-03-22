@@ -18,6 +18,14 @@ declare class VoxelGI extends VisualInstance3D {
    * Number of times to subdivide the grid that the {@link VoxelGI} operates on. A higher number results in finer detail and thus higher visual quality, while lower numbers result in better performance.
    */
   subdiv: int;
+  set_camera_attributes(value: CameraAttributes): void;
+  get_camera_attributes(): CameraAttributes;
+  set_probe_data(value: VoxelGIData): void;
+  get_probe_data(): VoxelGIData;
+  set_size(value: Vector3): void;
+  get_size(): Vector3;
+  set_subdiv(value: int): void;
+  get_subdiv(): int;
 
   /**
    * Bakes the effect from all {@link GeometryInstance3D}s marked with {@link GeometryInstance3D.GI_MODE_STATIC} and {@link Light3D}s marked with either {@link Light3D.BAKE_STATIC} or {@link Light3D.BAKE_DYNAMIC}. If `create_visual_debug` is `true`, after baking the light, this will generate a {@link MultiMesh} that has a cube representing each solid cell with each cube colored to the cell's albedo color. This can be used to visualize the {@link VoxelGI}'s data and debug any issues that may be occurring.

@@ -92,6 +92,54 @@ declare class NavigationMesh extends Resource {
    * The maximum number of vertices allowed for polygons generated during the contour to polygon conversion process.
    */
   vertices_per_polygon: float;
+  set_agent_height(value: float): void;
+  get_agent_height(): float;
+  set_agent_max_climb(value: float): void;
+  get_agent_max_climb(): float;
+  set_agent_max_slope(value: float): void;
+  get_agent_max_slope(): float;
+  set_agent_radius(value: float): void;
+  get_agent_radius(): float;
+  set_border_size(value: float): void;
+  get_border_size(): float;
+  set_cell_height(value: float): void;
+  get_cell_height(): float;
+  set_cell_size(value: float): void;
+  get_cell_size(): float;
+  set_detail_sample_distance(value: float): void;
+  get_detail_sample_distance(): float;
+  set_detail_sample_max_error(value: float): void;
+  get_detail_sample_max_error(): float;
+  set_edge_max_error(value: float): void;
+  get_edge_max_error(): float;
+  set_edge_max_length(value: float): void;
+  get_edge_max_length(): float;
+  set_filter_baking_aabb(value: AABB): void;
+  get_filter_baking_aabb(): AABB;
+  set_filter_baking_aabb_offset(value: Vector3): void;
+  get_filter_baking_aabb_offset(): Vector3;
+  set_filter_ledge_spans(value: boolean): void;
+  get_filter_ledge_spans(): boolean;
+  set_filter_low_hanging_obstacles(value: boolean): void;
+  get_filter_low_hanging_obstacles(): boolean;
+  set_filter_walkable_low_height_spans(value: boolean): void;
+  get_filter_walkable_low_height_spans(): boolean;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  set_parsed_geometry_type(value: int): void;
+  get_parsed_geometry_type(): int;
+  set_source_geometry_mode(value: int): void;
+  get_source_geometry_mode(): int;
+  set_source_group_name(value: string): void;
+  get_source_group_name(): string;
+  set_region_merge_size(value: float): void;
+  get_region_merge_size(): float;
+  set_region_min_size(value: float): void;
+  get_region_min_size(): float;
+  set_sample_partition_type(value: int): void;
+  get_sample_partition_type(): int;
+  set_vertices_per_polygon(value: float): void;
+  get_vertices_per_polygon(): float;
 
   /** Adds a polygon using the indices of the vertices you get when calling {@link get_vertices}. */
   add_polygon(polygon: PackedInt32Array): void;

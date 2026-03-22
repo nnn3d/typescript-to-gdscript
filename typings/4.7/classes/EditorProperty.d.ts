@@ -32,6 +32,27 @@ declare class EditorProperty extends Container {
   selectable: boolean;
   /** Used by the inspector, set to `true` when the property is using folding. */
   use_folding: boolean;
+  set_checkable(value: boolean): void;
+  is_checkable(): boolean;
+  set_checked(value: boolean): void;
+  is_checked(): boolean;
+  set_deletable(value: boolean): void;
+  is_deletable(): boolean;
+  set_draw_background(value: boolean): void;
+  is_draw_background(): boolean;
+  set_draw_label(value: boolean): void;
+  is_draw_label(): boolean;
+  set_draw_warning(value: boolean): void;
+  is_draw_warning(): boolean;
+  set_label(value: string): void;
+  get_label(): string;
+  set_name_split_ratio(value: float): void;
+  get_name_split_ratio(): float;
+  set_read_only(value: boolean): void;
+  set_selectable(value: boolean): void;
+  is_selectable(): boolean;
+  set_use_folding(value: boolean): void;
+  is_using_folding(): boolean;
 
   /**
    * Called when the read-only status of the property is changed. It may be used to change custom controls into a read-only or modifiable state.

@@ -18,4 +18,10 @@ declare class AudioEffectStereoEnhance extends AudioEffect {
    * Widens the stereo image through phase shifting in conjunction with {@link surround}. Just delays the right channel if {@link surround} is 0. Value is in milliseconds, and can range from 0 to 50.
    */
   time_pullout_ms: float;
+  set_pan_pullout(value: float): void;
+  get_pan_pullout(): float;
+  set_surround(value: float): void;
+  get_surround(): float;
+  set_time_pullout(value: float): void;
+  get_time_pullout(): float;
 }

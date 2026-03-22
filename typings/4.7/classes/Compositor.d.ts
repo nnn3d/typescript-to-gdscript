@@ -7,4 +7,6 @@ declare class Compositor extends Resource {
    * The custom {@link CompositorEffect}s that are applied during rendering of viewports using this compositor.
    */
   compositor_effects: unknown;
+  set_compositor_effects(value: unknown): void;
+  get_compositor_effects(): unknown;
 }

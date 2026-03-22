@@ -33,4 +33,20 @@ declare class PhysicsTestMotionParameters3D extends RefCounted {
    * If set to `false`, only collisions resulting from the motion are reported, which is generally the desired behavior.
    */
   recovery_as_collision: boolean;
+  set_collide_separation_ray_enabled(value: boolean): void;
+  is_collide_separation_ray_enabled(): boolean;
+  set_exclude_bodies(value: unknown): void;
+  get_exclude_bodies(): unknown;
+  set_exclude_objects(value: unknown): void;
+  get_exclude_objects(): unknown;
+  set_from(value: Transform3D): void;
+  get_from(): Transform3D;
+  set_margin(value: float): void;
+  get_margin(): float;
+  set_max_collisions(value: int): void;
+  get_max_collisions(): int;
+  set_motion(value: Vector3): void;
+  get_motion(): Vector3;
+  set_recovery_as_collision_enabled(value: boolean): void;
+  is_recovery_as_collision_enabled(): boolean;
 }

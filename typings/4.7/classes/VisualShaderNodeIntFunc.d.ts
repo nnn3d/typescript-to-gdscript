@@ -5,6 +5,8 @@
 declare class VisualShaderNodeIntFunc extends VisualShaderNode {
   /** A function to be applied to the scalar. */
   function: int;
+  set_function(value: int): void;
+  get_function(): int;
 
   // enum Function
   /** Returns the absolute value of the parameter. Translates to `abs(x)` in the Godot Shader Language. */

@@ -8,4 +8,6 @@ declare class GPUParticlesAttractorSphere3D extends GPUParticlesAttractor3D {
    * **Note:** Stretched ellipses can be obtained by using non-uniform scaling on the {@link GPUParticlesAttractorSphere3D} node.
    */
   radius: float;
+  set_radius(value: float): void;
+  get_radius(): float;
 }

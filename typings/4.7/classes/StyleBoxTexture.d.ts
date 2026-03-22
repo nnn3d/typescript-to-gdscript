@@ -59,6 +59,18 @@ declare class StyleBoxTexture extends StyleBox {
    * This is also the value used as fallback for {@link StyleBox.content_margin_top} if it is negative.
    */
   texture_margin_top: float;
+  set_h_axis_stretch_mode(value: int): void;
+  get_h_axis_stretch_mode(): int;
+  set_v_axis_stretch_mode(value: int): void;
+  get_v_axis_stretch_mode(): int;
+  set_draw_center(value: boolean): void;
+  is_draw_center_enabled(): boolean;
+  set_modulate(value: Color): void;
+  get_modulate(): Color;
+  set_region_rect(value: Rect2): void;
+  get_region_rect(): Rect2;
+  set_texture(value: Texture2D): void;
+  get_texture(): Texture2D;
 
   /** Returns the expand margin size of the specified {@link Side}. */
   get_expand_margin(margin: int): float;

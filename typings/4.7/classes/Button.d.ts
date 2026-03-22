@@ -46,4 +46,30 @@ declare class Button extends BaseButton {
    * Specifies if the icon should be aligned vertically to the top, bottom, or center of a button. Uses the same {@link VerticalAlignment} constants as the text alignment. If centered horizontally and vertically, text will draw on top of the icon.
    */
   vertical_icon_alignment: int;
+  set_text_alignment(value: int): void;
+  get_text_alignment(): int;
+  set_autowrap_mode(value: int): void;
+  get_autowrap_mode(): int;
+  set_autowrap_trim_flags(value: int): void;
+  get_autowrap_trim_flags(): int;
+  set_clip_text(value: boolean): void;
+  get_clip_text(): boolean;
+  set_expand_icon(value: boolean): void;
+  is_expand_icon(): boolean;
+  set_flat(value: boolean): void;
+  is_flat(): boolean;
+  set_button_icon(value: Texture2D): void;
+  get_button_icon(): Texture2D;
+  set_icon_alignment(value: int): void;
+  get_icon_alignment(): int;
+  set_language(value: string): void;
+  get_language(): string;
+  set_text(value: string): void;
+  get_text(): string;
+  set_text_direction(value: int): void;
+  get_text_direction(): int;
+  set_text_overrun_behavior(value: int): void;
+  get_text_overrun_behavior(): int;
+  set_vertical_icon_alignment(value: int): void;
+  get_vertical_icon_alignment(): int;
 }

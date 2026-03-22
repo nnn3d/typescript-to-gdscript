@@ -46,6 +46,30 @@ declare class EditorDock extends MarginContainer {
    * If `true`, the dock is not automatically opened or closed when loading an editor layout, only moved. It also can't be opened using a shortcut. This is meant for docks that are opened and closed in specific cases, such as when selecting a {@link TileMap} or {@link AnimationTree} node.
    */
   transient: boolean;
+  set_available_layouts(value: int): void;
+  get_available_layouts(): int;
+  set_closable(value: boolean): void;
+  is_closable(): boolean;
+  set_default_slot(value: int): void;
+  get_default_slot(): int;
+  set_dock_icon(value: Texture2D): void;
+  get_dock_icon(): Texture2D;
+  set_dock_shortcut(value: Shortcut): void;
+  get_dock_shortcut(): Shortcut;
+  set_force_show_icon(value: boolean): void;
+  get_force_show_icon(): boolean;
+  set_global(value: boolean): void;
+  is_global(): boolean;
+  set_icon_name(value: string): void;
+  get_icon_name(): string;
+  set_layout_key(value: string): void;
+  get_layout_key(): string;
+  set_title(value: string): void;
+  get_title(): string;
+  set_title_color(value: Color): void;
+  get_title_color(): Color;
+  set_transient(value: boolean): void;
+  is_transient(): boolean;
 
   /**
    * Implement this method to handle loading this dock's layout. It's equivalent to {@link EditorPlugin._set_window_layout}. `section` is a unique section based on {@link layout_key}.

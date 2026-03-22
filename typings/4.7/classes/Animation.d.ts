@@ -16,6 +16,13 @@ declare class Animation extends Resource {
   loop_mode: int;
   /** The animation step value. */
   step: float;
+  is_capture_included(): boolean;
+  set_length(value: float): void;
+  get_length(): float;
+  set_loop_mode(value: int): void;
+  get_loop_mode(): int;
+  set_step(value: float): void;
+  get_step(): float;
 
   /** Adds a marker to this Animation. */
   add_marker(name: string, time: float): void;

@@ -12,4 +12,8 @@ declare class AudioEffectAmplify extends AudioEffect {
    * **Note:** This member modifies {@link volume_db} for convenience. The returned value is equivalent to the result of {@link @GlobalScope.db_to_linear} on {@link volume_db}. Setting this member is equivalent to setting {@link volume_db} to the result of {@link @GlobalScope.linear_to_db} on a value.
    */
   volume_linear: float;
+  set_volume_db(value: float): void;
+  get_volume_db(): float;
+  set_volume_linear(value: float): void;
+  get_volume_linear(): float;
 }

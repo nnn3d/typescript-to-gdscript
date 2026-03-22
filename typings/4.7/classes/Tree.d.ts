@@ -57,6 +57,34 @@ declare class Tree extends Control {
    * If `true`, the scroll hint texture will be tiled instead of stretched. See {@link scroll_hint_mode}.
    */
   tile_scroll_hint: boolean;
+  set_allow_reselect(value: boolean): void;
+  get_allow_reselect(): boolean;
+  set_allow_rmb_select(value: boolean): void;
+  get_allow_rmb_select(): boolean;
+  set_allow_search(value: boolean): void;
+  get_allow_search(): boolean;
+  set_auto_tooltip(value: boolean): void;
+  is_auto_tooltip_enabled(): boolean;
+  set_columns(value: int): void;
+  get_columns(): int;
+  set_drop_mode_flags(value: int): void;
+  get_drop_mode_flags(): int;
+  set_enable_drag_unfolding(value: boolean): void;
+  is_drag_unfolding_enabled(): boolean;
+  set_enable_recursive_folding(value: boolean): void;
+  is_recursive_folding_enabled(): boolean;
+  set_hide_root(value: boolean): void;
+  is_root_hidden(): boolean;
+  set_scroll_hint_mode(value: int): void;
+  get_scroll_hint_mode(): int;
+  set_h_scroll_enabled(value: boolean): void;
+  is_h_scroll_enabled(): boolean;
+  set_v_scroll_enabled(value: boolean): void;
+  is_v_scroll_enabled(): boolean;
+  set_select_mode(value: int): void;
+  get_select_mode(): int;
+  set_tile_scroll_hint(value: boolean): void;
+  is_scroll_hint_tiled(): boolean;
 
   /**
    * Clears the tree. This removes all items.

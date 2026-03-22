@@ -19,4 +19,16 @@ declare class PinJoint2D extends Joint2D {
   motor_target_velocity: float;
   /** The higher this value, the more the bond to the pinned partner can flex. */
   softness: float;
+  set_angular_limit_enabled(value: boolean): void;
+  is_angular_limit_enabled(): boolean;
+  set_angular_limit_lower(value: float): void;
+  get_angular_limit_lower(): float;
+  set_angular_limit_upper(value: float): void;
+  get_angular_limit_upper(): float;
+  set_motor_enabled(value: boolean): void;
+  is_motor_enabled(): boolean;
+  set_motor_target_velocity(value: float): void;
+  get_motor_target_velocity(): float;
+  set_softness(value: float): void;
+  get_softness(): float;
 }

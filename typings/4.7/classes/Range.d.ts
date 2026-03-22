@@ -32,6 +32,24 @@ declare class Range extends Control {
    * Range's current value. Changing this property (even via code) will trigger {@link value_changed} signal. Use {@link set_value_no_signal} if you want to avoid it.
    */
   value: float;
+  set_allow_greater(value: boolean): void;
+  is_greater_allowed(): boolean;
+  set_allow_lesser(value: boolean): void;
+  is_lesser_allowed(): boolean;
+  set_exp_ratio(value: boolean): void;
+  is_ratio_exp(): boolean;
+  set_max(value: float): void;
+  get_max(): float;
+  set_min(value: float): void;
+  get_min(): float;
+  set_page(value: float): void;
+  get_page(): float;
+  set_as_ratio(value: float): void;
+  get_as_ratio(): float;
+  set_use_rounded_values(value: boolean): void;
+  is_using_rounded_values(): boolean;
+  set_value(value: float): void;
+  get_value(): float;
 
   /**
    * Called when the {@link Range}'s value is changed (following the same conditions as {@link value_changed}).

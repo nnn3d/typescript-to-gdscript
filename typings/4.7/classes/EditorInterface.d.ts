@@ -11,6 +11,10 @@ declare interface EditorInterface extends GodotObject {
    * If `true`, the Movie Maker mode is enabled in the editor. See {@link MovieWriter} for more information.
    */
   movie_maker_enabled: boolean;
+  set_distraction_free_mode(value: boolean): void;
+  is_distraction_free_mode_enabled(): boolean;
+  set_movie_maker_enabled(value: boolean): void;
+  is_movie_maker_enabled(): boolean;
 
   /**
    * Makes `node` root of the currently opened scene. Only works if the scene is empty. If the `node` is a scene instance, an inheriting scene will be created.

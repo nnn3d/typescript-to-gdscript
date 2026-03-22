@@ -19,6 +19,14 @@ declare class Slider extends Range {
   ticks_on_borders: boolean;
   /** Sets the position of the ticks. See {@link TickPosition} for details. */
   ticks_position: int;
+  set_editable(value: boolean): void;
+  is_editable(): boolean;
+  set_step(value: float): void;
+  get_step(): float;
+  set_ticks_on_borders(value: boolean): void;
+  get_ticks_on_borders(): boolean;
+  set_ticks_position(value: int): void;
+  get_ticks_position(): int;
 
   /**
    * Emitted when the grabber stops being dragged. If `value_changed` is `true`, {@link Range.value} is different from the value when the dragging was started.

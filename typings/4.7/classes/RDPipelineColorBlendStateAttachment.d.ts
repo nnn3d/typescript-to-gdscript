@@ -31,6 +31,28 @@ declare class RDPipelineColorBlendStateAttachment extends RefCounted {
   write_g: boolean;
   /** If `true`, writes the new red color channel to the final result. */
   write_r: boolean;
+  set_alpha_blend_op(value: int): void;
+  get_alpha_blend_op(): int;
+  set_color_blend_op(value: int): void;
+  get_color_blend_op(): int;
+  set_dst_alpha_blend_factor(value: int): void;
+  get_dst_alpha_blend_factor(): int;
+  set_dst_color_blend_factor(value: int): void;
+  get_dst_color_blend_factor(): int;
+  set_enable_blend(value: boolean): void;
+  get_enable_blend(): boolean;
+  set_src_alpha_blend_factor(value: int): void;
+  get_src_alpha_blend_factor(): int;
+  set_src_color_blend_factor(value: int): void;
+  get_src_color_blend_factor(): int;
+  set_write_a(value: boolean): void;
+  get_write_a(): boolean;
+  set_write_b(value: boolean): void;
+  get_write_b(): boolean;
+  set_write_g(value: boolean): void;
+  get_write_g(): boolean;
+  set_write_r(value: boolean): void;
+  get_write_r(): boolean;
 
   /**
    * Convenience method to perform standard mix blending with straight (non-premultiplied) alpha. This sets {@link enable_blend} to `true`, {@link src_color_blend_factor} to {@link RenderingDevice.BLEND_FACTOR_SRC_ALPHA}, {@link dst_color_blend_factor} to {@link RenderingDevice.BLEND_FACTOR_ONE_MINUS_SRC_ALPHA}, {@link src_alpha_blend_factor} to {@link RenderingDevice.BLEND_FACTOR_SRC_ALPHA} and {@link dst_alpha_blend_factor} to {@link RenderingDevice.BLEND_FACTOR_ONE_MINUS_SRC_ALPHA}.

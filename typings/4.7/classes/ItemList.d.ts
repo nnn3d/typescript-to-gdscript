@@ -66,6 +66,38 @@ declare class ItemList extends Control {
    * If `false`, the control will add a horizontal scrollbar to make all items visible.
    */
   wraparound_items: boolean;
+  set_allow_reselect(value: boolean): void;
+  get_allow_reselect(): boolean;
+  set_allow_rmb_select(value: boolean): void;
+  get_allow_rmb_select(): boolean;
+  set_allow_search(value: boolean): void;
+  get_allow_search(): boolean;
+  set_auto_height(value: boolean): void;
+  has_auto_height(): boolean;
+  set_auto_width(value: boolean): void;
+  has_auto_width(): boolean;
+  set_fixed_icon_size(value: Vector2i): void;
+  get_fixed_icon_size(): Vector2i;
+  set_icon_scale(value: float): void;
+  get_icon_scale(): float;
+  set_item_count(value: int): void;
+  get_item_count(): int;
+  set_max_columns(value: int): void;
+  get_max_columns(): int;
+  set_max_text_lines(value: int): void;
+  get_max_text_lines(): int;
+  set_same_column_width(value: boolean): void;
+  is_same_column_width(): boolean;
+  set_scroll_hint_mode(value: int): void;
+  get_scroll_hint_mode(): int;
+  set_select_mode(value: int): void;
+  get_select_mode(): int;
+  set_text_overrun_behavior(value: int): void;
+  get_text_overrun_behavior(): int;
+  set_tile_scroll_hint(value: boolean): void;
+  is_scroll_hint_tiled(): boolean;
+  set_wraparound_items(value: boolean): void;
+  has_wraparound_items(): boolean;
 
   /** Adds an item to the item list with no text, only an icon. Returns the index of an added item. */
   add_icon_item(icon: Texture2D, selectable?: boolean): int;

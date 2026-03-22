@@ -37,6 +37,28 @@ declare class VirtualJoystick extends Control {
   tip_size: float;
   /** The visibility mode to use. */
   visibility_mode: int;
+  set_action_down(value: string): void;
+  get_action_down(): string;
+  set_action_left(value: string): void;
+  get_action_left(): string;
+  set_action_right(value: string): void;
+  get_action_right(): string;
+  set_action_up(value: string): void;
+  get_action_up(): string;
+  set_clampzone_ratio(value: float): void;
+  get_clampzone_ratio(): float;
+  set_deadzone_ratio(value: float): void;
+  get_deadzone_ratio(): float;
+  set_initial_offset_ratio(value: Vector2): void;
+  get_initial_offset_ratio(): Vector2;
+  set_joystick_mode(value: int): void;
+  get_joystick_mode(): int;
+  set_joystick_size(value: float): void;
+  get_joystick_size(): float;
+  set_tip_size(value: float): void;
+  get_tip_size(): float;
+  set_visibility_mode(value: int): void;
+  get_visibility_mode(): int;
 
   /** Emitted when the tip enters the deadzone after being outside of it. */
   flick_canceled: Signal<[]>;

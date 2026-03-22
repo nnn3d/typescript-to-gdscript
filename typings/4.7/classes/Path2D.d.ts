@@ -5,4 +5,6 @@
 declare class Path2D extends Node2D {
   /** A {@link Curve2D} describing the path. */
   curve: Curve2D;
+  set_curve(value: Curve2D): void;
+  get_curve(): Curve2D;
 }

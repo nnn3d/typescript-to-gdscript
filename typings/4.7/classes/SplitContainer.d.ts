@@ -48,6 +48,30 @@ declare class SplitContainer extends Container {
    * Can't be changed when using {@link HSplitContainer} and {@link VSplitContainer}.
    */
   vertical: boolean;
+  set_collapsed(value: boolean): void;
+  is_collapsed(): boolean;
+  set_drag_area_highlight_in_editor(value: boolean): void;
+  is_drag_area_highlight_in_editor_enabled(): boolean;
+  set_drag_area_margin_begin(value: int): void;
+  get_drag_area_margin_begin(): int;
+  set_drag_area_margin_end(value: int): void;
+  get_drag_area_margin_end(): int;
+  set_drag_area_offset(value: int): void;
+  get_drag_area_offset(): int;
+  set_drag_nested_intersections(value: boolean): void;
+  is_dragging_nested_intersections(): boolean;
+  set_dragger_visibility(value: int): void;
+  get_dragger_visibility(): int;
+  set_dragging_enabled(value: boolean): void;
+  is_dragging_enabled(): boolean;
+  set_split_offset(value: int): void;
+  get_split_offset(): int;
+  set_split_offsets(value: PackedInt32Array): void;
+  get_split_offsets(): PackedInt32Array;
+  set_touch_dragger_enabled(value: boolean): void;
+  is_touch_dragger_enabled(): boolean;
+  set_vertical(value: boolean): void;
+  is_vertical(): boolean;
 
   /**
    * Clamps the {@link split_offsets} values to ensure they are within valid ranges and do not overlap with each other. When overlaps occur, this method prioritizes one split offset (at index `priority_index`) by clamping any overlapping split offsets to it.

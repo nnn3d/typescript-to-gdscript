@@ -106,6 +106,62 @@ declare class RichTextLabel extends Control {
    * **Note:** Setting this property updates {@link visible_characters} accordingly.
    */
   visible_ratio: float;
+  set_autowrap_mode(value: int): void;
+  get_autowrap_mode(): int;
+  set_autowrap_trim_flags(value: int): void;
+  get_autowrap_trim_flags(): int;
+  set_use_bbcode(value: boolean): void;
+  is_using_bbcode(): boolean;
+  set_effects(value: Array<unknown>): void;
+  get_effects(): Array<unknown>;
+  set_deselect_on_focus_loss_enabled(value: boolean): void;
+  is_deselect_on_focus_loss_enabled(): boolean;
+  set_drag_and_drop_selection_enabled(value: boolean): void;
+  is_drag_and_drop_selection_enabled(): boolean;
+  set_fit_content(value: boolean): void;
+  is_fit_content_enabled(): boolean;
+  set_horizontal_alignment(value: int): void;
+  get_horizontal_alignment(): int;
+  set_justification_flags(value: int): void;
+  get_justification_flags(): int;
+  set_language(value: string): void;
+  get_language(): string;
+  set_meta_underline(value: boolean): void;
+  is_meta_underlined(): boolean;
+  set_progress_bar_delay(value: int): void;
+  get_progress_bar_delay(): int;
+  set_scroll_active(value: boolean): void;
+  is_scroll_active(): boolean;
+  set_scroll_follow(value: boolean): void;
+  is_scroll_following(): boolean;
+  set_scroll_follow_visible_characters(value: boolean): void;
+  is_scroll_following_visible_characters(): boolean;
+  set_selection_enabled(value: boolean): void;
+  is_selection_enabled(): boolean;
+  set_shortcut_keys_enabled(value: boolean): void;
+  is_shortcut_keys_enabled(): boolean;
+  set_structured_text_bidi_override(value: int): void;
+  get_structured_text_bidi_override(): int;
+  set_structured_text_bidi_override_options(value: Array<unknown>): void;
+  get_structured_text_bidi_override_options(): Array<unknown>;
+  set_tab_size(value: int): void;
+  get_tab_size(): int;
+  set_tab_stops(value: PackedFloat32Array): void;
+  get_tab_stops(): PackedFloat32Array;
+  set_text(value: string): void;
+  get_text(): string;
+  set_text_direction(value: int): void;
+  get_text_direction(): int;
+  set_threaded(value: boolean): void;
+  is_threaded(): boolean;
+  set_vertical_alignment(value: int): void;
+  get_vertical_alignment(): int;
+  set_visible_characters(value: int): void;
+  get_visible_characters(): int;
+  set_visible_characters_behavior(value: int): void;
+  get_visible_characters_behavior(): int;
+  set_visible_ratio(value: float): void;
+  get_visible_ratio(): float;
 
   /**
    * Adds a horizontal rule that can be used to separate content.

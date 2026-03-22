@@ -16,6 +16,12 @@ declare class AnimationNodeStateMachine extends AnimationRootNode {
    * This property can define the process of transitions for different use cases. See also {@link AnimationNodeStateMachine.StateMachineType}.
    */
   state_machine_type: int;
+  set_allow_transition_to_self(value: boolean): void;
+  is_allow_transition_to_self(): boolean;
+  set_reset_ends(value: boolean): void;
+  are_ends_reset(): boolean;
+  set_state_machine_type(value: int): void;
+  get_state_machine_type(): int;
 
   /** Adds a new animation node to the graph. The `position` is used for display in the editor. */
   add_node(name: string, node: AnimationNode, position?: Vector2): void;

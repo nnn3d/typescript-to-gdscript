@@ -21,6 +21,12 @@ declare class OccluderInstance3D extends VisualInstance3D {
    * Alternatively, you can select a primitive occluder to use: {@link QuadOccluder3D}, {@link BoxOccluder3D} or {@link SphereOccluder3D}.
    */
   occluder: Occluder3D;
+  set_bake_mask(value: int): void;
+  get_bake_mask(): int;
+  set_bake_simplification_distance(value: float): void;
+  get_bake_simplification_distance(): float;
+  set_occluder(value: Occluder3D): void;
+  get_occluder(): Occluder3D;
 
   /**
    * Returns whether or not the specified layer of the {@link bake_mask} is enabled, given a `layer_number` between 1 and 32.

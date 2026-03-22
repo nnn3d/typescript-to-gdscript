@@ -23,6 +23,18 @@ declare class VisualShaderNodeFloatParameter extends VisualShaderNodeParameter {
    * Step (increment) value for the range hint with step. Used if {@link hint} is set to {@link HINT_RANGE_STEP}.
    */
   step: float;
+  set_default_value(value: float): void;
+  get_default_value(): float;
+  set_default_value_enabled(value: boolean): void;
+  is_default_value_enabled(): boolean;
+  set_hint(value: int): void;
+  get_hint(): int;
+  set_max(value: float): void;
+  get_max(): float;
+  set_min(value: float): void;
+  get_min(): float;
+  set_step(value: float): void;
+  get_step(): float;
 
   // enum Hint
   /** No hint used. */

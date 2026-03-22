@@ -5,4 +5,6 @@
 declare class CanvasModulate extends Node2D {
   /** The tint color to apply. */
   color: Color;
+  set_color(value: Color): void;
+  get_color(): Color;
 }

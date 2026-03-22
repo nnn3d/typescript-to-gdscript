@@ -62,6 +62,36 @@ declare class ReflectionProbe extends VisualInstance3D {
    * Sets how frequently the {@link ReflectionProbe} is updated. Can be {@link UPDATE_ONCE} or {@link UPDATE_ALWAYS}.
    */
   update_mode: int;
+  set_ambient_color(value: Color): void;
+  get_ambient_color(): Color;
+  set_ambient_color_energy(value: float): void;
+  get_ambient_color_energy(): float;
+  set_ambient_mode(value: int): void;
+  get_ambient_mode(): int;
+  set_blend_distance(value: float): void;
+  get_blend_distance(): float;
+  set_enable_box_projection(value: boolean): void;
+  is_box_projection_enabled(): boolean;
+  set_cull_mask(value: int): void;
+  get_cull_mask(): int;
+  set_enable_shadows(value: boolean): void;
+  are_shadows_enabled(): boolean;
+  set_intensity(value: float): void;
+  get_intensity(): float;
+  set_as_interior(value: boolean): void;
+  is_set_as_interior(): boolean;
+  set_max_distance(value: float): void;
+  get_max_distance(): float;
+  set_mesh_lod_threshold(value: float): void;
+  get_mesh_lod_threshold(): float;
+  set_origin_offset(value: Vector3): void;
+  get_origin_offset(): Vector3;
+  set_reflection_mask(value: int): void;
+  get_reflection_mask(): int;
+  set_size(value: Vector3): void;
+  get_size(): Vector3;
+  set_update_mode(value: int): void;
+  get_update_mode(): int;
 
   // enum UpdateMode
   /**

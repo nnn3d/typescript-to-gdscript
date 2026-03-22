@@ -5,4 +5,6 @@
 declare class InputEventFromWindow extends InputEvent {
   /** The ID of a {@link Window} that received this event. */
   window_id: int;
+  set_window_id(value: int): void;
+  get_window_id(): int;
 }

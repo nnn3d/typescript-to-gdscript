@@ -7,6 +7,8 @@ declare class UndoRedo extends GodotObject {
    * The maximum number of steps that can be stored in the undo/redo history. If the number of stored steps exceeds this limit, older steps are removed from history and can no longer be reached by calling {@link undo}. A value of `0` or lower means no limit.
    */
   max_steps: int;
+  set_max_steps(value: int): void;
+  get_max_steps(): int;
 
   /** Register a {@link Callable} that will be called when the action is committed. */
   add_do_method(callable: Callable): void;

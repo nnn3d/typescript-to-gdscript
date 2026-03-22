@@ -28,4 +28,16 @@ declare class FogMaterial extends Material {
    * The rate by which the height-based fog decreases in density as height increases in world space. A high falloff will result in a sharp transition, while a low falloff will result in a smoother transition. A value of `0.0` results in uniform-density fog. The height threshold is determined by the height of the associated {@link FogVolume}.
    */
   height_falloff: float;
+  set_albedo(value: Color): void;
+  get_albedo(): Color;
+  set_density(value: float): void;
+  get_density(): float;
+  set_density_texture(value: Texture3D): void;
+  get_density_texture(): Texture3D;
+  set_edge_fade(value: float): void;
+  get_edge_fade(): float;
+  set_emission(value: Color): void;
+  get_emission(): Color;
+  set_height_falloff(value: float): void;
+  get_height_falloff(): float;
 }

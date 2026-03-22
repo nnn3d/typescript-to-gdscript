@@ -60,6 +60,27 @@ declare class SceneTree extends MainLoop {
    * **Warning:** Do not delete this node. This will result in unstable behavior, followed by a crash.
    */
   root: Window;
+  set_auto_accept_quit(value: boolean): void;
+  is_auto_accept_quit(): boolean;
+  set_current_scene(value: Node): void;
+  get_current_scene(): Node;
+  set_debug_collisions_hint(value: boolean): void;
+  is_debugging_collisions_hint(): boolean;
+  set_debug_navigation_hint(value: boolean): void;
+  is_debugging_navigation_hint(): boolean;
+  set_debug_paths_hint(value: boolean): void;
+  is_debugging_paths_hint(): boolean;
+  set_edited_scene_root(value: Node): void;
+  get_edited_scene_root(): Node;
+  set_multiplayer_poll_enabled(value: boolean): void;
+  is_multiplayer_poll_enabled(): boolean;
+  set_pause(value: boolean): void;
+  is_paused(): boolean;
+  set_physics_interpolation_enabled(value: boolean): void;
+  is_physics_interpolation_enabled(): boolean;
+  set_quit_on_go_back(value: boolean): void;
+  is_quit_on_go_back(): boolean;
+  get_root(): Window;
 
   /** Calls `method` on each node in the given `group`. */
   call_group(group: string, method: string, ...args: any[]): void;

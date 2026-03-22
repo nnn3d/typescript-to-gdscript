@@ -9,4 +9,10 @@ declare class RDAttachmentFormat extends RefCounted {
   samples: int;
   /** The attachment's usage flags, which determine what can be done with it. */
   usage_flags: int;
+  set_format(value: int): void;
+  get_format(): int;
+  set_samples(value: int): void;
+  get_samples(): int;
+  set_usage_flags(value: int): void;
+  get_usage_flags(): int;
 }

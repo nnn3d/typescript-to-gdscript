@@ -44,6 +44,30 @@ declare class TabContainer extends Container {
    * If `true`, child {@link Control} nodes that are hidden have their minimum size take into account in the total, instead of only the currently visible one.
    */
   use_hidden_tabs_for_min_size: boolean;
+  set_all_tabs_in_front(value: boolean): void;
+  is_all_tabs_in_front(): boolean;
+  set_clip_tabs(value: boolean): void;
+  get_clip_tabs(): boolean;
+  set_current_tab(value: int): void;
+  get_current_tab(): int;
+  set_deselect_enabled(value: boolean): void;
+  get_deselect_enabled(): boolean;
+  set_drag_to_rearrange_enabled(value: boolean): void;
+  get_drag_to_rearrange_enabled(): boolean;
+  set_switch_on_drag_hover(value: boolean): void;
+  get_switch_on_drag_hover(): boolean;
+  set_tab_alignment(value: int): void;
+  get_tab_alignment(): int;
+  set_tab_focus_mode(value: int): void;
+  get_tab_focus_mode(): int;
+  set_tabs_position(value: int): void;
+  get_tabs_position(): int;
+  set_tabs_rearrange_group(value: int): void;
+  get_tabs_rearrange_group(): int;
+  set_tabs_visible(value: boolean): void;
+  are_tabs_visible(): boolean;
+  set_use_hidden_tabs_for_min_size(value: boolean): void;
+  get_use_hidden_tabs_for_min_size(): boolean;
 
   /** Returns the child {@link Control} node located at the active tab index. */
   get_current_tab_control(): Control;

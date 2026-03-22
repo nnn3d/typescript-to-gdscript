@@ -40,6 +40,24 @@ declare class NavigationObstacle3D extends Node3D {
    * The outline vertices of the obstacle. If the vertices are winded in clockwise order agents will be pushed in by the obstacle, else they will be pushed out. Outlines can not be crossed or overlap. Should the vertices using obstacle be warped to a new position agent's can not predict this movement and may get trapped inside the obstacle.
    */
   vertices: PackedVector3Array;
+  set_affect_navigation_mesh(value: boolean): void;
+  get_affect_navigation_mesh(): boolean;
+  set_avoidance_enabled(value: boolean): void;
+  get_avoidance_enabled(): boolean;
+  set_avoidance_layers(value: int): void;
+  get_avoidance_layers(): int;
+  set_carve_navigation_mesh(value: boolean): void;
+  get_carve_navigation_mesh(): boolean;
+  set_height(value: float): void;
+  get_height(): float;
+  set_radius(value: float): void;
+  get_radius(): float;
+  set_use_3d_avoidance(value: boolean): void;
+  get_use_3d_avoidance(): boolean;
+  set_velocity(value: Vector3): void;
+  get_velocity(): Vector3;
+  set_vertices(value: PackedVector3Array): void;
+  get_vertices(): PackedVector3Array;
 
   /**
    * Returns whether or not the specified layer of the {@link avoidance_layers} bitmask is enabled, given a `layer_number` between 1 and 32.

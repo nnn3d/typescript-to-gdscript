@@ -20,6 +20,12 @@ declare class VisualInstance3D extends Node3D {
    * The {@link AABB} center based sorting is generally more accurate for 3D models. The position based sorting instead allows to better control the drawing order when working with {@link GPUParticles3D} and {@link CPUParticles3D}.
    */
   sorting_use_aabb_center: boolean;
+  set_layer_mask(value: int): void;
+  get_layer_mask(): int;
+  set_sorting_offset(value: float): void;
+  get_sorting_offset(): float;
+  set_sorting_use_aabb_center(value: boolean): void;
+  is_sorting_use_aabb_center(): boolean;
 
   _get_aabb(): AABB;
   /** Returns the {@link AABB} (also known as the bounding box) for this {@link VisualInstance3D}. */

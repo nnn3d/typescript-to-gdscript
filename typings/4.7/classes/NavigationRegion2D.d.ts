@@ -23,6 +23,18 @@ declare class NavigationRegion2D extends Node2D {
    * If enabled the navigation region will use edge connections to connect with other navigation regions within proximity of the navigation map edge connection margin.
    */
   use_edge_connections: boolean;
+  set_enabled(value: boolean): void;
+  is_enabled(): boolean;
+  set_enter_cost(value: float): void;
+  get_enter_cost(): float;
+  set_navigation_layers(value: int): void;
+  get_navigation_layers(): int;
+  set_navigation_polygon(value: NavigationPolygon): void;
+  get_navigation_polygon(): NavigationPolygon;
+  set_travel_cost(value: float): void;
+  get_travel_cost(): float;
+  set_use_edge_connections(value: boolean): void;
+  get_use_edge_connections(): boolean;
 
   /**
    * Bakes the {@link NavigationPolygon}. If `on_thread` is set to `true` (default), the baking is done on a separate thread.

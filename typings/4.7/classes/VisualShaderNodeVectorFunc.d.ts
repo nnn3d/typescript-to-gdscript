@@ -5,6 +5,8 @@
 declare class VisualShaderNodeVectorFunc extends VisualShaderNodeVectorBase {
   /** The function to be performed. */
   function: int;
+  set_function(value: int): void;
+  get_function(): int;
 
   // enum Function
   /** Normalizes the vector so that it has a length of `1` but points in the same direction. */

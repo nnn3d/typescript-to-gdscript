@@ -71,6 +71,33 @@ declare class Node extends GodotObject {
    * **Note:** If another node with the same {@link owner} shares the same {@link name} as this node, the other node will no longer be accessible as unique.
    */
   unique_name_in_owner: boolean;
+  set_auto_translate_mode(value: int): void;
+  get_auto_translate_mode(): int;
+  set_editor_description(value: string): void;
+  get_editor_description(): string;
+  get_multiplayer(): MultiplayerAPI;
+  set_name(value: string): void;
+  get_name(): string;
+  set_owner(value: Node): void;
+  get_owner(): Node;
+  set_physics_interpolation_mode(value: int): void;
+  get_physics_interpolation_mode(): int;
+  set_process_mode(value: int): void;
+  get_process_mode(): int;
+  set_physics_process_priority(value: int): void;
+  get_physics_process_priority(): int;
+  set_process_priority(value: int): void;
+  get_process_priority(): int;
+  set_process_thread_group(value: int): void;
+  get_process_thread_group(): int;
+  set_process_thread_group_order(value: int): void;
+  get_process_thread_group_order(): int;
+  set_process_thread_messages(value: int): void;
+  get_process_thread_messages(): int;
+  set_scene_file_path(value: string): void;
+  get_scene_file_path(): string;
+  set_unique_name_in_owner(value: boolean): void;
+  is_unique_name_in_owner(): boolean;
 
   /**
    * Called when the node enters the {@link SceneTree} (e.g. upon instantiating, scene changing, or after calling {@link add_child} in a script). If the node has children, its {@link _enter_tree} callback will be called first, and then that of the children.

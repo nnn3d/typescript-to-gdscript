@@ -28,6 +28,22 @@ declare class PhysicsRayQueryParameters3D extends RefCounted {
   hit_from_inside: boolean;
   /** The ending point of the ray being queried for, in global coordinates. */
   to: Vector3;
+  set_collide_with_areas(value: boolean): void;
+  is_collide_with_areas_enabled(): boolean;
+  set_collide_with_bodies(value: boolean): void;
+  is_collide_with_bodies_enabled(): boolean;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  set_exclude(value: unknown): void;
+  get_exclude(): unknown;
+  set_from(value: Vector3): void;
+  get_from(): Vector3;
+  set_hit_back_faces(value: boolean): void;
+  is_hit_back_faces_enabled(): boolean;
+  set_hit_from_inside(value: boolean): void;
+  is_hit_from_inside_enabled(): boolean;
+  set_to(value: Vector3): void;
+  get_to(): Vector3;
 
   /**
    * Returns a new, pre-configured {@link PhysicsRayQueryParameters3D} object. Use it to quickly create query parameters using the most common options.

@@ -66,6 +66,36 @@ declare class SpriteBase3D extends GeometryInstance3D {
    * If `true`, the texture's transparency and the opacity are used to make those parts of the sprite invisible.
    */
   transparent: boolean;
+  set_alpha_antialiasing_edge(value: float): void;
+  get_alpha_antialiasing_edge(): float;
+  set_alpha_antialiasing(value: int): void;
+  get_alpha_antialiasing(): int;
+  set_alpha_cut_mode(value: int): void;
+  get_alpha_cut_mode(): int;
+  set_alpha_hash_scale(value: float): void;
+  get_alpha_hash_scale(): float;
+  set_alpha_scissor_threshold(value: float): void;
+  get_alpha_scissor_threshold(): float;
+  set_axis(value: int): void;
+  get_axis(): int;
+  set_billboard_mode(value: int): void;
+  get_billboard_mode(): int;
+  set_centered(value: boolean): void;
+  is_centered(): boolean;
+  set_flip_h(value: boolean): void;
+  is_flipped_h(): boolean;
+  set_flip_v(value: boolean): void;
+  is_flipped_v(): boolean;
+  set_modulate(value: Color): void;
+  get_modulate(): Color;
+  set_offset(value: Vector2): void;
+  get_offset(): Vector2;
+  set_pixel_size(value: float): void;
+  get_pixel_size(): float;
+  set_render_priority(value: int): void;
+  get_render_priority(): int;
+  set_texture_filter(value: int): void;
+  get_texture_filter(): int;
 
   /**
    * Returns a {@link TriangleMesh} with the sprite's vertices following its current configuration (such as its {@link axis} and {@link pixel_size}).

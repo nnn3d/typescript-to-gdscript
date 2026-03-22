@@ -5,6 +5,8 @@
 declare class AudioEffectRecord extends AudioEffect {
   /** Specifies the format in which the sample will be recorded. */
   format: int;
+  set_format(value: int): void;
+  get_format(): int;
 
   /** Returns the recorded sample. */
   get_recording(): AudioStreamWAV;

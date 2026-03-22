@@ -24,6 +24,14 @@ declare class AnimatedTexture extends Texture2D {
    * The animation speed is multiplied by this value. If set to a negative value, the animation is played in reverse.
    */
   resource_local_to_scene: boolean;
+  set_current_frame(value: int): void;
+  get_current_frame(): int;
+  set_frames(value: int): void;
+  get_frames(): int;
+  set_one_shot(value: boolean): void;
+  get_one_shot(): boolean;
+  set_pause(value: boolean): void;
+  get_pause(): boolean;
 
   /** Returns the given `frame`'s duration, in seconds. */
   get_frame_duration(frame: int): float;

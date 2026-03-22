@@ -60,6 +60,28 @@ declare class TextureProgressBar extends Range {
   tint_progress: Color;
   /** Multiplies the color of the bar's {@link texture_under} texture. */
   tint_under: Color;
+  set_fill_mode(value: int): void;
+  get_fill_mode(): int;
+  set_radial_center_offset(value: Vector2): void;
+  get_radial_center_offset(): Vector2;
+  set_fill_degrees(value: float): void;
+  get_fill_degrees(): float;
+  set_radial_initial_angle(value: float): void;
+  get_radial_initial_angle(): float;
+  set_over_texture(value: Texture2D): void;
+  get_over_texture(): Texture2D;
+  set_progress_texture(value: Texture2D): void;
+  get_progress_texture(): Texture2D;
+  set_texture_progress_offset(value: Vector2): void;
+  get_texture_progress_offset(): Vector2;
+  set_under_texture(value: Texture2D): void;
+  get_under_texture(): Texture2D;
+  set_tint_over(value: Color): void;
+  get_tint_over(): Color;
+  set_tint_progress(value: Color): void;
+  get_tint_progress(): Color;
+  set_tint_under(value: Color): void;
+  get_tint_under(): Color;
 
   /**
    * Returns the stretch margin with the specified index. See {@link stretch_margin_bottom} and related properties.

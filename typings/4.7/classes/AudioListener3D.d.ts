@@ -8,6 +8,8 @@ declare class AudioListener3D extends Node3D {
    * **Note:** The Doppler effect will only be heard on {@link AudioStreamPlayer3D}s if {@link AudioStreamPlayer3D.doppler_tracking} is not set to {@link AudioStreamPlayer3D.DOPPLER_TRACKING_DISABLED}.
    */
   doppler_tracking: int;
+  set_doppler_tracking(value: int): void;
+  get_doppler_tracking(): int;
 
   /** Disables the listener to use the current camera's listener instead. */
   clear_current(): void;

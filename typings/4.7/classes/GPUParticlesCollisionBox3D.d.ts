@@ -5,4 +5,6 @@
 declare class GPUParticlesCollisionBox3D extends GPUParticlesCollision3D {
   /** The collision box's size in 3D units. */
   size: Vector3;
+  set_size(value: Vector3): void;
+  get_size(): Vector3;
 }

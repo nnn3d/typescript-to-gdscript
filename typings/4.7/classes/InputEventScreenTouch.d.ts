@@ -13,4 +13,12 @@ declare class InputEventScreenTouch extends InputEventFromWindow {
   position: Vector2;
   /** If `true`, the touch's state is pressed. If `false`, the touch's state is released. */
   pressed: boolean;
+  set_canceled(value: boolean): void;
+  set_double_tap(value: boolean): void;
+  is_double_tap(): boolean;
+  set_index(value: int): void;
+  get_index(): int;
+  set_position(value: Vector2): void;
+  get_position(): Vector2;
+  set_pressed(value: boolean): void;
 }

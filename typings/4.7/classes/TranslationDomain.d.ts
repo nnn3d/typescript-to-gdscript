@@ -52,6 +52,26 @@ declare class TranslationDomain extends RefCounted {
    * **Note:** Updating this property does not automatically update texts in the scene tree. Please propagate the {@link MainLoop.NOTIFICATION_TRANSLATION_CHANGED} notification manually after you have finished modifying pseudolocalization related options.
    */
   pseudolocalization_suffix: string;
+  set_enabled(value: boolean): void;
+  is_enabled(): boolean;
+  set_pseudolocalization_accents_enabled(value: boolean): void;
+  is_pseudolocalization_accents_enabled(): boolean;
+  set_pseudolocalization_double_vowels_enabled(value: boolean): void;
+  is_pseudolocalization_double_vowels_enabled(): boolean;
+  set_pseudolocalization_enabled(value: boolean): void;
+  is_pseudolocalization_enabled(): boolean;
+  set_pseudolocalization_expansion_ratio(value: float): void;
+  get_pseudolocalization_expansion_ratio(): float;
+  set_pseudolocalization_fake_bidi_enabled(value: boolean): void;
+  is_pseudolocalization_fake_bidi_enabled(): boolean;
+  set_pseudolocalization_override_enabled(value: boolean): void;
+  is_pseudolocalization_override_enabled(): boolean;
+  set_pseudolocalization_prefix(value: string): void;
+  get_pseudolocalization_prefix(): string;
+  set_pseudolocalization_skip_placeholders_enabled(value: boolean): void;
+  is_pseudolocalization_skip_placeholders_enabled(): boolean;
+  set_pseudolocalization_suffix(value: string): void;
+  get_pseudolocalization_suffix(): string;
 
   /** Adds a translation. */
   add_translation(translation: Translation): void;

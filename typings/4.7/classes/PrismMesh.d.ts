@@ -15,4 +15,14 @@ declare class PrismMesh extends PrimitiveMesh {
   subdivide_height: int;
   /** Number of added edge loops along the X axis. */
   subdivide_width: int;
+  set_left_to_right(value: float): void;
+  get_left_to_right(): float;
+  set_size(value: Vector3): void;
+  get_size(): Vector3;
+  set_subdivide_depth(value: int): void;
+  get_subdivide_depth(): int;
+  set_subdivide_height(value: int): void;
+  get_subdivide_height(): int;
+  set_subdivide_width(value: int): void;
+  get_subdivide_width(): int;
 }

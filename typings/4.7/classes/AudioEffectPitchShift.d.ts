@@ -18,6 +18,12 @@ declare class AudioEffectPitchShift extends AudioEffect {
    * The pitch scale to use. `1.0` is the default pitch and plays sounds unaffected. {@link pitch_scale} can range from 0 (infinitely low pitch, inaudible) to 16 (16 times higher than the initial pitch).
    */
   pitch_scale: float;
+  set_fft_size(value: int): void;
+  get_fft_size(): int;
+  set_oversampling(value: int): void;
+  get_oversampling(): int;
+  set_pitch_scale(value: float): void;
+  get_pitch_scale(): float;
 
   // enum FFTSize
   /**

@@ -11,4 +11,12 @@ declare class BoxMesh extends PrimitiveMesh {
   subdivide_height: int;
   /** Number of extra edge loops inserted along the X axis. */
   subdivide_width: int;
+  set_size(value: Vector3): void;
+  get_size(): Vector3;
+  set_subdivide_depth(value: int): void;
+  get_subdivide_depth(): int;
+  set_subdivide_height(value: int): void;
+  get_subdivide_height(): int;
+  set_subdivide_width(value: int): void;
+  get_subdivide_width(): int;
 }

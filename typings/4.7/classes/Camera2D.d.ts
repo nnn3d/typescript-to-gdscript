@@ -112,6 +112,46 @@ declare class Camera2D extends Node2D {
    * **Note:** {@link FontFile.oversampling} does *not* take {@link Camera2D} zoom into account. This means that zooming in/out will cause bitmap fonts and rasterized (non-MSDF) dynamic fonts to appear blurry or pixelated unless the font is part of a {@link CanvasLayer} that makes it ignore camera zoom. To ensure text remains crisp regardless of zoom, you can enable MSDF font rendering by enabling {@link ProjectSettings.gui/theme/default_font_multichannel_signed_distance_field} (applies to the default project font only), or enabling **Multichannel Signed Distance Field** in the import options of a DynamicFont for custom fonts. On system fonts, {@link SystemFont.multichannel_signed_distance_field} can be enabled in the inspector.
    */
   zoom: Vector2;
+  set_anchor_mode(value: int): void;
+  get_anchor_mode(): int;
+  set_custom_viewport(value: Node): void;
+  get_custom_viewport(): Node;
+  set_drag_horizontal_enabled(value: boolean): void;
+  is_drag_horizontal_enabled(): boolean;
+  set_drag_horizontal_offset(value: float): void;
+  get_drag_horizontal_offset(): float;
+  set_drag_vertical_enabled(value: boolean): void;
+  is_drag_vertical_enabled(): boolean;
+  set_drag_vertical_offset(value: float): void;
+  get_drag_vertical_offset(): float;
+  set_margin_drawing_enabled(value: boolean): void;
+  is_margin_drawing_enabled(): boolean;
+  set_limit_drawing_enabled(value: boolean): void;
+  is_limit_drawing_enabled(): boolean;
+  set_screen_drawing_enabled(value: boolean): void;
+  is_screen_drawing_enabled(): boolean;
+  set_enabled(value: boolean): void;
+  is_enabled(): boolean;
+  set_ignore_rotation(value: boolean): void;
+  is_ignoring_rotation(): boolean;
+  set_limit_enabled(value: boolean): void;
+  is_limit_enabled(): boolean;
+  set_limit_smoothing_enabled(value: boolean): void;
+  is_limit_smoothing_enabled(): boolean;
+  set_offset(value: Vector2): void;
+  get_offset(): Vector2;
+  set_position_smoothing_enabled(value: boolean): void;
+  is_position_smoothing_enabled(): boolean;
+  set_position_smoothing_speed(value: float): void;
+  get_position_smoothing_speed(): float;
+  set_process_callback(value: int): void;
+  get_process_callback(): int;
+  set_rotation_smoothing_enabled(value: boolean): void;
+  is_rotation_smoothing_enabled(): boolean;
+  set_rotation_smoothing_speed(value: float): void;
+  get_rotation_smoothing_speed(): float;
+  set_zoom(value: Vector2): void;
+  get_zoom(): Vector2;
 
   /**
    * Aligns the camera to the tracked node.

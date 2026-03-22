@@ -22,4 +22,12 @@ declare class GPUParticlesAttractor3D extends VisualInstance3D {
    * Adjusts the strength of the attractor. If {@link strength} is negative, particles will be pushed in the opposite direction. Particles will be pushed *away* from the attractor's origin if {@link directionality} is `0.0`, or towards local +Z if {@link directionality} is greater than `0.0`.
    */
   strength: float;
+  set_attenuation(value: float): void;
+  get_attenuation(): float;
+  set_cull_mask(value: int): void;
+  get_cull_mask(): int;
+  set_directionality(value: float): void;
+  get_directionality(): float;
+  set_strength(value: float): void;
+  get_strength(): float;
 }

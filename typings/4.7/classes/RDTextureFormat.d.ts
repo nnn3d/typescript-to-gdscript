@@ -28,6 +28,28 @@ declare class RDTextureFormat extends RefCounted {
   usage_bits: int;
   /** The texture's width (in pixels). */
   width: int;
+  set_array_layers(value: int): void;
+  get_array_layers(): int;
+  set_depth(value: int): void;
+  get_depth(): int;
+  set_format(value: int): void;
+  get_format(): int;
+  set_height(value: int): void;
+  get_height(): int;
+  set_is_discardable(value: boolean): void;
+  get_is_discardable(): boolean;
+  set_is_resolve_buffer(value: boolean): void;
+  get_is_resolve_buffer(): boolean;
+  set_mipmaps(value: int): void;
+  get_mipmaps(): int;
+  set_samples(value: int): void;
+  get_samples(): int;
+  set_texture_type(value: int): void;
+  get_texture_type(): int;
+  set_usage_bits(value: int): void;
+  get_usage_bits(): int;
+  set_width(value: int): void;
+  get_width(): int;
 
   /**
    * Adds `format` as a valid format for the corresponding {@link RDTextureView}'s {@link RDTextureView.format_override} property. If any format is added as shareable, then the main {@link format} must also be added.

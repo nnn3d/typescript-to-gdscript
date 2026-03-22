@@ -1032,6 +1032,17 @@ export class TsToGdTransformer {
 
       // Handle self.method() / self.property() calls
       if (this.isSelfExpression(obj)) {
+        // this.get_node("%UniqueNode") -> %UniqueNode
+        if (
+          method === 'get_node' &&
+          node.arguments.length === 1 &&
+          ts.isStringLiteral(node.arguments[0]!) &&
+          node.arguments[0]!.text.startsWith('%')
+        ) {
+          const name = node.arguments[0]!.text.slice(1);
+          return `%${name}`;
+        }
+
         // Check if it's a method call or function (property) call via type checker
         const symbol = this.ctx.checker.getSymbolAtLocation(node.expression);
         if (symbol) {

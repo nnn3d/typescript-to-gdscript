@@ -5,6 +5,8 @@
 declare class VisualShaderNodeColorFunc extends VisualShaderNode {
   /** A function to be applied to the input color. */
   function: int;
+  set_function(value: int): void;
+  get_function(): int;
 
   // enum Function
   /** Converts the color to grayscale using the following formula: */

@@ -18,6 +18,16 @@ declare class TileSetAtlasSource extends TileSetSource {
    * Disabling this setting might lead a small performance improvement, as generating the internal texture requires both memory and processing time when the TileSetAtlasSource resource is modified.
    */
   use_texture_padding: boolean;
+  set_margins(value: Vector2i): void;
+  get_margins(): Vector2i;
+  set_separation(value: Vector2i): void;
+  get_separation(): Vector2i;
+  set_texture(value: Texture2D): void;
+  get_texture(): Texture2D;
+  set_texture_region_size(value: Vector2i): void;
+  get_texture_region_size(): Vector2i;
+  set_use_texture_padding(value: boolean): void;
+  get_use_texture_padding(): boolean;
 
   /**
    * Removes all tiles that don't fit the available texture area. This method iterates over all the source's tiles, so it's advised to use {@link has_tiles_outside_texture} beforehand.

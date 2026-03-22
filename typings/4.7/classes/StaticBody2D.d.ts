@@ -18,4 +18,10 @@ declare class StaticBody2D extends PhysicsBody2D {
    * If a material is assigned to this property, it will be used instead of any other physics material, such as an inherited one.
    */
   physics_material_override: PhysicsMaterial;
+  set_constant_angular_velocity(value: float): void;
+  get_constant_angular_velocity(): float;
+  set_constant_linear_velocity(value: Vector2): void;
+  get_constant_linear_velocity(): Vector2;
+  set_physics_material_override(value: PhysicsMaterial): void;
+  get_physics_material_override(): PhysicsMaterial;
 }

@@ -11,6 +11,8 @@ declare class XRHandTracker extends XRPositionalTracker {
   /** If `true`, the hand tracking data is valid. */
   has_tracking_data: boolean;
   type: int;
+  set_has_tracking_data(value: boolean): void;
+  get_has_tracking_data(): boolean;
 
   /** Returns the angular velocity for the given hand joint. */
   get_hand_joint_angular_velocity(joint: int): Vector3;

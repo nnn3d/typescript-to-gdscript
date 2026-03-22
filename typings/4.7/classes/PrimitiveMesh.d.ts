@@ -23,6 +23,16 @@ declare class PrimitiveMesh extends Mesh {
    * If the size of the lightmap texture can't be determined when generating the mesh, UV2 is calculated assuming a texture size of 1024x1024.
    */
   uv2_padding: float;
+  set_add_uv2(value: boolean): void;
+  get_add_uv2(): boolean;
+  set_custom_aabb(value: AABB): void;
+  get_custom_aabb(): AABB;
+  set_flip_faces(value: boolean): void;
+  get_flip_faces(): boolean;
+  set_material(value: Material): void;
+  get_material(): Material;
+  set_uv2_padding(value: float): void;
+  get_uv2_padding(): float;
 
   /**
    * Override this method to customize how this primitive mesh should be generated. Should return an {@link Array} where each element is another Array of values required for the mesh (see the {@link Mesh.ArrayType} constants).

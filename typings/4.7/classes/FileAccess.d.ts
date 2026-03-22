@@ -8,6 +8,8 @@ declare class FileAccess extends RefCounted {
    * **Note:** This is always reset to system endianness, which is little-endian on all supported platforms, whenever you open the file. Therefore, you must set {@link big_endian} *after* opening the file, not before.
    */
   big_endian: boolean;
+  set_big_endian(value: boolean): void;
+  is_big_endian(): boolean;
 
   /**
    * Closes the currently opened file and prevents subsequent read/write operations. Use {@link flush} to persist the data to disk without closing the file.

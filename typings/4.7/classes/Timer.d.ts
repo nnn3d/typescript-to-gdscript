@@ -31,6 +31,19 @@ declare class Timer extends Node {
    * **Note:** Timers can only process once per physics or process frame (depending on the {@link process_callback}). An unstable framerate may cause the timer to end inconsistently, which is especially noticeable if the wait time is lower than roughly `0.05` seconds. For very short timers, it is recommended to write your own code instead of using a {@link Timer} node. Timers are also affected by {@link Engine.time_scale}.
    */
   wait_time: float;
+  set_autostart(value: boolean): void;
+  has_autostart(): boolean;
+  set_ignore_time_scale(value: boolean): void;
+  is_ignoring_time_scale(): boolean;
+  set_one_shot(value: boolean): void;
+  is_one_shot(): boolean;
+  set_paused(value: boolean): void;
+  is_paused(): boolean;
+  set_timer_process_callback(value: int): void;
+  get_timer_process_callback(): int;
+  get_time_left(): float;
+  set_wait_time(value: float): void;
+  get_wait_time(): float;
 
   /** Returns `true` if the timer is stopped or has not started. */
   is_stopped(): boolean;

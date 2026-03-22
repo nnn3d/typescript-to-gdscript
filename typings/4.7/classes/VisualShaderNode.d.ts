@@ -11,6 +11,10 @@ declare class VisualShaderNode extends Resource {
    * Sets the output port index which will be showed for preview. If set to `-1` no port will be open for preview.
    */
   output_port_for_preview: int;
+  set_frame(value: int): void;
+  get_frame(): int;
+  set_output_port_for_preview(value: int): void;
+  get_output_port_for_preview(): int;
 
   /** Clears the default input ports value. */
   clear_default_input_values(): void;

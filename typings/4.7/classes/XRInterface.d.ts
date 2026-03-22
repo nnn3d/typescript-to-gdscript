@@ -13,6 +13,12 @@ declare class XRInterface extends RefCounted {
   interface_is_primary: boolean;
   /** The play area mode for this interface. */
   xr_play_area_mode: int;
+  set_anchor_detection_is_enabled(value: boolean): void;
+  get_anchor_detection_is_enabled(): boolean;
+  get_environment_blend_mode(): int;
+  set_primary(value: boolean): void;
+  is_primary(): boolean;
+  get_play_area_mode(): int;
 
   /**
    * If this is an AR interface that requires displaying a camera feed as the background, this method returns the feed ID in the {@link CameraServer} for this interface.

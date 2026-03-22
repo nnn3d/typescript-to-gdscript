@@ -20,6 +20,16 @@ declare class AudioEffectDistortion extends AudioEffect {
   post_gain: float;
   /** Gain before the effect, in dB. Value can range from -60 to 60. */
   pre_gain: float;
+  set_drive(value: float): void;
+  get_drive(): float;
+  set_keep_hf_hz(value: float): void;
+  get_keep_hf_hz(): float;
+  set_mode(value: int): void;
+  get_mode(): int;
+  set_post_gain(value: float): void;
+  get_post_gain(): float;
+  set_pre_gain(value: float): void;
+  get_pre_gain(): float;
 
   // enum Mode
   /**

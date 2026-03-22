@@ -31,4 +31,18 @@ declare class CylinderMesh extends PrimitiveMesh {
    * Top radius of the cylinder. If set to `0.0`, the top faces will not be generated, resulting in a conic shape. See also {@link cap_top}.
    */
   top_radius: float;
+  set_bottom_radius(value: float): void;
+  get_bottom_radius(): float;
+  set_cap_bottom(value: boolean): void;
+  is_cap_bottom(): boolean;
+  set_cap_top(value: boolean): void;
+  is_cap_top(): boolean;
+  set_height(value: float): void;
+  get_height(): float;
+  set_radial_segments(value: int): void;
+  get_radial_segments(): int;
+  set_rings(value: int): void;
+  get_rings(): int;
+  set_top_radius(value: float): void;
+  get_top_radius(): float;
 }

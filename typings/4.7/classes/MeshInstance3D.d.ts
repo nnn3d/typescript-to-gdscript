@@ -12,6 +12,12 @@ declare class MeshInstance3D extends GeometryInstance3D {
   skeleton: string;
   /** The {@link Skin} to be used by this instance. */
   skin: Skin;
+  set_mesh(value: Mesh): void;
+  get_mesh(): Mesh;
+  set_skeleton_path(value: string): void;
+  get_skeleton_path(): string;
+  set_skin(value: Skin): void;
+  get_skin(): Skin;
 
   /**
    * Takes a snapshot from the current {@link ArrayMesh} with all blend shapes applied according to their current weights and bakes it to the provided `existing` mesh. If no `existing` mesh is provided a new {@link ArrayMesh} is created, baked and returned. Mesh surface materials are not copied.

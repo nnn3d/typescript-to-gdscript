@@ -10,6 +10,10 @@ declare class SkeletonModifier3D extends Node3D {
    * **Note:** This value is used by {@link Skeleton3D} to blend, so the {@link SkeletonModifier3D} should always apply only 100% of the result without interpolation.
    */
   influence: float;
+  set_active(value: boolean): void;
+  is_active(): boolean;
+  set_influence(value: float): void;
+  get_influence(): float;
 
   /**
    * Override this virtual method to implement a custom skeleton modifier. You should do things like get the {@link Skeleton3D}'s current pose and apply the pose here.

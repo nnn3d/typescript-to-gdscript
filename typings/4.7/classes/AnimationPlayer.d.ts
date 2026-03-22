@@ -44,6 +44,28 @@ declare class AnimationPlayer extends AnimationMixer {
    * If set to a negative value, the animation is played in reverse. If set to `0`, the animation will not advance.
    */
   speed_scale: float;
+  set_assigned_animation(value: string): void;
+  get_assigned_animation(): string;
+  set_autoplay(value: string): void;
+  get_autoplay(): string;
+  set_current_animation(value: string): void;
+  get_current_animation(): string;
+  get_current_animation_length(): float;
+  get_current_animation_position(): float;
+  set_movie_quit_on_finish_enabled(value: boolean): void;
+  is_movie_quit_on_finish_enabled(): boolean;
+  set_auto_capture(value: boolean): void;
+  is_auto_capture(): boolean;
+  set_auto_capture_duration(value: float): void;
+  get_auto_capture_duration(): float;
+  set_auto_capture_ease_type(value: int): void;
+  get_auto_capture_ease_type(): int;
+  set_auto_capture_transition_type(value: int): void;
+  get_auto_capture_transition_type(): int;
+  set_default_blend_time(value: float): void;
+  get_default_blend_time(): float;
+  set_speed_scale(value: float): void;
+  get_speed_scale(): float;
 
   /** Returns the key of the animation which is queued to play after the `animation_from` animation. */
   animation_get_next(animation_from: string): string;

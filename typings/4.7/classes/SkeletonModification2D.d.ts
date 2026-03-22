@@ -11,6 +11,10 @@ declare class SkeletonModification2D extends Resource {
    * The execution mode for the modification. This tells the modification stack when to execute the modification. Some modifications have settings that are only available in certain execution modes.
    */
   execution_mode: int;
+  set_enabled(value: boolean): void;
+  get_enabled(): boolean;
+  set_execution_mode(value: int): void;
+  get_execution_mode(): int;
 
   /**
    * Used for drawing **editor-only** modification gizmos. This function will only be called in the Godot editor and can be overridden to draw custom gizmos.

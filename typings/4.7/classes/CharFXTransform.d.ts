@@ -59,4 +59,30 @@ declare class CharFXTransform extends RefCounted {
    * If `true`, the character will be drawn. If `false`, the character will be hidden. Characters around hidden characters will reflow to take the space of hidden characters. If this is not desired, set their {@link color} to `Color(1, 1, 1, 0)` instead.
    */
   visible: boolean;
+  set_color(value: Color): void;
+  get_color(): Color;
+  set_elapsed_time(value: float): void;
+  get_elapsed_time(): float;
+  set_environment(value: Dictionary): void;
+  get_environment(): Dictionary;
+  set_font(value: RID): void;
+  get_font(): RID;
+  set_glyph_count(value: int): void;
+  get_glyph_count(): int;
+  set_glyph_flags(value: int): void;
+  get_glyph_flags(): int;
+  set_glyph_index(value: int): void;
+  get_glyph_index(): int;
+  set_offset(value: Vector2): void;
+  get_offset(): Vector2;
+  set_outline(value: boolean): void;
+  is_outline(): boolean;
+  set_range(value: Vector2i): void;
+  get_range(): Vector2i;
+  set_relative_index(value: int): void;
+  get_relative_index(): int;
+  set_transform(value: Transform2D): void;
+  get_transform(): Transform2D;
+  set_visibility(value: boolean): void;
+  is_visible(): boolean;
 }

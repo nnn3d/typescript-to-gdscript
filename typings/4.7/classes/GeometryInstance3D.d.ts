@@ -72,6 +72,38 @@ declare class GeometryInstance3D extends VisualInstance3D {
   visibility_range_end_margin: float;
   /** Controls which instances will be faded when approaching the limits of the visibility range. */
   visibility_range_fade_mode: int;
+  set_cast_shadows_setting(value: int): void;
+  get_cast_shadows_setting(): int;
+  set_custom_aabb(value: AABB): void;
+  get_custom_aabb(): AABB;
+  set_extra_cull_margin(value: float): void;
+  get_extra_cull_margin(): float;
+  set_lightmap_scale(value: int): void;
+  get_lightmap_scale(): int;
+  set_lightmap_texel_scale(value: float): void;
+  get_lightmap_texel_scale(): float;
+  set_gi_mode(value: int): void;
+  get_gi_mode(): int;
+  set_ignore_occlusion_culling(value: boolean): void;
+  is_ignoring_occlusion_culling(): boolean;
+  set_lod_bias(value: float): void;
+  get_lod_bias(): float;
+  set_material_overlay(value: Material): void;
+  get_material_overlay(): Material;
+  set_material_override(value: Material): void;
+  get_material_override(): Material;
+  set_transparency(value: float): void;
+  get_transparency(): float;
+  set_visibility_range_begin(value: float): void;
+  get_visibility_range_begin(): float;
+  set_visibility_range_begin_margin(value: float): void;
+  get_visibility_range_begin_margin(): float;
+  set_visibility_range_end(value: float): void;
+  get_visibility_range_end(): float;
+  set_visibility_range_end_margin(value: float): void;
+  get_visibility_range_end_margin(): float;
+  set_visibility_range_fade_mode(value: int): void;
+  get_visibility_range_fade_mode(): int;
 
   /** Get the value of a shader parameter as set on this instance. */
   get_instance_shader_parameter(name: string): unknown;

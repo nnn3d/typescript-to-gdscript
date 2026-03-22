@@ -13,4 +13,10 @@ declare class PointLight2D extends Light2D {
   texture: Texture2D;
   /** The {@link texture}'s scale factor. */
   texture_scale: float;
+  set_texture_offset(value: Vector2): void;
+  get_texture_offset(): Vector2;
+  set_texture(value: Texture2D): void;
+  get_texture(): Texture2D;
+  set_texture_scale(value: float): void;
+  get_texture_scale(): float;
 }

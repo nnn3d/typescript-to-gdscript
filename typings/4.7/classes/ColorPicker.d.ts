@@ -33,6 +33,30 @@ declare class ColorPicker extends VBoxContainer {
   sampler_visible: boolean;
   /** If `true`, the color sliders are visible. */
   sliders_visible: boolean;
+  set_can_add_swatches(value: boolean): void;
+  are_swatches_enabled(): boolean;
+  set_pick_color(value: Color): void;
+  get_pick_color(): Color;
+  set_color_mode(value: int): void;
+  get_color_mode(): int;
+  set_modes_visible(value: boolean): void;
+  are_modes_visible(): boolean;
+  set_deferred_mode(value: boolean): void;
+  is_deferred_mode(): boolean;
+  set_edit_alpha(value: boolean): void;
+  is_editing_alpha(): boolean;
+  set_edit_intensity(value: boolean): void;
+  is_editing_intensity(): boolean;
+  set_hex_visible(value: boolean): void;
+  is_hex_visible(): boolean;
+  set_picker_shape(value: int): void;
+  get_picker_shape(): int;
+  set_presets_visible(value: boolean): void;
+  are_presets_visible(): boolean;
+  set_sampler_visible(value: boolean): void;
+  is_sampler_visible(): boolean;
+  set_sliders_visible(value: boolean): void;
+  are_sliders_visible(): boolean;
 
   /**
    * Adds the given color to a list of color presets. The presets are displayed in the color picker and the user will be able to select them.

@@ -24,4 +24,14 @@ declare class ParallaxBackground extends CanvasLayer {
    * The ParallaxBackground's scroll value. Calculated automatically when using a {@link Camera2D}, but can be used to manually manage scrolling when no camera is present.
    */
   scroll_offset: Vector2;
+  set_scroll_base_scale(value: Vector2): void;
+  get_scroll_base_scale(): Vector2;
+  set_ignore_camera_zoom(value: boolean): void;
+  is_ignore_camera_zoom(): boolean;
+  set_limit_begin(value: Vector2): void;
+  get_limit_begin(): Vector2;
+  set_limit_end(value: Vector2): void;
+  get_limit_end(): Vector2;
+  set_scroll_offset(value: Vector2): void;
+  get_scroll_offset(): Vector2;
 }

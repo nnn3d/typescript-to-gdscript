@@ -8,6 +8,8 @@ declare class PacketPeer extends RefCounted {
    * The {@link put_var} method allocates memory on the stack, and the buffer used will grow automatically to the closest power of two to match the size of the {@link Variant}. If the {@link Variant} is bigger than {@link encode_buffer_max_size}, the method will error out with {@link ERR_OUT_OF_MEMORY}.
    */
   encode_buffer_max_size: int;
+  set_encode_buffer_max_size(value: int): void;
+  get_encode_buffer_max_size(): int;
 
   /** Returns the number of packets currently available in the ring-buffer. */
   get_available_packet_count(): int;

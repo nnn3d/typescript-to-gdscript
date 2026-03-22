@@ -18,4 +18,14 @@ declare class PhysicsPointQueryParameters3D extends RefCounted {
   exclude: unknown;
   /** The position being queried for, in global coordinates. */
   position: Vector3;
+  set_collide_with_areas(value: boolean): void;
+  is_collide_with_areas_enabled(): boolean;
+  set_collide_with_bodies(value: boolean): void;
+  is_collide_with_bodies_enabled(): boolean;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  set_exclude(value: unknown): void;
+  get_exclude(): unknown;
+  set_position(value: Vector3): void;
+  get_position(): Vector3;
 }

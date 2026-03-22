@@ -8,6 +8,8 @@ declare class Shortcut extends Resource {
    * Generally the {@link InputEvent} used is an {@link InputEventKey}, though it can be any {@link InputEvent}, including an {@link InputEventAction}.
    */
   events: Array<unknown>;
+  set_events(value: Array<unknown>): void;
+  get_events(): Array<unknown>;
 
   /** Returns the shortcut's first valid {@link InputEvent} as a {@link String}. */
   get_as_text(): string;

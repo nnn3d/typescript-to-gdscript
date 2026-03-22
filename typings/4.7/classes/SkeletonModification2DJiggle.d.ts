@@ -27,6 +27,20 @@ declare class SkeletonModification2DJiggle extends SkeletonModification2D {
    * Whether the gravity vector, {@link gravity}, should be applied to the Jiggle joints, assuming they are not overriding the default settings.
    */
   use_gravity: boolean;
+  set_damping(value: float): void;
+  get_damping(): float;
+  set_gravity(value: Vector2): void;
+  get_gravity(): Vector2;
+  set_jiggle_data_chain_length(value: int): void;
+  get_jiggle_data_chain_length(): int;
+  set_mass(value: float): void;
+  get_mass(): float;
+  set_stiffness(value: float): void;
+  get_stiffness(): float;
+  set_target_node(value: string): void;
+  get_target_node(): string;
+  set_use_gravity(value: boolean): void;
+  get_use_gravity(): boolean;
 
   /** Returns the collision mask used by the Jiggle modifier when collisions are enabled. */
   get_collision_mask(): int;

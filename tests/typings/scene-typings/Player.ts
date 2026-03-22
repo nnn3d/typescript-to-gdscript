@@ -31,6 +31,10 @@ export class Player extends CharacterBody2D {
     let unknown = this.get_node('Unknown');
     const _checkUnknown: IsExact<typeof unknown, Node> = true;
 
+    // get_node: unique node via %Name → exact type
+    let health = this.get_node('%HealthBar');
+    const _checkHealth: IsExact<typeof health, ProgressBar> = true;
+
     this.get_tree().change_scene_to_file('res://Anonym.tscn');
 
     // Autoload global singleton — GameManager is declared globally from project.godot [autoload]

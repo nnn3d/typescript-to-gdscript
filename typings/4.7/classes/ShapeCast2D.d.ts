@@ -29,6 +29,25 @@ declare class ShapeCast2D extends Node2D {
   shape: Shape2D;
   /** The shape's destination point, relative to this node's {@link Node2D.position}. */
   target_position: Vector2;
+  set_collide_with_areas(value: boolean): void;
+  is_collide_with_areas_enabled(): boolean;
+  set_collide_with_bodies(value: boolean): void;
+  is_collide_with_bodies_enabled(): boolean;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  get_collision_result(): Array<unknown>;
+  set_enabled(value: boolean): void;
+  is_enabled(): boolean;
+  set_exclude_parent_body(value: boolean): void;
+  get_exclude_parent_body(): boolean;
+  set_margin(value: float): void;
+  get_margin(): float;
+  set_max_results(value: int): void;
+  get_max_results(): int;
+  set_shape(value: Shape2D): void;
+  get_shape(): Shape2D;
+  set_target_position(value: Vector2): void;
+  get_target_position(): Vector2;
 
   /** Adds a collision exception so the shape does not report collisions with the specified node. */
   add_exception(node: CollisionObject2D): void;

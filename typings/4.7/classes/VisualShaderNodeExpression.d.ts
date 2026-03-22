@@ -7,4 +7,6 @@ declare class VisualShaderNodeExpression extends VisualShaderNodeGroupBase {
    * An expression in Godot Shading Language, which will be injected at the start of the graph's matching shader function (`vertex`, `fragment`, or `light`), and thus cannot be used to declare functions, varyings, uniforms, or global constants.
    */
   expression: string;
+  set_expression(value: string): void;
+  get_expression(): string;
 }

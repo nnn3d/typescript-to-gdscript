@@ -14,6 +14,13 @@ declare class LimitAngularVelocityModifier3D extends SkeletonModifier3D {
   joint_count: int;
   /** The maximum angular velocity per second. */
   max_angular_velocity: float;
+  set_chain_count(value: int): void;
+  get_chain_count(): int;
+  set_exclude(value: boolean): void;
+  is_exclude(): boolean;
+  _get_joint_count(): int;
+  set_max_angular_velocity(value: float): void;
+  get_max_angular_velocity(): float;
 
   /** Clear all chains. */
   clear_chains(): void;

@@ -13,6 +13,12 @@ declare class SkeletonModificationStack2D extends Resource {
    * The interpolation strength of the modifications in stack. A value of `0` will make it where the modifications are not applied, a strength of `0.5` will be half applied, and a strength of `1` will allow the modifications to be fully applied and override the {@link Skeleton2D} {@link Bone2D} poses.
    */
   strength: float;
+  set_enabled(value: boolean): void;
+  get_enabled(): boolean;
+  set_modification_count(value: int): void;
+  get_modification_count(): int;
+  set_strength(value: float): void;
+  get_strength(): float;
 
   /** Adds the passed-in {@link SkeletonModification2D} to the stack. */
   add_modification(modification: SkeletonModification2D): void;

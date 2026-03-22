@@ -83,6 +83,28 @@ declare class FileDialog extends ConfirmationDialog {
    * **Note:** This property is ignored in {@link EditorFileDialog}.
    */
   size: Vector2i;
+  set_access(value: int): void;
+  get_access(): int;
+  set_current_dir(value: string): void;
+  get_current_dir(): string;
+  set_current_file(value: string): void;
+  get_current_file(): string;
+  set_current_path(value: string): void;
+  get_current_path(): string;
+  set_file_mode(value: int): void;
+  get_file_mode(): int;
+  set_filename_filter(value: string): void;
+  get_filename_filter(): string;
+  set_filters(value: PackedStringArray): void;
+  get_filters(): PackedStringArray;
+  set_mode_overrides_title(value: boolean): void;
+  is_mode_overriding_title(): boolean;
+  set_option_count(value: int): void;
+  get_option_count(): int;
+  set_root_subfolder(value: string): void;
+  get_root_subfolder(): string;
+  set_show_hidden_files(value: boolean): void;
+  is_showing_hidden_files(): boolean;
 
   /**
    * Adds a comma-separated file extension `filter` and comma-separated MIME type `mime_type` option to the {@link FileDialog} with an optional `description`, which restricts what files can be picked.

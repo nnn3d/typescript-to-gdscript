@@ -48,6 +48,34 @@ declare class Line2D extends Node2D {
    * The polyline's width curve. The width of the polyline over its length will be equivalent to the value of the width curve over its domain. The width curve should be a unit {@link Curve}.
    */
   width_curve: Curve;
+  set_antialiased(value: boolean): void;
+  get_antialiased(): boolean;
+  set_begin_cap_mode(value: int): void;
+  get_begin_cap_mode(): int;
+  set_closed(value: boolean): void;
+  is_closed(): boolean;
+  set_default_color(value: Color): void;
+  get_default_color(): Color;
+  set_end_cap_mode(value: int): void;
+  get_end_cap_mode(): int;
+  set_gradient(value: Gradient): void;
+  get_gradient(): Gradient;
+  set_joint_mode(value: int): void;
+  get_joint_mode(): int;
+  set_points(value: PackedVector2Array): void;
+  get_points(): PackedVector2Array;
+  set_round_precision(value: int): void;
+  get_round_precision(): int;
+  set_sharp_limit(value: float): void;
+  get_sharp_limit(): float;
+  set_texture(value: Texture2D): void;
+  get_texture(): Texture2D;
+  set_texture_mode(value: int): void;
+  get_texture_mode(): int;
+  set_width(value: float): void;
+  get_width(): float;
+  set_curve(value: Curve): void;
+  get_curve(): Curve;
 
   /**
    * Adds a point with the specified `position` relative to the polyline's own position. If no `index` is provided, the new point will be added to the end of the points array.

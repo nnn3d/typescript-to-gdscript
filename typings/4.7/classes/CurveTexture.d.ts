@@ -14,6 +14,9 @@ declare class CurveTexture extends Texture2D {
    * The width of the texture (in pixels). Higher values make it possible to represent high-frequency data better (such as sudden direction changes), at the cost of increased generation time and memory usage.
    */
   width: int;
+  set_curve(value: Curve): void;
+  get_curve(): Curve;
+  set_width(value: int): void;
 
   // enum TextureMode
   /**

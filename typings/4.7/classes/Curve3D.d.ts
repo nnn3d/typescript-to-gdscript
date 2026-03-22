@@ -17,6 +17,14 @@ declare class Curve3D extends Resource {
    * If `true`, the curve will bake up vectors used for orientation. This is used when {@link PathFollow3D.rotation_mode} is set to {@link PathFollow3D.ROTATION_ORIENTED}. Changing it forces the cache to be recomputed.
    */
   up_vector_enabled: boolean;
+  set_bake_interval(value: float): void;
+  get_bake_interval(): float;
+  set_closed(value: boolean): void;
+  is_closed(): boolean;
+  set_point_count(value: int): void;
+  get_point_count(): int;
+  set_up_vector_enabled(value: boolean): void;
+  is_up_vector_enabled(): boolean;
 
   /**
    * Adds a point with the specified `position` relative to the curve's own position, with control points `in` and `out`. Appends the new point at the end of the point list.

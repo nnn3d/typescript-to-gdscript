@@ -22,4 +22,14 @@ declare class CameraAttributes extends Resource {
    * **Note:** Only available when {@link ProjectSettings.rendering/lights_and_shadows/use_physical_light_units} is enabled.
    */
   exposure_sensitivity: float;
+  set_auto_exposure_enabled(value: boolean): void;
+  is_auto_exposure_enabled(): boolean;
+  set_auto_exposure_scale(value: float): void;
+  get_auto_exposure_scale(): float;
+  set_auto_exposure_speed(value: float): void;
+  get_auto_exposure_speed(): float;
+  set_exposure_multiplier(value: float): void;
+  get_exposure_multiplier(): float;
+  set_exposure_sensitivity(value: float): void;
+  get_exposure_sensitivity(): float;
 }

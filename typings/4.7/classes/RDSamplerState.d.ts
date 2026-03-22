@@ -58,4 +58,34 @@ declare class RDSamplerState extends RefCounted {
   unnormalized_uvw: boolean;
   /** If `true`, perform anisotropic sampling. See {@link anisotropy_max}. */
   use_anisotropy: boolean;
+  set_anisotropy_max(value: float): void;
+  get_anisotropy_max(): float;
+  set_border_color(value: int): void;
+  get_border_color(): int;
+  set_compare_op(value: int): void;
+  get_compare_op(): int;
+  set_enable_compare(value: boolean): void;
+  get_enable_compare(): boolean;
+  set_lod_bias(value: float): void;
+  get_lod_bias(): float;
+  set_mag_filter(value: int): void;
+  get_mag_filter(): int;
+  set_max_lod(value: float): void;
+  get_max_lod(): float;
+  set_min_filter(value: int): void;
+  get_min_filter(): int;
+  set_min_lod(value: float): void;
+  get_min_lod(): float;
+  set_mip_filter(value: int): void;
+  get_mip_filter(): int;
+  set_repeat_u(value: int): void;
+  get_repeat_u(): int;
+  set_repeat_v(value: int): void;
+  get_repeat_v(): int;
+  set_repeat_w(value: int): void;
+  get_repeat_w(): int;
+  set_unnormalized_uvw(value: boolean): void;
+  get_unnormalized_uvw(): boolean;
+  set_use_anisotropy(value: boolean): void;
+  get_use_anisotropy(): boolean;
 }

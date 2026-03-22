@@ -5,6 +5,8 @@
 declare class VisualShaderNodeColorOp extends VisualShaderNode {
   /** An operator to be applied to the inputs. */
   operator: int;
+  set_operator(value: int): void;
+  get_operator(): int;
 
   // enum Operator
   /** Produce a screen effect with the following formula: */

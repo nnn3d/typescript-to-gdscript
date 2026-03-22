@@ -110,6 +110,58 @@ declare class GPUParticles2D extends Node2D {
    * Grow the rect if particles suddenly appear/disappear when the node enters/exits the screen. The {@link Rect2} can be grown via code or with the **Particles → Generate Visibility Rect** editor tool.
    */
   visibility_rect: Rect2;
+  set_amount(value: int): void;
+  get_amount(): int;
+  set_amount_ratio(value: float): void;
+  get_amount_ratio(): float;
+  set_collision_base_size(value: float): void;
+  get_collision_base_size(): float;
+  set_draw_order(value: int): void;
+  get_draw_order(): int;
+  set_emitting(value: boolean): void;
+  is_emitting(): boolean;
+  set_explosiveness_ratio(value: float): void;
+  get_explosiveness_ratio(): float;
+  set_fixed_fps(value: int): void;
+  get_fixed_fps(): int;
+  set_fractional_delta(value: boolean): void;
+  get_fractional_delta(): boolean;
+  set_interp_to_end(value: float): void;
+  get_interp_to_end(): float;
+  set_interpolate(value: boolean): void;
+  get_interpolate(): boolean;
+  set_lifetime(value: float): void;
+  get_lifetime(): float;
+  set_use_local_coordinates(value: boolean): void;
+  get_use_local_coordinates(): boolean;
+  set_one_shot(value: boolean): void;
+  get_one_shot(): boolean;
+  set_pre_process_time(value: float): void;
+  get_pre_process_time(): float;
+  set_process_material(value: Material): void;
+  get_process_material(): Material;
+  set_randomness_ratio(value: float): void;
+  get_randomness_ratio(): float;
+  set_seed(value: int): void;
+  get_seed(): int;
+  set_speed_scale(value: float): void;
+  get_speed_scale(): float;
+  set_sub_emitter(value: string): void;
+  get_sub_emitter(): string;
+  set_texture(value: Texture2D): void;
+  get_texture(): Texture2D;
+  set_trail_enabled(value: boolean): void;
+  is_trail_enabled(): boolean;
+  set_trail_lifetime(value: float): void;
+  get_trail_lifetime(): float;
+  set_trail_section_subdivisions(value: int): void;
+  get_trail_section_subdivisions(): int;
+  set_trail_sections(value: int): void;
+  get_trail_sections(): int;
+  set_use_fixed_seed(value: boolean): void;
+  get_use_fixed_seed(): boolean;
+  set_visibility_rect(value: Rect2): void;
+  get_visibility_rect(): Rect2;
 
   /**
    * Returns a rectangle containing the positions of all existing particles.

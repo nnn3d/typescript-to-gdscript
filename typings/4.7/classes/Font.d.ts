@@ -8,6 +8,8 @@ declare class Font extends Resource {
    * If this array is empty in a {@link FontVariation}, the {@link FontVariation.base_font}'s fallbacks are used instead.
    */
   fallbacks: unknown;
+  set_fallbacks(value: unknown): void;
+  get_fallbacks(): unknown;
 
   /**
    * Draw a single Unicode character `char` into a canvas item using the font, at a given position, with `modulate` color. `pos` specifies the baseline, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.

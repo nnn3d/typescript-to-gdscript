@@ -21,6 +21,16 @@ declare class AudioStreamRandomizer extends AudioStream {
   random_volume_offset_db: float;
   /** The number of streams in the stream pool. */
   streams_count: int;
+  set_playback_mode(value: int): void;
+  get_playback_mode(): int;
+  set_random_pitch(value: float): void;
+  get_random_pitch(): float;
+  set_random_pitch_semitones(value: float): void;
+  get_random_pitch_semitones(): float;
+  set_random_volume_offset_db(value: float): void;
+  get_random_volume_offset_db(): float;
+  set_streams_count(value: int): void;
+  get_streams_count(): int;
 
   /**
    * Insert a stream at the specified index. If the index is less than zero, the insertion occurs at the end of the underlying pool.

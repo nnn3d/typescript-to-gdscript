@@ -21,6 +21,14 @@ declare class AudioEffectFilter extends AudioEffect {
    * - For low/high-pass filters, it increases or decreases frequencies at the {@link cutoff_hz} frequency threshold.
    */
   resonance: float;
+  set_cutoff(value: float): void;
+  get_cutoff(): float;
+  set_db(value: int): void;
+  get_db(): int;
+  set_gain(value: float): void;
+  get_gain(): float;
+  set_resonance(value: float): void;
+  get_resonance(): float;
 
   // enum FilterDB
   /**

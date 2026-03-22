@@ -21,6 +21,10 @@ declare class SubViewportContainer extends Container {
    * **Note:** {@link stretch} must be `true` for this property to work.
    */
   stretch_shrink: int;
+  set_stretch(value: boolean): void;
+  is_stretch_enabled(): boolean;
+  set_stretch_shrink(value: int): void;
+  get_stretch_shrink(): int;
 
   /**
    * Virtual method to be implemented by the user. If it returns `true`, the `event` is propagated to {@link SubViewport} children. Propagation doesn't happen if it returns `false`. If the function is not implemented, all events are propagated to SubViewports.

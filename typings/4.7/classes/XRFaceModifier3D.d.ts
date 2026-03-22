@@ -7,4 +7,8 @@ declare class XRFaceModifier3D extends Node3D {
   face_tracker: string;
   /** The {@link NodePath} of the face {@link MeshInstance3D}. */
   target: string;
+  set_face_tracker(value: string): void;
+  get_face_tracker(): string;
+  set_target(value: string): void;
+  get_target(): string;
 }

@@ -15,6 +15,8 @@ declare class MenuButton extends Button {
    */
   switch_on_hover: boolean;
   toggle_mode: boolean;
+  set_switch_on_hover(value: boolean): void;
+  is_switch_on_hover(): boolean;
 
   /**
    * Returns the {@link PopupMenu} contained in this button.

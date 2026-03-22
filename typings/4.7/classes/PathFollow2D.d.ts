@@ -28,4 +28,18 @@ declare class PathFollow2D extends Node2D {
   rotates: boolean;
   /** The node's offset perpendicular to the curve. */
   v_offset: float;
+  set_cubic_interpolation(value: boolean): void;
+  get_cubic_interpolation(): boolean;
+  set_h_offset(value: float): void;
+  get_h_offset(): float;
+  set_loop(value: boolean): void;
+  has_loop(): boolean;
+  set_progress(value: float): void;
+  get_progress(): float;
+  set_progress_ratio(value: float): void;
+  get_progress_ratio(): float;
+  set_rotates(value: boolean): void;
+  is_rotating(): boolean;
+  set_v_offset(value: float): void;
+  get_v_offset(): float;
 }

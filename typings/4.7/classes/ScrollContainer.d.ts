@@ -45,6 +45,26 @@ declare class ScrollContainer extends Container {
   tile_scroll_hint: boolean;
   /** Controls whether vertical scrollbar can be used and when it should be visible. */
   vertical_scroll_mode: int;
+  set_follow_focus(value: boolean): void;
+  is_following_focus(): boolean;
+  set_horizontal_scroll_mode(value: int): void;
+  get_horizontal_scroll_mode(): int;
+  set_deadzone(value: int): void;
+  get_deadzone(): int;
+  set_scroll_hint_mode(value: int): void;
+  get_scroll_hint_mode(): int;
+  set_h_scroll(value: int): void;
+  get_h_scroll(): int;
+  set_horizontal_custom_step(value: float): void;
+  get_horizontal_custom_step(): float;
+  set_v_scroll(value: int): void;
+  get_v_scroll(): int;
+  set_vertical_custom_step(value: float): void;
+  get_vertical_custom_step(): float;
+  set_tile_scroll_hint(value: boolean): void;
+  is_scroll_hint_tiled(): boolean;
+  set_vertical_scroll_mode(value: int): void;
+  get_vertical_scroll_mode(): int;
 
   /**
    * Ensures the given `control` is visible (must be a direct or indirect child of the ScrollContainer). Used by {@link follow_focus}.

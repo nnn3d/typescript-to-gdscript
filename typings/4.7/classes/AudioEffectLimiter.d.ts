@@ -15,4 +15,12 @@ declare class AudioEffectLimiter extends AudioEffect {
    * The volume threshold level from which the limiter begins to be active, in dB. Value can range from -30 to 0.
    */
   threshold_db: float;
+  set_ceiling_db(value: float): void;
+  get_ceiling_db(): float;
+  set_soft_clip_db(value: float): void;
+  get_soft_clip_db(): float;
+  set_soft_clip_ratio(value: float): void;
+  get_soft_clip_ratio(): float;
+  set_threshold_db(value: float): void;
+  get_threshold_db(): float;
 }

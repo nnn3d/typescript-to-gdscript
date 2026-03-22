@@ -26,6 +26,18 @@ declare class GradientTexture2D extends Texture2D {
    * The number of horizontal color samples that will be obtained from the {@link Gradient}, which also represents the texture's width.
    */
   width: int;
+  set_fill(value: int): void;
+  get_fill(): int;
+  set_fill_from(value: Vector2): void;
+  get_fill_from(): Vector2;
+  set_fill_to(value: Vector2): void;
+  get_fill_to(): Vector2;
+  set_gradient(value: Gradient): void;
+  get_gradient(): Gradient;
+  set_height(value: int): void;
+  set_repeat(value: int): void;
+  get_repeat(): int;
+  set_width(value: int): void;
 
   // enum Fill
   /** The colors are linearly interpolated in a straight line. */

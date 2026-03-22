@@ -5,6 +5,8 @@
 declare class VisualShaderNodeTransformOp extends VisualShaderNode {
   /** The type of the operation to be performed on the transforms. */
   operator: int;
+  set_operator(value: int): void;
+  get_operator(): int;
 
   // enum Operator
   /** Multiplies transform `a` by the transform `b`. */

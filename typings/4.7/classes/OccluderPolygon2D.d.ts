@@ -11,6 +11,12 @@ declare class OccluderPolygon2D extends Resource {
   cull_mode: int;
   /** A {@link Vector2} array with the index for polygon's vertices positions. */
   polygon: PackedVector2Array;
+  set_closed(value: boolean): void;
+  is_closed(): boolean;
+  set_cull_mode(value: int): void;
+  get_cull_mode(): int;
+  set_polygon(value: PackedVector2Array): void;
+  get_polygon(): PackedVector2Array;
 
   // enum CullMode
   /** Culling is disabled. See {@link cull_mode}. */

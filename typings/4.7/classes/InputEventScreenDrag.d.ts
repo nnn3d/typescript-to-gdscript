@@ -33,4 +33,22 @@ declare class InputEventScreenDrag extends InputEventFromWindow {
    * **Note:** {@link velocity} is automatically scaled according to the content scale factor, which is defined by the project's stretch mode settings. This means touch sensitivity will appear different depending on resolution when using {@link velocity} in a script that handles touch aiming. To avoid this, use {@link screen_velocity} instead.
    */
   velocity: Vector2;
+  set_index(value: int): void;
+  get_index(): int;
+  set_pen_inverted(value: boolean): void;
+  get_pen_inverted(): boolean;
+  set_position(value: Vector2): void;
+  get_position(): Vector2;
+  set_pressure(value: float): void;
+  get_pressure(): float;
+  set_relative(value: Vector2): void;
+  get_relative(): Vector2;
+  set_screen_relative(value: Vector2): void;
+  get_screen_relative(): Vector2;
+  set_screen_velocity(value: Vector2): void;
+  get_screen_velocity(): Vector2;
+  set_tilt(value: Vector2): void;
+  get_tilt(): Vector2;
+  set_velocity(value: Vector2): void;
+  get_velocity(): Vector2;
 }

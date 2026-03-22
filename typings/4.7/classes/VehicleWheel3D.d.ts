@@ -61,6 +61,32 @@ declare class VehicleWheel3D extends Node3D {
    * This value affects the roll of your vehicle. If set to 1.0 for all wheels, your vehicle will resist body roll, while a value of 0.0 will be prone to rolling over.
    */
   wheel_roll_influence: float;
+  set_brake(value: float): void;
+  get_brake(): float;
+  set_damping_compression(value: float): void;
+  get_damping_compression(): float;
+  set_damping_relaxation(value: float): void;
+  get_damping_relaxation(): float;
+  set_engine_force(value: float): void;
+  get_engine_force(): float;
+  set_suspension_max_force(value: float): void;
+  get_suspension_max_force(): float;
+  set_suspension_stiffness(value: float): void;
+  get_suspension_stiffness(): float;
+  set_suspension_travel(value: float): void;
+  get_suspension_travel(): float;
+  set_use_as_steering(value: boolean): void;
+  is_used_as_steering(): boolean;
+  set_use_as_traction(value: boolean): void;
+  is_used_as_traction(): boolean;
+  set_friction_slip(value: float): void;
+  get_friction_slip(): float;
+  set_radius(value: float): void;
+  get_radius(): float;
+  set_suspension_rest_length(value: float): void;
+  get_suspension_rest_length(): float;
+  set_roll_influence(value: float): void;
+  get_roll_influence(): float;
 
   /**
    * Returns the contacting body node if valid in the tree, as {@link Node3D}. At the moment, {@link GridMap} is not supported so the node will be always of type {@link PhysicsBody3D}.

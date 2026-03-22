@@ -7,4 +7,8 @@ declare class ModifierBoneTarget3D extends SkeletonModifier3D {
   bone: int;
   /** The name of the attached bone. */
   bone_name: string;
+  set_bone(value: int): void;
+  get_bone(): int;
+  set_bone_name(value: string): void;
+  get_bone_name(): string;
 }

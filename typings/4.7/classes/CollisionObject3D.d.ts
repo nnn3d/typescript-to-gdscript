@@ -29,6 +29,18 @@ declare class CollisionObject3D extends Node3D {
    * If `true`, this object is pickable. A pickable object can detect the mouse pointer entering/leaving, and if the mouse is inside it, report input events. Requires at least one {@link collision_layer} bit to be set.
    */
   input_ray_pickable: boolean;
+  set_collision_layer(value: int): void;
+  get_collision_layer(): int;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  set_collision_priority(value: float): void;
+  get_collision_priority(): float;
+  set_disable_mode(value: int): void;
+  get_disable_mode(): int;
+  set_capture_input_on_drag(value: boolean): void;
+  get_capture_input_on_drag(): boolean;
+  set_ray_pickable(value: boolean): void;
+  is_ray_pickable(): boolean;
 
   /**
    * Receives unhandled {@link InputEvent}s. `event_position` is the location in world space of the mouse pointer on the surface of the shape with index `shape_idx` and `normal` is the normal vector of the surface at that point. Connect to the {@link input_event} signal to easily pick up these events.

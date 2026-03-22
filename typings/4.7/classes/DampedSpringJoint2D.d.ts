@@ -17,4 +17,12 @@ declare class DampedSpringJoint2D extends Joint2D {
    * The higher the value, the less the bodies attached to the joint will deform it. The joint applies an opposing force to the bodies, the product of the stiffness multiplied by the size difference from its resting length.
    */
   stiffness: float;
+  set_damping(value: float): void;
+  get_damping(): float;
+  set_length(value: float): void;
+  get_length(): float;
+  set_rest_length(value: float): void;
+  get_rest_length(): float;
+  set_stiffness(value: float): void;
+  get_stiffness(): float;
 }

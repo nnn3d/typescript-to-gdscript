@@ -35,6 +35,20 @@ declare class NavigationLink2D extends Node2D {
    * When pathfinding moves along the link the traveled distance is multiplied with {@link travel_cost} for determining the shortest path.
    */
   travel_cost: float;
+  set_bidirectional(value: boolean): void;
+  is_bidirectional(): boolean;
+  set_enabled(value: boolean): void;
+  is_enabled(): boolean;
+  set_end_position(value: Vector2): void;
+  get_end_position(): Vector2;
+  set_enter_cost(value: float): void;
+  get_enter_cost(): float;
+  set_navigation_layers(value: int): void;
+  get_navigation_layers(): int;
+  set_start_position(value: Vector2): void;
+  get_start_position(): Vector2;
+  set_travel_cost(value: float): void;
+  get_travel_cost(): float;
 
   /** Returns the {@link end_position} that is relative to the link as a global position. */
   get_global_end_position(): Vector2;

@@ -37,6 +37,19 @@ declare class FontVariation extends Font {
    * For example, to simulate italic typeface by slanting, apply the following transform `Transform2D(1.0, slant, 0.0, 1.0, 0.0, 0.0)`.
    */
   variation_transform: Transform2D;
+  set_base_font(value: Font): void;
+  get_base_font(): Font;
+  set_baseline_offset(value: float): void;
+  get_baseline_offset(): float;
+  set_opentype_features(value: Dictionary): void;
+  set_variation_embolden(value: float): void;
+  get_variation_embolden(): float;
+  set_variation_face_index(value: int): void;
+  get_variation_face_index(): int;
+  set_variation_opentype(value: Dictionary): void;
+  get_variation_opentype(): Dictionary;
+  set_variation_transform(value: Transform2D): void;
+  get_variation_transform(): Transform2D;
 
   /** Sets the spacing for `spacing` to `value` in pixels (not relative to the font size). */
   set_spacing(spacing: int, value: int): void;

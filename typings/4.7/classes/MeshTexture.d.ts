@@ -10,4 +10,10 @@ declare class MeshTexture extends Texture2D {
   /** Sets the mesh used to draw. It must be a mesh using 2D vertices. */
   mesh: Mesh;
   resource_local_to_scene: boolean;
+  set_base_texture(value: Texture2D): void;
+  get_base_texture(): Texture2D;
+  set_image_size(value: Vector2): void;
+  get_image_size(): Vector2;
+  set_mesh(value: Mesh): void;
+  get_mesh(): Mesh;
 }

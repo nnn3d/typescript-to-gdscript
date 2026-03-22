@@ -18,6 +18,14 @@ declare class CollisionShape3D extends Node3D {
   disabled: boolean;
   /** The actual shape owned by this collision shape. */
   shape: Shape3D;
+  set_debug_color(value: Color): void;
+  get_debug_color(): Color;
+  set_enable_debug_fill(value: boolean): void;
+  get_enable_debug_fill(): boolean;
+  set_disabled(value: boolean): void;
+  is_disabled(): boolean;
+  set_shape(value: Shape3D): void;
+  get_shape(): Shape3D;
 
   /**
    * Sets the collision shape's shape to the addition of all its convexed {@link MeshInstance3D} siblings geometry.

@@ -5,6 +5,8 @@
 declare class VisualShaderNodeTransformVecMult extends VisualShaderNode {
   /** The multiplication type to be performed. */
   operator: int;
+  set_operator(value: int): void;
+  get_operator(): int;
 
   // enum Operator
   /** Multiplies transform `a` by the vector `b`. */

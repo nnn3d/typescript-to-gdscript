@@ -8,4 +8,6 @@ declare class JointLimitationCone3D extends JointLimitation3D {
    * `0` degrees makes a sphere without hole, `180` degrees makes a hemisphere, and `360` degrees become empty (no limitation).
    */
   angle: float;
+  set_angle(value: float): void;
+  get_angle(): float;
 }

@@ -8,6 +8,8 @@ declare class Shape2D extends Resource {
    * When set to `0`, the default value from {@link ProjectSettings.physics/2d/solver/default_contact_bias} is used.
    */
   custom_solver_bias: float;
+  set_custom_solver_bias(value: float): void;
+  get_custom_solver_bias(): float;
 
   /**
    * Returns `true` if this shape is colliding with another.

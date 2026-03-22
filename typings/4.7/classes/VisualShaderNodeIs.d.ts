@@ -5,6 +5,8 @@
 declare class VisualShaderNodeIs extends VisualShaderNode {
   /** The comparison function. */
   function: int;
+  set_function(value: int): void;
+  get_function(): int;
 
   // enum Function
   /** Comparison with `INF` (Infinity). */

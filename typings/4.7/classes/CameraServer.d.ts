@@ -9,6 +9,8 @@ declare interface CameraServer extends GodotObject {
    * **Note:** After setting it to `true`, you can receive updated camera feeds through the {@link camera_feeds_updated} signal.
    */
   monitoring_feeds: boolean;
+  set_monitoring_feeds(value: boolean): void;
+  is_monitoring_feeds(): boolean;
 
   /** Adds the camera `feed` to the camera server. */
   add_feed(feed: CameraFeed): void;

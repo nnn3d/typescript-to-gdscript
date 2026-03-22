@@ -46,6 +46,24 @@ declare class BaseButton extends Control {
    * If `true`, the button is in toggle mode. Makes the button flip state between pressed and unpressed each time its area is clicked.
    */
   toggle_mode: boolean;
+  set_action_mode(value: int): void;
+  get_action_mode(): int;
+  set_button_group(value: ButtonGroup): void;
+  get_button_group(): ButtonGroup;
+  set_button_mask(value: int): void;
+  get_button_mask(): int;
+  set_pressed(value: boolean): void;
+  is_pressed(): boolean;
+  set_disabled(value: boolean): void;
+  is_disabled(): boolean;
+  set_shortcut(value: Shortcut): void;
+  get_shortcut(): Shortcut;
+  set_shortcut_feedback(value: boolean): void;
+  is_shortcut_feedback(): boolean;
+  set_shortcut_in_tooltip(value: boolean): void;
+  is_shortcut_in_tooltip_enabled(): boolean;
+  set_toggle_mode(value: boolean): void;
+  is_toggle_mode(): boolean;
 
   /**
    * Called when the button is pressed. If you need to know the button's pressed state (and {@link toggle_mode} is active), use {@link _toggled} instead.

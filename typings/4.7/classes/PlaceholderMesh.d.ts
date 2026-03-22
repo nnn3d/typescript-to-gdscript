@@ -5,4 +5,5 @@
 declare class PlaceholderMesh extends Mesh {
   /** The smallest {@link AABB} enclosing this mesh in local space. */
   aabb: AABB;
+  set_aabb(value: AABB): void;
 }

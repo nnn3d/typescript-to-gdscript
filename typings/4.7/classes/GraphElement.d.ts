@@ -20,6 +20,18 @@ declare class GraphElement extends Container {
   selectable: boolean;
   /** If `true`, the GraphElement is selected. */
   selected: boolean;
+  set_draggable(value: boolean): void;
+  is_draggable(): boolean;
+  set_position_offset(value: Vector2): void;
+  get_position_offset(): Vector2;
+  set_resizable(value: boolean): void;
+  is_resizable(): boolean;
+  set_scaling_menus(value: boolean): void;
+  is_scaling_menus(): boolean;
+  set_selectable(value: boolean): void;
+  is_selectable(): boolean;
+  set_selected(value: boolean): void;
+  is_selected(): boolean;
 
   /** Emitted when removing the GraphElement is requested. */
   delete_request: Signal<[]>;

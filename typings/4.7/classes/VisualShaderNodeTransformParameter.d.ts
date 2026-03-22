@@ -7,4 +7,8 @@ declare class VisualShaderNodeTransformParameter extends VisualShaderNodeParamet
   default_value: Transform3D;
   /** Enables usage of the {@link default_value}. */
   default_value_enabled: boolean;
+  set_default_value(value: Transform3D): void;
+  get_default_value(): Transform3D;
+  set_default_value_enabled(value: boolean): void;
+  is_default_value_enabled(): boolean;
 }

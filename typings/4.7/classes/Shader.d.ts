@@ -5,6 +5,8 @@
 declare class Shader extends Resource {
   /** Returns the shader's code as the user has written it, not the full generated code used internally. */
   code: string;
+  set_code(value: string): void;
+  get_code(): string;
 
   /**
    * Returns the texture that is set as default for the specified parameter.

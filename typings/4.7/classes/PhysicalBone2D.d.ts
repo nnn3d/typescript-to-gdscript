@@ -22,6 +22,16 @@ declare class PhysicalBone2D extends RigidBody2D {
    * **Note:** To have the {@link Bone2D}s visually follow the {@link PhysicalBone2D}, use a {@link SkeletonModification2DPhysicalBones} modification on the {@link Skeleton2D} node with the {@link Bone2D} nodes.
    */
   simulate_physics: boolean;
+  set_auto_configure_joint(value: boolean): void;
+  get_auto_configure_joint(): boolean;
+  set_bone2d_index(value: int): void;
+  get_bone2d_index(): int;
+  set_bone2d_nodepath(value: string): void;
+  get_bone2d_nodepath(): string;
+  set_follow_bone_when_simulating(value: boolean): void;
+  get_follow_bone_when_simulating(): boolean;
+  set_simulate_physics(value: boolean): void;
+  get_simulate_physics(): boolean;
 
   /**
    * Returns the first {@link Joint2D} child node, if one exists. This is mainly a helper function to make it easier to get the {@link Joint2D} that the {@link PhysicalBone2D} is autoconfiguring.

@@ -51,6 +51,32 @@ declare class TileMapLayer extends Node2D {
    * This Y-sort origin value is added to each tile's Y-sort origin value. This allows, for example, to fake a different height level. This can be useful for top-down view games.
    */
   y_sort_origin: int;
+  set_collision_enabled(value: boolean): void;
+  is_collision_enabled(): boolean;
+  set_collision_visibility_mode(value: int): void;
+  get_collision_visibility_mode(): int;
+  set_enabled(value: boolean): void;
+  is_enabled(): boolean;
+  set_navigation_enabled(value: boolean): void;
+  is_navigation_enabled(): boolean;
+  set_navigation_visibility_mode(value: int): void;
+  get_navigation_visibility_mode(): int;
+  set_occlusion_enabled(value: boolean): void;
+  is_occlusion_enabled(): boolean;
+  set_physics_quadrant_size(value: int): void;
+  get_physics_quadrant_size(): int;
+  set_rendering_quadrant_size(value: int): void;
+  get_rendering_quadrant_size(): int;
+  set_tile_map_data_from_array(value: PackedByteArray): void;
+  get_tile_map_data_as_array(): PackedByteArray;
+  set_tile_set(value: TileSet): void;
+  get_tile_set(): TileSet;
+  set_use_kinematic_bodies(value: boolean): void;
+  is_using_kinematic_bodies(): boolean;
+  set_x_draw_order_reversed(value: boolean): void;
+  is_x_draw_order_reversed(): boolean;
+  set_y_sort_origin(value: int): void;
+  get_y_sort_origin(): int;
 
   /**
    * Called with a {@link TileData} object about to be used internally by the {@link TileMapLayer}, allowing its modification at runtime.

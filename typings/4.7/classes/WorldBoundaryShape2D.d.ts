@@ -12,4 +12,8 @@ declare class WorldBoundaryShape2D extends Shape2D {
    * The line's normal, typically a unit vector. Its direction indicates the non-colliding half-plane. Can be of any length but zero. Defaults to {@link Vector2.UP}.
    */
   normal: Vector2;
+  set_distance(value: float): void;
+  get_distance(): float;
+  set_normal(value: Vector2): void;
+  get_normal(): Vector2;
 }

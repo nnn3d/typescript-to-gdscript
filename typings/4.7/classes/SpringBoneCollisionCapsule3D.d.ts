@@ -19,4 +19,12 @@ declare class SpringBoneCollisionCapsule3D extends SpringBoneCollision3D {
    * **Note:** The {@link radius} of a capsule cannot be greater than half of its {@link height}. Otherwise, the capsule becomes a sphere. If the {@link radius} is greater than half of the {@link height}, the properties adjust to a valid value.
    */
   radius: float;
+  set_height(value: float): void;
+  get_height(): float;
+  set_inside(value: boolean): void;
+  is_inside(): boolean;
+  set_mid_height(value: float): void;
+  get_mid_height(): float;
+  set_radius(value: float): void;
+  get_radius(): float;
 }

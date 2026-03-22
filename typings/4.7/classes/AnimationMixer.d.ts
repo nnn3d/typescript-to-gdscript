@@ -45,6 +45,26 @@ declare class AnimationMixer extends Node {
   root_motion_track: string;
   /** The node which node path references will travel from. */
   root_node: string;
+  set_active(value: boolean): void;
+  is_active(): boolean;
+  set_audio_max_polyphony(value: int): void;
+  get_audio_max_polyphony(): int;
+  set_callback_mode_discrete(value: int): void;
+  get_callback_mode_discrete(): int;
+  set_callback_mode_method(value: int): void;
+  get_callback_mode_method(): int;
+  set_callback_mode_process(value: int): void;
+  get_callback_mode_process(): int;
+  set_deterministic(value: boolean): void;
+  is_deterministic(): boolean;
+  set_reset_on_save_enabled(value: boolean): void;
+  is_reset_on_save_enabled(): boolean;
+  set_root_motion_local(value: boolean): void;
+  is_root_motion_local(): boolean;
+  set_root_motion_track(value: string): void;
+  get_root_motion_track(): string;
+  set_root_node(value: string): void;
+  get_root_node(): string;
 
   /** A virtual function for processing after getting a key during playback. */
   _post_process_key_value(animation: Animation, track: int, value: unknown, object_id: int, object_sub_idx: int): unknown;

@@ -11,4 +11,8 @@ declare class XROrigin3D extends Node3D {
    * The scale of the game world compared to the real world. This is the same as {@link XRServer.world_scale}. By default, most AR/VR platforms assume that 1 game unit corresponds to 1 real world meter.
    */
   world_scale: float;
+  set_current(value: boolean): void;
+  is_current(): boolean;
+  set_world_scale(value: float): void;
+  get_world_scale(): float;
 }

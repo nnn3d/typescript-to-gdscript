@@ -7,4 +7,6 @@
 declare class ColorPalette extends Resource {
   /** A {@link PackedColorArray} containing the colors in the palette. */
   colors: PackedColorArray;
+  set_colors(value: PackedColorArray): void;
+  get_colors(): PackedColorArray;
 }

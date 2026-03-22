@@ -19,4 +19,14 @@ declare class World3D extends Resource {
   scenario: RID;
   /** The World3D's physics space. */
   space: RID;
+  set_camera_attributes(value: CameraAttributes): void;
+  get_camera_attributes(): CameraAttributes;
+  get_direct_space_state(): PhysicsDirectSpaceState3D;
+  set_environment(value: Environment): void;
+  get_environment(): Environment;
+  set_fallback_environment(value: Environment): void;
+  get_fallback_environment(): Environment;
+  get_navigation_map(): RID;
+  get_scenario(): RID;
+  get_space(): RID;
 }

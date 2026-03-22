@@ -24,4 +24,14 @@ declare class AudioEffectPhaser extends AudioEffect {
    * Adjusts the rate in Hz at which the effect sweeps up and down across the frequency range. Value can range from 0.01 to 20.
    */
   rate_hz: float;
+  set_depth(value: float): void;
+  get_depth(): float;
+  set_feedback(value: float): void;
+  get_feedback(): float;
+  set_range_max_hz(value: float): void;
+  get_range_max_hz(): float;
+  set_range_min_hz(value: float): void;
+  get_range_min_hz(): float;
+  set_rate_hz(value: float): void;
+  get_rate_hz(): float;
 }

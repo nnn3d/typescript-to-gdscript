@@ -13,6 +13,8 @@ interface SceneNode {
   parent: string;
   /** ext_resource id referenced by `script = ExtResource("id")`, if any */
   scriptExtId?: string;
+  /** Whether this node has `unique_name_in_owner = true` */
+  uniqueInOwner?: boolean;
 }
 
 interface ScriptNodeInfo {
@@ -83,8 +85,11 @@ function parseScene(
       scriptExtId = scriptMatch[1];
     }
 
+    // Check for unique_name_in_owner = true
+    const uniqueInOwner = /unique_name_in_owner\s*=\s*true/.test(body);
+
     if (name) {
-      nodes.push({ name, type: type ?? '', parent: parent ?? '', scriptExtId });
+      nodes.push({ name, type: type ?? '', parent: parent ?? '', scriptExtId, uniqueInOwner: uniqueInOwner || undefined });
     }
   }
 
@@ -129,6 +134,12 @@ function parseScene(
 
       if (relativePath) {
         children.push({ path: relativePath, type: other.type });
+      }
+
+      // Unique nodes (%NodeName) are accessible from the scene owner (root script)
+      // regardless of their position in the tree
+      if (other.uniqueInOwner && nodePath === '.') {
+        children.push({ path: `%${other.name}`, type: other.type });
       }
     }
 

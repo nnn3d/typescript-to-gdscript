@@ -36,6 +36,24 @@ declare class PathFollow3D extends Node3D {
   use_model_front: boolean;
   /** The node's offset perpendicular to the curve. */
   v_offset: float;
+  set_cubic_interpolation(value: boolean): void;
+  get_cubic_interpolation(): boolean;
+  set_h_offset(value: float): void;
+  get_h_offset(): float;
+  set_loop(value: boolean): void;
+  has_loop(): boolean;
+  set_progress(value: float): void;
+  get_progress(): float;
+  set_progress_ratio(value: float): void;
+  get_progress_ratio(): float;
+  set_rotation_mode(value: int): void;
+  get_rotation_mode(): int;
+  set_tilt_enabled(value: boolean): void;
+  is_tilt_enabled(): boolean;
+  set_use_model_front(value: boolean): void;
+  is_using_model_front(): boolean;
+  set_v_offset(value: float): void;
+  get_v_offset(): float;
 
   /**
    * Correct the `transform`. `rotation_mode` implicitly specifies how posture (forward, up and sideway direction) is calculated.

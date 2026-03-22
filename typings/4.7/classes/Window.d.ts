@@ -175,6 +175,62 @@ declare class Window extends Viewport {
    * If `false`, you need to call {@link child_controls_changed} manually.
    */
   wrap_controls: boolean;
+  set_accessibility_description(value: string): void;
+  get_accessibility_description(): string;
+  set_accessibility_name(value: string): void;
+  get_accessibility_name(): string;
+  set_auto_translate(value: boolean): void;
+  is_auto_translating(): boolean;
+  set_content_scale_aspect(value: int): void;
+  get_content_scale_aspect(): int;
+  set_content_scale_factor(value: float): void;
+  get_content_scale_factor(): float;
+  set_content_scale_mode(value: int): void;
+  get_content_scale_mode(): int;
+  set_content_scale_size(value: Vector2i): void;
+  get_content_scale_size(): Vector2i;
+  set_content_scale_stretch(value: int): void;
+  get_content_scale_stretch(): int;
+  set_current_screen(value: int): void;
+  get_current_screen(): int;
+  set_exclusive(value: boolean): void;
+  is_exclusive(): boolean;
+  set_force_native(value: boolean): void;
+  get_force_native(): boolean;
+  set_hdr_output_requested(value: boolean): void;
+  is_hdr_output_requested(): boolean;
+  set_initial_position(value: int): void;
+  get_initial_position(): int;
+  set_keep_title_visible(value: boolean): void;
+  get_keep_title_visible(): boolean;
+  set_max_size(value: Vector2i): void;
+  get_max_size(): Vector2i;
+  set_min_size(value: Vector2i): void;
+  get_min_size(): Vector2i;
+  set_mode(value: int): void;
+  get_mode(): int;
+  set_mouse_passthrough_polygon(value: PackedVector2Array): void;
+  get_mouse_passthrough_polygon(): PackedVector2Array;
+  set_nonclient_area(value: Rect2i): void;
+  get_nonclient_area(): Rect2i;
+  set_position(value: Vector2i): void;
+  get_position(): Vector2i;
+  set_size(value: Vector2i): void;
+  get_size(): Vector2i;
+  set_theme(value: Theme): void;
+  get_theme(): Theme;
+  set_theme_type_variation(value: string): void;
+  get_theme_type_variation(): string;
+  set_title(value: string): void;
+  get_title(): string;
+  set_transient(value: boolean): void;
+  is_transient(): boolean;
+  set_transient_to_focused(value: boolean): void;
+  is_transient_to_focused(): boolean;
+  set_visible(value: boolean): void;
+  is_visible(): boolean;
+  set_wrap_controls(value: boolean): void;
+  is_wrapping_controls(): boolean;
 
   /**
    * Virtual method to be implemented by the user. Overrides the value returned by {@link get_contents_minimum_size}.

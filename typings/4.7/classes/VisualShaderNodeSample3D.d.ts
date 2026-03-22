@@ -5,6 +5,8 @@
 declare class VisualShaderNodeSample3D extends VisualShaderNode {
   /** An input source type. */
   source: int;
+  set_source(value: int): void;
+  get_source(): int;
 
   // enum Source
   /** Creates internal uniform and provides a way to assign it within node. */

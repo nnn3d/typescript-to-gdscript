@@ -46,6 +46,30 @@ declare class Sprite2D extends Node2D {
    * The number of rows in the sprite sheet. When this property is changed, {@link frame} is adjusted so that the same visual frame is maintained (same row and column). If that's impossible, {@link frame} is reset to `0`.
    */
   vframes: int;
+  set_centered(value: boolean): void;
+  is_centered(): boolean;
+  set_flip_h(value: boolean): void;
+  is_flipped_h(): boolean;
+  set_flip_v(value: boolean): void;
+  is_flipped_v(): boolean;
+  set_frame(value: int): void;
+  get_frame(): int;
+  set_frame_coords(value: Vector2i): void;
+  get_frame_coords(): Vector2i;
+  set_hframes(value: int): void;
+  get_hframes(): int;
+  set_offset(value: Vector2): void;
+  get_offset(): Vector2;
+  set_region_enabled(value: boolean): void;
+  is_region_enabled(): boolean;
+  set_region_filter_clip_enabled(value: boolean): void;
+  is_region_filter_clip_enabled(): boolean;
+  set_region_rect(value: Rect2): void;
+  get_region_rect(): Rect2;
+  set_texture(value: Texture2D): void;
+  get_texture(): Texture2D;
+  set_vframes(value: int): void;
+  get_vframes(): int;
 
   /**
    * Returns a {@link Rect2} representing the Sprite2D's boundary in local coordinates.

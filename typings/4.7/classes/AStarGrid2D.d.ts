@@ -40,6 +40,24 @@ declare class AStarGrid2D extends RefCounted {
    * The size of the grid (number of cells of size {@link cell_size} on each axis). If changed, {@link update} needs to be called before finding the next path.
    */
   size: Vector2i;
+  set_cell_shape(value: int): void;
+  get_cell_shape(): int;
+  set_cell_size(value: Vector2): void;
+  get_cell_size(): Vector2;
+  set_default_compute_heuristic(value: int): void;
+  get_default_compute_heuristic(): int;
+  set_default_estimate_heuristic(value: int): void;
+  get_default_estimate_heuristic(): int;
+  set_diagonal_mode(value: int): void;
+  get_diagonal_mode(): int;
+  set_jumping_enabled(value: boolean): void;
+  is_jumping_enabled(): boolean;
+  set_offset(value: Vector2): void;
+  get_offset(): Vector2;
+  set_region(value: Rect2i): void;
+  get_region(): Rect2i;
+  set_size(value: Vector2i): void;
+  get_size(): Vector2i;
 
   /**
    * Called when computing the cost between two connected points.

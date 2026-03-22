@@ -36,4 +36,20 @@ declare class AudioEffectReverb extends AudioEffect {
    * The volume ratio of the modified audio. At 0, only the original audio is outputted. Value can range from 0 to 1.
    */
   wet: float;
+  set_damping(value: float): void;
+  get_damping(): float;
+  set_dry(value: float): void;
+  get_dry(): float;
+  set_hpf(value: float): void;
+  get_hpf(): float;
+  set_predelay_feedback(value: float): void;
+  get_predelay_feedback(): float;
+  set_predelay_msec(value: float): void;
+  get_predelay_msec(): float;
+  set_room_size(value: float): void;
+  get_room_size(): float;
+  set_spread(value: float): void;
+  get_spread(): float;
+  set_wet(value: float): void;
+  get_wet(): float;
 }

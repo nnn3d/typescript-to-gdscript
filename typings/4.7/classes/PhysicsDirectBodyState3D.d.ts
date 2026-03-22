@@ -34,6 +34,28 @@ declare class PhysicsDirectBodyState3D extends GodotObject {
   total_linear_damp: float;
   /** The body's transformation matrix. */
   transform: Transform3D;
+  set_angular_velocity(value: Vector3): void;
+  get_angular_velocity(): Vector3;
+  get_center_of_mass(): Vector3;
+  get_center_of_mass_local(): Vector3;
+  set_collision_layer(value: int): void;
+  get_collision_layer(): int;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  get_inverse_inertia(): Vector3;
+  get_inverse_inertia_tensor(): Basis;
+  get_inverse_mass(): float;
+  set_linear_velocity(value: Vector3): void;
+  get_linear_velocity(): Vector3;
+  get_principal_inertia_axes(): Basis;
+  set_sleep_state(value: boolean): void;
+  is_sleeping(): boolean;
+  get_step(): float;
+  get_total_angular_damp(): float;
+  get_total_gravity(): Vector3;
+  get_total_linear_damp(): float;
+  set_transform(value: Transform3D): void;
+  get_transform(): Transform3D;
 
   /**
    * Adds a constant directional force without affecting rotation that keeps being applied over time until cleared with `constant_force = Vector3(0, 0, 0)`.

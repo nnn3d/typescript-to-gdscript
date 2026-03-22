@@ -42,6 +42,26 @@ declare class PopupMenu extends Popup {
   system_menu_id: int;
   transparent: boolean;
   transparent_bg: boolean;
+  set_allow_search(value: boolean): void;
+  get_allow_search(): boolean;
+  set_hide_on_item_selection(value: boolean): void;
+  is_hide_on_item_selection(): boolean;
+  set_hide_on_state_item_selection(value: boolean): void;
+  is_hide_on_state_item_selection(): boolean;
+  set_item_count(value: int): void;
+  get_item_count(): int;
+  set_prefer_native_menu(value: boolean): void;
+  is_prefer_native_menu(): boolean;
+  set_search_bar_enabled_on_item_count(value: int): void;
+  get_search_bar_enabled_on_item_count(): int;
+  set_shrink_height(value: boolean): void;
+  get_shrink_height(): boolean;
+  set_shrink_width(value: boolean): void;
+  get_shrink_width(): boolean;
+  set_submenu_popup_delay(value: float): void;
+  get_submenu_popup_delay(): float;
+  set_system_menu(value: int): void;
+  get_system_menu(): int;
 
   /**
    * Checks the provided `event` against the {@link PopupMenu}'s shortcuts and accelerators, and activates the first item with matching events. If `for_global_only` is `true`, only shortcuts and accelerators with `global` set to `true` will be called.

@@ -5,4 +5,6 @@
 declare class RectangleShape2D extends Shape2D {
   /** The rectangle's width and height. */
   size: Vector2;
+  set_size(value: Vector2): void;
+  get_size(): Vector2;
 }

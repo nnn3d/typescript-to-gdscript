@@ -5,6 +5,8 @@
 declare class VisualShaderNodeUVFunc extends VisualShaderNode {
   /** A function to be applied to the texture coordinates. */
   function: int;
+  set_function(value: int): void;
+  get_function(): int;
 
   // enum Function
   /**

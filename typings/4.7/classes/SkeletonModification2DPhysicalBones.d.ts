@@ -5,6 +5,8 @@
 declare class SkeletonModification2DPhysicalBones extends SkeletonModification2D {
   /** The number of {@link PhysicalBone2D} nodes linked in this modification. */
   physical_bone_chain_length: int;
+  set_physical_bone_chain_length(value: int): void;
+  get_physical_bone_chain_length(): int;
 
   /**
    * Empties the list of {@link PhysicalBone2D} nodes and populates it with all {@link PhysicalBone2D} nodes that are children of the {@link Skeleton2D}.

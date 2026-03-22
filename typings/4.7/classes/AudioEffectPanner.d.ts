@@ -10,4 +10,6 @@ declare class AudioEffectPanner extends AudioEffect {
    * Pan position. Negative values pan the sound to the left, positive pan to the right. Value can range from -1 to 1.
    */
   pan: float;
+  set_pan(value: float): void;
+  get_pan(): float;
 }

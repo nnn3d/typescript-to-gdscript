@@ -14,6 +14,14 @@ declare class TreeItem extends GodotObject {
    * Note that if a {@link TreeItem} is set to not be visible, none of its children will be visible either.
    */
   visible: boolean;
+  set_collapsed(value: boolean): void;
+  is_collapsed(): boolean;
+  set_custom_minimum_height(value: int): void;
+  get_custom_minimum_height(): int;
+  set_disable_folding(value: boolean): void;
+  is_folding_disabled(): boolean;
+  set_visible(value: boolean): void;
+  is_visible(): boolean;
 
   /**
    * Adds a button with {@link Texture2D} `button` to the end of the cell at column `column`. The `id` is used to identify the button in the according {@link Tree.button_clicked} signal and can be different from the buttons index. If not specified, the next available index is used, which may be retrieved by calling {@link get_button_count} immediately before this method. Optionally, the button can be `disabled` and have a `tooltip_text`. `description` is used as the button description for assistive apps.

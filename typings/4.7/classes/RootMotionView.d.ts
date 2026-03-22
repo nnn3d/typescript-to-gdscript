@@ -17,4 +17,14 @@ declare class RootMotionView extends VisualInstance3D {
    * If `true`, the grid's points will all be on the same Y coordinate (*local* Y = 0). If `false`, the points' original Y coordinate is preserved.
    */
   zero_y: boolean;
+  set_animation_path(value: string): void;
+  get_animation_path(): string;
+  set_cell_size(value: float): void;
+  get_cell_size(): float;
+  set_color(value: Color): void;
+  get_color(): Color;
+  set_radius(value: float): void;
+  get_radius(): float;
+  set_zero_y(value: boolean): void;
+  get_zero_y(): boolean;
 }

@@ -96,6 +96,52 @@ declare class RigidBody3D extends PhysicsBody3D {
    * If `true`, the body will not move and will not calculate forces until woken up by another body through, for example, a collision, or by using the {@link apply_impulse} or {@link apply_force} methods.
    */
   sleeping: boolean;
+  set_angular_damp(value: float): void;
+  get_angular_damp(): float;
+  set_angular_damp_mode(value: int): void;
+  get_angular_damp_mode(): int;
+  set_angular_velocity(value: Vector3): void;
+  get_angular_velocity(): Vector3;
+  set_can_sleep(value: boolean): void;
+  is_able_to_sleep(): boolean;
+  set_center_of_mass(value: Vector3): void;
+  get_center_of_mass(): Vector3;
+  set_center_of_mass_mode(value: int): void;
+  get_center_of_mass_mode(): int;
+  set_constant_force(value: Vector3): void;
+  get_constant_force(): Vector3;
+  set_constant_torque(value: Vector3): void;
+  get_constant_torque(): Vector3;
+  set_contact_monitor(value: boolean): void;
+  is_contact_monitor_enabled(): boolean;
+  set_use_continuous_collision_detection(value: boolean): void;
+  is_using_continuous_collision_detection(): boolean;
+  set_use_custom_integrator(value: boolean): void;
+  is_using_custom_integrator(): boolean;
+  set_freeze_enabled(value: boolean): void;
+  is_freeze_enabled(): boolean;
+  set_freeze_mode(value: int): void;
+  get_freeze_mode(): int;
+  set_gravity_scale(value: float): void;
+  get_gravity_scale(): float;
+  set_inertia(value: Vector3): void;
+  get_inertia(): Vector3;
+  set_linear_damp(value: float): void;
+  get_linear_damp(): float;
+  set_linear_damp_mode(value: int): void;
+  get_linear_damp_mode(): int;
+  set_linear_velocity(value: Vector3): void;
+  get_linear_velocity(): Vector3;
+  set_lock_rotation_enabled(value: boolean): void;
+  is_lock_rotation_enabled(): boolean;
+  set_mass(value: float): void;
+  get_mass(): float;
+  set_max_contacts_reported(value: int): void;
+  get_max_contacts_reported(): int;
+  set_physics_material_override(value: PhysicsMaterial): void;
+  get_physics_material_override(): PhysicsMaterial;
+  set_sleeping(value: boolean): void;
+  is_sleeping(): boolean;
 
   /**
    * Called during physics processing, allowing you to read and safely modify the simulation state for the object. By default, it is called before the standard force integration, but the {@link custom_integrator} property allows you to disable the standard force integration and do fully custom force integration for a body.

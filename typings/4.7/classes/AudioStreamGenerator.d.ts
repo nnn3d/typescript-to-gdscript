@@ -19,6 +19,12 @@ declare class AudioStreamGenerator extends AudioStream {
    * Mixing rate mode. If set to {@link MIX_RATE_CUSTOM}, {@link mix_rate} is used, otherwise current {@link AudioServer} mixing rate is used.
    */
   mix_rate_mode: int;
+  set_buffer_length(value: float): void;
+  get_buffer_length(): float;
+  set_mix_rate(value: float): void;
+  get_mix_rate(): float;
+  set_mix_rate_mode(value: int): void;
+  get_mix_rate_mode(): int;
 
   // enum AudioStreamGeneratorMixRate
   /** Current {@link AudioServer} output mixing rate. */

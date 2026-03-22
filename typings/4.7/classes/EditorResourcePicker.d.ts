@@ -13,6 +13,14 @@ declare class EditorResourcePicker extends HBoxContainer {
    * If `true`, the main button with the resource preview works in the toggle mode. Use {@link set_toggle_pressed} to manually set the state.
    */
   toggle_mode: boolean;
+  set_base_type(value: string): void;
+  get_base_type(): string;
+  set_editable(value: boolean): void;
+  is_editable(): boolean;
+  set_edited_resource(value: Resource): void;
+  get_edited_resource(): Resource;
+  set_toggle_mode(value: boolean): void;
+  is_toggle_mode(): boolean;
 
   /**
    * This virtual method can be implemented to handle context menu items not handled by default. See {@link _set_create_options}.

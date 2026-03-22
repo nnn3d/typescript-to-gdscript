@@ -36,6 +36,24 @@ declare class AnimationNodeStateMachineTransition extends Resource {
    * **Note:** {@link AnimationNodeStateMachine} transitions the current state immediately after the start of the fading. The precise remaining time can only be inferred from the main animation. When {@link AnimationNodeOutput} is considered as the most upstream, so the {@link xfade_time} is not scaled depending on the downstream delta. See also {@link AnimationNodeOneShot.fadeout_time}.
    */
   xfade_time: float;
+  set_advance_condition(value: string): void;
+  get_advance_condition(): string;
+  set_advance_expression(value: string): void;
+  get_advance_expression(): string;
+  set_advance_mode(value: int): void;
+  get_advance_mode(): int;
+  set_break_loop_at_end(value: boolean): void;
+  is_loop_broken_at_end(): boolean;
+  set_priority(value: int): void;
+  get_priority(): int;
+  set_reset(value: boolean): void;
+  is_reset(): boolean;
+  set_switch_mode(value: int): void;
+  get_switch_mode(): int;
+  set_xfade_curve(value: Curve): void;
+  get_xfade_curve(): Curve;
+  set_xfade_time(value: float): void;
+  get_xfade_time(): float;
 
   /** Emitted when {@link advance_condition} is changed. */
   advance_condition_changed: Signal<[]>;

@@ -88,6 +88,40 @@ declare class Node3D extends Node {
    * If `true`, this node can be visible. The node is only rendered when all of its ancestors are visible, as well. That means {@link is_visible_in_tree} must return `true`.
    */
   visible: boolean;
+  set_basis(value: Basis): void;
+  get_basis(): Basis;
+  set_global_basis(value: Basis): void;
+  get_global_basis(): Basis;
+  set_global_position(value: Vector3): void;
+  get_global_position(): Vector3;
+  set_global_rotation(value: Vector3): void;
+  get_global_rotation(): Vector3;
+  set_global_rotation_degrees(value: Vector3): void;
+  get_global_rotation_degrees(): Vector3;
+  set_global_transform(value: Transform3D): void;
+  get_global_transform(): Transform3D;
+  set_position(value: Vector3): void;
+  get_position(): Vector3;
+  set_quaternion(value: Quaternion): void;
+  get_quaternion(): Quaternion;
+  set_rotation(value: Vector3): void;
+  get_rotation(): Vector3;
+  set_rotation_degrees(value: Vector3): void;
+  get_rotation_degrees(): Vector3;
+  set_rotation_edit_mode(value: int): void;
+  get_rotation_edit_mode(): int;
+  set_rotation_order(value: int): void;
+  get_rotation_order(): int;
+  set_scale(value: Vector3): void;
+  get_scale(): Vector3;
+  set_as_top_level(value: boolean): void;
+  is_set_as_top_level(): boolean;
+  set_transform(value: Transform3D): void;
+  get_transform(): Transform3D;
+  set_visibility_parent(value: string): void;
+  get_visibility_parent(): string;
+  set_visible(value: boolean): void;
+  is_visible(): boolean;
 
   /**
    * Attaches the given `gizmo` to this node. Only works in the editor.

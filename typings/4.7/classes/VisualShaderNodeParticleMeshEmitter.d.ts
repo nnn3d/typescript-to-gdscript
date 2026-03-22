@@ -11,4 +11,10 @@ declare class VisualShaderNodeParticleMeshEmitter extends VisualShaderNodePartic
   surface_index: int;
   /** If `true`, the particles will emit from all surfaces of the mesh. */
   use_all_surfaces: boolean;
+  set_mesh(value: Mesh): void;
+  get_mesh(): Mesh;
+  set_surface_index(value: int): void;
+  get_surface_index(): int;
+  set_use_all_surfaces(value: boolean): void;
+  is_use_all_surfaces(): boolean;
 }

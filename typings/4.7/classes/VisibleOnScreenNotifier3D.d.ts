@@ -5,6 +5,7 @@
 declare class VisibleOnScreenNotifier3D extends VisualInstance3D {
   /** The {@link VisibleOnScreenNotifier3D}'s bounding box. */
   aabb: AABB;
+  set_aabb(value: AABB): void;
 
   /**
    * Returns `true` if the bounding box is on the screen.

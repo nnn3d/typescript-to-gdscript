@@ -15,4 +15,10 @@ declare class AudioEffectHardLimiter extends AudioEffect {
   pre_gain_db: float;
   /** Time it takes in seconds for the gain reduction to fully release. Value can range from 0.01 to 3. */
   release: float;
+  set_ceiling_db(value: float): void;
+  get_ceiling_db(): float;
+  set_pre_gain_db(value: float): void;
+  get_pre_gain_db(): float;
+  set_release(value: float): void;
+  get_release(): float;
 }

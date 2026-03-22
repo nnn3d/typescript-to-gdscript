@@ -7,4 +7,6 @@
 declare class AudioStreamPolyphonic extends AudioStream {
   /** Maximum amount of simultaneous streams that can be played. */
   polyphony: int;
+  set_polyphony(value: int): void;
+  get_polyphony(): int;
 }

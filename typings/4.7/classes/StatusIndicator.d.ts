@@ -17,6 +17,14 @@ declare class StatusIndicator extends Node {
   tooltip: string;
   /** If `true`, the status indicator is visible. */
   visible: boolean;
+  set_icon(value: Texture2D): void;
+  get_icon(): Texture2D;
+  set_menu(value: string): void;
+  get_menu(): string;
+  set_tooltip(value: string): void;
+  get_tooltip(): string;
+  set_visible(value: boolean): void;
+  is_visible(): boolean;
 
   /**
    * Returns the status indicator rectangle in screen coordinates. If this status indicator is not visible, returns an empty {@link Rect2}.

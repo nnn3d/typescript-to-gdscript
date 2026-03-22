@@ -37,6 +37,22 @@ declare class CameraAttributesPhysical extends CameraAttributes {
    * Override value for {@link Camera3D.near}. Used internally when calculating depth of field. When attached to a {@link Camera3D} as its {@link Camera3D.attributes}, it will override the {@link Camera3D.near} property.
    */
   frustum_near: float;
+  set_auto_exposure_max_exposure_value(value: float): void;
+  get_auto_exposure_max_exposure_value(): float;
+  set_auto_exposure_min_exposure_value(value: float): void;
+  get_auto_exposure_min_exposure_value(): float;
+  set_aperture(value: float): void;
+  get_aperture(): float;
+  set_shutter_speed(value: float): void;
+  get_shutter_speed(): float;
+  set_far(value: float): void;
+  get_far(): float;
+  set_focal_length(value: float): void;
+  get_focal_length(): float;
+  set_focus_distance(value: float): void;
+  get_focus_distance(): float;
+  set_near(value: float): void;
+  get_near(): float;
 
   /**
    * Returns the vertical field of view that corresponds to the {@link frustum_focal_length}. This value is calculated internally whenever {@link frustum_focal_length} is changed.

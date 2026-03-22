@@ -22,6 +22,14 @@ declare class DPITexture extends Texture2D {
    * Overrides texture saturation.
    */
   resource_local_to_scene: boolean;
+  set_base_scale(value: float): void;
+  get_base_scale(): float;
+  set_color_map(value: Dictionary): void;
+  get_color_map(): Dictionary;
+  set_fix_alpha_border(value: boolean): void;
+  get_fix_alpha_border(): boolean;
+  set_premult_alpha(value: boolean): void;
+  get_premult_alpha(): boolean;
 
   /**
    * Creates a new {@link DPITexture} and initializes it by allocating and setting the SVG data to `source`.

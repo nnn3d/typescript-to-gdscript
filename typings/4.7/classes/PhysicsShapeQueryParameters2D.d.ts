@@ -30,4 +30,22 @@ declare class PhysicsShapeQueryParameters2D extends RefCounted {
   shape_rid: RID;
   /** The queried shape's transform matrix. */
   transform: Transform2D;
+  set_collide_with_areas(value: boolean): void;
+  is_collide_with_areas_enabled(): boolean;
+  set_collide_with_bodies(value: boolean): void;
+  is_collide_with_bodies_enabled(): boolean;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  set_exclude(value: unknown): void;
+  get_exclude(): unknown;
+  set_margin(value: float): void;
+  get_margin(): float;
+  set_motion(value: Vector2): void;
+  get_motion(): Vector2;
+  set_shape(value: Resource): void;
+  get_shape(): Resource;
+  set_shape_rid(value: RID): void;
+  get_shape_rid(): RID;
+  set_transform(value: Transform2D): void;
+  get_transform(): Transform2D;
 }

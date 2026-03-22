@@ -41,6 +41,28 @@ declare class Node2D extends CanvasItem {
   skew: float;
   /** The node's {@link Transform2D}, relative to the node's parent. See also {@link global_transform}. */
   transform: Transform2D;
+  set_global_position(value: Vector2): void;
+  get_global_position(): Vector2;
+  set_global_rotation(value: float): void;
+  get_global_rotation(): float;
+  set_global_rotation_degrees(value: float): void;
+  get_global_rotation_degrees(): float;
+  set_global_scale(value: Vector2): void;
+  get_global_scale(): Vector2;
+  set_global_skew(value: float): void;
+  get_global_skew(): float;
+  set_global_transform(value: Transform2D): void;
+  set_position(value: Vector2): void;
+  get_position(): Vector2;
+  set_rotation(value: float): void;
+  get_rotation(): float;
+  set_rotation_degrees(value: float): void;
+  get_rotation_degrees(): float;
+  set_scale(value: Vector2): void;
+  get_scale(): Vector2;
+  set_skew(value: float): void;
+  get_skew(): float;
+  set_transform(value: Transform2D): void;
 
   /** Multiplies the current scale by the `ratio` vector. */
   apply_scale(ratio: Vector2): void;

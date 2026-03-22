@@ -393,11 +393,23 @@ function generateInterfaceDeclaration(
   lines.push(`declare interface ${tsName} {`);
 
   // Properties (skip static-like things)
+  const ifMethodNames = new Set(cls.methods.map((m) => m.name));
   for (const prop of cls.properties) {
     lines.push(...emitJsDoc(prop.description));
     const tsType = godotTypeToTs(prop.type);
     const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
     lines.push(`  ${propName}: ${tsType};`);
+  }
+
+  // Property setter/getter methods
+  for (const prop of cls.properties) {
+    const tsType = godotTypeToTs(prop.type);
+    if (prop.setter && !ifMethodNames.has(prop.setter)) {
+      lines.push(`  ${prop.setter}(value: ${tsType}): void;`);
+    }
+    if (prop.getter && !ifMethodNames.has(prop.getter)) {
+      lines.push(`  ${prop.getter}(): ${tsType};`);
+    }
   }
 
   if (cls.properties.length > 0 && cls.methods.length > 0) {
@@ -444,6 +456,8 @@ function generateInterfaceDeclaration(
 function generateClassDeclaration(
   cls: GodotClassXml,
   dictOnlyOverrides?: Set<string>,
+  /** All explicit method names from ancestor classes (to avoid setter/getter conflicts) */
+  inheritedMethodNames?: Set<string>,
 ): string {
   const lines: string[] = [];
   const className = sanitizeClassName(cls.name);
@@ -455,11 +469,37 @@ function generateClassDeclaration(
   lines.push(`declare class ${className}${extendsClause} {`);
 
   // Properties
+  const methodNames = new Set(cls.methods.map((m) => m.name));
+  // Collect all property names (own) to detect property/method conflicts in children
+  const propNames = new Set(cls.properties.map((p) => p.name));
   for (const prop of cls.properties) {
     lines.push(...emitJsDoc(prop.description));
     const tsType = godotTypeToTs(prop.type);
     const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
     lines.push(`  ${propName}: ${tsType};`);
+  }
+
+  // Property setter/getter methods (implicit methods from Godot properties).
+  // Skip if the name conflicts with an explicit method in this class or ancestors,
+  // or with a property name (TS doesn't allow property + method with same name).
+  for (const prop of cls.properties) {
+    const tsType = godotTypeToTs(prop.type);
+    if (
+      prop.setter &&
+      !methodNames.has(prop.setter) &&
+      !propNames.has(prop.setter) &&
+      !inheritedMethodNames?.has(prop.setter)
+    ) {
+      lines.push(`  ${prop.setter}(value: ${tsType}): void;`);
+    }
+    if (
+      prop.getter &&
+      !methodNames.has(prop.getter) &&
+      !propNames.has(prop.getter) &&
+      !inheritedMethodNames?.has(prop.getter)
+    ) {
+      lines.push(`  ${prop.getter}(): ${tsType};`);
+    }
   }
 
   if (cls.properties.length > 0 && cls.methods.length > 0) {
@@ -1333,9 +1373,33 @@ export function generateGodotDocsTypings(
       continue;
     }
 
+    // Collect explicit method names and property names from ancestor classes.
+    // Generated setter/getter methods must not clash with inherited explicit methods
+    // (which may have different signatures) or inherited properties (TS can't have
+    // a method override a property).
+    const inheritedMemberNames = new Set<string>();
+    let ancestor = cls.inherits;
+    while (ancestor) {
+      const ancestorCls = classes.get(ancestor);
+      if (!ancestorCls) break;
+      for (const m of ancestorCls.methods) inheritedMemberNames.add(m.name);
+      for (const p of ancestorCls.properties) {
+        inheritedMemberNames.add(p.name);
+        if (p.setter) inheritedMemberNames.add(p.setter);
+        if (p.getter) inheritedMemberNames.add(p.getter);
+      }
+      ancestor = ancestorCls.inherits;
+    }
+    // Dict-only overrides on Object add `name: never` properties — any descendant
+    // must not generate a setter/getter method with the same name.
+    if (name !== 'Object' && dictOnlyOverrides) {
+      for (const n of dictOnlyOverrides) inheritedMemberNames.add(n);
+    }
+
     var classDecl = generateClassDeclaration(
       cls,
       name === 'Object' ? dictOnlyOverrides : undefined,
+      inheritedMemberNames,
     );
 
     // Apply overrides if available (by TS class name)

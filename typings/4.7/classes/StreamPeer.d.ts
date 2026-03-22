@@ -5,6 +5,8 @@
 declare class StreamPeer extends RefCounted {
   /** If `true`, this {@link StreamPeer} will using big-endian format for encoding and decoding. */
   big_endian: boolean;
+  set_big_endian(value: boolean): void;
+  is_big_endian_enabled(): boolean;
 
   /** Gets a signed byte from the stream. */
   get_8(): int;

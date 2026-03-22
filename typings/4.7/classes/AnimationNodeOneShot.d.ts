@@ -40,6 +40,26 @@ declare class AnimationNodeOneShot extends AnimationNodeSync {
   fadeout_time: float;
   /** The blend type. */
   mix_mode: int;
+  set_abort_on_reset(value: boolean): void;
+  is_aborted_on_reset(): boolean;
+  set_autorestart(value: boolean): void;
+  has_autorestart(): boolean;
+  set_autorestart_delay(value: float): void;
+  get_autorestart_delay(): float;
+  set_autorestart_random_delay(value: float): void;
+  get_autorestart_random_delay(): float;
+  set_break_loop_at_end(value: boolean): void;
+  is_loop_broken_at_end(): boolean;
+  set_fadein_curve(value: Curve): void;
+  get_fadein_curve(): Curve;
+  set_fadein_time(value: float): void;
+  get_fadein_time(): float;
+  set_fadeout_curve(value: Curve): void;
+  get_fadeout_curve(): Curve;
+  set_fadeout_time(value: float): void;
+  get_fadeout_time(): float;
+  set_mix_mode(value: int): void;
+  get_mix_mode(): int;
 
   // enum OneShotRequest
   /** The default state of the request. Nothing is done. */

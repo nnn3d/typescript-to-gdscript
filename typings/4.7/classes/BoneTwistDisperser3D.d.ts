@@ -10,6 +10,10 @@ declare class BoneTwistDisperser3D extends SkeletonModifier3D {
   mutable_bone_axes: boolean;
   /** The number of settings. */
   setting_count: int;
+  set_mutable_bone_axes(value: boolean): void;
+  are_bone_axes_mutable(): boolean;
+  set_setting_count(value: int): void;
+  get_setting_count(): int;
 
   /** Clears all settings. */
   clear_settings(): void;

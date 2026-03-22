@@ -28,6 +28,16 @@ declare interface ThemeDB extends GodotObject {
    * The fallback stylebox of every {@link Control} node and {@link Theme} resource. Used when no other value is available to the control.
    */
   fallback_stylebox: StyleBox;
+  set_fallback_base_scale(value: float): void;
+  get_fallback_base_scale(): float;
+  set_fallback_font(value: Font): void;
+  get_fallback_font(): Font;
+  set_fallback_font_size(value: int): void;
+  get_fallback_font_size(): int;
+  set_fallback_icon(value: Texture2D): void;
+  get_fallback_icon(): Texture2D;
+  set_fallback_stylebox(value: StyleBox): void;
+  get_fallback_stylebox(): StyleBox;
 
   /**
    * Returns a reference to the default engine {@link Theme}. This theme resource is responsible for the out-of-the-box look of {@link Control} nodes and cannot be overridden.

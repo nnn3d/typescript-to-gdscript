@@ -52,6 +52,32 @@ declare class MultiMesh extends Resource {
    * Limits the number of instances drawn, -1 draws all instances. Changing this does not change the sizes of the buffers.
    */
   visible_instance_count: int;
+  set_buffer(value: PackedFloat32Array): void;
+  get_buffer(): PackedFloat32Array;
+  _set_color_array(value: PackedColorArray): void;
+  _get_color_array(): PackedColorArray;
+  set_custom_aabb(value: AABB): void;
+  get_custom_aabb(): AABB;
+  _set_custom_data_array(value: PackedColorArray): void;
+  _get_custom_data_array(): PackedColorArray;
+  set_instance_count(value: int): void;
+  get_instance_count(): int;
+  set_mesh(value: Mesh): void;
+  get_mesh(): Mesh;
+  set_physics_interpolation_quality(value: int): void;
+  get_physics_interpolation_quality(): int;
+  _set_transform_2d_array(value: PackedVector2Array): void;
+  _get_transform_2d_array(): PackedVector2Array;
+  _set_transform_array(value: PackedVector3Array): void;
+  _get_transform_array(): PackedVector3Array;
+  set_transform_format(value: int): void;
+  get_transform_format(): int;
+  set_use_colors(value: boolean): void;
+  is_using_colors(): boolean;
+  set_use_custom_data(value: boolean): void;
+  is_using_custom_data(): boolean;
+  set_visible_instance_count(value: int): void;
+  get_visible_instance_count(): int;
 
   /** Returns the visibility axis-aligned bounding box in local space. */
   get_aabb(): AABB;

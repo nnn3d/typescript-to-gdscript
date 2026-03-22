@@ -42,4 +42,22 @@ declare class Parallax2D extends Node2D {
    * For example, a value of `1` scrolls at the same speed as the camera. A value greater than `1` scrolls faster, making objects appear closer. Less than `1` scrolls slower, making objects appear further, and a value of `0` stops the objects completely.
    */
   scroll_scale: Vector2;
+  set_autoscroll(value: Vector2): void;
+  get_autoscroll(): Vector2;
+  set_follow_viewport(value: boolean): void;
+  get_follow_viewport(): boolean;
+  set_ignore_camera_scroll(value: boolean): void;
+  is_ignore_camera_scroll(): boolean;
+  set_limit_begin(value: Vector2): void;
+  get_limit_begin(): Vector2;
+  set_limit_end(value: Vector2): void;
+  get_limit_end(): Vector2;
+  set_repeat_times(value: int): void;
+  get_repeat_times(): int;
+  set_screen_offset(value: Vector2): void;
+  get_screen_offset(): Vector2;
+  set_scroll_offset(value: Vector2): void;
+  get_scroll_offset(): Vector2;
+  set_scroll_scale(value: Vector2): void;
+  get_scroll_scale(): Vector2;
 }

@@ -17,4 +17,8 @@ declare class World2D extends Resource {
    * The {@link RID} of this world's physics space resource. Used by the {@link PhysicsServer2D} for 2D physics, treating it as both a space and an area.
    */
   space: RID;
+  get_canvas(): RID;
+  get_direct_space_state(): PhysicsDirectSpaceState2D;
+  get_navigation_map(): RID;
+  get_space(): RID;
 }

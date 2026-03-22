@@ -1150,9 +1150,26 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
   if (isGDNodeType(node, 'get_node')) {
     // $Path -> this.get_node("Path")
     // $"Path/To/Node" -> this.get_node("Path/To/Node")
+    // %UniqueNode -> this.get_node("%UniqueNode")
+    // %"UniqueNode" -> this.get_node("%UniqueNode")
     const text = node.text;
-    const path = text.startsWith('$"') ? text.slice(2, -1) : text.slice(1);
-    return `this.get_node("${path}")`;
+    if (text.startsWith('%"')) {
+      // %"UniqueNode" -> get_node("%UniqueNode")
+      const name = text.slice(2, -1);
+      return `this.get_node("%${name}")`;
+    } else if (text.startsWith('%')) {
+      // %UniqueNode -> get_node("%UniqueNode")
+      const name = text.slice(1);
+      return `this.get_node("%${name}")`;
+    } else if (text.startsWith('$"')) {
+      // $"Path/To/Node" -> get_node("Path/To/Node")
+      const path = text.slice(2, -1);
+      return `this.get_node("${path}")`;
+    } else {
+      // $Path -> get_node("Path")
+      const path = text.slice(1);
+      return `this.get_node("${path}")`;
+    }
   }
 
   if (isGDNodeType(node, 'array')) {

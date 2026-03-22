@@ -7,6 +7,8 @@ declare class Bone2D extends Node2D {
    * Rest transform of the bone. You can reset the node's transforms to this value using {@link apply_rest}.
    */
   rest: Transform2D;
+  set_rest(value: Transform2D): void;
+  get_rest(): Transform2D;
 
   /**
    * Resets the bone to the rest pose. This is equivalent to setting {@link Node2D.transform} to {@link rest}.

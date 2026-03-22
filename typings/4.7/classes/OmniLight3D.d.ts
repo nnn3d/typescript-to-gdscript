@@ -18,6 +18,8 @@ declare class OmniLight3D extends Light3D {
   omni_range: float;
   omni_shadow_mode: int;
   shadow_normal_bias: float;
+  set_shadow_mode(value: int): void;
+  get_shadow_mode(): int;
 
   // enum ShadowMode
   /**

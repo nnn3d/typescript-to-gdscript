@@ -9,6 +9,12 @@ declare class VisualShaderNodeParameter extends VisualShaderNode {
   parameter_name: string;
   /** Defines the scope of the parameter. */
   qualifier: int;
+  set_instance_index(value: int): void;
+  get_instance_index(): int;
+  set_parameter_name(value: string): void;
+  get_parameter_name(): string;
+  set_qualifier(value: int): void;
+  get_qualifier(): int;
 
   // enum Qualifier
   /** The parameter will be tied to the {@link ShaderMaterial} using this shader. */

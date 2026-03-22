@@ -100,6 +100,50 @@ declare class LightmapGI extends VisualInstance3D {
    * **Note:** {@link use_texture_for_bounces} only has an effect if {@link bounces} is set to a value greater than or equal to `1`.
    */
   use_texture_for_bounces: boolean;
+  set_bias(value: float): void;
+  get_bias(): float;
+  set_bounce_indirect_energy(value: float): void;
+  get_bounce_indirect_energy(): float;
+  set_bounces(value: int): void;
+  get_bounces(): int;
+  set_camera_attributes(value: CameraAttributes): void;
+  get_camera_attributes(): CameraAttributes;
+  set_denoiser_range(value: int): void;
+  get_denoiser_range(): int;
+  set_denoiser_strength(value: float): void;
+  get_denoiser_strength(): float;
+  set_directional(value: boolean): void;
+  is_directional(): boolean;
+  set_environment_custom_color(value: Color): void;
+  get_environment_custom_color(): Color;
+  set_environment_custom_energy(value: float): void;
+  get_environment_custom_energy(): float;
+  set_environment_custom_sky(value: Sky): void;
+  get_environment_custom_sky(): Sky;
+  set_environment_mode(value: int): void;
+  get_environment_mode(): int;
+  set_generate_probes(value: int): void;
+  get_generate_probes(): int;
+  set_interior(value: boolean): void;
+  is_interior(): boolean;
+  set_light_data(value: LightmapGIData): void;
+  get_light_data(): LightmapGIData;
+  set_max_texture_size(value: int): void;
+  get_max_texture_size(): int;
+  set_bake_quality(value: int): void;
+  get_bake_quality(): int;
+  set_shadowmask_mode(value: int): void;
+  get_shadowmask_mode(): int;
+  set_supersampling_enabled(value: boolean): void;
+  is_supersampling_enabled(): boolean;
+  set_supersampling_factor(value: float): void;
+  get_supersampling_factor(): float;
+  set_texel_scale(value: float): void;
+  get_texel_scale(): float;
+  set_use_denoiser(value: boolean): void;
+  is_using_denoiser(): boolean;
+  set_use_texture_for_bounces(value: boolean): void;
+  is_using_texture_for_bounces(): boolean;
 
   // enum BakeQuality
   /**

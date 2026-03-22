@@ -13,6 +13,14 @@ declare class AspectRatioContainer extends Container {
   ratio: float;
   /** The stretch mode used to align child controls. */
   stretch_mode: int;
+  set_alignment_horizontal(value: int): void;
+  get_alignment_horizontal(): int;
+  set_alignment_vertical(value: int): void;
+  get_alignment_vertical(): int;
+  set_ratio(value: float): void;
+  get_ratio(): float;
+  set_stretch_mode(value: int): void;
+  get_stretch_mode(): int;
 
   // enum StretchMode
   /** The height of child controls is automatically adjusted based on the width of the container. */

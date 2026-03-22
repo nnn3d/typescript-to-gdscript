@@ -24,6 +24,16 @@ declare class GraphFrame extends GraphElement {
   tint_color_enabled: boolean;
   /** Title of the frame. */
   title: string;
+  set_autoshrink_enabled(value: boolean): void;
+  is_autoshrink_enabled(): boolean;
+  set_autoshrink_margin(value: int): void;
+  get_autoshrink_margin(): int;
+  set_drag_margin(value: int): void;
+  get_drag_margin(): int;
+  set_tint_color_enabled(value: boolean): void;
+  is_tint_color_enabled(): boolean;
+  set_title(value: string): void;
+  get_title(): string;
 
   /**
    * Returns the {@link HBoxContainer} used for the title bar, only containing a {@link Label} for displaying the title by default.

@@ -25,6 +25,20 @@ declare class CodeHighlighter extends SyntaxHighlighter {
   number_color: Color;
   /** Sets the color for symbols. */
   symbol_color: Color;
+  set_color_regions(value: Dictionary): void;
+  get_color_regions(): Dictionary;
+  set_function_color(value: Color): void;
+  get_function_color(): Color;
+  set_keyword_colors(value: Dictionary): void;
+  get_keyword_colors(): Dictionary;
+  set_member_keyword_colors(value: Dictionary): void;
+  get_member_keyword_colors(): Dictionary;
+  set_member_variable_color(value: Color): void;
+  get_member_variable_color(): Color;
+  set_number_color(value: Color): void;
+  get_number_color(): Color;
+  set_symbol_color(value: Color): void;
+  get_symbol_color(): Color;
 
   /**
    * Adds a color region (such as for comments or strings) from `start_key` to `end_key`. Both keys should be symbols, and `start_key` must not be shared with other delimiters.

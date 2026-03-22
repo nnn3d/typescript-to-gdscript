@@ -12,4 +12,7 @@ declare class GradientTexture1D extends Texture2D {
   resource_local_to_scene: boolean;
   /** The number of color samples that will be obtained from the {@link Gradient}. */
   width: int;
+  set_gradient(value: Gradient): void;
+  get_gradient(): Gradient;
+  set_width(value: int): void;
 }

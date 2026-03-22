@@ -33,6 +33,20 @@ declare class SpinBox extends Range {
    * **Note:** If set to `true`, this will interfere with entering mathematical expressions in the {@link SpinBox}. The {@link SpinBox} will try to evaluate the expression as you type, which means symbols like a trailing `+` are removed immediately by the expression being evaluated.
    */
   update_on_text_changed: boolean;
+  set_horizontal_alignment(value: int): void;
+  get_horizontal_alignment(): int;
+  set_custom_arrow_round(value: boolean): void;
+  is_custom_arrow_rounding(): boolean;
+  set_custom_arrow_step(value: float): void;
+  get_custom_arrow_step(): float;
+  set_editable(value: boolean): void;
+  is_editable(): boolean;
+  set_prefix(value: string): void;
+  get_prefix(): string;
+  set_select_all_on_focus(value: boolean): void;
+  is_select_all_on_focus(): boolean;
+  set_update_on_text_changed(value: boolean): void;
+  get_update_on_text_changed(): boolean;
 
   /**
    * Applies the current value of this {@link SpinBox}. This is equivalent to pressing `Enter` while editing the {@link LineEdit} used by the {@link SpinBox}. This will cause {@link LineEdit.text_submitted} to be emitted and its currently contained expression to be evaluated.

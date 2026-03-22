@@ -16,6 +16,10 @@ declare class XRNode3D extends Node3D {
    * Godot defines a number of standard trackers such as `left_hand` and `right_hand` but others may be configured within a given {@link XRInterface}.
    */
   tracker: string;
+  set_show_when_tracked(value: boolean): void;
+  get_show_when_tracked(): boolean;
+  set_tracker(value: string): void;
+  get_tracker(): string;
 
   /** Returns `true` if the {@link tracker} has current tracking data for the {@link pose} being tracked. */
   get_has_tracking_data(): boolean;

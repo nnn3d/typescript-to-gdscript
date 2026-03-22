@@ -28,6 +28,14 @@ declare class AcceptDialog extends Window {
   transient: boolean;
   visible: boolean;
   wrap_controls: boolean;
+  set_autowrap(value: boolean): void;
+  has_autowrap(): boolean;
+  set_close_on_escape(value: boolean): void;
+  get_close_on_escape(): boolean;
+  set_hide_on_ok(value: boolean): void;
+  get_hide_on_ok(): boolean;
+  set_text(value: string): void;
+  get_text(): string;
 
   /**
    * Adds a button with label `text` and a custom `action` to the dialog and returns the created button.

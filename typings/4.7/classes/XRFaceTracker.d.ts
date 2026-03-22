@@ -8,6 +8,8 @@ declare class XRFaceTracker extends XRTracker {
    */
   blend_shapes: PackedFloat32Array;
   type: int;
+  set_blend_shapes(value: PackedFloat32Array): void;
+  get_blend_shapes(): PackedFloat32Array;
 
   /** Returns the requested face blend shape weight. */
   get_blend_shape(blend_shape: int): float;

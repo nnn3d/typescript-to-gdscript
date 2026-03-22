@@ -12,6 +12,12 @@ declare class MultiplayerPeer extends PacketPeer {
   transfer_channel: int;
   /** The manner in which to send packets to the target peer. See the {@link set_target_peer} method. */
   transfer_mode: int;
+  set_refuse_new_connections(value: boolean): void;
+  is_refusing_new_connections(): boolean;
+  set_transfer_channel(value: int): void;
+  get_transfer_channel(): int;
+  set_transfer_mode(value: int): void;
+  get_transfer_mode(): int;
 
   /**
    * Immediately close the multiplayer peer returning to the state {@link CONNECTION_DISCONNECTED}. Connected peers will be dropped without emitting {@link peer_disconnected}.

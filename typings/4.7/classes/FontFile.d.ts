@@ -69,6 +69,45 @@ declare class FontFile extends Font {
    * Font glyph subpixel positioning mode. Subpixel positioning provides shaper text and better kerning for smaller font sizes, at the cost of higher memory usage and lower font rasterization speed. Use {@link TextServer.SUBPIXEL_POSITIONING_AUTO} to automatically enable it based on the font size.
    */
   subpixel_positioning: int;
+  set_allow_system_fallback(value: boolean): void;
+  is_allow_system_fallback(): boolean;
+  set_antialiasing(value: int): void;
+  get_antialiasing(): int;
+  set_data(value: PackedByteArray): void;
+  get_data(): PackedByteArray;
+  set_disable_embedded_bitmaps(value: boolean): void;
+  get_disable_embedded_bitmaps(): boolean;
+  set_fixed_size(value: int): void;
+  get_fixed_size(): int;
+  set_fixed_size_scale_mode(value: int): void;
+  get_fixed_size_scale_mode(): int;
+  set_font_name(value: string): void;
+  set_font_stretch(value: int): void;
+  set_font_style(value: int): void;
+  set_font_weight(value: int): void;
+  set_force_autohinter(value: boolean): void;
+  is_force_autohinter(): boolean;
+  set_generate_mipmaps(value: boolean): void;
+  get_generate_mipmaps(): boolean;
+  set_hinting(value: int): void;
+  get_hinting(): int;
+  set_keep_rounding_remainders(value: boolean): void;
+  get_keep_rounding_remainders(): boolean;
+  set_modulate_color_glyphs(value: boolean): void;
+  is_modulate_color_glyphs(): boolean;
+  set_msdf_pixel_range(value: int): void;
+  get_msdf_pixel_range(): int;
+  set_msdf_size(value: int): void;
+  get_msdf_size(): int;
+  set_multichannel_signed_distance_field(value: boolean): void;
+  is_multichannel_signed_distance_field(): boolean;
+  set_opentype_feature_overrides(value: Dictionary): void;
+  get_opentype_feature_overrides(): Dictionary;
+  set_oversampling(value: float): void;
+  get_oversampling(): float;
+  set_font_style_name(value: string): void;
+  set_subpixel_positioning(value: int): void;
+  get_subpixel_positioning(): int;
 
   /** Removes all font cache entries. */
   clear_cache(): void;

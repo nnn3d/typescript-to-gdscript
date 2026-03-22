@@ -18,6 +18,14 @@ declare class InputEventWithModifiers extends InputEventFromWindow {
   device: int;
   /** State of the `Shift` modifier. */
   shift_pressed: boolean;
+  set_alt_pressed(value: boolean): void;
+  is_alt_pressed(): boolean;
+  set_command_or_control_autoremap(value: boolean): void;
+  is_command_or_control_autoremap(): boolean;
+  set_ctrl_pressed(value: boolean): void;
+  is_ctrl_pressed(): boolean;
+  set_shift_pressed(value: boolean): void;
+  is_shift_pressed(): boolean;
 
   /** Returns the keycode combination of modifier keys. */
   get_modifiers_mask(): int;

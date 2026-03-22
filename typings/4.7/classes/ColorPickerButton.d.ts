@@ -10,6 +10,12 @@ declare class ColorPickerButton extends Button {
   /** If `true`, the intensity slider in the displayed {@link ColorPicker} will be visible. */
   edit_intensity: boolean;
   toggle_mode: boolean;
+  set_pick_color(value: Color): void;
+  get_pick_color(): Color;
+  set_edit_alpha(value: boolean): void;
+  is_editing_alpha(): boolean;
+  set_edit_intensity(value: boolean): void;
+  is_editing_intensity(): boolean;
 
   /**
    * Returns the {@link ColorPicker} that this node toggles.

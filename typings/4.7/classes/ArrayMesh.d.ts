@@ -14,6 +14,12 @@ declare class ArrayMesh extends Mesh {
    * **Note:** This mesh must have exactly the same vertex positions as the source mesh (including the source mesh's LODs, if present). If vertex positions differ, then the mesh will not draw correctly.
    */
   shadow_mesh: ArrayMesh;
+  set_blend_shape_mode(value: int): void;
+  get_blend_shape_mode(): int;
+  set_custom_aabb(value: AABB): void;
+  get_custom_aabb(): AABB;
+  set_shadow_mesh(value: ArrayMesh): void;
+  get_shadow_mesh(): ArrayMesh;
 
   /**
    * Adds name for a blend shape that will be added with {@link add_surface_from_arrays}. Must be called before surface is added.

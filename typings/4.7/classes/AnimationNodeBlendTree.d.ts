@@ -7,6 +7,8 @@
 declare class AnimationNodeBlendTree extends AnimationRootNode {
   /** The global offset of all sub animation nodes. */
   graph_offset: Vector2;
+  set_graph_offset(value: Vector2): void;
+  get_graph_offset(): Vector2;
 
   /**
    * Adds an {@link AnimationNode} at the given `position`. The `name` is used to identify the created sub animation node later.

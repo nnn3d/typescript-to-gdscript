@@ -68,6 +68,36 @@ declare class CharacterBody3D extends PhysicsBody3D {
    * Minimum angle (in radians) where the body is allowed to slide when it encounters a wall. The default value equals 15 degrees. When {@link motion_mode} is {@link MOTION_MODE_GROUNDED}, it only affects movement if {@link floor_block_on_wall} is `true`.
    */
   wall_min_slide_angle: float;
+  set_floor_block_on_wall_enabled(value: boolean): void;
+  is_floor_block_on_wall_enabled(): boolean;
+  set_floor_constant_speed_enabled(value: boolean): void;
+  is_floor_constant_speed_enabled(): boolean;
+  set_floor_max_angle(value: float): void;
+  get_floor_max_angle(): float;
+  set_floor_snap_length(value: float): void;
+  get_floor_snap_length(): float;
+  set_floor_stop_on_slope_enabled(value: boolean): void;
+  is_floor_stop_on_slope_enabled(): boolean;
+  set_max_slides(value: int): void;
+  get_max_slides(): int;
+  set_motion_mode(value: int): void;
+  get_motion_mode(): int;
+  set_platform_floor_layers(value: int): void;
+  get_platform_floor_layers(): int;
+  set_platform_on_leave(value: int): void;
+  get_platform_on_leave(): int;
+  set_platform_wall_layers(value: int): void;
+  get_platform_wall_layers(): int;
+  set_safe_margin(value: float): void;
+  get_safe_margin(): float;
+  set_slide_on_ceiling_enabled(value: boolean): void;
+  is_slide_on_ceiling_enabled(): boolean;
+  set_up_direction(value: Vector3): void;
+  get_up_direction(): Vector3;
+  set_velocity(value: Vector3): void;
+  get_velocity(): Vector3;
+  set_wall_min_slide_angle(value: float): void;
+  get_wall_min_slide_angle(): float;
 
   /**
    * Allows to manually apply a snap to the floor regardless of the body's velocity. This function does nothing when {@link is_on_floor} returns `true`.

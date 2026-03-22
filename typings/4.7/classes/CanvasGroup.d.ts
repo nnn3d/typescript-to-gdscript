@@ -15,4 +15,10 @@ declare class CanvasGroup extends Node2D {
    * If `true`, calculates mipmaps for the backbuffer before drawing the {@link CanvasGroup} so that mipmaps can be used in a custom {@link ShaderMaterial} attached to the {@link CanvasGroup}. Generating mipmaps has a performance cost so this should not be enabled unless required.
    */
   use_mipmaps: boolean;
+  set_clear_margin(value: float): void;
+  get_clear_margin(): float;
+  set_fit_margin(value: float): void;
+  get_fit_margin(): float;
+  set_use_mipmaps(value: boolean): void;
+  is_using_mipmaps(): boolean;
 }

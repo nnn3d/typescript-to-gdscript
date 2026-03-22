@@ -19,6 +19,14 @@ declare class Skeleton3D extends Node3D {
    * If `true`, forces the bones in their default rest pose, regardless of their values. In the editor, this also prevents the bones from being edited.
    */
   show_rest_only: boolean;
+  set_animate_physical_bones(value: boolean): void;
+  get_animate_physical_bones(): boolean;
+  set_modifier_callback_mode_process(value: int): void;
+  get_modifier_callback_mode_process(): int;
+  set_motion_scale(value: float): void;
+  get_motion_scale(): float;
+  set_show_rest_only(value: boolean): void;
+  is_show_rest_only(): boolean;
 
   /**
    * Adds a new bone with the given name. Returns the new bone's index, or `-1` if this method fails.

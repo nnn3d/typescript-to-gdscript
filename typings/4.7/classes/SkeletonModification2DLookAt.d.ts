@@ -11,6 +11,12 @@ declare class SkeletonModification2DLookAt extends SkeletonModification2D {
    * The NodePath to the node that is the target for the LookAt modification. This node is what the modification will rotate the {@link Bone2D} to.
    */
   target_nodepath: string;
+  set_bone2d_node(value: string): void;
+  get_bone2d_node(): string;
+  set_bone_index(value: int): void;
+  get_bone_index(): int;
+  set_target_node(value: string): void;
+  get_target_node(): string;
 
   /** Returns the amount of additional rotation that is applied after the LookAt modification executes. */
   get_additional_rotation(): float;

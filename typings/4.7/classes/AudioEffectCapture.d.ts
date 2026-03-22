@@ -8,6 +8,8 @@ declare class AudioEffectCapture extends AudioEffect {
    * **Note:** Setting the buffer length will have no effect if already initialized.
    */
   buffer_length: float;
+  set_buffer_length(value: float): void;
+  get_buffer_length(): float;
 
   /** Returns `true` if at least `frames` samples are available to read in the internal ring buffer. */
   can_get_buffer(frames: int): boolean;

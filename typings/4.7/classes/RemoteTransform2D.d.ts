@@ -15,6 +15,16 @@ declare class RemoteTransform2D extends Node2D {
   update_scale: boolean;
   /** If `true`, global coordinates are used. If `false`, local coordinates are used. */
   use_global_coordinates: boolean;
+  set_remote_node(value: string): void;
+  get_remote_node(): string;
+  set_update_position(value: boolean): void;
+  get_update_position(): boolean;
+  set_update_rotation(value: boolean): void;
+  get_update_rotation(): boolean;
+  set_update_scale(value: boolean): void;
+  get_update_scale(): boolean;
+  set_use_global_coordinates(value: boolean): void;
+  get_use_global_coordinates(): boolean;
 
   /**
    * {@link RemoteTransform2D} caches the remote node. It may not notice if the remote node disappears; {@link force_update_cache} forces it to update the cache again.

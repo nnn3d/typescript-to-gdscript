@@ -15,4 +15,12 @@ declare class InputEventMouseButton extends InputEventMouse {
   factor: float;
   /** If `true`, the mouse button's state is pressed. If `false`, the mouse button's state is released. */
   pressed: boolean;
+  set_button_index(value: int): void;
+  get_button_index(): int;
+  set_canceled(value: boolean): void;
+  set_double_click(value: boolean): void;
+  is_double_click(): boolean;
+  set_factor(value: float): void;
+  get_factor(): float;
+  set_pressed(value: boolean): void;
 }

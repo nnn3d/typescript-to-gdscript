@@ -7,6 +7,8 @@ declare interface TranslationServer extends GodotObject {
    * If `true`, enables the use of pseudolocalization on the main translation domain. See {@link ProjectSettings.internationalization/pseudolocalization/use_pseudolocalization} for details.
    */
   pseudolocalization_enabled: boolean;
+  set_pseudolocalization_enabled(value: boolean): void;
+  is_pseudolocalization_enabled(): boolean;
 
   /** Adds a translation to the main translation domain. */
   add_translation(translation: Translation): void;

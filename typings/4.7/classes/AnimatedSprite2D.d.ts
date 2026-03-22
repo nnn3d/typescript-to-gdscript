@@ -37,6 +37,26 @@ declare class AnimatedSprite2D extends Node2D {
    * The {@link SpriteFrames} resource containing the animation(s). Allows you the option to load, edit, clear, make unique and save the states of the {@link SpriteFrames} resource.
    */
   sprite_frames: SpriteFrames;
+  set_animation(value: string): void;
+  get_animation(): string;
+  set_autoplay(value: string): void;
+  get_autoplay(): string;
+  set_centered(value: boolean): void;
+  is_centered(): boolean;
+  set_flip_h(value: boolean): void;
+  is_flipped_h(): boolean;
+  set_flip_v(value: boolean): void;
+  is_flipped_v(): boolean;
+  set_frame(value: int): void;
+  get_frame(): int;
+  set_frame_progress(value: float): void;
+  get_frame_progress(): float;
+  set_offset(value: Vector2): void;
+  get_offset(): Vector2;
+  set_speed_scale(value: float): void;
+  get_speed_scale(): float;
+  set_sprite_frames(value: SpriteFrames): void;
+  get_sprite_frames(): SpriteFrames;
 
   /**
    * Returns the actual playing speed of current animation or `0` if not playing. This speed is the {@link speed_scale} property multiplied by `custom_speed` argument specified when calling the {@link play} method.

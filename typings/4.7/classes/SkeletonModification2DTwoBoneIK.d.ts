@@ -19,6 +19,14 @@ declare class SkeletonModification2DTwoBoneIK extends SkeletonModification2D {
    * The NodePath to the node that is the target for the TwoBoneIK modification. This node is what the modification will use when bending the {@link Bone2D} nodes.
    */
   target_nodepath: string;
+  set_flip_bend_direction(value: boolean): void;
+  get_flip_bend_direction(): boolean;
+  set_target_maximum_distance(value: float): void;
+  get_target_maximum_distance(): float;
+  set_target_minimum_distance(value: float): void;
+  get_target_minimum_distance(): float;
+  set_target_node(value: string): void;
+  get_target_node(): string;
 
   /** Returns the {@link Bone2D} node that is being used as the first bone in the TwoBoneIK modification. */
   get_joint_one_bone2d_node(): string;

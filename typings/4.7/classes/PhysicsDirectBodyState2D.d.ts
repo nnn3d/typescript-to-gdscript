@@ -31,6 +31,26 @@ declare class PhysicsDirectBodyState2D extends GodotObject {
   total_linear_damp: float;
   /** The body's transformation matrix. */
   transform: Transform2D;
+  set_angular_velocity(value: float): void;
+  get_angular_velocity(): float;
+  get_center_of_mass(): Vector2;
+  get_center_of_mass_local(): Vector2;
+  set_collision_layer(value: int): void;
+  get_collision_layer(): int;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  get_inverse_inertia(): float;
+  get_inverse_mass(): float;
+  set_linear_velocity(value: Vector2): void;
+  get_linear_velocity(): Vector2;
+  set_sleep_state(value: boolean): void;
+  is_sleeping(): boolean;
+  get_step(): float;
+  get_total_angular_damp(): float;
+  get_total_gravity(): Vector2;
+  get_total_linear_damp(): float;
+  set_transform(value: Transform2D): void;
+  get_transform(): Transform2D;
 
   /**
    * Adds a constant directional force without affecting rotation that keeps being applied over time until cleared with `constant_force = Vector2(0, 0)`.

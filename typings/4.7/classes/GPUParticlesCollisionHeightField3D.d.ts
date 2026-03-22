@@ -24,6 +24,16 @@ declare class GPUParticlesCollisionHeightField3D extends GPUParticlesCollision3D
   size: Vector3;
   /** The update policy to use for the generated heightmap. */
   update_mode: int;
+  set_follow_camera_enabled(value: boolean): void;
+  is_follow_camera_enabled(): boolean;
+  set_heightfield_mask(value: int): void;
+  get_heightfield_mask(): int;
+  set_resolution(value: int): void;
+  get_resolution(): int;
+  set_size(value: Vector3): void;
+  get_size(): Vector3;
+  set_update_mode(value: int): void;
+  get_update_mode(): int;
 
   /**
    * Returns `true` if the specified layer of the {@link heightfield_mask} is enabled, given a `layer_number` between `1` and `20`, inclusive.

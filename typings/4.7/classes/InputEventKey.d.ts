@@ -45,6 +45,18 @@ declare class InputEventKey extends InputEventWithModifiers {
    * **Note:** This property is set by the engine only for a pressed event. If the event is sent by an IME or a virtual keyboard, no corresponding key released event is sent.
    */
   unicode: int;
+  set_echo(value: boolean): void;
+  set_key_label(value: int): void;
+  get_key_label(): int;
+  set_keycode(value: int): void;
+  get_keycode(): int;
+  set_location(value: int): void;
+  get_location(): int;
+  set_physical_keycode(value: int): void;
+  get_physical_keycode(): int;
+  set_pressed(value: boolean): void;
+  set_unicode(value: int): void;
+  get_unicode(): int;
 
   /** Returns a {@link String} representation of the event's {@link key_label} and modifiers. */
   as_text_key_label(): string;

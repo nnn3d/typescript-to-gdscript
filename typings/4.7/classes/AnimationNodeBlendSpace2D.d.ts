@@ -26,6 +26,22 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   x_label: string;
   /** Name of the blend space's Y axis. */
   y_label: string;
+  set_auto_triangles(value: boolean): void;
+  get_auto_triangles(): boolean;
+  set_blend_mode(value: int): void;
+  get_blend_mode(): int;
+  set_max_space(value: Vector2): void;
+  get_max_space(): Vector2;
+  set_min_space(value: Vector2): void;
+  get_min_space(): Vector2;
+  set_snap(value: Vector2): void;
+  get_snap(): Vector2;
+  set_use_sync(value: boolean): void;
+  is_using_sync(): boolean;
+  set_x_label(value: string): void;
+  get_x_label(): string;
+  set_y_label(value: string): void;
+  get_y_label(): string;
 
   /**
    * Adds a new point with `name` that represents a `node` at the position set by `pos`. You can insert it at a specific index using the `at_index` argument. If you use the default value for `at_index`, the point is inserted at the end of the blend points array.

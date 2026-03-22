@@ -6,6 +6,7 @@ declare class CompressedTexture2D extends Texture2D {
   /** The {@link CompressedTexture2D}'s file path to a `.ctex` file. */
   load_path: string;
   resource_local_to_scene: boolean;
+  get_load_path(): string;
 
   /** Loads the texture from the specified `path`. */
   load(path: string): int;

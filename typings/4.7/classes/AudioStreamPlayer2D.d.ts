@@ -45,6 +45,34 @@ declare class AudioStreamPlayer2D extends Node2D {
    * **Note:** This member modifies {@link volume_db} for convenience. The returned value is equivalent to the result of {@link @GlobalScope.db_to_linear} on {@link volume_db}. Setting this member is equivalent to setting {@link volume_db} to the result of {@link @GlobalScope.linear_to_db} on a value.
    */
   volume_linear: float;
+  set_area_mask(value: int): void;
+  get_area_mask(): int;
+  set_attenuation(value: float): void;
+  get_attenuation(): float;
+  set_autoplay(value: boolean): void;
+  is_autoplay_enabled(): boolean;
+  set_bus(value: string): void;
+  get_bus(): string;
+  set_max_distance(value: float): void;
+  get_max_distance(): float;
+  set_max_polyphony(value: int): void;
+  get_max_polyphony(): int;
+  set_panning_strength(value: float): void;
+  get_panning_strength(): float;
+  set_pitch_scale(value: float): void;
+  get_pitch_scale(): float;
+  set_playback_type(value: int): void;
+  get_playback_type(): int;
+  set_playing(value: boolean): void;
+  is_playing(): boolean;
+  set_stream(value: AudioStream): void;
+  get_stream(): AudioStream;
+  set_stream_paused(value: boolean): void;
+  get_stream_paused(): boolean;
+  set_volume_db(value: float): void;
+  get_volume_db(): float;
+  set_volume_linear(value: float): void;
+  get_volume_linear(): float;
 
   /** Returns the position in the {@link AudioStream}. */
   get_playback_position(): float;

@@ -5,5 +5,6 @@ export class MyClass extends Node {
     let concat = "Hello" + " " + "World";
     let sn = StringName("my_action");
     let np = NodePath("Sprite2D/AnimationPlayer");
+    let unique = this.get_node("%UniqueNode");
   }
 }

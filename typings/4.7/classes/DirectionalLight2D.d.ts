@@ -11,4 +11,6 @@ declare class DirectionalLight2D extends Light2D {
    * The maximum distance from the camera center objects can be before their shadows are culled (in pixels). Decreasing this value can prevent objects located outside the camera from casting shadows (while also improving performance). {@link Camera2D.zoom} is not taken into account by {@link max_distance}, which means that at higher zoom values, shadows will appear to fade out sooner when zooming onto a given point.
    */
   max_distance: float;
+  set_max_distance(value: float): void;
+  get_max_distance(): float;
 }

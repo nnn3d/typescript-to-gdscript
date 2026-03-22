@@ -14,6 +14,14 @@ declare class Joint2D extends Node2D {
   node_a: string;
   /** Path to the second body (B) attached to the joint. The node must inherit {@link PhysicsBody2D}. */
   node_b: string;
+  set_bias(value: float): void;
+  get_bias(): float;
+  set_exclude_nodes_from_collision(value: boolean): void;
+  get_exclude_nodes_from_collision(): boolean;
+  set_node_a(value: string): void;
+  get_node_a(): string;
+  set_node_b(value: string): void;
+  get_node_b(): string;
 
   /** Returns the joint's internal {@link RID} from the {@link PhysicsServer2D}. */
   get_rid(): RID;

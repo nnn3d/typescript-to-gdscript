@@ -17,6 +17,16 @@ declare class NavigationPathQueryResult3D extends RefCounted {
   path_rids: unknown;
   /** The type of navigation primitive (region or link) that each point of the path goes through. */
   path_types: PackedInt32Array;
+  set_path(value: PackedVector3Array): void;
+  get_path(): PackedVector3Array;
+  set_path_length(value: float): void;
+  get_path_length(): float;
+  set_path_owner_ids(value: PackedInt64Array): void;
+  get_path_owner_ids(): PackedInt64Array;
+  set_path_rids(value: unknown): void;
+  get_path_rids(): unknown;
+  set_path_types(value: PackedInt32Array): void;
+  get_path_types(): PackedInt32Array;
 
   /**
    * Reset the result object to its initial state. This is useful to reuse the object across multiple queries.

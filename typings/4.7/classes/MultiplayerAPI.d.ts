@@ -7,6 +7,8 @@ declare class MultiplayerAPI extends RefCounted {
    * The peer object to handle the RPC system (effectively enabling networking when set). Depending on the peer itself, the MultiplayerAPI will become a network server (check with {@link is_server}) and will set root node's network mode to authority, or it will become a regular client peer. All child nodes are set to inherit the network mode by default. Handling of networking-related events (connection, disconnection, new clients) is done by connecting to MultiplayerAPI's signals.
    */
   multiplayer_peer: MultiplayerPeer;
+  set_multiplayer_peer(value: MultiplayerPeer): void;
+  get_multiplayer_peer(): MultiplayerPeer;
 
   /** Returns a new instance of the default MultiplayerAPI. */
   static create_default_interface(): MultiplayerAPI;

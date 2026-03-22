@@ -30,4 +30,18 @@ declare class AudioEffectCompressor extends AudioEffect {
    * The volume level above which compression is applied to the audio, in dB. Value can range from -60 to 0.
    */
   threshold: float;
+  set_attack_us(value: float): void;
+  get_attack_us(): float;
+  set_gain(value: float): void;
+  get_gain(): float;
+  set_mix(value: float): void;
+  get_mix(): float;
+  set_ratio(value: float): void;
+  get_ratio(): float;
+  set_release_ms(value: float): void;
+  get_release_ms(): float;
+  set_sidechain(value: string): void;
+  get_sidechain(): string;
+  set_threshold(value: float): void;
+  get_threshold(): float;
 }

@@ -34,6 +34,20 @@ declare class CompositorEffect extends Resource {
    * If `true` this triggers specular data being rendered to a separate buffer and combined after effects have been applied, only applicable for the Forward+ renderer.
    */
   needs_separate_specular: boolean;
+  set_access_resolved_color(value: boolean): void;
+  get_access_resolved_color(): boolean;
+  set_access_resolved_depth(value: boolean): void;
+  get_access_resolved_depth(): boolean;
+  set_effect_callback_type(value: int): void;
+  get_effect_callback_type(): int;
+  set_enabled(value: boolean): void;
+  get_enabled(): boolean;
+  set_needs_motion_vectors(value: boolean): void;
+  get_needs_motion_vectors(): boolean;
+  set_needs_normal_roughness(value: boolean): void;
+  get_needs_normal_roughness(): boolean;
+  set_needs_separate_specular(value: boolean): void;
+  get_needs_separate_specular(): boolean;
 
   /**
    * Implement this function with your custom rendering code. `effect_callback_type` should always match the effect callback type you've specified in {@link effect_callback_type}. `render_data` provides access to the rendering state, it is only valid during rendering and should not be stored.

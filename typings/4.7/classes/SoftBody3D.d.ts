@@ -49,6 +49,30 @@ declare class SoftBody3D extends MeshInstance3D {
   simulation_precision: int;
   /** The SoftBody3D's mass. */
   total_mass: float;
+  set_collision_layer(value: int): void;
+  get_collision_layer(): int;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  set_damping_coefficient(value: float): void;
+  get_damping_coefficient(): float;
+  set_disable_mode(value: int): void;
+  get_disable_mode(): int;
+  set_drag_coefficient(value: float): void;
+  get_drag_coefficient(): float;
+  set_linear_stiffness(value: float): void;
+  get_linear_stiffness(): float;
+  set_parent_collision_ignore(value: string): void;
+  get_parent_collision_ignore(): string;
+  set_pressure_coefficient(value: float): void;
+  get_pressure_coefficient(): float;
+  set_ray_pickable(value: boolean): void;
+  is_ray_pickable(): boolean;
+  set_shrinking_factor(value: float): void;
+  get_shrinking_factor(): float;
+  set_simulation_precision(value: int): void;
+  get_simulation_precision(): int;
+  set_total_mass(value: float): void;
+  get_total_mass(): float;
 
   /** Adds a body to the list of bodies that this body can't collide with. */
   add_collision_exception_with(body: Node): void;

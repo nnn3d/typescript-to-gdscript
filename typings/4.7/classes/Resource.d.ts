@@ -25,6 +25,14 @@ declare class Resource extends RefCounted {
    * **Warning:** When setting, the ID must only consist of letters, numbers, and underscores. Otherwise, it will fail and default to a randomly generated ID.
    */
   resource_scene_unique_id: string;
+  set_local_to_scene(value: boolean): void;
+  is_local_to_scene(): boolean;
+  set_name(value: string): void;
+  get_name(): string;
+  set_path(value: string): void;
+  get_path(): string;
+  set_scene_unique_id(value: string): void;
+  get_scene_unique_id(): string;
 
   /** Override this method to return a custom {@link RID} when {@link get_rid} is called. */
   _get_rid(): RID;

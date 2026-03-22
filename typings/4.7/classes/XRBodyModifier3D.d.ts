@@ -11,6 +11,12 @@ declare class XRBodyModifier3D extends SkeletonModifier3D {
   body_update: int;
   /** Specifies the type of updates to perform on the bones. */
   bone_update: int;
+  set_body_tracker(value: string): void;
+  get_body_tracker(): string;
+  set_body_update(value: int): void;
+  get_body_update(): int;
+  set_bone_update(value: int): void;
+  get_bone_update(): int;
 
   // enum BodyUpdate
   /** The skeleton's upper body joints are updated. */

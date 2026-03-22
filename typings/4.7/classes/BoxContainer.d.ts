@@ -12,6 +12,10 @@ declare class BoxContainer extends Container {
    * Can't be changed when using {@link HBoxContainer} and {@link VBoxContainer}.
    */
   vertical: boolean;
+  set_alignment(value: int): void;
+  get_alignment(): int;
+  set_vertical(value: boolean): void;
+  is_vertical(): boolean;
 
   /**
    * Adds a {@link Control} node to the box as a spacer. If `begin` is `true`, it will insert the {@link Control} node in front of all other children.

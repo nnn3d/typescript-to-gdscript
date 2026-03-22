@@ -72,6 +72,46 @@ declare class Label extends Control {
    * **Note:** Setting this property updates {@link visible_characters} accordingly.
    */
   visible_ratio: float;
+  set_autowrap_mode(value: int): void;
+  get_autowrap_mode(): int;
+  set_autowrap_trim_flags(value: int): void;
+  get_autowrap_trim_flags(): int;
+  set_clip_text(value: boolean): void;
+  is_clipping_text(): boolean;
+  set_ellipsis_char(value: string): void;
+  get_ellipsis_char(): string;
+  set_horizontal_alignment(value: int): void;
+  get_horizontal_alignment(): int;
+  set_justification_flags(value: int): void;
+  get_justification_flags(): int;
+  set_label_settings(value: LabelSettings): void;
+  get_label_settings(): LabelSettings;
+  set_language(value: string): void;
+  get_language(): string;
+  set_lines_skipped(value: int): void;
+  get_lines_skipped(): int;
+  set_max_lines_visible(value: int): void;
+  get_max_lines_visible(): int;
+  set_structured_text_bidi_override_options(value: Array<unknown>): void;
+  get_structured_text_bidi_override_options(): Array<unknown>;
+  set_tab_stops(value: PackedFloat32Array): void;
+  get_tab_stops(): PackedFloat32Array;
+  set_text(value: string): void;
+  get_text(): string;
+  set_text_direction(value: int): void;
+  get_text_direction(): int;
+  set_text_overrun_behavior(value: int): void;
+  get_text_overrun_behavior(): int;
+  set_uppercase(value: boolean): void;
+  is_uppercase(): boolean;
+  set_vertical_alignment(value: int): void;
+  get_vertical_alignment(): int;
+  set_visible_characters(value: int): void;
+  get_visible_characters(): int;
+  set_visible_characters_behavior(value: int): void;
+  get_visible_characters_behavior(): int;
+  set_visible_ratio(value: float): void;
+  get_visible_ratio(): float;
 
   /**
    * Returns the bounding rectangle of the character at position `pos` in the label's local coordinate system. If the character is a non-visual character or `pos` is outside the valid range, an empty {@link Rect2} is returned. If the character is a part of a composite grapheme, the bounding rectangle of the whole grapheme is returned.

@@ -13,6 +13,10 @@ declare class DirAccess extends RefCounted {
    * Affects {@link list_dir_begin} and {@link get_directories}.
    */
   include_navigational: boolean;
+  set_include_hidden(value: boolean): void;
+  get_include_hidden(): boolean;
+  set_include_navigational(value: boolean): void;
+  get_include_navigational(): boolean;
 
   /**
    * Changes the currently opened directory to the one passed as an argument. The argument can be relative to the current directory (e.g. `newdir` or `../newdir`), or an absolute path (e.g. `/tmp/newdir` or `res://somedir/newdir`).

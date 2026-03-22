@@ -74,6 +74,28 @@ declare class StyleBoxFlat extends StyleBox {
    * **Note:** To ensure text does not touch the StyleBox's edges, consider increasing the {@link StyleBox}'s content margin (see {@link StyleBox.content_margin_bottom}). It is preferable to increase the content margin instead of the expand margin (see {@link expand_margin_bottom}), as increasing the expand margin does not increase the size of the clickable area for {@link Control}s.
    */
   skew: Vector2;
+  set_anti_aliased(value: boolean): void;
+  is_anti_aliased(): boolean;
+  set_aa_size(value: float): void;
+  get_aa_size(): float;
+  set_bg_color(value: Color): void;
+  get_bg_color(): Color;
+  set_border_blend(value: boolean): void;
+  get_border_blend(): boolean;
+  set_border_color(value: Color): void;
+  get_border_color(): Color;
+  set_corner_detail(value: int): void;
+  get_corner_detail(): int;
+  set_draw_center(value: boolean): void;
+  is_draw_center_enabled(): boolean;
+  set_shadow_color(value: Color): void;
+  get_shadow_color(): Color;
+  set_shadow_offset(value: Vector2): void;
+  get_shadow_offset(): Vector2;
+  set_shadow_size(value: int): void;
+  get_shadow_size(): int;
+  set_skew(value: Vector2): void;
+  get_skew(): Vector2;
 
   /** Returns the specified {@link Side}'s border width. */
   get_border_width(margin: int): int;

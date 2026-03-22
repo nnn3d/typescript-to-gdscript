@@ -16,6 +16,12 @@ declare class Sky extends Resource {
    * {@link Material} used to draw the background. Can be {@link PanoramaSkyMaterial}, {@link ProceduralSkyMaterial}, {@link PhysicalSkyMaterial}, or even a {@link ShaderMaterial} if you want to use your own custom shader.
    */
   sky_material: Material;
+  set_process_mode(value: int): void;
+  get_process_mode(): int;
+  set_radiance_size(value: int): void;
+  get_radiance_size(): int;
+  set_material(value: Material): void;
+  get_material(): Material;
 
   // enum RadianceSize
   /** Radiance texture size is 32×32 pixels. */

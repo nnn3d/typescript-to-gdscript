@@ -26,6 +26,24 @@ declare class TouchScreenButton extends Node2D {
   texture_pressed: Texture2D;
   /** The button's visibility mode. */
   visibility_mode: int;
+  set_action(value: string): void;
+  get_action(): string;
+  set_bitmask(value: BitMap): void;
+  get_bitmask(): BitMap;
+  set_passby_press(value: boolean): void;
+  is_passby_press_enabled(): boolean;
+  set_shape(value: Shape2D): void;
+  get_shape(): Shape2D;
+  set_shape_centered(value: boolean): void;
+  is_shape_centered(): boolean;
+  set_shape_visible(value: boolean): void;
+  is_shape_visible(): boolean;
+  set_texture_normal(value: Texture2D): void;
+  get_texture_normal(): Texture2D;
+  set_texture_pressed(value: Texture2D): void;
+  get_texture_pressed(): Texture2D;
+  set_visibility_mode(value: int): void;
+  get_visibility_mode(): int;
 
   /** Returns `true` if this button is currently pressed. */
   is_pressed(): boolean;

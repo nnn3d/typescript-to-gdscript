@@ -17,4 +17,11 @@ declare class InputEventAction extends InputEvent {
    * The action's strength between 0 and 1. This value is considered as equal to 0 if pressed is `false`. The event strength allows faking analog joypad motion events, by specifying how strongly the joypad axis is bent or pressed.
    */
   strength: float;
+  set_action(value: string): void;
+  get_action(): string;
+  set_event_index(value: int): void;
+  get_event_index(): int;
+  set_pressed(value: boolean): void;
+  set_strength(value: float): void;
+  get_strength(): float;
 }

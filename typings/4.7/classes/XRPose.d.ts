@@ -25,6 +25,18 @@ declare class XRPose extends RefCounted {
   tracking_confidence: int;
   /** The transform containing the original and transform as reported by the XR runtime. */
   transform: Transform3D;
+  set_angular_velocity(value: Vector3): void;
+  get_angular_velocity(): Vector3;
+  set_has_tracking_data(value: boolean): void;
+  get_has_tracking_data(): boolean;
+  set_linear_velocity(value: Vector3): void;
+  get_linear_velocity(): Vector3;
+  set_name(value: string): void;
+  get_name(): string;
+  set_tracking_confidence(value: int): void;
+  get_tracking_confidence(): int;
+  set_transform(value: Transform3D): void;
+  get_transform(): Transform3D;
 
   /**
    * Returns the {@link transform} with world scale and our reference frame applied. This is the transform used to position {@link XRNode3D} objects.

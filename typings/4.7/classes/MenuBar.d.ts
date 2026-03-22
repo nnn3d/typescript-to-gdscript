@@ -26,6 +26,16 @@ declare class MenuBar extends Control {
   switch_on_hover: boolean;
   /** Base text writing direction. */
   text_direction: int;
+  set_flat(value: boolean): void;
+  is_flat(): boolean;
+  set_prefer_global_menu(value: boolean): void;
+  is_prefer_global_menu(): boolean;
+  set_start_index(value: int): void;
+  get_start_index(): int;
+  set_switch_on_hover(value: boolean): void;
+  is_switch_on_hover(): boolean;
+  set_text_direction(value: int): void;
+  get_text_direction(): int;
 
   /** Returns number of menu items. */
   get_menu_count(): int;

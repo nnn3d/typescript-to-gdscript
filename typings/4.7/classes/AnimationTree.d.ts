@@ -15,6 +15,10 @@ declare class AnimationTree extends AnimationMixer {
    * The root animation node of this {@link AnimationTree}. See {@link AnimationRootNode}.
    */
   callback_mode_discrete: int;
+  set_advance_expression_base_node(value: string): void;
+  get_advance_expression_base_node(): string;
+  set_animation_player(value: string): void;
+  get_animation_player(): string;
 
   /** Returns the process notification in which to update animations. */
   get_process_callback(): int;

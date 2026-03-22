@@ -8,4 +8,6 @@ declare class AnimationNodeSync extends AnimationNode {
    * If `true`, forcing the blended animations to advance frame.
    */
   sync: boolean;
+  set_use_sync(value: boolean): void;
+  is_using_sync(): boolean;
 }

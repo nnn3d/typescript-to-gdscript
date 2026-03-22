@@ -5,6 +5,8 @@
 declare class VisualShaderNodeUIntFunc extends VisualShaderNode {
   /** A function to be applied to the scalar. */
   function: int;
+  set_function(value: int): void;
+  get_function(): int;
 
   // enum Function
   /** Negates the `x` using `-(x)`. */

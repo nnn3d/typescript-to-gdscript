@@ -10,4 +10,8 @@ declare class SeparationRayShape3D extends Shape3D {
    * If `true`, the shape can return the correct normal and separate in any direction, allowing sliding motion on slopes.
    */
   slide_on_slope: boolean;
+  set_length(value: float): void;
+  get_length(): float;
+  set_slide_on_slope(value: boolean): void;
+  get_slide_on_slope(): boolean;
 }

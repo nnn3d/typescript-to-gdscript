@@ -32,6 +32,22 @@ declare class AudioStreamWAV extends AudioStream {
    * **Note:** Only WAV files using a `LIST` chunk with an identifier of `INFO` to encode the tags are currently supported.
    */
   tags: Dictionary;
+  set_data(value: PackedByteArray): void;
+  get_data(): PackedByteArray;
+  set_format(value: int): void;
+  get_format(): int;
+  set_loop_begin(value: int): void;
+  get_loop_begin(): int;
+  set_loop_end(value: int): void;
+  get_loop_end(): int;
+  set_loop_mode(value: int): void;
+  get_loop_mode(): int;
+  set_mix_rate(value: int): void;
+  get_mix_rate(): int;
+  set_stereo(value: boolean): void;
+  is_stereo(): boolean;
+  set_tags(value: Dictionary): void;
+  get_tags(): Dictionary;
 
   /**
    * Creates a new {@link AudioStreamWAV} instance from the given buffer. The buffer must contain WAV data.

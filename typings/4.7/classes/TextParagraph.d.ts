@@ -33,6 +33,32 @@ declare class TextParagraph extends RefCounted {
   text_overrun_behavior: int;
   /** Paragraph width. */
   width: float;
+  set_alignment(value: int): void;
+  get_alignment(): int;
+  set_break_flags(value: int): void;
+  get_break_flags(): int;
+  set_custom_punctuation(value: string): void;
+  get_custom_punctuation(): string;
+  set_direction(value: int): void;
+  get_direction(): int;
+  set_ellipsis_char(value: string): void;
+  get_ellipsis_char(): string;
+  set_justification_flags(value: int): void;
+  get_justification_flags(): int;
+  set_line_spacing(value: float): void;
+  get_line_spacing(): float;
+  set_max_lines_visible(value: int): void;
+  get_max_lines_visible(): int;
+  set_orientation(value: int): void;
+  get_orientation(): int;
+  set_preserve_control(value: boolean): void;
+  get_preserve_control(): boolean;
+  set_preserve_invalid(value: boolean): void;
+  get_preserve_invalid(): boolean;
+  set_text_overrun_behavior(value: int): void;
+  get_text_overrun_behavior(): int;
+  set_width(value: float): void;
+  get_width(): float;
 
   /**
    * Adds inline object to the text buffer, `key` must be unique. In the text, object is represented as `length` object replacement characters.

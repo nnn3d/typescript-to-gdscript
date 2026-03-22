@@ -6,6 +6,8 @@ declare class ButtonGroup extends Resource {
   /** If `true`, it is possible to unpress all buttons in this {@link ButtonGroup}. */
   allow_unpress: boolean;
   resource_local_to_scene: boolean;
+  set_allow_unpress(value: boolean): void;
+  is_allow_unpress(): boolean;
 
   /**
    * Returns an {@link Array} of {@link Button}s who have this as their {@link ButtonGroup} (see {@link BaseButton.button_group}).

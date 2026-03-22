@@ -39,6 +39,26 @@ declare class TextureButton extends BaseButton {
    * Texture to display on mouse down over the node, if the node has keyboard focus and the player presses the Enter key or if the player presses the {@link BaseButton.shortcut} key. If not assigned, the {@link TextureButton} displays {@link texture_hover} instead when pressed.
    */
   texture_pressed: Texture2D;
+  set_flip_h(value: boolean): void;
+  is_flipped_h(): boolean;
+  set_flip_v(value: boolean): void;
+  is_flipped_v(): boolean;
+  set_ignore_texture_size(value: boolean): void;
+  get_ignore_texture_size(): boolean;
+  set_stretch_mode(value: int): void;
+  get_stretch_mode(): int;
+  set_click_mask(value: BitMap): void;
+  get_click_mask(): BitMap;
+  set_texture_disabled(value: Texture2D): void;
+  get_texture_disabled(): Texture2D;
+  set_texture_focused(value: Texture2D): void;
+  get_texture_focused(): Texture2D;
+  set_texture_hover(value: Texture2D): void;
+  get_texture_hover(): Texture2D;
+  set_texture_normal(value: Texture2D): void;
+  get_texture_normal(): Texture2D;
+  set_texture_pressed(value: Texture2D): void;
+  get_texture_pressed(): Texture2D;
 
   // enum StretchMode
   /** Scale to fit the node's bounding rectangle. */

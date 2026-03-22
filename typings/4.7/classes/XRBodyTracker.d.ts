@@ -8,6 +8,10 @@ declare class XRBodyTracker extends XRPositionalTracker {
   /** If `true`, the body tracking data is valid. */
   has_tracking_data: boolean;
   type: int;
+  set_body_flags(value: int): void;
+  get_body_flags(): int;
+  set_has_tracking_data(value: boolean): void;
+  get_has_tracking_data(): boolean;
 
   /** Returns flags about the validity of the tracking data for the given body joint. */
   get_joint_flags(joint: int): int;

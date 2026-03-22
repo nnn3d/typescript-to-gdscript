@@ -39,4 +39,26 @@ declare class RDPipelineRasterizationState extends RefCounted {
   patch_control_points: int;
   /** If `true`, performs wireframe rendering for triangles instead of flat or textured rendering. */
   wireframe: boolean;
+  set_cull_mode(value: int): void;
+  get_cull_mode(): int;
+  set_depth_bias_clamp(value: float): void;
+  get_depth_bias_clamp(): float;
+  set_depth_bias_constant_factor(value: float): void;
+  get_depth_bias_constant_factor(): float;
+  set_depth_bias_enabled(value: boolean): void;
+  get_depth_bias_enabled(): boolean;
+  set_depth_bias_slope_factor(value: float): void;
+  get_depth_bias_slope_factor(): float;
+  set_discard_primitives(value: boolean): void;
+  get_discard_primitives(): boolean;
+  set_enable_depth_clamp(value: boolean): void;
+  get_enable_depth_clamp(): boolean;
+  set_front_face(value: int): void;
+  get_front_face(): int;
+  set_line_width(value: float): void;
+  get_line_width(): float;
+  set_patch_control_points(value: int): void;
+  get_patch_control_points(): int;
+  set_wireframe(value: boolean): void;
+  get_wireframe(): boolean;
 }

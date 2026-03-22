@@ -18,6 +18,12 @@ declare class Theme extends Resource {
    * Values below `1` are invalid and can be used to unset the property. Use {@link has_default_font_size} to check if this value is valid.
    */
   default_font_size: int;
+  set_default_base_scale(value: float): void;
+  get_default_base_scale(): float;
+  set_default_font(value: Font): void;
+  get_default_font(): Font;
+  set_default_font_size(value: int): void;
+  get_default_font_size(): int;
 
   /**
    * Adds an empty theme type for every valid data type.

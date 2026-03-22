@@ -53,6 +53,38 @@ declare class PhysicalBone3D extends PhysicsBody3D {
   linear_velocity: Vector3;
   /** The body's mass. */
   mass: float;
+  set_angular_damp(value: float): void;
+  get_angular_damp(): float;
+  set_angular_damp_mode(value: int): void;
+  get_angular_damp_mode(): int;
+  set_angular_velocity(value: Vector3): void;
+  get_angular_velocity(): Vector3;
+  set_body_offset(value: Transform3D): void;
+  get_body_offset(): Transform3D;
+  set_bounce(value: float): void;
+  get_bounce(): float;
+  set_can_sleep(value: boolean): void;
+  is_able_to_sleep(): boolean;
+  set_use_custom_integrator(value: boolean): void;
+  is_using_custom_integrator(): boolean;
+  set_friction(value: float): void;
+  get_friction(): float;
+  set_gravity_scale(value: float): void;
+  get_gravity_scale(): float;
+  set_joint_offset(value: Transform3D): void;
+  get_joint_offset(): Transform3D;
+  set_joint_rotation(value: Vector3): void;
+  get_joint_rotation(): Vector3;
+  set_joint_type(value: int): void;
+  get_joint_type(): int;
+  set_linear_damp(value: float): void;
+  get_linear_damp(): float;
+  set_linear_damp_mode(value: int): void;
+  get_linear_damp_mode(): int;
+  set_linear_velocity(value: Vector3): void;
+  get_linear_velocity(): Vector3;
+  set_mass(value: float): void;
+  get_mass(): float;
 
   /**
    * Called during physics processing, allowing you to read and safely modify the simulation state for the object. By default, it is called before the standard force integration, but the {@link custom_integrator} property allows you to disable the standard force integration and do fully custom force integration for a body.

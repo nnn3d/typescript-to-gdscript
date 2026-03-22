@@ -9,6 +9,11 @@ declare class CameraFeed extends RefCounted {
   feed_transform: Transform2D;
   /** Formats supported by the feed. Each entry is a {@link Dictionary} describing format parameters. */
   formats: Array<unknown>;
+  set_active(value: boolean): void;
+  is_active(): boolean;
+  set_transform(value: Transform2D): void;
+  get_transform(): Transform2D;
+  get_formats(): Array<unknown>;
 
   /** Called when the camera feed is activated. */
   _activate_feed(): boolean;

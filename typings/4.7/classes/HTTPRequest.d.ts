@@ -30,6 +30,20 @@ declare class HTTPRequest extends Node {
   timeout: float;
   /** If `true`, multithreading is used to improve performance. */
   use_threads: boolean;
+  set_accept_gzip(value: boolean): void;
+  is_accepting_gzip(): boolean;
+  set_body_size_limit(value: int): void;
+  get_body_size_limit(): int;
+  set_download_chunk_size(value: int): void;
+  get_download_chunk_size(): int;
+  set_download_file(value: string): void;
+  get_download_file(): string;
+  set_max_redirects(value: int): void;
+  get_max_redirects(): int;
+  set_timeout(value: float): void;
+  get_timeout(): float;
+  set_use_threads(value: boolean): void;
+  is_using_threads(): boolean;
 
   /** Cancels the current request. */
   cancel_request(): void;

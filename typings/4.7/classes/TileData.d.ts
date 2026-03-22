@@ -27,6 +27,28 @@ declare class TileData extends GodotObject {
   y_sort_origin: int;
   /** Ordering index of this tile, relative to {@link TileMapLayer}. */
   z_index: int;
+  set_flip_h(value: boolean): void;
+  get_flip_h(): boolean;
+  set_flip_v(value: boolean): void;
+  get_flip_v(): boolean;
+  set_material(value: Material): void;
+  get_material(): Material;
+  set_modulate(value: Color): void;
+  get_modulate(): Color;
+  set_probability(value: float): void;
+  get_probability(): float;
+  set_terrain(value: int): void;
+  get_terrain(): int;
+  set_terrain_set(value: int): void;
+  get_terrain_set(): int;
+  set_texture_origin(value: Vector2i): void;
+  get_texture_origin(): Vector2i;
+  set_transpose(value: boolean): void;
+  get_transpose(): boolean;
+  set_y_sort_origin(value: int): void;
+  get_y_sort_origin(): int;
+  set_z_index(value: int): void;
+  get_z_index(): int;
 
   /** Adds a collision polygon to the tile on the given TileSet physics layer. */
   add_collision_polygon(layer_id: int): void;

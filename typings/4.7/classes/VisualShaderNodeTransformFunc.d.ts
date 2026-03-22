@@ -5,6 +5,8 @@
 declare class VisualShaderNodeTransformFunc extends VisualShaderNode {
   /** The function to be computed. */
   function: int;
+  set_function(value: int): void;
+  get_function(): int;
 
   // enum Function
   /** Perform the inverse operation on the {@link Transform3D} matrix. */

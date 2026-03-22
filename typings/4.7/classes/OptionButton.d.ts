@@ -21,6 +21,14 @@ declare class OptionButton extends Button {
   /** The index of the currently selected item, or `-1` if no item is selected. */
   selected: int;
   toggle_mode: boolean;
+  set_search_bar_enabled_on_item_count(value: int): void;
+  get_search_bar_enabled_on_item_count(): int;
+  set_fit_to_longest_item(value: boolean): void;
+  is_fit_to_longest_item(): boolean;
+  set_item_count(value: int): void;
+  get_item_count(): int;
+  _select_int(value: int): void;
+  get_selected(): int;
 
   /**
    * Adds an item, with a `texture` icon, text `label` and (optionally) `id`. If no `id` is passed, the item index will be used as the item's ID. New items are appended at the end.

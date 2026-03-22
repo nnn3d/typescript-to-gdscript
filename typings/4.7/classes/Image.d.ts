@@ -5,6 +5,8 @@
 declare class Image extends Resource {
   /** Holds all the image's color data in a given format. See {@link Format} constants. */
   data: Dictionary;
+  _set_data(value: Dictionary): void;
+  _get_data(): Dictionary;
 
   /**
    * Adjusts this image's `brightness`, `contrast`, and `saturation` by the given values. Does not work if the image is compressed (see {@link is_compressed}).

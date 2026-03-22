@@ -8,6 +8,8 @@ declare class IKModifier3D extends SkeletonModifier3D {
    * If `false`, the solver retrieves the bone axis from the bone rest and caches it, which increases performance slightly, but position changes in the bone pose made before processing this {@link IKModifier3D} are ignored.
    */
   mutable_bone_axes: boolean;
+  set_mutable_bone_axes(value: boolean): void;
+  are_bone_axes_mutable(): boolean;
 
   /** Clears all settings. */
   clear_settings(): void;

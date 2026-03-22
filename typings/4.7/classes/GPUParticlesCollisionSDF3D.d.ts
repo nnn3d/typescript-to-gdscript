@@ -21,6 +21,16 @@ declare class GPUParticlesCollisionSDF3D extends GPUParticlesCollision3D {
    * The collision shape's thickness. Unlike other particle colliders, {@link GPUParticlesCollisionSDF3D} is actually hollow on the inside. {@link thickness} can be increased to prevent particles from tunneling through the collision shape at high speeds, or when the {@link GPUParticlesCollisionSDF3D} is moved.
    */
   thickness: float;
+  set_bake_mask(value: int): void;
+  get_bake_mask(): int;
+  set_resolution(value: int): void;
+  get_resolution(): int;
+  set_size(value: Vector3): void;
+  get_size(): Vector3;
+  set_texture(value: Texture3D): void;
+  get_texture(): Texture3D;
+  set_thickness(value: float): void;
+  get_thickness(): float;
 
   /**
    * Returns whether or not the specified layer of the {@link bake_mask} is enabled, given a `layer_number` between 1 and 32.

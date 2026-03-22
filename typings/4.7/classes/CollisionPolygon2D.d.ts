@@ -26,6 +26,18 @@ declare class CollisionPolygon2D extends Node2D {
    * **Note:** The returned vertices are in the local coordinate space of the given {@link CollisionPolygon2D}.
    */
   polygon: PackedVector2Array;
+  set_build_mode(value: int): void;
+  get_build_mode(): int;
+  set_disabled(value: boolean): void;
+  is_disabled(): boolean;
+  set_one_way_collision(value: boolean): void;
+  is_one_way_collision_enabled(): boolean;
+  set_one_way_collision_direction(value: Vector2): void;
+  get_one_way_collision_direction(): Vector2;
+  set_one_way_collision_margin(value: float): void;
+  get_one_way_collision_margin(): float;
+  set_polygon(value: PackedVector2Array): void;
+  get_polygon(): PackedVector2Array;
 
   // enum BuildMode
   /**

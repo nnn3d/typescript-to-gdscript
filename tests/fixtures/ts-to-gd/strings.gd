@@ -7,3 +7,4 @@ func test_strings():
 	var concat = "Hello" + " " + "World"
 	var sn = &"my_action"
 	var np = ^"Sprite2D/AnimationPlayer"
+	var unique = %UniqueNode

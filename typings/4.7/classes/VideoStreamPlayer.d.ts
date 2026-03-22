@@ -31,6 +31,30 @@ declare class VideoStreamPlayer extends Control {
   volume: float;
   /** Audio volume in dB. */
   volume_db: float;
+  set_audio_track(value: int): void;
+  get_audio_track(): int;
+  set_autoplay(value: boolean): void;
+  has_autoplay(): boolean;
+  set_buffering_msec(value: int): void;
+  get_buffering_msec(): int;
+  set_bus(value: string): void;
+  get_bus(): string;
+  set_expand(value: boolean): void;
+  has_expand(): boolean;
+  set_loop(value: boolean): void;
+  has_loop(): boolean;
+  set_paused(value: boolean): void;
+  is_paused(): boolean;
+  set_speed_scale(value: float): void;
+  get_speed_scale(): float;
+  set_stream(value: VideoStream): void;
+  get_stream(): VideoStream;
+  set_stream_position(value: float): void;
+  get_stream_position(): float;
+  set_volume(value: float): void;
+  get_volume(): float;
+  set_volume_db(value: float): void;
+  get_volume_db(): float;
 
   /** The length of the current stream, in seconds. */
   get_stream_length(): float;

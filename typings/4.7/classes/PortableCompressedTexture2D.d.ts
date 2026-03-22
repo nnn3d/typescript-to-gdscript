@@ -13,6 +13,8 @@ declare class PortableCompressedTexture2D extends Texture2D {
    * Allows overriding the texture's size (for 2D only).
    */
   resource_local_to_scene: boolean;
+  set_keep_compressed_buffer(value: boolean): void;
+  is_keeping_compressed_buffer(): boolean;
 
   /**
    * Initializes the compressed texture from a base image. The compression mode must be provided.

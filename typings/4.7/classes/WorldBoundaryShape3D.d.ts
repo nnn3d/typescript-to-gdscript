@@ -5,4 +5,6 @@
 declare class WorldBoundaryShape3D extends Shape3D {
   /** The {@link Plane} used by the {@link WorldBoundaryShape3D} for collision. */
   plane: Plane;
+  set_plane(value: Plane): void;
+  get_plane(): Plane;
 }

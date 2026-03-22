@@ -25,6 +25,16 @@ declare class CollisionObject2D extends Node2D {
    * If `true`, this object is pickable. A pickable object can detect the mouse pointer entering/leaving, and if the mouse is inside it, report input events. Requires at least one {@link collision_layer} bit to be set.
    */
   input_pickable: boolean;
+  set_collision_layer(value: int): void;
+  get_collision_layer(): int;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  set_collision_priority(value: float): void;
+  get_collision_priority(): float;
+  set_disable_mode(value: int): void;
+  get_disable_mode(): int;
+  set_pickable(value: boolean): void;
+  is_pickable(): boolean;
 
   /**
    * Accepts unhandled {@link InputEvent}s. `shape_idx` is the child index of the clicked {@link Shape2D}. Connect to {@link input_event} to easily pick up these events.

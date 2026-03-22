@@ -5,6 +5,8 @@
 declare class AnimationNode extends Resource {
   /** If `true`, filtering is enabled. */
   filter_enabled: boolean;
+  set_filter_enabled(value: boolean): void;
+  is_filter_enabled(): boolean;
 
   /**
    * When inheriting from {@link AnimationRootNode}, implement this virtual method to override the text caption for this animation node.

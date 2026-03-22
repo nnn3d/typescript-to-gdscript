@@ -53,6 +53,36 @@ declare class NavigationPathQueryParameters2D extends RefCounted {
   start_position: Vector2;
   /** The pathfinding target position in global coordinates. */
   target_position: Vector2;
+  set_excluded_regions(value: unknown): void;
+  get_excluded_regions(): unknown;
+  set_included_regions(value: unknown): void;
+  get_included_regions(): unknown;
+  set_map(value: RID): void;
+  get_map(): RID;
+  set_metadata_flags(value: int): void;
+  get_metadata_flags(): int;
+  set_navigation_layers(value: int): void;
+  get_navigation_layers(): int;
+  set_path_postprocessing(value: int): void;
+  get_path_postprocessing(): int;
+  set_path_return_max_length(value: float): void;
+  get_path_return_max_length(): float;
+  set_path_return_max_radius(value: float): void;
+  get_path_return_max_radius(): float;
+  set_path_search_max_distance(value: float): void;
+  get_path_search_max_distance(): float;
+  set_path_search_max_polygons(value: int): void;
+  get_path_search_max_polygons(): int;
+  set_pathfinding_algorithm(value: int): void;
+  get_pathfinding_algorithm(): int;
+  set_simplify_epsilon(value: float): void;
+  get_simplify_epsilon(): float;
+  set_simplify_path(value: boolean): void;
+  get_simplify_path(): boolean;
+  set_start_position(value: Vector2): void;
+  get_start_position(): Vector2;
+  set_target_position(value: Vector2): void;
+  get_target_position(): Vector2;
 
   // enum PathfindingAlgorithm
   /** The path query uses the default A* pathfinding algorithm. */

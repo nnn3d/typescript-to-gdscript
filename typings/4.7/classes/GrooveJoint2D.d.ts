@@ -11,4 +11,8 @@ declare class GrooveJoint2D extends Joint2D {
    * The groove's length. The groove is from the joint's origin towards {@link length} along the joint's local Y axis.
    */
   length: float;
+  set_initial_offset(value: float): void;
+  get_initial_offset(): float;
+  set_length(value: float): void;
+  get_length(): float;
 }

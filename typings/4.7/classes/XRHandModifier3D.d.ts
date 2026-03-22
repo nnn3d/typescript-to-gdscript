@@ -9,6 +9,10 @@ declare class XRHandModifier3D extends SkeletonModifier3D {
    * The name of the {@link XRHandTracker} registered with {@link XRServer} to obtain the hand tracking data from.
    */
   hand_tracker: string;
+  set_bone_update(value: int): void;
+  get_bone_update(): int;
+  set_hand_tracker(value: string): void;
+  get_hand_tracker(): string;
 
   // enum BoneUpdate
   /** The skeleton's bones are fully updated (both position and rotation) to match the tracked bones. */

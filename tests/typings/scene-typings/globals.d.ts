@@ -78,6 +78,8 @@ interface _PlayerSceneNodes {
   "Sprite2D": Sprite2D;
   "CollisionShape2D": CollisionShape2D;
   "Sprite2D/AnimationPlayer": AnimationPlayer;
+  "HealthBar": ProgressBar;
+  "%HealthBar": ProgressBar;
 }
 
 declare module "./Player.ts" {

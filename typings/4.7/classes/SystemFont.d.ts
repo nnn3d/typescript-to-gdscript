@@ -59,4 +59,36 @@ declare class SystemFont extends Font {
    * Font glyph subpixel positioning mode. Subpixel positioning provides shaper text and better kerning for smaller font sizes, at the cost of memory usage and font rasterization speed. Use {@link TextServer.SUBPIXEL_POSITIONING_AUTO} to automatically enable it based on the font size.
    */
   subpixel_positioning: int;
+  set_allow_system_fallback(value: boolean): void;
+  is_allow_system_fallback(): boolean;
+  set_antialiasing(value: int): void;
+  get_antialiasing(): int;
+  set_disable_embedded_bitmaps(value: boolean): void;
+  get_disable_embedded_bitmaps(): boolean;
+  set_font_italic(value: boolean): void;
+  get_font_italic(): boolean;
+  set_font_names(value: PackedStringArray): void;
+  get_font_names(): PackedStringArray;
+  set_font_stretch(value: int): void;
+  set_font_weight(value: int): void;
+  set_force_autohinter(value: boolean): void;
+  is_force_autohinter(): boolean;
+  set_generate_mipmaps(value: boolean): void;
+  get_generate_mipmaps(): boolean;
+  set_hinting(value: int): void;
+  get_hinting(): int;
+  set_keep_rounding_remainders(value: boolean): void;
+  get_keep_rounding_remainders(): boolean;
+  set_modulate_color_glyphs(value: boolean): void;
+  is_modulate_color_glyphs(): boolean;
+  set_msdf_pixel_range(value: int): void;
+  get_msdf_pixel_range(): int;
+  set_msdf_size(value: int): void;
+  get_msdf_size(): int;
+  set_multichannel_signed_distance_field(value: boolean): void;
+  is_multichannel_signed_distance_field(): boolean;
+  set_oversampling(value: float): void;
+  get_oversampling(): float;
+  set_subpixel_positioning(value: int): void;
+  get_subpixel_positioning(): int;
 }

@@ -5,6 +5,8 @@
 declare class VisualShaderNodeParticleEmit extends VisualShaderNode {
   /** Flags used to override the properties defined in the sub-emitter's process material. */
   flags: int;
+  set_flags(value: int): void;
+  get_flags(): int;
 
   // enum EmitFlags
   /** If enabled, the particle starts with the position defined by this node. */

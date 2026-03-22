@@ -27,4 +27,16 @@ declare class CanvasTexture extends Texture2D {
   texture_filter: int;
   /** The texture repeat mode to use when drawing this {@link CanvasTexture}. */
   texture_repeat: int;
+  set_diffuse_texture(value: Texture2D): void;
+  get_diffuse_texture(): Texture2D;
+  set_normal_texture(value: Texture2D): void;
+  get_normal_texture(): Texture2D;
+  set_specular_shininess(value: float): void;
+  get_specular_shininess(): float;
+  set_specular_texture(value: Texture2D): void;
+  get_specular_texture(): Texture2D;
+  set_texture_filter(value: int): void;
+  get_texture_filter(): int;
+  set_texture_repeat(value: int): void;
+  get_texture_repeat(): int;
 }

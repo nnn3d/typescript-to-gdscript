@@ -9,4 +9,10 @@ declare class PanoramaSkyMaterial extends Material {
   filter: boolean;
   /** {@link Texture2D} to be applied to the {@link PanoramaSkyMaterial}. */
   panorama: Texture2D;
+  set_energy_multiplier(value: float): void;
+  get_energy_multiplier(): float;
+  set_filtering_enabled(value: boolean): void;
+  is_filtering_enabled(): boolean;
+  set_panorama(value: Texture2D): void;
+  get_panorama(): Texture2D;
 }

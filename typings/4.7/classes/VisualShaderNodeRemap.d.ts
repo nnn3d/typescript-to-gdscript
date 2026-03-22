@@ -4,6 +4,8 @@
 /** A visual shader node for remap function. */
 declare class VisualShaderNodeRemap extends VisualShaderNode {
   op_type: int;
+  set_op_type(value: int): void;
+  get_op_type(): int;
 
   // enum OpType
   /** A floating-point scalar type. */

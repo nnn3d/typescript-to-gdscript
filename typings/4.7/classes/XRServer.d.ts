@@ -19,6 +19,14 @@ declare interface XRServer extends GodotObject {
    * The scale of the game world compared to the real world. By default, most AR/VR platforms assume that 1 game unit corresponds to 1 real world meter.
    */
   world_scale: float;
+  set_camera_locked_to_origin(value: boolean): void;
+  is_camera_locked_to_origin(): boolean;
+  set_primary_interface(value: XRInterface): void;
+  get_primary_interface(): XRInterface;
+  set_world_origin(value: Transform3D): void;
+  get_world_origin(): Transform3D;
+  set_world_scale(value: float): void;
+  get_world_scale(): float;
 
   /** Registers an {@link XRInterface} object. */
   add_interface(interface_: XRInterface): void;

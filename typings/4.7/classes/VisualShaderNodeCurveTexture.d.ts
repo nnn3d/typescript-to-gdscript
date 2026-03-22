@@ -5,4 +5,6 @@
 declare class VisualShaderNodeCurveTexture extends VisualShaderNodeResizableBase {
   /** The source texture. */
   texture: CurveTexture;
+  set_texture(value: CurveTexture): void;
+  get_texture(): CurveTexture;
 }

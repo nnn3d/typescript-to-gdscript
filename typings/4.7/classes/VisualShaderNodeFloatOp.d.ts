@@ -5,6 +5,8 @@
 declare class VisualShaderNodeFloatOp extends VisualShaderNode {
   /** An operator to be applied to the inputs. */
   operator: int;
+  set_operator(value: int): void;
+  get_operator(): int;
 
   // enum Operator
   /** Sums two numbers using `a + b`. */

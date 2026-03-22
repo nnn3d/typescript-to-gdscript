@@ -7,4 +7,7 @@ declare class PlaceholderTextureLayered extends TextureLayered {
   layers: int;
   /** The size of each texture layer (in pixels). */
   size: Vector2i;
+  set_layers(value: int): void;
+  set_size(value: Vector2i): void;
+  get_size(): Vector2i;
 }

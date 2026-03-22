@@ -45,6 +45,32 @@ declare class TabBar extends Control {
    * Setting this to `-1` will disable rearranging between {@link TabBar}s.
    */
   tabs_rearrange_group: int;
+  set_clip_tabs(value: boolean): void;
+  get_clip_tabs(): boolean;
+  set_close_with_middle_mouse(value: boolean): void;
+  get_close_with_middle_mouse(): boolean;
+  set_current_tab(value: int): void;
+  get_current_tab(): int;
+  set_deselect_enabled(value: boolean): void;
+  get_deselect_enabled(): boolean;
+  set_drag_to_rearrange_enabled(value: boolean): void;
+  get_drag_to_rearrange_enabled(): boolean;
+  set_scroll_to_selected(value: boolean): void;
+  get_scroll_to_selected(): boolean;
+  set_scrolling_enabled(value: boolean): void;
+  get_scrolling_enabled(): boolean;
+  set_select_with_rmb(value: boolean): void;
+  get_select_with_rmb(): boolean;
+  set_switch_on_drag_hover(value: boolean): void;
+  get_switch_on_drag_hover(): boolean;
+  set_tab_alignment(value: int): void;
+  get_tab_alignment(): int;
+  set_tab_close_display_policy(value: int): void;
+  get_tab_close_display_policy(): int;
+  set_tab_count(value: int): void;
+  get_tab_count(): int;
+  set_tabs_rearrange_group(value: int): void;
+  get_tabs_rearrange_group(): int;
 
   /** Adds a new tab. */
   add_tab(title?: string, icon?: Texture2D): void;

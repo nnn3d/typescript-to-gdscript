@@ -26,6 +26,16 @@ declare class TileMap extends Node2D {
    * The {@link TileSet} used by this {@link TileMap}. The textures, collisions, and additional behavior of all available tiles are stored here.
    */
   tile_set: TileSet;
+  set_collision_animatable(value: boolean): void;
+  is_collision_animatable(): boolean;
+  set_collision_visibility_mode(value: int): void;
+  get_collision_visibility_mode(): int;
+  set_navigation_visibility_mode(value: int): void;
+  get_navigation_visibility_mode(): int;
+  set_rendering_quadrant_size(value: int): void;
+  get_rendering_quadrant_size(): int;
+  set_tileset(value: TileSet): void;
+  get_tileset(): TileSet;
 
   /**
    * Called with a TileData object about to be used internally by the TileMap, allowing its modification at runtime.

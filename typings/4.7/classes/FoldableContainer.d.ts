@@ -25,6 +25,18 @@ declare class FoldableContainer extends Container {
   title_text_direction: int;
   /** Defines the behavior of the title when the text is longer than the available space. */
   title_text_overrun_behavior: int;
+  set_folded(value: boolean): void;
+  is_folded(): boolean;
+  set_language(value: string): void;
+  get_language(): string;
+  set_title_alignment(value: int): void;
+  get_title_alignment(): int;
+  set_title_position(value: int): void;
+  get_title_position(): int;
+  set_title_text_direction(value: int): void;
+  get_title_text_direction(): int;
+  set_title_text_overrun_behavior(value: int): void;
+  get_title_text_overrun_behavior(): int;
 
   /**
    * Adds a {@link Control} that will be placed next to the container's title, obscuring the clickable area. Prime usage is adding {@link Button} nodes, but it can be any {@link Control}.

@@ -16,4 +16,10 @@ declare class CurveXYZTexture extends Texture2D {
    * The width of the texture (in pixels). Higher values make it possible to represent high-frequency data better (such as sudden direction changes), at the cost of increased generation time and memory usage.
    */
   resource_local_to_scene: boolean;
+  set_curve_x(value: Curve): void;
+  get_curve_x(): Curve;
+  set_curve_y(value: Curve): void;
+  get_curve_y(): Curve;
+  set_curve_z(value: Curve): void;
+  get_curve_z(): Curve;
 }

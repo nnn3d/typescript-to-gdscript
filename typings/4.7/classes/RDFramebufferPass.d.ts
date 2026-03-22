@@ -17,6 +17,16 @@ declare class RDFramebufferPass extends RefCounted {
   preserve_attachments: PackedInt32Array;
   /** If the color attachments are multisampled, non-multisampled resolve attachments can be provided. */
   resolve_attachments: PackedInt32Array;
+  set_color_attachments(value: PackedInt32Array): void;
+  get_color_attachments(): PackedInt32Array;
+  set_depth_attachment(value: int): void;
+  get_depth_attachment(): int;
+  set_input_attachments(value: PackedInt32Array): void;
+  get_input_attachments(): PackedInt32Array;
+  set_preserve_attachments(value: PackedInt32Array): void;
+  get_preserve_attachments(): PackedInt32Array;
+  set_resolve_attachments(value: PackedInt32Array): void;
+  get_resolve_attachments(): PackedInt32Array;
 
   /** Attachment is unused. */
   static readonly ATTACHMENT_UNUSED: int;

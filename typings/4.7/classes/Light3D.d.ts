@@ -122,6 +122,34 @@ declare class Light3D extends VisualInstance3D {
    */
   shadow_reverse_cull_face: boolean;
   shadow_transmittance_bias: float;
+  set_distance_fade_begin(value: float): void;
+  get_distance_fade_begin(): float;
+  set_enable_distance_fade(value: boolean): void;
+  is_distance_fade_enabled(): boolean;
+  set_distance_fade_length(value: float): void;
+  get_distance_fade_length(): float;
+  set_distance_fade_shadow(value: float): void;
+  get_distance_fade_shadow(): float;
+  set_editor_only(value: boolean): void;
+  is_editor_only(): boolean;
+  set_bake_mode(value: int): void;
+  get_bake_mode(): int;
+  set_color(value: Color): void;
+  get_color(): Color;
+  set_cull_mask(value: int): void;
+  get_cull_mask(): int;
+  set_negative(value: boolean): void;
+  is_negative(): boolean;
+  set_projector(value: Texture2D): void;
+  get_projector(): Texture2D;
+  set_temperature(value: float): void;
+  get_temperature(): float;
+  set_shadow_caster_mask(value: int): void;
+  get_shadow_caster_mask(): int;
+  set_shadow(value: boolean): void;
+  has_shadow(): boolean;
+  set_shadow_reverse_cull_face(value: boolean): void;
+  get_shadow_reverse_cull_face(): boolean;
 
   /**
    * Returns the {@link Color} of an idealized blackbody at the given {@link light_temperature}. This value is calculated internally based on the {@link light_temperature}. This {@link Color} is multiplied by {@link light_color} before being sent to the {@link RenderingServer}.

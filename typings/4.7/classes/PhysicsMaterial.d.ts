@@ -16,4 +16,12 @@ declare class PhysicsMaterial extends Resource {
    * If `true`, the physics engine will use the friction of the object marked as "rough" when two objects collide. If `false`, the physics engine will use the lowest friction of all colliding objects instead. If `true` for both colliding objects, the physics engine will use the highest friction.
    */
   rough: boolean;
+  set_absorbent(value: boolean): void;
+  is_absorbent(): boolean;
+  set_bounce(value: float): void;
+  get_bounce(): float;
+  set_friction(value: float): void;
+  get_friction(): float;
+  set_rough(value: boolean): void;
+  is_rough(): boolean;
 }

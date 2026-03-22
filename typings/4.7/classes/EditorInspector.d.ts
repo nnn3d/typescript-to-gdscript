@@ -7,6 +7,8 @@ declare class EditorInspector extends ScrollContainer {
   focus_mode: int;
   follow_focus: boolean;
   horizontal_scroll_mode: int;
+  set_draw_focus_border(value: boolean): void;
+  get_draw_focus_border(): boolean;
 
   /**
    * Shows the properties of the given `object` in this inspector for editing. To clear the inspector, call this method with `null`.

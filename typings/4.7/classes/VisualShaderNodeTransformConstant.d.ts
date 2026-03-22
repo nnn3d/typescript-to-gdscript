@@ -5,4 +5,6 @@
 declare class VisualShaderNodeTransformConstant extends VisualShaderNodeConstant {
   /** A {@link Transform3D} constant which represents the state of this node. */
   constant: Transform3D;
+  set_constant(value: Transform3D): void;
+  get_constant(): Transform3D;
 }

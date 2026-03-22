@@ -16,6 +16,10 @@ declare class RandomNumberGenerator extends RefCounted {
    * **Note:** The default value of this property is pseudo-random, and changes when calling {@link randomize}. The `0` value documented here is a placeholder, and not the actual default state.
    */
   state: int;
+  set_seed(value: int): void;
+  get_seed(): int;
+  set_state(value: int): void;
+  get_state(): int;
 
   /**
    * Returns a random index with non-uniform weights. Prints an error and returns `-1` if the array is empty.

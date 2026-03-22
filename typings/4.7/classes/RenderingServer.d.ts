@@ -7,6 +7,8 @@ declare interface RenderingServer extends GodotObject {
    * If `false`, disables rendering completely, but the engine logic is still being processed. You can call {@link force_draw} to draw a frame even with rendering disabled.
    */
   render_loop_enabled: boolean;
+  set_render_loop_enabled(value: boolean): void;
+  is_render_loop_enabled(): boolean;
 
   /**
    * Bakes the material data of the Mesh passed in the `base` parameter with optional `material_overrides` to a set of {@link Image}s of size `image_size`. Returns an array of {@link Image}s containing material properties as specified in {@link BakeChannels}.

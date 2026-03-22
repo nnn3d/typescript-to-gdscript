@@ -32,6 +32,16 @@ declare class NinePatchRect extends Control {
   region_rect: Rect2;
   /** The node's texture resource. */
   texture: Texture2D;
+  set_h_axis_stretch_mode(value: int): void;
+  get_h_axis_stretch_mode(): int;
+  set_v_axis_stretch_mode(value: int): void;
+  get_v_axis_stretch_mode(): int;
+  set_draw_center(value: boolean): void;
+  is_draw_center_enabled(): boolean;
+  set_region_rect(value: Rect2): void;
+  get_region_rect(): Rect2;
+  set_texture(value: Texture2D): void;
+  get_texture(): Texture2D;
 
   /** Returns the size of the margin on the specified {@link Side}. */
   get_patch_margin(margin: int): int;

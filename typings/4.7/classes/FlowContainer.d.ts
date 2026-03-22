@@ -23,6 +23,14 @@ declare class FlowContainer extends Container {
    * Can't be changed when using {@link HFlowContainer} and {@link VFlowContainer}.
    */
   vertical: boolean;
+  set_alignment(value: int): void;
+  get_alignment(): int;
+  set_last_wrap_alignment(value: int): void;
+  get_last_wrap_alignment(): int;
+  set_reverse_fill(value: boolean): void;
+  is_reverse_fill(): boolean;
+  set_vertical(value: boolean): void;
+  is_vertical(): boolean;
 
   /** Returns the current line count. */
   get_line_count(): int;

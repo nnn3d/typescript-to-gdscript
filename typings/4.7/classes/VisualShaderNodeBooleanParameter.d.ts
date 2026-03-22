@@ -7,4 +7,8 @@ declare class VisualShaderNodeBooleanParameter extends VisualShaderNodeParameter
   default_value: boolean;
   /** Enables usage of the {@link default_value}. */
   default_value_enabled: boolean;
+  set_default_value(value: boolean): void;
+  get_default_value(): boolean;
+  set_default_value_enabled(value: boolean): void;
+  is_default_value_enabled(): boolean;
 }

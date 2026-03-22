@@ -40,4 +40,20 @@ declare class InputEventMIDI extends InputEvent {
    * **Note:** Some MIDI devices may send a {@link MIDI_MESSAGE_NOTE_ON} message with `0` velocity and expect it to be treated the same as a {@link MIDI_MESSAGE_NOTE_OFF} message. If necessary, this can be handled with a few lines of code:
    */
   velocity: int;
+  set_channel(value: int): void;
+  get_channel(): int;
+  set_controller_number(value: int): void;
+  get_controller_number(): int;
+  set_controller_value(value: int): void;
+  get_controller_value(): int;
+  set_instrument(value: int): void;
+  get_instrument(): int;
+  set_message(value: int): void;
+  get_message(): int;
+  set_pitch(value: int): void;
+  get_pitch(): int;
+  set_pressure(value: int): void;
+  get_pressure(): int;
+  set_velocity(value: int): void;
+  get_velocity(): int;
 }

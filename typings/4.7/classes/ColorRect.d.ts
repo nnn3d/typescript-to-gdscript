@@ -5,4 +5,6 @@
 declare class ColorRect extends Control {
   /** The fill color of the rectangle. */
   color: Color;
+  set_color(value: Color): void;
+  get_color(): Color;
 }

@@ -12,4 +12,8 @@ declare class CameraTexture extends Texture2D {
    * Which image within the {@link CameraFeed} we want access to, important if the camera image is split in a Y and CbCr component.
    */
   resource_local_to_scene: boolean;
+  set_camera_feed_id(value: int): void;
+  get_camera_feed_id(): int;
+  set_camera_active(value: boolean): void;
+  get_camera_active(): boolean;
 }

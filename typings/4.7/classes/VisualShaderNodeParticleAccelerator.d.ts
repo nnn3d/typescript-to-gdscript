@@ -5,6 +5,8 @@
 declare class VisualShaderNodeParticleAccelerator extends VisualShaderNode {
   /** Defines in what manner the particles will be accelerated. */
   mode: int;
+  set_mode(value: int): void;
+  get_mode(): int;
 
   // enum Mode
   /** The particles will be accelerated based on their velocity. */

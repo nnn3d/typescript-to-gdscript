@@ -24,4 +24,16 @@ declare class CollisionPolygon3D extends Node3D {
   margin: float;
   /** Array of vertices which define the 2D polygon in the local XY plane. */
   polygon: PackedVector2Array;
+  set_debug_color(value: Color): void;
+  get_debug_color(): Color;
+  set_enable_debug_fill(value: boolean): void;
+  get_enable_debug_fill(): boolean;
+  set_depth(value: float): void;
+  get_depth(): float;
+  set_disabled(value: boolean): void;
+  is_disabled(): boolean;
+  set_margin(value: float): void;
+  get_margin(): float;
+  set_polygon(value: PackedVector2Array): void;
+  get_polygon(): PackedVector2Array;
 }

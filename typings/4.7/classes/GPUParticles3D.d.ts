@@ -112,6 +112,58 @@ declare class GPUParticles3D extends GeometryInstance3D {
    * **Note:** {@link visibility_aabb} is overridden by {@link GeometryInstance3D.custom_aabb} if that property is set to a non-default value.
    */
   visibility_aabb: AABB;
+  set_amount(value: int): void;
+  get_amount(): int;
+  set_amount_ratio(value: float): void;
+  get_amount_ratio(): float;
+  set_collision_base_size(value: float): void;
+  get_collision_base_size(): float;
+  set_draw_order(value: int): void;
+  get_draw_order(): int;
+  set_draw_passes(value: int): void;
+  get_draw_passes(): int;
+  set_skin(value: Skin): void;
+  get_skin(): Skin;
+  set_emitting(value: boolean): void;
+  is_emitting(): boolean;
+  set_explosiveness_ratio(value: float): void;
+  get_explosiveness_ratio(): float;
+  set_fixed_fps(value: int): void;
+  get_fixed_fps(): int;
+  set_fractional_delta(value: boolean): void;
+  get_fractional_delta(): boolean;
+  set_interp_to_end(value: float): void;
+  get_interp_to_end(): float;
+  set_interpolate(value: boolean): void;
+  get_interpolate(): boolean;
+  set_lifetime(value: float): void;
+  get_lifetime(): float;
+  set_use_local_coordinates(value: boolean): void;
+  get_use_local_coordinates(): boolean;
+  set_one_shot(value: boolean): void;
+  get_one_shot(): boolean;
+  set_pre_process_time(value: float): void;
+  get_pre_process_time(): float;
+  set_process_material(value: Material): void;
+  get_process_material(): Material;
+  set_randomness_ratio(value: float): void;
+  get_randomness_ratio(): float;
+  set_seed(value: int): void;
+  get_seed(): int;
+  set_speed_scale(value: float): void;
+  get_speed_scale(): float;
+  set_sub_emitter(value: string): void;
+  get_sub_emitter(): string;
+  set_trail_enabled(value: boolean): void;
+  is_trail_enabled(): boolean;
+  set_trail_lifetime(value: float): void;
+  get_trail_lifetime(): float;
+  set_transform_align(value: int): void;
+  get_transform_align(): int;
+  set_use_fixed_seed(value: boolean): void;
+  get_use_fixed_seed(): boolean;
+  set_visibility_aabb(value: AABB): void;
+  get_visibility_aabb(): AABB;
 
   /**
    * Returns the axis-aligned bounding box that contains all the particles that are active in the current frame.

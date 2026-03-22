@@ -27,6 +27,20 @@ declare class VisualShaderNodeIntParameter extends VisualShaderNodeParameter {
    * The step between parameter's values. Forces the parameter to be a multiple of the given value. {@link hint} must be {@link HINT_RANGE_STEP} for this to take effect.
    */
   step: int;
+  set_default_value(value: int): void;
+  get_default_value(): int;
+  set_default_value_enabled(value: boolean): void;
+  is_default_value_enabled(): boolean;
+  set_enum_names(value: PackedStringArray): void;
+  get_enum_names(): PackedStringArray;
+  set_hint(value: int): void;
+  get_hint(): int;
+  set_max(value: int): void;
+  get_max(): int;
+  set_min(value: int): void;
+  get_min(): int;
+  set_step(value: int): void;
+  get_step(): int;
 
   // enum Hint
   /** The parameter will not constrain its value. */

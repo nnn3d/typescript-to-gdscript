@@ -21,6 +21,14 @@ declare class SkeletonProfile extends Resource {
    * A bone name which will use model's height as the coefficient for normalization. For example, {@link SkeletonProfileHumanoid} defines it as `Hips`.
    */
   scale_base_bone: string;
+  set_bone_size(value: int): void;
+  get_bone_size(): int;
+  set_group_size(value: int): void;
+  get_group_size(): int;
+  set_root_bone(value: string): void;
+  get_root_bone(): string;
+  set_scale_base_bone(value: string): void;
+  get_scale_base_bone(): string;
 
   /** Returns the bone index that matches `bone_name` as its name. */
   find_bone(bone_name: string): int;

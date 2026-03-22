@@ -21,6 +21,24 @@ declare class TextLine extends RefCounted {
   text_overrun_behavior: int;
   /** Text line width. */
   width: float;
+  set_horizontal_alignment(value: int): void;
+  get_horizontal_alignment(): int;
+  set_direction(value: int): void;
+  get_direction(): int;
+  set_ellipsis_char(value: string): void;
+  get_ellipsis_char(): string;
+  set_flags(value: int): void;
+  get_flags(): int;
+  set_orientation(value: int): void;
+  get_orientation(): int;
+  set_preserve_control(value: boolean): void;
+  get_preserve_control(): boolean;
+  set_preserve_invalid(value: boolean): void;
+  get_preserve_invalid(): boolean;
+  set_text_overrun_behavior(value: int): void;
+  get_text_overrun_behavior(): int;
+  set_width(value: float): void;
+  get_width(): float;
 
   /**
    * Adds inline object to the text buffer, `key` must be unique. In the text, object is represented as `length` object replacement characters.

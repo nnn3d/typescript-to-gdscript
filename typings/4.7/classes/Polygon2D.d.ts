@@ -51,6 +51,36 @@ declare class Polygon2D extends Node2D {
    * Color for each vertex. Colors are interpolated between vertices, resulting in smooth gradients. There should be one per polygon vertex. If there are fewer, undefined vertices will use {@link color}.
    */
   vertex_colors: PackedColorArray;
+  set_antialiased(value: boolean): void;
+  get_antialiased(): boolean;
+  set_color(value: Color): void;
+  get_color(): Color;
+  set_internal_vertex_count(value: int): void;
+  get_internal_vertex_count(): int;
+  set_invert_border(value: float): void;
+  get_invert_border(): float;
+  set_invert_enabled(value: boolean): void;
+  get_invert_enabled(): boolean;
+  set_offset(value: Vector2): void;
+  get_offset(): Vector2;
+  set_polygon(value: PackedVector2Array): void;
+  get_polygon(): PackedVector2Array;
+  set_polygons(value: Array<unknown>): void;
+  get_polygons(): Array<unknown>;
+  set_skeleton(value: string): void;
+  get_skeleton(): string;
+  set_texture(value: Texture2D): void;
+  get_texture(): Texture2D;
+  set_texture_offset(value: Vector2): void;
+  get_texture_offset(): Vector2;
+  set_texture_rotation(value: float): void;
+  get_texture_rotation(): float;
+  set_texture_scale(value: Vector2): void;
+  get_texture_scale(): Vector2;
+  set_uv(value: PackedVector2Array): void;
+  get_uv(): PackedVector2Array;
+  set_vertex_colors(value: PackedColorArray): void;
+  get_vertex_colors(): PackedColorArray;
 
   /** Adds a bone with the specified `path` and `weights`. */
   add_bone(path: string, weights: PackedFloat32Array): void;

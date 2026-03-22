@@ -18,4 +18,8 @@ declare class InputEventMouse extends InputEventWithModifiers {
    * When received in {@link Control._gui_input}, returns the mouse's position in the {@link Control} using the local coordinate system of the {@link Control}.
    */
   position: Vector2;
+  set_button_mask(value: int): void;
+  get_button_mask(): int;
+  set_position(value: Vector2): void;
+  get_position(): Vector2;
 }

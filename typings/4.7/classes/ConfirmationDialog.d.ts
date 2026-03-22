@@ -8,6 +8,8 @@ declare class ConfirmationDialog extends AcceptDialog {
   min_size: Vector2i;
   size: Vector2i;
   title: string;
+  set_cancel_button_text(value: string): void;
+  get_cancel_button_text(): string;
 
   /**
    * Returns the cancel button.

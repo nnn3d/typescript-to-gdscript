@@ -37,6 +37,12 @@ declare class DirectionalLight3D extends Light3D {
    * Whether this {@link DirectionalLight3D} is visible in the sky, in the scene, or both in the sky and in the scene.
    */
   sky_mode: int;
+  set_blend_splits(value: boolean): void;
+  is_blend_splits_enabled(): boolean;
+  set_shadow_mode(value: int): void;
+  get_shadow_mode(): int;
+  set_sky_mode(value: int): void;
+  get_sky_mode(): int;
 
   // enum ShadowMode
   /**

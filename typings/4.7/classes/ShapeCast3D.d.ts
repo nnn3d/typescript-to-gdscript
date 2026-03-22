@@ -34,6 +34,27 @@ declare class ShapeCast3D extends Node3D {
   shape: Shape3D;
   /** The shape's destination point, relative to this node's {@link Node3D.position}. */
   target_position: Vector3;
+  set_collide_with_areas(value: boolean): void;
+  is_collide_with_areas_enabled(): boolean;
+  set_collide_with_bodies(value: boolean): void;
+  is_collide_with_bodies_enabled(): boolean;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  get_collision_result(): Array<unknown>;
+  set_debug_shape_custom_color(value: Color): void;
+  get_debug_shape_custom_color(): Color;
+  set_enabled(value: boolean): void;
+  is_enabled(): boolean;
+  set_exclude_parent_body(value: boolean): void;
+  get_exclude_parent_body(): boolean;
+  set_margin(value: float): void;
+  get_margin(): float;
+  set_max_results(value: int): void;
+  get_max_results(): int;
+  set_shape(value: Shape3D): void;
+  get_shape(): Shape3D;
+  set_target_position(value: Vector3): void;
+  get_target_position(): Vector3;
 
   /** Adds a collision exception so the shape does not report collisions with the specified node. */
   add_exception(node: CollisionObject3D): void;

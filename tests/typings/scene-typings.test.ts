@@ -54,6 +54,13 @@ describe('Scene typings generation', () => {
     expect(content).toContain('get_node_or_null<P extends keyof _PlayerSceneNodes');
   });
 
+  it('should generate unique node (%Name) typings for nodes with unique_name_in_owner', () => {
+    const content = generate();
+
+    // HealthBar has unique_name_in_owner = true → should appear as "%HealthBar" key
+    expect(content).toContain('"%HealthBar": ProgressBar;');
+  });
+
   it('should generate union types for scripts used in multiple scenes', () => {
     const content = generate();
 

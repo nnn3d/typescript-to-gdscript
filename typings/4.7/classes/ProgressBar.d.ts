@@ -13,6 +13,14 @@ declare class ProgressBar extends Range {
   indeterminate: boolean;
   /** If `true`, the fill percentage is displayed on the bar. */
   show_percentage: boolean;
+  set_editor_preview_indeterminate(value: boolean): void;
+  is_editor_preview_indeterminate_enabled(): boolean;
+  set_fill_mode(value: int): void;
+  get_fill_mode(): int;
+  set_indeterminate(value: boolean): void;
+  is_indeterminate(): boolean;
+  set_show_percentage(value: boolean): void;
+  is_percentage_shown(): boolean;
 
   // enum FillMode
   /**

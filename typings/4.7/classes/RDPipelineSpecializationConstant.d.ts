@@ -11,4 +11,8 @@ declare class RDPipelineSpecializationConstant extends RefCounted {
    * The specialization constant's value. Only [bool], [int] and [float] types are valid for specialization constants.
    */
   value: unknown;
+  set_constant_id(value: int): void;
+  get_constant_id(): int;
+  set_value(value: unknown): void;
+  get_value(): unknown;
 }

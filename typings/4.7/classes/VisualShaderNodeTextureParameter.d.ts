@@ -13,6 +13,16 @@ declare class VisualShaderNodeTextureParameter extends VisualShaderNodeParameter
   texture_source: int;
   /** Defines the type of data provided by the source texture. */
   texture_type: int;
+  set_color_default(value: int): void;
+  get_color_default(): int;
+  set_texture_filter(value: int): void;
+  get_texture_filter(): int;
+  set_texture_repeat(value: int): void;
+  get_texture_repeat(): int;
+  set_texture_source(value: int): void;
+  get_texture_source(): int;
+  set_texture_type(value: int): void;
+  get_texture_type(): int;
 
   // enum TextureType
   /** No hints are added to the uniform declaration. */

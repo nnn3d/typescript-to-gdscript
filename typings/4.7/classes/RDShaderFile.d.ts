@@ -9,6 +9,8 @@ declare class RDShaderFile extends Resource {
    * The base compilation error message, which indicates errors not related to a specific shader stage if non-empty. If empty, shader compilation is not necessarily successful (check {@link RDShaderSPIRV}'s error message members).
    */
   base_error: string;
+  set_base_error(value: string): void;
+  get_base_error(): string;
 
   /** Returns the SPIR-V intermediate representation for the specified shader `version`. */
   get_spirv(version?: string): RDShaderSPIRV;

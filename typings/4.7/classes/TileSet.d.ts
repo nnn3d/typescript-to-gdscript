@@ -19,6 +19,16 @@ declare class TileSet extends Resource {
   tile_size: Vector2i;
   /** Enables/Disable uv clipping when rendering the tiles. */
   uv_clipping: boolean;
+  set_tile_layout(value: int): void;
+  get_tile_layout(): int;
+  set_tile_offset_axis(value: int): void;
+  get_tile_offset_axis(): int;
+  set_tile_shape(value: int): void;
+  get_tile_shape(): int;
+  set_tile_size(value: Vector2i): void;
+  get_tile_size(): Vector2i;
+  set_uv_clipping(value: boolean): void;
+  is_uv_clipping(): boolean;
 
   /**
    * Adds a custom data layer to the TileSet at the given position `to_position` in the array. If `to_position` is -1, adds it at the end of the array.

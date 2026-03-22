@@ -11,4 +11,12 @@ declare class RDPipelineColorBlendState extends RefCounted {
   enable_logic_op: boolean;
   /** The logic operation to perform for blending. Only effective if {@link enable_logic_op} is `true`. */
   logic_op: int;
+  set_attachments(value: unknown): void;
+  get_attachments(): unknown;
+  set_blend_constant(value: Color): void;
+  get_blend_constant(): Color;
+  set_enable_logic_op(value: boolean): void;
+  get_enable_logic_op(): boolean;
+  set_logic_op(value: int): void;
+  get_logic_op(): int;
 }

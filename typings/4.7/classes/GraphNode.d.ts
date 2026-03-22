@@ -18,6 +18,8 @@ declare class GraphNode extends GraphElement {
   mouse_filter: int;
   /** The text displayed in the GraphNode's title bar. */
   title: string;
+  set_title(value: string): void;
+  get_title(): string;
 
   _draw_port(slot_index: int, position: Vector2i, left: boolean, color: Color): void;
   /** Disables all slots of the GraphNode. This will remove all input/output ports from the GraphNode. */

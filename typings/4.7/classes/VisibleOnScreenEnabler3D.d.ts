@@ -11,6 +11,10 @@ declare class VisibleOnScreenEnabler3D extends VisibleOnScreenNotifier3D {
    * The path to the target node, relative to the {@link VisibleOnScreenEnabler3D}. The target node is cached; it's only assigned when setting this property (if the {@link VisibleOnScreenEnabler3D} is inside the scene tree) and every time the {@link VisibleOnScreenEnabler3D} enters the scene tree. If the path is empty, no node will be affected. If the path is invalid, an error is also generated.
    */
   enable_node_path: string;
+  set_enable_mode(value: int): void;
+  get_enable_mode(): int;
+  set_enable_node_path(value: string): void;
+  get_enable_node_path(): string;
 
   // enum EnableMode
   /** Corresponds to {@link Node.PROCESS_MODE_INHERIT}. */

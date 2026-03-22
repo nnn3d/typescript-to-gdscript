@@ -10,6 +10,10 @@ declare class Translation extends Resource {
    * If empty or invalid, default plural rules from {@link TranslationServer.get_plural_rules} are used. The English plural rules are used as a fallback.
    */
   plural_rules_override: string;
+  set_locale(value: string): void;
+  get_locale(): string;
+  set_plural_rules_override(value: string): void;
+  get_plural_rules_override(): string;
 
   /** Virtual method to override {@link get_message}. */
   _get_message(src_message: string, context: string): string;

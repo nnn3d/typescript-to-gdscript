@@ -17,4 +17,10 @@ declare class FogVolume extends VisualInstance3D {
    * **Note:** If {@link shape} is {@link RenderingServer.FOG_VOLUME_SHAPE_CONE} or {@link RenderingServer.FOG_VOLUME_SHAPE_CYLINDER}, the cone/cylinder will be adjusted to fit within the size. Non-uniform scaling of cone/cylinder shapes via the {@link size} property is not supported, but you can scale the {@link FogVolume} node instead.
    */
   size: Vector3;
+  set_material(value: Material): void;
+  get_material(): Material;
+  set_shape(value: int): void;
+  get_shape(): int;
+  set_size(value: Vector3): void;
+  get_size(): Vector3;
 }

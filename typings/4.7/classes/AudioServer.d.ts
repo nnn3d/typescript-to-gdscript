@@ -18,6 +18,14 @@ declare interface AudioServer extends GodotObject {
    * Scales the rate at which audio is played (i.e. setting it to `0.5` will make the audio be played at half its speed). See also {@link Engine.time_scale} to affect the general simulation speed, which is independent from {@link AudioServer.playback_speed_scale}.
    */
   playback_speed_scale: float;
+  set_bus_count(value: int): void;
+  get_bus_count(): int;
+  set_input_device(value: string): void;
+  get_input_device(): string;
+  set_output_device(value: string): void;
+  get_output_device(): string;
+  set_playback_speed_scale(value: float): void;
+  get_playback_speed_scale(): float;
 
   /** Adds a bus at `at_position`. */
   add_bus(at_position?: int): void;

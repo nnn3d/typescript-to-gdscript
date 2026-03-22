@@ -13,6 +13,16 @@ declare class VisualShaderNodeFrame extends VisualShaderNodeResizableBase {
   tint_color_enabled: boolean;
   /** The title of the node. */
   title: string;
+  set_attached_nodes(value: PackedInt32Array): void;
+  get_attached_nodes(): PackedInt32Array;
+  set_autoshrink_enabled(value: boolean): void;
+  is_autoshrink_enabled(): boolean;
+  set_tint_color(value: Color): void;
+  get_tint_color(): Color;
+  set_tint_color_enabled(value: boolean): void;
+  is_tint_color_enabled(): boolean;
+  set_title(value: string): void;
+  get_title(): string;
 
   /**
    * Adds a node to the list of nodes attached to the frame. Should not be called directly, use the {@link VisualShader.attach_node_to_frame} method instead.

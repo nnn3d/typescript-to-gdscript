@@ -25,6 +25,8 @@ declare class RDShaderSource extends RefCounted {
   source_tesselation_evaluation: string;
   /** Source code for the shader's vertex stage. */
   source_vertex: string;
+  set_language(value: int): void;
+  get_language(): int;
 
   /**
    * Returns source code for the specified shader `stage`. Equivalent to getting one of {@link source_compute}, {@link source_fragment}, {@link source_tesselation_control}, {@link source_tesselation_evaluation} or {@link source_vertex}.

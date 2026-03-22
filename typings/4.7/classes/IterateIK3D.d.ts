@@ -21,6 +21,14 @@ declare class IterateIK3D extends ChainIK3D {
   min_distance: float;
   /** The number of settings. */
   setting_count: int;
+  set_angular_delta_limit(value: float): void;
+  get_angular_delta_limit(): float;
+  set_deterministic(value: boolean): void;
+  is_deterministic(): boolean;
+  set_max_iterations(value: int): void;
+  get_max_iterations(): int;
+  set_min_distance(value: float): void;
+  get_min_distance(): float;
 
   /** Returns the joint limitation at `joint` in the bone chain's joint list. */
   get_joint_limitation(index: int, joint: int): JointLimitation3D;

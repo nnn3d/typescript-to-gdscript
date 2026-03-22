@@ -23,6 +23,16 @@ declare interface Input extends GodotObject {
    * **Note:** Input accumulation is *enabled* by default.
    */
   use_accumulated_input: boolean;
+  set_emulate_mouse_from_touch(value: boolean): void;
+  is_emulating_mouse_from_touch(): boolean;
+  set_emulate_touch_from_mouse(value: boolean): void;
+  is_emulating_touch_from_mouse(): boolean;
+  set_ignore_joypad_on_unfocused_application(value: boolean): void;
+  is_ignoring_joypad_on_unfocused_application(): boolean;
+  set_mouse_mode(value: int): void;
+  get_mouse_mode(): int;
+  set_use_accumulated_input(value: boolean): void;
+  is_using_accumulated_input(): boolean;
 
   /**
    * This will simulate pressing the specified action.

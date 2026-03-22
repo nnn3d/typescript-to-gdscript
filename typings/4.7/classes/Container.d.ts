@@ -8,6 +8,8 @@ declare class Container extends Control {
    */
   accessibility_region: boolean;
   mouse_filter: int;
+  set_accessibility_region(value: boolean): void;
+  is_accessibility_region(): boolean;
 
   /**
    * Implement to return a list of allowed horizontal {@link Control.SizeFlags} for child nodes. This doesn't technically prevent the usages of any other size flags, if your implementation requires that. This only limits the options available to the user in the Inspector dock.

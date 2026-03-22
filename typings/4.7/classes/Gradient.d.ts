@@ -20,6 +20,14 @@ declare class Gradient extends Resource {
    * **Note:** Setting this property updates all offsets at once. To update any offset individually use {@link set_offset}.
    */
   offsets: PackedFloat32Array;
+  set_colors(value: PackedColorArray): void;
+  get_colors(): PackedColorArray;
+  set_interpolation_color_space(value: int): void;
+  get_interpolation_color_space(): int;
+  set_interpolation_mode(value: int): void;
+  get_interpolation_mode(): int;
+  set_offsets(value: PackedFloat32Array): void;
+  get_offsets(): PackedFloat32Array;
 
   /** Adds the specified color to the gradient, with the specified offset. */
   add_point(offset: float, color: Color): void;

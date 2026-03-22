@@ -7,4 +7,8 @@ declare class CylinderShape3D extends Shape3D {
   height: float;
   /** The cylinder's radius. */
   radius: float;
+  set_height(value: float): void;
+  get_height(): float;
+  set_radius(value: float): void;
+  get_radius(): float;
 }

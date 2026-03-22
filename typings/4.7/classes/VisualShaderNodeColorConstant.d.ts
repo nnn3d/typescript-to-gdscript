@@ -5,4 +5,6 @@
 declare class VisualShaderNodeColorConstant extends VisualShaderNodeConstant {
   /** A {@link Color} constant which represents a state of this node. */
   constant: Color;
+  set_constant(value: Color): void;
+  get_constant(): Color;
 }

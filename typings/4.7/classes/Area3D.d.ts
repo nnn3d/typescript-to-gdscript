@@ -75,6 +75,50 @@ declare class Area3D extends CollisionObject3D {
    * **Note:** This wind force only applies to {@link SoftBody3D} nodes. Other physics bodies are currently not affected by wind.
    */
   wind_source_path: string;
+  set_angular_damp(value: float): void;
+  get_angular_damp(): float;
+  set_angular_damp_space_override_mode(value: int): void;
+  get_angular_damp_space_override_mode(): int;
+  set_audio_bus_name(value: string): void;
+  get_audio_bus_name(): string;
+  set_audio_bus_override(value: boolean): void;
+  is_overriding_audio_bus(): boolean;
+  set_gravity(value: float): void;
+  get_gravity(): float;
+  set_gravity_direction(value: Vector3): void;
+  get_gravity_direction(): Vector3;
+  set_gravity_is_point(value: boolean): void;
+  is_gravity_a_point(): boolean;
+  set_gravity_point_center(value: Vector3): void;
+  get_gravity_point_center(): Vector3;
+  set_gravity_point_unit_distance(value: float): void;
+  get_gravity_point_unit_distance(): float;
+  set_gravity_space_override_mode(value: int): void;
+  get_gravity_space_override_mode(): int;
+  set_linear_damp(value: float): void;
+  get_linear_damp(): float;
+  set_linear_damp_space_override_mode(value: int): void;
+  get_linear_damp_space_override_mode(): int;
+  set_monitorable(value: boolean): void;
+  is_monitorable(): boolean;
+  set_monitoring(value: boolean): void;
+  is_monitoring(): boolean;
+  set_priority(value: int): void;
+  get_priority(): int;
+  set_reverb_amount(value: float): void;
+  get_reverb_amount(): float;
+  set_use_reverb_bus(value: boolean): void;
+  is_using_reverb_bus(): boolean;
+  set_reverb_bus_name(value: string): void;
+  get_reverb_bus_name(): string;
+  set_reverb_uniformity(value: float): void;
+  get_reverb_uniformity(): float;
+  set_wind_attenuation_factor(value: float): void;
+  get_wind_attenuation_factor(): float;
+  set_wind_force_magnitude(value: float): void;
+  get_wind_force_magnitude(): float;
+  set_wind_source_path(value: string): void;
+  get_wind_source_path(): string;
 
   /**
    * Returns a list of intersecting {@link Area3D}s. The overlapping area's {@link CollisionObject3D.collision_layer} must be part of this area's {@link CollisionObject3D.collision_mask} in order to be detected.

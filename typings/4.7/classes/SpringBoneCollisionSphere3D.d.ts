@@ -7,4 +7,8 @@ declare class SpringBoneCollisionSphere3D extends SpringBoneCollision3D {
   inside: boolean;
   /** The sphere's radius. */
   radius: float;
+  set_inside(value: boolean): void;
+  is_inside(): boolean;
+  set_radius(value: float): void;
+  get_radius(): float;
 }

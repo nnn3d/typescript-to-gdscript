@@ -5,6 +5,8 @@
 declare class ShaderMaterial extends Material {
   /** The {@link Shader} program used to render this material. */
   shader: Shader;
+  set_shader(value: Shader): void;
+  get_shader(): Shader;
 
   /** Returns the current value set for this material of a uniform in the shader. */
   get_shader_parameter(param: string): unknown;

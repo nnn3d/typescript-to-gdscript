@@ -5,6 +5,8 @@
 declare class StreamPeerBuffer extends StreamPeer {
   /** The underlying data buffer. Setting this value resets the cursor. */
   data_array: PackedByteArray;
+  set_data_array(value: PackedByteArray): void;
+  get_data_array(): PackedByteArray;
 
   /** Clears the {@link data_array} and resets the cursor. */
   clear(): void;

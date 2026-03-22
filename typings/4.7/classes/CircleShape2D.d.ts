@@ -5,4 +5,6 @@
 declare class CircleShape2D extends Shape2D {
   /** The circle's radius. */
   radius: float;
+  set_radius(value: float): void;
+  get_radius(): float;
 }

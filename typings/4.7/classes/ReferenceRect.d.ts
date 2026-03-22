@@ -13,4 +13,10 @@ declare class ReferenceRect extends Control {
    * If `true`, the {@link ReferenceRect} will only be visible while in editor. Otherwise, {@link ReferenceRect} will be visible in the running project.
    */
   editor_only: boolean;
+  set_border_color(value: Color): void;
+  get_border_color(): Color;
+  set_border_width(value: float): void;
+  get_border_width(): float;
+  set_editor_only(value: boolean): void;
+  get_editor_only(): boolean;
 }

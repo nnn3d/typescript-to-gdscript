@@ -23,4 +23,16 @@ declare class PhysicsPointQueryParameters2D extends RefCounted {
   exclude: unknown;
   /** The position being queried for, in global coordinates. */
   position: Vector2;
+  set_canvas_instance_id(value: int): void;
+  get_canvas_instance_id(): int;
+  set_collide_with_areas(value: boolean): void;
+  is_collide_with_areas_enabled(): boolean;
+  set_collide_with_bodies(value: boolean): void;
+  is_collide_with_bodies_enabled(): boolean;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  set_exclude(value: unknown): void;
+  get_exclude(): unknown;
+  set_position(value: Vector2): void;
+  get_position(): Vector2;
 }

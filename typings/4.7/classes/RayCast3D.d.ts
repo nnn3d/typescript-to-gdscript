@@ -36,6 +36,26 @@ declare class RayCast3D extends Node3D {
   hit_from_inside: boolean;
   /** The ray's destination point, relative to this raycast's {@link Node3D.position}. */
   target_position: Vector3;
+  set_collide_with_areas(value: boolean): void;
+  is_collide_with_areas_enabled(): boolean;
+  set_collide_with_bodies(value: boolean): void;
+  is_collide_with_bodies_enabled(): boolean;
+  set_collision_mask(value: int): void;
+  get_collision_mask(): int;
+  set_debug_shape_custom_color(value: Color): void;
+  get_debug_shape_custom_color(): Color;
+  set_debug_shape_thickness(value: int): void;
+  get_debug_shape_thickness(): int;
+  set_enabled(value: boolean): void;
+  is_enabled(): boolean;
+  set_exclude_parent_body(value: boolean): void;
+  get_exclude_parent_body(): boolean;
+  set_hit_back_faces(value: boolean): void;
+  is_hit_back_faces_enabled(): boolean;
+  set_hit_from_inside(value: boolean): void;
+  is_hit_from_inside_enabled(): boolean;
+  set_target_position(value: Vector3): void;
+  get_target_position(): Vector3;
 
   /** Adds a collision exception so the ray does not report collisions with the specified `node`. */
   add_exception(node: CollisionObject3D): void;

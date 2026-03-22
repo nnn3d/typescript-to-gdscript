@@ -110,6 +110,66 @@ declare class NavigationAgent2D extends Node {
    * Sets the new wanted velocity for the agent. The avoidance simulation will try to fulfill this velocity if possible but will modify it to avoid collision with other agents and obstacles. When an agent is teleported to a new position, use {@link set_velocity_forced} as well to reset the internal simulation velocity.
    */
   velocity: Vector2;
+  set_avoidance_enabled(value: boolean): void;
+  get_avoidance_enabled(): boolean;
+  set_avoidance_layers(value: int): void;
+  get_avoidance_layers(): int;
+  set_avoidance_mask(value: int): void;
+  get_avoidance_mask(): int;
+  set_avoidance_priority(value: float): void;
+  get_avoidance_priority(): float;
+  set_debug_enabled(value: boolean): void;
+  get_debug_enabled(): boolean;
+  set_debug_path_custom_color(value: Color): void;
+  get_debug_path_custom_color(): Color;
+  set_debug_path_custom_line_width(value: float): void;
+  get_debug_path_custom_line_width(): float;
+  set_debug_path_custom_point_size(value: float): void;
+  get_debug_path_custom_point_size(): float;
+  set_debug_use_custom(value: boolean): void;
+  get_debug_use_custom(): boolean;
+  set_max_neighbors(value: int): void;
+  get_max_neighbors(): int;
+  set_max_speed(value: float): void;
+  get_max_speed(): float;
+  set_navigation_layers(value: int): void;
+  get_navigation_layers(): int;
+  set_neighbor_distance(value: float): void;
+  get_neighbor_distance(): float;
+  set_path_desired_distance(value: float): void;
+  get_path_desired_distance(): float;
+  set_path_max_distance(value: float): void;
+  get_path_max_distance(): float;
+  set_path_metadata_flags(value: int): void;
+  get_path_metadata_flags(): int;
+  set_path_postprocessing(value: int): void;
+  get_path_postprocessing(): int;
+  set_path_return_max_length(value: float): void;
+  get_path_return_max_length(): float;
+  set_path_return_max_radius(value: float): void;
+  get_path_return_max_radius(): float;
+  set_path_search_max_distance(value: float): void;
+  get_path_search_max_distance(): float;
+  set_path_search_max_polygons(value: int): void;
+  get_path_search_max_polygons(): int;
+  set_pathfinding_algorithm(value: int): void;
+  get_pathfinding_algorithm(): int;
+  set_radius(value: float): void;
+  get_radius(): float;
+  set_simplify_epsilon(value: float): void;
+  get_simplify_epsilon(): float;
+  set_simplify_path(value: boolean): void;
+  get_simplify_path(): boolean;
+  set_target_desired_distance(value: float): void;
+  get_target_desired_distance(): float;
+  set_target_position(value: Vector2): void;
+  get_target_position(): Vector2;
+  set_time_horizon_agents(value: float): void;
+  get_time_horizon_agents(): float;
+  set_time_horizon_obstacles(value: float): void;
+  get_time_horizon_obstacles(): float;
+  set_velocity(value: Vector2): void;
+  get_velocity(): Vector2;
 
   /**
    * Returns the distance to the target position, using the agent's global position. The user must set {@link target_position} in order for this to be accurate.

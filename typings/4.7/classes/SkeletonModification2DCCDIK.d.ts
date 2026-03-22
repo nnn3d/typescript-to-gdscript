@@ -13,6 +13,12 @@ declare class SkeletonModification2DCCDIK extends SkeletonModification2D {
    * The end position of the CCDIK chain. Typically, this should be a child of a {@link Bone2D} node attached to the final {@link Bone2D} in the CCDIK chain.
    */
   tip_nodepath: string;
+  set_ccdik_data_chain_length(value: int): void;
+  get_ccdik_data_chain_length(): int;
+  set_target_node(value: string): void;
+  get_target_node(): string;
+  set_tip_node(value: string): void;
+  get_tip_node(): string;
 
   /** Returns the {@link Bone2D} node assigned to the CCDIK joint at `joint_idx`. */
   get_ccdik_joint_bone2d_node(joint_idx: int): string;

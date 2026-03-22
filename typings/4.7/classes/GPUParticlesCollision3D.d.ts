@@ -9,4 +9,6 @@ declare class GPUParticlesCollision3D extends VisualInstance3D {
    * Particle collision can also be disabled on a per-process material basis by setting {@link ParticleProcessMaterial.collision_mode} on the {@link GPUParticles3D} node.
    */
   cull_mask: int;
+  set_cull_mask(value: int): void;
+  get_cull_mask(): int;
 }

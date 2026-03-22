@@ -9,6 +9,10 @@ declare class Curve2D extends Resource {
   bake_interval: float;
   /** The number of points describing the curve. */
   point_count: int;
+  set_bake_interval(value: float): void;
+  get_bake_interval(): float;
+  set_point_count(value: int): void;
+  get_point_count(): int;
 
   /**
    * Adds a point with the specified `position` relative to the curve's own position, with control points `in` and `out`. Appends the new point at the end of the point list.

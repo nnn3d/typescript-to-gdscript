@@ -19,4 +19,8 @@ declare class VehicleBody3D extends RigidBody3D {
    * **Note:** This property is edited in the inspector in degrees. In code the property is set in radians.
    */
   mass: float;
+  set_brake(value: float): void;
+  get_brake(): float;
+  set_engine_force(value: float): void;
+  get_engine_force(): float;
 }

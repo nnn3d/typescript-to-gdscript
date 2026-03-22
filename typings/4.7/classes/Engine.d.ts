@@ -50,6 +50,20 @@ declare interface Engine extends GodotObject {
    * **Note:** This does not automatically adjust {@link physics_ticks_per_second}. With values above `1.0` physics simulation may become less precise, as each physics tick will stretch over a larger period of engine time. If you're modifying {@link Engine.time_scale} to speed up simulation by a large factor, consider also increasing {@link physics_ticks_per_second} to make the simulation more reliable.
    */
   time_scale: float;
+  set_max_fps(value: int): void;
+  get_max_fps(): int;
+  set_max_physics_steps_per_frame(value: int): void;
+  get_max_physics_steps_per_frame(): int;
+  set_physics_jitter_fix(value: float): void;
+  get_physics_jitter_fix(): float;
+  set_physics_ticks_per_second(value: int): void;
+  get_physics_ticks_per_second(): int;
+  set_print_error_messages(value: boolean): void;
+  is_printing_error_messages(): boolean;
+  set_print_to_stdout(value: boolean): void;
+  is_printing_to_stdout(): boolean;
+  set_time_scale(value: float): void;
+  get_time_scale(): float;
 
   /**
    * Captures and returns backtraces from all registered script languages.

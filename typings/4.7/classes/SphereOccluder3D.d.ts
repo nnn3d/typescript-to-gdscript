@@ -5,4 +5,6 @@
 declare class SphereOccluder3D extends Occluder3D {
   /** The sphere's radius in 3D units. */
   radius: float;
+  set_radius(value: float): void;
+  get_radius(): float;
 }

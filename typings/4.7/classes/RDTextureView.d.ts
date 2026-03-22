@@ -15,4 +15,14 @@ declare class RDTextureView extends RefCounted {
   swizzle_g: int;
   /** The channel to sample when sampling the red color channel. */
   swizzle_r: int;
+  set_format_override(value: int): void;
+  get_format_override(): int;
+  set_swizzle_a(value: int): void;
+  get_swizzle_a(): int;
+  set_swizzle_b(value: int): void;
+  get_swizzle_b(): int;
+  set_swizzle_g(value: int): void;
+  get_swizzle_g(): int;
+  set_swizzle_r(value: int): void;
+  get_swizzle_r(): int;
 }

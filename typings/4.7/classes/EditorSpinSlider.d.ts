@@ -30,6 +30,17 @@ declare class EditorSpinSlider extends Range {
    * The suffix to display after the value (in a faded color). This should generally be a plural word. You may have to use an abbreviation if the suffix is too long to be displayed.
    */
   size_flags_vertical: int;
+  set_control_state(value: int): void;
+  get_control_state(): int;
+  set_deferred_drag_mode_enabled(value: boolean): void;
+  is_deferred_drag_mode_enabled(): boolean;
+  set_editing_integer(value: boolean): void;
+  is_editing_integer(): boolean;
+  set_flat(value: boolean): void;
+  is_flat(): boolean;
+  set_label(value: string): void;
+  get_label(): string;
+  set_read_only(value: boolean): void;
 
   /** Emitted when the spinner/slider is grabbed. */
   grabbed: Signal<[]>;
