@@ -300,10 +300,10 @@ export function generateSceneTypings(options: GenerateSceneTypingsOptions): stri
     aliasMap.set(resPath, { alias, className: info.className, tsModulePath: info.tsModulePath });
   }
 
-  // Collect per-class: { tsModulePath, className, children[] }
-  const classData = new Map<
+  // Collect per-script: keyed by script resPath (unique) to avoid collisions for __CLASS__
+  const scriptData = new Map<
     string,
-    { tsModulePath: string; className: string; children: Array<{ path: string; type: string }> }
+    { alias: string; tsModulePath: string; className: string; children: Array<{ path: string; type: string }> }
   >();
 
   // Collect GodotResources entries: res:// path → alias | undefined
@@ -334,14 +334,18 @@ export function generateSceneTypings(options: GenerateSceneTypingsOptions): stri
       if (!classInfo) continue;
       if (script.children.length === 0) continue;
 
-      let data = classData.get(classInfo.className);
+      const aliasEntry = aliasMap.get(script.scriptResPath);
+      if (!aliasEntry) continue;
+
+      let data = scriptData.get(script.scriptResPath);
       if (!data) {
         data = {
+          alias: aliasEntry.alias,
           tsModulePath: classInfo.tsModulePath,
           className: classInfo.className,
           children: [],
         };
-        classData.set(classInfo.className, data);
+        scriptData.set(script.scriptResPath, data);
       }
       data.children.push(...script.children);
     }
@@ -361,12 +365,12 @@ export function generateSceneTypings(options: GenerateSceneTypingsOptions): stri
     lines.push('');
   }
 
-  for (const [, data] of classData) {
-    const relScene = data.tsModulePath;
-    const nodesInterface = `${data.className}SceneNodes`;
+  for (const [, data] of scriptData) {
+    // Use alias for interface name to avoid collisions (e.g. multiple __CLASS__ scripts)
+    const nodesInterface = `${data.alias}SceneNodes`;
 
-    // Per-class path → type mapping interface
-    lines.push(`// Scene nodes for: ${data.className}`);
+    // Per-script path → type mapping interface
+    lines.push(`// Scene nodes for: ${data.alias}`);
     lines.push(`interface ${nodesInterface} {`);
     for (const child of data.children) {
       lines.push(`  "${child.path}": ${child.type};`);
@@ -375,7 +379,7 @@ export function generateSceneTypings(options: GenerateSceneTypingsOptions): stri
     lines.push('');
 
     // Module augmentation: override get_node/get_node_or_null with conditional types
-    lines.push(`declare module "${relScene}" {`);
+    lines.push(`declare module "${data.tsModulePath}" {`);
     lines.push(`  interface ${data.className} {`);
     lines.push(`    get_node<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P];`);
     lines.push(`    get_node(path: string): Node;`);

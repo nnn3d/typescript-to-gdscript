@@ -64,17 +64,17 @@ describe('Scene typings generation', () => {
       projectFile: PROJECT_FILE,
     });
 
-    // Per-class scene nodes interface
-    expect(sceneTypings).toContain('interface PlayerSceneNodes');
+    // Per-script scene nodes interface (uses alias to avoid __CLASS__ collisions)
+    expect(sceneTypings).toContain('interface _PlayerSceneNodes');
     expect(sceneTypings).toContain('"Sprite2D": Sprite2D;');
     expect(sceneTypings).toContain('"CollisionShape2D": CollisionShape2D;');
 
     // Module augmentation with conditional types + autocomplete
     expect(sceneTypings).toContain('declare module "./Player.ts"');
     expect(sceneTypings).toContain('interface Player');
-    expect(sceneTypings).toContain('keyof PlayerSceneNodes');
-    expect(sceneTypings).toContain('get_node<P extends keyof PlayerSceneNodes');
-    expect(sceneTypings).toContain('get_node_or_null<P extends keyof PlayerSceneNodes');
+    expect(sceneTypings).toContain('keyof _PlayerSceneNodes');
+    expect(sceneTypings).toContain('get_node<P extends keyof _PlayerSceneNodes');
+    expect(sceneTypings).toContain('get_node_or_null<P extends keyof _PlayerSceneNodes');
 
     // GodotResources entries (using import aliases)
     expect(sceneTypings).toContain('interface GodotResources');

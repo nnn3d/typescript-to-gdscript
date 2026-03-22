@@ -9,14 +9,8 @@ import type { __CLASS__ as _GameManager } from "./GameManager.ts";
 import type { Player as _Player } from "./Player.ts";
 import type { __CLASS__ as _nested_Anonym } from "./nested/Anonym.ts";
 
-// Scene nodes for: __CLASS__
-interface __CLASS__SceneNodes {
-  "Sprite2D": Sprite2D;
-  "CollisionShape2D": CollisionShape2D;
-  "Sprite2D/AnimationPlayer": AnimationPlayer;
-  "Sprite2D": Sprite2D;
-  "CollisionShape2D": CollisionShape2D;
-  "Sprite2D/AnimationPlayer": AnimationPlayer;
+// Scene nodes for: _Anonym
+interface _AnonymSceneNodes {
   "Sprite2D": Sprite2D;
   "CollisionShape2D": CollisionShape2D;
   "Sprite2D/AnimationPlayer": AnimationPlayer;
@@ -24,15 +18,47 @@ interface __CLASS__SceneNodes {
 
 declare module "./Anonym.ts" {
   interface __CLASS__ {
-    get_node<P extends keyof __CLASS__SceneNodes>(path: P): __CLASS__SceneNodes[P];
+    get_node<P extends keyof _AnonymSceneNodes>(path: P): _AnonymSceneNodes[P];
     get_node(path: string): Node;
-    get_node_or_null<P extends keyof __CLASS__SceneNodes>(path: P): __CLASS__SceneNodes[P] | null;
+    get_node_or_null<P extends keyof _AnonymSceneNodes>(path: P): _AnonymSceneNodes[P] | null;
     get_node_or_null(path: string): Node | null;
   }
 }
 
-// Scene nodes for: Player
-interface PlayerSceneNodes {
+// Scene nodes for: _Anonym2
+interface _Anonym2SceneNodes {
+  "Sprite2D": Sprite2D;
+  "CollisionShape2D": CollisionShape2D;
+  "Sprite2D/AnimationPlayer": AnimationPlayer;
+}
+
+declare module "./Anonym2.ts" {
+  interface __CLASS__ {
+    get_node<P extends keyof _Anonym2SceneNodes>(path: P): _Anonym2SceneNodes[P];
+    get_node(path: string): Node;
+    get_node_or_null<P extends keyof _Anonym2SceneNodes>(path: P): _Anonym2SceneNodes[P] | null;
+    get_node_or_null(path: string): Node | null;
+  }
+}
+
+// Scene nodes for: _nested_Anonym
+interface _nested_AnonymSceneNodes {
+  "Sprite2D": Sprite2D;
+  "CollisionShape2D": CollisionShape2D;
+  "Sprite2D/AnimationPlayer": AnimationPlayer;
+}
+
+declare module "./nested/Anonym.ts" {
+  interface __CLASS__ {
+    get_node<P extends keyof _nested_AnonymSceneNodes>(path: P): _nested_AnonymSceneNodes[P];
+    get_node(path: string): Node;
+    get_node_or_null<P extends keyof _nested_AnonymSceneNodes>(path: P): _nested_AnonymSceneNodes[P] | null;
+    get_node_or_null(path: string): Node | null;
+  }
+}
+
+// Scene nodes for: _Player
+interface _PlayerSceneNodes {
   "Sprite2D": Sprite2D;
   "CollisionShape2D": CollisionShape2D;
   "Sprite2D/AnimationPlayer": AnimationPlayer;
@@ -40,9 +66,9 @@ interface PlayerSceneNodes {
 
 declare module "./Player.ts" {
   interface Player {
-    get_node<P extends keyof PlayerSceneNodes>(path: P): PlayerSceneNodes[P];
+    get_node<P extends keyof _PlayerSceneNodes>(path: P): _PlayerSceneNodes[P];
     get_node(path: string): Node;
-    get_node_or_null<P extends keyof PlayerSceneNodes>(path: P): PlayerSceneNodes[P] | null;
+    get_node_or_null<P extends keyof _PlayerSceneNodes>(path: P): _PlayerSceneNodes[P] | null;
     get_node_or_null(path: string): Node | null;
   }
 }
