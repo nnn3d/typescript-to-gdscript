@@ -41,6 +41,22 @@ declare module "./Anonym2.ts" {
   }
 }
 
+// Scene nodes for: _Ball
+interface _BallSceneNodes {
+  "Sprite2D": Sprite2D;
+  "Timer": Timer | null;
+  "Label": Label | null;
+}
+
+declare module "./Ball.ts" {
+  interface Ball {
+    get_node<P extends keyof _BallSceneNodes>(path: P): _BallSceneNodes[P];
+    get_node(path: string): Node;
+    get_node_or_null<P extends keyof _BallSceneNodes>(path: P): _BallSceneNodes[P] | null;
+    get_node_or_null(path: string): Node | null;
+  }
+}
+
 // Scene nodes for: _nested_Anonym
 interface _nested_AnonymSceneNodes {
   "Sprite2D": Sprite2D;
@@ -81,6 +97,8 @@ declare global {
   interface GodotResources {
     "res://Anonym.tscn": PackedScene<_Anonym>;
     "res://Anonym2.tscn": PackedScene<_Anonym2>;
+    "res://BallA.tscn": PackedScene<_Ball>;
+    "res://BallB.tscn": PackedScene<_Ball>;
     "res://nested/Anonym.tscn": PackedScene<_nested_Anonym>;
     "res://Player.tscn": PackedScene<_Player>;
     "res://Anonym.gd": _Anonym;

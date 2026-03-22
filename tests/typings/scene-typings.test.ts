@@ -55,6 +55,20 @@ describe('Scene typings generation', () => {
     expect(content).toContain('get_node_or_null<P extends keyof _PlayerSceneNodes');
   });
 
+  it('should generate union types for scripts used in multiple scenes', () => {
+    const content = generate();
+
+    // Ball.gd is used in BallA.tscn (Sprite2D, Timer) and BallB.tscn (Sprite2D, Label)
+    expect(content).toContain('interface _BallSceneNodes');
+
+    // Sprite2D is in both scenes with the same type — no null
+    expect(content).toMatch(/"Sprite2D": Sprite2D;/);
+    // Timer is only in BallA — gets | null
+    expect(content).toMatch(/"Timer": Timer \| null;/);
+    // Label is only in BallB — gets | null
+    expect(content).toMatch(/"Label": Label \| null;/);
+  });
+
   it('should generate GodotResources and autoload singletons', () => {
     const content = generate();
 

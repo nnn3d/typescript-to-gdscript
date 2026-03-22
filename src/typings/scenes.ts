@@ -191,272 +191,6 @@ export interface ScriptClassInfo {
   tsModulePath: string;
 }
 
-export interface SceneNodeOverload {
-  path: string;
-  type: string;
-}
-
-export interface SceneTypingsOptions {
-  /** Directory containing .tscn files */
-  scenesDir: string;
-  /**
-   * Map from GD script path (as written in .tscn, e.g. "res://scripts/Player.gd")
-   * to { className, tsModulePath } where tsModulePath is relative to outputPath dir.
-   */
-  scriptClassMap: Map<string, ScriptClassInfo>;
-  /** Root directory (for ignore pattern matching) */
-  rootDir?: string;
-  /** Glob patterns for files/folders to ignore. */
-  ignore?: string[];
-}
-
-/**
- * Collects get_node/get_node_or_null overloads from scene files.
- * Returns a map from class name to its scene node overloads, which should be
- * passed to `generateClassTypings({ sceneOverloads })` to be included directly
- * on the global class declaration (overriding inherited Node methods).
- *
- * Overloads must be on the class (not via interface merge) because TypeScript
- * resolves class method overloads before interface overloads — and the base
- * Node.get_node<T>(path: string) generic would always match first.
- */
-export function collectSceneOverloads(
-  options: SceneTypingsOptions,
-): Map<string, SceneNodeOverload[]> {
-  const scenes = findSceneFiles(
-    options.scenesDir,
-    options.rootDir ?? options.scenesDir,
-    options.ignore ?? [],
-  );
-  const result = new Map<string, SceneNodeOverload[]>();
-
-  for (const scenePath of scenes) {
-    const scene = parseScene(scenePath);
-    if (!scene) continue;
-
-    for (const script of scene.scripts) {
-      if (script.children.length === 0) continue;
-      const classInfo = options.scriptClassMap.get(script.scriptResPath);
-      if (!classInfo) continue;
-
-      let overloads = result.get(classInfo.className);
-      if (!overloads) {
-        overloads = [];
-        result.set(classInfo.className, overloads);
-      }
-      overloads.push(...script.children);
-    }
-  }
-
-  return result;
-}
-
-export interface GenerateSceneTypingsOptions {
-  /** Directory containing .tscn files */
-  scenesDir: string;
-  /** Output path for the generated scene-typings.d.ts file */
-  outputPath: string;
-  /**
-   * Map from GD script path (as written in .tscn, e.g. "res://scripts/Player.gd")
-   * to { className, tsModulePath } where tsModulePath is relative to outputPath dir.
-   */
-  scriptClassMap: Map<string, ScriptClassInfo>;
-  /** Root directory of the project (used for res:// path computation) */
-  rootDir: string;
-  /** Glob patterns for files/folders to ignore. */
-  ignore?: string[];
-  /** Path to project.godot file (for autoload singleton detection). */
-  projectFile?: string;
-}
-
-/**
- * Generates scene-typings.d.ts with `declare module` augmentations.
- * Each class that has a script attached in a .tscn scene gets
- * get_node / get_node_or_null overloads for its child nodes.
- *
- * Uses module augmentation (`declare module "./Player.js" { interface Player { ... } }`)
- * so overloads are visible inside the source file itself (via interface-class merging).
- */
-export function generateSceneTypings(options: GenerateSceneTypingsOptions): string {
-  const scenes = findSceneFiles(
-    options.scenesDir,
-    options.rootDir,
-    options.ignore ?? [],
-  );
-
-  // Build unique import aliases for each script class (handles duplicate class names like __CLASS__)
-  // resPath → { alias, className, tsModulePath }
-  const aliasMap = new Map<string, { alias: string; className: string; tsModulePath: string }>();
-  const usedAliases = new Set<string>();
-  for (const [resPath, info] of options.scriptClassMap) {
-    // Derive alias from res:// path: res://scripts/Player.gd → _scripts_Player
-    let alias = '_' + resPath.replace(/^res:\/\//, '').replace(/\.[^.]+$/, '').replace(/\//g, '_');
-    let base = alias;
-    let i = 2;
-    while (usedAliases.has(alias)) {
-      alias = `${base}_${i++}`;
-    }
-    usedAliases.add(alias);
-    aliasMap.set(resPath, { alias, className: info.className, tsModulePath: info.tsModulePath });
-  }
-
-  // Collect per-script: keyed by script resPath (unique) to avoid collisions for __CLASS__
-  const scriptData = new Map<
-    string,
-    { alias: string; tsModulePath: string; className: string; children: Array<{ path: string; type: string }> }
-  >();
-
-  // Collect GodotResources entries: res:// path → alias | undefined
-  const resourceEntries: Array<{ resPath: string; alias?: string }> = [];
-
-  for (const scenePath of scenes) {
-    const scene = parseScene(scenePath);
-    if (!scene) {
-      const resPath = `res://${relative(options.rootDir, scenePath).replace(/\\/g, '/')}`;
-      resourceEntries.push({ resPath });
-      continue;
-    }
-
-    const resPath = `res://${relative(options.rootDir, scenePath).replace(/\\/g, '/')}`;
-
-    // Determine root script alias (if any)
-    let rootAlias: string | undefined;
-    if (scene.rootScript) {
-      const aliasEntry = aliasMap.get(scene.rootScript.scriptResPath);
-      if (aliasEntry) {
-        rootAlias = aliasEntry.alias;
-      }
-    }
-    resourceEntries.push({ resPath, alias: rootAlias });
-
-    for (const script of scene.scripts) {
-      const classInfo = options.scriptClassMap.get(script.scriptResPath);
-      if (!classInfo) continue;
-      if (script.children.length === 0) continue;
-
-      const aliasEntry = aliasMap.get(script.scriptResPath);
-      if (!aliasEntry) continue;
-
-      let data = scriptData.get(script.scriptResPath);
-      if (!data) {
-        data = {
-          alias: aliasEntry.alias,
-          tsModulePath: classInfo.tsModulePath,
-          className: classInfo.className,
-          children: [],
-        };
-        scriptData.set(script.scriptResPath, data);
-      }
-      data.children.push(...script.children);
-    }
-  }
-
-  const lines: string[] = [];
-  lines.push('// AUTO-GENERATED — do not edit manually.');
-  lines.push('// Generated by ts2gd from .tscn scene files.');
-  lines.push('// Provides get_node/get_node_or_null overloads and GodotResources entries.');
-  lines.push('');
-
-  // Import all script classes with unique aliases
-  for (const [, entry] of aliasMap) {
-    lines.push(`import type { ${entry.className} as ${entry.alias} } from "${entry.tsModulePath}";`);
-  }
-  if (aliasMap.size > 0) {
-    lines.push('');
-  }
-
-  for (const [, data] of scriptData) {
-    // Use alias for interface name to avoid collisions (e.g. multiple __CLASS__ scripts)
-    const nodesInterface = `${data.alias}SceneNodes`;
-
-    // Per-script path → type mapping interface
-    lines.push(`// Scene nodes for: ${data.alias}`);
-    lines.push(`interface ${nodesInterface} {`);
-    for (const child of data.children) {
-      lines.push(`  "${child.path}": ${child.type};`);
-    }
-    lines.push('}');
-    lines.push('');
-
-    // Module augmentation: override get_node/get_node_or_null with conditional types
-    lines.push(`declare module "${data.tsModulePath}" {`);
-    lines.push(`  interface ${data.className} {`);
-    lines.push(`    get_node<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P];`);
-    lines.push(`    get_node(path: string): Node;`);
-    lines.push(`    get_node_or_null<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P] | null;`);
-    lines.push(`    get_node_or_null(path: string): Node | null;`);
-    lines.push('  }');
-    lines.push('}');
-    lines.push('');
-  }
-
-  // Parse autoloads from project.godot
-  const autoloads = options.projectFile ? parseAutoloads(options.projectFile) : [];
-
-  // Resolve autoload types: script → alias, scene → root script alias, fallback → Node
-  const autoloadDecls: Array<{ name: string; type: string }> = [];
-  for (const autoload of autoloads) {
-    if (autoload.resPath.endsWith('.gd')) {
-      // Script autoload — look up in aliasMap
-      const aliasEntry = aliasMap.get(autoload.resPath);
-      autoloadDecls.push({ name: autoload.name, type: aliasEntry ? aliasEntry.alias : 'Node' });
-    } else if (autoload.resPath.endsWith('.tscn')) {
-      // Scene autoload — find the scene and get its root script alias
-      const sceneEntry = resourceEntries.find((e) => e.resPath === autoload.resPath);
-      autoloadDecls.push({ name: autoload.name, type: sceneEntry?.alias ?? 'Node' });
-    } else {
-      autoloadDecls.push({ name: autoload.name, type: 'Node' });
-    }
-  }
-
-  // GodotResources interface augmentation + autoload globals (must be global scope)
-  const hasScriptEntries = aliasMap.size > 0;
-  const hasAutoloads = autoloadDecls.length > 0;
-  if (resourceEntries.length > 0 || hasScriptEntries || hasAutoloads) {
-    lines.push('// Resource path → type mappings for load()/preload()');
-    lines.push('declare global {');
-
-    if (resourceEntries.length > 0 || hasScriptEntries) {
-      lines.push('  interface GodotResources {');
-
-      // Scene paths → PackedScene<Alias> or PackedScene
-      for (const entry of resourceEntries) {
-        if (entry.alias) {
-          lines.push(`    "${entry.resPath}": PackedScene<${entry.alias}>;`);
-        } else {
-          lines.push(`    "${entry.resPath}": PackedScene;`);
-        }
-      }
-
-      // Script paths → class types (for load/preload of .gd scripts)
-      for (const [resPath, aliasEntry] of aliasMap) {
-        lines.push(`    "${resPath}": ${aliasEntry.alias};`);
-      }
-
-      lines.push('  }');
-    }
-
-    // Autoload singletons as global constants
-    if (hasAutoloads) {
-      lines.push('  // Autoload singletons from project.godot');
-      for (const decl of autoloadDecls) {
-        lines.push(`  const ${decl.name}: ${decl.type};`);
-      }
-    }
-
-    lines.push('}');
-    lines.push('');
-  }
-
-  // export {} makes this a module file, required for declare module with relative paths
-  lines.push('export {};');
-  lines.push('');
-
-  const content = lines.join('\n');
-  writeFileSync(options.outputPath, content);
-  return content;
-}
-
 export interface BuildScriptClassMapOptions {
   /** TS source files to scan for class names */
   files: string[];
@@ -498,9 +232,11 @@ export function buildScriptClassMap(
       const className = statement.name.text;
 
       // Compute res:// path for the corresponding .gd file
-      const relFromRoot = relative(options.rootDir, filePath)
-        .replace(/\\/g, '/')
-        .replace(/\.ts$/, '.gd');
+      // When tsDir != gdDir, the GD output goes to gdDir with the same relative path,
+      // so we compute the GD path relative to rootDir (which is the Godot project root).
+      const relFromTs = relative(options.tsDir, filePath).replace(/\\/g, '/').replace(/\.ts$/, '.gd');
+      const gdAbsPath = join(options.gdDir, relFromTs);
+      const relFromRoot = relative(options.rootDir, gdAbsPath).replace(/\\/g, '/');
       const resPath = `res://${relFromRoot}`;
 
       // Compute TS module path relative to scene typings output dir
@@ -583,9 +319,16 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     options.ignore ?? [],
   );
 
+  // Track per-scene children for each script, so we can compute union types.
+  // When a script is used in multiple scenes, a path present in all scenes gets a union
+  // of all types; a path missing from some scenes gets `| null`.
   const scriptData = new Map<
     string,
-    { alias: string; tsModulePath: string; className: string; children: Array<{ path: string; type: string }> }
+    {
+      alias: string; tsModulePath: string; className: string;
+      /** Each entry is one scene's children map (path → type) */
+      sceneMaps: Array<Map<string, string>>;
+    }
   >();
 
   const resourceEntries: Array<{ resPath: string; alias?: string }> = [];
@@ -623,11 +366,16 @@ export function generateTypings(options: GenerateTypingsOptions): string {
           alias: aliasEntry.alias,
           tsModulePath: classInfo.tsModulePath,
           className: classInfo.className,
-          children: [],
+          sceneMaps: [],
         };
         scriptData.set(script.scriptResPath, data);
       }
-      data.children.push(...script.children);
+      // One map per scene occurrence
+      const sceneChildren = new Map<string, string>();
+      for (const child of script.children) {
+        sceneChildren.set(child.path, child.type);
+      }
+      data.sceneMaps.push(sceneChildren);
     }
   }
 
@@ -644,6 +392,16 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     } else {
       autoloadDecls.push({ name: autoload.name, type: 'Node' });
     }
+  }
+
+  // Find asset files and build resource entries for them
+  const assetFiles = findAssetFiles(options.scenesDir, options.rootDir, options.ignore ?? []);
+  const assetEntries: Array<{ resPath: string; type: string }> = [];
+  for (const assetPath of assetFiles) {
+    const resPath = `res://${relative(options.rootDir, assetPath).replace(/\\/g, '/')}`;
+    const ext = extname(assetPath).toLowerCase();
+    const type = ASSET_EXTENSION_MAP[ext] ?? 'Resource';
+    assetEntries.push({ resPath, type });
   }
 
   // Collect named classes for global declarations (skip __CLASS__)
@@ -674,10 +432,13 @@ export function generateTypings(options: GenerateTypingsOptions): string {
   for (const [, data] of scriptData) {
     const nodesInterface = `${data.alias}SceneNodes`;
 
+    // Compute merged children: union of types across scenes, nullable if missing from some
+    const mergedChildren = mergeSceneChildren(data.sceneMaps);
+
     lines.push(`// Scene nodes for: ${data.alias}`);
     lines.push(`interface ${nodesInterface} {`);
-    for (const child of data.children) {
-      lines.push(`  "${child.path}": ${child.type};`);
+    for (const { path, type } of mergedChildren) {
+      lines.push(`  "${path}": ${type};`);
     }
     lines.push('}');
     lines.push('');
@@ -694,7 +455,7 @@ export function generateTypings(options: GenerateTypingsOptions): string {
   }
 
   // declare global block: class declarations + GodotResources + autoloads
-  const hasResources = resourceEntries.length > 0 || aliasMap.size > 0;
+  const hasResources = resourceEntries.length > 0 || aliasMap.size > 0 || assetEntries.length > 0;
   const hasAutoloads = autoloadDecls.length > 0;
   if (globalClasses.length > 0 || hasResources || hasAutoloads) {
     lines.push('declare global {');
@@ -720,6 +481,10 @@ export function generateTypings(options: GenerateTypingsOptions): string {
       for (const [resPath, aliasEntry] of aliasMap) {
         lines.push(`    "${resPath}": ${aliasEntry.alias};`);
       }
+      // Asset resources (images, audio, fonts, etc.)
+      for (const asset of assetEntries) {
+        lines.push(`    "${asset.resPath}": ${asset.type};`);
+      }
       lines.push('  }');
     }
 
@@ -743,10 +508,80 @@ export function generateTypings(options: GenerateTypingsOptions): string {
   return content;
 }
 
-function findSceneFiles(
+/**
+ * Merges children from multiple scene occurrences of the same script.
+ * - Collects all unique paths across all scenes
+ * - For each path, builds a union of all distinct types seen
+ * - If a path is missing from at least one scene, appends `| null`
+ */
+function mergeSceneChildren(
+  sceneMaps: Array<Map<string, string>>,
+): Array<{ path: string; type: string }> {
+  const totalScenes = sceneMaps.length;
+
+  // Collect all paths and, for each, the set of types and how many scenes contain it
+  const pathInfo = new Map<string, { types: Set<string>; count: number }>();
+  for (const sceneMap of sceneMaps) {
+    for (const [path, type] of sceneMap) {
+      let info = pathInfo.get(path);
+      if (!info) {
+        info = { types: new Set(), count: 0 };
+        pathInfo.set(path, info);
+      }
+      info.types.add(type);
+      info.count++;
+    }
+  }
+
+  const result: Array<{ path: string; type: string }> = [];
+  for (const [path, info] of pathInfo) {
+    const types = [...info.types];
+    const nullable = info.count < totalScenes;
+    let type = types.join(' | ');
+    if (nullable) {
+      type += ' | null';
+    }
+    result.push({ path, type });
+  }
+  return result;
+}
+
+/** Known Godot asset extensions → Godot resource type name */
+const ASSET_EXTENSION_MAP: Record<string, string> = {
+  // Images / Textures
+  '.png': 'Texture2D', '.jpg': 'Texture2D', '.jpeg': 'Texture2D',
+  '.webp': 'Texture2D', '.svg': 'Texture2D', '.bmp': 'Texture2D',
+  '.tga': 'Texture2D', '.hdr': 'Texture2D', '.exr': 'Texture2D',
+  // Audio
+  '.wav': 'AudioStream', '.ogg': 'AudioStream', '.mp3': 'AudioStream',
+  // 3D models
+  '.glb': 'PackedScene', '.gltf': 'PackedScene', '.obj': 'Resource',
+  '.fbx': 'PackedScene', '.dae': 'PackedScene',
+  // Fonts
+  '.ttf': 'Font', '.otf': 'Font', '.woff': 'Font', '.woff2': 'Font',
+  '.fnt': 'Font',
+  // Shaders
+  '.gdshader': 'Shader', '.gdshaderinc': 'Resource',
+  // Resources
+  '.tres': 'Resource', '.res': 'Resource',
+  // Themes
+  '.theme': 'Theme',
+  // Videos
+  '.ogv': 'VideoStream', '.webm': 'VideoStream',
+  // Translations
+  '.translation': 'Translation', '.po': 'Translation',
+  // Materials
+  '.material': 'Material',
+};
+
+/** Extensions recognized as Godot asset files (for GodotResources scanning) */
+const ASSET_EXTENSIONS = new Set(Object.keys(ASSET_EXTENSION_MAP));
+
+function findProjectFiles(
   dir: string,
   rootDir: string,
   ignore: string[],
+  extensions: Set<string>,
 ): string[] {
   const results: string[] = [];
 
@@ -758,11 +593,11 @@ function findSceneFiles(
         if (shouldIgnore(fullPath, rootDir, ignore)) continue;
         const stat = statSync(fullPath);
         if (stat.isDirectory()) {
-          // Skip addons and hidden dirs
-          if (!entry.startsWith('.') && entry !== 'addons') {
-            results.push(...findSceneFiles(fullPath, rootDir, ignore));
+          // Skip addons, hidden dirs, and node_modules
+          if (!entry.startsWith('.') && entry !== 'addons' && entry !== 'node_modules') {
+            results.push(...findProjectFiles(fullPath, rootDir, ignore, extensions));
           }
-        } else if (extname(entry) === '.tscn') {
+        } else if (extensions.has(extname(entry).toLowerCase())) {
           results.push(fullPath);
         }
       } catch {
@@ -774,4 +609,20 @@ function findSceneFiles(
   }
 
   return results;
+}
+
+function findSceneFiles(
+  dir: string,
+  rootDir: string,
+  ignore: string[],
+): string[] {
+  return findProjectFiles(dir, rootDir, ignore, new Set(['.tscn']));
+}
+
+function findAssetFiles(
+  dir: string,
+  rootDir: string,
+  ignore: string[],
+): string[] {
+  return findProjectFiles(dir, rootDir, ignore, ASSET_EXTENSIONS);
 }

@@ -10,7 +10,7 @@ export { GDScriptParser } from './parser/gdscript/index.ts';
 export { createTsProgram } from './parser/typescript/index.ts';
 export { SourceMapper } from './sourcemap/index.ts';
 export { generateClassTypings } from './typings/classes.ts';
-export { generateSceneTypings, generateTypings } from './typings/scenes.ts';
+export { generateTypings } from './typings/scenes.ts';
 export { generateGodotDocsTypings } from './typings/godot-docs.ts';
 export {
   GodotClassRegistry,

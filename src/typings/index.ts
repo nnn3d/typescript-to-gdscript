@@ -3,15 +3,10 @@ export {
   type ClassTypingsOptions,
 } from './classes.ts';
 export {
-  collectSceneOverloads,
-  generateSceneTypings,
   generateTypings,
   buildScriptClassMap,
   parseAutoloads,
-  type SceneTypingsOptions,
-  type GenerateSceneTypingsOptions,
   type GenerateTypingsOptions,
-  type SceneNodeOverload,
   type BuildScriptClassMapOptions,
   type ScriptClassInfo,
   type AutoloadEntry,
