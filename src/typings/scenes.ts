@@ -3,6 +3,8 @@ import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from '
 import { join, relative, extname, dirname } from 'path';
 import { createTsProgram } from '../parser/typescript/index.ts';
 import { shouldIgnore } from '../config/index.ts';
+import { GodotClassRegistry } from './godot-registry.ts';
+import { godotTypeToTs } from './godot-docs.ts';
 
 interface SceneNode {
   name: string;
@@ -22,6 +24,17 @@ interface ScriptNodeInfo {
   children: Array<{ path: string; type: string }>;
 }
 
+interface SceneConnection {
+  /** Signal name (e.g. "area_entered") */
+  signal: string;
+  /** Emitter node path (e.g. "Area2D", "tileset_objects/LevelExit") */
+  fromPath: string;
+  /** Receiver node path (e.g. ".", "tileset_objects/LevelExit") */
+  toPath: string;
+  /** Handler method name (e.g. "_on_area_entered") */
+  method: string;
+}
+
 /**
  * Parses a .tscn file and extracts script attachments with their child nodes.
  * Each node with a script gets its own entry with relative child paths.
@@ -32,6 +45,9 @@ function parseScene(
   filePath: string;
   scripts: ScriptNodeInfo[];
   rootScript?: { scriptResPath: string };
+  connections: SceneConnection[];
+  /** Map of full node paths to their Godot type (e.g. "Area2D" → "Area2D") */
+  nodeTypes: Map<string, string>;
 } | null {
   const content = readFileSync(filePath, 'utf-8');
   const extResources = new Map<string, { path: string; type: string }>();
@@ -133,7 +149,31 @@ function parseScene(
     }
   }
 
-  return { filePath, scripts, rootScript };
+  // Build node type map (full path → Godot type)
+  const nodeTypes = new Map<string, string>();
+  for (const node of nodes) {
+    if (!node.type) continue;
+    const fullPath =
+      node.parent === '' ? '.' : node.parent === '.' ? node.name : `${node.parent}/${node.name}`;
+    nodeTypes.set(fullPath, node.type);
+  }
+
+  // Parse [connection ...] sections
+  const connections: SceneConnection[] = [];
+  const connRegex = /\[connection\s+([^\]]+)\]/g;
+  let connMatch: RegExpExecArray | null;
+  while ((connMatch = connRegex.exec(content)) !== null) {
+    const attrs = connMatch[1]!;
+    const signal = extractAttr(attrs, 'signal');
+    const fromPath = extractAttr(attrs, 'from');
+    const toPath = extractAttr(attrs, 'to');
+    const method = extractAttr(attrs, 'method');
+    if (signal && fromPath && toPath && method) {
+      connections.push({ signal, fromPath, toPath, method });
+    }
+  }
+
+  return { filePath, scripts, rootScript, connections, nodeTypes };
 }
 
 function extractAttr(attrs: string, name: string): string | undefined {
@@ -274,6 +314,8 @@ export interface GenerateTypingsOptions {
   ignore?: string[];
   /** Path to project.godot file (for autoload singleton detection) */
   projectFile?: string;
+  /** Path to godot-class-registry.json (for typed signal handler generation) */
+  registryPath?: string;
 }
 
 /**
@@ -319,6 +361,11 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     options.ignore ?? [],
   );
 
+  // Load Godot class registry (for signal handler type resolution)
+  const registry = options.registryPath
+    ? GodotClassRegistry.fromJsonFile(options.registryPath)
+    : null;
+
   // Track per-scene children for each script, so we can compute union types.
   // When a script is used in multiple scenes, a path present in all scenes gets a union
   // of all types; a path missing from some scenes gets `| null`.
@@ -328,6 +375,8 @@ export function generateTypings(options: GenerateTypingsOptions): string {
       alias: string; tsModulePath: string; className: string;
       /** Each entry is one scene's children map (path → type) */
       sceneMaps: Array<Map<string, string>>;
+      /** Signal handler methods collected from connections across scenes */
+      handlers: Map<string, { params: Array<{ name: string; tsType: string }>; comment: string }>;
     }
   >();
 
@@ -355,7 +404,6 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     for (const script of scene.scripts) {
       const classInfo = scriptClassMap.get(script.scriptResPath);
       if (!classInfo) continue;
-      if (script.children.length === 0) continue;
 
       const aliasEntry = aliasMap.get(script.scriptResPath);
       if (!aliasEntry) continue;
@@ -367,15 +415,87 @@ export function generateTypings(options: GenerateTypingsOptions): string {
           tsModulePath: classInfo.tsModulePath,
           className: classInfo.className,
           sceneMaps: [],
+          handlers: new Map(),
         };
         scriptData.set(script.scriptResPath, data);
       }
-      // One map per scene occurrence
-      const sceneChildren = new Map<string, string>();
-      for (const child of script.children) {
-        sceneChildren.set(child.path, child.type);
+
+      if (script.children.length > 0) {
+        // One map per scene occurrence
+        const sceneChildren = new Map<string, string>();
+        for (const child of script.children) {
+          sceneChildren.set(child.path, child.type);
+        }
+        data.sceneMaps.push(sceneChildren);
       }
-      data.sceneMaps.push(sceneChildren);
+    }
+
+    // Resolve signal connections → typed handler methods
+    if (registry && scene.connections.length > 0) {
+      for (const conn of scene.connections) {
+        // Resolve "from" node path → Godot type
+        const fromType = scene.nodeTypes.get(conn.fromPath);
+        if (!fromType) continue;
+
+        // Look up signal parameters on the emitter's type
+        const signalParams = registry.getSignalParams(fromType, conn.signal);
+        if (!signalParams) continue;
+
+        // Resolve "to" node path → find which script handles it
+        // Find the script node that matches or is an ancestor of the "to" path
+        let targetScript: ScriptNodeInfo | undefined;
+        for (const script of scene.scripts) {
+          if (script.nodePath === '.' && (conn.toPath === '.' || conn.toPath !== '')) {
+            // Root script is a candidate (matches any "to" path as fallback)
+            if (!targetScript) targetScript = script;
+          }
+          if (conn.toPath === '.' && script.nodePath === '.') {
+            targetScript = script;
+            break;
+          }
+          if (conn.toPath === script.nodePath) {
+            targetScript = script;
+            break;
+          }
+          // Check if script node is an ancestor of "to" path
+          if (conn.toPath.startsWith(script.nodePath + '/')) {
+            targetScript = script;
+            // Don't break — a more specific script might match
+          }
+        }
+        if (!targetScript) continue;
+
+        const targetClassInfo = scriptClassMap.get(targetScript.scriptResPath);
+        if (!targetClassInfo) continue;
+
+        const aliasEntry = aliasMap.get(targetScript.scriptResPath);
+        if (!aliasEntry) continue;
+
+        // Ensure scriptData entry exists for this script
+        let data = scriptData.get(targetScript.scriptResPath);
+        if (!data) {
+          data = {
+            alias: aliasEntry.alias,
+            tsModulePath: targetClassInfo.tsModulePath,
+            className: targetClassInfo.className,
+            sceneMaps: [],
+            handlers: new Map(),
+          };
+          scriptData.set(targetScript.scriptResPath, data);
+        }
+
+        // Add handler (deduplicate by method name)
+        if (!data.handlers.has(conn.method)) {
+          const params = signalParams.map((p) => ({
+            name: p.name,
+            tsType: godotTypeToTs(p.type),
+          }));
+          data.handlers.set(conn.method, {
+            params,
+            comment: `Signal handler: ${fromType}.${conn.signal}`,
+          });
+        }
+      }
     }
   }
 
@@ -430,27 +550,51 @@ export function generateTypings(options: GenerateTypingsOptions): string {
 
   // Scene node interfaces + module augmentations (outside declare global)
   for (const [, data] of scriptData) {
-    const nodesInterface = `${data.alias}SceneNodes`;
+    const hasChildren = data.sceneMaps.length > 0;
+    const hasHandlers = data.handlers.size > 0;
+    if (!hasChildren && !hasHandlers) continue;
 
-    // Compute merged children: union of types across scenes, nullable if missing from some
-    const mergedChildren = mergeSceneChildren(data.sceneMaps);
+    if (hasChildren) {
+      const nodesInterface = `${data.alias}SceneNodes`;
 
-    lines.push(`// Scene nodes for: ${data.alias}`);
-    lines.push(`interface ${nodesInterface} {`);
-    for (const { path, type } of mergedChildren) {
-      lines.push(`  "${path}": ${type};`);
+      // Compute merged children: union of types across scenes, nullable if missing from some
+      const mergedChildren = mergeSceneChildren(data.sceneMaps);
+
+      lines.push(`// Scene nodes for: ${data.alias}`);
+      lines.push(`interface ${nodesInterface} {`);
+      for (const { path, type } of mergedChildren) {
+        lines.push(`  "${path}": ${type};`);
+      }
+      lines.push('}');
+      lines.push('');
+
+      lines.push(`declare module "${data.tsModulePath}" {`);
+      lines.push(`  interface ${data.className} {`);
+      lines.push(`    get_node<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P];`);
+      lines.push(`    get_node(path: string): Node;`);
+      lines.push(`    get_node_or_null<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P] | null;`);
+      lines.push(`    get_node_or_null(path: string): Node | null;`);
+      if (hasHandlers) {
+        for (const [method, handler] of data.handlers) {
+          const paramList = handler.params.map((p) => `${p.name}: ${p.tsType}`).join(', ');
+          lines.push(`    /** ${handler.comment} */`);
+          lines.push(`    ${method}(${paramList}): void;`);
+        }
+      }
+      lines.push('  }');
+      lines.push('}');
+    } else {
+      // Only handlers, no scene children
+      lines.push(`declare module "${data.tsModulePath}" {`);
+      lines.push(`  interface ${data.className} {`);
+      for (const [method, handler] of data.handlers) {
+        const paramList = handler.params.map((p) => `${p.name}: ${p.tsType}`).join(', ');
+        lines.push(`    /** ${handler.comment} */`);
+        lines.push(`    ${method}(${paramList}): void;`);
+      }
+      lines.push('  }');
+      lines.push('}');
     }
-    lines.push('}');
-    lines.push('');
-
-    lines.push(`declare module "${data.tsModulePath}" {`);
-    lines.push(`  interface ${data.className} {`);
-    lines.push(`    get_node<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P];`);
-    lines.push(`    get_node(path: string): Node;`);
-    lines.push(`    get_node_or_null<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P] | null;`);
-    lines.push(`    get_node_or_null(path: string): Node | null;`);
-    lines.push('  }');
-    lines.push('}');
     lines.push('');
   }
 

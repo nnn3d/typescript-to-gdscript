@@ -3,13 +3,24 @@ import { join } from 'path';
 
 // ─── Data Types ───────────────────────────────────────────────
 
+export interface GodotSignalParamInfo {
+  name: string;
+  /** Godot type name (e.g. "RID", "Area2D", "int") */
+  type: string;
+}
+
+export interface GodotSignalInfo {
+  name: string;
+  parameters: GodotSignalParamInfo[];
+}
+
 export interface GodotClassInfo {
   name: string;
   inherits: string | null;
   description?: string;
   methods: string[];
   properties: string[];
-  signals: string[];
+  signals: GodotSignalInfo[];
   constants: string[];
   enums: GodotEnumInfo[];
 }
@@ -454,7 +465,10 @@ export function generateRegistryData(
       description: cls.briefDescription,
       methods: cls.methods.map((m) => m.name),
       properties: cls.properties.map((p) => p.name),
-      signals: cls.signals.map((s) => s.name),
+      signals: cls.signals.map((s) => ({
+        name: s.name,
+        parameters: s.parameters.map((p) => ({ name: p.name, type: p.type })),
+      })),
       constants: cls.constants.filter((c) => !c.enumName).map((c) => c.name),
       enums: cls.enums,
     };
@@ -504,7 +518,7 @@ export class GodotClassRegistry {
       if (!cls) continue;
       for (const m of cls.methods) members.add(m);
       for (const p of cls.properties) members.add(p);
-      for (const s of cls.signals) members.add(s);
+      for (const s of cls.signals) members.add(s.name);
       for (const c of cls.constants) members.add(c);
     }
 
@@ -556,6 +570,21 @@ export class GodotClassRegistry {
   /** Get class info */
   getClass(className: string): GodotClassInfo | undefined {
     return this.data.classes[className];
+  }
+
+  /**
+   * Get signal parameters for a signal on a class (walks inheritance chain).
+   * Returns null if the signal is not found on the class or any ancestor.
+   */
+  getSignalParams(className: string, signalName: string): GodotSignalParamInfo[] | null {
+    const chain = this.getInheritanceChain(className);
+    for (const cn of chain) {
+      const cls = this.data.classes[cn];
+      if (!cls) continue;
+      const sig = cls.signals.find((s) => s.name === signalName);
+      if (sig) return sig.parameters;
+    }
+    return null;
   }
 
   /** Get registry data (for serialization) */

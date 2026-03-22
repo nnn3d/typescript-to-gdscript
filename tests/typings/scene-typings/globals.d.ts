@@ -78,6 +78,7 @@ interface _PlayerSceneNodes {
   "Sprite2D": Sprite2D;
   "CollisionShape2D": CollisionShape2D;
   "Sprite2D/AnimationPlayer": AnimationPlayer;
+  "Area2D": Area2D;
 }
 
 declare module "./Player.ts" {
@@ -86,6 +87,8 @@ declare module "./Player.ts" {
     get_node(path: string): Node;
     get_node_or_null<P extends keyof _PlayerSceneNodes>(path: P): _PlayerSceneNodes[P] | null;
     get_node_or_null(path: string): Node | null;
+    /** Signal handler: Area2D.area_entered */
+    _on_area_entered(area: Area2D): void;
   }
 }
 

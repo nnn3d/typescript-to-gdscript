@@ -38,7 +38,7 @@ export interface GodotDocsTypingsOptions {
 /** Set of known Godot classes, populated during generation */
 let knownClasses = new Set<string>();
 
-function godotTypeToTs(type: string): string {
+export function godotTypeToTs(type: string): string {
   // Strip C++ pointer/reference markers (handle "type*", "type **", "const type*")
   const cleaned = type
     .replace(/[\s*]*\*+\s*$/, '')

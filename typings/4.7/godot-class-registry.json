@@ -65,9 +65,23 @@
         "wrap_controls"
       ],
       "signals": [
-        "canceled",
-        "confirmed",
-        "custom_action"
+        {
+          "name": "canceled",
+          "parameters": []
+        },
+        {
+          "name": "confirmed",
+          "parameters": []
+        },
+        {
+          "name": "custom_action",
+          "parameters": [
+            {
+              "name": "action",
+              "type": "StringName"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -692,11 +706,26 @@
         "sprite_frames"
       ],
       "signals": [
-        "animation_changed",
-        "animation_finished",
-        "animation_looped",
-        "frame_changed",
-        "sprite_frames_changed"
+        {
+          "name": "animation_changed",
+          "parameters": []
+        },
+        {
+          "name": "animation_finished",
+          "parameters": []
+        },
+        {
+          "name": "animation_looped",
+          "parameters": []
+        },
+        {
+          "name": "frame_changed",
+          "parameters": []
+        },
+        {
+          "name": "sprite_frames_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -723,11 +752,26 @@
         "sprite_frames"
       ],
       "signals": [
-        "animation_changed",
-        "animation_finished",
-        "animation_looped",
-        "frame_changed",
-        "sprite_frames_changed"
+        {
+          "name": "animation_changed",
+          "parameters": []
+        },
+        {
+          "name": "animation_finished",
+          "parameters": []
+        },
+        {
+          "name": "animation_looped",
+          "parameters": []
+        },
+        {
+          "name": "frame_changed",
+          "parameters": []
+        },
+        {
+          "name": "sprite_frames_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -999,10 +1043,46 @@
       ],
       "properties": [],
       "signals": [
-        "animation_added",
-        "animation_changed",
-        "animation_removed",
-        "animation_renamed"
+        {
+          "name": "animation_added",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "animation_changed",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "animation_removed",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "animation_renamed",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "StringName"
+            },
+            {
+              "name": "to_name",
+              "type": "StringName"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -1047,13 +1127,44 @@
         "root_node"
       ],
       "signals": [
-        "animation_finished",
-        "animation_libraries_updated",
-        "animation_list_changed",
-        "animation_started",
-        "caches_cleared",
-        "mixer_applied",
-        "mixer_updated"
+        {
+          "name": "animation_finished",
+          "parameters": [
+            {
+              "name": "anim_name",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "animation_libraries_updated",
+          "parameters": []
+        },
+        {
+          "name": "animation_list_changed",
+          "parameters": []
+        },
+        {
+          "name": "animation_started",
+          "parameters": [
+            {
+              "name": "anim_name",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "caches_cleared",
+          "parameters": []
+        },
+        {
+          "name": "mixer_applied",
+          "parameters": []
+        },
+        {
+          "name": "mixer_updated",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -1139,9 +1250,40 @@
         "filter_enabled"
       ],
       "signals": [
-        "animation_node_removed",
-        "animation_node_renamed",
-        "tree_changed"
+        {
+          "name": "animation_node_removed",
+          "parameters": [
+            {
+              "name": "object_id",
+              "type": "int"
+            },
+            {
+              "name": "name",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "animation_node_renamed",
+          "parameters": [
+            {
+              "name": "object_id",
+              "type": "int"
+            },
+            {
+              "name": "old_name",
+              "type": "String"
+            },
+            {
+              "name": "new_name",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "tree_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -1320,7 +1462,10 @@
         "y_label"
       ],
       "signals": [
-        "triangles_updated"
+        {
+          "name": "triangles_updated",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -1363,7 +1508,15 @@
         "graph_offset"
       ],
       "signals": [
-        "node_changed"
+        {
+          "name": "node_changed",
+          "parameters": [
+            {
+              "name": "node_name",
+              "type": "StringName"
+            }
+          ]
+        }
       ],
       "constants": [
         "CONNECTION_OK",
@@ -1532,8 +1685,24 @@
         "resource_local_to_scene"
       ],
       "signals": [
-        "state_finished",
-        "state_started"
+        {
+          "name": "state_finished",
+          "parameters": [
+            {
+              "name": "state",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "state_started",
+          "parameters": [
+            {
+              "name": "state",
+              "type": "StringName"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -1555,7 +1724,10 @@
         "xfade_time"
       ],
       "signals": [
-        "advance_condition_changed"
+        {
+          "name": "advance_condition_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -1714,8 +1886,28 @@
         "speed_scale"
       ],
       "signals": [
-        "animation_changed",
-        "current_animation_changed"
+        {
+          "name": "animation_changed",
+          "parameters": [
+            {
+              "name": "old_name",
+              "type": "StringName"
+            },
+            {
+              "name": "new_name",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "current_animation_changed",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "StringName"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -1775,7 +1967,10 @@
         "callback_mode_discrete"
       ],
       "signals": [
-        "animation_player_changed"
+        {
+          "name": "animation_player_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -1828,14 +2023,126 @@
         "priority"
       ],
       "signals": [
-        "area_entered",
-        "area_exited",
-        "area_shape_entered",
-        "area_shape_exited",
-        "body_entered",
-        "body_exited",
-        "body_shape_entered",
-        "body_shape_exited"
+        {
+          "name": "area_entered",
+          "parameters": [
+            {
+              "name": "area",
+              "type": "Area2D"
+            }
+          ]
+        },
+        {
+          "name": "area_exited",
+          "parameters": [
+            {
+              "name": "area",
+              "type": "Area2D"
+            }
+          ]
+        },
+        {
+          "name": "area_shape_entered",
+          "parameters": [
+            {
+              "name": "area_rid",
+              "type": "RID"
+            },
+            {
+              "name": "area",
+              "type": "Area2D"
+            },
+            {
+              "name": "area_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "area_shape_exited",
+          "parameters": [
+            {
+              "name": "area_rid",
+              "type": "RID"
+            },
+            {
+              "name": "area",
+              "type": "Area2D"
+            },
+            {
+              "name": "area_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "body_entered",
+          "parameters": [
+            {
+              "name": "body",
+              "type": "Node2D"
+            }
+          ]
+        },
+        {
+          "name": "body_exited",
+          "parameters": [
+            {
+              "name": "body",
+              "type": "Node2D"
+            }
+          ]
+        },
+        {
+          "name": "body_shape_entered",
+          "parameters": [
+            {
+              "name": "body_rid",
+              "type": "RID"
+            },
+            {
+              "name": "body",
+              "type": "Node2D"
+            },
+            {
+              "name": "body_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "body_shape_exited",
+          "parameters": [
+            {
+              "name": "body_rid",
+              "type": "RID"
+            },
+            {
+              "name": "body",
+              "type": "Node2D"
+            },
+            {
+              "name": "body_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -1903,14 +2210,126 @@
         "wind_source_path"
       ],
       "signals": [
-        "area_entered",
-        "area_exited",
-        "area_shape_entered",
-        "area_shape_exited",
-        "body_entered",
-        "body_exited",
-        "body_shape_entered",
-        "body_shape_exited"
+        {
+          "name": "area_entered",
+          "parameters": [
+            {
+              "name": "area",
+              "type": "Area3D"
+            }
+          ]
+        },
+        {
+          "name": "area_exited",
+          "parameters": [
+            {
+              "name": "area",
+              "type": "Area3D"
+            }
+          ]
+        },
+        {
+          "name": "area_shape_entered",
+          "parameters": [
+            {
+              "name": "area_rid",
+              "type": "RID"
+            },
+            {
+              "name": "area",
+              "type": "Area3D"
+            },
+            {
+              "name": "area_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "area_shape_exited",
+          "parameters": [
+            {
+              "name": "area_rid",
+              "type": "RID"
+            },
+            {
+              "name": "area",
+              "type": "Area3D"
+            },
+            {
+              "name": "area_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "body_entered",
+          "parameters": [
+            {
+              "name": "body",
+              "type": "Node3D"
+            }
+          ]
+        },
+        {
+          "name": "body_exited",
+          "parameters": [
+            {
+              "name": "body",
+              "type": "Node3D"
+            }
+          ]
+        },
+        {
+          "name": "body_shape_entered",
+          "parameters": [
+            {
+              "name": "body_rid",
+              "type": "RID"
+            },
+            {
+              "name": "body",
+              "type": "Node3D"
+            },
+            {
+              "name": "body_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "body_shape_exited",
+          "parameters": [
+            {
+              "name": "body_rid",
+              "type": "RID"
+            },
+            {
+              "name": "body",
+              "type": "Node3D"
+            },
+            {
+              "name": "body_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -3015,8 +3434,27 @@
         "playback_speed_scale"
       ],
       "signals": [
-        "bus_layout_changed",
-        "bus_renamed"
+        {
+          "name": "bus_layout_changed",
+          "parameters": []
+        },
+        {
+          "name": "bus_renamed",
+          "parameters": [
+            {
+              "name": "bus_index",
+              "type": "int"
+            },
+            {
+              "name": "old_name",
+              "type": "StringName"
+            },
+            {
+              "name": "new_name",
+              "type": "StringName"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -3088,7 +3526,10 @@
       ],
       "properties": [],
       "signals": [
-        "parameter_list_changed"
+        {
+          "name": "parameter_list_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -3244,7 +3685,10 @@
         "volume_linear"
       ],
       "signals": [
-        "finished"
+        {
+          "name": "finished",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -3296,7 +3740,10 @@
         "volume_linear"
       ],
       "signals": [
-        "finished"
+        {
+          "name": "finished",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -3338,7 +3785,10 @@
         "volume_linear"
       ],
       "signals": [
-        "finished"
+        {
+          "name": "finished",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -3569,10 +4019,27 @@
         "toggle_mode"
       ],
       "signals": [
-        "button_down",
-        "button_up",
-        "pressed",
-        "toggled"
+        {
+          "name": "button_down",
+          "parameters": []
+        },
+        {
+          "name": "button_up",
+          "parameters": []
+        },
+        {
+          "name": "pressed",
+          "parameters": []
+        },
+        {
+          "name": "toggled",
+          "parameters": [
+            {
+              "name": "toggled_on",
+              "type": "bool"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -4594,8 +5061,14 @@
         "profile"
       ],
       "signals": [
-        "bone_map_updated",
-        "profile_updated"
+        {
+          "name": "bone_map_updated",
+          "parameters": []
+        },
+        {
+          "name": "profile_updated",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -4781,7 +5254,15 @@
         "resource_local_to_scene"
       ],
       "signals": [
-        "pressed"
+        {
+          "name": "pressed",
+          "parameters": [
+            {
+              "name": "button",
+              "type": "BaseButton"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -5088,8 +5569,14 @@
         "formats"
       ],
       "signals": [
-        "format_changed",
-        "frame_changed"
+        {
+          "name": "format_changed",
+          "parameters": []
+        },
+        {
+          "name": "frame_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -5152,9 +5639,28 @@
         "monitoring_feeds"
       ],
       "signals": [
-        "camera_feed_added",
-        "camera_feed_removed",
-        "camera_feeds_updated"
+        {
+          "name": "camera_feed_added",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "camera_feed_removed",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "camera_feeds_updated",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -5295,10 +5801,22 @@
         "z_index"
       ],
       "signals": [
-        "draw",
-        "hidden",
-        "item_rect_changed",
-        "visibility_changed"
+        {
+          "name": "draw",
+          "parameters": []
+        },
+        {
+          "name": "hidden",
+          "parameters": []
+        },
+        {
+          "name": "item_rect_changed",
+          "parameters": []
+        },
+        {
+          "name": "visibility_changed",
+          "parameters": []
+        }
       ],
       "constants": [
         "NOTIFICATION_TRANSFORM_CHANGED",
@@ -5477,7 +5995,10 @@
         "visible"
       ],
       "signals": [
-        "visibility_changed"
+        {
+          "name": "visibility_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -5992,11 +6513,62 @@
         "text_direction"
       ],
       "signals": [
-        "breakpoint_toggled",
-        "code_completion_requested",
-        "symbol_hovered",
-        "symbol_lookup",
-        "symbol_validate"
+        {
+          "name": "breakpoint_toggled",
+          "parameters": [
+            {
+              "name": "line",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "code_completion_requested",
+          "parameters": []
+        },
+        {
+          "name": "symbol_hovered",
+          "parameters": [
+            {
+              "name": "symbol",
+              "type": "String"
+            },
+            {
+              "name": "line",
+              "type": "int"
+            },
+            {
+              "name": "column",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "symbol_lookup",
+          "parameters": [
+            {
+              "name": "symbol",
+              "type": "String"
+            },
+            {
+              "name": "line",
+              "type": "int"
+            },
+            {
+              "name": "column",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "symbol_validate",
+          "parameters": [
+            {
+              "name": "symbol",
+              "type": "String"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -6146,11 +6718,49 @@
         "input_pickable"
       ],
       "signals": [
-        "input_event",
-        "mouse_entered",
-        "mouse_exited",
-        "mouse_shape_entered",
-        "mouse_shape_exited"
+        {
+          "name": "input_event",
+          "parameters": [
+            {
+              "name": "viewport",
+              "type": "Node"
+            },
+            {
+              "name": "event",
+              "type": "InputEvent"
+            },
+            {
+              "name": "shape_idx",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "mouse_entered",
+          "parameters": []
+        },
+        {
+          "name": "mouse_exited",
+          "parameters": []
+        },
+        {
+          "name": "mouse_shape_entered",
+          "parameters": [
+            {
+              "name": "shape_idx",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "mouse_shape_exited",
+          "parameters": [
+            {
+              "name": "shape_idx",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -6211,9 +6821,39 @@
         "input_ray_pickable"
       ],
       "signals": [
-        "input_event",
-        "mouse_entered",
-        "mouse_exited"
+        {
+          "name": "input_event",
+          "parameters": [
+            {
+              "name": "camera",
+              "type": "Node"
+            },
+            {
+              "name": "event",
+              "type": "InputEvent"
+            },
+            {
+              "name": "event_position",
+              "type": "Vector3"
+            },
+            {
+              "name": "normal",
+              "type": "Vector3"
+            },
+            {
+              "name": "shape_idx",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "mouse_entered",
+          "parameters": []
+        },
+        {
+          "name": "mouse_exited",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -6557,9 +7197,33 @@
         "sliders_visible"
       ],
       "signals": [
-        "color_changed",
-        "preset_added",
-        "preset_removed"
+        {
+          "name": "color_changed",
+          "parameters": [
+            {
+              "name": "color",
+              "type": "Color"
+            }
+          ]
+        },
+        {
+          "name": "preset_added",
+          "parameters": [
+            {
+              "name": "color",
+              "type": "Color"
+            }
+          ]
+        },
+        {
+          "name": "preset_removed",
+          "parameters": [
+            {
+              "name": "color",
+              "type": "Color"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -6638,9 +7302,23 @@
         "toggle_mode"
       ],
       "signals": [
-        "color_changed",
-        "picker_created",
-        "popup_closed"
+        {
+          "name": "color_changed",
+          "parameters": [
+            {
+              "name": "color",
+              "type": "Color"
+            }
+          ]
+        },
+        {
+          "name": "picker_created",
+          "parameters": []
+        },
+        {
+          "name": "popup_closed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -6928,8 +7606,14 @@
         "mouse_filter"
       ],
       "signals": [
-        "pre_sort_children",
-        "sort_children"
+        {
+          "name": "pre_sort_children",
+          "parameters": []
+        },
+        {
+          "name": "sort_children",
+          "parameters": []
+        }
       ],
       "constants": [
         "NOTIFICATION_PRE_SORT_CHILDREN",
@@ -7097,15 +7781,47 @@
         "tooltip_text"
       ],
       "signals": [
-        "focus_entered",
-        "focus_exited",
-        "gui_input",
-        "minimum_size_changed",
-        "mouse_entered",
-        "mouse_exited",
-        "resized",
-        "size_flags_changed",
-        "theme_changed"
+        {
+          "name": "focus_entered",
+          "parameters": []
+        },
+        {
+          "name": "focus_exited",
+          "parameters": []
+        },
+        {
+          "name": "gui_input",
+          "parameters": [
+            {
+              "name": "event",
+              "type": "InputEvent"
+            }
+          ]
+        },
+        {
+          "name": "minimum_size_changed",
+          "parameters": []
+        },
+        {
+          "name": "mouse_entered",
+          "parameters": []
+        },
+        {
+          "name": "mouse_exited",
+          "parameters": []
+        },
+        {
+          "name": "resized",
+          "parameters": []
+        },
+        {
+          "name": "size_flags_changed",
+          "parameters": []
+        },
+        {
+          "name": "theme_changed",
+          "parameters": []
+        }
       ],
       "constants": [
         "NOTIFICATION_RESIZED",
@@ -7721,7 +8437,10 @@
         "use_fixed_seed"
       ],
       "signals": [
-        "finished"
+        {
+          "name": "finished",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -7953,7 +8672,10 @@
         "visibility_aabb"
       ],
       "signals": [
-        "finished"
+        {
+          "name": "finished",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -8186,8 +8908,14 @@
         "point_count"
       ],
       "signals": [
-        "domain_changed",
-        "range_changed"
+        {
+          "name": "domain_changed",
+          "parameters": []
+        },
+        {
+          "name": "range_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -8885,7 +9613,15 @@
       ],
       "properties": [],
       "signals": [
-        "orientation_changed"
+        {
+          "name": "orientation_changed",
+          "parameters": [
+            {
+              "name": "orientation",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [
         "INVALID_SCREEN",
@@ -10120,10 +10856,27 @@
       ],
       "properties": [],
       "signals": [
-        "breaked",
-        "continued",
-        "started",
-        "stopped"
+        {
+          "name": "breaked",
+          "parameters": [
+            {
+              "name": "can_debug",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "continued",
+          "parameters": []
+        },
+        {
+          "name": "started",
+          "parameters": []
+        },
+        {
+          "name": "stopped",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -10155,8 +10908,14 @@
         "transient"
       ],
       "signals": [
-        "closed",
-        "opened"
+        {
+          "name": "closed",
+          "parameters": []
+        },
+        {
+          "name": "opened",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -10657,12 +11416,50 @@
       ],
       "properties": [],
       "signals": [
-        "filesystem_changed",
-        "resources_reimported",
-        "resources_reimporting",
-        "resources_reload",
-        "script_classes_updated",
-        "sources_changed"
+        {
+          "name": "filesystem_changed",
+          "parameters": []
+        },
+        {
+          "name": "resources_reimported",
+          "parameters": [
+            {
+              "name": "resources",
+              "type": "PackedStringArray"
+            }
+          ]
+        },
+        {
+          "name": "resources_reimporting",
+          "parameters": [
+            {
+              "name": "resources",
+              "type": "PackedStringArray"
+            }
+          ]
+        },
+        {
+          "name": "resources_reload",
+          "parameters": [
+            {
+              "name": "resources",
+              "type": "PackedStringArray"
+            }
+          ]
+        },
+        {
+          "name": "script_classes_updated",
+          "parameters": []
+        },
+        {
+          "name": "sources_changed",
+          "parameters": [
+            {
+              "name": "exist",
+              "type": "bool"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -10749,15 +11546,93 @@
         "horizontal_scroll_mode"
       ],
       "signals": [
-        "edited_object_changed",
-        "object_id_selected",
-        "property_deleted",
-        "property_edited",
-        "property_keyed",
-        "property_selected",
-        "property_toggled",
-        "resource_selected",
-        "restart_requested"
+        {
+          "name": "edited_object_changed",
+          "parameters": []
+        },
+        {
+          "name": "object_id_selected",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "property_deleted",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "property_edited",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "property_keyed",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "String"
+            },
+            {
+              "name": "value",
+              "type": "Variant"
+            },
+            {
+              "name": "advance",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "property_selected",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "property_toggled",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "String"
+            },
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "resource_selected",
+          "parameters": [
+            {
+              "name": "resource",
+              "type": "Resource"
+            },
+            {
+              "name": "path",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "restart_requested",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -11034,11 +11909,51 @@
       ],
       "properties": [],
       "signals": [
-        "main_screen_changed",
-        "resource_saved",
-        "scene_changed",
-        "scene_closed",
-        "scene_saved"
+        {
+          "name": "main_screen_changed",
+          "parameters": [
+            {
+              "name": "screen_name",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "resource_saved",
+          "parameters": [
+            {
+              "name": "resource",
+              "type": "Resource"
+            }
+          ]
+        },
+        {
+          "name": "scene_changed",
+          "parameters": [
+            {
+              "name": "scene_root",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "scene_closed",
+          "parameters": [
+            {
+              "name": "filepath",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "scene_saved",
+          "parameters": [
+            {
+              "name": "filepath",
+              "type": "String"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -11197,19 +12112,166 @@
         "use_folding"
       ],
       "signals": [
-        "multiple_properties_changed",
-        "object_id_selected",
-        "property_can_revert_changed",
-        "property_changed",
-        "property_checked",
-        "property_deleted",
-        "property_favorited",
-        "property_keyed",
-        "property_keyed_with_value",
-        "property_overridden",
-        "property_pinned",
-        "resource_selected",
-        "selected"
+        {
+          "name": "multiple_properties_changed",
+          "parameters": [
+            {
+              "name": "properties",
+              "type": "PackedStringArray"
+            },
+            {
+              "name": "value",
+              "type": "Array"
+            }
+          ]
+        },
+        {
+          "name": "object_id_selected",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "StringName"
+            },
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "property_can_revert_changed",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "StringName"
+            },
+            {
+              "name": "can_revert",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "property_changed",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "StringName"
+            },
+            {
+              "name": "value",
+              "type": "Variant"
+            },
+            {
+              "name": "field",
+              "type": "StringName"
+            },
+            {
+              "name": "changing",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "property_checked",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "StringName"
+            },
+            {
+              "name": "checked",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "property_deleted",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "property_favorited",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "StringName"
+            },
+            {
+              "name": "favorited",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "property_keyed",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "property_keyed_with_value",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "StringName"
+            },
+            {
+              "name": "value",
+              "type": "Variant"
+            }
+          ]
+        },
+        {
+          "name": "property_overridden",
+          "parameters": []
+        },
+        {
+          "name": "property_pinned",
+          "parameters": [
+            {
+              "name": "property",
+              "type": "StringName"
+            },
+            {
+              "name": "pinned",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "resource_selected",
+          "parameters": [
+            {
+              "name": "path",
+              "type": "String"
+            },
+            {
+              "name": "resource",
+              "type": "Resource"
+            }
+          ]
+        },
+        {
+          "name": "selected",
+          "parameters": [
+            {
+              "name": "path",
+              "type": "String"
+            },
+            {
+              "name": "focusable_idx",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -11245,8 +12307,28 @@
         "toggle_mode"
       ],
       "signals": [
-        "resource_changed",
-        "resource_selected"
+        {
+          "name": "resource_changed",
+          "parameters": [
+            {
+              "name": "resource",
+              "type": "Resource"
+            }
+          ]
+        },
+        {
+          "name": "resource_selected",
+          "parameters": [
+            {
+              "name": "resource",
+              "type": "Resource"
+            },
+            {
+              "name": "inspect",
+              "type": "bool"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -11264,7 +12346,15 @@
       ],
       "properties": [],
       "signals": [
-        "preview_invalidated"
+        {
+          "name": "preview_invalidated",
+          "parameters": [
+            {
+              "name": "path",
+              "type": "String"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -11439,7 +12529,10 @@
       ],
       "properties": [],
       "signals": [
-        "selection_changed"
+        {
+          "name": "selection_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -11934,7 +13027,10 @@
         "version_control/username"
       ],
       "signals": [
-        "settings_changed"
+        {
+          "name": "settings_changed",
+          "parameters": []
+        }
       ],
       "constants": [
         "NOTIFICATION_EDITOR_SETTINGS_CHANGED"
@@ -11957,11 +13053,26 @@
         "size_flags_vertical"
       ],
       "signals": [
-        "grabbed",
-        "ungrabbed",
-        "updown_pressed",
-        "value_focus_entered",
-        "value_focus_exited"
+        {
+          "name": "grabbed",
+          "parameters": []
+        },
+        {
+          "name": "ungrabbed",
+          "parameters": []
+        },
+        {
+          "name": "updown_pressed",
+          "parameters": []
+        },
+        {
+          "name": "value_focus_entered",
+          "parameters": []
+        },
+        {
+          "name": "value_focus_exited",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -12062,8 +13173,14 @@
       ],
       "properties": [],
       "signals": [
-        "history_changed",
-        "version_changed"
+        {
+          "name": "history_changed",
+          "parameters": []
+        },
+        {
+          "name": "version_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -12821,10 +13938,42 @@
         "size"
       ],
       "signals": [
-        "dir_selected",
-        "file_selected",
-        "filename_filter_changed",
-        "files_selected"
+        {
+          "name": "dir_selected",
+          "parameters": [
+            {
+              "name": "dir",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "file_selected",
+          "parameters": [
+            {
+              "name": "path",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "filename_filter_changed",
+          "parameters": [
+            {
+              "name": "filter",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "files_selected",
+          "parameters": [
+            {
+              "name": "paths",
+              "type": "PackedStringArray"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -12937,16 +14086,89 @@
       ],
       "properties": [],
       "signals": [
-        "display_mode_changed",
-        "file_removed",
-        "files_moved",
-        "folder_color_changed",
-        "folder_moved",
-        "folder_removed",
-        "inherit",
-        "instantiate",
-        "resource_removed",
-        "selection_changed"
+        {
+          "name": "display_mode_changed",
+          "parameters": []
+        },
+        {
+          "name": "file_removed",
+          "parameters": [
+            {
+              "name": "file",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "files_moved",
+          "parameters": [
+            {
+              "name": "old_file",
+              "type": "String"
+            },
+            {
+              "name": "new_file",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "folder_color_changed",
+          "parameters": []
+        },
+        {
+          "name": "folder_moved",
+          "parameters": [
+            {
+              "name": "old_folder",
+              "type": "String"
+            },
+            {
+              "name": "new_folder",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "folder_removed",
+          "parameters": [
+            {
+              "name": "folder",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "inherit",
+          "parameters": [
+            {
+              "name": "file",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "instantiate",
+          "parameters": [
+            {
+              "name": "files",
+              "type": "PackedStringArray"
+            }
+          ]
+        },
+        {
+          "name": "resource_removed",
+          "parameters": [
+            {
+              "name": "resource",
+              "type": "Resource"
+            }
+          ]
+        },
+        {
+          "name": "selection_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -13069,7 +14291,15 @@
         "title_text_overrun_behavior"
       ],
       "signals": [
-        "folding_changed"
+        {
+          "name": "folding_changed",
+          "parameters": [
+            {
+              "name": "is_folded",
+              "type": "bool"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -13101,7 +14331,15 @@
         "resource_local_to_scene"
       ],
       "signals": [
-        "expanded"
+        {
+          "name": "expanded",
+          "parameters": [
+            {
+              "name": "container",
+              "type": "FoldableContainer"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -13338,9 +14576,28 @@
       ],
       "properties": [],
       "signals": [
-        "extension_loaded",
-        "extension_unloading",
-        "extensions_reloaded"
+        {
+          "name": "extension_loaded",
+          "parameters": [
+            {
+              "name": "extension",
+              "type": "GDExtension"
+            }
+          ]
+        },
+        {
+          "name": "extension_unloading",
+          "parameters": [
+            {
+              "name": "extension",
+              "type": "GDExtension"
+            }
+          ]
+        },
+        {
+          "name": "extensions_reloaded",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -13904,7 +15161,10 @@
         "visibility_rect"
       ],
       "signals": [
-        "finished"
+        {
+          "name": "finished",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -13998,7 +15258,10 @@
         "visibility_aabb"
       ],
       "signals": [
-        "finished"
+        {
+          "name": "finished",
+          "parameters": []
+        }
       ],
       "constants": [
         "MAX_DRAW_PASSES"
@@ -14475,25 +15738,198 @@
         "zoom_step"
       ],
       "signals": [
-        "begin_node_move",
-        "connection_drag_ended",
-        "connection_drag_started",
-        "connection_from_empty",
-        "connection_request",
-        "connection_to_empty",
-        "copy_nodes_request",
-        "cut_nodes_request",
-        "delete_nodes_request",
-        "disconnection_request",
-        "duplicate_nodes_request",
-        "end_node_move",
-        "frame_rect_changed",
-        "graph_elements_linked_to_frame_request",
-        "node_deselected",
-        "node_selected",
-        "paste_nodes_request",
-        "popup_request",
-        "scroll_offset_changed"
+        {
+          "name": "begin_node_move",
+          "parameters": []
+        },
+        {
+          "name": "connection_drag_ended",
+          "parameters": []
+        },
+        {
+          "name": "connection_drag_started",
+          "parameters": [
+            {
+              "name": "from_node",
+              "type": "StringName"
+            },
+            {
+              "name": "from_port",
+              "type": "int"
+            },
+            {
+              "name": "is_output",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "connection_from_empty",
+          "parameters": [
+            {
+              "name": "to_node",
+              "type": "StringName"
+            },
+            {
+              "name": "to_port",
+              "type": "int"
+            },
+            {
+              "name": "release_position",
+              "type": "Vector2"
+            }
+          ]
+        },
+        {
+          "name": "connection_request",
+          "parameters": [
+            {
+              "name": "from_node",
+              "type": "StringName"
+            },
+            {
+              "name": "from_port",
+              "type": "int"
+            },
+            {
+              "name": "to_node",
+              "type": "StringName"
+            },
+            {
+              "name": "to_port",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "connection_to_empty",
+          "parameters": [
+            {
+              "name": "from_node",
+              "type": "StringName"
+            },
+            {
+              "name": "from_port",
+              "type": "int"
+            },
+            {
+              "name": "release_position",
+              "type": "Vector2"
+            }
+          ]
+        },
+        {
+          "name": "copy_nodes_request",
+          "parameters": []
+        },
+        {
+          "name": "cut_nodes_request",
+          "parameters": []
+        },
+        {
+          "name": "delete_nodes_request",
+          "parameters": [
+            {
+              "name": "nodes",
+              "type": "StringName[]"
+            }
+          ]
+        },
+        {
+          "name": "disconnection_request",
+          "parameters": [
+            {
+              "name": "from_node",
+              "type": "StringName"
+            },
+            {
+              "name": "from_port",
+              "type": "int"
+            },
+            {
+              "name": "to_node",
+              "type": "StringName"
+            },
+            {
+              "name": "to_port",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "duplicate_nodes_request",
+          "parameters": []
+        },
+        {
+          "name": "end_node_move",
+          "parameters": []
+        },
+        {
+          "name": "frame_rect_changed",
+          "parameters": [
+            {
+              "name": "frame",
+              "type": "GraphFrame"
+            },
+            {
+              "name": "new_rect",
+              "type": "Rect2"
+            }
+          ]
+        },
+        {
+          "name": "graph_elements_linked_to_frame_request",
+          "parameters": [
+            {
+              "name": "elements",
+              "type": "Array"
+            },
+            {
+              "name": "frame",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "node_deselected",
+          "parameters": [
+            {
+              "name": "node",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "node_selected",
+          "parameters": [
+            {
+              "name": "node",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "paste_nodes_request",
+          "parameters": []
+        },
+        {
+          "name": "popup_request",
+          "parameters": [
+            {
+              "name": "at_position",
+              "type": "Vector2"
+            }
+          ]
+        },
+        {
+          "name": "scroll_offset_changed",
+          "parameters": [
+            {
+              "name": "offset",
+              "type": "Vector2"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -14539,14 +15975,57 @@
         "selected"
       ],
       "signals": [
-        "delete_request",
-        "dragged",
-        "node_deselected",
-        "node_selected",
-        "position_offset_changed",
-        "raise_request",
-        "resize_end",
-        "resize_request"
+        {
+          "name": "delete_request",
+          "parameters": []
+        },
+        {
+          "name": "dragged",
+          "parameters": [
+            {
+              "name": "from",
+              "type": "Vector2"
+            },
+            {
+              "name": "to",
+              "type": "Vector2"
+            }
+          ]
+        },
+        {
+          "name": "node_deselected",
+          "parameters": []
+        },
+        {
+          "name": "node_selected",
+          "parameters": []
+        },
+        {
+          "name": "position_offset_changed",
+          "parameters": []
+        },
+        {
+          "name": "raise_request",
+          "parameters": []
+        },
+        {
+          "name": "resize_end",
+          "parameters": [
+            {
+              "name": "new_size",
+              "type": "Vector2"
+            }
+          ]
+        },
+        {
+          "name": "resize_request",
+          "parameters": [
+            {
+              "name": "new_size",
+              "type": "Vector2"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -14567,7 +16046,10 @@
         "title"
       ],
       "signals": [
-        "autoshrink_changed"
+        {
+          "name": "autoshrink_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -14621,8 +16103,19 @@
         "title"
       ],
       "signals": [
-        "slot_sizes_changed",
-        "slot_updated"
+        {
+          "name": "slot_sizes_changed",
+          "parameters": []
+        },
+        {
+          "name": "slot_updated",
+          "parameters": [
+            {
+              "name": "slot_index",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -15257,7 +16750,27 @@
         "use_threads"
       ],
       "signals": [
-        "request_completed"
+        {
+          "name": "request_completed",
+          "parameters": [
+            {
+              "name": "result",
+              "type": "int"
+            },
+            {
+              "name": "response_code",
+              "type": "int"
+            },
+            {
+              "name": "headers",
+              "type": "PackedStringArray"
+            },
+            {
+              "name": "body",
+              "type": "PackedByteArray"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -16005,7 +17518,19 @@
         "use_accumulated_input"
       ],
       "signals": [
-        "joy_connection_changed"
+        {
+          "name": "joy_connection_changed",
+          "parameters": [
+            {
+              "name": "device",
+              "type": "int"
+            },
+            {
+              "name": "connected",
+              "type": "bool"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -16415,7 +17940,10 @@
       ],
       "properties": [],
       "signals": [
-        "project_settings_loaded"
+        {
+          "name": "project_settings_loaded",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -16597,11 +18125,67 @@
         "wraparound_items"
       ],
       "signals": [
-        "empty_clicked",
-        "item_activated",
-        "item_clicked",
-        "item_selected",
-        "multi_selected"
+        {
+          "name": "empty_clicked",
+          "parameters": [
+            {
+              "name": "at_position",
+              "type": "Vector2"
+            },
+            {
+              "name": "mouse_button_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "item_activated",
+          "parameters": [
+            {
+              "name": "index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "item_clicked",
+          "parameters": [
+            {
+              "name": "index",
+              "type": "int"
+            },
+            {
+              "name": "at_position",
+              "type": "Vector2"
+            },
+            {
+              "name": "mouse_button_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "item_selected",
+          "parameters": [
+            {
+              "name": "index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "multi_selected",
+          "parameters": [
+            {
+              "name": "index",
+              "type": "int"
+            },
+            {
+              "name": "selected",
+              "type": "bool"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -16758,7 +18342,10 @@
       ],
       "properties": [],
       "signals": [
-        "pwa_update_available"
+        {
+          "name": "pwa_update_available",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -17763,10 +19350,42 @@
         "virtual_keyboard_type"
       ],
       "signals": [
-        "editing_toggled",
-        "text_change_rejected",
-        "text_changed",
-        "text_submitted"
+        {
+          "name": "editing_toggled",
+          "parameters": [
+            {
+              "name": "toggled_on",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "text_change_rejected",
+          "parameters": [
+            {
+              "name": "rejected_substring",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "text_changed",
+          "parameters": [
+            {
+              "name": "new_text",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "text_submitted",
+          "parameters": [
+            {
+              "name": "new_text",
+              "type": "String"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -18107,7 +19726,19 @@
       ],
       "properties": [],
       "signals": [
-        "on_request_permissions_result"
+        {
+          "name": "on_request_permissions_result",
+          "parameters": [
+            {
+              "name": "permission",
+              "type": "String"
+            },
+            {
+              "name": "granted",
+              "type": "bool"
+            }
+          ]
+        }
       ],
       "constants": [
         "NOTIFICATION_OS_MEMORY_WARNING",
@@ -18244,7 +19875,10 @@
         "toggle_mode"
       ],
       "signals": [
-        "about_to_popup"
+        {
+          "name": "about_to_popup",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -18639,7 +20273,10 @@
         "texture"
       ],
       "signals": [
-        "texture_changed"
+        {
+          "name": "texture_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -18871,7 +20508,10 @@
         "texture"
       ],
       "signals": [
-        "texture_changed"
+        {
+          "name": "texture_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -18910,11 +20550,36 @@
         "multiplayer_peer"
       ],
       "signals": [
-        "connected_to_server",
-        "connection_failed",
-        "peer_connected",
-        "peer_disconnected",
-        "server_disconnected"
+        {
+          "name": "connected_to_server",
+          "parameters": []
+        },
+        {
+          "name": "connection_failed",
+          "parameters": []
+        },
+        {
+          "name": "peer_connected",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "peer_disconnected",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "server_disconnected",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -18980,8 +20645,24 @@
         "transfer_mode"
       ],
       "signals": [
-        "peer_connected",
-        "peer_disconnected"
+        {
+          "name": "peer_connected",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "peer_disconnected",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [
         "TARGET_PEER_BROADCAST",
@@ -19266,12 +20947,45 @@
         "velocity"
       ],
       "signals": [
-        "link_reached",
-        "navigation_finished",
-        "path_changed",
-        "target_reached",
-        "velocity_computed",
-        "waypoint_reached"
+        {
+          "name": "link_reached",
+          "parameters": [
+            {
+              "name": "details",
+              "type": "Dictionary"
+            }
+          ]
+        },
+        {
+          "name": "navigation_finished",
+          "parameters": []
+        },
+        {
+          "name": "path_changed",
+          "parameters": []
+        },
+        {
+          "name": "target_reached",
+          "parameters": []
+        },
+        {
+          "name": "velocity_computed",
+          "parameters": [
+            {
+              "name": "safe_velocity",
+              "type": "Vector2"
+            }
+          ]
+        },
+        {
+          "name": "waypoint_reached",
+          "parameters": [
+            {
+              "name": "details",
+              "type": "Dictionary"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -19338,12 +21052,45 @@
         "velocity"
       ],
       "signals": [
-        "link_reached",
-        "navigation_finished",
-        "path_changed",
-        "target_reached",
-        "velocity_computed",
-        "waypoint_reached"
+        {
+          "name": "link_reached",
+          "parameters": [
+            {
+              "name": "details",
+              "type": "Dictionary"
+            }
+          ]
+        },
+        {
+          "name": "navigation_finished",
+          "parameters": []
+        },
+        {
+          "name": "path_changed",
+          "parameters": []
+        },
+        {
+          "name": "target_reached",
+          "parameters": []
+        },
+        {
+          "name": "velocity_computed",
+          "parameters": [
+            {
+              "name": "safe_velocity",
+              "type": "Vector3"
+            }
+          ]
+        },
+        {
+          "name": "waypoint_reached",
+          "parameters": [
+            {
+              "name": "details",
+              "type": "Dictionary"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -19977,8 +21724,14 @@
         "use_edge_connections"
       ],
       "signals": [
-        "bake_finished",
-        "navigation_polygon_changed"
+        {
+          "name": "bake_finished",
+          "parameters": []
+        },
+        {
+          "name": "navigation_polygon_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -20007,8 +21760,14 @@
         "use_edge_connections"
       ],
       "signals": [
-        "bake_finished",
-        "navigation_mesh_changed"
+        {
+          "name": "bake_finished",
+          "parameters": []
+        },
+        {
+          "name": "navigation_mesh_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -20158,9 +21917,23 @@
       ],
       "properties": [],
       "signals": [
-        "avoidance_debug_changed",
-        "map_changed",
-        "navigation_debug_changed"
+        {
+          "name": "avoidance_debug_changed",
+          "parameters": []
+        },
+        {
+          "name": "map_changed",
+          "parameters": [
+            {
+              "name": "map",
+              "type": "RID"
+            }
+          ]
+        },
+        {
+          "name": "navigation_debug_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -20386,9 +22159,23 @@
       ],
       "properties": [],
       "signals": [
-        "avoidance_debug_changed",
-        "map_changed",
-        "navigation_debug_changed"
+        {
+          "name": "avoidance_debug_changed",
+          "parameters": []
+        },
+        {
+          "name": "map_changed",
+          "parameters": [
+            {
+              "name": "map",
+              "type": "RID"
+            }
+          ]
+        },
+        {
+          "name": "navigation_debug_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -20472,7 +22259,10 @@
         "texture"
       ],
       "signals": [
-        "texture_changed"
+        {
+          "name": "texture_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -20624,17 +22414,70 @@
         "unique_name_in_owner"
       ],
       "signals": [
-        "child_entered_tree",
-        "child_exiting_tree",
-        "child_order_changed",
-        "editor_description_changed",
-        "editor_state_changed",
-        "ready",
-        "renamed",
-        "replacing_by",
-        "tree_entered",
-        "tree_exited",
-        "tree_exiting"
+        {
+          "name": "child_entered_tree",
+          "parameters": [
+            {
+              "name": "node",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "child_exiting_tree",
+          "parameters": [
+            {
+              "name": "node",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "child_order_changed",
+          "parameters": []
+        },
+        {
+          "name": "editor_description_changed",
+          "parameters": [
+            {
+              "name": "node",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "editor_state_changed",
+          "parameters": []
+        },
+        {
+          "name": "ready",
+          "parameters": []
+        },
+        {
+          "name": "renamed",
+          "parameters": []
+        },
+        {
+          "name": "replacing_by",
+          "parameters": [
+            {
+              "name": "node",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "tree_entered",
+          "parameters": []
+        },
+        {
+          "name": "tree_exited",
+          "parameters": []
+        },
+        {
+          "name": "tree_exiting",
+          "parameters": []
+        }
       ],
       "constants": [
         "NOTIFICATION_ENTER_TREE",
@@ -20926,7 +22769,10 @@
         "visible"
       ],
       "signals": [
-        "visibility_changed"
+        {
+          "name": "visibility_changed",
+          "parameters": []
+        }
       ],
       "constants": [
         "NOTIFICATION_TRANSFORM_CHANGED",
@@ -21057,8 +22903,14 @@
       ],
       "properties": [],
       "signals": [
-        "property_list_changed",
-        "script_changed"
+        {
+          "name": "property_list_changed",
+          "parameters": []
+        },
+        {
+          "name": "script_changed",
+          "parameters": []
+        }
       ],
       "constants": [
         "NOTIFICATION_POSTINITIALIZE",
@@ -21241,8 +23093,24 @@
         "toggle_mode"
       ],
       "signals": [
-        "item_focused",
-        "item_selected"
+        {
+          "name": "item_focused",
+          "parameters": [
+            {
+              "name": "index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "item_selected",
+          "parameters": [
+            {
+              "name": "index",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -22197,7 +24065,10 @@
         "velocity_pivot"
       ],
       "signals": [
-        "emission_shape_changed"
+        {
+          "name": "emission_shape_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -22418,8 +24289,14 @@
         "debug_custom_color"
       ],
       "signals": [
-        "curve_changed",
-        "debug_color_changed"
+        {
+          "name": "curve_changed",
+          "parameters": []
+        },
+        {
+          "name": "debug_color_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -25603,7 +27480,10 @@
         "wrap_controls"
       ],
       "signals": [
-        "popup_hide"
+        {
+          "name": "popup_hide",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -25705,10 +27585,37 @@
         "transparent_bg"
       ],
       "signals": [
-        "id_focused",
-        "id_pressed",
-        "index_pressed",
-        "menu_changed"
+        {
+          "name": "id_focused",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "id_pressed",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "index_pressed",
+          "parameters": [
+            {
+              "name": "index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "menu_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -26920,7 +28827,10 @@
         "xr/shaders/enabled"
       ],
       "signals": [
-        "settings_changed"
+        {
+          "name": "settings_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -27049,8 +28959,19 @@
         "value"
       ],
       "signals": [
-        "changed",
-        "value_changed"
+        {
+          "name": "changed",
+          "parameters": []
+        },
+        {
+          "name": "value_changed",
+          "parameters": [
+            {
+              "name": "value",
+              "type": "float"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -30812,8 +32733,14 @@
         "render_loop_enabled"
       ],
       "signals": [
-        "frame_post_draw",
-        "frame_pre_draw"
+        {
+          "name": "frame_post_draw",
+          "parameters": []
+        },
+        {
+          "name": "frame_pre_draw",
+          "parameters": []
+        }
       ],
       "constants": [
         "NO_INDEX_ARRAY",
@@ -33367,7 +35294,10 @@
         "resource_scene_unique_id"
       ],
       "signals": [
-        "changed"
+        {
+          "name": "changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -34132,10 +36062,37 @@
         "visible_ratio"
       ],
       "signals": [
-        "finished",
-        "meta_clicked",
-        "meta_hover_ended",
-        "meta_hover_started"
+        {
+          "name": "finished",
+          "parameters": []
+        },
+        {
+          "name": "meta_clicked",
+          "parameters": [
+            {
+              "name": "meta",
+              "type": "Variant"
+            }
+          ]
+        },
+        {
+          "name": "meta_hover_ended",
+          "parameters": [
+            {
+              "name": "meta",
+              "type": "Variant"
+            }
+          ]
+        },
+        {
+          "name": "meta_hover_started",
+          "parameters": [
+            {
+              "name": "meta",
+              "type": "Variant"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -34291,11 +36248,70 @@
         "sleeping"
       ],
       "signals": [
-        "body_entered",
-        "body_exited",
-        "body_shape_entered",
-        "body_shape_exited",
-        "sleeping_state_changed"
+        {
+          "name": "body_entered",
+          "parameters": [
+            {
+              "name": "body",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "body_exited",
+          "parameters": [
+            {
+              "name": "body",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "body_shape_entered",
+          "parameters": [
+            {
+              "name": "body_rid",
+              "type": "RID"
+            },
+            {
+              "name": "body",
+              "type": "Node"
+            },
+            {
+              "name": "body_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "body_shape_exited",
+          "parameters": [
+            {
+              "name": "body_rid",
+              "type": "RID"
+            },
+            {
+              "name": "body",
+              "type": "Node"
+            },
+            {
+              "name": "body_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "sleeping_state_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -34403,11 +36419,70 @@
         "sleeping"
       ],
       "signals": [
-        "body_entered",
-        "body_exited",
-        "body_shape_entered",
-        "body_shape_exited",
-        "sleeping_state_changed"
+        {
+          "name": "body_entered",
+          "parameters": [
+            {
+              "name": "body",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "body_exited",
+          "parameters": [
+            {
+              "name": "body",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "body_shape_entered",
+          "parameters": [
+            {
+              "name": "body_rid",
+              "type": "RID"
+            },
+            {
+              "name": "body",
+              "type": "Node"
+            },
+            {
+              "name": "body_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "body_shape_exited",
+          "parameters": [
+            {
+              "name": "body_rid",
+              "type": "RID"
+            },
+            {
+              "name": "body",
+              "type": "Node"
+            },
+            {
+              "name": "body_shape_index",
+              "type": "int"
+            },
+            {
+              "name": "local_shape_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "sleeping_state_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -34570,15 +36645,62 @@
         "root"
       ],
       "signals": [
-        "node_added",
-        "node_configuration_warning_changed",
-        "node_removed",
-        "node_renamed",
-        "physics_frame",
-        "process_frame",
-        "scene_changed",
-        "tree_changed",
-        "tree_process_mode_changed"
+        {
+          "name": "node_added",
+          "parameters": [
+            {
+              "name": "node",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "node_configuration_warning_changed",
+          "parameters": [
+            {
+              "name": "node",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "node_removed",
+          "parameters": [
+            {
+              "name": "node",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "node_renamed",
+          "parameters": [
+            {
+              "name": "node",
+              "type": "Node"
+            }
+          ]
+        },
+        {
+          "name": "physics_frame",
+          "parameters": []
+        },
+        {
+          "name": "process_frame",
+          "parameters": []
+        },
+        {
+          "name": "scene_changed",
+          "parameters": []
+        },
+        {
+          "name": "tree_changed",
+          "parameters": []
+        },
+        {
+          "name": "tree_process_mode_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -34614,7 +36736,10 @@
         "time_left"
       ],
       "signals": [
-        "timeout"
+        {
+          "name": "timeout",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -34688,7 +36813,15 @@
         "title"
       ],
       "signals": [
-        "script_created"
+        {
+          "name": "script_created",
+          "parameters": [
+            {
+              "name": "script",
+              "type": "Script"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -34715,8 +36848,24 @@
       ],
       "properties": [],
       "signals": [
-        "editor_script_changed",
-        "script_close"
+        {
+          "name": "editor_script_changed",
+          "parameters": [
+            {
+              "name": "script",
+              "type": "Script"
+            }
+          ]
+        },
+        {
+          "name": "script_close",
+          "parameters": [
+            {
+              "name": "script",
+              "type": "Script"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -34731,16 +36880,89 @@
       ],
       "properties": [],
       "signals": [
-        "edited_script_changed",
-        "go_to_help",
-        "go_to_method",
-        "name_changed",
-        "replace_in_files_requested",
-        "request_help",
-        "request_open_script_at_line",
-        "request_save_history",
-        "request_save_previous_state",
-        "search_in_files_requested"
+        {
+          "name": "edited_script_changed",
+          "parameters": []
+        },
+        {
+          "name": "go_to_help",
+          "parameters": [
+            {
+              "name": "what",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "go_to_method",
+          "parameters": [
+            {
+              "name": "script",
+              "type": "Object"
+            },
+            {
+              "name": "method",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "name_changed",
+          "parameters": []
+        },
+        {
+          "name": "replace_in_files_requested",
+          "parameters": [
+            {
+              "name": "text",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "request_help",
+          "parameters": [
+            {
+              "name": "topic",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "request_open_script_at_line",
+          "parameters": [
+            {
+              "name": "script",
+              "type": "Object"
+            },
+            {
+              "name": "line",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "request_save_history",
+          "parameters": []
+        },
+        {
+          "name": "request_save_previous_state",
+          "parameters": [
+            {
+              "name": "state",
+              "type": "Dictionary"
+            }
+          ]
+        },
+        {
+          "name": "search_in_files_requested",
+          "parameters": [
+            {
+              "name": "text",
+              "type": "String"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -35032,7 +37254,10 @@
         "step"
       ],
       "signals": [
-        "scrolling"
+        {
+          "name": "scrolling",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -35060,8 +37285,14 @@
         "vertical_scroll_mode"
       ],
       "signals": [
-        "scroll_ended",
-        "scroll_started"
+        {
+          "name": "scroll_ended",
+          "parameters": []
+        },
+        {
+          "name": "scroll_started",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -35442,7 +37673,10 @@
       ],
       "properties": [],
       "signals": [
-        "bone_setup_changed"
+        {
+          "name": "bone_setup_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -35508,12 +37742,35 @@
         "show_rest_only"
       ],
       "signals": [
-        "bone_enabled_changed",
-        "bone_list_changed",
-        "pose_updated",
-        "rest_updated",
-        "show_rest_only_changed",
-        "skeleton_updated"
+        {
+          "name": "bone_enabled_changed",
+          "parameters": [
+            {
+              "name": "bone_idx",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "bone_list_changed",
+          "parameters": []
+        },
+        {
+          "name": "pose_updated",
+          "parameters": []
+        },
+        {
+          "name": "rest_updated",
+          "parameters": []
+        },
+        {
+          "name": "show_rest_only_changed",
+          "parameters": []
+        },
+        {
+          "name": "skeleton_updated",
+          "parameters": []
+        }
       ],
       "constants": [
         "NOTIFICATION_UPDATE_SKELETON"
@@ -35797,7 +38054,10 @@
         "influence"
       ],
       "signals": [
-        "modification_processed"
+        {
+          "name": "modification_processed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -35961,7 +38221,10 @@
         "scale_base_bone"
       ],
       "signals": [
-        "profile_updated"
+        {
+          "name": "profile_updated",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -36119,8 +38382,19 @@
         "ticks_position"
       ],
       "signals": [
-        "drag_ended",
-        "drag_started"
+        {
+          "name": "drag_ended",
+          "parameters": [
+            {
+              "name": "value_changed",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "drag_started",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -36456,9 +38730,23 @@
         "vertical"
       ],
       "signals": [
-        "drag_ended",
-        "drag_started",
-        "dragged"
+        {
+          "name": "drag_ended",
+          "parameters": []
+        },
+        {
+          "name": "drag_started",
+          "parameters": []
+        },
+        {
+          "name": "dragged",
+          "parameters": [
+            {
+              "name": "offset",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -36704,8 +38992,14 @@
         "vframes"
       ],
       "signals": [
-        "frame_changed",
-        "texture_changed"
+        {
+          "name": "frame_changed",
+          "parameters": []
+        },
+        {
+          "name": "texture_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -36725,8 +39019,14 @@
         "vframes"
       ],
       "signals": [
-        "frame_changed",
-        "texture_changed"
+        {
+          "name": "frame_changed",
+          "parameters": []
+        },
+        {
+          "name": "texture_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -36899,7 +39199,19 @@
         "visible"
       ],
       "signals": [
-        "pressed"
+        {
+          "name": "pressed",
+          "parameters": [
+            {
+              "name": "mouse_button",
+              "type": "int"
+            },
+            {
+              "name": "mouse_position",
+              "type": "Vector2i"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -37795,14 +40107,78 @@
         "tabs_rearrange_group"
       ],
       "signals": [
-        "active_tab_rearranged",
-        "tab_button_pressed",
-        "tab_changed",
-        "tab_clicked",
-        "tab_close_pressed",
-        "tab_hovered",
-        "tab_rmb_clicked",
-        "tab_selected"
+        {
+          "name": "active_tab_rearranged",
+          "parameters": [
+            {
+              "name": "idx_to",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tab_button_pressed",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tab_changed",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tab_clicked",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tab_close_pressed",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tab_hovered",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tab_rmb_clicked",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tab_selected",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -37898,13 +40274,64 @@
         "use_hidden_tabs_for_min_size"
       ],
       "signals": [
-        "active_tab_rearranged",
-        "pre_popup_pressed",
-        "tab_button_pressed",
-        "tab_changed",
-        "tab_clicked",
-        "tab_hovered",
-        "tab_selected"
+        {
+          "name": "active_tab_rearranged",
+          "parameters": [
+            {
+              "name": "idx_to",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "pre_popup_pressed",
+          "parameters": []
+        },
+        {
+          "name": "tab_button_pressed",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tab_changed",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tab_clicked",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tab_hovered",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tab_selected",
+          "parameters": [
+            {
+              "name": "tab",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -38158,13 +40585,52 @@
         "wrap_mode"
       ],
       "signals": [
-        "caret_changed",
-        "gutter_added",
-        "gutter_clicked",
-        "gutter_removed",
-        "lines_edited_from",
-        "text_changed",
-        "text_set"
+        {
+          "name": "caret_changed",
+          "parameters": []
+        },
+        {
+          "name": "gutter_added",
+          "parameters": []
+        },
+        {
+          "name": "gutter_clicked",
+          "parameters": [
+            {
+              "name": "line",
+              "type": "int"
+            },
+            {
+              "name": "gutter",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "gutter_removed",
+          "parameters": []
+        },
+        {
+          "name": "lines_edited_from",
+          "parameters": [
+            {
+              "name": "from_line",
+              "type": "int"
+            },
+            {
+              "name": "to_line",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "text_changed",
+          "parameters": []
+        },
+        {
+          "name": "text_set",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -39624,8 +42090,24 @@
       ],
       "properties": [],
       "signals": [
-        "interface_added",
-        "interface_removed"
+        {
+          "name": "interface_added",
+          "parameters": [
+            {
+              "name": "interface_name",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "interface_removed",
+          "parameters": [
+            {
+              "name": "interface_name",
+              "type": "StringName"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -40153,7 +42635,10 @@
         "fallback_stylebox"
       ],
       "signals": [
-        "fallback_changed"
+        {
+          "name": "fallback_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -40246,7 +42731,10 @@
         "z_index"
       ],
       "signals": [
-        "changed"
+        {
+          "name": "changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -40318,7 +42806,10 @@
         "tile_set"
       ],
       "signals": [
-        "changed"
+        {
+          "name": "changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -40395,7 +42886,10 @@
         "y_sort_origin"
       ],
       "signals": [
-        "changed"
+        {
+          "name": "changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -40932,7 +43426,10 @@
         "wait_time"
       ],
       "signals": [
-        "timeout"
+        {
+          "name": "timeout",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -41005,8 +43502,14 @@
         "visibility_mode"
       ],
       "signals": [
-        "pressed",
-        "released"
+        {
+          "name": "pressed",
+          "parameters": []
+        },
+        {
+          "name": "released",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -41265,21 +43768,147 @@
         "tile_scroll_hint"
       ],
       "signals": [
-        "button_clicked",
-        "cell_selected",
-        "check_propagated_to_item",
-        "column_title_clicked",
-        "custom_item_clicked",
-        "custom_popup_edited",
-        "empty_clicked",
-        "item_activated",
-        "item_collapsed",
-        "item_edited",
-        "item_icon_double_clicked",
-        "item_mouse_selected",
-        "item_selected",
-        "multi_selected",
-        "nothing_selected"
+        {
+          "name": "button_clicked",
+          "parameters": [
+            {
+              "name": "item",
+              "type": "TreeItem"
+            },
+            {
+              "name": "column",
+              "type": "int"
+            },
+            {
+              "name": "id",
+              "type": "int"
+            },
+            {
+              "name": "mouse_button_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "cell_selected",
+          "parameters": []
+        },
+        {
+          "name": "check_propagated_to_item",
+          "parameters": [
+            {
+              "name": "item",
+              "type": "TreeItem"
+            },
+            {
+              "name": "column",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "column_title_clicked",
+          "parameters": [
+            {
+              "name": "column",
+              "type": "int"
+            },
+            {
+              "name": "mouse_button_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "custom_item_clicked",
+          "parameters": [
+            {
+              "name": "mouse_button_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "custom_popup_edited",
+          "parameters": [
+            {
+              "name": "arrow_clicked",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "empty_clicked",
+          "parameters": [
+            {
+              "name": "click_position",
+              "type": "Vector2"
+            },
+            {
+              "name": "mouse_button_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "item_activated",
+          "parameters": []
+        },
+        {
+          "name": "item_collapsed",
+          "parameters": [
+            {
+              "name": "item",
+              "type": "TreeItem"
+            }
+          ]
+        },
+        {
+          "name": "item_edited",
+          "parameters": []
+        },
+        {
+          "name": "item_icon_double_clicked",
+          "parameters": []
+        },
+        {
+          "name": "item_mouse_selected",
+          "parameters": [
+            {
+              "name": "mouse_position",
+              "type": "Vector2"
+            },
+            {
+              "name": "mouse_button_index",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "item_selected",
+          "parameters": []
+        },
+        {
+          "name": "multi_selected",
+          "parameters": [
+            {
+              "name": "item",
+              "type": "TreeItem"
+            },
+            {
+              "name": "column",
+              "type": "int"
+            },
+            {
+              "name": "selected",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "name": "nothing_selected",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -41567,9 +44196,28 @@
       ],
       "properties": [],
       "signals": [
-        "finished",
-        "loop_finished",
-        "step_finished"
+        {
+          "name": "finished",
+          "parameters": []
+        },
+        {
+          "name": "loop_finished",
+          "parameters": [
+            {
+              "name": "loop_count",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "step_finished",
+          "parameters": [
+            {
+              "name": "idx",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -41686,7 +44334,10 @@
       "methods": [],
       "properties": [],
       "signals": [
-        "finished"
+        {
+          "name": "finished",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -41796,7 +44447,10 @@
         "max_steps"
       ],
       "signals": [
-        "version_changed"
+        {
+          "name": "version_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -42401,7 +45055,10 @@
         "volume_db"
       ],
       "signals": [
-        "finished"
+        {
+          "name": "finished",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -42503,8 +45160,19 @@
         "world_3d"
       ],
       "signals": [
-        "gui_focus_changed",
-        "size_changed"
+        {
+          "name": "gui_focus_changed",
+          "parameters": [
+            {
+              "name": "node",
+              "type": "Control"
+            }
+          ]
+        },
+        {
+          "name": "size_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -42979,11 +45647,36 @@
         "visibility_mode"
       ],
       "signals": [
-        "flick_canceled",
-        "flicked",
-        "pressed",
-        "released",
-        "tapped"
+        {
+          "name": "flick_canceled",
+          "parameters": []
+        },
+        {
+          "name": "flicked",
+          "parameters": [
+            {
+              "name": "input_vector",
+              "type": "Vector2"
+            }
+          ]
+        },
+        {
+          "name": "pressed",
+          "parameters": []
+        },
+        {
+          "name": "released",
+          "parameters": [
+            {
+              "name": "input_vector",
+              "type": "Vector2"
+            }
+          ]
+        },
+        {
+          "name": "tapped",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [
@@ -43093,8 +45786,14 @@
         "show_rect"
       ],
       "signals": [
-        "screen_entered",
-        "screen_exited"
+        {
+          "name": "screen_entered",
+          "parameters": []
+        },
+        {
+          "name": "screen_exited",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -43110,8 +45809,14 @@
         "aabb"
       ],
       "signals": [
-        "screen_entered",
-        "screen_exited"
+        {
+          "name": "screen_entered",
+          "parameters": []
+        },
+        {
+          "name": "screen_exited",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -44329,7 +47034,10 @@
         "input_name"
       ],
       "signals": [
-        "input_type_changed"
+        {
+          "name": "input_type_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": []
@@ -46549,21 +49257,81 @@
         "wrap_controls"
       ],
       "signals": [
-        "about_to_popup",
-        "close_requested",
-        "dpi_changed",
-        "files_dropped",
-        "focus_entered",
-        "focus_exited",
-        "go_back_requested",
-        "mouse_entered",
-        "mouse_exited",
-        "nonclient_window_input",
-        "theme_changed",
-        "title_changed",
-        "titlebar_changed",
-        "visibility_changed",
-        "window_input"
+        {
+          "name": "about_to_popup",
+          "parameters": []
+        },
+        {
+          "name": "close_requested",
+          "parameters": []
+        },
+        {
+          "name": "dpi_changed",
+          "parameters": []
+        },
+        {
+          "name": "files_dropped",
+          "parameters": [
+            {
+              "name": "files",
+              "type": "PackedStringArray"
+            }
+          ]
+        },
+        {
+          "name": "focus_entered",
+          "parameters": []
+        },
+        {
+          "name": "focus_exited",
+          "parameters": []
+        },
+        {
+          "name": "go_back_requested",
+          "parameters": []
+        },
+        {
+          "name": "mouse_entered",
+          "parameters": []
+        },
+        {
+          "name": "mouse_exited",
+          "parameters": []
+        },
+        {
+          "name": "nonclient_window_input",
+          "parameters": [
+            {
+              "name": "event",
+              "type": "InputEvent"
+            }
+          ]
+        },
+        {
+          "name": "theme_changed",
+          "parameters": []
+        },
+        {
+          "name": "title_changed",
+          "parameters": []
+        },
+        {
+          "name": "titlebar_changed",
+          "parameters": []
+        },
+        {
+          "name": "visibility_changed",
+          "parameters": []
+        },
+        {
+          "name": "window_input",
+          "parameters": [
+            {
+              "name": "event",
+              "type": "InputEvent"
+            }
+          ]
+        }
       ],
       "constants": [
         "NOTIFICATION_VISIBILITY_CHANGED",
@@ -47446,11 +50214,59 @@
       ],
       "properties": [],
       "signals": [
-        "button_pressed",
-        "button_released",
-        "input_float_changed",
-        "input_vector2_changed",
-        "profile_changed"
+        {
+          "name": "button_pressed",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "button_released",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "input_float_changed",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "String"
+            },
+            {
+              "name": "value",
+              "type": "float"
+            }
+          ]
+        },
+        {
+          "name": "input_vector2_changed",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "String"
+            },
+            {
+              "name": "value",
+              "type": "Vector2"
+            }
+          ]
+        },
+        {
+          "name": "profile_changed",
+          "parameters": [
+            {
+              "name": "role",
+              "type": "String"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -48337,7 +51153,15 @@
         "xr_play_area_mode"
       ],
       "signals": [
-        "play_area_changed"
+        {
+          "name": "play_area_changed",
+          "parameters": [
+            {
+              "name": "mode",
+              "type": "int"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -48528,7 +51352,15 @@
         "tracker"
       ],
       "signals": [
-        "tracking_changed"
+        {
+          "name": "tracking_changed",
+          "parameters": [
+            {
+              "name": "tracking",
+              "type": "bool"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": []
@@ -48600,13 +51432,77 @@
         "profile"
       ],
       "signals": [
-        "button_pressed",
-        "button_released",
-        "input_float_changed",
-        "input_vector2_changed",
-        "pose_changed",
-        "pose_lost_tracking",
-        "profile_changed"
+        {
+          "name": "button_pressed",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "button_released",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "input_float_changed",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "String"
+            },
+            {
+              "name": "value",
+              "type": "float"
+            }
+          ]
+        },
+        {
+          "name": "input_vector2_changed",
+          "parameters": [
+            {
+              "name": "name",
+              "type": "String"
+            },
+            {
+              "name": "vector",
+              "type": "Vector2"
+            }
+          ]
+        },
+        {
+          "name": "pose_changed",
+          "parameters": [
+            {
+              "name": "pose",
+              "type": "XRPose"
+            }
+          ]
+        },
+        {
+          "name": "pose_lost_tracking",
+          "parameters": [
+            {
+              "name": "pose",
+              "type": "XRPose"
+            }
+          ]
+        },
+        {
+          "name": "profile_changed",
+          "parameters": [
+            {
+              "name": "role",
+              "type": "String"
+            }
+          ]
+        }
       ],
       "constants": [],
       "enums": [
@@ -48660,13 +51556,71 @@
         "world_scale"
       ],
       "signals": [
-        "interface_added",
-        "interface_removed",
-        "reference_frame_changed",
-        "tracker_added",
-        "tracker_removed",
-        "tracker_updated",
-        "world_origin_changed"
+        {
+          "name": "interface_added",
+          "parameters": [
+            {
+              "name": "interface_name",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "interface_removed",
+          "parameters": [
+            {
+              "name": "interface_name",
+              "type": "StringName"
+            }
+          ]
+        },
+        {
+          "name": "reference_frame_changed",
+          "parameters": []
+        },
+        {
+          "name": "tracker_added",
+          "parameters": [
+            {
+              "name": "tracker_name",
+              "type": "StringName"
+            },
+            {
+              "name": "type",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tracker_removed",
+          "parameters": [
+            {
+              "name": "tracker_name",
+              "type": "StringName"
+            },
+            {
+              "name": "type",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "tracker_updated",
+          "parameters": [
+            {
+              "name": "tracker_name",
+              "type": "StringName"
+            },
+            {
+              "name": "type",
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "world_origin_changed",
+          "parameters": []
+        }
       ],
       "constants": [],
       "enums": [

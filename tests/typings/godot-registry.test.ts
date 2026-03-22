@@ -191,7 +191,7 @@ describe('Godot Registry: Registry Generation', () => {
     expect(data.classes['Node']!.methods).toContain('add_child');
     expect(data.classes['Node']!.methods).toContain('get_node');
     expect(data.classes['Node']!.properties).toContain('name');
-    expect(data.classes['Node']!.signals).toContain('ready');
+    expect(data.classes['Node']!.signals.map((s) => s.name)).toContain('ready');
   });
 });
 
@@ -220,7 +220,11 @@ describe('Godot Registry: GodotClassRegistry', () => {
             '_process',
           ],
           properties: ['name', 'owner'],
-          signals: ['ready', 'tree_entered', 'tree_exited'],
+          signals: [
+            { name: 'ready', parameters: [] },
+            { name: 'tree_entered', parameters: [] },
+            { name: 'tree_exited', parameters: [] },
+          ],
           constants: [],
           enums: [
             {
@@ -234,7 +238,7 @@ describe('Godot Registry: GodotClassRegistry', () => {
           inherits: 'Node',
           methods: ['draw', 'update', 'get_global_transform'],
           properties: ['visible', 'modulate'],
-          signals: ['visibility_changed'],
+          signals: [{ name: 'visibility_changed', parameters: [] }],
           constants: [],
           enums: [],
         },

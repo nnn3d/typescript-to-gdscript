@@ -1,0 +1,54 @@
+{
+  "version": "4.7",
+  "classes": {
+    "Node": {
+      "name": "Node",
+      "inherits": null,
+      "methods": ["get_node", "get_node_or_null", "get_tree", "get_parent"],
+      "properties": ["name"],
+      "signals": [
+        { "name": "ready", "parameters": [] },
+        { "name": "tree_entered", "parameters": [] },
+        { "name": "tree_exited", "parameters": [] }
+      ],
+      "constants": [],
+      "enums": []
+    },
+    "Node2D": {
+      "name": "Node2D",
+      "inherits": "Node",
+      "methods": [],
+      "properties": ["position", "rotation", "scale"],
+      "signals": [],
+      "constants": [],
+      "enums": []
+    },
+    "CollisionObject2D": {
+      "name": "CollisionObject2D",
+      "inherits": "Node2D",
+      "methods": [],
+      "properties": [],
+      "signals": [],
+      "constants": [],
+      "enums": []
+    },
+    "Area2D": {
+      "name": "Area2D",
+      "inherits": "CollisionObject2D",
+      "methods": [],
+      "properties": [],
+      "signals": [
+        { "name": "area_entered", "parameters": [{ "name": "area", "type": "Area2D" }] },
+        { "name": "area_exited", "parameters": [{ "name": "area", "type": "Area2D" }] },
+        { "name": "area_shape_entered", "parameters": [{ "name": "area_rid", "type": "RID" }, { "name": "area", "type": "Area2D" }, { "name": "area_shape_index", "type": "int" }, { "name": "local_shape_index", "type": "int" }] },
+        { "name": "body_entered", "parameters": [{ "name": "body", "type": "Node2D" }] }
+      ],
+      "constants": [],
+      "enums": []
+    }
+  },
+  "globalFunctions": ["print", "load", "preload"],
+  "globalConstants": [],
+  "globalEnums": [],
+  "constructors": ["Vector2", "Vector3", "Color"]
+}
