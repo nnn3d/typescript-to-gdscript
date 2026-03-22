@@ -24,6 +24,7 @@ import {
   resolveRegistry,
   resolveGodotPath,
   resolveConfig,
+  shouldIgnore,
 } from '../config/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
 
@@ -34,15 +35,20 @@ program
   .description('Convert TypeScript to GDScript and back')
   .version('0.1.0');
 
-/** Recursively find all .ts files (excluding .d.ts, node_modules, hidden dirs) */
-function findTsFiles(dir: string): string[] {
+/** Recursively find all .ts files (excluding .d.ts, node_modules, hidden dirs, and ignored patterns) */
+function findTsFiles(
+  dir: string,
+  rootDir: string,
+  ignore: string[],
+): string[] {
   const results: string[] = [];
   try {
     for (const entry of readdirSync(dir)) {
       if (entry.startsWith('.') || entry === 'node_modules') continue;
       const fullPath = join(dir, entry);
+      if (shouldIgnore(fullPath, rootDir, ignore)) continue;
       if (statSync(fullPath).isDirectory()) {
-        results.push(...findTsFiles(fullPath));
+        results.push(...findTsFiles(fullPath, rootDir, ignore));
       } else if (entry.endsWith('.ts') && !entry.endsWith('.d.ts')) {
         results.push(fullPath);
       }
@@ -58,19 +64,20 @@ function generateAllTypings(cfg: {
   rootDir: string;
   tsDir: string;
   gdDir: string;
-  classTypingsPath: string;
+  typingsDir: string;
   scenesDir: string;
+  ignore: string[];
   tsconfig?: string;
   tsFiles?: string[];
 }): void {
-  const tsFiles = cfg.tsFiles ?? findTsFiles(cfg.tsDir);
+  const tsFiles =
+    cfg.tsFiles ?? findTsFiles(cfg.tsDir, cfg.rootDir, cfg.ignore);
   if (tsFiles.length === 0) return;
 
-  const typingsDir = resolve(cfg.rootDir, cfg.classTypingsPath);
-  mkdirSync(typingsDir, { recursive: true });
+  mkdirSync(cfg.typingsDir, { recursive: true });
 
-  const classTypingsOutput = join(typingsDir, 'globals.d.ts');
-  const sceneTypingsOutput = join(typingsDir, 'scene-typings.d.ts');
+  const classTypingsOutput = join(cfg.typingsDir, 'globals.d.ts');
+  const sceneTypingsOutput = join(cfg.typingsDir, 'scene-typings.d.ts');
   const tsconfigPath = cfg.tsconfig ? resolve(cfg.tsconfig) : undefined;
 
   // Generate globals.d.ts (global class declarations)
@@ -88,7 +95,7 @@ function generateAllTypings(cfg: {
     rootDir: cfg.rootDir,
     tsDir: cfg.tsDir,
     gdDir: cfg.gdDir,
-    sceneTypingsDir: typingsDir,
+    sceneTypingsDir: cfg.typingsDir,
     tsConfigPath: tsconfigPath,
   });
 
@@ -97,6 +104,7 @@ function generateAllTypings(cfg: {
     outputPath: sceneTypingsOutput,
     scriptClassMap,
     rootDir: cfg.rootDir,
+    ignore: cfg.ignore,
   });
   console.log(`Generated: ${sceneTypingsOutput}`);
 }
@@ -126,6 +134,10 @@ program
 
     for (const file of files) {
       const filePath = resolve(file);
+      if (shouldIgnore(filePath, cfg.rootDir, cfg.ignore)) {
+        console.log(`Ignored: ${filePath}`);
+        continue;
+      }
       const result = convertTsToGd({
         filePath,
         rootDir: cfg.tsDir,
@@ -196,6 +208,10 @@ program
 
     for (const file of files) {
       const filePath = resolve(file);
+      if (shouldIgnore(filePath, cfg.rootDir, cfg.ignore)) {
+        console.log(`Ignored: ${filePath}`);
+        continue;
+      }
       const source = readFileSync(filePath, 'utf-8');
 
       const result = convertGdToTs({ source, filePath, registry });
@@ -294,12 +310,8 @@ program
   .option('--source-map', 'Generate source maps', false)
   .option('--tsconfig <path>', 'Path to tsconfig.json')
   .option(
-    '--class-typings <path>',
-    'Output path for global class typings (deprecated, use --class-typings-path)',
-  )
-  .option(
-    '--class-typings-path <path>',
-    'Directory for generated global class typings (relative to rootDir)',
+    '--typings-dir <path>',
+    'Directory for all generated typings (relative to rootDir)',
   )
   .option(
     '--godot-path <path>',
@@ -312,7 +324,7 @@ program
         rootDir: opts.rootDir,
         tsDir: opts.tsDir,
         gdDir: opts.gdDir,
-        classTypingsPath: opts.classTypingsPath,
+        typingsDir: opts.typingsDir,
         tsconfig: opts.tsconfig,
         sourceMap: opts.sourceMap,
         godotPath: opts.godotPath,
@@ -322,11 +334,6 @@ program
       ? resolveGodotPath({ godotPath: cfg.godotPath })
       : undefined;
 
-    // Resolve class typings output path
-    const classTypingsOutput = opts.classTypings
-      ? resolve(opts.classTypings)
-      : resolve(cfg.rootDir, cfg.classTypingsPath, 'globals.d.ts');
-
     const watcher = new Watcher({
       rootDir: cfg.rootDir,
       tsDir: cfg.tsDir,
@@ -334,8 +341,9 @@ program
       outputDir: cfg.gdDir,
       tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
       sourceMap: cfg.sourceMap,
-      classTypingsOutput,
+      typingsDir: cfg.typingsDir,
       scenesDir: cfg.scenesDir,
+      ignore: cfg.ignore,
       godotPath,
       projectRoot: opts.projectRoot ? resolve(opts.projectRoot) : undefined,
     });
@@ -492,8 +500,8 @@ program
   .argument('<files...>', 'TypeScript source files')
   .option('-o, --output <path>', 'Output .d.ts file path')
   .option(
-    '--class-typings-path <path>',
-    'Directory for generated global class typings (relative to rootDir)',
+    '--typings-dir <path>',
+    'Directory for all generated typings (relative to rootDir)',
   )
   .option('--root-dir <dir>', 'Root directory', '.')
   .option('--tsconfig <path>', 'Path to tsconfig.json')
@@ -501,14 +509,14 @@ program
     const cfg = resolveConfig({
       overrides: {
         rootDir: opts.rootDir,
-        classTypingsPath: opts.classTypingsPath,
+        typingsDir: opts.typingsDir,
         tsconfig: opts.tsconfig,
       },
     });
 
     const outputPath = opts.output
       ? resolve(opts.output)
-      : resolve(cfg.rootDir, cfg.classTypingsPath, 'globals.d.ts');
+      : join(cfg.typingsDir, 'globals.d.ts');
 
     generateClassTypings({
       rootDir: cfg.rootDir,

@@ -1,6 +1,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { join, resolve, dirname, relative } from 'path';
 import { fileURLToPath } from 'url';
+import { minimatch } from 'minimatch';
 import { GodotClassRegistry } from '../typings/godot-registry.ts';
 
 // ─── Config Types ─────────────────────────────────────────────
@@ -16,10 +17,8 @@ export interface TsToGdConfig {
   tsDir?: string;
   /** GDScript output directory (relative to rootDir or absolute). Defaults to tsDir. */
   gdDir?: string;
-  /** Directory for generated global class typings (relative to rootDir). Defaults to "_gdtots". */
-  classTypingsPath?: string;
-  /** Directory for generated scene typings (relative to rootDir). Defaults to classTypingsPath. */
-  sceneTypingsPath?: string;
+  /** Directory for all generated typings (globals.d.ts, scene-typings.d.ts). Relative to rootDir. Defaults to "_gdtots". */
+  typingsDir?: string;
   /** Directory to scan for .tscn scene files (relative to rootDir). Defaults to rootDir. */
   scenesDir?: string;
   /** Path to tsconfig.json */
@@ -28,6 +27,8 @@ export interface TsToGdConfig {
   sourceMap?: boolean;
   /** Path to Godot executable for GDScript validation */
   godotPath?: string;
+  /** Glob patterns for files/folders to ignore in all conversions and typings generation. */
+  ignore?: string[];
 }
 
 // ─── Resolved Config ─────────────────────────────────────────
@@ -36,14 +37,16 @@ export interface ResolvedConfig {
   rootDir: string;
   tsDir: string;
   gdDir: string;
-  classTypingsPath: string;
-  sceneTypingsPath: string;
+  /** Absolute path to the directory for all generated typings (globals.d.ts, scene-typings.d.ts). */
+  typingsDir: string;
   scenesDir: string;
   tsconfig?: string;
   sourceMap?: boolean;
   godotVersion?: string;
   registryPath?: string;
   godotPath?: string;
+  /** Glob patterns for files/folders to ignore. */
+  ignore: string[];
 }
 
 /**
@@ -69,28 +72,46 @@ export function resolveConfig(options?: {
     rootDir,
     overrides.gdDir ?? config?.gdDir ?? (relative(rootDir, tsDir) || '.'),
   );
-  const classTypingsPath =
-    overrides.classTypingsPath ?? config?.classTypingsPath ?? '_gdtots';
-  const sceneTypingsPath =
-    overrides.sceneTypingsPath ?? config?.sceneTypingsPath ?? classTypingsPath;
+  const typingsDir = resolve(
+    rootDir,
+    overrides.typingsDir ?? config?.typingsDir ?? '_gdtots',
+  );
   const scenesDir = resolve(
     rootDir,
     overrides.scenesDir ?? config?.scenesDir ?? '.',
   );
 
+  const ignore = overrides.ignore ?? config?.ignore ?? [];
+
   return {
     rootDir,
     tsDir,
     gdDir,
-    classTypingsPath,
-    sceneTypingsPath,
+    typingsDir,
     scenesDir,
+    ignore,
     tsconfig: overrides.tsconfig ?? config?.tsconfig,
     sourceMap: overrides.sourceMap ?? config?.sourceMap,
     godotVersion: overrides.godotVersion ?? config?.godotVersion,
     registryPath: overrides.registryPath ?? config?.registryPath,
     godotPath: overrides.godotPath ?? config?.godotPath,
   };
+}
+
+// ─── Ignore Patterns ─────────────────────────────────────────
+
+/**
+ * Tests whether a file path matches any of the ignore glob patterns.
+ * Paths are compared relative to rootDir using forward slashes.
+ */
+export function shouldIgnore(
+  filePath: string,
+  rootDir: string,
+  patterns: string[],
+): boolean {
+  if (patterns.length === 0) return false;
+  const rel = relative(rootDir, filePath).replace(/\\/g, '/');
+  return patterns.some((pattern) => minimatch(rel, pattern, { dot: true }));
 }
 
 const CONFIG_FILENAME = 'tstogd.json';

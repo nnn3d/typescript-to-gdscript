@@ -2,6 +2,7 @@ import ts from 'typescript';
 import { readFileSync, readdirSync, statSync, writeFileSync } from 'fs';
 import { join, relative, extname, dirname } from 'path';
 import { createTsProgram } from '../parser/typescript/index.ts';
+import { shouldIgnore } from '../config/index.ts';
 
 interface SceneNode {
   name: string;
@@ -155,6 +156,10 @@ export interface SceneTypingsOptions {
    * to { className, tsModulePath } where tsModulePath is relative to outputPath dir.
    */
   scriptClassMap: Map<string, ScriptClassInfo>;
+  /** Root directory (for ignore pattern matching) */
+  rootDir?: string;
+  /** Glob patterns for files/folders to ignore. */
+  ignore?: string[];
 }
 
 /**
@@ -170,7 +175,11 @@ export interface SceneTypingsOptions {
 export function collectSceneOverloads(
   options: SceneTypingsOptions,
 ): Map<string, SceneNodeOverload[]> {
-  const scenes = findSceneFiles(options.scenesDir);
+  const scenes = findSceneFiles(
+    options.scenesDir,
+    options.rootDir ?? options.scenesDir,
+    options.ignore ?? [],
+  );
   const result = new Map<string, SceneNodeOverload[]>();
 
   for (const scenePath of scenes) {
@@ -206,6 +215,8 @@ export interface GenerateSceneTypingsOptions {
   scriptClassMap: Map<string, ScriptClassInfo>;
   /** Root directory of the project (used for res:// path computation) */
   rootDir: string;
+  /** Glob patterns for files/folders to ignore. */
+  ignore?: string[];
 }
 
 /**
@@ -217,7 +228,11 @@ export interface GenerateSceneTypingsOptions {
  * so overloads are visible inside the source file itself (via interface-class merging).
  */
 export function generateSceneTypings(options: GenerateSceneTypingsOptions): string {
-  const scenes = findSceneFiles(options.scenesDir);
+  const scenes = findSceneFiles(
+    options.scenesDir,
+    options.rootDir,
+    options.ignore ?? [],
+  );
 
   // Build unique import aliases for each script class (handles duplicate class names like __CLASS__)
   // resPath → { alias, className, tsModulePath }
@@ -416,7 +431,11 @@ export function buildScriptClassMap(
   return map;
 }
 
-function findSceneFiles(dir: string): string[] {
+function findSceneFiles(
+  dir: string,
+  rootDir: string,
+  ignore: string[],
+): string[] {
   const results: string[] = [];
 
   try {
@@ -424,11 +443,12 @@ function findSceneFiles(dir: string): string[] {
     for (const entry of entries) {
       const fullPath = join(dir, entry);
       try {
+        if (shouldIgnore(fullPath, rootDir, ignore)) continue;
         const stat = statSync(fullPath);
         if (stat.isDirectory()) {
           // Skip addons and hidden dirs
           if (!entry.startsWith('.') && entry !== 'addons') {
-            results.push(...findSceneFiles(fullPath));
+            results.push(...findSceneFiles(fullPath, rootDir, ignore));
           }
         } else if (extname(entry) === '.tscn') {
           results.push(fullPath);

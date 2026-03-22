@@ -7,6 +7,7 @@ import {
   generateSceneTypings,
   buildScriptClassMap,
 } from '../typings/scenes.ts';
+import { shouldIgnore } from '../config/index.ts';
 import { FileCache } from '../cache/index.ts';
 import { writeFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
@@ -24,8 +25,8 @@ export interface WatcherOptions {
   tsConfigPath?: string;
   /** Enable source maps */
   sourceMap?: boolean;
-  /** Path to global class typings output (includes scene overloads) */
-  classTypingsOutput?: string;
+  /** Directory for all generated typings (globals.d.ts, scene-typings.d.ts) */
+  typingsDir?: string;
   /** Directory to scan for .tscn files. Defaults to rootDir. */
   scenesDir?: string;
   /** Cache directory */
@@ -36,6 +37,8 @@ export interface WatcherOptions {
   godotPath?: string;
   /** Godot project root for validation (defaults to rootDir) */
   projectRoot?: string;
+  /** Glob patterns for files/folders to ignore. */
+  ignore?: string[];
 }
 
 export class Watcher {
@@ -83,6 +86,7 @@ export class Watcher {
 
   private handleFile(filePath: string): void {
     const ext = extname(filePath);
+    if (shouldIgnore(filePath, this.options.rootDir, this.options.ignore ?? [])) return;
 
     if (ext === '.ts' && !filePath.endsWith('.d.ts')) {
       this.tsFiles.add(filePath);
@@ -178,17 +182,22 @@ export class Watcher {
   }
 
   private regenerateClassTypings(): void {
-    if (!this.options.classTypingsOutput) return;
+    if (!this.options.typingsDir) return;
 
     const files = [...this.tsFiles];
     const scenesDir = this.options.scenesDir ?? this.options.rootDir;
-    const typingsDir = dirname(this.options.classTypingsOutput);
+    const typingsDir = this.options.typingsDir;
+
+    mkdirSync(typingsDir, { recursive: true });
+
+    const classTypingsOutput = join(typingsDir, 'globals.d.ts');
+    const sceneTypingsOutput = join(typingsDir, 'scene-typings.d.ts');
 
     // Generate globals.d.ts (global class declarations)
     generateClassTypings({
       rootDir: this.options.rootDir,
       files,
-      outputPath: this.options.classTypingsOutput,
+      outputPath: classTypingsOutput,
       tsConfigPath: this.options.tsConfigPath,
     });
 
@@ -202,11 +211,11 @@ export class Watcher {
       tsConfigPath: this.options.tsConfigPath,
     });
 
-    const sceneTypingsOutput = join(typingsDir, 'scene-typings.d.ts');
     generateSceneTypings({
       scenesDir,
       outputPath: sceneTypingsOutput,
       scriptClassMap,
+      rootDir: this.options.rootDir,
     });
   }
 

@@ -53,8 +53,10 @@ Create a `tstogd.json` in your project root to configure the converter:
 | `registryPath` | `string`  | Path to a custom `godot-class-registry.json`. Overrides `godotVersion`.  |
 | `rootDir`      | `string`  | Root directory for TS source files.                                      |
 | `outputDir`    | `string`  | Output directory for GDScript files.                                     |
+| `typingsDir`   | `string`  | Directory for all generated typings (`globals.d.ts`, `scene-typings.d.ts`). Relative to `rootDir`. Defaults to `"_gdtots"`. |
 | `sourceMap`    | `boolean` | Generate source maps.                                                    |
 | `tsconfig`     | `string`  | Path to `tsconfig.json`.                                                 |
+| `ignore`       | `string[]` | Glob patterns for files/folders to ignore in all conversions (e.g. `["addons/**", "test/**"]`). |
 
 ## CLI Commands
 
@@ -109,7 +111,7 @@ Options:
 - `--output-dir <dir>` — Output directory for GDScript files
 - `--source-map` — Generate source maps
 - `--tsconfig <path>` — Path to tsconfig.json
-- `--class-typings <path>` — Output path for global class typings
+- `--typings-dir <path>` — Directory for all generated typings (globals.d.ts, scene-typings.d.ts)
 
 ### `ts2gd generate-typings`
 
