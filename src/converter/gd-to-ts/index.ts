@@ -1361,12 +1361,43 @@ function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
 
 // ─── Binary / Unary Operators ─────────────────────────────────
 
+/** Comparison operators where GDScript `not` has lower precedence than the op,
+ *  but tree-sitter-gdscript incorrectly parses `not X op Y` as `(not X) op Y`.
+ *  In real GDScript, `not a == 0` means `not (a == 0)`. */
+const NOT_LIFT_OPS = new Set(['==', '!=', '<', '>', '<=', '>=', 'in', 'is']);
+
 function emitBinaryOp(node: GDNode, ctx: GdToTsContext): string {
   const left = node.childForFieldName('left');
   const right = node.childForFieldName('right');
   const opNode = node.childForFieldName('op');
   const opText =
     opNode?.text ?? node.children.find((c) => !c.isNamed)?.text ?? '??';
+
+  // Fix tree-sitter-gdscript precedence bug: `not X op Y` is parsed as
+  // `(not X) op Y` but GDScript evaluates it as `not (X op Y)`.
+  // Lift the `not` to wrap the entire comparison.
+  if (
+    NOT_LIFT_OPS.has(opText) &&
+    left &&
+    isGDNodeType(left, 'unary_operator')
+  ) {
+    const unaryOp = left.children.find((c) => !c.isNamed)?.text;
+    if (unaryOp === 'not') {
+      const innerLeft = left.namedChildren[0];
+      const innerLeftStr = innerLeft ? emitExpr(innerLeft, ctx) : '';
+      const rightStr = right ? emitExpr(right, ctx) : '';
+      // Rebuild the comparison without `not`, then wrap with `!(...)`
+      const gdToTsOp: Record<string, string> = {
+        '==': '===',
+        '!=': '!==',
+      };
+      const tsOp = gdToTsOp[opText] ?? opText;
+      if (opText === 'is') {
+        return `!(${innerLeftStr} instanceof ${rightStr})`;
+      }
+      return `!(${innerLeftStr} ${tsOp} ${rightStr})`;
+    }
+  }
 
   // GD `as` -> gd.as()
   if (opText === 'as') {

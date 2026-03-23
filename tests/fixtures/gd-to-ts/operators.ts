@@ -13,6 +13,7 @@ export class Operators extends Node {
     let f: int = a + b;
     let g: float = a / b;
     let h: int = a % b;
+    let i: boolean = a > b && !(a === 0);
   }
 
   test_vector_math() {
@@ -27,6 +28,17 @@ export class Operators extends Node {
     let v4 = gd.ops.sub(gd.ops.mul(this.v1, this.v2), this.v1);
     let v5 = gd.ops.add(gd.ops.sub(this.v1, gd.ops.mul(this.v2, this.v2)), gd.ops.div(this.v1, this.v2));
     let v6 = gd.ops.add(gd.ops.sub(this.v1, 2 * 1), gd.ops.div(this.v1, this.v2));
+  }
+
+  test_not_precedence() {
+    let a: int = 10;
+    let b: int = 3;
+    let c: boolean = !(a === 0);
+    let d: boolean = !(a !== 0);
+    let e: boolean = !(a > b);
+    let f: boolean = !(a >= b);
+    let g: boolean = !(a < b);
+    let h: boolean = !(a <= b);
   }
 
   test_ops_helpers() {
