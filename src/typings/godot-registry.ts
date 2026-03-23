@@ -40,6 +40,8 @@ export interface GodotRegistryData {
   constructors: string[];
   /** Global singleton instances from @GlobalScope (e.g. Engine, Input, ProjectSettings) */
   singletons: Array<{ name: string; type: string }>;
+  /** GDScript annotations that take no parameters (bare decorators in TS) */
+  bareAnnotations: string[];
 }
 
 // ─── XML Parsing ──────────────────────────────────────────────
@@ -470,6 +472,7 @@ const CONSTRUCTOR_TYPES = new Set([
  */
 export function generateRegistryData(
   classes: Map<string, GodotClassXml>,
+  gdscriptCls?: GodotClassXml | null,
 ): GodotRegistryData {
   const registry: GodotRegistryData = {
     version: '',
@@ -479,7 +482,15 @@ export function generateRegistryData(
     globalEnums: [],
     constructors: [...CONSTRUCTOR_TYPES],
     singletons: [],
+    bareAnnotations: [],
   };
+
+  // Compute bare annotations from @GDScript XML (annotations with no params and not vararg)
+  if (gdscriptCls) {
+    registry.bareAnnotations = gdscriptCls.annotations
+      .filter((a) => a.parameters.length === 0 && !a.isVararg)
+      .map((a) => a.name);
+  }
 
   for (const [name, cls] of classes) {
     // @GlobalScope is special — its members become globals
@@ -542,11 +553,14 @@ export class GodotClassRegistry {
   private constructorsSet: Set<string>;
   private singletonsSet: Set<string>;
 
+  private bareAnnotationsSet: Set<string>;
+
   constructor(data: GodotRegistryData) {
     this.data = data;
     this.globalFunctionsSet = new Set(data.globalFunctions);
     this.constructorsSet = new Set(data.constructors);
     this.singletonsSet = new Set((data.singletons ?? []).map((s) => s.name));
+    this.bareAnnotationsSet = new Set(data.bareAnnotations ?? []);
   }
 
   static fromJsonFile(jsonPath: string): GodotClassRegistry {
@@ -602,6 +616,11 @@ export class GodotClassRegistry {
   /** Check if a name should not get `this.` prefix (global function, constructor, or singleton) */
   isGlobal(name: string): boolean {
     return this.globalFunctionsSet.has(name) || this.constructorsSet.has(name) || this.singletonsSet.has(name);
+  }
+
+  /** Check if an annotation takes no parameters (bare decorator in TS, no `()` needed) */
+  isBareAnnotation(name: string): boolean {
+    return this.bareAnnotationsSet.has(name);
   }
 
   /** Get the inheritance chain for a class (including itself) */

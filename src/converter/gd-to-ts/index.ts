@@ -617,7 +617,7 @@ function emitClassVariable(node: GDNode, ctx: GdToTsContext): string {
 
   let decorators = '';
   for (const ann of annotations) {
-    decorators += `  ${emitAnnotationAsDecorator(ann)}\n`;
+    decorators += `  ${emitAnnotationAsDecorator(ann, ctx)}\n`;
   }
 
   const staticPrefix = isStatic ? 'static ' : '';
@@ -696,7 +696,7 @@ function getAnnotations(node: GDNode): GDNode[] {
   return annotations;
 }
 
-function emitAnnotationAsDecorator(node: GDNode): string {
+function emitAnnotationAsDecorator(node: GDNode, ctx: GdToTsContext): string {
   // Annotation text is like "@export" or "@onready" or "@export_range(0, 100)"
   const text = node.text;
   const match = text.match(/^@(\w+)(?:\((.+)\))?$/);
@@ -708,8 +708,14 @@ function emitAnnotationAsDecorator(node: GDNode): string {
   // GDScript @export → TS @exports (avoids TS keyword conflict)
   const tsName = name === 'export' ? 'exports' : name;
 
-  // All annotations are now global decorators (no gd. prefix)
-  return args ? `@${tsName}(${args})` : `@${tsName}`;
+  if (args) {
+    return `@${tsName}(${args})`;
+  }
+  // Parameterized annotations need () even when called without args in GD
+  if (!ctx.registry.isBareAnnotation(name)) {
+    return `@${tsName}()`;
+  }
+  return `@${tsName}`;
 }
 
 // ─── Functions ────────────────────────────────────────────────

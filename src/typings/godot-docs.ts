@@ -1635,7 +1635,7 @@ export function generateGodotDocsTypings(
   // Generate registry JSON if requested
   let registry: GodotClassRegistry | null = null;
   if (options.registryOutputPath) {
-    const data = generateRegistryData(classes);
+    const data = generateRegistryData(classes, gdscriptCls);
     data.version = options.version ?? '';
     writeFileSync(options.registryOutputPath, JSON.stringify(data, null, 2));
     registry = new GodotClassRegistry(data);

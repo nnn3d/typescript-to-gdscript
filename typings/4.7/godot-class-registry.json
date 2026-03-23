@@ -61107,5 +61107,23 @@
       "name": "XRServer",
       "type": "XRServer"
     }
+  ],
+  "bareAnnotations": [
+    "abstract",
+    "export",
+    "export_color_no_alpha",
+    "export_dir",
+    "export_flags_2d_navigation",
+    "export_flags_2d_physics",
+    "export_flags_2d_render",
+    "export_flags_3d_navigation",
+    "export_flags_3d_physics",
+    "export_flags_3d_render",
+    "export_flags_avoidance",
+    "export_global_dir",
+    "export_storage",
+    "onready",
+    "static_unload",
+    "tool"
   ]
 }
