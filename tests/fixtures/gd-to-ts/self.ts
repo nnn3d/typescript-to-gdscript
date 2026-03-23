@@ -9,7 +9,7 @@ export class Self extends ColorPicker {
     floori(1.1);
   }
 
-  Test = class extends Self {
+  static Test = class extends Self {
     run() {
       print('test');
       this.print_data();

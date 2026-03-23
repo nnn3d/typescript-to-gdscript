@@ -9,3 +9,4 @@ var current_state: int = 0
 
 func set_direction(dir: int):
 	self.current_direction = dir
+	return self.Direction.LEFT or self.State.IDLE

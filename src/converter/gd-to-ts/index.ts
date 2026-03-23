@@ -280,6 +280,33 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
         ctx.classMembers.add(name);
         ctx.staticMembers.add(name);
       }
+    } else if (isGDNodeType(child, 'enum_definition')) {
+      const nameNode = child.childForFieldName('name');
+      if (nameNode) {
+        // Named enum → static member
+        ctx.classMembers.add(nameNode.text);
+        ctx.staticMembers.add(nameNode.text);
+      } else {
+        // Anonymous enum → each enumerator is a static constant
+        const bodyNode = child.childForFieldName('body');
+        if (bodyNode) {
+          for (const e of bodyNode.namedChildren) {
+            if (isGDNodeType(e, 'enumerator')) {
+              const eName = e.childForFieldName('left')?.text;
+              if (eName) {
+                ctx.classMembers.add(eName);
+                ctx.staticMembers.add(eName);
+              }
+            }
+          }
+        }
+      }
+    } else if (isGDNodeType(child, 'class_definition')) {
+      const name = child.childForFieldName('name')?.text;
+      if (name) {
+        ctx.classMembers.add(name);
+        ctx.staticMembers.add(name);
+      }
     }
   }
 
@@ -518,7 +545,7 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext): string {
     .join('\n')
     .replace(/\n+$/, '');
 
-  return `  ${className} = class${extendsClause} {\n${indentedMembers}\n  }`;
+  return `  static ${className} = class${extendsClause} {\n${indentedMembers}\n  }`;
 }
 
 // ─── Comments ─────────────────────────────────────────────────
@@ -588,10 +615,10 @@ function emitEnum(node: GDNode, ctx: GdToTsContext): string {
         }
       }
     }
-    return `  ${nameNode.text} = gd.enum(${values.join(', ')});`;
+    return `  static ${nameNode.text} = gd.enum(${values.join(', ')});`;
   }
 
-  // Anonymous enum -> constants
+  // Anonymous enum -> static constants
   const lines: string[] = [];
   let counter = 0;
   for (const e of enumerators) {
@@ -599,7 +626,7 @@ function emitEnum(node: GDNode, ctx: GdToTsContext): string {
     const eValue = e.childForFieldName('right');
     const val = eValue ? parseInt(eValue.text) : counter;
     if (eName) {
-      lines.push(`  ${eName}: int = ${val};`);
+      lines.push(`  static ${eName}: int = ${val};`);
     }
     counter = val + 1;
   }
