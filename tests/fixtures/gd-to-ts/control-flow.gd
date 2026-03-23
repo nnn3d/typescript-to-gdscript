@@ -35,3 +35,9 @@ func test_break_continue():
 		if i == 3:
 			continue
 		print(i)
+
+func test_is(x):
+	if x is Node2D:
+		print(x, "is Node2D")
+	if x is not Node2D:
+		print(x, "is not Node2D")

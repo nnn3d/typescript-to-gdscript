@@ -1873,28 +1873,372 @@ declare const INT32_MAX: int;
 declare const INT64_MIN: int;
 /** Maximum value of a 64-bit signed integer. */
 declare const INT64_MAX: int;
+// @GDScript — built-in constants, functions, and annotations
 
-// @GDScript — built-in constants and functions
-/** Positive floating-point infinity. */
-declare const INF: float;
-/** "Not a Number" invalid float value. */
-declare const NAN: float;
-/** Constant that represents how many times the diameter of a circle fits around its perimeter. Approximately 3.14159265358979. */
+/**
+ * Constant that represents how many times the diameter of a circle fits around its perimeter. This is equivalent to `TAU / 2`, or 180 degrees in rotations.
+ */
 declare const PI: float;
-/** The circle constant, the circumference of the unit circle in radians. Approximately 6.28318530717959. Equivalent to PI * 2. */
+/**
+ * The circle constant, the circumference of the unit circle in radians. This is equivalent to `PI * 2`, or 360 degrees in rotations.
+ */
 declare const TAU: float;
+/**
+ * Positive floating-point infinity. This is the result of floating-point division when the divisor is `0.0`. For negative infinity, use `-INF`. Dividing by `-0.0` will result in negative infinity if the numerator is positive, so dividing by `0.0` is not the same as dividing by `-0.0` (despite `0.0 == -0.0` returning `true`).
+ * **Warning:** Numeric infinity is only a concept with floating-point numbers, and has no equivalent for integers. Dividing an integer number by `0` will not result in {@link INF} and will result in a run-time error instead.
+ */
+declare const INF: float;
+/**
+ * "Not a Number", an invalid floating-point value. It is returned by some invalid operations, such as dividing floating-point `0.0` by `0.0`.
+ * {@link NAN} has special properties, including that `!=` always returns `true`, while other comparison operators always return `false`. This is true even when comparing with itself (`NAN == NAN` returns `false` and `NAN != NAN` returns `true`). Due to this, you must use {@link @GlobalScope.is_nan} to check whether a number is equal to {@link NAN}.
+ * **Warning:** "Not a Number" is only a concept with floating-point numbers, and has no equivalent for integers. Dividing an integer `0` by `0` will not result in {@link NAN} and will result in a run-time error instead.
+ */
+declare const NAN: float;
 
-/** Returns the length of the given Variant. Arrays, strings, dictionaries, and packed arrays return their element count. */
-declare function len(value: unknown): int;
-/** Returns an array with the given range. range(n) is [0..n-1], range(a,b) is [a..b-1], range(a,b,step). */
+/**
+ * Returns a {@link Color} constructed from red (`r8`), green (`g8`), blue (`b8`), and optionally alpha (`a8`) integer channels, each divided by `255.0` for their final value. Using {@link Color8} instead of the standard {@link Color} constructor is useful when you need to match exact color values in an {@link Image}.
+ * **Note:** Due to the lower precision of {@link Color8} compared to the standard {@link Color} constructor, a color created with {@link Color8} will generally not be equal to the same color created with the standard {@link Color} constructor. Use {@link Color.is_equal_approx} for comparisons to avoid issues with floating-point precision error.
+ */
+declare function Color8(r8: int, g8: int, b8: int, a8?: int): Color;
+/**
+ * Asserts that the `condition` is `true`. If the `condition` is `false`, an error is generated. When running from the editor, the running project will also be paused until you resume it. This can be used as a stronger form of {@link @GlobalScope.push_error} for reporting errors to project developers or add-on users.
+ * An optional `message` can be shown in addition to the generic "Assertion failed" message. You can use this to provide additional details about why the assertion failed.
+ * **Warning:** For performance reasons, the code inside {@link assert} is only executed in debug builds or when running the project from the editor. Don't include code that has side effects in an {@link assert} call. Otherwise, the project will behave differently when exported in release mode.
+ * **Note:** {@link assert} is a keyword, not a function. So you cannot access it as a {@link Callable} or use it inside expressions.
+ */
+declare function assert(condition: boolean, message?: string): void;
+/**
+ * Returns a single character (as a {@link String} of length 1) of the given Unicode code point `code`.
+ * This is the inverse of {@link ord}. See also {@link String.chr} and {@link String.unicode_at}.
+ */
+declare function char(code: int): string;
+/**
+ * Converts `what` to `type` in the best way possible. The `type` uses the {@link Variant.Type} values.
+ */
+declare function convert(what: unknown, type_: int): unknown;
+/**
+ * Converts a `dictionary` (created with {@link inst_to_dict}) back to an Object instance. Can be useful for deserializing.
+ */
+declare function dict_to_inst(dictionary: Dictionary): GodotObject;
+/**
+ * Returns an array of dictionaries representing the current call stack.
+ * Starting from `_ready()`, `bar()` would print:
+ * [codeblock lang=text]
+ * [{function:bar, line:12, source:res://script.gd}, {function:foo, line:9, source:res://script.gd}, {function:_ready, line:6, source:res://script.gd}]
+ * [/codeblock]
+ * See also {@link print_debug}, {@link print_stack}, and {@link Engine.capture_script_backtraces}.
+ * **Note:** By default, backtraces are only available in editor builds and debug builds. To enable them for release builds as well, you need to enable {@link ProjectSettings.debug/settings/gdscript/always_track_call_stacks}.
+ */
+declare function get_stack(): Array<unknown>;
+/**
+ * Returns the passed `instance` converted to a {@link Dictionary}. Can be useful for serializing.
+ * Prints out:
+ * [codeblock lang=text]
+ * [@subpath, @path, foo]
+ * [, res://test.gd, bar]
+ * [/codeblock]
+ * **Note:** This function can only be used to serialize objects with an attached {@link GDScript} stored in a separate file. Objects without an attached script, with a script written in another language, or with a built-in script are not supported.
+ * **Note:** This function is not recursive, which means that nested objects will not be represented as dictionaries. Also, properties passed by reference ({@link Object}, {@link Dictionary}, {@link Array}, and packed arrays) are copied by reference, not duplicated.
+ */
+declare function inst_to_dict(instance: GodotObject): Dictionary;
+/**
+ * Returns `true` if `value` is an instance of `type`. The `type` value must be one of the following:
+ * - A constant from the {@link Variant.Type} enumeration, for example {@link TYPE_INT}.
+ * - An {@link Object}-derived class which exists in {@link ClassDB}, for example {@link Node}.
+ * - A {@link Script} (you can use any class, including inner one).
+ * Unlike the right operand of the `is` operator, `type` can be a non-constant value. The `is` operator supports more features (such as typed arrays). Use the operator instead of this method if you do not need to check the type dynamically.
+ * **Examples:**
+ * **Note:** If `value` and/or `type` are freed objects (see {@link @GlobalScope.is_instance_valid}), or `type` is not one of the above options, this method will raise a runtime error.
+ * See also {@link @GlobalScope.typeof}, {@link type_exists}, {@link Array.is_same_typed} (and other {@link Array} methods).
+ */
+declare function is_instance_of(value: unknown, type_: unknown): boolean;
+/**
+ * Returns the length of the given Variant `var`. The length can be the character count of a {@link String} or {@link StringName}, the element count of any array type, or the size of a {@link Dictionary}. For every other Variant type, a run-time error is generated and execution is stopped.
+ */
+declare function len(var_: unknown): int;
+/**
+ * Returns a {@link Resource} from the filesystem located at the absolute `path`. Unless it's already referenced elsewhere (such as in another script or in the scene), the resource is loaded from disk on function call, which might cause a slight delay, especially when loading large scenes. To avoid unnecessary delays when loading something multiple times, either store the resource in a variable or use {@link preload}. This method is equivalent of using {@link ResourceLoader.load} with {@link ResourceLoader.CACHE_MODE_REUSE}.
+ * **Note:** Resource paths can be obtained by right-clicking on a resource in the FileSystem dock and choosing "Copy Path", or by dragging the file from the FileSystem dock into the current script.
+ * **Important:** Relative paths are *not* relative to the script calling this method, instead it is prefixed with `"res://"`. Loading from relative paths might not work as expected.
+ * This function is a simplified version of {@link ResourceLoader.load}, which can be used for more advanced scenarios.
+ * **Note:** Files have to be imported into the engine first to load them using this function. If you want to load {@link Image}s at run-time, you may use {@link Image.load}. If you want to import audio files, you can use the snippet described in {@link AudioStreamMP3.data}.
+ * **Note:** If {@link ProjectSettings.editor/export/convert_text_resources_to_binary} is `true`, {@link @GDScript.load} will not be able to read converted files in an exported project. If you rely on run-time loading of files present within the PCK, set {@link ProjectSettings.editor/export/convert_text_resources_to_binary} to `false`.
+ */
+declare function load<P extends keyof GodotResources>(path: P): GodotResources[P];
+declare function load(path: string): Resource;
+/**
+ * Returns an integer representing the Unicode code point of the given character `char`, which should be a string of length 1.
+ * This is the inverse of {@link char}. See also {@link String.chr} and {@link String.unicode_at}.
+ */
+declare function ord(char: string): int;
+/**
+ * Returns a {@link Resource} from the filesystem located at `path`. During run-time, the resource is loaded when the script is being parsed. This function effectively acts as a reference to that resource. Note that this function requires `path` to be a constant {@link String}. If you want to load a resource from a dynamic/variable path, use {@link load}.
+ * **Note:** Resource paths can be obtained by right-clicking on a resource in the Assets Panel and choosing "Copy Path", or by dragging the file from the FileSystem dock into the current script.
+ * **Note:** {@link preload} is a keyword, not a function. So you cannot access it as a {@link Callable}.
+ */
+declare function preload<P extends keyof GodotResources>(path: P): GodotResources[P];
+declare function preload(path: string): Resource;
+/**
+ * Like {@link @GlobalScope.print}, but includes the current stack frame when running with the debugger turned on.
+ * The output in the console may look like the following:
+ * [codeblock lang=text]
+ * Test print
+ * At: res://test.gd:15:_process()
+ * [/codeblock]
+ * See also {@link print_stack}, {@link get_stack}, and {@link Engine.capture_script_backtraces}.
+ * **Note:** By default, backtraces are only available in editor builds and debug builds. To enable them for release builds as well, you need to enable {@link ProjectSettings.debug/settings/gdscript/always_track_call_stacks}.
+ */
+declare function print_debug(...args: any[]): void;
+/**
+ * Prints a stack trace at the current code location.
+ * The output in the console may look like the following:
+ * [codeblock lang=text]
+ * Frame 0 - res://test.gd:16 in function '_process'
+ * [/codeblock]
+ * See also {@link print_debug}, {@link get_stack}, and {@link Engine.capture_script_backtraces}.
+ * **Note:** By default, backtraces are only available in editor builds and debug builds. To enable them for release builds as well, you need to enable {@link ProjectSettings.debug/settings/gdscript/always_track_call_stacks}.
+ */
+declare function print_stack(): void;
+/**
+ * Returns an array with the given range. {@link range} can be called in three ways:
+ * `range(n: int)`: Starts from 0, increases by steps of 1, and stops *before* `n`. The argument `n` is **exclusive**.
+ * `range(b: int, n: int)`: Starts from `b`, increases by steps of 1, and stops *before* `n`. The arguments `b` and `n` are **inclusive** and **exclusive**, respectively.
+ * `range(b: int, n: int, s: int)`: Starts from `b`, increases/decreases by steps of `s`, and stops *before* `n`. The arguments `b` and `n` are **inclusive** and **exclusive**, respectively. The argument `s` **can** be negative, but not `0`. If `s` is `0`, an error message is printed.
+ * {@link range} converts all arguments to [int] before processing.
+ * **Note:** Returns an empty array if no value meets the value constraint (e.g. `range(2, 5, -1)` or `range(5, 5, 1)`).
+ * **Examples:**
+ * To iterate over an {@link Array} backwards, use:
+ * Output:
+ * [codeblock lang=text]
+ * 9
+ * 6
+ * 3
+ * [/codeblock]
+ * To iterate over [float], convert them in the loop.
+ * Output:
+ * [codeblock lang=text]
+ * 0.3
+ * 0.2
+ * 0.1
+ * [/codeblock]
+ */
 declare function range(end: int): Array<int>;
 declare function range(begin: int, end: int): Array<int>;
 declare function range(begin: int, end: int, step: int): Array<int>;
-/** Loads a resource from the given path. Returns the registered type from GodotResources if the path is known. */
-declare function load<P extends keyof GodotResources>(path: P): GodotResources[P];
-declare function load(path: string): Resource;
-/** Returns a resource from the filesystem that is loaded during script parsing. Returns the registered type from GodotResources if the path is known. */
-declare function preload<P extends keyof GodotResources>(path: P): GodotResources[P];
-declare function preload(path: string): Resource;
-/** Asserts that the condition is true. If the condition is false in debug builds, execution is halted. */
-declare function assert(condition: boolean, message?: string): void;
+/**
+ * Returns `true` if the given {@link Object}-derived class exists in {@link ClassDB}. Note that {@link Variant} data types are not registered in {@link ClassDB}.
+ */
+declare function type_exists(type_: string): boolean;
+
+// GDScript annotations as TypeScript decorators
+/**
+ * Marks a class or a method as abstract.
+ * An abstract class is a class that cannot be instantiated directly. Instead, it is meant to be inherited by other classes. Attempting to instantiate an abstract class will result in an error.
+ * An abstract method is a method that has no implementation. Therefore, a newline or a semicolon is expected after the function header. This defines a contract that inheriting classes must conform to, because the method signature must be compatible when overriding.
+ * Inheriting classes must either provide implementations for all abstract methods, or the inheriting class must be marked as abstract. If a class has at least one abstract method (either its own or an unimplemented inherited one), then it must also be marked as abstract. However, the reverse is not true: an abstract class is allowed to have no abstract methods.
+ */
+declare function abstract(target: any, context: any): void;
+/**
+ * Mark the following property as exported (editable in the Inspector dock and saved to disk). To control the type of the exported property, use the type hint notation.
+ * **Note:** Custom resources and nodes should be registered as global classes using `class_name`, since the Inspector currently only supports global classes. Otherwise, a less specific type will be exported instead.
+ * **Note:** Node export is only supported in {@link Node}-derived classes and has a number of other limitations.
+ */
+declare function exports(target: any, context: any): void;
+/**
+ * Define a new category for the following exported properties. This helps to organize properties in the Inspector dock.
+ * See also {@link PROPERTY_USAGE_CATEGORY}.
+ * **Note:** Categories in the Inspector dock's list usually divide properties coming from different classes (Node, Node2D, Sprite, etc.). For better clarity, it's recommended to use  and , instead.
+ */
+declare function export_category(name: string): (target: any, context: any) => void;
+/**
+ * Export a {@link Color}, {@link Array}[lb]{@link Color}[rb], or {@link PackedColorArray} property without allowing its transparency ({@link Color.a}) to be edited.
+ * See also {@link PROPERTY_HINT_COLOR_NO_ALPHA}.
+ */
+declare function export_color_no_alpha(target: any, context: any): void;
+/**
+ * Allows you to set a custom hint, hint string, and usage flags for the exported property. Note that there's no validation done in GDScript, it will just pass the parameters to the editor.
+ * **Note:** Regardless of the `usage` value, the {@link PROPERTY_USAGE_SCRIPT_VARIABLE} flag is always added, as with any explicitly declared script variable.
+ */
+declare function export_custom(hint: int, hint_string: string, usage: int): (target: any, context: any) => void;
+/**
+ * Export a {@link String}, {@link Array}[lb]{@link String}[rb], or {@link PackedStringArray} property as a path to a directory. The path will be limited to the project folder and its subfolders. See  to allow picking from the entire filesystem.
+ * See also {@link PROPERTY_HINT_DIR}.
+ */
+declare function export_dir(target: any, context: any): void;
+/**
+ * Export an [int], {@link String}, {@link Array}[lb][int][rb], {@link Array}[lb]{@link String}[rb], {@link PackedByteArray}, {@link PackedInt32Array}, {@link PackedInt64Array}, or {@link PackedStringArray} property as an enumerated list of options (or an array of options). If the property is an [int], then the index of the value is stored, in the same order the values are provided. You can add explicit values using a colon. If the property is a {@link String}, then the value is stored.
+ * See also {@link PROPERTY_HINT_ENUM}.
+ * If you want to set an initial value, you must specify it explicitly:
+ * If you want to use named GDScript enums, then use  instead:
+ */
+declare function export_enum(names: string, ...args: any[]): (target: any, context: any) => void;
+/**
+ * Export a floating-point property with an easing editor widget. Additional hints can be provided to adjust the behavior of the widget. `"attenuation"` flips the curve, which makes it more intuitive for editing attenuation properties. `"positive_only"` limits values to only be greater than or equal to zero.
+ * See also {@link PROPERTY_HINT_EXP_EASING}.
+ */
+declare function export_exp_easing(hints?: string, ...args: any[]): (target: any, context: any) => void;
+/**
+ * Export a {@link String}, {@link Array}[lb]{@link String}[rb], or {@link PackedStringArray} property as a path to a file. The path will be limited to the project folder and its subfolders. See  to allow picking from the entire filesystem.
+ * If `filter` is provided, only matching files will be available for picking.
+ * See also {@link PROPERTY_HINT_FILE}.
+ * **Note:** The file will be stored and referenced as UID, if available. This ensures that the reference is valid even when the file is moved. You can use {@link ResourceUID} methods to convert it to path.
+ */
+declare function export_file(filter?: string, ...args: any[]): (target: any, context: any) => void;
+/**
+ * Same as , except the file will be stored as a raw path. This means that it may become invalid when the file is moved. If you are exporting a {@link Resource} path, consider using  instead.
+ */
+declare function export_file_path(filter?: string, ...args: any[]): (target: any, context: any) => void;
+/**
+ * Export an integer property as a bit flag field. This allows to store several "checked" or `true` values with one property, and comfortably select them from the Inspector dock.
+ * See also {@link PROPERTY_HINT_FLAGS}.
+ * You can add explicit values using a colon:
+ * You can also combine several flags:
+ * **Note:** A flag value must be at least `1` and at most `2 ** 32 - 1`.
+ * **Note:** Unlike , the previous explicit value is not taken into account. In the following example, A is 16, B is 2, C is 4.
+ * You can also use the annotation on {@link Array}[lb][int][rb], {@link PackedByteArray}, {@link PackedInt32Array}, and {@link PackedInt64Array}
+ */
+declare function export_flags(names: string, ...args: any[]): (target: any, context: any) => void;
+/**
+ * Export an integer property as a bit flag field for 2D navigation layers. The widget in the Inspector dock will use the layer names defined in {@link ProjectSettings.layer_names/2d_navigation/layer_1}.
+ * See also {@link PROPERTY_HINT_LAYERS_2D_NAVIGATION}.
+ */
+declare function export_flags_2d_navigation(target: any, context: any): void;
+/**
+ * Export an integer property as a bit flag field for 2D physics layers. The widget in the Inspector dock will use the layer names defined in {@link ProjectSettings.layer_names/2d_physics/layer_1}.
+ * See also {@link PROPERTY_HINT_LAYERS_2D_PHYSICS}.
+ */
+declare function export_flags_2d_physics(target: any, context: any): void;
+/**
+ * Export an integer property as a bit flag field for 2D render layers. The widget in the Inspector dock will use the layer names defined in {@link ProjectSettings.layer_names/2d_render/layer_1}.
+ * See also {@link PROPERTY_HINT_LAYERS_2D_RENDER}.
+ */
+declare function export_flags_2d_render(target: any, context: any): void;
+/**
+ * Export an integer property as a bit flag field for 3D navigation layers. The widget in the Inspector dock will use the layer names defined in {@link ProjectSettings.layer_names/3d_navigation/layer_1}.
+ * See also {@link PROPERTY_HINT_LAYERS_3D_NAVIGATION}.
+ */
+declare function export_flags_3d_navigation(target: any, context: any): void;
+/**
+ * Export an integer property as a bit flag field for 3D physics layers. The widget in the Inspector dock will use the layer names defined in {@link ProjectSettings.layer_names/3d_physics/layer_1}.
+ * See also {@link PROPERTY_HINT_LAYERS_3D_PHYSICS}.
+ */
+declare function export_flags_3d_physics(target: any, context: any): void;
+/**
+ * Export an integer property as a bit flag field for 3D render layers. The widget in the Inspector dock will use the layer names defined in {@link ProjectSettings.layer_names/3d_render/layer_1}.
+ * See also {@link PROPERTY_HINT_LAYERS_3D_RENDER}.
+ */
+declare function export_flags_3d_render(target: any, context: any): void;
+/**
+ * Export an integer property as a bit flag field for navigation avoidance layers. The widget in the Inspector dock will use the layer names defined in {@link ProjectSettings.layer_names/avoidance/layer_1}.
+ * See also {@link PROPERTY_HINT_LAYERS_AVOIDANCE}.
+ */
+declare function export_flags_avoidance(target: any, context: any): void;
+/**
+ * Export a {@link String}, {@link Array}[lb]{@link String}[rb], or {@link PackedStringArray} property as an absolute path to a directory. The path can be picked from the entire filesystem. See  to limit it to the project folder and its subfolders.
+ * See also {@link PROPERTY_HINT_GLOBAL_DIR}.
+ */
+declare function export_global_dir(target: any, context: any): void;
+/**
+ * Export a {@link String}, {@link Array}[lb]{@link String}[rb], or {@link PackedStringArray} property as an absolute path to a file. The path can be picked from the entire filesystem. See  to limit it to the project folder and its subfolders.
+ * If `filter` is provided, only matching files will be available for picking.
+ * See also {@link PROPERTY_HINT_GLOBAL_FILE}.
+ */
+declare function export_global_file(filter?: string, ...args: any[]): (target: any, context: any) => void;
+/**
+ * Define a new group for the following exported properties. This helps to organize properties in the Inspector dock. Groups can be added with an optional `prefix`, which would make group to only consider properties that have this prefix. The grouping will break on the first property that doesn't have a prefix. The prefix is also removed from the property's name in the Inspector dock.
+ * If no `prefix` is provided, then every following property will be added to the group. The group ends when then next group or category is defined. You can also force end a group by using this annotation with empty strings for parameters, `@export_group("", "")`.
+ * Groups cannot be nested, use  to add subgroups within groups.
+ * See also {@link PROPERTY_USAGE_GROUP}.
+ */
+declare function export_group(name: string, prefix?: string): (target: any, context: any) => void;
+/**
+ * Export a {@link String}, {@link Array}[lb]{@link String}[rb], {@link PackedStringArray}, {@link Dictionary} or {@link Array}[lb]{@link Dictionary}[rb] property with a large {@link TextEdit} widget instead of a {@link LineEdit}. This adds support for multiline content and makes it easier to edit large amount of text stored in the property.
+ * See also {@link PROPERTY_HINT_MULTILINE_TEXT}.
+ */
+declare function export_multiline(hint?: string, ...args: any[]): (target: any, context: any) => void;
+/**
+ * Export a {@link NodePath} or {@link Array}[lb]{@link NodePath}[rb] property with a filter for allowed node types.
+ * See also {@link PROPERTY_HINT_NODE_PATH_VALID_TYPES}.
+ * **Note:** The type must be a native class or a globally registered script (using the `class_name` keyword) that inherits {@link Node}.
+ */
+declare function export_node_path(type_?: string, ...args: any[]): (target: any, context: any) => void;
+/**
+ * Export a {@link String}, {@link Array}[lb]{@link String}[rb], or {@link PackedStringArray} property with a placeholder text displayed in the editor widget when no value is present.
+ * See also {@link PROPERTY_HINT_PLACEHOLDER_TEXT}.
+ */
+declare function export_placeholder(placeholder: string): (target: any, context: any) => void;
+/**
+ * Export an [int], [float], {@link Array}[lb][int][rb], {@link Array}[lb][float][rb], {@link PackedByteArray}, {@link PackedInt32Array}, {@link PackedInt64Array}, {@link PackedFloat32Array}, or {@link PackedFloat64Array} property as a range value. The range must be defined by `min` and `max`, as well as an optional `step` and a variety of extra hints. The `step` defaults to `1` for integer properties. For floating-point numbers this value depends on your {@link EditorSettings.interface/inspector/default_float_step} setting.
+ * If hints `"or_greater"` and `"or_less"` are provided, the editor widget will not cap the value at range boundaries. The `"exp"` hint will make the edited values on range to change exponentially. The `"prefer_slider"` hint will make integer values use the slider instead of arrows for editing, while `"hide_control"` will hide the element controlling the value of the editor widget.
+ * Hints also allow to indicate the units for the edited value. Using `"radians_as_degrees"` you can specify that the actual value is in radians, but should be displayed in degrees in the Inspector dock (the range values are also in degrees). `"degrees"` allows to add a degree sign as a unit suffix (the value is unchanged). Finally, a custom suffix can be provided using `"suffix:unit"`, where "unit" can be any string.
+ * See also {@link PROPERTY_HINT_RANGE}.
+ */
+declare function export_range(min: float, max: float, step?: float, extra_hints?: string, ...args: any[]): (target: any, context: any) => void;
+/**
+ * Export a property with {@link PROPERTY_USAGE_STORAGE} flag. The property is not displayed in the editor, but it is serialized and stored in the scene or resource file. This can be useful for  scripts. Also the property value is copied when {@link Resource.duplicate} or {@link Node.duplicate} is called, unlike non-exported variables.
+ */
+declare function export_storage(target: any, context: any): void;
+/**
+ * Define a new subgroup for the following exported properties. This helps to organize properties in the Inspector dock. Subgroups work exactly like groups, except they need a parent group to exist. See .
+ * See also {@link PROPERTY_USAGE_SUBGROUP}.
+ * **Note:** Subgroups cannot be nested, but you can use the slash separator (`/`) to achieve the desired effect:
+ */
+declare function export_subgroup(name: string, prefix?: string): (target: any, context: any) => void;
+/**
+ * Export a {@link Callable} property as a clickable button with the label `text`. When the button is pressed, the callable is called.
+ * If `icon` is specified, it is used to fetch an icon for the button via {@link Control.get_theme_icon}, from the `"EditorIcons"` theme type. If `icon` is omitted, the default `"Callable"` icon is used instead.
+ * Consider using the {@link EditorUndoRedoManager} to allow the action to be reverted safely.
+ * See also {@link PROPERTY_HINT_TOOL_BUTTON}.
+ * **Note:** The property is exported without the {@link PROPERTY_USAGE_STORAGE} flag because a {@link Callable} cannot be properly serialized and stored in a file.
+ * **Note:** In an exported project neither {@link EditorInterface} nor {@link EditorUndoRedoManager} exist, which may cause some scripts to break. To prevent this, you can use {@link Engine.get_singleton} and omit the static type from the variable declaration:
+ * **Note:** Avoid storing lambda callables in member variables of {@link RefCounted}-based classes (e.g. resources), as this can lead to memory leaks. Use only method callables and optionally {@link Callable.bind} or {@link Callable.unbind}.
+ */
+declare function export_tool_button(text: string, icon?: string): (target: any, context: any) => void;
+/**
+ * Add a custom icon to the current script. The icon specified at `icon_path` is displayed in the Scene dock for every node of that class, as well as in various editor dialogs.
+ * **Note:** Only the script can have a custom icon. Inner classes are not supported.
+ * **Note:** As annotations describe their subject, the  annotation must be placed before the class definition and inheritance.
+ * **Note:** Unlike most other annotations, the argument of the  annotation must be a string literal (constant expressions are not supported).
+ */
+declare function icon(icon_path: string): (target: any, context: any) => void;
+/**
+ * Mark the following property as assigned when the {@link Node} is ready. Values for these properties are not assigned immediately when the node is initialized ({@link Object._init}), and instead are computed and stored right before {@link Node._ready}.
+ */
+declare function onready(target: any, context: any): void;
+/**
+ * Mark the following method for remote procedure calls. See High-level multiplayer ($DOCS_URL/tutorials/networking/high_level_multiplayer.html).
+ * If `mode` is set as `"any_peer"`, allows any peer to call this RPC function. Otherwise, only the authority peer is allowed to call it and `mode` should be kept as `"authority"`. When configuring functions as RPCs with {@link Node.rpc_config}, each of these modes respectively corresponds to the {@link MultiplayerAPI.RPC_MODE_AUTHORITY} and {@link MultiplayerAPI.RPC_MODE_ANY_PEER} RPC modes. See {@link MultiplayerAPI.RPCMode}. If a peer that is not the authority tries to call a function that is only allowed for the authority, the function will not be executed. If the error can be detected locally (when the RPC configuration is consistent between the local and the remote peer), an error message will be displayed on the sender peer. Otherwise, the remote peer will detect the error and print an error there.
+ * If `sync` is set as `"call_remote"`, the function will only be executed on the remote peer, but not locally. To run this function locally too, set `sync` to `"call_local"`. When configuring functions as RPCs with {@link Node.rpc_config}, this is equivalent to setting `call_local` to `true`.
+ * The `transfer_mode` accepted values are `"unreliable"`, `"unreliable_ordered"`, or `"reliable"`. It sets the transfer mode of the underlying {@link MultiplayerPeer}. See {@link MultiplayerPeer.transfer_mode}.
+ * The `transfer_channel` defines the channel of the underlying {@link MultiplayerPeer}. See {@link MultiplayerPeer.transfer_channel}.
+ * The order of `mode`, `sync` and `transfer_mode` does not matter, but values related to the same argument must not be used more than once. `transfer_channel` always has to be the 4th argument (you must specify 3 preceding arguments).
+ * **Note:** Methods annotated with  cannot receive objects which define required parameters in {@link Object._init}. See {@link Object._init} for more details.
+ */
+declare function rpc(mode?: string, sync?: string, transfer_mode?: string, transfer_channel?: int): (target: any, context: any) => void;
+/**
+ * Make a script with static variables to not persist after all references are lost. If the script is loaded again the static variables will revert to their default values.
+ * **Note:** As annotations describe their subject, the  annotation must be placed before the class definition and inheritance.
+ * **Warning:** Currently, due to a bug, scripts are never freed, even if  annotation is used.
+ */
+declare function static_unload(target: any, context: any): void;
+/**
+ * Mark the current script as a tool script, allowing it to be loaded and executed by the editor. See Running code in the editor ($DOCS_URL/tutorials/plugins/running_code_in_the_editor.html).
+ * **Note:** As annotations describe their subject, the  annotation must be placed before the class definition and inheritance.
+ */
+declare function tool(target: any, context: any): void;
+/**
+ * Mark the following statement to ignore the specified `warning`. See GDScript warning system ($DOCS_URL/tutorials/scripting/gdscript/warning_system.html).
+ * See also  and .
+ */
+declare function warning_ignore(warning: string, ...args: any[]): (target: any, context: any) => void;
+/**
+ * Stops ignoring the listed warning types after . Ignoring the specified warning types will be reset to Project Settings. This annotation can be omitted to ignore the warning types until the end of the file.
+ * **Note:** Unlike most other annotations, arguments of the  annotation must be string literals (constant expressions are not supported).
+ */
+declare function warning_ignore_restore(warning: string, ...args: any[]): (target: any, context: any) => void;
+/**
+ * Starts ignoring the listed warning types until the end of the file or the  annotation with the given warning type.
+ * **Note:** To suppress a single warning, use  instead.
+ * **Note:** Unlike most other annotations, arguments of the  annotation must be string literals (constant expressions are not supported).
+ */
+declare function warning_ignore_start(warning: string, ...args: any[]): (target: any, context: any) => void;

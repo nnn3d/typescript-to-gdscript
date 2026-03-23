@@ -1534,6 +1534,8 @@ export class TsToGdTransformer {
         return '>>';
       case ts.SyntaxKind.InKeyword:
         return 'in';
+      case ts.SyntaxKind.InstanceOfKeyword:
+        return 'is';
       default:
         return '??';
     }
@@ -1628,6 +1630,7 @@ export class TsToGdTransformer {
       if (ts.isCallExpression(dec.expression)) {
         const callExpr = dec.expression;
         if (ts.isPropertyAccessExpression(callExpr.expression)) {
+          // Legacy @gd.export_range(...) style
           const obj = callExpr.expression.expression;
           const method = callExpr.expression.name.text;
           if (ts.isIdentifier(obj) && obj.text === 'gd') {
@@ -1640,13 +1643,33 @@ export class TsToGdTransformer {
               result.push(`@${method}`);
             }
           }
+        } else if (ts.isIdentifier(callExpr.expression)) {
+          // Global decorator call: @export_range(0, 100), @icon("res://icon.png")
+          let name = callExpr.expression.text;
+          // 'exports' in TS → 'export' in GDScript
+          if (name === 'exports') name = 'export';
+          const args = callExpr.arguments
+            .map((a) => this.emitExpression(a))
+            .join(', ');
+          if (args) {
+            result.push(`@${name}(${args})`);
+          } else {
+            result.push(`@${name}`);
+          }
         }
       } else if (ts.isPropertyAccessExpression(dec.expression)) {
+        // Legacy @gd.export style
         const obj = dec.expression.expression;
         const method = dec.expression.name.text;
         if (ts.isIdentifier(obj) && obj.text === 'gd') {
           result.push(`@${method}`);
         }
+      } else if (ts.isIdentifier(dec.expression)) {
+        // Global decorator: @exports, @onready, @tool
+        let name = dec.expression.text;
+        // 'exports' in TS → 'export' in GDScript
+        if (name === 'exports') name = 'export';
+        result.push(`@${name}`);
       }
     }
     return result;

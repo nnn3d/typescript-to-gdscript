@@ -96,17 +96,17 @@ class OpsTest extends Node {
   }
 }
 
-// ─── gd decorators ──────────────────────────────────────────
+// ─── global decorators ──────────────────────────────────────
 
 class DecoratorTest extends Node {
-  @gd.export
+  @exports
   speed: float = 100.0;
 
-  @gd.onready
+  @onready
   sprite: Sprite2D = null!;
 
-  @gd.export_category('Movement')
-  @gd.export
+  @export_category('Movement')
+  @exports
   max_speed: float = 200.0;
 }
 

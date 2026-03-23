@@ -57,4 +57,13 @@ export class ControlFlow extends Node {
       print(i);
     }
   }
+
+  test_is(x) {
+    if (x instanceof Node2D) {
+      print(x, "is Node2D");
+    }
+    if (!(x instanceof Node2D)) {
+      print(x, "is not Node2D");
+    }
+  }
 }

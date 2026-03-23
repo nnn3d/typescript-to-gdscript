@@ -10,12 +10,14 @@ import { join } from 'path';
 import ts from 'typescript';
 import {
   parseAllClassXmls,
+  parseClassXml,
   generateRegistryData,
   GodotClassRegistry,
   gdDocToPlain,
   type GodotClassXml,
   type GodotMethodXml,
   type GodotParamXml,
+  type GodotAnnotationXml,
   type GodotOperatorXml,
 } from './godot-registry.ts';
 
@@ -805,58 +807,84 @@ function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
   // Singleton instances are emitted in per-class .d.ts files
   // (as `declare interface` + `declare const`), not here.
 
-  // GDScript built-in constants and functions (from @GDScript, not in @GlobalScope XML docs)
+  return lines.join('\n');
+}
+
+/**
+ * Generates TypeScript declarations from @GDScript.xml:
+ * constants, methods, and annotation decorators.
+ */
+function generateGDScriptDeclaration(cls: GodotClassXml): string {
+  const lines: string[] = [];
   lines.push('');
-  lines.push('// @GDScript — built-in constants and functions');
-  lines.push('/** Positive floating-point infinity. */');
-  lines.push('declare const INF: float;');
-  lines.push('/** "Not a Number" invalid float value. */');
-  lines.push('declare const NAN: float;');
-  lines.push(
-    '/** Constant that represents how many times the diameter of a circle fits around its perimeter. Approximately 3.14159265358979. */',
-  );
-  lines.push('declare const PI: float;');
-  lines.push(
-    '/** The circle constant, the circumference of the unit circle in radians. Approximately 6.28318530717959. Equivalent to PI * 2. */',
-  );
-  lines.push('declare const TAU: float;');
-  lines.push('');
-  lines.push(
-    '/** Returns the length of the given Variant. Arrays, strings, dictionaries, and packed arrays return their element count. */',
-  );
-  lines.push('declare function len(value: unknown): int;');
-  lines.push(
-    '/** Returns an array with the given range. range(n) is [0..n-1], range(a,b) is [a..b-1], range(a,b,step). */',
-  );
-  lines.push('declare function range(end: int): Array<int>;');
-  lines.push('declare function range(begin: int, end: int): Array<int>;');
-  lines.push(
-    'declare function range(begin: int, end: int, step: int): Array<int>;',
-  );
-  lines.push(
-    '/** Loads a resource from the given path. Returns the registered type from GodotResources if the path is known. */',
-  );
-  lines.push(
-    'declare function load<P extends keyof GodotResources>(path: P): GodotResources[P];',
-  );
-  lines.push(
-    'declare function load(path: string): Resource;',
-  );
-  lines.push(
-    '/** Returns a resource from the filesystem that is loaded during script parsing. Returns the registered type from GodotResources if the path is known. */',
-  );
-  lines.push(
-    'declare function preload<P extends keyof GodotResources>(path: P): GodotResources[P];',
-  );
-  lines.push(
-    'declare function preload(path: string): Resource;',
-  );
-  lines.push(
-    '/** Asserts that the condition is true. If the condition is false in debug builds, execution is halted. */',
-  );
-  lines.push(
-    'declare function assert(condition: boolean, message?: string): void;',
-  );
+  lines.push('// @GDScript — built-in constants, functions, and annotations');
+
+  // Constants
+  if (cls.constants.length > 0) {
+    lines.push('');
+    for (const c of cls.constants) {
+      lines.push(...emitJsDoc(c.description, ''));
+      const tsType = c.value === 'inf' || c.value === 'nan' ||
+        c.value.includes('.') ? 'float' : 'int';
+      lines.push(`declare const ${c.name}: ${tsType};`);
+    }
+  }
+
+  // Methods
+  if (cls.methods.length > 0) {
+    lines.push('');
+    for (const method of cls.methods) {
+      lines.push(...emitJsDoc(method.description, ''));
+      let seenOptional = false;
+      const params = method.parameters.map((p) => {
+        const tsType = godotTypeToTs(p.type);
+        if (p.defaultValue !== undefined) seenOptional = true;
+        const optional = seenOptional ? '?' : '';
+        return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
+      });
+      if (method.isVararg) {
+        params.push('...args: any[]');
+      }
+      const returnType = godotTypeToTs(method.returnType);
+      lines.push(
+        `declare function ${sanitizeFunctionName(method.name)}(${params.join(', ')}): ${returnType};`,
+      );
+    }
+  }
+
+  // Annotations → global decorator functions
+  if (cls.annotations.length > 0) {
+    lines.push('');
+    lines.push('// GDScript annotations as TypeScript decorators');
+    for (const ann of cls.annotations) {
+      lines.push(...emitJsDoc(ann.description, ''));
+      // Strip @ prefix and rename 'export' → 'exports' to avoid TS keyword conflict
+      let tsName = ann.name;
+      if (tsName === 'export') tsName = 'exports';
+
+      if (ann.parameters.length === 0 && !ann.isVararg) {
+        // No-param decorator: bare decorator function
+        lines.push(
+          `declare function ${tsName}(target: any, context: any): void;`,
+        );
+      } else {
+        // Parameterized decorator: factory function returning decorator
+        let seenOptional = false;
+        const params = ann.parameters.map((p) => {
+          const tsType = godotTypeToTs(p.type);
+          if (p.defaultValue !== undefined) seenOptional = true;
+          const optional = seenOptional ? '?' : '';
+          return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
+        });
+        if (ann.isVararg) {
+          params.push('...args: any[]');
+        }
+        lines.push(
+          `declare function ${tsName}(${params.join(', ')}): (target: any, context: any) => void;`,
+        );
+      }
+    }
+  }
 
   return lines.join('\n');
 }
@@ -1313,6 +1341,17 @@ export function generateGodotDocsTypings(
 ): GodotClassRegistry | null {
   const classes = parseAllClassXmls(options.classDocsDir);
 
+  // Load @GDScript.xml from modules/gdscript/doc_classes/ (sibling to doc/classes/)
+  let gdscriptCls: GodotClassXml | null = null;
+  const gdscriptXmlPath = join(
+    options.classDocsDir,
+    '../../modules/gdscript/doc_classes/@GDScript.xml',
+  );
+  if (existsSync(gdscriptXmlPath)) {
+    const xmlContent = readFileSync(gdscriptXmlPath, 'utf-8');
+    gdscriptCls = parseClassXml(xmlContent);
+  }
+
   // Populate known class names for type resolution
   knownClasses = new Set([...classes.keys()].filter((n) => !n.startsWith('@')));
 
@@ -1393,6 +1432,10 @@ export function generateGodotDocsTypings(
 
     if (name === '@GlobalScope') {
       let globalsContent = generateGlobalScopeDeclaration(cls);
+      // Append @GDScript built-in constants, functions, and annotation decorators
+      if (gdscriptCls) {
+        globalsContent += generateGDScriptDeclaration(gdscriptCls);
+      }
       globalsContent = applyGlobalOverrides(globalsContent, globalOverrides);
       const content = header + '\n' + globalsContent + '\n';
       const fileName = '_globals.d.ts';

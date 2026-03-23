@@ -3,11 +3,11 @@ export class MyClass extends Node {
     let x: int = 5;
 
     if (x > 10) {
-      print("big");
+      print('big');
     } else if (x > 0) {
-      print("positive");
+      print('positive');
     } else {
-      print("non-positive");
+      print('non-positive');
     }
   }
 
@@ -30,16 +30,16 @@ export class MyClass extends Node {
     let value: int = 2;
     switch (value) {
       case 1:
-        print("one");
+        print('one');
         break;
       case 2:
-        print("two");
+        print('two');
         break;
       case 3:
-        print("three");
+        print('three');
         break;
       default:
-        print("other");
+        print('other');
         break;
     }
   }
@@ -55,6 +55,15 @@ export class MyClass extends Node {
         break;
       }
       print(i);
+    }
+  }
+
+  test_is(x) {
+    if (x instanceof Node2D) {
+      print(x, 'is Node2D');
+    }
+    if (!(x instanceof Node2D)) {
+      print(x, 'is not Node2D');
     }
   }
 }

@@ -705,26 +705,11 @@ function emitAnnotationAsDecorator(node: GDNode): string {
   const name = match[1]!;
   const args = match[2];
 
-  switch (name) {
-    case 'export':
-      return args ? `@gd.export(${args})` : '@gd.export';
-    case 'export_range':
-    case 'export_category':
-    case 'export_group':
-    case 'export_subgroup':
-    case 'export_global_file':
-    case 'export_file':
-    case 'export_multiline':
-      return args ? `@gd.${name}(${args})` : `@gd.${name}`;
-    case 'onready':
-      return '@gd.onready';
-    case 'tool':
-      return '@gd.tool';
-    case 'icon':
-      return args ? `@gd.icon(${args})` : '@gd.icon';
-    default:
-      return args ? `@gd.${name}(${args})` : `@gd.${name}`;
-  }
+  // GDScript @export → TS @exports (avoids TS keyword conflict)
+  const tsName = name === 'export' ? 'exports' : name;
+
+  // All annotations are now global decorators (no gd. prefix)
+  return args ? `@${tsName}(${args})` : `@${tsName}`;
 }
 
 // ─── Functions ────────────────────────────────────────────────
@@ -1497,6 +1482,18 @@ function emitBinaryOp(node: GDNode, ctx: GdToTsContext): string {
   const opNode = node.childForFieldName('op');
   const opText =
     opNode?.text ?? node.children.find((c) => !c.isNamed)?.text ?? '??';
+
+  // GD `is not` -> !(... instanceof ...)
+  // tree-sitter parses `x is not Y` as binary_operator with children: x, "is", "not", Y
+  if (opText === 'is') {
+    const anonymousChildren = node.children.filter((c) => !c.isNamed);
+    const hasNot = anonymousChildren.some((c) => c.text === 'not');
+    if (hasNot) {
+      const leftStr = left ? emitExpr(left, ctx) : '';
+      const rightStr = right?.text ?? '';
+      return `!(${leftStr} instanceof ${rightStr})`;
+    }
+  }
 
   // Fix tree-sitter-gdscript precedence bug: `not X op Y` is parsed as
   // `(not X) op Y` but GDScript evaluates it as `not (X op Y)`.

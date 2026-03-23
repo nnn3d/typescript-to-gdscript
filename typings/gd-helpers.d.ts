@@ -255,19 +255,4 @@ declare const gd: {
     ) => UnaryOpResult<typeof __minus, T>;
   };
 
-  // Decorators
-
-  // Decorators are accessed as `@gd.export`, `@gd.onready`, etc.
-  // Since `export` is a reserved word in TS, decorators are defined via
-  // the `decorators` sub-namespace. The transformer maps `@gd.export` directly.
-  readonly export: (target: any, context: any) => void;
-  readonly export_category: (
-    category: string,
-  ) => (target: any, context: any) => void;
-  readonly export_global_file: (
-    ...filters: string[]
-  ) => (target: any, context: any) => void;
-  readonly onready: (target: any, context: any) => void;
-  readonly icon: (path: string) => (target: any, context: any) => void;
-  readonly tool: (target: any, context: any) => void;
 };

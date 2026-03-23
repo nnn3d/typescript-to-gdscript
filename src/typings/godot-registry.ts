@@ -56,6 +56,7 @@ export interface GodotClassXml {
   constants: GodotConstantXml[];
   enums: GodotEnumInfo[];
   operators: GodotOperatorXml[];
+  annotations: GodotAnnotationXml[];
 }
 
 export interface GodotMethodXml {
@@ -94,6 +95,13 @@ export interface GodotConstantXml {
   value: string;
   description?: string;
   enumName?: string;
+}
+
+export interface GodotAnnotationXml {
+  name: string;
+  parameters: GodotParamXml[];
+  description?: string;
+  isVararg: boolean;
 }
 
 export interface GodotOperatorXml {
@@ -334,6 +342,33 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
     });
   }
 
+  // Parse annotations
+  const annotations: GodotAnnotationXml[] = [];
+  const annotationRegex =
+    /<annotation name="@([^"]+)"(?:\s+qualifiers="([^"]*)")?[^>]*>([\s\S]*?)<\/annotation>/g;
+  while ((match = annotationRegex.exec(xmlContent)) !== null) {
+    const annName = match[1]!;
+    const qualifiers = match[2] ?? '';
+    const annBody = match[3]!;
+    const params: GodotParamXml[] = [];
+    const paramRegex4 =
+      /<param index="\d+" name="([^"]+)" type="([^"]+)"(?:\s+default="([^"]*)")?/g;
+    let paramMatch: RegExpExecArray | null;
+    while ((paramMatch = paramRegex4.exec(annBody)) !== null) {
+      params.push({
+        name: paramMatch[1]!,
+        type: paramMatch[2]!,
+        defaultValue: paramMatch[3],
+      });
+    }
+    annotations.push({
+      name: annName,
+      parameters: params,
+      description: extractDescription(annBody),
+      isVararg: qualifiers.includes('vararg'),
+    });
+  }
+
   return {
     name,
     inherits,
@@ -346,6 +381,7 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
     constants,
     enums: [...enumMap.values()],
     operators,
+    annotations,
   };
 }
 
