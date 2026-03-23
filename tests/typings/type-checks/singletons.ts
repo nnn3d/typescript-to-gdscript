@@ -5,9 +5,9 @@
 class SingletonTest extends Node {
   test_project_settings() {
     // ProjectSettings is a global singleton instance
-    let val: unknown = ProjectSettings.get_setting('display/window/size/width');
-    ProjectSettings.set_setting('display/window/size/width', 1920);
-    let has: boolean = ProjectSettings.has_setting('display/window/size/width');
+    let val: number = ProjectSettings.get_setting('display/window/size/window_width_override');
+    ProjectSettings.set_setting('display/window/size/window_width_override', 1920);
+    let has: boolean = ProjectSettings.has_setting('display/window/size/window_width_override');
 
     // Should be assignable to its own type
     let ps: ProjectSettings = ProjectSettings;
