@@ -17,7 +17,9 @@ declare class PropertyTweener extends Tweener {
    * Makes the {@link PropertyTweener} use the current property value (i.e. at the time of creating this {@link PropertyTweener}) as a starting point. This is equivalent of using {@link from} with the current value. These two calls will do the same:
    */
   from_current(): PropertyTweener;
-  /** Sets a custom interpolation function. `interpolator_method` receives a value from 0.0 to 1.0 and should return a value in the same range. */
+  /**
+   * Allows interpolating the value with a custom easing function. The provided `interpolator_method` will be called with a value ranging from `0.0` to `1.0` and is expected to return a value within the same range (values outside the range can be used for overshoot). The return value of the method is then used for interpolation between initial and final value. Note that the parameter passed to the method is still subject to the tweener's own easing.
+   */
   set_custom_interpolator(
   interpolator_method: (value: float) => float,
   ): PropertyTweener;

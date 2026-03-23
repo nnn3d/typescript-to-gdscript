@@ -1143,20 +1143,25 @@ function applyGlobalOverrides(
 
     if (fnMatch && globalOverrides.has(fnMatch[1]!)) {
       const fnName = fnMatch[1]!;
+      const overrideText = globalOverrides.get(fnName)!;
+      const overrideHasJsDoc = overrideText.trimStart().startsWith('/**');
 
-      // Remove preceding JSDoc comment (scan backwards in result)
-      while (
-        result.length > 0 &&
-        (result[result.length - 1]!.trimStart().startsWith('*') ||
-          result[result.length - 1]!.trimStart().startsWith('/**') ||
-          result[result.length - 1]!.trimStart().startsWith('*/'))
-      ) {
-        result.pop();
+      if (overrideHasJsDoc) {
+        // Override has its own JSDoc — remove generated JSDoc
+        while (
+          result.length > 0 &&
+          (result[result.length - 1]!.trimStart().startsWith('*') ||
+            result[result.length - 1]!.trimStart().startsWith('/**') ||
+            result[result.length - 1]!.trimStart().startsWith('*/'))
+        ) {
+          result.pop();
+        }
       }
+      // Otherwise keep the generated JSDoc already in result
 
       // Insert override text on first occurrence
       if (!replaced.has(fnName)) {
-        result.push(globalOverrides.get(fnName)!);
+        result.push(overrideText);
         replaced.add(fnName);
       }
 
@@ -1255,9 +1260,16 @@ function applyOverride(generated: string, override: ParsedOverride): string {
     if (memberMatch) {
       const memberName = memberMatch[1] ?? memberMatch[2];
       if (override.members.has(memberName)) {
-        // Drop buffered JSDoc (replaced by override's own JSDoc)
-        pendingJsDoc = [];
-        result.push(override.members.get(memberName)!);
+        const overrideText = override.members.get(memberName)!;
+        // If override has its own JSDoc, use it; otherwise preserve generated JSDoc
+        const overrideHasJsDoc = overrideText.trimStart().startsWith('/**');
+        if (overrideHasJsDoc || pendingJsDoc.length === 0) {
+          pendingJsDoc = [];
+        } else {
+          result.push(...pendingJsDoc);
+          pendingJsDoc = [];
+        }
+        result.push(overrideText);
         usedOverrides.add(memberName);
         i++;
         continue;

@@ -112,7 +112,11 @@ declare class Tween extends RefCounted {
    * **Note:** If you are awaiting a signal from a callback called in the same {@link Tween}, make sure the signal is emitted *after* the await starts. If it can't be reasonably guaranteed, you can await and emit in the same step:
    */
   tween_await(signal: GodotSignal): AwaitTweener;
-  /** Creates and appends a {@link CallbackTweener}. Calls the given callback when this step is reached. */
+  /**
+   * Creates and appends a {@link CallbackTweener}. This method can be used to call an arbitrary method in any object. Use {@link Callable.bind} to bind additional arguments for the call.
+   * **Example:** Object that keeps shooting every 1 second:
+   * **Example:** Turning a sprite red and then blue, with 2 second delay:
+   */
   tween_callback(callback: () => void): CallbackTweener;
   /**
    * Creates and appends an {@link IntervalTweener}. This method can be used to create delays in the tween animation, as an alternative to using the delay in other {@link Tweener}s, or when there's no animation (in which case the {@link Tween} acts as a timer). `time` is the length of the interval, in seconds.
@@ -120,14 +124,23 @@ declare class Tween extends RefCounted {
    * **Example:** Creating an object that moves back and forth and jumps every few seconds:
    */
   tween_interval(time: float): IntervalTweener;
-  /** Creates and appends a {@link MethodTweener}. Tweens a value from `from_` to `to` over `duration` seconds, calling `method` with the interpolated value each step. */
+  /**
+   * Creates and appends a {@link MethodTweener}. This method is similar to a combination of {@link tween_callback} and {@link tween_property}. It calls a method over time with a tweened value provided as an argument. The value is tweened between `from` and `to` over the time specified by `duration`, in seconds. Use {@link Callable.bind} to bind additional arguments for the call. You can use {@link MethodTweener.set_ease} and {@link MethodTweener.set_trans} to tweak the easing and transition of the value or {@link MethodTweener.set_delay} to delay the tweening.
+   * **Example:** Making a 3D object look from one point to another point:
+   * **Example:** Setting the text of a {@link Label}, using an intermediate method and after a delay:
+   */
   tween_method<T>(
   method: (value: T) => void,
   from_: T,
   to: T,
   duration: float,
   ): MethodTweener;
-  /** Creates and appends a {@link PropertyTweener}. Tweens `property` of `object` to `final_val` over `duration` seconds. */
+  /**
+   * Creates and appends a {@link PropertyTweener}. This method tweens a `property` of an `object` between an initial value and `final_val` in a span of time equal to `duration`, in seconds. The initial value by default is the property's value at the time the tweening of the {@link PropertyTweener} starts.
+   * will move the sprite to position (100, 200) and then to (200, 300). If you use {@link PropertyTweener.from} or {@link PropertyTweener.from_current}, the starting position will be overwritten by the given value instead. See other methods in {@link PropertyTweener} to see how the tweening can be tweaked further.
+   * **Note:** You can find the correct property name by hovering over the property in the Inspector. You can also provide the components of a property directly by using `"property:component"` (eg. `position:x`), where it would only apply to that particular component.
+   * **Example:** Moving an object twice from the same position, with different transition types:
+   */
   tween_property<T>(
   object: GodotObject,
   property: string,

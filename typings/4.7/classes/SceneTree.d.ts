@@ -82,16 +82,27 @@ declare class SceneTree extends MainLoop {
   is_quit_on_go_back(): boolean;
   get_root(): Window;
 
-  /** Calls `method` on each node in the given `group`. */
+  /**
+   * Calls `method` on each node inside this tree added to the given `group`. You can pass arguments to `method` by specifying them at the end of this method call. Nodes that cannot call `method` (either because the method doesn't exist or the arguments do not match) are ignored. See also {@link set_group} and {@link notify_group}.
+   * **Note:** This method acts immediately on all selected nodes at once, which may cause stuttering in some performance-intensive situations.
+   * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
+   */
   call_group(group: string, method: string, ...args: any[]): void;
-  /** Calls `method` on each node in the given `group`, using `flags` to customize behavior. */
+  /**
+   * Calls the given `method` on each node inside this tree added to the given `group`. Use `flags` to customize this method's behavior (see {@link GroupCallFlags}). Additional arguments for `method` can be passed at the end of this method. Nodes that cannot call `method` (either because the method doesn't exist or the arguments do not match) are ignored.
+   * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
+   */
   call_group_flags(
   flags: int,
   group: string,
   method: string,
   ...args: any[]
   ): void;
-  /** Changes the running scene to the one at the given path. Accepts known scene paths from GodotResources. */
+  /**
+   * Changes the running scene to the one at the given `path`, after loading it into a {@link PackedScene} and creating a new instance.
+   * Returns {@link OK} on success, {@link ERR_CANT_OPEN} if the `path` cannot be loaded into a {@link PackedScene}, or {@link ERR_CANT_CREATE} if that scene cannot be instantiated.
+   * **Note:** See {@link change_scene_to_node} for details on the order of operations.
+   */
   change_scene_to_file(path: GodotScenePaths): int;
   change_scene_to_file(path: string): int;
   /**

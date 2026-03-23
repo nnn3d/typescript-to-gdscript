@@ -19,9 +19,9 @@ interface _AnonymSceneNodes {
 declare module "./Anonym.ts" {
   interface __CLASS__ {
     get_node<P extends keyof _AnonymSceneNodes>(path: P): _AnonymSceneNodes[P];
-    get_node(path: string): Node;
+    get_node<T extends Node = Node>(path: string): T;
     get_node_or_null<P extends keyof _AnonymSceneNodes>(path: P): _AnonymSceneNodes[P] | null;
-    get_node_or_null(path: string): Node | null;
+    get_node_or_null<T extends Node = Node>(path: string): T | null;
   }
 }
 
@@ -35,9 +35,9 @@ interface _Anonym2SceneNodes {
 declare module "./Anonym2.ts" {
   interface __CLASS__ {
     get_node<P extends keyof _Anonym2SceneNodes>(path: P): _Anonym2SceneNodes[P];
-    get_node(path: string): Node;
+    get_node<T extends Node = Node>(path: string): T;
     get_node_or_null<P extends keyof _Anonym2SceneNodes>(path: P): _Anonym2SceneNodes[P] | null;
-    get_node_or_null(path: string): Node | null;
+    get_node_or_null<T extends Node = Node>(path: string): T | null;
   }
 }
 
@@ -51,9 +51,9 @@ interface _BallSceneNodes {
 declare module "./Ball.ts" {
   interface Ball {
     get_node<P extends keyof _BallSceneNodes>(path: P): _BallSceneNodes[P];
-    get_node(path: string): Node;
+    get_node<T extends Node = Node>(path: string): T;
     get_node_or_null<P extends keyof _BallSceneNodes>(path: P): _BallSceneNodes[P] | null;
-    get_node_or_null(path: string): Node | null;
+    get_node_or_null<T extends Node = Node>(path: string): T | null;
   }
 }
 
@@ -67,9 +67,9 @@ interface _nested_AnonymSceneNodes {
 declare module "./nested/Anonym.ts" {
   interface __CLASS__ {
     get_node<P extends keyof _nested_AnonymSceneNodes>(path: P): _nested_AnonymSceneNodes[P];
-    get_node(path: string): Node;
+    get_node<T extends Node = Node>(path: string): T;
     get_node_or_null<P extends keyof _nested_AnonymSceneNodes>(path: P): _nested_AnonymSceneNodes[P] | null;
-    get_node_or_null(path: string): Node | null;
+    get_node_or_null<T extends Node = Node>(path: string): T | null;
   }
 }
 
@@ -85,9 +85,9 @@ interface _PlayerSceneNodes {
 declare module "./Player.ts" {
   interface Player {
     get_node<P extends keyof _PlayerSceneNodes>(path: P): _PlayerSceneNodes[P];
-    get_node(path: string): Node;
+    get_node<T extends Node = Node>(path: string): T;
     get_node_or_null<P extends keyof _PlayerSceneNodes>(path: P): _PlayerSceneNodes[P] | null;
-    get_node_or_null(path: string): Node | null;
+    get_node_or_null<T extends Node = Node>(path: string): T | null;
   }
 }
 

@@ -43,7 +43,7 @@ declare interface ClassDB extends GodotObject {
   object: GodotObject,
   property: string,
   ): V;
-  /** Returns the default value of `property` of `class_` or its ancestor classes. */
+  /** Returns the default value of `property` of `class` or its ancestor classes. */
   class_get_property_default_value<V = unknown>(
   class_: string,
   property: string,
@@ -83,7 +83,7 @@ declare interface ClassDB extends GodotObject {
   get_inheriters_from_class(class_: string): PackedStringArray;
   /** Returns the parent class of `class`. */
   get_parent_class(class_: string): string;
-  /** Creates an instance of `class_`. */
+  /** Creates an instance of `class`. */
   instantiate<T extends GodotObject = GodotObject>(class_: string): T;
   /** Returns whether this `class` is enabled or not. */
   is_class_enabled(class_: string): boolean;

@@ -76,13 +76,24 @@ declare class GodotObject {
    * Adds a user-defined signal named `signal`. Optional arguments for the signal can be added as an {@link Array} of dictionaries, each defining a `name` {@link String} and a `type` [int] (see {@link Variant.Type}). See also {@link has_user_signal} and {@link remove_user_signal}.
    */
   add_user_signal(signal: string, arguments?: Array<unknown>): void;
-  /** Calls the `method` on the object and returns the result. Supports variable arguments. */
+  /**
+   * Calls the `method` on the object and returns the result. This method supports a variable number of arguments, so parameters can be passed as a comma separated list.
+   * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
+   */
   call<N extends string, A extends any[], R>(
   this: Record<N, (...args: A) => R>,
   method: N,
   ...args: A
   ): R;
-  /** Calls the `method` on the object during idle time. Always returns null. */
+  /**
+   * Calls the `method` on the object during idle time. Always returns `null`, **not** the method's result.
+   * Idle time happens mainly at the end of process and physics frames. In it, deferred calls will be run until there are none left, which means you can defer calls from other deferred calls and they'll still be run in the current idle time cycle. This means you should not call a method deferred from itself (or from a method called by it), as this causes infinite recursion the same way as if you had called the method directly.
+   * This method supports a variable number of arguments, so parameters can be passed as a comma separated list.
+   * For methods that are deferred from the same thread, the order of execution at idle time is identical to the order in which [code skip-lint]call_deferred[/code] was called.
+   * See also {@link Callable.call_deferred}.
+   * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
+   * **Note:** If you're looking to delay the function call by a frame, refer to the {@link SceneTree.process_frame} and {@link SceneTree.physics_frame} signals.
+   */
   call_deferred<const N extends string, A extends any[], R>(
   this: Record<N, (...args: A) => R>,
   method: N,
@@ -113,7 +124,11 @@ declare class GodotObject {
    * Disconnects a `signal` by name from a given `callable`. If the connection does not exist, generates an error. Use {@link is_connected} to make sure that the connection exists.
    */
   disconnect(signal: string, callable: Callable): void;
-  /** Emits the given `signal` by name with the provided arguments. */
+  /**
+   * Emits the given `signal` by name. The signal must exist, so it should be a built-in signal of this class or one of its inherited classes, or a user-defined signal (see {@link add_user_signal}). This method supports a variable number of arguments, so parameters can be passed as a comma separated list.
+   * Returns {@link ERR_UNAVAILABLE} if `signal` does not exist or the parameters are invalid.
+   * **Note:** In C#, `signal` must be in snake_case when referring to built-in Godot signals. Prefer using the names exposed in the `SignalName` class to avoid allocating a new {@link StringName} on each call.
+   */
   emit_signal<const N extends string, A extends any[]>(
   this: Record<N, Signal<A>>,
   signal: N,
@@ -152,7 +167,11 @@ declare class GodotObject {
    * **Note:** This ID is only useful during the current session. It won't correspond to a similar object if the ID is sent over a network, or loaded from a file at a later time.
    */
   get_instance_id(): int;
-  /** Returns the object's metadata for the given `name`. If the entry does not exist, returns `default_`. */
+  /**
+   * Returns the object's metadata value for the given entry `name`. If the entry does not exist, returns `default`. If `default` is `null`, an error is also generated.
+   * **Note:** A metadata's name must be a valid identifier as per {@link StringName.is_valid_identifier} method.
+   * **Note:** Metadata that has a name starting with an underscore (`_`) is considered editor-only. Editor-only metadata is not displayed in the Inspector and should not be edited, although it can still be found by this method.
+   */
   get_meta<T = unknown>(name: string, default_?: T): T;
   /** Returns the object's metadata entry names as an {@link Array} of {@link StringName}s. */
   get_meta_list(): unknown;

@@ -3706,7 +3706,11 @@ declare interface ProjectSettings {
    * **Note:** Setting `"usage"` for the property is not supported. Use {@link set_as_basic}, {@link set_restart_if_changed}, and {@link set_as_internal} to modify usage flags.
    */
   add_property_info(hint: Dictionary): void;
+  /**
+   * Checks if any settings with the prefix `setting_prefix` exist in the set of changed settings. See also {@link get_changed_settings}.
+   */
   check_changed_settings_in_group(setting_prefix: string): boolean;
+  /** Clears the whole configuration (not recommended, may break things). */
   clear<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T): void;
   clear(name: string): void;
   /**
@@ -3723,12 +3727,25 @@ declare interface ProjectSettings {
    * **Note:** Both the script and the icon paths are local to the project filesystem, i.e. they start with `res://`.
    */
   get_global_class_list(): Dictionary;
+  /** Returns the order of a configuration value (influences when saved to the config file). */
   get_order<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T): int;
   get_order(name: string): int;
+  /**
+   * Returns the value of the setting identified by `name`. If the setting doesn't exist and `default_value` is specified, the value of `default_value` is returned. Otherwise, `null` is returned.
+   * **Note:** This method doesn't take potential feature overrides into account automatically. Use {@link get_setting_with_override} to handle seamlessly.
+   * See also {@link has_setting} to check whether a setting exists.
+   */
   get_setting<const T extends keyof ProjectSettings & `${string}/${string}`, D>(name: T, default_value?: ProjectSettings[T]): ProjectSettings[T];
   get_setting(name: string, default_value?: unknown): unknown;
+  /**
+   * Similar to {@link get_setting}, but applies feature tag overrides if any exists and is valid.
+   * **Example:** If the setting override `"application/config/name.windows"` exists, and the following code is executed on a *Windows* operating system, the overridden setting is printed instead:
+   */
   get_setting_with_override<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T): ProjectSettings[T];
   get_setting_with_override(name: string): unknown;
+  /**
+   * Similar to {@link get_setting_with_override}, but applies feature tag overrides instead of current OS features.
+   */
   get_setting_with_override_and_custom_features<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, features: PackedStringArray): ProjectSettings[T];
   get_setting_with_override_and_custom_features(name: string, features: PackedStringArray): unknown;
   /**
@@ -3736,6 +3753,10 @@ declare interface ProjectSettings {
    * **Note:** {@link globalize_path} with `res://` will not work in an exported project. Instead, prepend the executable's base directory to the path when running from an exported project:
    */
   globalize_path(path: string): string;
+  /**
+   * Returns `true` if a configuration value is present.
+   * **Note:** In order to be be detected, custom settings have to be either defined with {@link set_setting}, or exist in the `project.godot` file. This is especially relevant when using {@link set_initial_value}.
+   */
   has_setting<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T): boolean;
   has_setting(name: string): boolean;
   /**
@@ -3758,16 +3779,35 @@ declare interface ProjectSettings {
    * Saves the configuration to a custom file. The file extension must be `.godot` (to save in text-based {@link ConfigFile} format) or `.binary` (to save in binary format). You can also save `override.cfg` file, which is also text, but can be used in exported projects unlike other formats.
    */
   save_custom(file: string): int;
+  /**
+   * Defines if the specified setting is considered basic or advanced. Basic settings will always be shown in the project settings. Advanced settings will only be shown if the user enables the "Advanced Settings" option.
+   */
   set_as_basic<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, basic: boolean): void;
   set_as_basic(name: string, basic: boolean): void;
+  /**
+   * Defines if the specified setting is considered internal. An internal setting won't show up in the Project Settings dialog. This is mostly useful for addons that need to store their own internal settings without exposing them directly to the user.
+   */
   set_as_internal<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, internal: boolean): void;
   set_as_internal(name: string, internal: boolean): void;
+  /**
+   * Sets the specified setting's initial value. This is the value the setting reverts to. The setting should already exist before calling this method. Note that project settings equal to their default value are not saved, so your code needs to account for that.
+   * If you have a project setting defined by an {@link EditorPlugin}, but want to use it in a running project, you will need a similar code at runtime.
+   */
   set_initial_value<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, value: unknown): void;
   set_initial_value(name: string, value: unknown): void;
+  /** Sets the order of a configuration value (influences when saved to the config file). */
   set_order<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, position: int): void;
   set_order(name: string, position: int): void;
+  /**
+   * Sets whether a setting requires restarting the editor to properly take effect.
+   * **Note:** This is just a hint to display to the user that the editor must be restarted for changes to take effect. Enabling {@link set_restart_if_changed} does *not* delay the setting being set when changed.
+   */
   set_restart_if_changed<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, restart: boolean): void;
   set_restart_if_changed(name: string, restart: boolean): void;
+  /**
+   * Sets the value of a setting.
+   * This can also be used to erase custom project settings. To do this change the setting value to `null`.
+   */
   set_setting<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, value: unknown): void;
   set_setting(name: string, value: unknown): void;
 

@@ -257,7 +257,7 @@ declare class Node extends GodotObject {
    * **Note:** For nodes with a {@link Script} attached, if {@link Object._init} has been defined with required parameters, the duplicated node will not have a {@link Script}.
    * **Note:** By default, this method will duplicate only properties marked for serialization (i.e. using {@link @GlobalScope.PROPERTY_USAGE_STORAGE}, or in GDScript, ). If you want to duplicate all properties, use {@link DUPLICATE_INTERNAL_STATE}.
    */
-  duplicate(flags?: int): Node;
+  duplicate(flags?: int): this;
   /**
    * Finds the first descendant of this node whose {@link name} matches `pattern`, returning `null` if no match is found. The matching is done against node names, *not* their paths, through {@link String.match}. As such, it is case-sensitive, `"*"` matches zero or more characters, and `"?"` matches any single character.
    * If `recursive` is `false`, only this node's direct children are checked. Nodes are checked in tree order, so this node's first direct child is checked first, then its own direct children, etc., before moving to the second direct child, and so on. Internal children are also included in the search (see `internal` parameter in {@link add_child}).
@@ -320,8 +320,25 @@ declare class Node extends GodotObject {
    * Returns the peer ID of the multiplayer authority for this node. See {@link set_multiplayer_authority}.
    */
   get_multiplayer_authority(): int;
-  /** Fetches a node by {@link NodePath}. The path can be absolute or relative. */
-  get_node(path: string): Node;
+  /**
+   * Fetches a node. The {@link NodePath} can either be a relative path (from this node), or an absolute path (from the {@link SceneTree.root}) to a node. If `path` does not point to a valid node, generates an error and returns `null`. Attempts to access methods on the return value will result in an *"Attempt to call <method> on a null instance."* error.
+   * **Note:** Fetching by absolute path only works when the node is inside the scene tree (see {@link is_inside_tree}).
+   * **Example:** Assume this method is called from the Character node, inside the following tree:
+   * [codeblock lang=text]
+   * ┖╴root
+   * ┠╴Character (you are here!)
+   * ┃  ┠╴Sword
+   * ┃  ┖╴Backpack
+   * ┃     ┖╴Dagger
+   * ┠╴MyGame
+   * ┖╴Swamp
+   * ┠╴Alligator
+   * ┠╴Mosquito
+   * ┖╴Goblin
+   * [/codeblock]
+   * The following calls will return a valid node:
+   */
+  get_node<T extends Node = Node>(path: string): T;
   /**
    * Fetches a node and its most nested resource as specified by the {@link NodePath}'s subname. Returns an {@link Array} of size `3` where:
    * - Element `0` is the {@link Node}, or `null` if not found;
@@ -330,8 +347,10 @@ declare class Node extends GodotObject {
    * **Example:** Assume that the child's {@link Sprite2D.texture} has been assigned an {@link AtlasTexture}:
    */
   get_node_and_resource(path: string): Array<unknown>;
-  /** Fetches a node by {@link NodePath}. Returns `null` if the path does not point to a valid node. */
-  get_node_or_null(path: string): Node | null;
+  /**
+   * Fetches a node by {@link NodePath}. Similar to {@link get_node}, but does not generate an error if `path` does not point to a valid node.
+   */
+  get_node_or_null<T extends Node = Node>(path: string): T | null;
   /**
    * Returns a {@link Dictionary} mapping method names to their RPC configuration defined for this node using {@link rpc_config}.
    * **Note:** This method only returns the RPC configuration assigned via {@link rpc_config}. See {@link Script.get_rpc_config} to retrieve the RPCs defined by the {@link Script}.
@@ -343,7 +362,7 @@ declare class Node extends GodotObject {
    */
   static get_orphan_node_ids(): unknown;
   /** Returns this node's parent node, or `null` if the node doesn't have a parent. */
-  get_parent(): Node;
+  get_parent<T extends Node = Node>(): T;
   /**
    * Returns the node's absolute path, relative to the {@link SceneTree.root}. If the node is not inside the scene tree, this method fails and returns an empty {@link NodePath}.
    */

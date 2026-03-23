@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /**
- * An abstraction of a serialized scene.
+ * Override: PackedScene — generic type parameter for root node type.
  * @typeParam T - The type of the root node/script. Inferred from `GodotResources` when using `load()`/`preload()`.
  */
 declare class PackedScene<T extends Node = Node> extends Resource {
@@ -11,8 +11,8 @@ declare class PackedScene<T extends Node = Node> extends Resource {
   /** Returns the {@link SceneState} representing the scene file contents. */
   get_state(): SceneState;
   /**
-  * Instantiates the scene's node hierarchy. Triggers child scene instantiation(s).
-  */
+   * Instantiates the scene's node hierarchy. Triggers child scene instantiation(s). Triggers a {@link Node.NOTIFICATION_SCENE_INSTANTIATED} notification on the root node.
+   */
   instantiate(edit_state?: int): T;
   /**
    * Packs the `path` node, and all owned sub-nodes, into this {@link PackedScene}. Any existing data will be cleared. See {@link Node.owner}.
