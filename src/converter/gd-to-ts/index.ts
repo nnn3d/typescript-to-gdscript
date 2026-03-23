@@ -1022,41 +1022,166 @@ function emitMatchStatement(
   depth: number,
 ): string {
   const indent = '  '.repeat(depth);
+  const i1 = indent + '  '; // cases array indent
+  const i2 = indent + '    '; // case object indent
+  const i3 = indent + '      '; // do() body indent
   const value = node.childForFieldName('value');
   const bodyNode = node.childForFieldName('body');
 
   const valueStr = value ? emitExpr(value, ctx) : '';
-  let result = `${indent}switch (${valueStr}) {\n`;
+  let result = `${indent}gd.match(${valueStr}, [\n`;
 
   if (bodyNode) {
     for (const section of bodyNode.namedChildren) {
-      if (isGDNodeType(section, 'pattern_section')) {
-        const body = section.childForFieldName('body');
-        // Patterns are all named children before 'body'
-        const patterns = section.namedChildren.filter(
-          (c) => !isGDNodeType(c, 'body'),
-        );
-        const isDefault = patterns.length === 1 && patterns[0]?.text === '_';
+      if (!isGDNodeType(section, 'pattern_section')) continue;
 
-        if (isDefault) {
-          result += `${indent}  default: {\n`;
-        } else {
-          const patternStr = patterns.map((p) => emitExpr(p, ctx)).join(', ');
-          result += `${indent}  case ${patternStr}: {\n`;
-        }
+      const body = section.childForFieldName('body');
+      // Patterns are all named children except body and pattern_guard
+      const patterns = section.namedChildren.filter(
+        (c) => !isGDNodeType(c, 'body') && !isGDNodeType(c, 'pattern_guard'),
+      );
+      const guard = section.namedChildren.find((c) =>
+        isGDNodeType(c, 'pattern_guard'),
+      );
 
-        if (body) {
-          result += emitBody(body, ctx, depth + 2);
-          result += '\n';
-        }
-        result += `${indent}    break;\n`;
-        result += `${indent}  }\n`;
+      // Collect all pattern_binding names from all patterns
+      const bindings: string[] = [];
+      for (const p of patterns) {
+        collectBindings(p, bindings);
       }
+
+      const hasBindings = bindings.length > 0;
+      const hasGuard = !!guard;
+      const isMultiPattern =
+        patterns.length > 1 && !hasBindings && !hasGuard;
+
+      // Add pattern bindings to local scope so they don't get this. prefix
+      const savedLocals = new Set(ctx.localVars);
+      for (const b of bindings) ctx.localVars.add(b);
+
+      // Emit do() body
+      const bodyStr = body ? emitBody(body, ctx, depth + 3) : '';
+      const doBlock = `do() {\n${bodyStr}\n${i2}}`;
+
+      if (isMultiPattern) {
+        // Multiple patterns: { matchMany: [...], do() { ... } }
+        const patternStrs = patterns.map((p) => emitMatchPattern(p, ctx));
+        result += `${i1}{\n`;
+        result += `${i2}matchMany: [${patternStrs.join(', ')}],\n`;
+        result += `${i2}${doBlock},\n`;
+        result += `${i1}},\n`;
+      } else if (hasBindings || hasGuard) {
+        // Arrow function: (bindings...) => ({ match: ..., when?: ..., do() { ... } })
+        const patternStr = emitMatchPattern(patterns[0]!, ctx);
+        result += `${i1}(${bindings.join(', ')}) => ({\n`;
+        result += `${i2}match: ${patternStr},\n`;
+        if (hasGuard) {
+          const guardExpr = guard!.namedChildren[0];
+          const guardStr = guardExpr ? emitExpr(guardExpr, ctx) : 'true';
+          result += `${i2}when: ${guardStr},\n`;
+        }
+        result += `${i2}${doBlock},\n`;
+        result += `${i1}}),\n`;
+      } else {
+        // Simple object: { match: ..., do() { ... } }
+        const pattern = patterns[0];
+        const patternStr = pattern
+          ? emitMatchPattern(pattern, ctx)
+          : 'undefined';
+        result += `${i1}{\n`;
+        result += `${i2}match: ${patternStr},\n`;
+        result += `${i2}${doBlock},\n`;
+        result += `${i1}},\n`;
+      }
+
+      // Restore local scope
+      ctx.localVars = savedLocals;
     }
   }
 
-  result += `${indent}}`;
+  result += `${indent}]);`;
   return result;
+}
+
+/** Collect all pattern_binding identifier names from a pattern tree */
+function collectBindings(node: GDNode, bindings: string[]): void {
+  if (isGDNodeType(node, 'pattern_binding')) {
+    const ident = node.namedChildren[0];
+    if (ident) bindings.push(ident.text);
+    return;
+  }
+  for (const child of node.namedChildren) {
+    collectBindings(child, bindings);
+  }
+}
+
+/** Emit a match pattern as a TypeScript expression for use inside gd.match() */
+function emitMatchPattern(node: GDNode, ctx: GdToTsContext): string {
+  // Wildcard: _ → undefined
+  if (isGDNodeType(node, 'identifier') && node.text === '_') {
+    return 'undefined';
+  }
+
+  // Binding: var name → just the name (it becomes an arrow param)
+  if (isGDNodeType(node, 'pattern_binding')) {
+    const ident = node.namedChildren[0];
+    return ident ? ident.text : 'undefined';
+  }
+
+  // Array pattern: [elem1, elem2, ..]
+  if (isGDNodeType(node, 'array')) {
+    const elements: string[] = [];
+    let hasOpenEnding = false;
+    for (const child of node.namedChildren) {
+      if (isGDNodeType(child, 'pattern_open_ending')) {
+        hasOpenEnding = true;
+        continue;
+      }
+      elements.push(emitMatchPattern(child, ctx));
+    }
+    if (hasOpenEnding) {
+      return `[${elements.join(', ')}, ...[]]`;
+    }
+    return `[${elements.join(', ')}]`;
+  }
+
+  // Dictionary pattern: {key: value, ..} or {key1, key2}
+  if (isGDNodeType(node, 'dictionary')) {
+    const entries: string[] = [];
+    let hasOpenEnding = false;
+    for (const child of node.namedChildren) {
+      if (isGDNodeType(child, 'pattern_open_ending')) {
+        hasOpenEnding = true;
+        continue;
+      }
+      if (isGDNodeType(child, 'pair')) {
+        const left = child.childForFieldName('left');
+        const value = child.childForFieldName('value');
+        // Key: strip quotes for object key
+        let key: string;
+        if (left && isGDNodeType(left, 'string')) {
+          key = left.text.slice(1, -1); // remove quotes
+        } else {
+          key = left ? emitExpr(left, ctx) : '';
+        }
+        // Value: may be a pattern_binding or regular value
+        const valStr = value ? emitMatchPattern(value, ctx) : 'undefined';
+        entries.push(`${key}: ${valStr}`);
+      } else if (isGDNodeType(child, 'string')) {
+        // Bare string in dict like {"name", "age"} → name: undefined
+        const key = child.text.slice(1, -1);
+        entries.push(`${key}: undefined`);
+      }
+    }
+    const inner = entries.join(', ');
+    if (hasOpenEnding) {
+      return `{ ${inner}, ...{} }`;
+    }
+    return `{ ${inner} }`;
+  }
+
+  // Everything else: use regular expression emitter
+  return emitExpr(node, ctx);
 }
 
 // ─── Assignment ───────────────────────────────────────────────

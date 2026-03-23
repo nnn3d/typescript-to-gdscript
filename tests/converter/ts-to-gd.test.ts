@@ -72,10 +72,31 @@ describe('TS to GD: Fixture-based tests', () => {
         const actual = actualLines[i] ?? '<missing>';
         const expected = expectedLines[i] ?? '<missing>';
         if (actual !== expected) {
+          const contextStart = Math.max(0, i - 2);
+          const contextEnd = Math.min(
+            Math.max(actualLines.length, expectedLines.length),
+            i + 10,
+          );
+          const expectedContext = expectedLines
+            .slice(contextStart, contextEnd)
+            .map(
+              (l, j) =>
+                `  ${j + contextStart === i ? '>' : ' '} ${j + contextStart + 1}| ${l}`,
+            )
+            .join('\n');
+          const actualContext = actualLines
+            .slice(contextStart, contextEnd)
+            .map(
+              (l, j) =>
+                `  ${j + contextStart === i ? '>' : ' '} ${j + contextStart + 1}| ${l}`,
+            )
+            .join('\n');
           expect.fail(
             `Line ${i + 1} mismatch in ${fixtureName}:\n` +
               `  Expected: ${JSON.stringify(expected)}\n` +
-              `  Actual:   ${JSON.stringify(actual)}`,
+              `  Actual:   ${JSON.stringify(actual)}\n\n` +
+              `  Expected context:\n${expectedContext}\n\n` +
+              `  Actual context:\n${actualContext}`,
           );
         }
       }

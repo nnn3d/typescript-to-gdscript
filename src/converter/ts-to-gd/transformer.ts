@@ -488,11 +488,15 @@ export class TsToGdTransformer {
     if (ts.isVariableStatement(node)) {
       this.visitVariableStatement(node);
     } else if (ts.isExpressionStatement(node)) {
-      this.emitter.writeLine(
-        this.emitExpression(node.expression),
-        pos.line,
-        pos.col,
-      );
+      if (this.isGdMatchCall(node.expression)) {
+        this.visitGdMatchStatement(node.expression as ts.CallExpression);
+      } else {
+        this.emitter.writeLine(
+          this.emitExpression(node.expression),
+          pos.line,
+          pos.col,
+        );
+      }
     } else if (ts.isReturnStatement(node)) {
       const expr = node.expression
         ? ` ${this.emitExpression(node.expression)}`
@@ -744,6 +748,226 @@ export class TsToGdTransformer {
     }
 
     this.emitter.dedent();
+  }
+
+  // ─── gd.match() → match ─────────────────────────────────────
+
+  private isGdMatchCall(node: ts.Expression): boolean {
+    if (!ts.isCallExpression(node)) return false;
+    if (!ts.isPropertyAccessExpression(node.expression)) return false;
+    const obj = node.expression.expression;
+    return (
+      ts.isIdentifier(obj) &&
+      obj.text === 'gd' &&
+      node.expression.name.text === 'match'
+    );
+  }
+
+  private visitGdMatchStatement(node: ts.CallExpression): void {
+    if (node.arguments.length < 2) return;
+    const pos = this.getLineAndCol(node);
+    const valueExpr = node.arguments[0]!;
+    const casesExpr = node.arguments[1]!;
+
+    this.emitter.writeLine(
+      `match ${this.emitExpression(valueExpr)}:`,
+      pos.line,
+      pos.col,
+    );
+    this.emitter.indent();
+
+    if (ts.isArrayLiteralExpression(casesExpr)) {
+      for (const caseElement of casesExpr.elements) {
+        if (ts.isObjectLiteralExpression(caseElement)) {
+          this.emitGdMatchCase(caseElement);
+        } else if (ts.isArrowFunction(caseElement)) {
+          this.emitGdMatchArrowCase(caseElement);
+        } else if (ts.isParenthesizedExpression(caseElement)) {
+          // (x, y) => ({...}) sometimes parenthesized
+          const inner = caseElement.expression;
+          if (ts.isArrowFunction(inner)) {
+            this.emitGdMatchArrowCase(inner);
+          }
+        }
+      }
+    }
+
+    this.emitter.dedent();
+  }
+
+  /** Emit a plain object case: { match: ..., do() { ... } } or { matchMany: [...], do() { ... } } */
+  private emitGdMatchCase(obj: ts.ObjectLiteralExpression): void {
+    let matchExpr: ts.Expression | undefined;
+    let matchManyExpr: ts.Expression | undefined;
+    let doBody: ts.Block | undefined;
+
+    for (const prop of obj.properties) {
+      if (!ts.isPropertyAssignment(prop) && !ts.isMethodDeclaration(prop))
+        continue;
+      const name = prop.name?.getText(this.ctx.sourceFile);
+      if (name === 'match' && ts.isPropertyAssignment(prop)) {
+        matchExpr = prop.initializer;
+      } else if (name === 'matchMany' && ts.isPropertyAssignment(prop)) {
+        matchManyExpr = prop.initializer;
+      } else if (name === 'do' && ts.isMethodDeclaration(prop) && prop.body) {
+        doBody = prop.body;
+      }
+    }
+
+    if (matchManyExpr && ts.isArrayLiteralExpression(matchManyExpr)) {
+      // Multiple patterns: 1, 2, 3:
+      const patterns = matchManyExpr.elements.map((e) =>
+        this.emitMatchPatternExpr(e),
+      );
+      this.emitter.writeLine(`${patterns.join(', ')}:`);
+    } else if (matchExpr) {
+      const pattern = this.emitMatchPatternExpr(matchExpr);
+      this.emitter.writeLine(`${pattern}:`);
+    } else {
+      return;
+    }
+
+    this.emitter.indent();
+    if (doBody) {
+      const stmts = doBody.statements;
+      if (stmts.length === 0) {
+        this.emitter.writeLine('pass');
+      } else {
+        for (const stmt of stmts) {
+          this.visitStatement(stmt);
+        }
+      }
+    } else {
+      this.emitter.writeLine('pass');
+    }
+    this.emitter.dedent();
+  }
+
+  /** Emit an arrow function case: (bindings...) => ({ match: ..., when?: ..., do() { ... } }) */
+  private emitGdMatchArrowCase(arrow: ts.ArrowFunction): void {
+    // Extract parameter names (bindings)
+    const bindings = arrow.parameters.map((p) =>
+      p.name.getText(this.ctx.sourceFile),
+    );
+
+    // Get the object literal from body
+    let obj: ts.ObjectLiteralExpression | undefined;
+    if (ts.isParenthesizedExpression(arrow.body)) {
+      const inner = arrow.body.expression;
+      if (ts.isObjectLiteralExpression(inner)) obj = inner;
+    } else if (ts.isObjectLiteralExpression(arrow.body)) {
+      obj = arrow.body;
+    }
+    if (!obj) return;
+
+    let matchExpr: ts.Expression | undefined;
+    let whenExpr: ts.Expression | undefined;
+    let doBody: ts.Block | undefined;
+
+    for (const prop of obj.properties) {
+      if (!ts.isPropertyAssignment(prop) && !ts.isMethodDeclaration(prop))
+        continue;
+      const name = prop.name?.getText(this.ctx.sourceFile);
+      if (name === 'match' && ts.isPropertyAssignment(prop)) {
+        matchExpr = prop.initializer;
+      } else if (name === 'when' && ts.isPropertyAssignment(prop)) {
+        whenExpr = prop.initializer;
+      } else if (name === 'do' && ts.isMethodDeclaration(prop) && prop.body) {
+        doBody = prop.body;
+      }
+    }
+
+    if (!matchExpr) return;
+
+    // Build the pattern, replacing binding names with `var name`
+    const bindingSet = new Set(bindings);
+    const pattern = this.emitMatchPatternExpr(matchExpr, bindingSet);
+
+    if (whenExpr) {
+      this.emitter.writeLine(
+        `${pattern} when ${this.emitExpression(whenExpr)}:`,
+      );
+    } else {
+      this.emitter.writeLine(`${pattern}:`);
+    }
+
+    this.emitter.indent();
+    if (doBody) {
+      const stmts = doBody.statements;
+      if (stmts.length === 0) {
+        this.emitter.writeLine('pass');
+      } else {
+        for (const stmt of stmts) {
+          this.visitStatement(stmt);
+        }
+      }
+    } else {
+      this.emitter.writeLine('pass');
+    }
+    this.emitter.dedent();
+  }
+
+  /**
+   * Convert a TS expression to a GDScript match pattern.
+   * @param bindings - Set of variable names that should be emitted as `var name` pattern bindings
+   */
+  private emitMatchPatternExpr(
+    node: ts.Expression,
+    bindings?: Set<string>,
+  ): string {
+    // undefined → _ (wildcard)
+    if (ts.isIdentifier(node) && node.text === 'undefined') {
+      return '_';
+    }
+
+    // Binding variable: becomes `var name`
+    if (bindings && ts.isIdentifier(node) && bindings.has(node.text)) {
+      return `var ${node.text}`;
+    }
+
+    // Array literal → array pattern
+    if (ts.isArrayLiteralExpression(node)) {
+      const elements: string[] = [];
+      for (const el of node.elements) {
+        // ...[] → .. (open ending)
+        if (ts.isSpreadElement(el)) {
+          elements.push('..');
+          continue;
+        }
+        elements.push(this.emitMatchPatternExpr(el, bindings));
+      }
+      return `[${elements.join(', ')}]`;
+    }
+
+    // Object literal → dictionary pattern
+    if (ts.isObjectLiteralExpression(node)) {
+      const entries: string[] = [];
+      let hasSpread = false;
+      for (const prop of node.properties) {
+        if (ts.isSpreadAssignment(prop)) {
+          // ...{} → ..
+          hasSpread = true;
+          continue;
+        }
+        if (ts.isPropertyAssignment(prop)) {
+          const key = prop.name.getText(this.ctx.sourceFile);
+          const val = this.emitMatchPatternExpr(prop.initializer, bindings);
+          if (val === '_') {
+            // { name: undefined } → just "name" as a key-only check
+            entries.push(`"${key}"`);
+          } else {
+            entries.push(`"${key}": ${val}`);
+          }
+        }
+      }
+      if (hasSpread) {
+        return `{${entries.join(', ')}, ..}`;
+      }
+      return `{${entries.join(', ')}}`;
+    }
+
+    // Everything else: regular expression
+    return this.emitExpression(node);
   }
 
   // ─── Statement Body Helper ──────────────────────────────────

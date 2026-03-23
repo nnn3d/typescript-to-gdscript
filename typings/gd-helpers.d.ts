@@ -109,6 +109,55 @@ declare const gd: {
    */
   readonly dict: (entries: [unknown, unknown][]) => Dictionary;
 
+  /**
+   * GDScript `match` statement. Transforms to `match value:` with pattern cases in GDScript.
+   *
+   * Cases can be:
+   * - **Simple match**: `{ match: value, do() { ... } }` → `value: ...`
+   * - **Wildcard**: `{ match: undefined, do() { ... } }` → `_: ...`
+   * - **Multiple patterns**: `{ matchMany: [1, 2, 3], do() { ... } }` → `1, 2, 3: ...`
+   * - **Binding with guard**: `(x, y) => ({ match: [x, y], when: y === x, do() { ... } })` → `[var x, var y] when y == x: ...`
+   * - **Array pattern**: `{ match: [1, ...[] ], do() { ... } }` → `[1, ..]: ...`
+   * - **Dict pattern**: `{ match: { key: "val", ...{} }, do() { ... } }` → `{"key": "val", ..}: ...`
+   *
+   * In array/dict patterns, `undefined` maps to `_` (wildcard).
+   * Arrow function parameters become `var name` pattern bindings.
+   * Spread `...[]` in arrays and `...{}` in dicts map to `..` (open-ended).
+   *
+   * @example
+   * gd.match(this.x, [
+   *   { match: 1, do() { print("one"); } },
+   *   { match: 2, do() { print("two"); } },
+   *   { match: undefined, do() { print("other"); } },
+   * ]);
+   * // becomes:
+   * // match x:
+   * //   1:
+   * //     print("one")
+   * //   2:
+   * //     print("two")
+   * //   _:
+   * //     print("other")
+   */
+  readonly match: (
+    value: unknown,
+    cases: Array<
+      | {
+        match: unknown;
+        do: () => void;
+      }
+      | {
+        matchMany: unknown[];
+        do: () => void;
+      }
+      | ((...args: unknown[]) => {
+        match: unknown;
+        when?: unknown;
+        do: () => void;
+      })
+    >,
+  ) => void;
+
   /** GDScript `as` operator. Transforms to `value as Type` in GDScript. */
   readonly as: <T, U>(
     value: T,
