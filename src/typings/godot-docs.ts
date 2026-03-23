@@ -1051,6 +1051,128 @@ function loadOverrides(overrideDir: string): Map<string, ParsedOverride> {
 }
 
 /**
+ * Loads global function overrides from `_globals.d.ts` in the override directory.
+ * Returns a map: function name → full declaration text (JSDoc + all overloads).
+ */
+function loadGlobalOverrides(overrideDir: string): Map<string, string> {
+  const result = new Map<string, string>();
+  const filePath = join(overrideDir, '_globals.d.ts');
+  if (!existsSync(filePath)) return result;
+
+  const content = readFileSync(filePath, 'utf-8');
+  const lines = content.split('\n');
+
+  let pendingJsDoc: string[] = [];
+  let currentName: string | null = null;
+  let currentLines: string[] = [];
+
+  function flush() {
+    if (currentName && currentLines.length > 0) {
+      result.set(currentName, currentLines.join('\n'));
+    }
+    currentName = null;
+    currentLines = [];
+  }
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+
+    // Accumulate JSDoc lines
+    if (trimmed.startsWith('/**') || trimmed.startsWith(' *') || trimmed.startsWith('*')) {
+      if (!currentName) {
+        // JSDoc before first function
+        pendingJsDoc.push(line);
+      } else if (trimmed.startsWith('/**')) {
+        // New JSDoc block — might be a different function
+        pendingJsDoc = [line];
+      } else {
+        pendingJsDoc.push(line);
+      }
+      continue;
+    }
+
+    // Match declare function lines
+    const fnMatch = trimmed.match(/^declare\s+function\s+(\w+)/);
+    if (fnMatch) {
+      const fnName = fnMatch[1]!;
+      if (fnName !== currentName) {
+        flush();
+        currentName = fnName;
+        currentLines = [...pendingJsDoc, line];
+      } else {
+        // Additional overload for same function
+        currentLines.push(...pendingJsDoc, line);
+      }
+      pendingJsDoc = [];
+      continue;
+    }
+
+    // Skip empty lines and comments between functions
+    if (trimmed === '' || trimmed.startsWith('//')) {
+      if (currentName) {
+        // Could be between overloads — keep pending
+      }
+      pendingJsDoc = [];
+      continue;
+    }
+  }
+  flush();
+
+  return result;
+}
+
+/**
+ * Applies global function overrides to generated `_globals.d.ts` content.
+ * For each overridden function, replaces the generated declaration (and its JSDoc)
+ * with the override text.
+ */
+function applyGlobalOverrides(
+  content: string,
+  globalOverrides: Map<string, string>,
+): string {
+  if (globalOverrides.size === 0) return content;
+
+  const lines = content.split('\n');
+  const result: string[] = [];
+  const replaced = new Set<string>();
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i]!;
+    const fnMatch = line.match(/^declare\s+function\s+(\w+)/);
+
+    if (fnMatch && globalOverrides.has(fnMatch[1]!)) {
+      const fnName = fnMatch[1]!;
+
+      // Remove preceding JSDoc comment (scan backwards in result)
+      while (
+        result.length > 0 &&
+        (result[result.length - 1]!.trimStart().startsWith('*') ||
+          result[result.length - 1]!.trimStart().startsWith('/**') ||
+          result[result.length - 1]!.trimStart().startsWith('*/'))
+      ) {
+        result.pop();
+      }
+
+      // Insert override text on first occurrence
+      if (!replaced.has(fnName)) {
+        result.push(globalOverrides.get(fnName)!);
+        replaced.add(fnName);
+      }
+
+      // Skip this line (and any subsequent overloads of the same function)
+      i++;
+      continue;
+    }
+
+    result.push(line);
+    i++;
+  }
+
+  return result.join('\n');
+}
+
+/**
  * Applies override to a generated declaration string.
  * Replaces the header and merges members: overridden members replace generated ones,
  * new members from the override are appended.
@@ -1186,6 +1308,9 @@ export function generateGodotDocsTypings(
   const overrides = options.overrideDir
     ? loadOverrides(options.overrideDir)
     : new Map();
+  const globalOverrides = options.overrideDir
+    ? loadGlobalOverrides(options.overrideDir)
+    : new Map();
 
   // Report unmatched overrides (class name not found in Godot docs)
   // Special overrides that don't map to a Godot class directly
@@ -1255,8 +1380,9 @@ export function generateGodotDocsTypings(
     const cls = classes.get(name)!;
 
     if (name === '@GlobalScope') {
-      const content =
-        header + '\n' + generateGlobalScopeDeclaration(cls) + '\n';
+      let globalsContent = generateGlobalScopeDeclaration(cls);
+      globalsContent = applyGlobalOverrides(globalsContent, globalOverrides);
+      const content = header + '\n' + globalsContent + '\n';
       const fileName = '_globals.d.ts';
       writeFileSync(join(classesDir, fileName), content);
       generatedFiles.push(fileName);

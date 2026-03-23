@@ -589,9 +589,9 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     lines.push(`declare module "${data.tsModulePath}" {`);
     lines.push(`  interface ${data.className} {`);
     lines.push(`    get_node<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P];`);
-    lines.push(`    get_node(path: string): Node;`);
+    lines.push(`    get_node<T extends Node = Node>(path: string): T;`);
     lines.push(`    get_node_or_null<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P] | null;`);
-    lines.push(`    get_node_or_null(path: string): Node | null;`);
+    lines.push(`    get_node_or_null<T extends Node = Node>(path: string): T | null;`);
     lines.push('  }');
     lines.push('}');
     lines.push('');
