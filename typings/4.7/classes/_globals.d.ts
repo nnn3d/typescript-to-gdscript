@@ -71,7 +71,7 @@ declare function bytes_to_var_with_objects(bytes: PackedByteArray): unknown;
  * See also {@link floor}, {@link round}, and {@link snapped}.
  * **Note:** For better type safety, use {@link ceilf}, {@link ceili}, {@link Vector2.ceil}, {@link Vector3.ceil}, or {@link Vector4.ceil}.
  */
-declare function ceil(x: unknown): unknown;
+declare function ceil<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T): T;
 /**
  * Rounds `x` upward (towards positive infinity), returning the smallest whole number that is not less than `x`.
  * A type-safe version of {@link ceil}, returning a [float].
@@ -87,7 +87,7 @@ declare function ceili(x: float): int;
  * **Note:** For better type safety, use {@link clampf}, {@link clampi}, {@link Vector2.clamp}, {@link Vector2i.clamp}, {@link Vector3.clamp}, {@link Vector3i.clamp}, {@link Vector4.clamp}, {@link Vector4i.clamp}, or {@link Color.clamp} (not currently supported by this method).
  * **Note:** When using this on vectors it will *not* perform component-wise clamping, and will pick `min` if `value < min` or `max` if `value > max`. To perform component-wise clamping use the methods listed above.
  */
-declare function clamp(value: unknown, min: unknown, max: unknown): unknown;
+declare function clamp<T extends int | float>(value: T, min: T, max: T): T;
 /** Clamps the `value`, returning a [float] not less than `min` and not more than `max`. */
 declare function clampf(value: float, min: float, max: float): float;
 /** Clamps the `value`, returning an [int] not less than `min` and not more than `max`. */
@@ -146,7 +146,7 @@ declare function exp(x: float): float;
  * See also {@link ceil}, {@link round}, and {@link snapped}.
  * **Note:** For better type safety, use {@link floorf}, {@link floori}, {@link Vector2.floor}, {@link Vector3.floor}, or {@link Vector4.floor}.
  */
-declare function floor(x: unknown): unknown;
+declare function floor<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T): T;
 /**
  * Rounds `x` downward (towards negative infinity), returning the largest whole number that is not more than `x`.
  * A type-safe version of {@link floor}, returning a [float].
@@ -230,7 +230,7 @@ declare function is_zero_approx(x: float): boolean;
  * See also {@link inverse_lerp} which performs the reverse of this operation. To perform eased interpolation with {@link lerp}, combine it with {@link ease} or {@link smoothstep}. See also {@link remap} to map a continuous series of values to another.
  * **Note:** For better type safety, use {@link lerpf}, {@link Vector2.lerp}, {@link Vector3.lerp}, {@link Vector4.lerp}, {@link Color.lerp}, {@link Quaternion.slerp}, {@link Basis.slerp}, {@link Transform2D.interpolate_with}, or {@link Transform3D.interpolate_with}.
  */
-declare function lerp(from_: unknown, to: unknown, weight: unknown): unknown;
+declare function lerp<T extends int | float | Vector2 | Vector3 | Vector4 | Color | Quaternion | Basis | Transform2D | Transform3D>(from_: T, to: T, weight: float): T;
 /**
  * Linearly interpolates between two angles (in radians) by a `weight` value between 0.0 and 1.0.
  * Similar to {@link lerp}, but interpolates correctly when the angles wrap around {@link @GDScript.TAU}. To perform eased interpolation with {@link lerp_angle}, combine it with {@link ease} or {@link smoothstep}.
@@ -257,7 +257,7 @@ declare function log(x: float): float;
  * Returns the maximum of the given numeric values. This function can take any number of arguments.
  * **Note:** When using this on vectors it will *not* perform component-wise maximum, and will pick the largest value when compared using `x < y`. To perform component-wise maximum, use {@link Vector2.max}, {@link Vector2i.max}, {@link Vector3.max}, {@link Vector3i.max}, {@link Vector4.max}, and {@link Vector4i.max}.
  */
-declare function max(...args: any[]): unknown;
+declare function max<T extends int | float>(...args: T[]): T;
 /** Returns the maximum of two [float] values. */
 declare function maxf(a: float, b: float): float;
 /** Returns the maximum of two [int] values. */
@@ -266,7 +266,7 @@ declare function maxi(a: int, b: int): int;
  * Returns the minimum of the given numeric values. This function can take any number of arguments.
  * **Note:** When using this on vectors it will *not* perform component-wise minimum, and will pick the smallest value when compared using `x < y`. To perform component-wise minimum, use {@link Vector2.min}, {@link Vector2i.min}, {@link Vector3.min}, {@link Vector3i.min}, {@link Vector4.min}, and {@link Vector4i.min}.
  */
-declare function min(...args: any[]): unknown;
+declare function min<T extends int | float>(...args: T[]): T;
 /** Returns the minimum of two [float] values. */
 declare function minf(a: float, b: float): float;
 /** Returns the minimum of two [int] values. */
@@ -393,7 +393,7 @@ declare function rotate_toward(from_: float, to: float, delta: float): float;
  * See also {@link floor}, {@link ceil}, and {@link snapped}.
  * **Note:** For better type safety, use {@link roundf}, {@link roundi}, {@link Vector2.round}, {@link Vector3.round}, or {@link Vector4.round}.
  */
-declare function round(x: unknown): unknown;
+declare function round<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T): T;
 /**
  * Rounds `x` to the nearest whole number, with halfway cases rounded away from 0.
  * A type-safe version of {@link round}, returning a [float].
@@ -413,7 +413,7 @@ declare function seed(base: int): void;
  * Supported types: [int], [float], {@link Vector2}, {@link Vector2i}, {@link Vector3}, {@link Vector3i}, {@link Vector4}, {@link Vector4i}.
  * **Note:** For better type safety, use {@link signf}, {@link signi}, {@link Vector2.sign}, {@link Vector2i.sign}, {@link Vector3.sign}, {@link Vector3i.sign}, {@link Vector4.sign}, or {@link Vector4i.sign}.
  */
-declare function sign(x: unknown): unknown;
+declare function sign<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T): T;
 /**
  * Returns `-1.0` if `x` is negative, `1.0` if `x` is positive, and `0.0` if `x` is zero. For `nan` values of `x` it returns 0.0.
  */
@@ -440,7 +440,7 @@ declare function smoothstep(from_: float, to: float, x: float): float;
  * See also {@link ceil}, {@link floor}, and {@link round}.
  * **Note:** For better type safety, use {@link snappedf}, {@link snappedi}, {@link Vector2.snapped}, {@link Vector2i.snapped}, {@link Vector3.snapped}, {@link Vector3i.snapped}, {@link Vector4.snapped}, or {@link Vector4i.snapped}.
  */
-declare function snapped(x: unknown, step: unknown): unknown;
+declare function snapped<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T, step: T): T;
 /**
  * Returns the multiple of `step` that is the closest to `x`. This can also be used to round a floating-point number to an arbitrary number of decimals.
  * A type-safe version of {@link snapped}, returning a [float].
@@ -515,12 +515,12 @@ declare function var_to_str(variable: unknown): string;
  * Returns a {@link WeakRef} instance holding a weak reference to `obj`. Returns an empty {@link WeakRef} instance if `obj` is `null`. Prints an error and returns `null` if `obj` is neither {@link Object}-derived nor `null`.
  * A weak reference to an object is not enough to keep the object alive: when the only remaining references to a referent are weak references, garbage collection is free to destroy the referent and reuse its memory for something else. However, until the object is actually destroyed the weak reference may return the object even if there are no strong references to it.
  */
-declare function weakref(obj: unknown): unknown;
+declare function weakref(obj: GodotObject): GodotWeakRef;
 /**
  * Wraps the {@link Variant} `value` between `min` and `max`. `min` is *inclusive* while `max` is *exclusive*. This can be used for creating loop-like behavior or infinite surfaces.
  * Variant types [int] and [float] are supported. If any of the arguments is [float], this function returns a [float], otherwise it returns an [int].
  */
-declare function wrap(value: unknown, min: unknown, max: unknown): unknown;
+declare function wrap<T extends int | float>(value: T, min: T, max: T): T;
 /**
  * Wraps the float `value` between `min` and `max`. `min` is *inclusive* while `max` is *exclusive*. This can be used for creating loop-like behavior or infinite surfaces.
  * **Note:** If `min` is `0`, this is equivalent to {@link fposmod}, so prefer using that instead. {@link wrapf} is more flexible than using the {@link fposmod} approach by giving the user control over the minimum value.
