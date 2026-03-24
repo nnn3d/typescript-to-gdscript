@@ -331,16 +331,59 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
     );
   }
 
+  // Check for @abstract annotation at root level (sibling of extends/class_name)
+  let isAbstractClass = false;
+  // Track indices of @abstract annotation nodes at root level (to skip in second pass)
+  const rootAbstractAnnotationIndices = new Set<number>();
+  // Track indices of function_definition nodes that have a preceding @abstract annotation
+  const abstractFunctionIndices = new Set<number>();
+  // Track indices of class_definition nodes that have a preceding @abstract annotation
+  const abstractClassIndices = new Set<number>();
+
+  for (let i = 0; i < root.namedChildren.length; i++) {
+    const child = root.namedChildren[i]!;
+    if (
+      isGDNodeType(child, 'annotation') &&
+      child.text === '@abstract'
+    ) {
+      // Check what follows this annotation
+      const next = root.namedChildren[i + 1];
+      if (
+        next &&
+        (isGDNodeType(next, 'extends_statement') ||
+          isGDNodeType(next, 'class_name_statement'))
+      ) {
+        isAbstractClass = true;
+        rootAbstractAnnotationIndices.add(i);
+      } else if (next && isGDNodeType(next, 'function_definition')) {
+        abstractFunctionIndices.add(i + 1);
+        rootAbstractAnnotationIndices.add(i);
+      } else if (next && isGDNodeType(next, 'class_definition')) {
+        abstractClassIndices.add(i + 1);
+        rootAbstractAnnotationIndices.add(i);
+      }
+    }
+  }
+
   // Second pass: emit everything
   let lastWasFunction = false;
   let hasNonFunctionMembers = false;
 
-  for (const child of root.namedChildren) {
+  for (let ci = 0; ci < root.namedChildren.length; ci++) {
+    const child = root.namedChildren[ci]!;
     if (
       isGDNodeType(child, 'extends_statement') ||
       isGDNodeType(child, 'class_name_statement')
     ) {
       continue; // handled in class header
+    }
+
+    // Skip root-level @abstract annotations (handled via isAbstractClass / abstractFunctions)
+    if (
+      isGDNodeType(child, 'annotation') &&
+      rootAbstractAnnotationIndices.has(ci)
+    ) {
+      continue;
     }
 
     if (isGDNodeType(child, 'comment')) {
@@ -363,7 +406,8 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
     }
 
     if (isGDNodeType(child, 'function_definition')) {
-      memberLines.push(emitFunction(child, ctx));
+      const isAbstract = abstractFunctionIndices.has(ci);
+      memberLines.push(emitFunction(child, ctx, isAbstract));
       memberLines.push('');
       lastWasFunction = true;
       continue;
@@ -414,7 +458,8 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       if (hasNonFunctionMembers && !lastWasFunction) {
         memberLines.push('');
       }
-      memberLines.push(emitInnerClass(child, ctx));
+      const isAbstractInner = abstractClassIndices.has(ci);
+      memberLines.push(emitInnerClass(child, ctx, isAbstractInner));
       hasNonFunctionMembers = true;
       lastWasFunction = false;
       continue;
@@ -438,15 +483,20 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
   }
 
   const extendsClause = extendsClass ? ` extends ${extendsClass}` : '';
-  const classHeader = `export class ${className || '__CLASS__'}${extendsClause} {`;
+  const abstractKeyword = isAbstractClass ? 'abstract ' : '';
+  const classHeader = `export ${abstractKeyword}class ${className || '__CLASS__'}${extendsClause} {`;
   return [classHeader, ...memberLines, '}', ''].join('\n');
 }
 
 // ─── Inner Class ──────────────────────────────────────────────
 
-function emitInnerClass(node: GDNode, ctx: GdToTsContext): string {
+function emitInnerClass(node: GDNode, ctx: GdToTsContext, isAbstractFromParent = false): string {
   const nameNode = node.childForFieldName('name');
   const className = nameNode?.text ?? 'InnerClass';
+
+  // Check for @abstract annotation as child of class_definition, or passed from parent scope
+  const annotations = getAnnotations(node);
+  const isAbstractInner = isAbstractFromParent || annotations.some((ann) => ann.text === '@abstract');
 
   // Find extends
   let extendsClass = '';
@@ -545,7 +595,8 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext): string {
     .join('\n')
     .replace(/\n+$/, '');
 
-  return `  static ${className} = class${extendsClause} {\n${indentedMembers}\n  }`;
+  const abstractDecorator = isAbstractInner ? '  @abstract\n' : '';
+  return `${abstractDecorator}  static ${className} = class${extendsClause} {\n${indentedMembers}\n  }`;
 }
 
 // ─── Comments ─────────────────────────────────────────────────
@@ -747,11 +798,17 @@ function emitAnnotationAsDecorator(node: GDNode, ctx: GdToTsContext): string {
 
 // ─── Functions ────────────────────────────────────────────────
 
-function emitFunction(node: GDNode, ctx: GdToTsContext): string {
+function emitFunction(node: GDNode, ctx: GdToTsContext, isAbstract = false): string {
   const name = node.childForFieldName('name')?.text ?? 'unknown';
   const paramsNode = node.childForFieldName('parameters');
   const returnTypeNode = node.childForFieldName('return_type');
   const bodyNode = node.childForFieldName('body');
+
+  // Check for @abstract annotation as child (inner class context)
+  const annotations = getAnnotations(node);
+  const childAbstract = annotations.some(
+    (ann) => ann.text === '@abstract',
+  );
 
   // Create local scope for this function
   const savedLocals = ctx.localVars;
@@ -764,6 +821,27 @@ function emitFunction(node: GDNode, ctx: GdToTsContext): string {
 
   const params = paramsNode ? emitParams(paramsNode, ctx) : '';
   const returnType = returnTypeNode ? emitReturnType(returnTypeNode) : '';
+
+  // Root-level abstract (passed from emitSourceFile): native TS abstract keyword, no body
+  if (isAbstract) {
+    ctx.localVars = savedLocals;
+    ctx.localVarTypes = savedLocalTypes;
+    ctx.currentMethodName = savedMethodName;
+    return `  abstract ${name}(${params})${returnType};`;
+  }
+
+  // Child annotation @abstract (inner class): use @abstract decorator
+  if (childAbstract) {
+    const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
+    ctx.localVars = savedLocals;
+    ctx.localVarTypes = savedLocalTypes;
+    ctx.currentMethodName = savedMethodName;
+    if (body) {
+      return `  @abstract\n  ${name}(${params})${returnType} {\n${body}\n  }`;
+    }
+    return `  @abstract\n  ${name}(${params})${returnType} {\n  }`;
+  }
+
   const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
   ctx.localVars = savedLocals;
   ctx.localVarTypes = savedLocalTypes;

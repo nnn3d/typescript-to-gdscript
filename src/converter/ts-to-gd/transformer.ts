@@ -90,6 +90,14 @@ export class TsToGdTransformer {
   private visitClassDeclaration(node: ts.ClassDeclaration): void {
     const pos = this.getLineAndCol(node);
 
+    // abstract class → @abstract annotation before extends/class_name
+    const isAbstract = node.modifiers?.some(
+      (m) => m.kind === ts.SyntaxKind.AbstractKeyword,
+    );
+    if (isAbstract) {
+      this.emitter.writeLine('@abstract', pos.line, pos.col);
+    }
+
     // extends
     if (node.heritageClauses) {
       for (const clause of node.heritageClauses) {
@@ -121,6 +129,7 @@ export class TsToGdTransformer {
     const signals: ts.PropertyDeclaration[] = [];
     const enums: ts.PropertyDeclaration[] = [];
     const properties: ts.PropertyDeclaration[] = [];
+    const innerClasses: ts.PropertyDeclaration[] = [];
     const methods: ts.MethodDeclaration[] = [];
     const constructor_: ts.ConstructorDeclaration | undefined =
       node.members.find(ts.isConstructorDeclaration) as
@@ -133,6 +142,11 @@ export class TsToGdTransformer {
           signals.push(member);
         } else if (this.isEnumProperty(member)) {
           enums.push(member);
+        } else if (
+          member.initializer &&
+          ts.isClassExpression(member.initializer)
+        ) {
+          innerClasses.push(member);
         } else {
           properties.push(member);
         }
@@ -192,6 +206,20 @@ export class TsToGdTransformer {
       this.visitMethodDeclaration(methods[i]!);
       if (i < methods.length - 1) {
         this.emitter.writeEmptyLine();
+      }
+    }
+
+    // Emit inner classes after methods
+    if (innerClasses.length > 0) {
+      if (methods.length > 0 || constructor_ || properties.length > 0 || signals.length > 0 || enums.length > 0) {
+        this.emitter.writeEmptyLine();
+      }
+      for (let i = 0; i < innerClasses.length; i++) {
+        this.emitLeadingComments(innerClasses[i]!);
+        this.visitPropertyDeclaration(innerClasses[i]!);
+        if (i < innerClasses.length - 1) {
+          this.emitter.writeEmptyLine();
+        }
       }
     }
   }
@@ -345,6 +373,12 @@ export class TsToGdTransformer {
     const pos = this.getLineAndCol(node);
     const name = node.name.getText(this.ctx.sourceFile);
 
+    // Inner class: static Foo = class extends Bar { ... }
+    if (node.initializer && ts.isClassExpression(node.initializer)) {
+      this.visitInnerClassDeclaration(name, node.initializer, node);
+      return;
+    }
+
     // Check for decorators (@gd.export, @gd.onready, etc.)
     const decorators = this.getDecorators(node);
     for (const dec of decorators) {
@@ -395,6 +429,73 @@ export class TsToGdTransformer {
     }
   }
 
+  // ─── Inner Class ──────────────────────────────────────────────
+
+  private visitInnerClassDeclaration(
+    name: string,
+    classExpr: ts.ClassExpression,
+    property: ts.PropertyDeclaration,
+  ): void {
+    const pos = this.getLineAndCol(property);
+
+    // Emit decorators as annotations (e.g., @abstract)
+    const decorators = this.getDecorators(property);
+    for (const dec of decorators) {
+      this.emitter.writeLine(dec, pos.line, pos.col);
+    }
+
+    // Emit class header: class Name:  or  class Name extends Base:
+    let extendsClause = '';
+    if (classExpr.heritageClauses) {
+      for (const clause of classExpr.heritageClauses) {
+        if (
+          clause.token === ts.SyntaxKind.ExtendsKeyword &&
+          clause.types.length > 0
+        ) {
+          const baseType = clause.types[0]!;
+          extendsClause = ` extends ${baseType.expression.getText(this.ctx.sourceFile)}`;
+        }
+      }
+    }
+
+    this.emitter.writeLine(
+      `class ${name}${extendsClause}:`,
+      pos.line,
+      pos.col,
+    );
+
+    this.emitter.indent();
+
+    // Emit members
+    let hasMembers = false;
+    for (const member of classExpr.members) {
+      if (ts.isMethodDeclaration(member)) {
+        if (hasMembers) this.emitter.writeEmptyLine();
+        this.visitMethodDeclaration(member);
+        hasMembers = true;
+      } else if (ts.isPropertyDeclaration(member)) {
+        if (this.isSignalProperty(member)) {
+          this.visitSignalDeclaration(member);
+        } else if (this.isEnumProperty(member)) {
+          this.visitEnumDeclaration(member);
+        } else {
+          this.visitPropertyDeclaration(member);
+        }
+        hasMembers = true;
+      } else if (ts.isConstructorDeclaration(member)) {
+        if (hasMembers) this.emitter.writeEmptyLine();
+        this.visitConstructor(member);
+        hasMembers = true;
+      }
+    }
+
+    if (!hasMembers) {
+      this.emitter.writeLine('pass');
+    }
+
+    this.emitter.dedent();
+  }
+
   // ─── Constructor → _init ─────────────────────────────────────
 
   private visitConstructor(node: ts.ConstructorDeclaration): void {
@@ -425,6 +526,20 @@ export class TsToGdTransformer {
       this.ctx.sourceFile,
     );
     const returnAnnotation = returnType ? ` -> ${returnType}` : '';
+
+    // Check for decorators (including @abstract)
+    const decorators = this.getDecorators(node);
+    for (const dec of decorators) {
+      this.emitter.writeLine(dec, pos.line, pos.col);
+    }
+
+    // Abstract method → @abstract annotation + func with pass body
+    const isAbstract = node.modifiers?.some(
+      (m) => m.kind === ts.SyntaxKind.AbstractKeyword,
+    );
+    if (isAbstract) {
+      this.emitter.writeLine('@abstract', pos.line, pos.col);
+    }
 
     // Static (ignore async — GDScript doesn't have it)
     const isStatic = node.modifiers?.some(
