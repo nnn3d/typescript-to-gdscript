@@ -589,7 +589,7 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     lines.push(`declare module "${data.tsModulePath}" {`);
     lines.push(`  interface ${data.className} {`);
     lines.push(
-      `    get_node<P extends keyof ${nodesInterface}>(path: P): null extends ${nodesInterface}[P] ? type NonNullable<${nodesInterface}[P]> | Node : ${nodesInterface}[P];`,
+      `    get_node<P extends keyof ${nodesInterface}>(path: P): null extends ${nodesInterface}[P] ? NonNullable<${nodesInterface}[P]> | Node : ${nodesInterface}[P];`,
     );
     lines.push(`    get_node<T extends Node = Node>(path: string): T;`);
     lines.push(`    get_node_or_null<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P] | null;`);
