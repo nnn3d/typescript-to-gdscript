@@ -9,5 +9,9 @@ export class Comments extends Node {
     this.health = 50;
     /** Important value */
     this.speed = 10.0;
+    if (this.health > 0) {
+      // Comment with bad align
+      print("done");
+    }
   }
 }

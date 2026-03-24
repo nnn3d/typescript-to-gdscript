@@ -4,6 +4,52 @@ import { isGDNodeType } from '../../parser/gdscript/types.ts';
 import type { TransformResult, TransformDiagnostic } from '../common/index.ts';
 import type { GodotClassRegistry } from '../../typings/godot-registry.ts';
 
+/**
+ * Fix comment indentation so tree-sitter doesn't break block structure.
+ * In GDScript, comments don't affect block indentation. A comment at column 0
+ * inside an indented block shouldn't break the block. This function aligns
+ * such comments to the indentation of the next non-comment, non-empty line.
+ */
+function fixCommentIndentation(source: string): string {
+  const lines = source.split('\n');
+  const result: string[] = [];
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]!;
+    const trimmed = line.trimStart();
+
+    // Check if this is a comment line (# or ##)
+    if (trimmed.startsWith('#')) {
+      // Find the next non-empty, non-comment line
+      let nextIndent: string | null = null;
+      for (let j = i + 1; j < lines.length; j++) {
+        const nextTrimmed = lines[j]!.trimStart();
+        if (nextTrimmed === '' || nextTrimmed.startsWith('#')) continue;
+        // Get indentation of the next code line
+        nextIndent = lines[j]!.substring(
+          0,
+          lines[j]!.length - nextTrimmed.length,
+        );
+        break;
+      }
+
+      if (nextIndent !== null) {
+        // Get current comment indentation
+        const currentIndent = line.substring(0, line.length - trimmed.length);
+        // If comment has less indentation than the next code line, re-indent it
+        if (currentIndent.length < nextIndent.length) {
+          result.push(nextIndent + trimmed);
+          continue;
+        }
+      }
+    }
+
+    result.push(line);
+  }
+
+  return result.join('\n');
+}
+
 export interface GdToTsOptions {
   /** GDScript source code */
   source: string;
@@ -38,7 +84,7 @@ export interface UserClassInfo {
  */
 export function parseGdClassInfo(source: string): UserClassInfo | null {
   const parser = new GDScriptParser();
-  const root = parser.parse(source);
+  const root = parser.parse(fixCommentIndentation(source));
 
   let className = '';
   let extendsClass = '';
@@ -163,9 +209,10 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
   if (selfInfo) userClasses.set(selfInfo.name, selfInfo);
 
   const parser = new GDScriptParser();
-  const root = parser.parse(options.source);
+  const fixedSource = fixCommentIndentation(options.source);
+  const root = parser.parse(fixedSource);
   const ctx: GdToTsContext = {
-    source: options.source,
+    source: fixedSource,
     filePath: options.filePath,
     diagnostics: [],
     classMembers: new Set(),

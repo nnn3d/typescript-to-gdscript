@@ -12,3 +12,6 @@ func _ready():
 	health = 50
 	## Important value
 	speed = 10.0
+	if health > 0:
+# Comment with bad align
+  	print("done")
