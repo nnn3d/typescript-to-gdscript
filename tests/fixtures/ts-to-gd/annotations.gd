@@ -1,6 +1,7 @@
 extends Node2D
 class_name MyClass
 
+@export_group("group")
 @export
 var speed: float = 100.0
 @export

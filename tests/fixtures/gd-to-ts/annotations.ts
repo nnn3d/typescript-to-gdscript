@@ -1,4 +1,5 @@
 export class Annotations extends Node {
+  @export_group("group")
   @exports
   health: int = 100;
   @export_file()

@@ -1,4 +1,5 @@
 export class MyClass extends Node2D {
+  @export_group("group")
   @exports
   speed: float = 100.0;
 

@@ -415,6 +415,13 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
   // Second pass: emit everything
   let lastWasFunction = false;
   let hasNonFunctionMembers = false;
+  let pendingAnnotations: string[] = [];
+  const flushPendingAnnotations = () => {
+    for (const ann of pendingAnnotations) {
+      memberLines.push(ann);
+    }
+    pendingAnnotations = [];
+  };
 
   for (let ci = 0; ci < root.namedChildren.length; ci++) {
     const child = root.namedChildren[ci]!;
@@ -430,6 +437,12 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       isGDNodeType(child, 'annotation') &&
       rootAbstractAnnotationIndices.has(ci)
     ) {
+      continue;
+    }
+
+    // Standalone annotations (e.g. @export_group) — collect and prepend to next member
+    if (isGDNodeType(child, 'annotation')) {
+      pendingAnnotations.push(`  ${emitAnnotationAsDecorator(child, ctx)}`);
       continue;
     }
 
@@ -454,6 +467,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
 
     if (isGDNodeType(child, 'function_definition')) {
       const isAbstract = abstractFunctionIndices.has(ci);
+      flushPendingAnnotations();
       memberLines.push(emitFunction(child, ctx, isAbstract));
       memberLines.push('');
       lastWasFunction = true;
@@ -461,6 +475,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
     }
 
     if (isGDNodeType(child, 'constructor_definition')) {
+      flushPendingAnnotations();
       memberLines.push(emitConstructor(child, ctx));
       memberLines.push('');
       lastWasFunction = true;
@@ -472,6 +487,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       isGDNodeType(child, 'export_variable_statement') ||
       isGDNodeType(child, 'onready_variable_statement')
     ) {
+      flushPendingAnnotations();
       memberLines.push(emitClassVariable(child, ctx));
       hasNonFunctionMembers = true;
       lastWasFunction = false;
@@ -479,6 +495,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
     }
 
     if (isGDNodeType(child, 'const_statement')) {
+      flushPendingAnnotations();
       memberLines.push(emitConstStatement(child, ctx));
       hasNonFunctionMembers = true;
       lastWasFunction = false;
@@ -486,6 +503,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
     }
 
     if (isGDNodeType(child, 'signal_statement')) {
+      flushPendingAnnotations();
       memberLines.push(emitSignal(child, ctx));
       hasNonFunctionMembers = true;
       lastWasFunction = false;
@@ -493,6 +511,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
     }
 
     if (isGDNodeType(child, 'enum_definition')) {
+      flushPendingAnnotations();
       memberLines.push(emitEnum(child, ctx));
       hasNonFunctionMembers = true;
       lastWasFunction = false;
@@ -505,6 +524,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       if (hasNonFunctionMembers && !lastWasFunction) {
         memberLines.push('');
       }
+      flushPendingAnnotations();
       const isAbstractInner = abstractClassIndices.has(ci);
       memberLines.push(emitInnerClass(child, ctx, isAbstractInner));
       hasNonFunctionMembers = true;
