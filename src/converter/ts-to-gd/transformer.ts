@@ -644,7 +644,7 @@ export class TsToGdTransformer {
     } else {
       this.addDiagnostic(
         node,
-        'warning',
+        'error',
         `Unsupported statement: ${ts.SyntaxKind[node.kind]}`,
       );
     }
@@ -1281,7 +1281,7 @@ export class TsToGdTransformer {
     // Fallback — unsupported expression
     this.addDiagnostic(
       node,
-      'warning',
+      'error',
       `Unsupported expression: ${ts.SyntaxKind[node.kind]}`,
     );
     return node.getText(this.ctx.sourceFile);

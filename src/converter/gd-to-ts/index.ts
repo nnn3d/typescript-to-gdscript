@@ -514,7 +514,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
 
     ctx.diagnostics.push({
       message: `Unhandled top-level node: ${child.type}`,
-      severity: 'warning',
+      severity: 'error',
       file: ctx.filePath,
       line: child.startPosition.row + 1,
       column: child.startPosition.column,
@@ -1510,7 +1510,7 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
   // Fallback: return raw text with warning
   ctx.diagnostics.push({
     message: `Unhandled GDScript expression: ${node.type}`,
-    severity: 'warning',
+    severity: 'error',
     file: ctx.filePath,
     line: node.startPosition.row + 1,
     column: node.startPosition.column,

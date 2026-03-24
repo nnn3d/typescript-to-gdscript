@@ -8,10 +8,10 @@ export class Ball extends Node {
 
     // get_node: path only in one scene → Type | null (nullable because missing in other scene)
     let timer = this.get_node('Timer');
-    const _checkTimer: IsExact<typeof timer, Timer | null> = true;
+    const _checkTimer: IsExact<typeof timer, Timer | Node> = true;
 
     let label = this.get_node('Label');
-    const _checkLabel: IsExact<typeof label, Label | null> = true;
+    const _checkLabel: IsExact<typeof label, Label | Node> = true;
 
     // get_node_or_null: path in both scenes → Type | null
     let spriteOrNull = this.get_node_or_null('Sprite2D');

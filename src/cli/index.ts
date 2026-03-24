@@ -38,7 +38,15 @@ const program = new Command();
 program
   .name('ts2gd')
   .description('Convert TypeScript to GDScript and back')
-  .version('0.1.0');
+  .version('0.1.0')
+  .option('--debug', 'Show debug/info messages', false);
+
+/** Print a message only when --debug is enabled */
+function debugLog(message: string): void {
+  if (program.opts().debug) {
+    console.log(message);
+  }
+}
 
 /** Recursively find all .ts files (excluding .d.ts, node_modules, hidden dirs, and ignored patterns) */
 function findTsFiles(
@@ -151,7 +159,7 @@ function generateAllTypings(cfg: {
     ignore: cfg.ignore,
     projectFile: cfg.projectFile,
   });
-  console.log(`Generated: ${outputPath}`);
+  debugLog(`Generated: ${outputPath}`);
 }
 
 // ─── Convert TS -> GD ──────────────────────────────────────
@@ -192,8 +200,9 @@ program
       return;
     }
 
-    console.log(`Converting ${resolvedFiles.length} file(s)...`);
+    debugLog(`Converting ${resolvedFiles.length} file(s)...`);
 
+    let hasErrors = false;
     for (const filePath of resolvedFiles) {
       const result = convertTsToGd({
         filePath,
@@ -214,19 +223,22 @@ program
         );
       }
 
-      if (result.diagnostics.some((d) => d.severity === 'error')) continue;
+      if (result.diagnostics.some((d) => d.severity === 'error')) {
+        hasErrors = true;
+        continue;
+      }
 
       const relPath = relative(cfg.tsDir, filePath);
       const outputPath = resolve(cfg.gdDir, relPath.replace(/\.ts$/, '.gd'));
 
       mkdirSync(dirname(outputPath), { recursive: true });
       writeFileSync(outputPath, result.code);
-      console.log(`Written: ${outputPath}`);
+      debugLog(`Written: ${outputPath}`);
 
       if (result.sourceMap) {
         const mapPath = outputPath + '.map';
         writeFileSync(mapPath, result.sourceMap);
-        console.log(`Written: ${mapPath}`);
+        debugLog(`Written: ${mapPath}`);
       }
     }
 
@@ -235,6 +247,8 @@ program
       ...cfg,
       tsFiles: resolvedFiles,
     });
+
+    if (hasErrors) process.exit(1);
   });
 
 // ─── Convert GD -> TS ──────────────────────────────────────
@@ -276,7 +290,7 @@ program
       return;
     }
 
-    console.log(`Converting ${resolvedFiles.length} file(s)...`);
+    debugLog(`Converting ${resolvedFiles.length} file(s)...`);
 
     const registry = resolveRegistry({ registryPath: cfg.registryPath });
     const tsOutputFiles: string[] = [];
@@ -294,6 +308,7 @@ program
       filePath: f,
     }));
 
+    let hasErrors = false;
     for (const { source, filePath } of projectSources) {
       // Resolve signal handler types from .tscn connections
       const scriptResPath = `res://${relative(cfg.rootDir, filePath).replace(/\\/g, '/')}`;
@@ -315,12 +330,17 @@ program
         );
       }
 
+      if (result.diagnostics.some((d) => d.severity === 'error')) {
+        hasErrors = true;
+        continue;
+      }
+
       const relPath = relative(cfg.gdDir, filePath);
       const outputPath = resolve(cfg.tsDir, relPath.replace(/\.gd$/, '.ts'));
 
       mkdirSync(dirname(outputPath), { recursive: true });
       writeFileSync(outputPath, result.code);
-      console.log(`Written: ${outputPath}`);
+      debugLog(`Written: ${outputPath}`);
       tsOutputFiles.push(outputPath);
     }
 
@@ -329,6 +349,8 @@ program
       ...cfg,
       tsFiles: tsOutputFiles,
     });
+
+    if (hasErrors) process.exit(1);
   });
 
 // ─── Validate GD ─────────────────────────────────────────────
@@ -634,7 +656,7 @@ program
       ignore: cfg.ignore,
       projectFile: cfg.projectFile,
     });
-    console.log(`Generated: ${outputPath}`);
+    debugLog(`Generated: ${outputPath}`);
   });
 
 // ─── Lint ──────────────────────────────────────────────────
