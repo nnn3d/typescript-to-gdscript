@@ -1965,7 +1965,7 @@ declare function len(var_: unknown): int;
  * **Note:** If {@link ProjectSettings.editor/export/convert_text_resources_to_binary} is `true`, {@link @GDScript.load} will not be able to read converted files in an exported project. If you rely on run-time loading of files present within the PCK, set {@link ProjectSettings.editor/export/convert_text_resources_to_binary} to `false`.
  */
 declare function load<P extends keyof GodotResources>(path: P): GodotResources[P];
-declare function load(path: string): Resource;
+declare function load<T extends Resource = Resource>(path: string): T;
 /**
  * Returns an integer representing the Unicode code point of the given character `char`, which should be a string of length 1.
  * This is the inverse of {@link char}. See also {@link String.chr} and {@link String.unicode_at}.
@@ -1977,7 +1977,7 @@ declare function ord(char: string): int;
  * **Note:** {@link preload} is a keyword, not a function. So you cannot access it as a {@link Callable}.
  */
 declare function preload<P extends keyof GodotResources>(path: P): GodotResources[P];
-declare function preload(path: string): Resource;
+declare function preload<T extends Resource = Resource>(path: string): T;
 /**
  * Like {@link @GlobalScope.print}, but includes the current stack frame when running with the debugger turned on.
  * The output in the console may look like the following:

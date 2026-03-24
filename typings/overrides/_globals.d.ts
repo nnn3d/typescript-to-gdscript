@@ -13,14 +13,14 @@ declare function floor<T extends int | float | Vector2 | Vector2i | Vector3 | Ve
 declare function lerp<T extends int | float | Vector2 | Vector3 | Vector4 | Color | Quaternion | Basis | Transform2D | Transform3D>(from_: T, to: T, weight: float): T;
 
 declare function load<P extends keyof GodotResources>(path: P): GodotResources[P];
-declare function load(path: string): Resource;
+declare function load<T extends Resource = Resource>(path: string): T;
 
 declare function max<T extends int | float>(...args: T[]): T;
 
 declare function min<T extends int | float>(...args: T[]): T;
 
 declare function preload<P extends keyof GodotResources>(path: P): GodotResources[P];
-declare function preload(path: string): Resource;
+declare function preload<T extends Resource = Resource>(path: string): T;
 
 declare function range(end: int): Array<int>;
 declare function range(begin: int, end: int): Array<int>;
