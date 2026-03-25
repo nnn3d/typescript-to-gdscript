@@ -32,6 +32,7 @@ import {
   validateGdFiles,
   validateGdFilesSync,
 } from '../godot-validate/index.ts';
+import { tmpdir } from 'os';
 
 const program = new Command();
 
@@ -741,7 +742,7 @@ program
       if (!fileHasErrors && godotPath) {
         const relPath = relative(cfg.tsDir, filePath);
         const gdRelPath = relPath.replace(/\.ts$/, '.gd');
-        const gdAbsPath = resolve(projectRoot, gdRelPath);
+        const gdAbsPath = resolve(tmpdir(), 'tstogd', gdRelPath);
         const gdDir = dirname(gdAbsPath);
 
         try {

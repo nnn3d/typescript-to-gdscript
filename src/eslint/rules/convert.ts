@@ -1,5 +1,6 @@
 import { writeFileSync, mkdirSync, rmSync, existsSync } from 'fs';
 import { resolve, relative, dirname, join } from 'path';
+import { tmpdir } from 'os';
 import { convertTsToGd } from '../../converter/ts-to-gd/index.ts';
 import { validateGdFilesSync } from '../../godot-validate/index.ts';
 import { resolveConfig } from '../../config/index.ts';
@@ -155,7 +156,7 @@ function runGodotValidation(context: any, params: GodotValidationParams): void {
   // Create temp GD file inside the project root so Godot can find it via res://
   const relPath = relative(params.tsDirOrRootDir, params.tsFilePath);
   const gdRelPath = relPath.replace(/\.ts$/, '.gd');
-  const gdAbsPath = resolve(params.projectRoot, gdRelPath);
+  const gdAbsPath = resolve(tmpdir(), 'tstogd', gdRelPath);
   const gdDir = dirname(gdAbsPath);
 
   try {

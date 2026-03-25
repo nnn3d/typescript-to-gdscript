@@ -454,7 +454,10 @@ export function validateGdFilesSync(
 ): GodotValidateResult {
   // Check Godot availability
   try {
-    execFileSync(options.godotPath, ['--version'], { timeout: 10000 });
+    execFileSync(options.godotPath, ['--version'], {
+      timeout: 10000,
+      stdio: 'pipe',
+    });
   } catch {
     return {
       diagnostics: [
@@ -508,6 +511,7 @@ export function validateGdFilesSync(
         {
           timeout: 30000,
           cwd: options.projectRoot,
+          stdio: 'pipe',
         },
       );
     } catch (err: any) {
