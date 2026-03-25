@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3D physics body that is moved by a physics simulation. */
-declare class RigidBody3D extends PhysicsBody3D {
+declare class RigidBody3D<Tree extends object = any> extends PhysicsBody3D<Tree> {
   /**
    * Damps the body's rotation. By default, the body will use the {@link ProjectSettings.physics/3d/default_angular_damp} project setting or any value override set by an {@link Area3D} the body is in. Depending on {@link angular_damp_mode}, you can set {@link angular_damp} to be added to or to replace the body's damping value.
    * See {@link ProjectSettings.physics/3d/default_angular_damp} for more details about damping.

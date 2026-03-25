@@ -2,5 +2,5 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A horizontal slider that goes from left (min) to right (max). */
-declare class HSlider extends Slider {
+declare class HSlider<Tree extends object = any> extends Slider<Tree> {
 }

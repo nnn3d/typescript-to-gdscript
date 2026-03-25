@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Texture-based progress bar. Useful for loading screens and life or stamina bars. */
-declare class TextureProgressBar extends Range {
+declare class TextureProgressBar<Tree extends object = any> extends Range<Tree> {
   /** The fill direction. See {@link FillMode} for possible values. */
   fill_mode: int;
   /**

@@ -4,7 +4,7 @@
 /**
  * A {@link SkeletonModifier3D} to apply inverse kinematics to bone chains containing an arbitrary number of bones.
  */
-declare class ChainIK3D extends IKModifier3D {
+declare class ChainIK3D<Tree extends object = any> extends IKModifier3D<Tree> {
   /** Returns the end bone index of the bone chain. */
   get_end_bone(index: int): int;
   /**

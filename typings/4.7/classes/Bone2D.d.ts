@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A joint used with {@link Skeleton2D} to control and animate other nodes. */
-declare class Bone2D extends Node2D {
+declare class Bone2D<Tree extends object = any> extends Node2D<Tree> {
   /**
    * Rest transform of the bone. You can reset the node's transforms to this value using {@link apply_rest}.
    */

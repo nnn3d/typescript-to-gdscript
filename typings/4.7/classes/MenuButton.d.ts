@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A button that brings up a {@link PopupMenu} when clicked. */
-declare class MenuButton extends Button {
+declare class MenuButton<Tree extends object = any> extends Button<Tree> {
   /**
    * <member name="flat" type="bool" setter="set_flat" getter="is_flat" overrides="Button" default="true" />
    * <member name="focus_mode" type="int" setter="set_focus_mode" getter="get_focus_mode" overrides="Control" enum="Control.FocusMode" default="3" />

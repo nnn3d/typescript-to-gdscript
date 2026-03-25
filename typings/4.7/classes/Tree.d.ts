@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A control used to show a set of internal {@link TreeItem}s in a hierarchical structure. */
-declare class Tree extends Control {
+declare class Tree<Tree extends object = any> extends Control<Tree> {
   /** If `true`, the currently selected cell may be selected again. */
   allow_reselect: boolean;
   /** If `true`, a right mouse button click can select items. */

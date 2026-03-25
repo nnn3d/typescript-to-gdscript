@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Directional 2D light from a distance. */
-declare class DirectionalLight2D extends Light2D {
+declare class DirectionalLight2D<Tree extends object = any> extends Light2D<Tree> {
   /**
    * The height of the light. Used with 2D normal mapping. Ranges from 0 (parallel to the plane) to 1 (perpendicular to the plane).
    */

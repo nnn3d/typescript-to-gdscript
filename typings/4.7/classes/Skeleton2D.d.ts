@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** The parent of a hierarchy of {@link Bone2D}s, used to create a 2D skeletal animation. */
-declare class Skeleton2D extends Node2D {
+declare class Skeleton2D<Tree extends object = any> extends Node2D<Tree> {
   /**
    * Executes all the modifications on the {@link SkeletonModificationStack2D}, if the Skeleton2D has one assigned.
    */

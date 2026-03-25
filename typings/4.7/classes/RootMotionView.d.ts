@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Editor-only helper for setting up root motion in {@link AnimationMixer}. */
-declare class RootMotionView extends VisualInstance3D {
+declare class RootMotionView<Tree extends object = any> extends VisualInstance3D<Tree> {
   /** Path to an {@link AnimationMixer} node to use as a basis for root motion. */
   animation_path: string;
   /** The grid's cell size in 3D units. */

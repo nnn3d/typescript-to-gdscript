@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Manages toast notifications within the editor. */
-declare class EditorToaster extends HBoxContainer {
+declare class EditorToaster<Tree extends object = any> extends HBoxContainer<Tree> {
   /** Pushes a toast notification to the editor for display. */
   push_toast(message: string, severity: int, tooltip?: string): void;
 

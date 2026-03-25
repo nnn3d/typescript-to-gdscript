@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A CPU-based 3D particle emitter. */
-declare class CPUParticles3D extends GeometryInstance3D {
+declare class CPUParticles3D<Tree extends object = any> extends GeometryInstance3D<Tree> {
   /** Number of particles emitted in one emission cycle. */
   amount: int;
   /** Each particle's rotation will be animated along this {@link Curve}. Should be a unit {@link Curve}. */

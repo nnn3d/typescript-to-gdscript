@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D polyline that can optionally be textured. */
-declare class Line2D extends Node2D {
+declare class Line2D<Tree extends object = any> extends Node2D<Tree> {
   /**
    * If `true`, the polyline's border will be anti-aliased.
    * **Note:** {@link Line2D} is not accelerated by batching when being anti-aliased.

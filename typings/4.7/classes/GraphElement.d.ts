@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A container that represents a basic element that can be placed inside a {@link GraphEdit} control. */
-declare class GraphElement extends Container {
+declare class GraphElement<Tree extends object = any> extends Container<Tree> {
   /** If `true`, the user can drag the GraphElement. */
   draggable: boolean;
   /** The offset of the GraphElement, relative to the scroll offset of the {@link GraphEdit}. */

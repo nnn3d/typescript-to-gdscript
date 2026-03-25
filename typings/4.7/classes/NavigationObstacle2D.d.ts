@@ -4,7 +4,7 @@
 /**
  * 2D obstacle used to affect navigation mesh baking or constrain velocities of avoidance controlled agents.
  */
-declare class NavigationObstacle2D extends Node2D {
+declare class NavigationObstacle2D<Tree extends object = any> extends Node2D<Tree> {
   /**
    * If enabled and parsed in a navigation mesh baking process the obstacle will discard source geometry inside its {@link vertices} defined shape.
    */

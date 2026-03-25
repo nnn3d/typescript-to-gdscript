@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Abstract base class for all 2D physics joints. */
-declare class Joint2D extends Node2D {
+declare class Joint2D<Tree extends object = any> extends Node2D<Tree> {
   /**
    * When {@link node_a} and {@link node_b} move in different directions the {@link bias} controls how fast the joint pulls them back to their original position. The lower the {@link bias} the more the two bodies can pull on the joint.
    * When set to `0`, the default value from {@link ProjectSettings.physics/2d/solver/default_constraint_bias} is used.

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A container that can be expanded/collapsed. */
-declare class FoldableContainer extends Container {
+declare class FoldableContainer<Tree extends object = any> extends Container<Tree> {
   /**
    * <member name="foldable_group" type="FoldableGroup" setter="set_foldable_group" getter="get_foldable_group">
    * The {@link FoldableGroup} associated with the container. When multiple {@link FoldableContainer} nodes share the same group, only one of them is allowed to be unfolded.

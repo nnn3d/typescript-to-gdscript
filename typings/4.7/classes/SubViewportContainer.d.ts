@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A container used for displaying the contents of a {@link SubViewport}. */
-declare class SubViewportContainer extends Container {
+declare class SubViewportContainer<Tree extends object = any> extends Container<Tree> {
   /**
    * <member name="mouse_target" type="bool" setter="set_mouse_target" getter="is_mouse_target_enabled" default="false">
    * Configure, if either the {@link SubViewportContainer} or alternatively the {@link Control} nodes of its {@link SubViewport} children should be available as targets of mouse-related functionalities, like identifying the drop target in drag-and-drop operations or cursor shape of hovered {@link Control} node.

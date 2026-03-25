@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Base class for all GUI controls. Adapts its position and size based on its parent control. */
-declare class Control extends CanvasItem {
+declare class Control<Tree extends object = any> extends CanvasItem<Tree> {
   /** The paths to the nodes which are controlled by this node. */
   accessibility_controls_nodes: unknown;
   /** The paths to the nodes which are describing this node. */

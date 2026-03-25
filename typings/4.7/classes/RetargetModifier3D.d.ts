@@ -4,7 +4,7 @@
 /**
  * A modifier to transfer parent skeleton poses (or global poses) to child skeletons in model space with different rests.
  */
-declare class RetargetModifier3D extends SkeletonModifier3D {
+declare class RetargetModifier3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
   /**
    * Flags to control the process of the transform elements individually when {@link use_global_pose} is disabled.
    */

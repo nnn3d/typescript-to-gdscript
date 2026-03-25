@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A real-time heightmap-shaped 3D particle collision shape affecting {@link GPUParticles3D} nodes. */
-declare class GPUParticlesCollisionHeightField3D extends GPUParticlesCollision3D {
+declare class GPUParticlesCollisionHeightField3D<Tree extends object = any> extends GPUParticlesCollision3D<Tree> {
   /**
    * If `true`, the {@link GPUParticlesCollisionHeightField3D} will follow the current camera in global space. The {@link GPUParticlesCollisionHeightField3D} does not need to be a child of the {@link Camera3D} node for this to work.
    * Following the camera has a performance cost, as it will force the heightmap to update whenever the camera moves. Consider lowering {@link resolution} to improve performance if {@link follow_camera_enabled} is `true`.

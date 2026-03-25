@@ -4,7 +4,7 @@
 /**
  * A physics joint that attaches two 2D physics bodies at a single point, allowing them to freely rotate.
  */
-declare class PinJoint2D extends Joint2D {
+declare class PinJoint2D<Tree extends object = any> extends Joint2D<Tree> {
   /**
    * If `true`, the pin maximum and minimum rotation, defined by {@link angular_limit_lower} and {@link angular_limit_upper} are applied.
    */

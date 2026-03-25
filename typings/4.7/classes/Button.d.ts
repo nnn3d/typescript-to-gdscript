@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A themed button that can contain text and an icon. */
-declare class Button extends BaseButton {
+declare class Button<Tree extends object = any> extends BaseButton<Tree> {
   /** Text alignment policy for the button's text. */
   alignment: int;
   /**

@@ -4,7 +4,7 @@
 /**
  * A node used to rotate all bones of a {@link Skeleton3D} bone chain a way that places the end bone at a desired 3D position.
  */
-declare class SkeletonIK3D extends SkeletonModifier3D {
+declare class SkeletonIK3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
   /**
    * Interpolation value for how much the IK results are applied to the current skeleton bone chain. A value of `1.0` will overwrite all skeleton bone transforms completely while a value of `0.0` will visually disable the SkeletonIK.
    */

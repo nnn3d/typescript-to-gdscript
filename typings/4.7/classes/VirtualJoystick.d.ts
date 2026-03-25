@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A virtual joystick control for touchscreen devices. */
-declare class VirtualJoystick extends Control {
+declare class VirtualJoystick<Tree extends object = any> extends Control<Tree> {
   /** The action to trigger when the joystick is moved down. */
   action_down: string;
   /** The action to trigger when the joystick is moved left. */

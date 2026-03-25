@@ -4,7 +4,7 @@
 /**
  * A physics joint that restricts the movement of a 3D physics body along an axis relative to another physics body.
  */
-declare class SliderJoint3D extends Joint3D {
+declare class SliderJoint3D<Tree extends object = any> extends Joint3D<Tree> {
   /**
    * The amount of damping of the rotation when the limit is surpassed.
    * A lower damping value allows a rotation initiated by body A to travel to body B slower.

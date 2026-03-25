@@ -2,5 +2,5 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Jacobian transpose based inverse kinematics solver. */
-declare class JacobianIK3D extends IterateIK3D {
+declare class JacobianIK3D<Tree extends object = any> extends IterateIK3D<Tree> {
 }

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A box-shaped region of 3D space that detects whether it is visible on screen. */
-declare class VisibleOnScreenNotifier3D extends VisualInstance3D {
+declare class VisibleOnScreenNotifier3D<Tree extends object = any> extends VisualInstance3D<Tree> {
   /** The {@link VisibleOnScreenNotifier3D}'s bounding box. */
   aabb: AABB;
   set_aabb(value: AABB): void;

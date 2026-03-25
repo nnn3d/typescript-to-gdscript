@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A control that displays a texture by keeping its corners intact, but tiling its edges and center. */
-declare class NinePatchRect extends Control {
+declare class NinePatchRect<Tree extends object = any> extends Control<Tree> {
   /** The stretch mode to use for horizontal stretching/tiling. */
   axis_stretch_horizontal: int;
   /** The stretch mode to use for vertical stretching/tiling. */

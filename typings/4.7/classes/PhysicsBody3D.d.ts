@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Abstract base class for 3D game objects affected by physics. */
-declare class PhysicsBody3D extends CollisionObject3D {
+declare class PhysicsBody3D<Tree extends object = any> extends CollisionObject3D<Tree> {
   /** Lock the body's rotation in the X axis. */
   axis_lock_angular_x: boolean;
   /** Lock the body's rotation in the Y axis. */

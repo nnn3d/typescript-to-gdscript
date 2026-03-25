@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D shape that sweeps a region of space to detect {@link CollisionObject2D}s. */
-declare class ShapeCast2D extends Node2D {
+declare class ShapeCast2D<Tree extends object = any> extends Node2D<Tree> {
   /** If `true`, collisions with {@link Area2D}s will be reported. */
   collide_with_areas: boolean;
   /** If `true`, collisions with {@link PhysicsBody2D}s will be reported. */

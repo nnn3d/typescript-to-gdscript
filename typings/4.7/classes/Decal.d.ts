@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Node that projects a texture onto a {@link MeshInstance3D}. */
-declare class Decal extends VisualInstance3D {
+declare class Decal<Tree extends object = any> extends VisualInstance3D<Tree> {
   /**
    * Blends the albedo {@link Color} of the decal with albedo {@link Color} of the underlying mesh. This can be set to `0.0` to create a decal that only affects normal or ORM. In this case, an albedo texture is still required as its alpha channel will determine where the normal and ORM will be overridden. See also {@link modulate}.
    */

@@ -4,7 +4,7 @@
 /**
  * A container that arranges child controls horizontally or vertically and provides grabbers for adjusting the split ratios between them.
  */
-declare class SplitContainer extends Container {
+declare class SplitContainer<Tree extends object = any> extends Container<Tree> {
   /**
    * If `true`, the draggers will be disabled and the children will be sized as if all {@link split_offsets} were `0`.
    */

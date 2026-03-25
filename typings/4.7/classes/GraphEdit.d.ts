@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** An editor for graph-like structures, using {@link GraphNode}s. */
-declare class GraphEdit extends Control {
+declare class GraphEdit<Tree extends object = any> extends Control<Tree> {
   /**
    * <member name="connection_lines_antialiased" type="bool" setter="set_connection_lines_antialiased" getter="is_connection_lines_antialiased" default="true">
    * If `true`, the lines between nodes will use antialiasing.

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A node that provides a thickened polygon shape (a prism) to a {@link CollisionObject3D} parent. */
-declare class CollisionPolygon3D extends Node3D {
+declare class CollisionPolygon3D<Tree extends object = any> extends Node3D<Tree> {
   /**
    * The collision shape color that is displayed in the editor, or in the running project if **Debug > Visible Collision Shapes** is checked at the top of the editor.
    * **Note:** The default value is {@link ProjectSettings.debug/shapes/collision/shape_color}. The `Color(0, 0, 0, 0)` value documented here is a placeholder, and not the actual default debug color.

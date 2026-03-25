@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A node for audio playback. */
-declare class AudioStreamPlayer extends Node {
+declare class AudioStreamPlayer<Tree extends object = any> extends Node<Tree> {
   /** If `true`, this node calls {@link play} when entering the tree. */
   autoplay: boolean;
   /**

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** An interface to a game world that doesn't create a window or draw to the screen directly. */
-declare class SubViewport extends Viewport {
+declare class SubViewport<Tree extends object = any> extends Viewport<Tree> {
   /**
    * The clear mode when the sub-viewport is used as a render target.
    * **Note:** This property is intended for 2D usage.

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3D shape that sweeps a region of space to detect {@link CollisionObject3D}s. */
-declare class ShapeCast3D extends Node3D {
+declare class ShapeCast3D<Tree extends object = any> extends Node3D<Tree> {
   /** If `true`, collisions with {@link Area3D}s will be reported. */
   collide_with_areas: boolean;
   /** If `true`, collisions with {@link PhysicsBody3D}s will be reported. */

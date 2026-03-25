@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D physics body that is moved by a physics simulation. */
-declare class RigidBody2D extends PhysicsBody2D {
+declare class RigidBody2D<Tree extends object = any> extends PhysicsBody2D<Tree> {
   /**
    * Damps the body's rotation. By default, the body will use the {@link ProjectSettings.physics/2d/default_angular_damp} setting or any value override set by an {@link Area2D} the body is in. Depending on {@link angular_damp_mode}, you can set {@link angular_damp} to be added to or to replace the body's damping value.
    * See {@link ProjectSettings.physics/2d/default_angular_damp} for more details about damping.

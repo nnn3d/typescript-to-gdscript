@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A base dialog used for user notification. */
-declare class AcceptDialog extends Window {
+declare class AcceptDialog<Tree extends object = any> extends Window<Tree> {
   /** Sets autowrapping for the text in the dialog. */
   dialog_autowrap: boolean;
   /**

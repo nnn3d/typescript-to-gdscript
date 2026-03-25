@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Node that instances meshes into a scenario. */
-declare class MeshInstance3D extends GeometryInstance3D {
+declare class MeshInstance3D<Tree extends object = any> extends GeometryInstance3D<Tree> {
   /** The {@link Mesh} resource for the instance. */
   mesh: Mesh;
   /**

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3D node representing a spatially-tracked controller. */
-declare class XRController3D extends XRNode3D {
+declare class XRController3D<Tree extends object = any> extends XRNode3D<Tree> {
   /**
    * Returns a numeric value for the input with the given `name`. This is used for triggers and grip sensors.
    * **Note:** The current {@link XRInterface} defines the `name` for each input. In the case of OpenXR, these are the names of actions in the current action set.

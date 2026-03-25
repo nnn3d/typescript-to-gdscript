@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A modal window used to display a list of options. */
-declare class PopupMenu extends Popup {
+declare class PopupMenu<Tree extends object = any> extends Popup<Tree> {
   /** If `true`, allows navigating {@link PopupMenu} with letter keys. */
   allow_search: boolean;
   /**

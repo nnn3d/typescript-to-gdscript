@@ -4,7 +4,7 @@
 /**
  * Node that can be the parent of {@link PhysicalBone3D} and can apply the simulation results to {@link Skeleton3D}.
  */
-declare class PhysicalBoneSimulator3D extends SkeletonModifier3D {
+declare class PhysicalBoneSimulator3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
   /**
    * Returns a boolean that indicates whether the {@link PhysicalBoneSimulator3D} is running and simulating.
    */

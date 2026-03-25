@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A button that represents a link. */
-declare class LinkButton extends BaseButton {
+declare class LinkButton<Tree extends object = any> extends BaseButton<Tree> {
   /** Ellipsis character used for text clipping. */
   ellipsis_char: string;
   /**

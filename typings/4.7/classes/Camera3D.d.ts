@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Camera node, displays from a point of view. */
-declare class Camera3D extends Node3D {
+declare class Camera3D<Tree extends object = any> extends Node3D<Tree> {
   /** The {@link CameraAttributes} to use for this camera. */
   attributes: CameraAttributes;
   /** The {@link Compositor} to use for this camera. */

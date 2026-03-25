@@ -15,7 +15,7 @@ export class Player extends CharacterBody2D {
   PlayerPackedScene: PackedScene<Player> = load('res://Player.tscn');
 
   _ready() {
-    // get_node_or_null: known path → exact type | null (not just Node | null)
+    // get_node_or_null: known path → Godot type with [__parent] | null
     let sprite = this.get_node_or_null('Sprite2D');
     const _checkSprite: IsExact<typeof sprite, Sprite2D | null> = true;
 
@@ -23,7 +23,7 @@ export class Player extends CharacterBody2D {
     let node_or_null = this.get_node_or_null('Unknown');
     const _checkNodeOrNull: IsExact<typeof node_or_null, Node | null> = true;
 
-    // get_node: known path → exact type (no null)
+    // get_node: known path → Godot type with [__parent] (no null)
     let collision = this.get_node('CollisionShape2D');
     const _checkCollision: IsExact<typeof collision, CollisionShape2D> = true;
 
@@ -31,9 +31,19 @@ export class Player extends CharacterBody2D {
     let unknown = this.get_node('Unknown');
     const _checkUnknown: IsExact<typeof unknown, Node> = true;
 
-    // get_node: unique node via %Name → exact type
+    // get_node: unique node via %Name → Godot type with [__parent]
     let health = this.get_node('%HealthBar');
-    const _checkHealth: IsExact<typeof health, ProgressBar> = true;
+    let _healthAssign: ProgressBar = health;
+
+    // get_parent() on a Godot built-in child resolves to script class via [__parent]
+    let spriteNode = this.get_node('Sprite2D');
+    let parent = spriteNode.get_parent();
+    let _parentCheck: Player = parent;
+
+    // Nested path: AnimationPlayer's parent is Sprite2D (not Player)
+    let anim = this.get_node('Sprite2D/AnimationPlayer');
+    let animParent = anim.get_parent();
+    let _animParentCheck: Sprite2D = animParent;
 
     this.get_tree().change_scene_to_file('res://Anonym.tscn');
 

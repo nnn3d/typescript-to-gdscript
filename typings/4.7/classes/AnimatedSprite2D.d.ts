@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Sprite node that contains multiple textures as frames to play for animation. */
-declare class AnimatedSprite2D extends Node2D {
+declare class AnimatedSprite2D<Tree extends object = any> extends Node2D<Tree> {
   /**
    * The current animation from the {@link sprite_frames} resource. If this value is changed, the {@link frame} counter and the {@link frame_progress} are reset.
    */

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A physics joint that connects two 2D physics bodies with a spring-like force. */
-declare class DampedSpringJoint2D extends Joint2D {
+declare class DampedSpringJoint2D<Tree extends object = any> extends Joint2D<Tree> {
   /**
    * The spring joint's damping ratio. A value between `0` and `1`. When the two bodies move into different directions the system tries to align them to the spring axis again. A high {@link damping} value forces the attached bodies to align faster.
    */

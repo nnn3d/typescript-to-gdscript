@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A traversable 3D region that {@link NavigationAgent3D}s can use for pathfinding. */
-declare class NavigationRegion3D extends Node3D {
+declare class NavigationRegion3D<Tree extends object = any> extends Node3D<Tree> {
   /** Determines if the {@link NavigationRegion3D} is enabled or disabled. */
   enabled: boolean;
   /**

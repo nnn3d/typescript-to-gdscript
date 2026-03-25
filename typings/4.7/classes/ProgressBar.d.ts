@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A control used for visual representation of a percentage. */
-declare class ProgressBar extends Range {
+declare class ProgressBar<Tree extends object = any> extends Range<Tree> {
   /** If `false`, the {@link indeterminate} animation will be paused in the editor. */
   editor_preview_indeterminate: boolean;
   /** The fill direction. See {@link FillMode} for possible values. */

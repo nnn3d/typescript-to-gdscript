@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Overrides the location sounds are heard from. */
-declare class AudioListener2D extends Node2D {
+declare class AudioListener2D<Tree extends object = any> extends Node2D<Tree> {
   /** Disables the {@link AudioListener2D}. If it's not set as current, this method will have no effect. */
   clear_current(): void;
   /** Returns `true` if this {@link AudioListener2D} is currently active. */

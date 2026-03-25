@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Godot editor's control for selecting {@link Resource} type properties. */
-declare class EditorResourcePicker extends HBoxContainer {
+declare class EditorResourcePicker<Tree extends object = any> extends HBoxContainer<Tree> {
   /** The base type of allowed resource types. Can be a comma-separated list of several options. */
   base_type: string;
   /** If `true`, the value can be selected and edited. */

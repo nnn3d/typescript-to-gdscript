@@ -4,7 +4,7 @@
 /**
  * RemoteTransform2D pushes its own {@link Transform2D} to another {@link Node2D} derived node in the scene.
  */
-declare class RemoteTransform2D extends Node2D {
+declare class RemoteTransform2D<Tree extends object = any> extends Node2D<Tree> {
   /** The {@link NodePath} to the remote node, relative to the RemoteTransform2D's position in the scene. */
   remote_path: string;
   /** If `true`, the remote node's position is updated. */

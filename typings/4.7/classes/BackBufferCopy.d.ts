@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A node that copies a region of the screen to a buffer for access in shader code. */
-declare class BackBufferCopy extends Node2D {
+declare class BackBufferCopy<Tree extends object = any> extends Node2D<Tree> {
   /** Buffer mode. */
   copy_mode: int;
   /**

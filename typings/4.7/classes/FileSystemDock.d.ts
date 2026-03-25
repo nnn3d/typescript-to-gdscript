@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Godot editor's dock for managing files in the project. */
-declare class FileSystemDock extends EditorDock {
+declare class FileSystemDock<Tree extends object = any> extends EditorDock<Tree> {
   /** Registers a new {@link EditorResourceTooltipPlugin}. */
   add_resource_tooltip_plugin(plugin: EditorResourceTooltipPlugin): void;
   /** Sets the given `path` as currently selected, ensuring that the selected file/directory is visible. */

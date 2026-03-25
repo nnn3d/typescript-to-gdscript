@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** The origin point in AR/VR. */
-declare class XROrigin3D extends Node3D {
+declare class XROrigin3D<Tree extends object = any> extends Node3D<Tree> {
   /**
    * If `true`, this origin node is currently being used by the {@link XRServer}. Only one origin point can be used at a time.
    */

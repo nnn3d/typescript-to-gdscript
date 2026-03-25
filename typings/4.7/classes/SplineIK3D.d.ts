@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A {@link SkeletonModifier3D} for aligning bones along a {@link Path3D}. */
-declare class SplineIK3D extends ChainIK3D {
+declare class SplineIK3D<Tree extends object = any> extends ChainIK3D<Tree> {
   /** The number of settings. */
   setting_count: int;
 

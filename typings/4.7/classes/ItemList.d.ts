@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A vertical list of selectable items with one or multiple columns. */
-declare class ItemList extends Control {
+declare class ItemList<Tree extends object = any> extends Control<Tree> {
   /** If `true`, the currently selected item can be selected again. */
   allow_reselect: boolean;
   /** If `true`, right mouse button click can select items. */

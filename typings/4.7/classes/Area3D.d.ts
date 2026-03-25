@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A region of 3D space that detects other {@link CollisionObject3D}s entering or exiting it. */
-declare class Area3D extends CollisionObject3D {
+declare class Area3D<Tree extends object = any> extends CollisionObject3D<Tree> {
   /**
    * The rate at which objects stop spinning in this area. Represents the angular velocity lost per second.
    * See {@link ProjectSettings.physics/3d/default_angular_damp} for more details about damping.

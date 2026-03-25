@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A link between two positions on {@link NavigationRegion2D}s that agents can be routed through. */
-declare class NavigationLink2D extends Node2D {
+declare class NavigationLink2D<Tree extends object = any> extends Node2D<Tree> {
   /**
    * Whether this link can be traveled in both directions or only from {@link start_position} to {@link end_position}.
    */

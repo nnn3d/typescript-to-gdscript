@@ -39,13 +39,21 @@ describe('Scene typings generation', () => {
     expect(content).toContain('__CLASS__ as _GameManager');
   });
 
-  it('should generate scene node overloads with module augmentation', () => {
+  it('should generate scene node types with [__parent] for Godot built-in types', () => {
     const content = generate();
 
-    // Per-script scene nodes interface (uses alias to avoid __CLASS__ collisions)
+    // Per-script scene nodes interface
     expect(content).toContain('interface _PlayerSceneNodes');
-    expect(content).toContain('"Sprite2D": Sprite2D;');
-    expect(content).toContain('"CollisionShape2D": CollisionShape2D;');
+
+    // Direct children get [__parent] pointing to script class alias
+    expect(content).toContain('"Sprite2D": Sprite2D<{[__parent]: _Player}>;');
+    expect(content).toContain('"CollisionShape2D": CollisionShape2D<{[__parent]: _Player}>;');
+
+    // Nested path: AnimationPlayer's parent is Sprite2D (intermediate node), not Player
+    expect(content).toContain('"Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: Sprite2D}>;');
+
+    // Unique nodes (%Name) also get [__parent] pointing to script class
+    expect(content).toContain('"%HealthBar": ProgressBar<{[__parent]: _Player}>;');
 
     // Module augmentation with typed overloads
     expect(content).toContain('declare module "./Player.ts"');
@@ -54,25 +62,33 @@ describe('Scene typings generation', () => {
     expect(content).toContain('get_node_or_null<P extends keyof _PlayerSceneNodes');
   });
 
-  it('should generate unique node (%Name) typings for nodes with unique_name_in_owner', () => {
-    const content = generate();
-
-    // HealthBar has unique_name_in_owner = true → should appear as "%HealthBar" key
-    expect(content).toContain('"%HealthBar": ProgressBar;');
-  });
-
-  it('should generate union types for scripts used in multiple scenes', () => {
+  it('should generate union types with [__parent] for scripts used in multiple scenes', () => {
     const content = generate();
 
     // Ball.gd is used in BallA.tscn (Sprite2D, Timer) and BallB.tscn (Sprite2D, Label)
     expect(content).toContain('interface _BallSceneNodes');
 
-    // Sprite2D is in both scenes with the same type — no null
-    expect(content).toMatch(/"Sprite2D": Sprite2D;/);
-    // Timer is only in BallA — gets | null
-    expect(content).toMatch(/"Timer": Timer \| null;/);
+    // Sprite2D is in both scenes with the same type — no null, with [__parent]
+    expect(content).toMatch(/"Sprite2D": Sprite2D<\{\[__parent\]: _Ball\}>;/);
+    // Timer is only in BallA — gets | null, each type part gets [__parent]
+    expect(content).toMatch(/"Timer": Timer<\{\[__parent\]: _Ball\}> \| null;/);
     // Label is only in BallB — gets | null
-    expect(content).toMatch(/"Label": Label \| null;/);
+    expect(content).toMatch(/"Label": Label<\{\[__parent\]: _Ball\}> \| null;/);
+  });
+
+  it('should resolve instanced scene nodes to their root script class type', () => {
+    const content = generate();
+
+    // Level.tscn instances Player.tscn and Enemy.tscn
+    expect(content).toContain('interface _LevelSceneNodes');
+    // Instanced scene roots: user classes stay plain (get_parent via module augmentation)
+    expect(content).toContain('"Player": Player;');
+    expect(content).toContain('"Enemy": Enemy;');
+    // Regular Godot built-in child gets [__parent]
+    expect(content).toContain('"Background": Sprite2D<{[__parent]: _Level}>;');
+    // Nested children under non-script intermediate nodes
+    expect(content).toContain('"UI": CanvasLayer<{[__parent]: _Level}>;');
+    expect(content).toContain('"UI/ScoreLabel": Label<{[__parent]: CanvasLayer}>;');
   });
 
   it('should generate GodotResources and autoload singletons', () => {
@@ -94,16 +110,16 @@ describe('Scene typings generation', () => {
     expect(content).toContain('const GameManager: _GameManager;');
   });
 
-  it('should compile all .ts files with generated typings (typed get_node, load, preload, autoloads)', () => {
+  it('should compile all .ts files with generated typings (typed get_node, get_parent, load, autoloads)', () => {
     generate();
 
     // Run tsc — should compile without errors.
     // Tests that:
-    //   - get_node_or_null("Sprite2D") returns Sprite2D (not Node | null)
-    //   - load("res://Anonym.gd") returns __CLASS__ (not Resource)
-    //   - preload("res://Player.gd") returns Player (not Resource)
-    //   - GameManager autoload global is typed correctly
-    //   - GameManager.reset_game() and GameManager.get_score() are valid
+    //   - get_node("Sprite2D") returns Sprite2D<{[__parent]: _Player}> (assignable to Sprite2D)
+    //   - get_parent() on a child resolves to the script class via [__parent]
+    //   - Nested path get_parent() resolves to intermediate node type
+    //   - Instanced scene get_node returns the script class type
+    //   - load/preload/autoloads are typed correctly
     try {
       execSync(`npx tsc -p "${TSCONFIG_PATH}"`, {
         cwd: resolve(__dirname, '../..'),

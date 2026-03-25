@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A spotlight, such as a reflector spotlight or a lantern. */
-declare class SpotLight3D extends Light3D {
+declare class SpotLight3D<Tree extends object = any> extends Light3D<Tree> {
   /**
    * <member name="shadow_bias" type="float" setter="set_param" getter="get_param" overrides="Light3D" default="0.03" />
    * <member name="shadow_normal_bias" type="float" setter="set_param" getter="get_param" overrides="Light3D" default="1.0" />

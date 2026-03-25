@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A ray in 3D space, used to find the first collision object it intersects. */
-declare class RayCast3D extends Node3D {
+declare class RayCast3D<Tree extends object = any> extends Node3D<Tree> {
   /** If `true`, collisions with {@link Area3D}s will be reported. */
   collide_with_areas: boolean;
   /** If `true`, collisions with {@link PhysicsBody3D}s will be reported. */

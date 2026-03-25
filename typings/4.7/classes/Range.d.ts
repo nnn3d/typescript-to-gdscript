@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Abstract base class for controls that represent a number within a range. */
-declare class Range extends Control {
+declare class Range<Tree extends object = any> extends Control<Tree> {
   /** If `true`, {@link value} may be greater than {@link max_value}. */
   allow_greater: boolean;
   /** If `true`, {@link value} may be less than {@link min_value}. */

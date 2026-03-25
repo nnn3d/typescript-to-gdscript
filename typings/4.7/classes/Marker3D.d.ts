@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Generic 3D position hint for editing. */
-declare class Marker3D extends Node3D {
+declare class Marker3D<Tree extends object = any> extends Node3D<Tree> {
   /** Size of the gizmo cross that appears in the editor. */
   gizmo_extents: float;
   set_gizmo_extents(value: float): void;

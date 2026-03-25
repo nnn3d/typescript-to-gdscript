@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Godot editor's control for editing numeric values. */
-declare class EditorSpinSlider extends Range {
+declare class EditorSpinSlider<Tree extends object = any> extends Range<Tree> {
   /** The state in which the control used to manipulate the value will be. */
   control_state: int;
   /**

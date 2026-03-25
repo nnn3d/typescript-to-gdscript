@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** The {@link LookAtModifier3D} rotates a bone to look at a target. */
-declare class LookAtModifier3D extends SkeletonModifier3D {
+declare class LookAtModifier3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
   /** Index of the {@link bone_name} in the parent {@link Skeleton3D}. */
   bone: int;
   /** The bone name of the {@link Skeleton3D} that the modification will operate on. */

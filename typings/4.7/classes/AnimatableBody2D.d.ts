@@ -4,7 +4,7 @@
 /**
  * A 2D physics body that can't be moved by external forces. When moved manually, it affects other bodies in its path.
  */
-declare class AnimatableBody2D extends StaticBody2D {
+declare class AnimatableBody2D<Tree extends object = any> extends StaticBody2D<Tree> {
   /**
    * If `true`, the body's movement will be synchronized to the physics frame. This is useful when animating movement via {@link AnimationPlayer}, for example on moving platforms. Do **not** use together with {@link PhysicsBody2D.move_and_collide}.
    */

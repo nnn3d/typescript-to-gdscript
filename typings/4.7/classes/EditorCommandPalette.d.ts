@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Godot editor's command palette. */
-declare class EditorCommandPalette extends ConfirmationDialog {
+declare class EditorCommandPalette<Tree extends object = any> extends ConfirmationDialog<Tree> {
   dialog_hide_on_ok: boolean;
 
   /**

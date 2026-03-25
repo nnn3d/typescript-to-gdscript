@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Real-time global illumination (GI) probe. */
-declare class VoxelGI extends VisualInstance3D {
+declare class VoxelGI<Tree extends object = any> extends VisualInstance3D<Tree> {
   /**
    * The {@link CameraAttributes} resource that specifies exposure levels to bake at. Auto-exposure and non exposure properties will be ignored. Exposure settings should be used to reduce the dynamic range present when baking. If exposure is too high, the {@link VoxelGI} will have banding artifacts or may have over-exposure artifacts.
    */

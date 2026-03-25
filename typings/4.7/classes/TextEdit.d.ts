@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A multiline text editor. */
-declare class TextEdit extends Control {
+declare class TextEdit<Tree extends object = any> extends Control<Tree> {
   /** If {@link wrap_mode} is set to {@link LINE_WRAPPING_BOUNDARY}, sets text wrapping mode. */
   autowrap_mode: int;
   /**

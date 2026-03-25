@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A {@link SkeletonModifier3D} to approach the goal by repeating small rotations. */
-declare class IterateIK3D extends ChainIK3D {
+declare class IterateIK3D<Tree extends object = any> extends ChainIK3D<Tree> {
   /**
    * The maximum amount each bone can rotate in a single iteration.
    * **Note:** This limitation is applied during each iteration. For example, if {@link max_iterations} is `4` and {@link angular_delta_limit} is `5` degrees, the maximum rotation possible in a single frame is `20` degrees.

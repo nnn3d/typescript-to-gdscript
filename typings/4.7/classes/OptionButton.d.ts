@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A button that brings up a dropdown with selectable options when pressed. */
-declare class OptionButton extends Button {
+declare class OptionButton<Tree extends object = any> extends Button<Tree> {
   /**
    * <member name="alignment" type="int" setter="set_text_alignment" getter="get_text_alignment" overrides="Button" enum="HorizontalAlignment" default="0" />
    * <member name="allow_reselect" type="bool" setter="set_allow_reselect" getter="get_allow_reselect" default="false">

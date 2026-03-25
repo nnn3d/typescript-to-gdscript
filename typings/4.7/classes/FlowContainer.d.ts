@@ -4,7 +4,7 @@
 /**
  * A container that arranges its child controls horizontally or vertically and wraps them around at the borders.
  */
-declare class FlowContainer extends Container {
+declare class FlowContainer<Tree extends object = any> extends Container<Tree> {
   /**
    * The alignment of the container's children (must be one of {@link ALIGNMENT_BEGIN}, {@link ALIGNMENT_CENTER}, or {@link ALIGNMENT_END}).
    */

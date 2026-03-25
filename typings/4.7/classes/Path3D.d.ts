@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Contains a {@link Curve3D} path for {@link PathFollow3D} nodes to follow. */
-declare class Path3D extends Node3D {
+declare class Path3D<Tree extends object = any> extends Node3D<Tree> {
   /** A {@link Curve3D} describing the path. */
   curve: Curve3D;
   /**

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Placeholder for the root {@link Node} of a {@link PackedScene}. */
-declare class InstancePlaceholder extends Node {
+declare class InstancePlaceholder<Tree extends object = any> extends Node<Tree> {
   /**
    * Call this method to actually load in the node. The created node will be placed as a sibling *above* the {@link InstancePlaceholder} in the scene tree. The {@link Node}'s reference is also returned for convenience.
    * **Note:** {@link create_instance} is not thread-safe. Use {@link Object.call_deferred} if calling from a thread.

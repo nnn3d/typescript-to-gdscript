@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Node that instances a {@link MultiMesh}. */
-declare class MultiMeshInstance3D extends GeometryInstance3D {
+declare class MultiMeshInstance3D<Tree extends object = any> extends GeometryInstance3D<Tree> {
   /**
    * The {@link MultiMesh} resource that will be used and shared among all instances of the {@link MultiMeshInstance3D}.
    */

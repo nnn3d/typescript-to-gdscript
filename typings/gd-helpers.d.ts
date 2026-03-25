@@ -45,6 +45,12 @@ declare function StringName(value: string): string;
 /** Global helper for NodePath */
 declare function NodePath(value: string): string;
 
+// ─── Node Tree Symbols ───────────────────────────────────────
+// Used by scene typings to encode parent-child relationships in Node<Tree> generics.
+
+/** Symbol key for parent node reference in tree types */
+declare const __parent: unique symbol;
+
 // ─── Operator Symbols ─────────────────────────────────────────
 // Unique symbols used as branded keys for operator overload dispatch.
 // Godot classes declare [__add](right: T): R overloads keyed by these symbols.

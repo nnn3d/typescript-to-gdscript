@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Resource filesystem, as the editor sees it. */
-declare class EditorFileSystem extends Node {
+declare class EditorFileSystem<Tree extends object = any> extends Node<Tree> {
   /**
    * Returns the resource type of the file, given the full path. This returns a string such as `"Resource"` or `"GDScript"`, *not* a file extension such as `".gd"`.
    */

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Merges several 2D nodes into a single draw operation. */
-declare class CanvasGroup extends Node2D {
+declare class CanvasGroup<Tree extends object = any> extends Node2D<Tree> {
   /**
    * Sets the size of the margin used to expand the clearing rect of this {@link CanvasGroup}. This expands the area of the backbuffer that will be used by the {@link CanvasGroup}. A smaller margin will reduce the area of the backbuffer used which can increase performance, however if {@link use_mipmaps} is enabled, a small margin may result in mipmap errors at the edge of the {@link CanvasGroup}. Accordingly, this should be left as small as possible, but should be increased if artifacts appear along the edges of the canvas group.
    */

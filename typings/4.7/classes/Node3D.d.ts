@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Base object in 3D space, inherited by all 3D nodes. */
-declare class Node3D extends Node {
+declare class Node3D<Tree extends object = any> extends Node<Tree> {
   /**
    * Basis of the {@link transform} property. Represents the rotation, scale, and shear of this node in parent space (relative to the parent node).
    */

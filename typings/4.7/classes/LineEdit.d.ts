@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** An input field for single-line text. */
-declare class LineEdit extends Control {
+declare class LineEdit<Tree extends object = any> extends Control<Tree> {
   /** The text's horizontal alignment. */
   alignment: int;
   /**

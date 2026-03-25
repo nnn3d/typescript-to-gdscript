@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Captures its surroundings to create fast, accurate reflections from a given point. */
-declare class ReflectionProbe extends VisualInstance3D {
+declare class ReflectionProbe<Tree extends object = any> extends VisualInstance3D<Tree> {
   /**
    * The custom ambient color to use within the {@link ReflectionProbe}'s box defined by its {@link size}. Only effective if {@link ambient_mode} is {@link AMBIENT_COLOR}.
    */

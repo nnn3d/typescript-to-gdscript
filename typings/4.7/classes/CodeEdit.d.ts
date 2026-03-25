@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A multiline text editor designed for editing code. */
-declare class CodeEdit extends TextEdit {
+declare class CodeEdit<Tree extends object = any> extends TextEdit<Tree> {
   /**
    * If `true`, uses {@link auto_brace_completion_pairs} to automatically insert the closing brace when the opening brace is inserted by typing or autocompletion. Also automatically removes the closing brace when using backspace on the opening brace.
    */

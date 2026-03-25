@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Node that instances a {@link MultiMesh} in 2D. */
-declare class MultiMeshInstance2D extends Node2D {
+declare class MultiMeshInstance2D<Tree extends object = any> extends Node2D<Tree> {
   /** The {@link MultiMesh} that will be drawn by the {@link MultiMeshInstance2D}. */
   multimesh: MultiMesh;
   /**

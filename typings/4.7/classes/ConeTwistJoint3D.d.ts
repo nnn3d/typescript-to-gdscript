@@ -4,7 +4,7 @@
 /**
  * A physics joint that connects two 3D physics bodies in a way that simulates a ball-and-socket joint.
  */
-declare class ConeTwistJoint3D extends Joint3D {
+declare class ConeTwistJoint3D<Tree extends object = any> extends Joint3D<Tree> {
   /**
    * The speed with which the swing or twist will take place.
    * The higher, the faster.

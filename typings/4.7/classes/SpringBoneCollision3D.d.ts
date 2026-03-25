@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A base class of the collision that interacts with {@link SpringBoneSimulator3D}. */
-declare class SpringBoneCollision3D extends Node3D {
+declare class SpringBoneCollision3D<Tree extends object = any> extends Node3D<Tree> {
   /** The index of the attached bone. */
   bone: int;
   /** The name of the attached bone. */

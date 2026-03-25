@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A popup with a panel background. */
-declare class PopupPanel extends Popup {
+declare class PopupPanel<Tree extends object = any> extends Popup<Tree> {
   canvas_item_default_texture_filter: int;
   canvas_item_default_texture_repeat: int;
   transparent: boolean;

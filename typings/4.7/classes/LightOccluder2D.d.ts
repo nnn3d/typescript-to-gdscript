@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Occludes light cast by a Light2D, casting shadows. */
-declare class LightOccluder2D extends Node2D {
+declare class LightOccluder2D<Tree extends object = any> extends Node2D<Tree> {
   /** The {@link OccluderPolygon2D} used to compute the shadow. */
   occluder: OccluderPolygon2D;
   /**

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** An input field for numbers. */
-declare class SpinBox extends Range {
+declare class SpinBox<Tree extends object = any> extends Range<Tree> {
   /** Changes the alignment of the underlying {@link LineEdit}. */
   alignment: int;
   /**

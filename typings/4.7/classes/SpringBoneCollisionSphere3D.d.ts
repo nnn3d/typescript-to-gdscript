@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A sphere shape collision that interacts with {@link SpringBoneSimulator3D}. */
-declare class SpringBoneCollisionSphere3D extends SpringBoneCollision3D {
+declare class SpringBoneCollisionSphere3D<Tree extends object = any> extends SpringBoneCollision3D<Tree> {
   /** If `true`, the collision acts to trap the joint within the collision. */
   inside: boolean;
   /** The sphere's radius. */

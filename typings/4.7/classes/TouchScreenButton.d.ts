@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Button for touch screen devices for gameplay use. */
-declare class TouchScreenButton extends Node2D {
+declare class TouchScreenButton<Tree extends object = any> extends Node2D<Tree> {
   /** The button's action. Actions can be handled with {@link InputEventAction}. */
   action: string;
   /** The button's bitmask. */

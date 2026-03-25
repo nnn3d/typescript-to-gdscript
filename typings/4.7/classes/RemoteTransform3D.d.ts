@@ -4,7 +4,7 @@
 /**
  * RemoteTransform3D pushes its own {@link Transform3D} to another {@link Node3D} derived Node in the scene.
  */
-declare class RemoteTransform3D extends Node3D {
+declare class RemoteTransform3D<Tree extends object = any> extends Node3D<Tree> {
   /** The {@link NodePath} to the remote node, relative to the RemoteTransform3D's position in the scene. */
   remote_path: string;
   /** If `true`, the remote node's position is updated. */

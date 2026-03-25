@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Abstract base class for all 3D physics joints. */
-declare class Joint3D extends Node3D {
+declare class Joint3D<Tree extends object = any> extends Node3D<Tree> {
   /** If `true`, the two bodies bound together do not collide with each other. */
   exclude_nodes_from_collision: boolean;
   /**

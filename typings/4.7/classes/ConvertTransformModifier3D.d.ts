@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A {@link SkeletonModifier3D} that apply transform to the bone which converted from reference. */
-declare class ConvertTransformModifier3D extends BoneConstraint3D {
+declare class ConvertTransformModifier3D<Tree extends object = any> extends BoneConstraint3D<Tree> {
   /** The number of settings in the modifier. */
   setting_count: int;
 

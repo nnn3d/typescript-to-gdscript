@@ -13,6 +13,8 @@ interface SceneNode {
   parent: string;
   /** ext_resource id referenced by `script = ExtResource("id")`, if any */
   scriptExtId?: string;
+  /** ext_resource id referenced by `instance=ExtResource("id")`, if any */
+  instanceExtId?: string;
   /** Whether this node has `unique_name_in_owner = true` */
   uniqueInOwner?: boolean;
 }
@@ -23,7 +25,7 @@ interface ScriptNodeInfo {
   /** Full node path within the scene (e.g. "Ball", "." for root) */
   nodePath: string;
   /** Child nodes with paths relative to this script node */
-  children: Array<{ path: string; type: string }>;
+  children: Array<{ path: string; type: string; instanceSceneResPath?: string }>;
 }
 
 interface SceneConnection {
@@ -50,6 +52,8 @@ function parseScene(
   connections: SceneConnection[];
   /** Map of full node paths to their Godot type (e.g. "Area2D" → "Area2D") */
   nodeTypes: Map<string, string>;
+  /** Map of full node paths to instanced scene res:// paths */
+  instancedNodes: Map<string, string>;
 } | null {
   const content = readFileSync(filePath, 'utf-8');
   const extResources = new Map<string, { path: string; type: string }>();
@@ -85,11 +89,18 @@ function parseScene(
       scriptExtId = scriptMatch[1];
     }
 
+    // Check for instance=ExtResource("id") in node attributes (instanced scenes)
+    const instanceMatch = /instance=ExtResource\("([^"]+)"\)/.exec(attrs);
+    let instanceExtId: string | undefined;
+    if (instanceMatch) {
+      instanceExtId = instanceMatch[1];
+    }
+
     // Check for unique_name_in_owner = true
     const uniqueInOwner = /unique_name_in_owner\s*=\s*true/.test(body);
 
     if (name) {
-      nodes.push({ name, type: type ?? '', parent: parent ?? '', scriptExtId, uniqueInOwner: uniqueInOwner || undefined });
+      nodes.push({ name, type: type ?? '', parent: parent ?? '', scriptExtId, instanceExtId, uniqueInOwner: uniqueInOwner || undefined });
     }
   }
 
@@ -109,10 +120,24 @@ function parseScene(
       node.parent === '' ? '.' : node.parent === '.' ? node.name : `${node.parent}/${node.name}`;
 
     // Find all descendant nodes
-    const children: Array<{ path: string; type: string }> = [];
+    const children: Array<{ path: string; type: string; instanceSceneResPath?: string }> = [];
     for (const other of nodes) {
       if (other === node) continue;
-      if (!other.type) continue; // skip instance nodes without type
+
+      // Resolve type: explicit type, or from instance ext_resource
+      let nodeType = other.type;
+      let instanceSceneResPath: string | undefined;
+      if (!nodeType && other.instanceExtId) {
+        // Instanced scene node — resolve type from the ext_resource
+        const instanceRes = extResources.get(other.instanceExtId);
+        if (instanceRes && instanceRes.type === 'PackedScene') {
+          instanceSceneResPath = instanceRes.path;
+          // Type will be resolved from instanced scene's root script later;
+          // for now use empty string as placeholder
+          nodeType = '';
+        }
+      }
+      if (!nodeType && !instanceSceneResPath) continue; // skip nodes without type or instance
 
       // Compute the other node's full path
       const otherPath =
@@ -133,13 +158,13 @@ function parseScene(
       }
 
       if (relativePath) {
-        children.push({ path: relativePath, type: other.type });
+        children.push({ path: relativePath, type: nodeType, instanceSceneResPath });
       }
 
       // Unique nodes (%NodeName) are accessible from the scene owner (root script)
       // regardless of their position in the tree
       if (other.uniqueInOwner && nodePath === '.') {
-        children.push({ path: `%${other.name}`, type: other.type });
+        children.push({ path: `%${other.name}`, type: nodeType, instanceSceneResPath });
       }
     }
 
@@ -184,7 +209,18 @@ function parseScene(
     }
   }
 
-  return { filePath, scripts, rootScript, connections, nodeTypes };
+  // Build instanced nodes map (full path → instanced scene res:// path)
+  const instancedNodes = new Map<string, string>();
+  for (const node of nodes) {
+    if (!node.instanceExtId) continue;
+    const extRes = extResources.get(node.instanceExtId);
+    if (!extRes || extRes.type !== 'PackedScene') continue;
+    const fullPath =
+      node.parent === '' ? '.' : node.parent === '.' ? node.name : `${node.parent}/${node.name}`;
+    instancedNodes.set(fullPath, extRes.path);
+  }
+
+  return { filePath, scripts, rootScript, connections, nodeTypes, instancedNodes };
 }
 
 function extractAttr(attrs: string, name: string): string | undefined {
@@ -458,6 +494,37 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     options.ignore ?? [],
   );
 
+  // Parse all scenes first, then process
+  const parsedScenes: Array<{
+    scenePath: string;
+    resPath: string;
+    scene: NonNullable<ReturnType<typeof parseScene>>;
+  }> = [];
+  const resourceEntries: Array<{ resPath: string; alias?: string }> = [];
+
+  // Build scene root script map: tscn res:// path → gd script res:// path
+  const sceneRootScripts = new Map<string, string>();
+
+  for (const scenePath of scenes) {
+    const scene = parseScene(scenePath);
+    const resPath = `res://${relative(options.rootDir, scenePath).replace(/\\/g, '/')}`;
+    if (!scene) {
+      resourceEntries.push({ resPath });
+      continue;
+    }
+
+    let rootAlias: string | undefined;
+    if (scene.rootScript) {
+      const aliasEntry = aliasMap.get(scene.rootScript.scriptResPath);
+      if (aliasEntry) {
+        rootAlias = aliasEntry.alias;
+      }
+      sceneRootScripts.set(resPath, scene.rootScript.scriptResPath);
+    }
+    resourceEntries.push({ resPath, alias: rootAlias });
+    parsedScenes.push({ scenePath, resPath, scene });
+  }
+
   // Track per-scene children for each script, so we can compute union types.
   // When a script is used in multiple scenes, a path present in all scenes gets a union
   // of all types; a path missing from some scenes gets `| null`.
@@ -470,27 +537,11 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     }
   >();
 
-  const resourceEntries: Array<{ resPath: string; alias?: string }> = [];
+  // Track instanced scene parent relationships: childScriptAlias → Set<parentScriptAlias>
+  // Used to add get_parent() to module augmentation returning the parent script class type.
+  const instancedParents = new Map<string, Set<string>>();
 
-  for (const scenePath of scenes) {
-    const scene = parseScene(scenePath);
-    if (!scene) {
-      const resPath = `res://${relative(options.rootDir, scenePath).replace(/\\/g, '/')}`;
-      resourceEntries.push({ resPath });
-      continue;
-    }
-
-    const resPath = `res://${relative(options.rootDir, scenePath).replace(/\\/g, '/')}`;
-
-    let rootAlias: string | undefined;
-    if (scene.rootScript) {
-      const aliasEntry = aliasMap.get(scene.rootScript.scriptResPath);
-      if (aliasEntry) {
-        rootAlias = aliasEntry.alias;
-      }
-    }
-    resourceEntries.push({ resPath, alias: rootAlias });
-
+  for (const { scene } of parsedScenes) {
     for (const script of scene.scripts) {
       const classInfo = scriptClassMap.get(script.scriptResPath);
       if (!classInfo) continue;
@@ -513,7 +564,32 @@ export function generateTypings(options: GenerateTypingsOptions): string {
         // One map per scene occurrence
         const sceneChildren = new Map<string, string>();
         for (const child of script.children) {
-          sceneChildren.set(child.path, child.type);
+          let childType = child.type;
+          // Resolve instanced scene nodes to their root script class
+          if (child.instanceSceneResPath) {
+            const instanceScriptResPath = sceneRootScripts.get(child.instanceSceneResPath);
+            if (instanceScriptResPath) {
+              const instanceAlias = aliasMap.get(instanceScriptResPath);
+              if (instanceAlias) {
+                childType = instanceAlias.className === '__CLASS__' ? instanceAlias.alias : instanceAlias.className;
+
+                // Track parent→child scene relationship for get_parent() in module augmentation
+                const childScriptAlias = instanceAlias.alias;
+                const parentScriptAlias = aliasEntry.alias;
+                if (!instancedParents.has(childScriptAlias)) {
+                  instancedParents.set(childScriptAlias, new Set());
+                }
+                instancedParents.get(childScriptAlias)!.add(parentScriptAlias);
+              }
+            }
+            // If we couldn't resolve, try the Godot type from the instanced scene's root node
+            if (!childType) {
+              childType = 'Node';
+            }
+          }
+          if (childType) {
+            sceneChildren.set(child.path, childType);
+          }
         }
         data.sceneMaps.push(sceneChildren);
       }
@@ -543,6 +619,16 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     const ext = extname(assetPath).toLowerCase();
     const type = ASSET_EXTENSION_MAP[ext] ?? 'Resource';
     assetEntries.push({ resPath, type });
+  }
+
+  // Build set of user-defined class types (these don't accept Tree generic parameter)
+  // Only Godot built-in Node descendants have <Tree extends object = {}> from godot-docs generation
+  const userClassTypes = new Set<string>();
+  for (const [, entry] of aliasMap) {
+    userClassTypes.add(entry.alias);
+    if (entry.className !== '__CLASS__') {
+      userClassTypes.add(entry.className);
+    }
   }
 
   // Collect named classes for global declarations (skip __CLASS__)
@@ -578,10 +664,43 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     // Compute merged children: union of types across scenes, nullable if missing from some
     const mergedChildren = mergeSceneChildren(data.sceneMaps);
 
+    // Build lookup for parent type resolution (path → raw type)
+    const childTypeMap = new Map<string, string>();
+    for (const { path, type } of mergedChildren) {
+      childTypeMap.set(path, type);
+    }
+
     lines.push(`// Scene nodes for: ${data.alias}`);
     lines.push(`interface ${nodesInterface} {`);
     for (const { path, type } of mergedChildren) {
-      lines.push(`  "${path}": ${type};`);
+      // Determine parent type: direct children → script alias, nested → intermediate node type
+      let parentType: string;
+      if (path.startsWith('%') || !path.includes('/')) {
+        // Direct child or unique node → parent is the script class
+        parentType = data.alias;
+      } else {
+        // Nested path like "Sprite2D/AnimationPlayer" → parent is "Sprite2D"
+        const parentPath = path.substring(0, path.lastIndexOf('/'));
+        const rawParent = childTypeMap.get(parentPath);
+        // Use first non-null type from parent's union
+        parentType = rawParent
+          ? rawParent.split(' | ').find(t => t !== 'null') ?? 'Node'
+          : 'Node';
+      }
+
+      // Annotate types with parent info:
+      // - Godot built-in types get <{[__parent]: ParentType}> (they have Tree generic from godot-docs)
+      // - User classes stay plain — their get_parent() is set via module augmentation
+      // - null stays as null
+      const annotatedType = type.split(' | ').map(t => {
+        if (t === 'null') return 'null';
+        if (userClassTypes.has(t)) {
+          return t;
+        }
+        return `${t}<{[__parent]: ${parentType}}>`;
+      }).join(' | ');
+
+      lines.push(`  "${path}": ${annotatedType};`);
     }
     lines.push('}');
     lines.push('');
@@ -594,6 +713,12 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     lines.push(`    get_node<T extends Node = Node>(path: string): T;`);
     lines.push(`    get_node_or_null<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P] | null;`);
     lines.push(`    get_node_or_null<T extends Node = Node>(path: string): T | null;`);
+    // Add get_parent() if this script is instanced in other scenes
+    const parentAliases = instancedParents.get(data.alias);
+    if (parentAliases && parentAliases.size > 0) {
+      const parentType = [...parentAliases].join(' | ');
+      lines.push(`    get_parent(): ${parentType};`);
+    }
     lines.push('  }');
     lines.push('}');
     lines.push('');

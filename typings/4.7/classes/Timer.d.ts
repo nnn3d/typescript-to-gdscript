@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A countdown timer. */
-declare class Timer extends Node {
+declare class Timer<Tree extends object = any> extends Node<Tree> {
   /**
    * If `true`, the timer will start immediately when it enters the scene tree.
    * **Note:** After the timer enters the tree, this property is automatically set to `false`.

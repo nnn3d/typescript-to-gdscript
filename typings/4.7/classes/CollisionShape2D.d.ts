@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A node that provides a {@link Shape2D} to a {@link CollisionObject2D} parent. */
-declare class CollisionShape2D extends Node2D {
+declare class CollisionShape2D<Tree extends object = any> extends Node2D<Tree> {
   /**
    * The collision shape color that is displayed in the editor, or in the running project if **Debug > Visible Collision Shapes** is checked at the top of the editor.
    * **Note:** The default value is {@link ProjectSettings.debug/shapes/collision/shape_color}. The `Color(0, 0, 0, 0)` value documented here is a placeholder, and not the actual default debug color.

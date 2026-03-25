@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://test_level_scene"]
+
+[ext_resource type="Script" uid="uid://test_level_script" path="res://Level.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://test_player_packed" path="res://Player.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://test_enemy_packed" path="res://Enemy.tscn" id="3"]
+
+[node name="Level" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Player" parent="." instance=ExtResource("2")]
+
+[node name="Enemy" parent="." instance=ExtResource("3")]
+
+[node name="Background" type="Sprite2D" parent="."]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="ScoreLabel" type="Label" parent="UI"]

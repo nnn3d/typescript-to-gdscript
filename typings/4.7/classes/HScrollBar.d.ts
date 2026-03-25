@@ -2,5 +2,5 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A horizontal scrollbar that goes from left (min) to right (max). */
-declare class HScrollBar extends ScrollBar {
+declare class HScrollBar<Tree extends object = any> extends ScrollBar<Tree> {
 }

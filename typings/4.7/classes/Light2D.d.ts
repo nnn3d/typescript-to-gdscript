@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Casts light in a 2D environment. */
-declare class Light2D extends Node2D {
+declare class Light2D<Tree extends object = any> extends Node2D<Tree> {
   /** The Light2D's blend mode. */
   blend_mode: int;
   /** The Light2D's {@link Color}. */

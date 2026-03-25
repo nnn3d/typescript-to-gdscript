@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D polygon. */
-declare class Polygon2D extends Node2D {
+declare class Polygon2D<Tree extends object = any> extends Node2D<Tree> {
   /** If `true`, polygon edges will be anti-aliased. */
   antialiased: boolean;
   /**

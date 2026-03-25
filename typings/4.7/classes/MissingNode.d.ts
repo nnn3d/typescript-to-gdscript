@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** An internal editor class intended for keeping the data of unrecognized nodes. */
-declare class MissingNode extends Node {
+declare class MissingNode<Tree extends object = any> extends Node<Tree> {
   /** The name of the class this node was supposed to be (see {@link Object.get_class}). */
   original_class: string;
   /** Returns the path of the scene this node was instance of originally. */

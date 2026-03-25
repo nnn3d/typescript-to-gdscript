@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Abstract base class for viewports. Encapsulates drawing and interaction with a game world. */
-declare class Viewport extends Node {
+declare class Viewport<Tree extends object = any> extends Node<Tree> {
   /**
    * Sets the maximum number of samples to take when using anisotropic filtering on textures (as a power of two). A higher sample count will result in sharper textures at oblique angles, but is more expensive to compute. A value of `0` forcibly disables anisotropic filtering, even on materials where it is enabled.
    * The anisotropic filtering level also affects decals and light projectors if they are configured to use anisotropic filtering. See {@link ProjectSettings.rendering/textures/decals/filter} and {@link ProjectSettings.rendering/textures/light_projectors/filter}.

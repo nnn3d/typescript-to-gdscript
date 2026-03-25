@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A modified version of {@link FileDialog} used by the editor. */
-declare class EditorFileDialog extends FileDialog {
+declare class EditorFileDialog<Tree extends object = any> extends FileDialog<Tree> {
   /** If `true`, the {@link EditorFileDialog} will not warn the user before overwriting files. */
   disable_overwrite_warning: boolean;
   set_disable_overwrite_warning(value: boolean): void;

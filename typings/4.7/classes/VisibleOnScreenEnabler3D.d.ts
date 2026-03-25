@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A box-shaped region of 3D space that, when visible on screen, enables a target node. */
-declare class VisibleOnScreenEnabler3D extends VisibleOnScreenNotifier3D {
+declare class VisibleOnScreenEnabler3D<Tree extends object = any> extends VisibleOnScreenNotifier3D<Tree> {
   /**
    * Determines how the target node is enabled. Corresponds to {@link Node.ProcessMode}. When the node is disabled, it always uses {@link Node.PROCESS_MODE_DISABLED}.
    */

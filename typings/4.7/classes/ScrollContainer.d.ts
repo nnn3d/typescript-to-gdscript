@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A container used to provide scrollbars to a child control when needed. */
-declare class ScrollContainer extends Container {
+declare class ScrollContainer<Tree extends object = any> extends Container<Tree> {
   /**
    * <member name="draw_focus_border" type="bool" setter="set_draw_focus_border" getter="get_draw_focus_border" default="false">
    * If `true`,  is drawn when the ScrollContainer or one of its descendant nodes is focused.

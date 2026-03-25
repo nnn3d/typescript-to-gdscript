@@ -5,15 +5,17 @@
 import type { __CLASS__ as _Anonym } from "./Anonym.ts";
 import type { __CLASS__ as _Anonym2 } from "./Anonym2.ts";
 import type { Ball as _Ball } from "./Ball.ts";
+import type { Enemy as _Enemy } from "./Enemy.ts";
 import type { __CLASS__ as _GameManager } from "./GameManager.ts";
+import type { Level as _Level } from "./Level.ts";
 import type { Player as _Player } from "./Player.ts";
 import type { __CLASS__ as _nested_Anonym } from "./nested/Anonym.ts";
 
 // Scene nodes for: _Anonym
 interface _AnonymSceneNodes {
-  "Sprite2D": Sprite2D;
-  "CollisionShape2D": CollisionShape2D;
-  "Sprite2D/AnimationPlayer": AnimationPlayer;
+  "Sprite2D": Sprite2D<{[__parent]: _Anonym}>;
+  "CollisionShape2D": CollisionShape2D<{[__parent]: _Anonym}>;
+  "Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: Sprite2D}>;
 }
 
 declare module "./Anonym.ts" {
@@ -27,9 +29,9 @@ declare module "./Anonym.ts" {
 
 // Scene nodes for: _Anonym2
 interface _Anonym2SceneNodes {
-  "Sprite2D": Sprite2D;
-  "CollisionShape2D": CollisionShape2D;
-  "Sprite2D/AnimationPlayer": AnimationPlayer;
+  "Sprite2D": Sprite2D<{[__parent]: _Anonym2}>;
+  "CollisionShape2D": CollisionShape2D<{[__parent]: _Anonym2}>;
+  "Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: Sprite2D}>;
 }
 
 declare module "./Anonym2.ts" {
@@ -43,9 +45,9 @@ declare module "./Anonym2.ts" {
 
 // Scene nodes for: _Ball
 interface _BallSceneNodes {
-  "Sprite2D": Sprite2D;
-  "Timer": Timer | null;
-  "Label": Label | null;
+  "Sprite2D": Sprite2D<{[__parent]: _Ball}>;
+  "Timer": Timer<{[__parent]: _Ball}> | null;
+  "Label": Label<{[__parent]: _Ball}> | null;
 }
 
 declare module "./Ball.ts" {
@@ -57,11 +59,47 @@ declare module "./Ball.ts" {
   }
 }
 
+// Scene nodes for: _Enemy
+interface _EnemySceneNodes {
+  "Sprite2D": Sprite2D<{[__parent]: _Enemy}>;
+  "Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: Sprite2D}>;
+  "HitBox": Area2D<{[__parent]: _Enemy}>;
+  "HitBox/CollisionShape2D": CollisionShape2D<{[__parent]: Area2D}>;
+}
+
+declare module "./Enemy.ts" {
+  interface Enemy {
+    get_node<P extends keyof _EnemySceneNodes>(path: P): null extends _EnemySceneNodes[P] ? NonNullable<_EnemySceneNodes[P]> | Node : _EnemySceneNodes[P];
+    get_node<T extends Node = Node>(path: string): T;
+    get_node_or_null<P extends keyof _EnemySceneNodes>(path: P): _EnemySceneNodes[P] | null;
+    get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_parent(): _Level;
+  }
+}
+
+// Scene nodes for: _Level
+interface _LevelSceneNodes {
+  "Player": Player;
+  "Enemy": Enemy;
+  "Background": Sprite2D<{[__parent]: _Level}>;
+  "UI": CanvasLayer<{[__parent]: _Level}>;
+  "UI/ScoreLabel": Label<{[__parent]: CanvasLayer}>;
+}
+
+declare module "./Level.ts" {
+  interface Level {
+    get_node<P extends keyof _LevelSceneNodes>(path: P): null extends _LevelSceneNodes[P] ? NonNullable<_LevelSceneNodes[P]> | Node : _LevelSceneNodes[P];
+    get_node<T extends Node = Node>(path: string): T;
+    get_node_or_null<P extends keyof _LevelSceneNodes>(path: P): _LevelSceneNodes[P] | null;
+    get_node_or_null<T extends Node = Node>(path: string): T | null;
+  }
+}
+
 // Scene nodes for: _nested_Anonym
 interface _nested_AnonymSceneNodes {
-  "Sprite2D": Sprite2D;
-  "CollisionShape2D": CollisionShape2D;
-  "Sprite2D/AnimationPlayer": AnimationPlayer;
+  "Sprite2D": Sprite2D<{[__parent]: _nested_Anonym}>;
+  "CollisionShape2D": CollisionShape2D<{[__parent]: _nested_Anonym}>;
+  "Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: Sprite2D}>;
 }
 
 declare module "./nested/Anonym.ts" {
@@ -75,11 +113,11 @@ declare module "./nested/Anonym.ts" {
 
 // Scene nodes for: _Player
 interface _PlayerSceneNodes {
-  "Sprite2D": Sprite2D;
-  "CollisionShape2D": CollisionShape2D;
-  "Sprite2D/AnimationPlayer": AnimationPlayer;
-  "HealthBar": ProgressBar;
-  "%HealthBar": ProgressBar;
+  "Sprite2D": Sprite2D<{[__parent]: _Player}>;
+  "CollisionShape2D": CollisionShape2D<{[__parent]: _Player}>;
+  "Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: Sprite2D}>;
+  "HealthBar": ProgressBar<{[__parent]: _Player}>;
+  "%HealthBar": ProgressBar<{[__parent]: _Player}>;
 }
 
 declare module "./Player.ts" {
@@ -88,12 +126,17 @@ declare module "./Player.ts" {
     get_node<T extends Node = Node>(path: string): T;
     get_node_or_null<P extends keyof _PlayerSceneNodes>(path: P): _PlayerSceneNodes[P] | null;
     get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_parent(): _Level;
   }
 }
 
 declare global {
   // From: Ball.ts
   class Ball extends _Ball {}
+  // From: Enemy.ts
+  class Enemy extends _Enemy {}
+  // From: Level.ts
+  class Level extends _Level {}
   // From: Player.ts
   class Player extends _Player {}
   interface GodotResources {
@@ -101,12 +144,16 @@ declare global {
     "res://Anonym2.tscn": PackedScene<_Anonym2>;
     "res://BallA.tscn": PackedScene<_Ball>;
     "res://BallB.tscn": PackedScene<_Ball>;
+    "res://Enemy.tscn": PackedScene<_Enemy>;
+    "res://Level.tscn": PackedScene<_Level>;
     "res://nested/Anonym.tscn": PackedScene<_nested_Anonym>;
     "res://Player.tscn": PackedScene<_Player>;
     "res://Anonym.gd": _Anonym;
     "res://Anonym2.gd": _Anonym2;
     "res://Ball.gd": _Ball;
+    "res://Enemy.gd": _Enemy;
     "res://GameManager.gd": _GameManager;
+    "res://Level.gd": _Level;
     "res://Player.gd": _Player;
     "res://nested/Anonym.gd": _nested_Anonym;
   }

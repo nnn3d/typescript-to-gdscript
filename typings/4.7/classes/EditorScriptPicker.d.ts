@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Godot editor's control for selecting the `script` property of a {@link Node}. */
-declare class EditorScriptPicker extends EditorResourcePicker {
+declare class EditorScriptPicker<Tree extends object = any> extends EditorResourcePicker<Tree> {
   /** The owner {@link Node} of the script property that holds the edited resource. */
   script_owner: Node;
   set_script_owner(value: Node): void;

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D physics body specialized for characters moved by script. */
-declare class CharacterBody2D extends PhysicsBody2D {
+declare class CharacterBody2D<Tree extends object = any> extends PhysicsBody2D<Tree> {
   /**
    * If `true`, the body will be able to move on the floor only. This option avoids to be able to walk on walls, it will however allow to slide down along them.
    */

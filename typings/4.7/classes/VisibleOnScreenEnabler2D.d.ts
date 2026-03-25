@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A rectangular region of 2D space that, when visible on screen, enables a target node. */
-declare class VisibleOnScreenEnabler2D extends VisibleOnScreenNotifier2D {
+declare class VisibleOnScreenEnabler2D<Tree extends object = any> extends VisibleOnScreenNotifier2D<Tree> {
   /**
    * Determines how the target node is enabled. Corresponds to {@link Node.ProcessMode}. When the node is disabled, it always uses {@link Node.PROCESS_MODE_DISABLED}.
    */

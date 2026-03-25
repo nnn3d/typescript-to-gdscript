@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 2D agent used to pathfind to a position while avoiding obstacles. */
-declare class NavigationAgent2D extends Node {
+declare class NavigationAgent2D<Tree extends object = any> extends Node<Tree> {
   /**
    * If `true` the agent is registered for an RVO avoidance callback on the {@link NavigationServer2D}. When {@link velocity} is used and the processing is completed a `safe_velocity` Vector2 is received with a signal connection to {@link velocity_computed}. Avoidance processing with many registered agents has a significant performance cost and should only be enabled on agents that currently require it.
    */

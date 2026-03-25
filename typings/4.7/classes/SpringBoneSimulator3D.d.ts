@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A {@link SkeletonModifier3D} to apply inertial wavering to bone chains. */
-declare class SpringBoneSimulator3D extends SkeletonModifier3D {
+declare class SpringBoneSimulator3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
   /**
    * The constant force that always affected bones. It is equal to the result when the parent {@link Skeleton3D} moves at this speed in the opposite direction.
    * This is useful for effects such as wind and anti-gravity.

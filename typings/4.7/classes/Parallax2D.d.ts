@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A node used to create a parallax scrolling background. */
-declare class Parallax2D extends Node2D {
+declare class Parallax2D<Tree extends object = any> extends Node2D<Tree> {
   /** Velocity at which the offset scrolls automatically, in pixels per second. */
   autoscroll: Vector2;
   /**

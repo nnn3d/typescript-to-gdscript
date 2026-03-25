@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** A 3D node that has its position automatically updated by the {@link XRServer}. */
-declare class XRNode3D extends Node3D {
+declare class XRNode3D<Tree extends object = any> extends Node3D<Tree> {
   /**
    * <member name="pose" type="StringName" setter="set_pose_name" getter="get_pose_name" default="&&quot;default&quot;">
    * The name of the pose we're bound to. Which poses a tracker supports is not known during design time.

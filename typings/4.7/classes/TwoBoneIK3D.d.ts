@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/overrides/*.d.ts
 
 /** Rotation based intersection of two circles inverse kinematics solver. */
-declare class TwoBoneIK3D extends IKModifier3D {
+declare class TwoBoneIK3D<Tree extends object = any> extends IKModifier3D<Tree> {
   /** The number of settings. */
   setting_count: int;
 
