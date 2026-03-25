@@ -127,7 +127,7 @@ function reportDiagnostics(
       diag.line > 0
         ? {
             start: { line: diag.line, column: diag.column },
-            end: { line: diag.line, column: diag.column + 100 },
+            end: { line: diag.line, column: diag.column + 1000 },
           }
         : undefined;
 
@@ -180,7 +180,7 @@ function runGodotValidation(context: any, params: GodotValidationParams): void {
         diag.line > 0
           ? {
               start: { line: diag.line, column: diag.column },
-              end: { line: diag.line, column: diag.column + 100 },
+              end: { line: diag.line, column: diag.column + 1000 },
             }
           : undefined;
 

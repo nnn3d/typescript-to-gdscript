@@ -39,30 +39,30 @@ export class GDScriptEmitter {
    * @param originalColumn Original source column (0-based), for source map
    */
   write(text: string, originalLine?: number, originalColumn?: number): void {
+    const lines = text.split('\n');
+
     if (
       originalLine !== undefined &&
       originalColumn !== undefined &&
       this.sourceMapper
     ) {
-      this.sourceMapper.addMapping({
-        source: this.sourceFile,
-        originalLine,
-        originalColumn,
-        generatedLine: this.currentLine,
-        generatedColumn: this.currentColumn,
-      });
+      for (let lineNum = 0; lineNum < lines.length; lineNum++) {
+        this.sourceMapper.addMapping({
+          source: this.sourceFile,
+          originalLine: originalLine,
+          originalColumn: originalColumn,
+          generatedLine: this.currentLine + lineNum,
+          generatedColumn: this.currentColumn + lineNum,
+        });
+      }
     }
 
     this.output.push(text);
-    // Update position tracking
-    for (const char of text) {
-      if (char === '\n') {
-        this.currentLine++;
-        this.currentColumn = 0;
-      } else {
-        this.currentColumn++;
-      }
-    }
+    this.currentLine += lines.length - 1;
+    this.currentColumn =
+      lines.length > 1
+        ? lines.at(-1)!.length
+        : this.currentColumn + lines.at(0)!.length;
   }
 
   /** Write text followed by a newline */
