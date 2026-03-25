@@ -8,6 +8,10 @@ export class Level extends Node2D {
     let enemy = this.get_node('Enemy');
     let _enemy: Enemy = enemy;
 
+    // get_node for instanced scene without script → root node Godot type
+    let tileset = this.get_node('TilesetObjects');
+    let _tileset: TileMap = tileset;
+
     // get_node for regular child → Godot built-in with [__parent]
     let bg = this.get_node('Background');
     let _bg: Sprite2D = bg;

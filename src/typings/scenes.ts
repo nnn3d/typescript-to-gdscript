@@ -49,6 +49,9 @@ function parseScene(
   filePath: string;
   scripts: ScriptNodeInfo[];
   rootScript?: { scriptResPath: string };
+  /** When root node instances another scene (inherited scene), this is the instanced scene's res:// path.
+   *  E.g. RI1_1.tscn inherits world.tscn → inheritedSceneResPath = "res://world.tscn" */
+  inheritedSceneResPath?: string;
   connections: SceneConnection[];
   /** Map of full node paths to their Godot type (e.g. "Area2D" → "Area2D") */
   nodeTypes: Map<string, string>;
@@ -106,6 +109,52 @@ function parseScene(
 
   if (nodes.length === 0) return null;
 
+  /** Collect all descendant nodes of `scriptNode` as children with relative paths */
+  function collectChildren(
+    scriptNode: SceneNode,
+    nodePath: string,
+  ): Array<{ path: string; type: string; instanceSceneResPath?: string }> {
+    const children: Array<{ path: string; type: string; instanceSceneResPath?: string }> = [];
+    for (const other of nodes) {
+      if (other === scriptNode) continue;
+
+      // Resolve type: explicit type, or from instance ext_resource
+      let nodeType = other.type;
+      let instanceSceneResPath: string | undefined;
+      if (!nodeType && other.instanceExtId) {
+        const instanceRes = extResources.get(other.instanceExtId);
+        if (instanceRes && instanceRes.type === 'PackedScene') {
+          instanceSceneResPath = instanceRes.path;
+          nodeType = '';
+        }
+      }
+      if (!nodeType && !instanceSceneResPath) continue;
+
+      const otherPath =
+        other.parent === '.'
+          ? other.name
+          : `${other.parent}/${other.name}`;
+
+      let relativePath: string | null = null;
+      if (nodePath === '.') {
+        if (other.parent !== '') {
+          relativePath = otherPath;
+        }
+      } else if (other.parent === nodePath || other.parent.startsWith(nodePath + '/')) {
+        relativePath = otherPath.slice(nodePath.length + 1);
+      }
+
+      if (relativePath) {
+        children.push({ path: relativePath, type: nodeType, instanceSceneResPath });
+      }
+
+      if (other.uniqueInOwner && nodePath === '.') {
+        children.push({ path: `%${other.name}`, type: nodeType, instanceSceneResPath });
+      }
+    }
+    return children;
+  }
+
   // Build script attachments
   const scripts: ScriptNodeInfo[] = [];
 
@@ -115,73 +164,31 @@ function parseScene(
     if (!extRes || extRes.type !== 'Script' || !extRes.path.endsWith('.gd'))
       continue;
 
-    // Compute this node's full path in the scene
     const nodePath =
       node.parent === '' ? '.' : node.parent === '.' ? node.name : `${node.parent}/${node.name}`;
-
-    // Find all descendant nodes
-    const children: Array<{ path: string; type: string; instanceSceneResPath?: string }> = [];
-    for (const other of nodes) {
-      if (other === node) continue;
-
-      // Resolve type: explicit type, or from instance ext_resource
-      let nodeType = other.type;
-      let instanceSceneResPath: string | undefined;
-      if (!nodeType && other.instanceExtId) {
-        // Instanced scene node — resolve type from the ext_resource
-        const instanceRes = extResources.get(other.instanceExtId);
-        if (instanceRes && instanceRes.type === 'PackedScene') {
-          instanceSceneResPath = instanceRes.path;
-          // Type will be resolved from instanced scene's root script later;
-          // for now use empty string as placeholder
-          nodeType = '';
-        }
-      }
-      if (!nodeType && !instanceSceneResPath) continue; // skip nodes without type or instance
-
-      // Compute the other node's full path
-      const otherPath =
-        other.parent === '.'
-          ? other.name
-          : `${other.parent}/${other.name}`;
-
-      // Check if otherPath is a descendant of nodePath
-      let relativePath: string | null = null;
-      if (nodePath === '.') {
-        // Root script — all non-root nodes are children
-        if (other.parent !== '') {
-          relativePath = otherPath;
-        }
-      } else if (other.parent === nodePath || other.parent.startsWith(nodePath + '/')) {
-        // Direct or nested child of script node
-        relativePath = otherPath.slice(nodePath.length + 1);
-      }
-
-      if (relativePath) {
-        children.push({ path: relativePath, type: nodeType, instanceSceneResPath });
-      }
-
-      // Unique nodes (%NodeName) are accessible from the scene owner (root script)
-      // regardless of their position in the tree
-      if (other.uniqueInOwner && nodePath === '.') {
-        children.push({ path: `%${other.name}`, type: nodeType, instanceSceneResPath });
-      }
-    }
 
     scripts.push({
       scriptResPath: extRes.path,
       nodePath,
-      children,
+      children: collectChildren(node, nodePath),
     });
   }
 
-  // Detect root node script
-  const rootNode = nodes.find((n) => n.parent === '' && n.scriptExtId);
+  // Detect root node script (direct or from inherited/instanced scene)
+  const rootNode = nodes.find((n) => n.parent === '');
   let rootScript: { scriptResPath: string } | undefined;
+  let inheritedSceneResPath: string | undefined;
   if (rootNode?.scriptExtId) {
     const extRes = extResources.get(rootNode.scriptExtId);
     if (extRes && extRes.type === 'Script' && extRes.path.endsWith('.gd')) {
       rootScript = { scriptResPath: extRes.path };
+    }
+  }
+  // Inherited scene: root node instances another scene (e.g. level inherits world.tscn)
+  if (rootNode?.instanceExtId) {
+    const extRes = extResources.get(rootNode.instanceExtId);
+    if (extRes && extRes.type === 'PackedScene') {
+      inheritedSceneResPath = extRes.path;
     }
   }
 
@@ -220,7 +227,7 @@ function parseScene(
     instancedNodes.set(fullPath, extRes.path);
   }
 
-  return { filePath, scripts, rootScript, connections, nodeTypes, instancedNodes };
+  return { filePath, scripts, rootScript, inheritedSceneResPath, connections, nodeTypes, instancedNodes };
 }
 
 function extractAttr(attrs: string, name: string): string | undefined {
@@ -504,6 +511,9 @@ export function generateTypings(options: GenerateTypingsOptions): string {
 
   // Build scene root script map: tscn res:// path → gd script res:// path
   const sceneRootScripts = new Map<string, string>();
+  // Build scene root type map: tscn res:// path → Godot type of root node (e.g. "TileMap", "Node2D")
+  // Used as fallback for instanced scenes without a root script
+  const sceneRootTypes = new Map<string, string>();
 
   for (const scenePath of scenes) {
     const scene = parseScene(scenePath);
@@ -520,6 +530,11 @@ export function generateTypings(options: GenerateTypingsOptions): string {
         rootAlias = aliasEntry.alias;
       }
       sceneRootScripts.set(resPath, scene.rootScript.scriptResPath);
+    }
+    // Track root node Godot type for instanced scene fallback
+    const rootType = scene.nodeTypes.get('.');
+    if (rootType) {
+      sceneRootTypes.set(resPath, rootType);
     }
     resourceEntries.push({ resPath, alias: rootAlias });
     parsedScenes.push({ scenePath, resPath, scene });
@@ -541,59 +556,116 @@ export function generateTypings(options: GenerateTypingsOptions): string {
   // Used to add get_parent() to module augmentation returning the parent script class type.
   const instancedParents = new Map<string, Set<string>>();
 
+  /** Resolve a script's children into a type map and track instanced parent relationships */
+  function resolveScriptChildren(
+    children: ScriptNodeInfo['children'],
+    parentAliasEntry: { alias: string },
+  ): Map<string, string> {
+    const sceneChildren = new Map<string, string>();
+    for (const child of children) {
+      let childType = child.type;
+      // Resolve instanced scene nodes to their root script class
+      if (child.instanceSceneResPath) {
+        const instanceScriptResPath = sceneRootScripts.get(child.instanceSceneResPath);
+        if (instanceScriptResPath) {
+          const instanceAlias = aliasMap.get(instanceScriptResPath);
+          if (instanceAlias) {
+            childType = instanceAlias.className === '__CLASS__' ? instanceAlias.alias : instanceAlias.className;
+
+            // Track parent→child scene relationship for get_parent() in module augmentation
+            const childScriptAlias = instanceAlias.alias;
+            if (!instancedParents.has(childScriptAlias)) {
+              instancedParents.set(childScriptAlias, new Set());
+            }
+            instancedParents.get(childScriptAlias)!.add(parentAliasEntry.alias);
+          }
+        }
+        // If we couldn't resolve via script, use the root node's Godot type
+        if (!childType && child.instanceSceneResPath) {
+          childType = sceneRootTypes.get(child.instanceSceneResPath) ?? 'Node';
+        }
+        if (!childType) {
+          childType = 'Node';
+        }
+      }
+      if (childType) {
+        sceneChildren.set(child.path, childType);
+      }
+    }
+    return sceneChildren;
+  }
+
+  /** Ensure scriptData entry exists for a given script res path */
+  function ensureScriptData(scriptResPath: string) {
+    if (scriptData.has(scriptResPath)) return scriptData.get(scriptResPath)!;
+    const classInfo = scriptClassMap.get(scriptResPath);
+    if (!classInfo) return null;
+    const aliasEntry = aliasMap.get(scriptResPath);
+    if (!aliasEntry) return null;
+    const data = {
+      alias: aliasEntry.alias,
+      tsModulePath: classInfo.tsModulePath,
+      className: classInfo.className,
+      sceneMaps: [] as Array<Map<string, string>>,
+    };
+    scriptData.set(scriptResPath, data);
+    return data;
+  }
+
+  // Pass 1: Process all regular scripts (scripts defined directly in scenes)
   for (const { scene } of parsedScenes) {
     for (const script of scene.scripts) {
-      const classInfo = scriptClassMap.get(script.scriptResPath);
-      if (!classInfo) continue;
-
       const aliasEntry = aliasMap.get(script.scriptResPath);
       if (!aliasEntry) continue;
 
-      let data = scriptData.get(script.scriptResPath);
-      if (!data) {
-        data = {
-          alias: aliasEntry.alias,
-          tsModulePath: classInfo.tsModulePath,
-          className: classInfo.className,
-          sceneMaps: [],
-        };
-        scriptData.set(script.scriptResPath, data);
-      }
+      const data = ensureScriptData(script.scriptResPath);
+      if (!data) continue;
 
       if (script.children.length > 0) {
-        // One map per scene occurrence
-        const sceneChildren = new Map<string, string>();
-        for (const child of script.children) {
-          let childType = child.type;
-          // Resolve instanced scene nodes to their root script class
-          if (child.instanceSceneResPath) {
-            const instanceScriptResPath = sceneRootScripts.get(child.instanceSceneResPath);
-            if (instanceScriptResPath) {
-              const instanceAlias = aliasMap.get(instanceScriptResPath);
-              if (instanceAlias) {
-                childType = instanceAlias.className === '__CLASS__' ? instanceAlias.alias : instanceAlias.className;
-
-                // Track parent→child scene relationship for get_parent() in module augmentation
-                const childScriptAlias = instanceAlias.alias;
-                const parentScriptAlias = aliasEntry.alias;
-                if (!instancedParents.has(childScriptAlias)) {
-                  instancedParents.set(childScriptAlias, new Set());
-                }
-                instancedParents.get(childScriptAlias)!.add(parentScriptAlias);
-              }
-            }
-            // If we couldn't resolve, try the Godot type from the instanced scene's root node
-            if (!childType) {
-              childType = 'Node';
-            }
-          }
-          if (childType) {
-            sceneChildren.set(child.path, childType);
-          }
-        }
-        data.sceneMaps.push(sceneChildren);
+        data.sceneMaps.push(resolveScriptChildren(script.children, aliasEntry));
       }
     }
+  }
+
+  // Pass 2: Handle inherited scenes (root node instances another scene, e.g. RI1_1.tscn inherits world.tscn)
+  // Children added by the inheriting scene are ADDITIVE to the base scene's children,
+  // so we clone the base scene's map and add the new children to get a complete snapshot.
+  for (const { scene } of parsedScenes) {
+    if (!scene.inheritedSceneResPath) continue;
+
+    const inheritedRootScriptPath = sceneRootScripts.get(scene.inheritedSceneResPath);
+    if (!inheritedRootScriptPath) continue;
+
+    const aliasEntry = aliasMap.get(inheritedRootScriptPath);
+    if (!aliasEntry) continue;
+
+    const data = ensureScriptData(inheritedRootScriptPath);
+    if (!data) continue;
+
+    // Collect children added by the inheriting scene
+    const inheritedChildren: ScriptNodeInfo['children'] = [];
+    for (const [fullPath, instanceResPath] of scene.instancedNodes) {
+      if (fullPath === '.') continue;
+      inheritedChildren.push({ path: fullPath, type: '', instanceSceneResPath: instanceResPath });
+    }
+    for (const [fullPath, nodeType] of scene.nodeTypes) {
+      if (fullPath === '.') continue;
+      if (!scene.instancedNodes.has(fullPath)) {
+        inheritedChildren.push({ path: fullPath, type: nodeType });
+      }
+    }
+    if (inheritedChildren.length === 0) continue;
+
+    // Combine with the base scene's children: clone the first existing map (from base scene)
+    // and merge the inherited additions into it, so it's a complete snapshot
+    const resolvedAdditions = resolveScriptChildren(inheritedChildren, aliasEntry);
+    const baseMap = data.sceneMaps.length > 0
+      ? new Map(data.sceneMaps[0]!)
+      : new Map<string, string>();
+    for (const [path, type] of resolvedAdditions) {
+      baseMap.set(path, type);
+    }
+    data.sceneMaps.push(baseMap);
   }
 
   // Parse autoloads from project.godot

@@ -81,9 +81,12 @@ declare module "./Enemy.ts" {
 interface _LevelSceneNodes {
   "Player": Player;
   "Enemy": Enemy;
+  "TilesetObjects": TileMap<{[__parent]: _Level}>;
   "Background": Sprite2D<{[__parent]: _Level}>;
   "UI": CanvasLayer<{[__parent]: _Level}>;
   "UI/ScoreLabel": Label<{[__parent]: CanvasLayer}>;
+  "TilesetObjects2": TileMap<{[__parent]: _Level}> | null;
+  "ExtraSprite": Sprite2D<{[__parent]: _Level}> | null;
 }
 
 declare module "./Level.ts" {
@@ -146,8 +149,10 @@ declare global {
     "res://BallB.tscn": PackedScene<_Ball>;
     "res://Enemy.tscn": PackedScene<_Enemy>;
     "res://Level.tscn": PackedScene<_Level>;
+    "res://Level1.tscn": PackedScene;
     "res://nested/Anonym.tscn": PackedScene<_nested_Anonym>;
     "res://Player.tscn": PackedScene<_Player>;
+    "res://TilesetObjects.tscn": PackedScene;
     "res://Anonym.gd": _Anonym;
     "res://Anonym2.gd": _Anonym2;
     "res://Ball.gd": _Ball;

@@ -84,11 +84,19 @@ describe('Scene typings generation', () => {
     // Instanced scene roots: user classes stay plain (get_parent via module augmentation)
     expect(content).toContain('"Player": Player;');
     expect(content).toContain('"Enemy": Enemy;');
+    // Instanced scene without script → root node Godot type with [__parent]
+    expect(content).toContain('"TilesetObjects": TileMap<{[__parent]: _Level}>;');
     // Regular Godot built-in child gets [__parent]
     expect(content).toContain('"Background": Sprite2D<{[__parent]: _Level}>;');
     // Nested children under non-script intermediate nodes
     expect(content).toContain('"UI": CanvasLayer<{[__parent]: _Level}>;');
     expect(content).toContain('"UI/ScoreLabel": Label<{[__parent]: CanvasLayer}>;');
+
+    // Level1.tscn inherits Level.tscn and adds extra children
+    // These should appear in Level's SceneNodes (as union/nullable with other occurrences)
+    // TilesetObjects2 and ExtraSprite are added by the inheriting scene
+    expect(content).toContain('"TilesetObjects2"');
+    expect(content).toContain('"ExtraSprite"');
   });
 
   it('should generate GodotResources and autoload singletons', () => {
