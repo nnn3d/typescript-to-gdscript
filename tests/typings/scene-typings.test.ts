@@ -105,6 +105,9 @@ describe('Scene typings generation', () => {
     expect(content).toContain('"res://Anonym2.gd": _Anonym2;');
     expect(content).toContain('"res://GameManager.gd": _GameManager;');
 
+    // .tres resources use gd_resource type header for precise typing
+    expect(content).toContain('"res://player_material.tres": ShaderMaterial;');
+
     // Autoload singletons from project.godot
     expect(content).toContain('Autoload singletons from project.godot');
     expect(content).toContain('const GameManager: _GameManager;');

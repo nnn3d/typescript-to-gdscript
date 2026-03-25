@@ -1,0 +1,4 @@
+[gd_resource type="ShaderMaterial" format=3 uid="uid://b5ws7ks5frcgv"]
+
+[resource]
+shader = ExtResource("1_abc")

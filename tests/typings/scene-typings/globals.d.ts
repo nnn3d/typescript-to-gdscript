@@ -156,6 +156,7 @@ declare global {
     "res://Level.gd": _Level;
     "res://Player.gd": _Player;
     "res://nested/Anonym.gd": _nested_Anonym;
+    "res://player_material.tres": ShaderMaterial;
   }
   // Autoload singletons from project.godot
   const GameManager: _GameManager;

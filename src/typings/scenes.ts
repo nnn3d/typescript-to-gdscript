@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, readdirSync, statSync, writeFileSync, existsSync, openSync, readSync, closeSync } from 'fs';
 import { join, relative, extname, dirname } from 'path';
 import { createTsProgram } from '../parser/typescript/index.ts';
 import { shouldIgnore } from '../config/index.ts';
@@ -617,7 +617,10 @@ export function generateTypings(options: GenerateTypingsOptions): string {
   for (const assetPath of assetFiles) {
     const resPath = `res://${relative(options.rootDir, assetPath).replace(/\\/g, '/')}`;
     const ext = extname(assetPath).toLowerCase();
-    const type = ASSET_EXTENSION_MAP[ext] ?? 'Resource';
+    // For Godot resource files (.tres/.res), parse the gd_resource header to get the actual type
+    const type = (ext === '.tres' || ext === '.res')
+      ? parseGdResourceType(assetPath) ?? 'Resource'
+      : ASSET_EXTENSION_MAP[ext] ?? 'Resource';
     assetEntries.push({ resPath, type });
   }
 
@@ -846,6 +849,26 @@ const ASSET_EXTENSION_MAP: Record<string, string> = {
 
 /** Extensions recognized as Godot asset files (for GodotResources scanning) */
 const ASSET_EXTENSIONS = new Set(Object.keys(ASSET_EXTENSION_MAP));
+
+/**
+ * Parses the `[gd_resource type="..."]` header from a .tres/.res file
+ * to determine the actual Godot resource class (e.g. "ShaderMaterial", "AudioStreamOggVorbis").
+ * Returns undefined if the header cannot be parsed (binary .res files, corrupt files, etc.).
+ */
+function parseGdResourceType(filePath: string): string | undefined {
+  try {
+    // Only read the first 256 bytes — the header is always on the first line
+    const fd = openSync(filePath, 'r');
+    const buf = Buffer.alloc(256);
+    const bytesRead = readSync(fd, buf, 0, 256, 0);
+    closeSync(fd);
+    const header = buf.toString('utf-8', 0, bytesRead);
+    const match = /^\[gd_resource\s+type="([^"]+)"/.exec(header);
+    return match?.[1];
+  } catch {
+    return undefined;
+  }
+}
 
 function findProjectFiles(
   dir: string,
