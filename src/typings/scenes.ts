@@ -899,12 +899,51 @@ export function generateTypings(options: GenerateTypingsOptions): string {
 
   // Pass 3: Handle embedded scene references (TileMap tiles, etc.)
   // These scenes are instantiated at runtime as children of the embedding node (e.g. TileMap),
-  // so their get_parent() should return the embedding node's Godot type or script class.
-  for (const { scene } of parsedScenes) {
-    for (const [, { parentType, sceneResPaths }] of scene.embeddedScenes) {
-      // Determine the parent type name for get_parent()
-      // For now, use the Godot built-in type (e.g. "TileMap")
-      // TODO: if the embedding node has a script, use the script's alias instead
+  // so their get_parent() should return the embedding node's type with [__parent] for chain resolution.
+  //
+  // For a TileMap node in a scene, the embedded scene's parent chain is:
+  //   embedded_scene → TileMap → owning_scene_script
+  // So get_parent() should be: TileMap<{[__parent]: owning_script_alias}>
+  //
+  // If the TileMap is the root of a non-scripted scene (e.g. TilesetObjects.tscn),
+  // the grandparent comes from wherever that scene is instanced.
+  for (const { resPath, scene } of parsedScenes) {
+    for (const [parentPath, { parentType, sceneResPaths }] of scene.embeddedScenes) {
+      // Determine grandparent aliases (parent of the TileMap node)
+      const grandparentAliases = new Set<string>();
+
+      if (parentPath === '.') {
+        // TileMap is root of this scene — grandparent comes from where this scene is instanced
+        // Look through all scenes to find which ones instance this scene
+        for (const { scene: otherScene } of parsedScenes) {
+          for (const [, instanceResPath] of otherScene.instancedNodes) {
+            if (instanceResPath === resPath) {
+              // Found a scene that instances this scene
+              // The grandparent is the root script of the instancing scene
+              if (otherScene.rootScript) {
+                const gpAlias = aliasMap.get(otherScene.rootScript.scriptResPath);
+                if (gpAlias) grandparentAliases.add(gpAlias.alias);
+              }
+            }
+          }
+        }
+      } else {
+        // TileMap is a non-root node — grandparent is the scene's root script
+        if (scene.rootScript) {
+          const gpAlias = aliasMap.get(scene.rootScript.scriptResPath);
+          if (gpAlias) grandparentAliases.add(gpAlias.alias);
+        }
+      }
+
+      // Build the parent type with [__parent] for chain resolution
+      let resolvedParentType: string;
+      if (grandparentAliases.size > 0) {
+        const gpType = [...grandparentAliases].join(' | ');
+        resolvedParentType = `${parentType}<{[__parent]: ${gpType}}>`;
+      } else {
+        resolvedParentType = parentType;
+      }
+
       for (const sceneResPath of sceneResPaths) {
         const instanceScriptResPath = sceneRootScripts.get(sceneResPath);
         if (!instanceScriptResPath) continue;
@@ -915,7 +954,7 @@ export function generateTypings(options: GenerateTypingsOptions): string {
         if (!instancedParents.has(childScriptAlias)) {
           instancedParents.set(childScriptAlias, new Set());
         }
-        instancedParents.get(childScriptAlias)!.add(parentType);
+        instancedParents.get(childScriptAlias)!.add(resolvedParentType);
       }
     }
   }

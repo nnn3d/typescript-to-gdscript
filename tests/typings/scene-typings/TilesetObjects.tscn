@@ -1,3 +1,20 @@
 [gd_scene format=3 uid="uid://test_tileset_objects"]
 
+[ext_resource type="PackedScene" uid="uid://ci46huf1xa7gh" path="res://Anonym.tscn" id="1_6ck4y"]
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_kxjp3"]
+resource_name = "objects"
+scenes/1/scene = ExtResource("1_6ck4y")
+
+[sub_resource type="TileSet" id="TileSet_bxi0m"]
+tile_size = Vector2i(64, 64)
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetScenesCollectionSource_kxjp3")
+
 [node name="tileset_objects" type="TileMap"]
+visibility_layer = 2
+z_index = -1
+texture_filter = 1
+tile_set = SubResource("TileSet_bxi0m")
+rendering_quadrant_size = 64
+format = 2

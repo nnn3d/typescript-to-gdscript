@@ -11,5 +11,9 @@ export class __CLASS__ extends Node {
     let collision: CollisionShape2D = this.get_node('CollisionShape2D');
     // Unknown path for get_node returns Node
     let unknown: Node = this.get_node('Unknown');
+
+    let parent = this.get_parent();
+
+    let levels: Level = parent.get_parent();
   }
 }

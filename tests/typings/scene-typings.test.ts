@@ -108,9 +108,13 @@ describe('Scene typings generation', () => {
     // TileMap child should appear in Level's scene nodes
     expect(content).toContain('"TilesetObjectsMap": TileMap<{[__parent]: _Level}>;');
 
-    // Ball (from BallA.tscn) should get get_parent() → TileMap
-    // because it's referenced via TileSetScenesCollectionSource
-    expect(content).toMatch(/interface Ball \{[\s\S]*?get_parent\(\): TileMap/);
+    // Ball (from BallA.tscn) should get get_parent() → TileMap<{[__parent]: _Level}>
+    // because it's referenced via TileSetScenesCollectionSource in Level.tscn
+    expect(content).toMatch(/interface Ball \{[\s\S]*?get_parent\(\): TileMap<\{\[__parent\]: _Level\}>/);
+
+    // Anonym (from Anonym.tscn) should also get TileMap<{[__parent]: _Level}>
+    // because it's embedded in TilesetObjects.tscn which is instanced in Level.tscn and Level1.tscn
+    expect(content).toMatch(/interface __CLASS__ \{[\s\S]*?get_parent\(\): TileMap<\{\[__parent\]: _Level\}>/);
   });
 
   it('should inherit scene trees for parent classes without their own scenes', () => {

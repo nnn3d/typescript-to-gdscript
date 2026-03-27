@@ -159,6 +159,6 @@ tests/
 - AST type post-processing: `const enum` → const object (erasableSyntaxOnly), `SyntaxType.X` → `typeof SyntaxType.X` in type positions
 - tree-sitter-gdscript `ParametersNode` name clash: type alias renamed to `ParameterChildNode`
 - Cross-file class visibility: `import { Name as _Name }` + `declare global { class Name extends _Name {} }`
-- TileMap embedded scenes: sub_resource chains (TileMap → TileSet → TileSetScenesCollectionSource) parsed via `collectTileMapScenes()`, injected into `instancedParents` in Pass 3 of `generateTypings()` with Godot built-in type name as parent (not script alias)
+- TileMap embedded scenes: sub_resource chains (TileMap → TileSet → TileSetScenesCollectionSource) parsed via `collectTileMapScenes()`, injected into `instancedParents` in Pass 3 of `generateTypings()` with `NodeType<{[__parent]: grandparentAlias}>` for proper chain resolution (e.g. `TileMap<{[__parent]: _Level}>` so `get_parent().get_parent()` resolves correctly). For root TileMap in instanced scenes (e.g. TilesetObjects.tscn), grandparent is resolved from instancing scenes.
 - Godot validation autoload filtering: `--check-only --script` doesn't load autoloads (bug #80319), two error formats: `"Identifier not found: X"` and `"Identifier "X" not declared in the current scope."`, filtered in both parsed and unparsed error paths
 - Godot validation duplicate class filtering: `Class "X" hides a global script class` when tmp validation copy coexists with original .gd file, filtered via `isDuplicateClassFalsePositive()`
