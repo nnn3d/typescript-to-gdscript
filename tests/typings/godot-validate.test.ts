@@ -5,6 +5,7 @@ import {
   validateGdFiles,
   getAutoloadNames,
   isAutoloadFalsePositive,
+  isDuplicateClassFalsePositive,
   type GodotRawError,
 } from '../../src/godot-validate/index.ts';
 import { convertTsToGd } from '../../src/converter/ts-to-gd/index.ts';
@@ -333,6 +334,30 @@ describe('isAutoloadFalsePositive', () => {
   });
 });
 
+describe('isDuplicateClassFalsePositive', () => {
+  it('should detect "Class ... hides a global script class" error', () => {
+    const error: GodotRawError = {
+      file: '/tmp/tstogd/player.gd',
+      line: 1,
+      column: 0,
+      errorType: 'Parse Error',
+      message: 'Class "Player" hides a global script class.',
+    };
+    expect(isDuplicateClassFalsePositive(error)).toBe(true);
+  });
+
+  it('should NOT filter unrelated Parse Errors', () => {
+    const error: GodotRawError = {
+      file: '/project/test.gd',
+      line: 5,
+      column: 0,
+      errorType: 'Parse Error',
+      message: 'Expected ":" after variable name.',
+    };
+    expect(isDuplicateClassFalsePositive(error)).toBe(false);
+  });
+});
+
 describe('getAutoloadNames', () => {
   it('should parse autoloads from project.godot', () => {
     const projectDir = join(TMP_DIR, 'autoload-parse-test');
@@ -652,6 +677,36 @@ describe('Godot CLI integration', () => {
       (d) => d.message.includes('GameManager'),
     );
     expect(autoloadErrors).toHaveLength(0);
+  });
+
+  it('should filter "hides a global script class" when duplicate class_name exists', async () => {
+    const projectDir = setupGodotProject();
+    // Original script in the project
+    writeFileSync(
+      join(projectDir, 'player.gd'),
+      ['class_name Player', 'extends Node', '', 'var health: int = 100'].join(
+        '\n',
+      ),
+    );
+    // Duplicate script (simulating tmp validation copy) with same class_name
+    writeFileSync(
+      join(projectDir, 'player_tmp.gd'),
+      ['class_name Player', 'extends Node', '', 'var health: int = 100'].join(
+        '\n',
+      ),
+    );
+
+    const result = await validateGdFiles({
+      gdFiles: [join(projectDir, 'player_tmp.gd')],
+      projectRoot: projectDir,
+      godotPath: GODOT_PATH,
+    });
+
+    // The "hides a global script class" error should be filtered out
+    const hideErrors = result.diagnostics.filter((d) =>
+      d.message.includes('hides a global script class'),
+    );
+    expect(hideErrors).toHaveLength(0);
   });
 
   it('should validate multiple files', async () => {

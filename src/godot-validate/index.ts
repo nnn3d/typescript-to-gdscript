@@ -74,6 +74,15 @@ export function isAutoloadFalsePositive(
   return false;
 }
 
+/**
+ * Returns true if the error is a false positive caused by validating a
+ * tmp copy of a GD file while the original still exists in the project.
+ * Godot reports: 'Class "Foo" hides a global script class.'
+ */
+export function isDuplicateClassFalsePositive(error: GodotRawError): boolean {
+  return /^Class ".*" hides a global script class/.test(error.message);
+}
+
 // ─── Error Parsing ───────────────────────────────────────────
 
 /**
@@ -323,25 +332,30 @@ export async function validateGdFiles(
       var output = stderr + '\n' + stdout;
 
       var rawErrors = parseGodotErrors(output, options.projectRoot);
-      // Filter false-positive autoload errors (Godot bug #80319)
+      // Filter false-positive errors
       rawErrors = rawErrors.filter(
-        (e) => !isAutoloadFalsePositive(e, autoloadNames),
+        (e) =>
+          !isAutoloadFalsePositive(e, autoloadNames) &&
+          !isDuplicateClassFalsePositive(e),
       );
 
       if (rawErrors.length === 0 && output.trim()) {
         // Unparsed error output — report first meaningful line
-        // But first check if it's an autoload false positive
-        var isAutoloadFP = false;
+        // But first check if it's a known false positive
+        var isFalsePositive = false;
         if (autoloadNames.size > 0) {
           for (var autoloadName of autoloadNames) {
             if (output.includes('Identifier not found: ' + autoloadName) ||
                 output.includes('Identifier "' + autoloadName + '" not declared')) {
-              isAutoloadFP = true;
+              isFalsePositive = true;
               break;
             }
           }
         }
-        if (!isAutoloadFP) {
+        if (!isFalsePositive && /Class ".*" hides a global script class/.test(output)) {
+          isFalsePositive = true;
+        }
+        if (!isFalsePositive) {
           var firstLine = output
             .trim()
             .split('\n')
@@ -599,24 +613,29 @@ export function validateGdFilesSync(
 
       var output = stderr + '\n' + stdout;
       var rawErrors = parseGodotErrors(output, options.projectRoot);
-      // Filter false-positive autoload errors (Godot bug #80319)
+      // Filter false-positive errors
       rawErrors = rawErrors.filter(
-        (e) => !isAutoloadFalsePositive(e, autoloadNames),
+        (e) =>
+          !isAutoloadFalsePositive(e, autoloadNames) &&
+          !isDuplicateClassFalsePositive(e),
       );
 
       if (rawErrors.length === 0 && output.trim()) {
-        // Check if unparsed output is an autoload false positive
-        var isAutoloadFP = false;
+        // Check if unparsed output is a known false positive
+        var isFalsePositive = false;
         if (autoloadNames.size > 0) {
           for (var autoloadName of autoloadNames) {
             if (output.includes('Identifier not found: ' + autoloadName) ||
                 output.includes('Identifier "' + autoloadName + '" not declared')) {
-              isAutoloadFP = true;
+              isFalsePositive = true;
               break;
             }
           }
         }
-        if (!isAutoloadFP) {
+        if (!isFalsePositive && /Class ".*" hides a global script class/.test(output)) {
+          isFalsePositive = true;
+        }
+        if (!isFalsePositive) {
           var firstLine = output
             .trim()
             .split('\n')

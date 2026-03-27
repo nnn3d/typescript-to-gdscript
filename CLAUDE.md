@@ -161,3 +161,4 @@ tests/
 - Cross-file class visibility: `import { Name as _Name }` + `declare global { class Name extends _Name {} }`
 - TileMap embedded scenes: sub_resource chains (TileMap → TileSet → TileSetScenesCollectionSource) parsed via `collectTileMapScenes()`, injected into `instancedParents` in Pass 3 of `generateTypings()` with Godot built-in type name as parent (not script alias)
 - Godot validation autoload filtering: `--check-only --script` doesn't load autoloads (bug #80319), two error formats: `"Identifier not found: X"` and `"Identifier "X" not declared in the current scope."`, filtered in both parsed and unparsed error paths
+- Godot validation duplicate class filtering: `Class "X" hides a global script class` when tmp validation copy coexists with original .gd file, filtered via `isDuplicateClassFalsePositive()`
