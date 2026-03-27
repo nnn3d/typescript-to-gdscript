@@ -32,7 +32,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "lint": "tsc --noEmit",
-    "generate:ast-types": "tsx src/parser/gdscript/generate-types.ts",
+    "generate:ast-types": "dts-tree-sitter tree-sitter-gdscript > src/parser/gdscript/types.ts && node scripts/fix-tree-sitter-types.js src/parser/gdscript/types.ts",
+    "generate:resource-ast-types": "dts-tree-sitter tree-sitter-godot-resource > src/parser/godot-resource/types.ts && node scripts/fix-tree-sitter-types.js src/parser/godot-resource/types.ts",
     "generate:godot-typings": "tsx src/cli/index.ts generate-gdscript-global-typings --docs-dir vendor/godot/doc/classes --typings-dir typings --set-latest",
     "set-latest": "tsx src/cli/index.ts set-latest"
   },
@@ -61,6 +62,7 @@
     "source-map": "^0.7.4",
     "tree-sitter": "^0.22.0",
     "tree-sitter-gdscript": "^6.1.0",
+    "tree-sitter-godot-resource": "^0.7.0",
     "typescript": "^5.9.0"
   },
   "peerDependencies": {
@@ -72,6 +74,7 @@
     }
   },
   "devDependencies": {
+    "@asgerf/dts-tree-sitter": "^0.21.0",
     "@types/glob": "^9.0.0",
     "@types/node": "^22.0.0",
     "@typescript-eslint/parser": "^8.57.1",

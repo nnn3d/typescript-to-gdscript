@@ -1,6 +1,5 @@
 import { GDScriptParser } from '../../parser/gdscript/index.ts';
-import type { GDNode, GDNodeBase } from '../../parser/gdscript/types.ts';
-import { isGDNodeType } from '../../parser/gdscript/types.ts';
+import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
 import type { TransformResult, TransformDiagnostic } from '../common/index.ts';
 import type { GodotClassRegistry } from '../../typings/godot-registry.ts';
 
@@ -92,25 +91,25 @@ export function parseGdClassInfo(source: string): UserClassInfo | null {
   const memberTypes = new Map<string, string>();
 
   for (const child of root.namedChildren) {
-    if (isGDNodeType(child, 'extends_statement')) {
+    if (child.type === SyntaxType.ExtendsStatement) {
       const typeNode = child.namedChildren[0];
       if (typeNode) {
-        extendsClass = isGDNodeType(typeNode, 'type')
+        extendsClass = typeNode.type === SyntaxType.Type
           ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
           : typeNode.text;
       }
-    } else if (isGDNodeType(child, 'class_name_statement')) {
+    } else if (child.type === SyntaxType.ClassNameStatement) {
       className = child.childForFieldName('name')?.text ?? '';
     } else if (
-      isGDNodeType(child, 'function_definition') ||
-      isGDNodeType(child, 'constructor_definition')
+      child.type === SyntaxType.FunctionDefinition ||
+      child.type === SyntaxType.ConstructorDefinition
     ) {
       const name = child.childForFieldName('name')?.text ?? '_init';
       members.add(name === '_init' ? 'constructor' : name);
     } else if (
-      isGDNodeType(child, 'variable_statement') ||
-      isGDNodeType(child, 'export_variable_statement') ||
-      isGDNodeType(child, 'onready_variable_statement')
+      child.type === SyntaxType.VariableStatement ||
+      child.type === SyntaxType.ExportVariableStatement ||
+      child.type === SyntaxType.OnreadyVariableStatement
     ) {
       const name = child.childForFieldName('name')?.text;
       if (name) {
@@ -124,10 +123,10 @@ export function parseGdClassInfo(source: string): UserClassInfo | null {
             : null;
         if (inferredType) memberTypes.set(name, inferredType);
       }
-    } else if (isGDNodeType(child, 'signal_statement')) {
+    } else if (child.type === SyntaxType.SignalStatement) {
       const name = child.childForFieldName('name')?.text;
       if (name) members.add(name);
-    } else if (isGDNodeType(child, 'const_statement')) {
+    } else if (child.type === SyntaxType.ConstStatement) {
       const name = child.childForFieldName('name')?.text;
       if (name) members.add(name);
     }
@@ -275,7 +274,7 @@ function isGlobalName(name: string, ctx: GdToTsContext): boolean {
 
 // ─── Source File ─────────────────────────────────────────────
 
-function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
+function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
   const lines: string[] = [];
   let className = '';
   let extendsClass = '';
@@ -284,25 +283,25 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
 
   // First pass: collect class name, extends, and member names
   for (const child of root.namedChildren) {
-    if (isGDNodeType(child, 'extends_statement')) {
+    if (child.type === SyntaxType.ExtendsStatement) {
       const typeNode = child.namedChildren[0];
       if (typeNode) {
-        extendsClass = isGDNodeType(typeNode, 'type')
+        extendsClass = typeNode.type === SyntaxType.Type
           ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
           : typeNode.text;
       }
-    } else if (isGDNodeType(child, 'class_name_statement')) {
+    } else if (child.type === SyntaxType.ClassNameStatement) {
       className = child.childForFieldName('name')?.text ?? '';
     } else if (
-      isGDNodeType(child, 'function_definition') ||
-      isGDNodeType(child, 'constructor_definition')
+      child.type === SyntaxType.FunctionDefinition ||
+      child.type === SyntaxType.ConstructorDefinition
     ) {
       const name = child.childForFieldName('name')?.text ?? '_init';
       ctx.classMembers.add(name === '_init' ? 'constructor' : name);
     } else if (
-      isGDNodeType(child, 'variable_statement') ||
-      isGDNodeType(child, 'export_variable_statement') ||
-      isGDNodeType(child, 'onready_variable_statement')
+      child.type === SyntaxType.VariableStatement ||
+      child.type === SyntaxType.ExportVariableStatement ||
+      child.type === SyntaxType.OnreadyVariableStatement
     ) {
       const name = child.childForFieldName('name')?.text;
       if (name) {
@@ -318,16 +317,16 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
             : null;
         if (inferredType) ctx.classMemberTypes.set(name, inferredType);
       }
-    } else if (isGDNodeType(child, 'signal_statement')) {
+    } else if (child.type === SyntaxType.SignalStatement) {
       const name = child.childForFieldName('name')?.text;
       if (name) ctx.classMembers.add(name);
-    } else if (isGDNodeType(child, 'const_statement')) {
+    } else if (child.type === SyntaxType.ConstStatement) {
       const name = child.childForFieldName('name')?.text;
       if (name) {
         ctx.classMembers.add(name);
         ctx.staticMembers.add(name);
       }
-    } else if (isGDNodeType(child, 'enum_definition')) {
+    } else if (child.type === SyntaxType.EnumDefinition) {
       const nameNode = child.childForFieldName('name');
       if (nameNode) {
         // Named enum → static member
@@ -338,7 +337,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
         const bodyNode = child.childForFieldName('body');
         if (bodyNode) {
           for (const e of bodyNode.namedChildren) {
-            if (isGDNodeType(e, 'enumerator')) {
+            if (e.type === SyntaxType.Enumerator) {
               const eName = e.childForFieldName('left')?.text;
               if (eName) {
                 ctx.classMembers.add(eName);
@@ -348,7 +347,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
           }
         }
       }
-    } else if (isGDNodeType(child, 'class_definition')) {
+    } else if (child.type === SyntaxType.ClassDefinition) {
       const name = child.childForFieldName('name')?.text;
       if (name) {
         ctx.classMembers.add(name);
@@ -390,22 +389,22 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
   for (let i = 0; i < root.namedChildren.length; i++) {
     const child = root.namedChildren[i]!;
     if (
-      isGDNodeType(child, 'annotation') &&
+      child.type === SyntaxType.Annotation &&
       child.text === '@abstract'
     ) {
       // Check what follows this annotation
       const next = root.namedChildren[i + 1];
       if (
         next &&
-        (isGDNodeType(next, 'extends_statement') ||
-          isGDNodeType(next, 'class_name_statement'))
+        (next.type === SyntaxType.ExtendsStatement ||
+          next.type === SyntaxType.ClassNameStatement)
       ) {
         isAbstractClass = true;
         rootAbstractAnnotationIndices.add(i);
-      } else if (next && isGDNodeType(next, 'function_definition')) {
+      } else if (next && next.type === SyntaxType.FunctionDefinition) {
         abstractFunctionIndices.add(i + 1);
         rootAbstractAnnotationIndices.add(i);
-      } else if (next && isGDNodeType(next, 'class_definition')) {
+      } else if (next && next.type === SyntaxType.ClassDefinition) {
         abstractClassIndices.add(i + 1);
         rootAbstractAnnotationIndices.add(i);
       }
@@ -426,27 +425,27 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
   for (let ci = 0; ci < root.namedChildren.length; ci++) {
     const child = root.namedChildren[ci]!;
     if (
-      isGDNodeType(child, 'extends_statement') ||
-      isGDNodeType(child, 'class_name_statement')
+      child.type === SyntaxType.ExtendsStatement ||
+      child.type === SyntaxType.ClassNameStatement
     ) {
       continue; // handled in class header
     }
 
     // Skip root-level @abstract annotations (handled via isAbstractClass / abstractFunctions)
     if (
-      isGDNodeType(child, 'annotation') &&
+      child.type === SyntaxType.Annotation &&
       rootAbstractAnnotationIndices.has(ci)
     ) {
       continue;
     }
 
     // Standalone annotations (e.g. @export_group) — collect and prepend to next member
-    if (isGDNodeType(child, 'annotation')) {
+    if (child.type === SyntaxType.Annotation) {
       pendingAnnotations.push(`  ${emitAnnotationAsDecorator(child, ctx)}`);
       continue;
     }
 
-    if (isGDNodeType(child, 'comment')) {
+    if (child.type === SyntaxType.Comment) {
       // Comments before class body become top-level comments inside class
       memberLines.push(emitComment(child));
       hasNonFunctionMembers = true;
@@ -455,8 +454,8 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
     }
 
     const isFunction =
-      isGDNodeType(child, 'function_definition') ||
-      isGDNodeType(child, 'constructor_definition');
+      child.type === SyntaxType.FunctionDefinition ||
+      child.type === SyntaxType.ConstructorDefinition;
 
     if (isFunction) {
       // Add blank line before first function if there were property members
@@ -465,7 +464,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       }
     }
 
-    if (isGDNodeType(child, 'function_definition')) {
+    if (child.type === SyntaxType.FunctionDefinition) {
       const isAbstract = abstractFunctionIndices.has(ci);
       flushPendingAnnotations();
       memberLines.push(emitFunction(child, ctx, isAbstract));
@@ -474,7 +473,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       continue;
     }
 
-    if (isGDNodeType(child, 'constructor_definition')) {
+    if (child.type === SyntaxType.ConstructorDefinition) {
       flushPendingAnnotations();
       memberLines.push(emitConstructor(child, ctx));
       memberLines.push('');
@@ -483,9 +482,9 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
     }
 
     if (
-      isGDNodeType(child, 'variable_statement') ||
-      isGDNodeType(child, 'export_variable_statement') ||
-      isGDNodeType(child, 'onready_variable_statement')
+      child.type === SyntaxType.VariableStatement ||
+      child.type === SyntaxType.ExportVariableStatement ||
+      child.type === SyntaxType.OnreadyVariableStatement
     ) {
       flushPendingAnnotations();
       memberLines.push(emitClassVariable(child, ctx));
@@ -494,7 +493,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       continue;
     }
 
-    if (isGDNodeType(child, 'const_statement')) {
+    if (child.type === SyntaxType.ConstStatement) {
       flushPendingAnnotations();
       memberLines.push(emitConstStatement(child, ctx));
       hasNonFunctionMembers = true;
@@ -502,7 +501,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       continue;
     }
 
-    if (isGDNodeType(child, 'signal_statement')) {
+    if (child.type === SyntaxType.SignalStatement) {
       flushPendingAnnotations();
       memberLines.push(emitSignal(child, ctx));
       hasNonFunctionMembers = true;
@@ -510,7 +509,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       continue;
     }
 
-    if (isGDNodeType(child, 'enum_definition')) {
+    if (child.type === SyntaxType.EnumDefinition) {
       flushPendingAnnotations();
       memberLines.push(emitEnum(child, ctx));
       hasNonFunctionMembers = true;
@@ -518,7 +517,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
       continue;
     }
 
-    if (isGDNodeType(child, 'class_definition')) {
+    if (child.type === SyntaxType.ClassDefinition) {
       // Add blank line before inner class if there were non-function members
       // (functions already add trailing blank lines)
       if (hasNonFunctionMembers && !lastWasFunction) {
@@ -557,7 +556,7 @@ function emitSourceFile(root: GDNode, ctx: GdToTsContext): string {
 
 // ─── Inner Class ──────────────────────────────────────────────
 
-function emitInnerClass(node: GDNode, ctx: GdToTsContext, isAbstractFromParent = false): string {
+function emitInnerClass(node: SyntaxNode, ctx: GdToTsContext, isAbstractFromParent = false): string {
   const nameNode = node.childForFieldName('name');
   const className = nameNode?.text ?? 'InnerClass';
 
@@ -570,10 +569,10 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext, isAbstractFromParent =
   const bodyNode = node.childForFieldName('body');
 
   for (const child of node.namedChildren) {
-    if (isGDNodeType(child, 'extends_statement')) {
+    if (child.type === SyntaxType.ExtendsStatement) {
       const typeNode = child.namedChildren[0];
       if (typeNode) {
-        extendsClass = isGDNodeType(typeNode, 'type')
+        extendsClass = typeNode.type === SyntaxType.Type
           ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
           : typeNode.text;
       }
@@ -594,18 +593,18 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext, isAbstractFromParent =
   if (bodyNode) {
     for (const child of bodyNode.namedChildren) {
       if (
-        isGDNodeType(child, 'function_definition') ||
-        isGDNodeType(child, 'constructor_definition')
+        child.type === SyntaxType.FunctionDefinition ||
+        child.type === SyntaxType.ConstructorDefinition
       ) {
         const name = child.childForFieldName('name')?.text ?? '_init';
         ctx.classMembers.add(name === '_init' ? 'constructor' : name);
       } else if (
-        isGDNodeType(child, 'variable_statement') ||
-        isGDNodeType(child, 'export_variable_statement')
+        child.type === SyntaxType.VariableStatement ||
+        child.type === SyntaxType.ExportVariableStatement
       ) {
         const name = child.childForFieldName('name')?.text;
         if (name) ctx.classMembers.add(name);
-      } else if (isGDNodeType(child, 'signal_statement')) {
+      } else if (child.type === SyntaxType.SignalStatement) {
         const name = child.childForFieldName('name')?.text;
         if (name) ctx.classMembers.add(name);
       }
@@ -628,17 +627,17 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext, isAbstractFromParent =
   const memberLines: string[] = [];
   if (bodyNode) {
     for (const child of bodyNode.namedChildren) {
-      if (isGDNodeType(child, 'function_definition')) {
+      if (child.type === SyntaxType.FunctionDefinition) {
         memberLines.push(emitFunction(child, ctx));
         continue;
       }
-      if (isGDNodeType(child, 'constructor_definition')) {
+      if (child.type === SyntaxType.ConstructorDefinition) {
         memberLines.push(emitConstructor(child, ctx));
         continue;
       }
       if (
-        isGDNodeType(child, 'variable_statement') ||
-        isGDNodeType(child, 'export_variable_statement')
+        child.type === SyntaxType.VariableStatement ||
+        child.type === SyntaxType.ExportVariableStatement
       ) {
         memberLines.push(emitClassVariable(child, ctx));
         continue;
@@ -668,7 +667,7 @@ function emitInnerClass(node: GDNode, ctx: GdToTsContext, isAbstractFromParent =
 
 // ─── Comments ─────────────────────────────────────────────────
 
-function emitComment(node: GDNode): string {
+function emitComment(node: SyntaxNode): string {
   const text = node.text;
   if (text.startsWith('##')) {
     // Doc comment: ## ... -> /** ... */
@@ -682,7 +681,7 @@ function emitComment(node: GDNode): string {
 
 // ─── Signals ──────────────────────────────────────────────────
 
-function emitSignal(node: GDNode, ctx: GdToTsContext): string {
+function emitSignal(node: SyntaxNode, ctx: GdToTsContext): string {
   const name = node.childForFieldName('name')?.text ?? '';
   const paramsNode = node.childForFieldName('parameters');
 
@@ -694,14 +693,14 @@ function emitSignal(node: GDNode, ctx: GdToTsContext): string {
   return `  ${name} = gd.signal();`;
 }
 
-function emitSignalParamTypes(paramsNode: GDNode): string {
+function emitSignalParamTypes(paramsNode: SyntaxNode): string {
   const types: string[] = [];
   for (const child of paramsNode.namedChildren) {
-    if (isGDNodeType(child, 'typed_parameter')) {
+    if (child.type === SyntaxType.TypedParameter) {
       const typeNode = child.childForFieldName('type');
       const tsType = typeNode ? gdTypeToTs(typeNode.text) : 'any';
       types.push(tsType ?? 'any');
-    } else if (isGDNodeType(child, 'identifier')) {
+    } else if (child.type === SyntaxType.Identifier) {
       types.push('any');
     }
   }
@@ -710,13 +709,13 @@ function emitSignalParamTypes(paramsNode: GDNode): string {
 
 // ─── Enums ────────────────────────────────────────────────────
 
-function emitEnum(node: GDNode, ctx: GdToTsContext): string {
+function emitEnum(node: SyntaxNode, ctx: GdToTsContext): string {
   const nameNode = node.childForFieldName('name');
   const bodyNode = node.childForFieldName('body');
   if (!bodyNode) return '';
 
   const enumerators = bodyNode.namedChildren.filter((c) =>
-    isGDNodeType(c, 'enumerator'),
+    c.type === SyntaxType.Enumerator,
   );
 
   if (nameNode) {
@@ -753,7 +752,7 @@ function emitEnum(node: GDNode, ctx: GdToTsContext): string {
 
 // ─── Variables ────────────────────────────────────────────────
 
-function emitClassVariable(node: GDNode, ctx: GdToTsContext): string {
+function emitClassVariable(node: SyntaxNode, ctx: GdToTsContext): string {
   const annotations = getAnnotations(node);
   const isStatic = node.childForFieldName('static') !== null;
   const name = node.childForFieldName('name')?.text ?? '';
@@ -772,7 +771,7 @@ function emitClassVariable(node: GDNode, ctx: GdToTsContext): string {
   return `${decorators}  ${staticPrefix}${name}${typeAnnotation}${init};`;
 }
 
-function emitConstStatement(node: GDNode, ctx: GdToTsContext): string {
+function emitConstStatement(node: SyntaxNode, ctx: GdToTsContext): string {
   const name = node.childForFieldName('name')?.text ?? '';
   const typeNode = node.childForFieldName('type');
   const valueNode = node.childForFieldName('value');
@@ -785,7 +784,7 @@ function emitConstStatement(node: GDNode, ctx: GdToTsContext): string {
 }
 
 function emitLocalVariable(
-  node: GDNode,
+  node: SyntaxNode,
   ctx: GdToTsContext,
   indent: string,
 ): string {
@@ -812,11 +811,11 @@ function emitLocalVariable(
 
 // ─── Type Annotations ─────────────────────────────────────────
 
-function emitTypeAnnotation(typeNode: GDNode): string {
-  if (isGDNodeType(typeNode, 'inferred_type')) {
+function emitTypeAnnotation(typeNode: SyntaxNode): string {
+  if (typeNode.type === SyntaxType.InferredType) {
     return ''; // := inferred — omit type in TS
   }
-  if (isGDNodeType(typeNode, 'type')) {
+  if (typeNode.type === SyntaxType.Type) {
     const inner = typeNode.namedChildren[0]?.text ?? typeNode.text;
     const tsType = gdTypeToTs(inner);
     return tsType ? `: ${tsType}` : '';
@@ -827,12 +826,12 @@ function emitTypeAnnotation(typeNode: GDNode): string {
 
 // ─── Annotations / Decorators ─────────────────────────────────
 
-function getAnnotations(node: GDNode): GDNode[] {
-  const annotations: GDNode[] = [];
+function getAnnotations(node: SyntaxNode): SyntaxNode[] {
+  const annotations: SyntaxNode[] = [];
   for (const child of node.namedChildren) {
-    if (isGDNodeType(child, 'annotations')) {
+    if (child.type === SyntaxType.Annotations) {
       for (const ann of child.namedChildren) {
-        if (isGDNodeType(ann, 'annotation')) {
+        if (ann.type === SyntaxType.Annotation) {
           annotations.push(ann);
         }
       }
@@ -841,7 +840,7 @@ function getAnnotations(node: GDNode): GDNode[] {
   return annotations;
 }
 
-function emitAnnotationAsDecorator(node: GDNode, ctx: GdToTsContext): string {
+function emitAnnotationAsDecorator(node: SyntaxNode, ctx: GdToTsContext): string {
   // Annotation text is like "@export" or "@onready" or "@export_range(0, 100)"
   const text = node.text;
   const match = text.match(/^@(\w+)(?:\((.+)\))?$/);
@@ -865,7 +864,7 @@ function emitAnnotationAsDecorator(node: GDNode, ctx: GdToTsContext): string {
 
 // ─── Functions ────────────────────────────────────────────────
 
-function emitFunction(node: GDNode, ctx: GdToTsContext, isAbstract = false): string {
+function emitFunction(node: SyntaxNode, ctx: GdToTsContext, isAbstract = false): string {
   const name = node.childForFieldName('name')?.text ?? 'unknown';
   const paramsNode = node.childForFieldName('parameters');
   const returnTypeNode = node.childForFieldName('return_type');
@@ -924,7 +923,7 @@ function emitFunction(node: GDNode, ctx: GdToTsContext, isAbstract = false): str
   return `  ${asyncPrefix}${name}(${params})${returnType} {\n  }`;
 }
 
-function emitConstructor(node: GDNode, ctx: GdToTsContext): string {
+function emitConstructor(node: SyntaxNode, ctx: GdToTsContext): string {
   const paramsNode = node.childForFieldName('parameters');
   const bodyNode = node.childForFieldName('body');
 
@@ -947,27 +946,27 @@ function emitConstructor(node: GDNode, ctx: GdToTsContext): string {
 }
 
 function collectParamNames(
-  paramsNode: GDNode | null,
+  paramsNode: SyntaxNode | null,
   ctx: GdToTsContext,
 ): void {
   if (!paramsNode) return;
   for (const child of paramsNode.namedChildren) {
-    if (isGDNodeType(child, 'identifier')) {
+    if (child.type === SyntaxType.Identifier) {
       ctx.localVars.add(child.text);
     } else if (
-      isGDNodeType(child, 'typed_parameter') ||
-      isGDNodeType(child, 'default_parameter') ||
-      isGDNodeType(child, 'typed_default_parameter')
+      child.type === SyntaxType.TypedParameter ||
+      child.type === SyntaxType.DefaultParameter ||
+      child.type === SyntaxType.TypedDefaultParameter
     ) {
       const name = child.namedChildren.find((c) =>
-        isGDNodeType(c, 'identifier'),
+        c.type === SyntaxType.Identifier,
       )?.text;
       if (name) ctx.localVars.add(name);
     }
   }
 }
 
-function emitParams(paramsNode: GDNode, ctx: GdToTsContext): string {
+function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
   // Look up signal handler info for the current method (if any)
   const handlerInfo = ctx.currentMethodName
     ? ctx.signalHandlers.get(ctx.currentMethodName)
@@ -976,7 +975,7 @@ function emitParams(paramsNode: GDNode, ctx: GdToTsContext): string {
   const params: string[] = [];
   let paramIndex = 0;
   for (const child of paramsNode.namedChildren) {
-    if (isGDNodeType(child, 'identifier')) {
+    if (child.type === SyntaxType.Identifier) {
       // Untyped param — use signal handler type if available
       if (handlerInfo && paramIndex < handlerInfo.params.length) {
         const sigParam = handlerInfo.params[paramIndex]!;
@@ -986,25 +985,25 @@ function emitParams(paramsNode: GDNode, ctx: GdToTsContext): string {
         params.push(child.text);
       }
       paramIndex++;
-    } else if (isGDNodeType(child, 'typed_parameter')) {
+    } else if (child.type === SyntaxType.TypedParameter) {
       const name =
-        child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
         '';
       const typeNode = child.childForFieldName('type');
       const tsType = typeNode ? gdTypeToTs(typeNode.text) : null;
       params.push(tsType ? `${name}: ${tsType}` : name);
       paramIndex++;
-    } else if (isGDNodeType(child, 'default_parameter')) {
+    } else if (child.type === SyntaxType.DefaultParameter) {
       const name =
-        child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
         '';
       const value = child.childForFieldName('value');
       const valueStr = value ? emitExpr(value, ctx) : '';
       params.push(`${name} = ${valueStr}`);
       paramIndex++;
-    } else if (isGDNodeType(child, 'typed_default_parameter')) {
+    } else if (child.type === SyntaxType.TypedDefaultParameter) {
       const name =
-        child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
         '';
       const typeNode = child.childForFieldName('type');
       const value = child.childForFieldName('value');
@@ -1018,8 +1017,8 @@ function emitParams(paramsNode: GDNode, ctx: GdToTsContext): string {
   return params.join(', ');
 }
 
-function emitReturnType(typeNode: GDNode): string {
-  if (isGDNodeType(typeNode, 'type')) {
+function emitReturnType(typeNode: SyntaxNode): string {
+  if (typeNode.type === SyntaxType.Type) {
     const inner = typeNode.namedChildren[0]?.text ?? typeNode.text;
     const tsType = gdTypeToTs(inner);
     return tsType ? `: ${tsType}` : '';
@@ -1030,22 +1029,22 @@ function emitReturnType(typeNode: GDNode): string {
 
 // ─── Body / Statements ────────────────────────────────────────
 
-function emitBody(node: GDNode, ctx: GdToTsContext, depth: number): string {
+function emitBody(node: SyntaxNode, ctx: GdToTsContext, depth: number): string {
   const indent = '  '.repeat(depth);
   const lines: string[] = [];
 
   for (const child of node.namedChildren) {
-    if (isGDNodeType(child, 'comment')) {
+    if (child.type === SyntaxType.Comment) {
       lines.push(`${indent}${emitCommentInline(child)}`);
       continue;
     }
 
-    if (isGDNodeType(child, 'expression_statement')) {
+    if (child.type === SyntaxType.ExpressionStatement) {
       const expr = child.namedChildren[0];
       if (expr) {
-        if (isGDNodeType(expr, 'assignment')) {
+        if (expr.type === SyntaxType.Assignment) {
           lines.push(`${indent}${emitAssignment(expr, ctx)};`);
-        } else if (isGDNodeType(expr, 'augmented_assignment')) {
+        } else if (expr.type === SyntaxType.AugmentedAssignment) {
           lines.push(`${indent}${emitAugmentedAssignment(expr, ctx)};`);
         } else {
           lines.push(`${indent}${emitExpr(expr, ctx)};`);
@@ -1054,7 +1053,7 @@ function emitBody(node: GDNode, ctx: GdToTsContext, depth: number): string {
       continue;
     }
 
-    if (isGDNodeType(child, 'return_statement')) {
+    if (child.type === SyntaxType.ReturnStatement) {
       const value = child.namedChildren[0];
       lines.push(
         value ? `${indent}return ${emitExpr(value, ctx)};` : `${indent}return;`,
@@ -1062,42 +1061,42 @@ function emitBody(node: GDNode, ctx: GdToTsContext, depth: number): string {
       continue;
     }
 
-    if (isGDNodeType(child, 'variable_statement')) {
+    if (child.type === SyntaxType.VariableStatement) {
       lines.push(emitLocalVariable(child, ctx, indent));
       continue;
     }
 
-    if (isGDNodeType(child, 'if_statement')) {
+    if (child.type === SyntaxType.IfStatement) {
       lines.push(emitIfStatement(child, ctx, depth));
       continue;
     }
 
-    if (isGDNodeType(child, 'for_statement')) {
+    if (child.type === SyntaxType.ForStatement) {
       lines.push(emitForStatement(child, ctx, depth));
       continue;
     }
 
-    if (isGDNodeType(child, 'while_statement')) {
+    if (child.type === SyntaxType.WhileStatement) {
       lines.push(emitWhileStatement(child, ctx, depth));
       continue;
     }
 
-    if (isGDNodeType(child, 'match_statement')) {
+    if (child.type === SyntaxType.MatchStatement) {
       lines.push(emitMatchStatement(child, ctx, depth));
       continue;
     }
 
-    if (isGDNodeType(child, 'pass_statement')) {
+    if (child.type === SyntaxType.PassStatement) {
       // Skip pass in TS
       continue;
     }
 
-    if (isGDNodeType(child, 'break_statement')) {
+    if (child.type === SyntaxType.BreakStatement) {
       lines.push(`${indent}break;`);
       continue;
     }
 
-    if (isGDNodeType(child, 'continue_statement')) {
+    if (child.type === SyntaxType.ContinueStatement) {
       lines.push(`${indent}continue;`);
       continue;
     }
@@ -1113,7 +1112,7 @@ function emitBody(node: GDNode, ctx: GdToTsContext, depth: number): string {
 // ─── Control Flow ─────────────────────────────────────────────
 
 function emitIfStatement(
-  node: GDNode,
+  node: SyntaxNode,
   ctx: GdToTsContext,
   depth: number,
 ): string {
@@ -1129,14 +1128,14 @@ function emitIfStatement(
   // Handle elif and else via alternatives
   const alternatives = node.childrenForFieldName('alternative');
   for (const alt of alternatives) {
-    if (isGDNodeType(alt, 'elif_clause')) {
+    if (alt.type === SyntaxType.ElifClause) {
       const elifCond = alt.childForFieldName('condition');
       const elifBody = alt.childForFieldName('body');
       const elifCondStr = elifCond ? emitExpr(elifCond, ctx) : 'true';
       result += ` else if (${elifCondStr}) {\n`;
       if (elifBody) result += emitBody(elifBody, ctx, depth + 1);
       result += `\n${indent}}`;
-    } else if (isGDNodeType(alt, 'else_clause')) {
+    } else if (alt.type === SyntaxType.ElseClause) {
       const elseBody = alt.childForFieldName('body');
       result += ` else {\n`;
       if (elseBody) result += emitBody(elseBody, ctx, depth + 1);
@@ -1148,7 +1147,7 @@ function emitIfStatement(
 }
 
 function emitForStatement(
-  node: GDNode,
+  node: SyntaxNode,
   ctx: GdToTsContext,
   depth: number,
 ): string {
@@ -1165,7 +1164,7 @@ function emitForStatement(
 }
 
 function emitWhileStatement(
-  node: GDNode,
+  node: SyntaxNode,
   ctx: GdToTsContext,
   depth: number,
 ): string {
@@ -1180,7 +1179,7 @@ function emitWhileStatement(
 }
 
 function emitMatchStatement(
-  node: GDNode,
+  node: SyntaxNode,
   ctx: GdToTsContext,
   depth: number,
 ): string {
@@ -1196,15 +1195,15 @@ function emitMatchStatement(
 
   if (bodyNode) {
     for (const section of bodyNode.namedChildren) {
-      if (!isGDNodeType(section, 'pattern_section')) continue;
+      if (section.type !== SyntaxType.PatternSection) continue;
 
       const body = section.childForFieldName('body');
       // Patterns are all named children except body and pattern_guard
       const patterns = section.namedChildren.filter(
-        (c) => !isGDNodeType(c, 'body') && !isGDNodeType(c, 'pattern_guard'),
+        (c) => c.type !== SyntaxType.Body && c.type !== SyntaxType.PatternGuard,
       );
       const guard = section.namedChildren.find((c) =>
-        isGDNodeType(c, 'pattern_guard'),
+        c.type === SyntaxType.PatternGuard,
       );
 
       // Collect all pattern_binding names from all patterns
@@ -1267,8 +1266,8 @@ function emitMatchStatement(
 }
 
 /** Collect all pattern_binding identifier names from a pattern tree */
-function collectBindings(node: GDNode, bindings: string[]): void {
-  if (isGDNodeType(node, 'pattern_binding')) {
+function collectBindings(node: SyntaxNode, bindings: string[]): void {
+  if (node.type === SyntaxType.PatternBinding) {
     const ident = node.namedChildren[0];
     if (ident) bindings.push(ident.text);
     return;
@@ -1279,24 +1278,24 @@ function collectBindings(node: GDNode, bindings: string[]): void {
 }
 
 /** Emit a match pattern as a TypeScript expression for use inside gd.match() */
-function emitMatchPattern(node: GDNode, ctx: GdToTsContext): string {
+function emitMatchPattern(node: SyntaxNode, ctx: GdToTsContext): string {
   // Wildcard: _ → undefined
-  if (isGDNodeType(node, 'identifier') && node.text === '_') {
+  if (node.type === SyntaxType.Identifier && node.text === '_') {
     return 'undefined';
   }
 
   // Binding: var name → just the name (it becomes an arrow param)
-  if (isGDNodeType(node, 'pattern_binding')) {
+  if (node.type === SyntaxType.PatternBinding) {
     const ident = node.namedChildren[0];
     return ident ? ident.text : 'undefined';
   }
 
   // Array pattern: [elem1, elem2, ..]
-  if (isGDNodeType(node, 'array')) {
+  if (node.type === SyntaxType.Array) {
     const elements: string[] = [];
     let hasOpenEnding = false;
     for (const child of node.namedChildren) {
-      if (isGDNodeType(child, 'pattern_open_ending')) {
+      if (child.type === SyntaxType.PatternOpenEnding) {
         hasOpenEnding = true;
         continue;
       }
@@ -1309,20 +1308,20 @@ function emitMatchPattern(node: GDNode, ctx: GdToTsContext): string {
   }
 
   // Dictionary pattern: {key: value, ..} or {key1, key2}
-  if (isGDNodeType(node, 'dictionary')) {
+  if (node.type === SyntaxType.Dictionary) {
     const entries: string[] = [];
     let hasOpenEnding = false;
     for (const child of node.namedChildren) {
-      if (isGDNodeType(child, 'pattern_open_ending')) {
+      if (child.type === SyntaxType.PatternOpenEnding) {
         hasOpenEnding = true;
         continue;
       }
-      if (isGDNodeType(child, 'pair')) {
+      if (child.type === SyntaxType.Pair) {
         const left = child.childForFieldName('left');
         const value = child.childForFieldName('value');
         // Key: strip quotes for object key
         let key: string;
-        if (left && isGDNodeType(left, 'string')) {
+        if (left && left.type === SyntaxType.String) {
           key = left.text.slice(1, -1); // remove quotes
         } else {
           key = left ? emitExpr(left, ctx) : '';
@@ -1330,7 +1329,7 @@ function emitMatchPattern(node: GDNode, ctx: GdToTsContext): string {
         // Value: may be a pattern_binding or regular value
         const valStr = value ? emitMatchPattern(value, ctx) : 'undefined';
         entries.push(`${key}: ${valStr}`);
-      } else if (isGDNodeType(child, 'string')) {
+      } else if (child.type === SyntaxType.String) {
         // Bare string in dict like {"name", "age"} → name: undefined
         const key = child.text.slice(1, -1);
         entries.push(`${key}: undefined`);
@@ -1349,7 +1348,7 @@ function emitMatchPattern(node: GDNode, ctx: GdToTsContext): string {
 
 // ─── Assignment ───────────────────────────────────────────────
 
-function emitAssignment(node: GDNode, ctx: GdToTsContext): string {
+function emitAssignment(node: SyntaxNode, ctx: GdToTsContext): string {
   const left = node.childForFieldName('left');
   const right = node.childForFieldName('right');
   const leftStr = left ? emitExpr(left, ctx) : '';
@@ -1357,7 +1356,7 @@ function emitAssignment(node: GDNode, ctx: GdToTsContext): string {
   return `${leftStr} = ${rightStr}`;
 }
 
-function emitAugmentedAssignment(node: GDNode, ctx: GdToTsContext): string {
+function emitAugmentedAssignment(node: SyntaxNode, ctx: GdToTsContext): string {
   const left = node.childForFieldName('left');
   const right = node.childForFieldName('right');
   const opNode = node.childForFieldName('op');
@@ -1372,8 +1371,8 @@ function emitAugmentedAssignment(node: GDNode, ctx: GdToTsContext): string {
 
 // ─── Expressions ──────────────────────────────────────────────
 
-function emitExpr(node: GDNode, ctx: GdToTsContext): string {
-  if (isGDNodeType(node, 'identifier')) {
+function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
+  if (node.type === SyntaxType.Identifier) {
     if (node.text === 'self') return 'this';
     if (node.text === 'null') return 'null';
     if (node.text === 'true') return 'true';
@@ -1388,36 +1387,36 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
     return node.text;
   }
 
-  if (isGDNodeType(node, 'integer') || isGDNodeType(node, 'float')) {
+  if (node.type === SyntaxType.Integer || node.type === SyntaxType.Float) {
     return node.text;
   }
 
-  if (isGDNodeType(node, 'string')) {
+  if (node.type === SyntaxType.String) {
     return node.text;
   }
 
-  if (isGDNodeType(node, 'true')) return 'true';
-  if (isGDNodeType(node, 'false')) return 'false';
-  if (isGDNodeType(node, 'null')) return 'null';
+  if (node.type === SyntaxType.True) return 'true';
+  if (node.type === SyntaxType.False) return 'false';
+  if (node.type === SyntaxType.Null) return 'null';
 
-  if (isGDNodeType(node, 'call')) {
+  if (node.type === SyntaxType.Call) {
     return emitCall(node, ctx);
   }
 
-  if (isGDNodeType(node, 'attribute')) {
+  if (node.type === SyntaxType.Attribute) {
     return emitAttribute(node, ctx);
   }
 
-  if (isGDNodeType(node, 'binary_operator')) {
+  if (node.type === SyntaxType.BinaryOperator) {
     return emitBinaryOp(node, ctx);
   }
 
-  if (isGDNodeType(node, 'unary_operator')) {
+  if (node.type === SyntaxType.UnaryOperator) {
     return emitUnaryOp(node, ctx);
   }
 
-  if (isGDNodeType(node, 'string_name')) {
-    const strChild = node.namedChildren.find((c) => isGDNodeType(c, 'string'));
+  if (node.type === SyntaxType.StringName) {
+    const strChild = node.namedChildren.find((c) => c.type === SyntaxType.String);
     if (strChild) {
       // Extract the string content
       const content = strChild.text.slice(1, -1); // remove quotes
@@ -1429,13 +1428,13 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
     return `StringName('${content}')`;
   }
 
-  if (isGDNodeType(node, 'node_path')) {
+  if (node.type === SyntaxType.NodePath) {
     const text = node.text;
     const content = text.slice(2, -1);
     return `NodePath('${content}')`;
   }
 
-  if (isGDNodeType(node, 'get_node')) {
+  if (node.type === SyntaxType.GetNode) {
     // $Path -> this.get_node("Path")
     // $"Path/To/Node" -> this.get_node("Path/To/Node")
     // %UniqueNode -> this.get_node("%UniqueNode")
@@ -1460,17 +1459,17 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
     }
   }
 
-  if (isGDNodeType(node, 'array')) {
+  if (node.type === SyntaxType.Array) {
     const elements = node.namedChildren.map((e) => emitExpr(e, ctx)).join(', ');
     return `[${elements}]`;
   }
 
-  if (isGDNodeType(node, 'dictionary')) {
-    const pairNodes = node.namedChildren.filter((c) => isGDNodeType(c, 'pair'));
+  if (node.type === SyntaxType.Dictionary) {
+    const pairNodes = node.namedChildren.filter((c) => c.type === SyntaxType.Pair);
     // Check if any key is an identifier (variable reference, not string/number literal)
     const hasIdentifierKey = pairNodes.some((p) => {
       const key = p.childForFieldName('left');
-      return key && isGDNodeType(key, 'identifier');
+      return key && key.type === SyntaxType.Identifier;
     });
     if (hasIdentifierKey) {
       // Use gd.dict() format for dicts with variable keys
@@ -1494,7 +1493,7 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
     return `{${pairs}}`;
   }
 
-  if (isGDNodeType(node, 'conditional_expression')) {
+  if (node.type === SyntaxType.ConditionalExpression) {
     // GD: value if cond else other -> TS: cond ? value : other
     const left = node.childForFieldName('left');
     const condition = node.childForFieldName('condition');
@@ -1505,17 +1504,17 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
     return node.text;
   }
 
-  if (isGDNodeType(node, 'await_expression')) {
+  if (node.type === SyntaxType.AwaitExpression) {
     const expr = node.namedChildren[0];
     return `await ${expr ? emitExpr(expr, ctx) : ''}`;
   }
 
-  if (isGDNodeType(node, 'parenthesized_expression')) {
+  if (node.type === SyntaxType.ParenthesizedExpression) {
     const inner = node.namedChildren[0];
     return inner ? `(${emitExpr(inner, ctx)})` : '()';
   }
 
-  if (isGDNodeType(node, 'subscript')) {
+  if (node.type === SyntaxType.Subscript) {
     // obj[key]
     const obj = node.namedChildren[0];
     const argsNode = node.childForFieldName('arguments');
@@ -1523,7 +1522,7 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
     return `${obj ? emitExpr(obj, ctx) : ''}[${key ? emitExpr(key, ctx) : ''}]`;
   }
 
-  if (isGDNodeType(node, 'lambda')) {
+  if (node.type === SyntaxType.Lambda) {
     return emitLambda(node, ctx);
   }
 
@@ -1540,7 +1539,7 @@ function emitExpr(node: GDNode, ctx: GdToTsContext): string {
 
 // ─── Call Expression ──────────────────────────────────────────
 
-function emitCall(node: GDNode, ctx: GdToTsContext): string {
+function emitCall(node: SyntaxNode, ctx: GdToTsContext): string {
   // call node: first named child is callee, 'arguments' field has args
   const callee = node.namedChildren[0];
   const argsNode = node.childForFieldName('arguments');
@@ -1551,7 +1550,7 @@ function emitCall(node: GDNode, ctx: GdToTsContext): string {
   if (!callee) return `(${args})`;
 
   // GDScript super() → TS super.methodName() (or super() in constructors)
-  if (isGDNodeType(callee, 'identifier') && callee.text === 'super') {
+  if (callee.type === SyntaxType.Identifier && callee.text === 'super') {
     if (ctx.currentMethodName && ctx.currentMethodName !== 'constructor') {
       return `super.${ctx.currentMethodName}(${args})`;
     }
@@ -1560,7 +1559,7 @@ function emitCall(node: GDNode, ctx: GdToTsContext): string {
 
   // For bare identifier calls: add this. prefix for known class members
   if (
-    isGDNodeType(callee, 'identifier') &&
+    callee.type === SyntaxType.Identifier &&
     !ctx.localVars.has(callee.text) &&
     !isGlobalName(callee.text, ctx)
   ) {
@@ -1575,7 +1574,7 @@ function emitCall(node: GDNode, ctx: GdToTsContext): string {
 
 // ─── Attribute Expression ─────────────────────────────────────
 
-function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
+function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
   // attribute node children: [object, ".", name] or [object, ".", attribute_call]
   const children = node.namedChildren;
   if (children.length === 0) return node.text;
@@ -1587,11 +1586,11 @@ function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
     const child = children[i]!;
 
     // `self` at the start of an attribute chain becomes `this` (or ClassName for static members)
-    if (i === 0 && isGDNodeType(child, 'identifier') && child.text === 'self') {
+    if (i === 0 && child.type === SyntaxType.Identifier && child.text === 'self') {
       // Look ahead to see if the next part is a static member
       const nextChild = children[i + 1];
       const nextName =
-        nextChild && isGDNodeType(nextChild, 'identifier')
+        nextChild && nextChild.type === SyntaxType.Identifier
           ? nextChild.text
           : '';
       if (nextName && ctx.staticMembers.has(nextName)) {
@@ -1603,10 +1602,10 @@ function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
       continue;
     }
 
-    if (isGDNodeType(child, 'attribute_call')) {
+    if (child.type === SyntaxType.AttributeCall) {
       // method call on attribute: obj.method(args)
       const methodName =
-        child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
         '';
       const argsNode = child.childForFieldName('arguments');
       const args = argsNode
@@ -1620,14 +1619,14 @@ function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
       } else {
         parts.push(`${methodName}(${args})`);
       }
-    } else if (isGDNodeType(child, 'attribute_subscript')) {
+    } else if (child.type === SyntaxType.AttributeSubscript) {
       const attrName =
-        child.namedChildren.find((c) => isGDNodeType(c, 'identifier'))?.text ??
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
         '';
       const argsNode = child.childForFieldName('arguments');
       const key = argsNode?.namedChildren[0];
       parts.push(`${attrName}[${key ? emitExpr(key, ctx) : ''}]`);
-    } else if (isGDNodeType(child, 'identifier')) {
+    } else if (child.type === SyntaxType.Identifier) {
       // After self or for property access, use raw identifier (no this. prefix)
       parts.push(child.text);
     } else {
@@ -1654,7 +1653,7 @@ function emitAttribute(node: GDNode, ctx: GdToTsContext): string {
  *  In real GDScript, `not a == 0` means `not (a == 0)`. */
 const NOT_LIFT_OPS = new Set(['==', '!=', '<', '>', '<=', '>=', 'in', 'is']);
 
-function emitBinaryOp(node: GDNode, ctx: GdToTsContext): string {
+function emitBinaryOp(node: SyntaxNode, ctx: GdToTsContext): string {
   const left = node.childForFieldName('left');
   const right = node.childForFieldName('right');
   const opNode = node.childForFieldName('op');
@@ -1679,7 +1678,7 @@ function emitBinaryOp(node: GDNode, ctx: GdToTsContext): string {
   if (
     NOT_LIFT_OPS.has(opText) &&
     left &&
-    isGDNodeType(left, 'unary_operator')
+    left.type === SyntaxType.UnaryOperator
   ) {
     const unaryOp = left.children.find((c) => !c.isNamed)?.text;
     if (unaryOp === 'not') {
@@ -1739,7 +1738,7 @@ function emitBinaryOp(node: GDNode, ctx: GdToTsContext): string {
   return `${leftStr} ${tsOp} ${rightStr}`;
 }
 
-function emitUnaryOp(node: GDNode, ctx: GdToTsContext): string {
+function emitUnaryOp(node: SyntaxNode, ctx: GdToTsContext): string {
   const operand = node.namedChildren[0];
   const op = node.children.find((c) => !c.isNamed)?.text ?? '';
   const tsOp = op === 'not' ? '!' : op;
@@ -1748,7 +1747,7 @@ function emitUnaryOp(node: GDNode, ctx: GdToTsContext): string {
 
 // ─── Lambda ───────────────────────────────────────────────────
 
-function emitLambda(node: GDNode, ctx: GdToTsContext): string {
+function emitLambda(node: SyntaxNode, ctx: GdToTsContext): string {
   const paramsNode = node.childForFieldName('parameters');
   const returnTypeNode = node.childForFieldName('return_type');
   const bodyNode = node.childForFieldName('body');
@@ -1760,14 +1759,14 @@ function emitLambda(node: GDNode, ctx: GdToTsContext): string {
   if (bodyNode && bodyNode.namedChildren.length === 1) {
     const stmt = bodyNode.namedChildren[0]!;
     if (
-      isGDNodeType(stmt, 'return_statement') &&
+      stmt.type === SyntaxType.ReturnStatement &&
       stmt.namedChildren.length > 0
     ) {
       const expr = stmt.namedChildren[0]!;
       return `(${params})${returnType} => ${emitExpr(expr, ctx)}`;
     }
     if (
-      isGDNodeType(stmt, 'expression_statement') &&
+      stmt.type === SyntaxType.ExpressionStatement &&
       stmt.namedChildren.length > 0
     ) {
       const expr = stmt.namedChildren[0]!;
@@ -1782,7 +1781,7 @@ function emitLambda(node: GDNode, ctx: GdToTsContext): string {
 
 // ─── Comments (inline) ───────────────────────────────────────
 
-function emitCommentInline(node: GDNode): string {
+function emitCommentInline(node: SyntaxNode): string {
   const text = node.text;
   if (text.startsWith('##')) {
     const content = text.slice(2).trim();
@@ -1811,11 +1810,11 @@ const OPERATOR_OVERLOAD_TYPES = new Set([
 ]);
 
 /** Extract raw GD type name from a type node */
-function extractGdTypeName(typeNode: GDNode): string | null {
-  if (isGDNodeType(typeNode, 'type')) {
+function extractGdTypeName(typeNode: SyntaxNode): string | null {
+  if (typeNode.type === SyntaxType.Type) {
     return typeNode.namedChildren[0]?.text ?? typeNode.text;
   }
-  if (isGDNodeType(typeNode, 'inferred_type')) {
+  if (typeNode.type === SyntaxType.InferredType) {
     return null;
   }
   return typeNode.text;
@@ -1823,12 +1822,12 @@ function extractGdTypeName(typeNode: GDNode): string | null {
 
 /** Infer the GD type of an expression (best-effort, for gd.ops detection) */
 /** Infer type from expression without context (for parseGdClassInfo). Only handles constructor calls. */
-function inferExprTypeStatic(node: GDNode): string | null {
-  if (isGDNodeType(node, 'call')) {
+function inferExprTypeStatic(node: SyntaxNode): string | null {
+  if (node.type === SyntaxType.Call) {
     const callee = node.namedChildren[0];
     if (
       callee &&
-      isGDNodeType(callee, 'identifier') &&
+      callee.type === SyntaxType.Identifier &&
       OPERATOR_OVERLOAD_TYPES.has(callee.text)
     ) {
       return callee.text;
@@ -1837,27 +1836,27 @@ function inferExprTypeStatic(node: GDNode): string | null {
   return null;
 }
 
-function inferExprType(node: GDNode, ctx: GdToTsContext): string | null {
+function inferExprType(node: SyntaxNode, ctx: GdToTsContext): string | null {
   // Constructor call: Vector2(...), Color(...), etc.
-  if (isGDNodeType(node, 'call')) {
+  if (node.type === SyntaxType.Call) {
     const callee = node.namedChildren[0];
     if (
       callee &&
-      isGDNodeType(callee, 'identifier') &&
+      callee.type === SyntaxType.Identifier &&
       OPERATOR_OVERLOAD_TYPES.has(callee.text)
     ) {
       return callee.text;
     }
   }
   // Identifier: look up tracked type (local vars first, then class members)
-  if (isGDNodeType(node, 'identifier')) {
+  if (node.type === SyntaxType.Identifier) {
     if (ctx.localVarTypes.has(node.text))
       return ctx.localVarTypes.get(node.text)!;
     if (ctx.classMemberTypes.has(node.text))
       return ctx.classMemberTypes.get(node.text)!;
   }
   // Binary operator: inherit type from left operand
-  if (isGDNodeType(node, 'binary_operator')) {
+  if (node.type === SyntaxType.BinaryOperator) {
     const left = node.childForFieldName('left');
     if (left) return inferExprType(left, ctx);
   }
@@ -1879,8 +1878,8 @@ const GD_OPS_MAP: Record<string, string> = {
 
 // ─── Helpers ──────────────────────────────────────────────────
 
-function containsAwait(node: GDNode): boolean {
-  if (isGDNodeType(node, 'await_expression')) return true;
+function containsAwait(node: SyntaxNode): boolean {
+  if (node.type === SyntaxType.AwaitExpression) return true;
   for (const child of node.namedChildren) {
     if (containsAwait(child)) return true;
   }

@@ -1,21 +1,17 @@
 import TreeSitter from 'tree-sitter';
 import type { SyntaxNode } from './types.ts';
-import GDScript from 'tree-sitter-gdscript';
+import GodotResource from 'tree-sitter-godot-resource';
 
-export class GDScriptParser {
+export class GodotResourceParser {
   private parser: TreeSitter;
 
   constructor() {
     this.parser = new TreeSitter();
-    this.parser.setLanguage(GDScript as any);
+    this.parser.setLanguage(GodotResource as any);
   }
 
   parse(source: string): SyntaxNode {
     const tree = this.parser.parse(source);
     return tree.rootNode as unknown as SyntaxNode;
-  }
-
-  parseFile(source: string, previousTree?: TreeSitter.Tree): TreeSitter.Tree {
-    return this.parser.parse(source, previousTree);
   }
 }

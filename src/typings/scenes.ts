@@ -1,10 +1,12 @@
 import ts from 'typescript';
-import { readFileSync, readdirSync, statSync, writeFileSync, existsSync, openSync, readSync, closeSync } from 'fs';
+import { readFileSync, readdirSync, statSync, writeFileSync, existsSync } from 'fs';
 import { join, relative, extname, dirname } from 'path';
 import { createTsProgram } from '../parser/typescript/index.ts';
 import { shouldIgnore } from '../config/index.ts';
 import { GodotClassRegistry, type GodotSignalParamInfo } from './godot-registry.ts';
 import { godotTypeToTs } from './godot-docs.ts';
+import { GodotResourceParser } from '../parser/godot-resource/index.ts';
+import { SyntaxType, type SyntaxNode } from '../parser/godot-resource/types.ts';
 
 interface SceneNode {
   name: string;
@@ -39,6 +41,81 @@ interface SceneConnection {
   method: string;
 }
 
+/** Shared parser instance for all godot-resource parsing */
+const resourceParser = new GodotResourceParser();
+
+/**
+ * Extract a named attribute value from a section's attribute children.
+ * Strips surrounding quotes from string values.
+ */
+function getSectionAttr(section: SyntaxNode, name: string): string | undefined {
+  for (const child of section.namedChildren) {
+    if (child.type !== SyntaxType.Attribute) continue;
+    const parts = child.namedChildren;
+    if (parts.length >= 2 && parts[0]!.type === SyntaxType.Identifier && parts[0]!.text === name) {
+      const val = parts[1]!;
+      if (val.type === SyntaxType.String) {
+        return val.text.slice(1, -1); // strip quotes
+      }
+      return val.text;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Extract a named property value from a section's property children.
+ * Returns the raw text of the value node.
+ */
+function getSectionProp(section: SyntaxNode, name: string): string | undefined {
+  for (const child of section.namedChildren) {
+    if (child.type !== SyntaxType.Property) continue;
+    const parts = child.namedChildren;
+    if (parts.length >= 2 && parts[0]!.type === SyntaxType.Path && parts[0]!.text === name) {
+      return parts[1]!.text;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Extract the first argument string from a Constructor node like ExtResource("id").
+ * Returns the unquoted string, or undefined.
+ */
+function getConstructorFirstArg(node: SyntaxNode): string | undefined {
+  if (node.type !== SyntaxType.Constructor) return undefined;
+  for (const child of node.namedChildren) {
+    if (child.type === SyntaxType.Arguments) {
+      const first = child.namedChildren[0];
+      if (first?.type === SyntaxType.String) {
+        return first.text.slice(1, -1);
+      }
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Extract ExtResource("id") from a property value in a section.
+ * Looks for: `propertyName = ExtResource("id")`
+ */
+function getSectionExtResource(section: SyntaxNode, propName: string): string | undefined {
+  for (const child of section.namedChildren) {
+    if (child.type !== SyntaxType.Property) continue;
+    const parts = child.namedChildren;
+    if (parts.length >= 2 && parts[0]!.type === SyntaxType.Path && parts[0]!.text === propName) {
+      const val = parts[1]!;
+      if (val.type === SyntaxType.Constructor) {
+        const ctorIdent = val.namedChildren.find(c => c.type === SyntaxType.Identifier);
+        if (ctorIdent?.text === 'ExtResource') {
+          return getConstructorFirstArg(val);
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
 /**
  * Parses a .tscn file and extracts script attachments with their child nodes.
  * Each node with a script gets its own entry with relative child paths.
@@ -59,51 +136,64 @@ function parseScene(
   instancedNodes: Map<string, string>;
 } | null {
   const content = readFileSync(filePath, 'utf-8');
+  const root = resourceParser.parse(content);
+
   const extResources = new Map<string, { path: string; type: string }>();
   const nodes: SceneNode[] = [];
+  const connections: SceneConnection[] = [];
 
-  // Parse [ext_resource ...] sections
-  const extRegex = /\[ext_resource\s+([^\]]+)\]/g;
-  let extMatch: RegExpExecArray | null;
-  while ((extMatch = extRegex.exec(content)) !== null) {
-    const attrs = extMatch[1]!;
-    const id = extractAttr(attrs, 'id');
-    const path = extractAttr(attrs, 'path');
-    const type = extractAttr(attrs, 'type');
-    if (id && path && type) {
-      extResources.set(id, { path, type });
-    }
-  }
+  for (const section of root.namedChildren) {
+    if (section.type !== SyntaxType.Section) continue;
+    const sectionIdent = section.namedChildren.find(c => c.type === SyntaxType.Identifier);
+    if (!sectionIdent) continue;
+    const sectionType = sectionIdent.text;
 
-  // Parse [node ...] sections with their body (for script = ExtResource("id"))
-  const nodeRegex = /\[node\s+([^\]]+)\]([\s\S]*?)(?=\[|$)/g;
-  let match: RegExpExecArray | null;
-  while ((match = nodeRegex.exec(content)) !== null) {
-    const attrs = match[1]!;
-    const body = match[2] ?? '';
-    const name = extractAttr(attrs, 'name');
-    const type = extractAttr(attrs, 'type');
-    const parent = extractAttr(attrs, 'parent');
+    if (sectionType === 'ext_resource') {
+      const id = getSectionAttr(section, 'id');
+      const path = getSectionAttr(section, 'path');
+      const type = getSectionAttr(section, 'type');
+      if (id && path && type) {
+        extResources.set(id, { path, type });
+      }
+    } else if (sectionType === 'node') {
+      const name = getSectionAttr(section, 'name');
+      const type = getSectionAttr(section, 'type');
+      const parent = getSectionAttr(section, 'parent');
 
-    // Check for script assignment in node body
-    const scriptMatch = /script\s*=\s*ExtResource\("([^"]+)"\)/.exec(body);
-    let scriptExtId: string | undefined;
-    if (scriptMatch) {
-      scriptExtId = scriptMatch[1];
-    }
+      // Check for instance=ExtResource("id") in attributes
+      const instanceAttr = getSectionAttr(section, 'instance');
+      let instanceExtId: string | undefined;
+      if (instanceAttr) {
+        // instance attribute is inlined as ExtResource("id") in the section header
+        // tree-sitter parses this as a constructor node in the attribute value
+        for (const child of section.namedChildren) {
+          if (child.type !== SyntaxType.Attribute) continue;
+          const parts = child.namedChildren;
+          if (parts.length >= 2 && parts[0]!.type === SyntaxType.Identifier && parts[0]!.text === 'instance') {
+            instanceExtId = getConstructorFirstArg(parts[1]!);
+            break;
+          }
+        }
+      }
 
-    // Check for instance=ExtResource("id") in node attributes (instanced scenes)
-    const instanceMatch = /instance=ExtResource\("([^"]+)"\)/.exec(attrs);
-    let instanceExtId: string | undefined;
-    if (instanceMatch) {
-      instanceExtId = instanceMatch[1];
-    }
+      // Check for script = ExtResource("id") in properties
+      const scriptExtId = getSectionExtResource(section, 'script');
 
-    // Check for unique_name_in_owner = true
-    const uniqueInOwner = /unique_name_in_owner\s*=\s*true/.test(body);
+      // Check for unique_name_in_owner = true
+      const uniqueVal = getSectionProp(section, 'unique_name_in_owner');
+      const uniqueInOwner = uniqueVal === 'true' || undefined;
 
-    if (name) {
-      nodes.push({ name, type: type ?? '', parent: parent ?? '', scriptExtId, instanceExtId, uniqueInOwner: uniqueInOwner || undefined });
+      if (name) {
+        nodes.push({ name, type: type ?? '', parent: parent ?? '', scriptExtId, instanceExtId, uniqueInOwner });
+      }
+    } else if (sectionType === 'connection') {
+      const signal = getSectionAttr(section, 'signal');
+      const fromPath = getSectionAttr(section, 'from');
+      const toPath = getSectionAttr(section, 'to');
+      const method = getSectionAttr(section, 'method');
+      if (signal && fromPath && toPath && method) {
+        connections.push({ signal, fromPath, toPath, method });
+      }
     }
   }
 
@@ -201,21 +291,6 @@ function parseScene(
     nodeTypes.set(fullPath, node.type);
   }
 
-  // Parse [connection ...] sections
-  const connections: SceneConnection[] = [];
-  const connRegex = /\[connection\s+([^\]]+)\]/g;
-  let connMatch: RegExpExecArray | null;
-  while ((connMatch = connRegex.exec(content)) !== null) {
-    const attrs = connMatch[1]!;
-    const signal = extractAttr(attrs, 'signal');
-    const fromPath = extractAttr(attrs, 'from');
-    const toPath = extractAttr(attrs, 'to');
-    const method = extractAttr(attrs, 'method');
-    if (signal && fromPath && toPath && method) {
-      connections.push({ signal, fromPath, toPath, method });
-    }
-  }
-
   // Build instanced nodes map (full path → instanced scene res:// path)
   const instancedNodes = new Map<string, string>();
   for (const node of nodes) {
@@ -228,12 +303,6 @@ function parseScene(
   }
 
   return { filePath, scripts, rootScript, inheritedSceneResPath, connections, nodeTypes, instancedNodes };
-}
-
-function extractAttr(attrs: string, name: string): string | undefined {
-  const regex = new RegExp(`(?:^|\\s)${name}="([^"]+)"`);
-  const match = regex.exec(attrs);
-  return match?.[1];
 }
 
 /**
@@ -338,28 +407,29 @@ export function parseAutoloads(projectFilePath: string): AutoloadEntry[] {
   if (!existsSync(projectFilePath)) return [];
 
   const content = readFileSync(projectFilePath, 'utf-8');
+  const root = resourceParser.parse(content);
   const entries: AutoloadEntry[] = [];
 
-  // Find [autoload] section
-  const autoloadMatch = /^\[autoload\]\s*$/m.exec(content);
-  if (!autoloadMatch) return entries;
+  for (const section of root.namedChildren) {
+    if (section.type !== SyntaxType.Section) continue;
+    const sectionIdent = section.namedChildren.find(c => c.type === SyntaxType.Identifier);
+    if (!sectionIdent || sectionIdent.text !== 'autoload') continue;
 
-  // Extract lines after [autoload] until next section or end of file
-  const afterAutoload = content.slice(autoloadMatch.index + autoloadMatch[0].length);
-  const nextSection = /^\[/m.exec(afterAutoload);
-  const autoloadBlock = nextSection
-    ? afterAutoload.slice(0, nextSection.index)
-    : afterAutoload;
+    // Parse properties: Name="*res://path"
+    for (const child of section.namedChildren) {
+      if (child.type !== SyntaxType.Property) continue;
+      const parts = child.namedChildren;
+      if (parts.length < 2) continue;
+      const pathNode = parts[0]!;
+      const valueNode = parts[1]!;
+      if (pathNode.type !== SyntaxType.Path) continue;
+      if (valueNode.type !== SyntaxType.String) continue;
 
-  // Parse each line: Name="*res://path"
-  const lineRegex = /^(\w+)="(\*?)([^"]+)"$/gm;
-  let lineMatch: RegExpExecArray | null;
-  while ((lineMatch = lineRegex.exec(autoloadBlock)) !== null) {
-    const name = lineMatch[1]!;
-    const enabled = lineMatch[2] === '*';
-    const resPath = lineMatch[3]!;
-    if (enabled) {
-      entries.push({ name, resPath });
+      const name = pathNode.text;
+      const rawValue = valueNode.text.slice(1, -1); // strip quotes
+      if (rawValue.startsWith('*')) {
+        entries.push({ name, resPath: rawValue.slice(1) });
+      }
     }
   }
 
@@ -929,14 +999,16 @@ const ASSET_EXTENSIONS = new Set(Object.keys(ASSET_EXTENSION_MAP));
  */
 function parseGdResourceType(filePath: string): string | undefined {
   try {
-    // Only read the first 256 bytes — the header is always on the first line
-    const fd = openSync(filePath, 'r');
-    const buf = Buffer.alloc(256);
-    const bytesRead = readSync(fd, buf, 0, 256, 0);
-    closeSync(fd);
-    const header = buf.toString('utf-8', 0, bytesRead);
-    const match = /^\[gd_resource\s+type="([^"]+)"/.exec(header);
-    return match?.[1];
+    const content = readFileSync(filePath, 'utf-8');
+    const root = resourceParser.parse(content);
+
+    for (const section of root.namedChildren) {
+      if (section.type !== SyntaxType.Section) continue;
+      const sectionIdent = section.namedChildren.find(c => c.type === SyntaxType.Identifier);
+      if (!sectionIdent || sectionIdent.text !== 'gd_resource') continue;
+      return getSectionAttr(section, 'type');
+    }
+    return undefined;
   } catch {
     return undefined;
   }
