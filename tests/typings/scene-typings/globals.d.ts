@@ -5,6 +5,7 @@
 import type { __CLASS__ as _Anonym } from "./Anonym.ts";
 import type { __CLASS__ as _Anonym2 } from "./Anonym2.ts";
 import type { Ball as _Ball } from "./Ball.ts";
+import type { BaseCharacter as _BaseCharacter } from "./BaseCharacter.ts";
 import type { Enemy as _Enemy } from "./Enemy.ts";
 import type { __CLASS__ as _GameManager } from "./GameManager.ts";
 import type { Level as _Level } from "./Level.ts";
@@ -56,6 +57,7 @@ declare module "./Ball.ts" {
     get_node<T extends Node = Node>(path: string): T;
     get_node_or_null<P extends keyof _BallSceneNodes>(path: P): _BallSceneNodes[P] | null;
     get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_parent(): TileMap;
   }
 }
 
@@ -85,6 +87,7 @@ interface _LevelSceneNodes {
   "Background": Sprite2D<{[__parent]: _Level}>;
   "UI": CanvasLayer<{[__parent]: _Level}>;
   "UI/ScoreLabel": Label<{[__parent]: CanvasLayer}>;
+  "TilesetObjectsMap": TileMap<{[__parent]: _Level}>;
   "TilesetObjects2": TileMap<{[__parent]: _Level}> | null;
   "ExtraSprite": Sprite2D<{[__parent]: _Level}> | null;
 }
@@ -133,9 +136,31 @@ declare module "./Player.ts" {
   }
 }
 
+// Scene nodes for: _BaseCharacter
+interface _BaseCharacterSceneNodes {
+  "Sprite2D": Sprite2D<{[__parent]: _BaseCharacter}>;
+  "Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: Sprite2D}>;
+  "HitBox": Area2D<{[__parent]: _BaseCharacter}> | null;
+  "HitBox/CollisionShape2D": CollisionShape2D<{[__parent]: Area2D}> | null;
+  "CollisionShape2D": CollisionShape2D<{[__parent]: _BaseCharacter}> | null;
+  "HealthBar": ProgressBar<{[__parent]: _BaseCharacter}> | null;
+  "%HealthBar": ProgressBar<{[__parent]: _BaseCharacter}> | null;
+}
+
+declare module "./BaseCharacter.ts" {
+  interface BaseCharacter {
+    get_node<P extends keyof _BaseCharacterSceneNodes>(path: P): null extends _BaseCharacterSceneNodes[P] ? NonNullable<_BaseCharacterSceneNodes[P]> | Node : _BaseCharacterSceneNodes[P];
+    get_node<T extends Node = Node>(path: string): T;
+    get_node_or_null<P extends keyof _BaseCharacterSceneNodes>(path: P): _BaseCharacterSceneNodes[P] | null;
+    get_node_or_null<T extends Node = Node>(path: string): T | null;
+  }
+}
+
 declare global {
   // From: Ball.ts
   class Ball extends _Ball {}
+  // From: BaseCharacter.ts
+  class BaseCharacter extends _BaseCharacter {}
   // From: Enemy.ts
   class Enemy extends _Enemy {}
   // From: Level.ts
@@ -156,6 +181,7 @@ declare global {
     "res://Anonym.gd": typeof _Anonym;
     "res://Anonym2.gd": typeof _Anonym2;
     "res://Ball.gd": typeof _Ball;
+    "res://BaseCharacter.gd": typeof _BaseCharacter;
     "res://Enemy.gd": typeof _Enemy;
     "res://GameManager.gd": typeof _GameManager;
     "res://Level.gd": typeof _Level;

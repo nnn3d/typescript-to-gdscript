@@ -99,6 +99,44 @@ describe('Scene typings generation', () => {
     expect(content).toContain('"ExtraSprite"');
   });
 
+  it('should resolve TileMap embedded scenes (via TileSetScenesCollectionSource) for get_parent()', () => {
+    const content = generate();
+
+    // Level.tscn has a TileMap node "TilesetObjectsMap" with a TileSetScenesCollectionSource
+    // that references BallA.tscn. Ball's get_parent() should include TileMap.
+    expect(content).toContain('interface _LevelSceneNodes');
+    // TileMap child should appear in Level's scene nodes
+    expect(content).toContain('"TilesetObjectsMap": TileMap<{[__parent]: _Level}>;');
+
+    // Ball (from BallA.tscn) should get get_parent() → TileMap
+    // because it's referenced via TileSetScenesCollectionSource
+    expect(content).toMatch(/interface Ball \{[\s\S]*?get_parent\(\): TileMap/);
+  });
+
+  it('should inherit scene trees for parent classes without their own scenes', () => {
+    const content = generate();
+
+    // BaseCharacter has no scene but Player and Enemy extend it
+    expect(content).toContain('interface _BaseCharacterSceneNodes');
+
+    // Sprite2D is in both Player and Enemy → no null
+    expect(content).toMatch(/"Sprite2D": Sprite2D<\{\[__parent\]: _BaseCharacter\}>;/);
+
+    // Sprite2D/AnimationPlayer is in both → no null
+    expect(content).toMatch(/"Sprite2D\/AnimationPlayer": AnimationPlayer<\{\[__parent\]: Sprite2D\}>;/);
+
+    // CollisionShape2D is only in Player → | null
+    expect(content).toMatch(/"CollisionShape2D": CollisionShape2D<\{\[__parent\]: _BaseCharacter\}> \| null;/);
+
+    // HitBox is only in Enemy → | null
+    expect(content).toMatch(/"HitBox": Area2D<\{\[__parent\]: _BaseCharacter\}> \| null;/);
+
+    // Module augmentation for BaseCharacter
+    expect(content).toContain('declare module "./BaseCharacter.ts"');
+    expect(content).toContain('interface BaseCharacter');
+    expect(content).toContain('get_node<P extends keyof _BaseCharacterSceneNodes');
+  });
+
   it('should generate GodotResources and autoload singletons', () => {
     const content = generate();
 
@@ -111,6 +149,7 @@ describe('Scene typings generation', () => {
     expect(content).toContain('"res://Ball.gd": typeof _Ball;');
     expect(content).toContain('"res://Anonym.gd": typeof _Anonym;');
     expect(content).toContain('"res://Anonym2.gd": typeof _Anonym2;');
+    expect(content).toContain('"res://BaseCharacter.gd": typeof _BaseCharacter;');
     expect(content).toContain('"res://GameManager.gd": typeof _GameManager;');
 
     // .tres resources use gd_resource type header for precise typing

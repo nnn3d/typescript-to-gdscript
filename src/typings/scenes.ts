@@ -19,6 +19,8 @@ interface SceneNode {
   instanceExtId?: string;
   /** Whether this node has `unique_name_in_owner = true` */
   uniqueInOwner?: boolean;
+  /** AST section node (for post-processing sub_resource chains) */
+  section?: SyntaxNode;
 }
 
 interface ScriptNodeInfo {
@@ -117,6 +119,111 @@ function getSectionExtResource(section: SyntaxNode, propName: string): string | 
 }
 
 /**
+ * Extract SubResource("id") from a property value in a section.
+ * Looks for: `propertyName = SubResource("id")`
+ */
+function getSectionSubResource(section: SyntaxNode, propName: string): string | undefined {
+  for (const child of section.namedChildren) {
+    if (child.type !== SyntaxType.Property) continue;
+    const parts = child.namedChildren;
+    if (parts.length >= 2 && parts[0]!.type === SyntaxType.Path && parts[0]!.text === propName) {
+      const val = parts[1]!;
+      if (val.type === SyntaxType.Constructor) {
+        const ctorIdent = val.namedChildren.find(c => c.type === SyntaxType.Identifier);
+        if (ctorIdent?.text === 'SubResource') {
+          return getConstructorFirstArg(val);
+        }
+      }
+    }
+  }
+  return undefined;
+}
+
+/**
+ * Find all properties in a section whose path starts with a given prefix.
+ * Returns [fullPath, valueNode] pairs.
+ * E.g. prefix "sources/" matches "sources/0", "sources/1", etc.
+ */
+function getSectionPropsWithPrefix(
+  section: SyntaxNode,
+  prefix: string,
+): Array<{ path: string; valueNode: SyntaxNode }> {
+  const results: Array<{ path: string; valueNode: SyntaxNode }> = [];
+  for (const child of section.namedChildren) {
+    if (child.type !== SyntaxType.Property) continue;
+    const parts = child.namedChildren;
+    if (parts.length >= 2 && parts[0]!.type === SyntaxType.Path && parts[0]!.text.startsWith(prefix)) {
+      results.push({ path: parts[0]!.text, valueNode: parts[1]! });
+    }
+  }
+  return results;
+}
+
+/**
+ * Extract SubResource("id") from a Constructor value node.
+ */
+function getSubResourceId(valueNode: SyntaxNode): string | undefined {
+  if (valueNode.type !== SyntaxType.Constructor) return undefined;
+  const ctorIdent = valueNode.namedChildren.find(c => c.type === SyntaxType.Identifier);
+  if (ctorIdent?.text !== 'SubResource') return undefined;
+  return getConstructorFirstArg(valueNode);
+}
+
+/**
+ * Extract ExtResource("id") from a Constructor value node.
+ */
+function getExtResourceId(valueNode: SyntaxNode): string | undefined {
+  if (valueNode.type !== SyntaxType.Constructor) return undefined;
+  const ctorIdent = valueNode.namedChildren.find(c => c.type === SyntaxType.Identifier);
+  if (ctorIdent?.text !== 'ExtResource') return undefined;
+  return getConstructorFirstArg(valueNode);
+}
+
+/**
+ * Follow the TileMap sub_resource chain to find all referenced PackedScene ext_resource IDs.
+ *
+ * Chain: TileMap node → tile_set = SubResource("TileSet_xxx")
+ *   → TileSet sub_resource → sources/N = SubResource("TileSetScenesCollectionSource_xxx")
+ *     → TileSetScenesCollectionSource → scenes/N/scene = ExtResource("id")
+ */
+function collectTileMapScenes(
+  nodeSection: SyntaxNode,
+  subResources: Map<string, { type: string; section: SyntaxNode }>,
+): string[] {
+  const extIds: string[] = [];
+
+  // Step 1: Find tile_set = SubResource("TileSet_xxx") on the node
+  const tileSetId = getSectionSubResource(nodeSection, 'tile_set');
+  if (!tileSetId) return extIds;
+
+  const tileSet = subResources.get(tileSetId);
+  if (!tileSet || tileSet.type !== 'TileSet') return extIds;
+
+  // Step 2: Find sources/N = SubResource("TileSetScenesCollectionSource_xxx") on the TileSet
+  const sourceProps = getSectionPropsWithPrefix(tileSet.section, 'sources/');
+  for (const { valueNode } of sourceProps) {
+    const sourceId = getSubResourceId(valueNode);
+    if (!sourceId) continue;
+
+    const source = subResources.get(sourceId);
+    if (!source || source.type !== 'TileSetScenesCollectionSource') continue;
+
+    // Step 3: Find scenes/N/scene = ExtResource("id") on the TileSetScenesCollectionSource
+    const sceneProps = getSectionPropsWithPrefix(source.section, 'scenes/');
+    for (const { path, valueNode: sceneValue } of sceneProps) {
+      // Only match scenes/N/scene (not scenes/N/id or other props)
+      if (!path.endsWith('/scene')) continue;
+      const extId = getExtResourceId(sceneValue);
+      if (extId && !extIds.includes(extId)) {
+        extIds.push(extId);
+      }
+    }
+  }
+
+  return extIds;
+}
+
+/**
  * Parses a .tscn file and extracts script attachments with their child nodes.
  * Each node with a script gets its own entry with relative child paths.
  */
@@ -134,11 +241,14 @@ function parseScene(
   nodeTypes: Map<string, string>;
   /** Map of full node paths to instanced scene res:// paths */
   instancedNodes: Map<string, string>;
+  /** Scenes embedded via sub_resource chains (TileMap tiles, etc.) — parentNodePath → { parentType, sceneResPaths } */
+  embeddedScenes: Map<string, { parentType: string; sceneResPaths: string[] }>;
 } | null {
   const content = readFileSync(filePath, 'utf-8');
   const root = resourceParser.parse(content);
 
   const extResources = new Map<string, { path: string; type: string }>();
+  const subResources = new Map<string, { type: string; section: SyntaxNode }>();
   const nodes: SceneNode[] = [];
   const connections: SceneConnection[] = [];
 
@@ -184,7 +294,13 @@ function parseScene(
       const uniqueInOwner = uniqueVal === 'true' || undefined;
 
       if (name) {
-        nodes.push({ name, type: type ?? '', parent: parent ?? '', scriptExtId, instanceExtId, uniqueInOwner });
+        nodes.push({ name, type: type ?? '', parent: parent ?? '', scriptExtId, instanceExtId, uniqueInOwner, section });
+      }
+    } else if (sectionType === 'sub_resource') {
+      const id = getSectionAttr(section, 'id');
+      const type = getSectionAttr(section, 'type');
+      if (id && type) {
+        subResources.set(id, { type, section });
       }
     } else if (sectionType === 'connection') {
       const signal = getSectionAttr(section, 'signal');
@@ -198,6 +314,30 @@ function parseScene(
   }
 
   if (nodes.length === 0) return null;
+
+  // Post-process: collect embedded scene references from special node types (TileMap, etc.)
+  // TileMap nodes reference external scenes through sub_resource chains
+  // (TileSet → TileSetScenesCollectionSource → scenes/N/scene = ExtResource("id")).
+  // At runtime, Godot instantiates these as children of the TileMap node.
+  const embeddedScenes = new Map<string, { parentType: string; sceneResPaths: string[] }>();
+  for (const node of nodes) {
+    if (node.type === 'TileMap' || node.type === 'TileMapLayer') {
+      if (!node.section) continue;
+      const extIds = collectTileMapScenes(node.section, subResources);
+      if (extIds.length === 0) continue;
+      const parentPath = node.parent === '' ? '.' : node.parent === '.' ? node.name : `${node.parent}/${node.name}`;
+      const sceneResPaths: string[] = [];
+      for (const extId of extIds) {
+        const extRes = extResources.get(extId);
+        if (extRes && extRes.type === 'PackedScene') {
+          sceneResPaths.push(extRes.path);
+        }
+      }
+      if (sceneResPaths.length > 0) {
+        embeddedScenes.set(parentPath, { parentType: node.type, sceneResPaths });
+      }
+    }
+  }
 
   /** Collect all descendant nodes of `scriptNode` as children with relative paths */
   function collectChildren(
@@ -302,7 +442,7 @@ function parseScene(
     instancedNodes.set(fullPath, extRes.path);
   }
 
-  return { filePath, scripts, rootScript, inheritedSceneResPath, connections, nodeTypes, instancedNodes };
+  return { filePath, scripts, rootScript, inheritedSceneResPath, connections, nodeTypes, instancedNodes, embeddedScenes };
 }
 
 /**
@@ -439,6 +579,7 @@ export function parseAutoloads(projectFilePath: string): AutoloadEntry[] {
 export interface ScriptClassInfo {
   className: string;
   tsModulePath: string;
+  extendsClassName?: string;
 }
 
 export interface BuildScriptClassMapOptions {
@@ -481,6 +622,16 @@ export function buildScriptClassMap(
 
       const className = statement.name.text;
 
+      // Extract extends clause (e.g. "CharacterBody2D", "BaseCharacter")
+      let extendsClassName: string | undefined;
+      if (statement.heritageClauses) {
+        for (const clause of statement.heritageClauses) {
+          if (clause.token === ts.SyntaxKind.ExtendsKeyword && clause.types.length > 0) {
+            extendsClassName = clause.types[0]!.expression.getText(sourceFile);
+          }
+        }
+      }
+
       // Compute res:// path for the corresponding .gd file
       // When tsDir != gdDir, the GD output goes to gdDir with the same relative path,
       // so we compute the GD path relative to rootDir (which is the Godot project root).
@@ -496,7 +647,7 @@ export function buildScriptClassMap(
         tsModulePath = './' + tsModulePath;
       }
 
-      map.set(resPath, { className, tsModulePath });
+      map.set(resPath, { className, tsModulePath, extendsClassName });
     }
   }
 
@@ -562,6 +713,14 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     }
     usedAliases.add(alias);
     aliasMap.set(resPath, { alias, className: info.className, tsModulePath: info.tsModulePath });
+  }
+
+  // Reverse map: className → resPath (for resolving extendsClassName to script res:// paths)
+  const classNameToResPath = new Map<string, string>();
+  for (const [resPath, info] of scriptClassMap) {
+    if (info.className !== '__CLASS__') {
+      classNameToResPath.set(info.className, resPath);
+    }
   }
 
   // Find scene files and collect per-script scene node data
@@ -736,6 +895,66 @@ export function generateTypings(options: GenerateTypingsOptions): string {
       baseMap.set(path, type);
     }
     data.sceneMaps.push(baseMap);
+  }
+
+  // Pass 3: Handle embedded scene references (TileMap tiles, etc.)
+  // These scenes are instantiated at runtime as children of the embedding node (e.g. TileMap),
+  // so their get_parent() should return the embedding node's Godot type or script class.
+  for (const { scene } of parsedScenes) {
+    for (const [, { parentType, sceneResPaths }] of scene.embeddedScenes) {
+      // Determine the parent type name for get_parent()
+      // For now, use the Godot built-in type (e.g. "TileMap")
+      // TODO: if the embedding node has a script, use the script's alias instead
+      for (const sceneResPath of sceneResPaths) {
+        const instanceScriptResPath = sceneRootScripts.get(sceneResPath);
+        if (!instanceScriptResPath) continue;
+        const instanceAlias = aliasMap.get(instanceScriptResPath);
+        if (!instanceAlias) continue;
+
+        const childScriptAlias = instanceAlias.alias;
+        if (!instancedParents.has(childScriptAlias)) {
+          instancedParents.set(childScriptAlias, new Set());
+        }
+        instancedParents.get(childScriptAlias)!.add(parentType);
+      }
+    }
+  }
+
+  // Pass 4: Inherit scene trees for parent classes without their own scenes.
+  // If BaseCharacter has no scene but Player and Enemy extend it, BaseCharacter
+  // gets scene nodes = union of Player's and Enemy's scene trees.
+  const childrenOf = new Map<string, Set<string>>();
+  for (const [resPath, info] of scriptClassMap) {
+    if (!info.extendsClassName) continue;
+    const parentResPath = classNameToResPath.get(info.extendsClassName);
+    if (!parentResPath) continue; // extends a Godot built-in or unknown class
+    if (!childrenOf.has(parentResPath)) {
+      childrenOf.set(parentResPath, new Set());
+    }
+    childrenOf.get(parentResPath)!.add(resPath);
+  }
+
+  // Iterate until stable (handles multi-level chains: A extends B extends C)
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const [parentResPath, childResPaths] of childrenOf) {
+      const existing = scriptData.get(parentResPath);
+      if (existing && existing.sceneMaps.length > 0) continue; // already has scenes
+
+      const inheritedMaps: Array<Map<string, string>> = [];
+      for (const childResPath of childResPaths) {
+        const childData = scriptData.get(childResPath);
+        if (!childData || childData.sceneMaps.length === 0) continue;
+        inheritedMaps.push(...childData.sceneMaps);
+      }
+      if (inheritedMaps.length === 0) continue;
+
+      const data = ensureScriptData(parentResPath);
+      if (!data) continue;
+      data.sceneMaps.push(...inheritedMaps);
+      changed = true;
+    }
   }
 
   // Parse autoloads from project.godot

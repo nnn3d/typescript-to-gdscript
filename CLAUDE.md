@@ -108,12 +108,13 @@ tests/
   - Scene parsing via tree-sitter-godot-resource: .tscn, .tres, project.godot
   - `get_node()`/`get_node_or_null()` overloads via module augmentation per script class
   - `get_parent()` typed via `[__parent]` symbol on `Node<Tree>` generic
+  - Sub-resource chain parsing for special node types (TileMap → TileSet → TileSetScenesCollectionSource → ExtResource) — scenes placed via TileMap tiles get `get_parent()` typed to TileMap
   - `GodotResources` interface: `.tscn` → `PackedScene<T>`, `.gd` → `typeof _Class`, `.tres` → `gd_resource type` header, assets → from extension
   - Autoload singletons from `project.godot` → global `const` declarations
 - [x] Godot class registry (916 classes, inheritance chain, global functions from `vendor/godot` XML docs)
 - [x] Converter diagnostics + ESLint plugin (`ts2gd/convert` rule, flat config ESLint >= 9)
 - [x] Watch mode + CLI + Cache
-- [x] Godot validation (CLI --check-only, source map remapping to TS positions)
+- [x] Godot validation (CLI --check-only, source map remapping to TS positions, autoload false-positive filtering for Godot bug #80319)
 - [ ] Source map integration with Godot LSP (map LSP errors back to TS in IDE)
 
 ## Conversion Rules (TS ↔ GDScript)
@@ -158,3 +159,5 @@ tests/
 - AST type post-processing: `const enum` → const object (erasableSyntaxOnly), `SyntaxType.X` → `typeof SyntaxType.X` in type positions
 - tree-sitter-gdscript `ParametersNode` name clash: type alias renamed to `ParameterChildNode`
 - Cross-file class visibility: `import { Name as _Name }` + `declare global { class Name extends _Name {} }`
+- TileMap embedded scenes: sub_resource chains (TileMap → TileSet → TileSetScenesCollectionSource) parsed via `collectTileMapScenes()`, injected into `instancedParents` in Pass 3 of `generateTypings()` with Godot built-in type name as parent (not script alias)
+- Godot validation autoload filtering: `--check-only --script` doesn't load autoloads (bug #80319), two error formats: `"Identifier not found: X"` and `"Identifier "X" not declared in the current scope."`, filtered in both parsed and unparsed error paths

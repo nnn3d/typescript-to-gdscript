@@ -3,7 +3,7 @@ import type { __CLASS__ as Anonym2 } from './Anonym2.ts';
 import type { __CLASS__ as AnonymNested } from './nested/Anonym.ts';
 import type { __CLASS__ as GameManagerType } from './GameManager.ts';
 
-export class Player extends CharacterBody2D {
+export class Player extends BaseCharacter {
   AnonymScript: typeof Anonym = load('res://Anonym.gd');
 
   Anonym2Script: typeof Anonym2 = load('res://Anonym2.gd');
