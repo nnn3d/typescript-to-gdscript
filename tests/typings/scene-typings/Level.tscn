@@ -4,15 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://test_player_packed" path="res://Player.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://test_enemy_packed" path="res://Enemy.tscn" id="3"]
 [ext_resource type="PackedScene" uid="uid://test_tileset_objects" path="res://TilesetObjects.tscn" id="4"]
-[ext_resource type="PackedScene" uid="uid://test_ball_packed" path="res://BallA.tscn" id="5"]
-
-[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_test1"]
-resource_name = "objects"
-scenes/1/scene = ExtResource("5")
-
-[sub_resource type="TileSet" id="TileSet_test1"]
-tile_size = Vector2i(64, 64)
-sources/0 = SubResource("TileSetScenesCollectionSource_test1")
+[ext_resource type="PackedScene" uid="uid://test_level_2" path="res://Level2.tscn" id="5"]
 
 [node name="Level" type="Node2D"]
 script = ExtResource("1")
@@ -29,5 +21,6 @@ script = ExtResource("1")
 
 [node name="ScoreLabel" type="Label" parent="UI"]
 
-[node name="TilesetObjectsMap" type="TileMap" parent="."]
-tile_set = SubResource("TileSet_test1")
+[node name="TilesetObjectsMap" parent="." instance=ExtResource("4")]
+
+[node name="Level2" parent="." instance=ExtResource("5")]

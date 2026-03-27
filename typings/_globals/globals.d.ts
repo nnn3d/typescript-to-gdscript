@@ -59,6 +59,7 @@ type ConstructorParameters<T extends abstract new (...args: any) => any> =
 type InstanceType<T extends abstract new (...args: any) => any> =
   T extends abstract new (...args: infer R) => any ? R : any;
 type NoInfer<T> = intrinsic;
+type IsAny<T> = boolean extends (T extends never ? true : false) ? true : false;
 
 // ─── Template literal support ───────────────────────────────
 

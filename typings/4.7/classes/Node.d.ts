@@ -322,7 +322,13 @@ declare class Node<Tree extends object = any> extends GodotObject {
    */
   get_multiplayer_authority(): int;
   /** Get a child node by path. Known paths (from scene tree) return exact types with autocomplete. */
-  get_node<P extends string & keyof Tree>(path: P): null extends Tree[P] ? NonNullable<Tree[P]> | Node : Tree[P];
+  get_node<P extends string & keyof Tree>(
+  path: P,
+  ): IsAny<Tree> extends true
+  ? Node
+  : null extends Tree[P]
+  ? NonNullable<Tree[P]> | Node
+  : Tree[P];
   /** Get a child node by path. Unknown paths return Node. */
   get_node(path: string): Node;
   /**
@@ -348,7 +354,11 @@ declare class Node<Tree extends object = any> extends GodotObject {
    */
   static get_orphan_node_ids(): unknown;
   /** Get the parent node. Returns typed parent from scene tree if known. */
-  get_parent(): [Tree] extends [{ [__parent]: infer P }] ? [P] extends [Node] ? P : Node : Node;
+  get_parent(): [Tree] extends [{ [__parent]: infer P }]
+  ? [P] extends [Node]
+  ? P
+  : Node
+  : Node;
   /**
    * Returns the node's absolute path, relative to the {@link SceneTree.root}. If the node is not inside the scene tree, this method fails and returns an empty {@link NodePath}.
    */

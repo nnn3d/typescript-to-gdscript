@@ -58,7 +58,6 @@ declare module "./Ball.ts" {
     get_node<T extends Node = Node>(path: string): T;
     get_node_or_null<P extends keyof _BallSceneNodes>(path: P): _BallSceneNodes[P] | null;
     get_node_or_null<T extends Node = Node>(path: string): T | null;
-    get_parent(): TileMap<{[__parent]: _Level}>;
   }
 }
 
@@ -89,6 +88,7 @@ interface _LevelSceneNodes {
   "UI": CanvasLayer<{[__parent]: _Level}>;
   "UI/ScoreLabel": Label<{[__parent]: CanvasLayer}>;
   "TilesetObjectsMap": TileMap<{[__parent]: _Level}>;
+  "Level2": Node<{[__parent]: _Level}>;
   "TilesetObjects2": TileMap<{[__parent]: _Level}> | null;
   "ExtraSprite": Sprite2D<{[__parent]: _Level}> | null;
 }
@@ -176,6 +176,7 @@ declare global {
     "res://Enemy.tscn": PackedScene<_Enemy>;
     "res://Level.tscn": PackedScene<_Level>;
     "res://Level1.tscn": PackedScene;
+    "res://Level2.tscn": PackedScene;
     "res://nested/Anonym.tscn": PackedScene<_nested_Anonym>;
     "res://Player.tscn": PackedScene<_Player>;
     "res://TilesetObjects.tscn": PackedScene;

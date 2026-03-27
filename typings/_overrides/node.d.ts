@@ -6,15 +6,29 @@
  */
 declare class Node<Tree extends object = any> extends GodotObject {
   /** Get a child node by path. Known paths (from scene tree) return exact types with autocomplete. */
-  get_node<P extends string & keyof Tree>(path: P): null extends Tree[P] ? NonNullable<Tree[P]> | Node : Tree[P];
+  get_node<P extends string & keyof Tree>(
+    path: P,
+  ): IsAny<Tree> extends true
+    ? Node
+    : null extends Tree[P]
+      ? NonNullable<Tree[P]> | Node
+      : Tree[P];
   /** Get a child node by path. Unknown paths return Node. */
   get_node(path: string): Node;
   /** Get a child node or null by path. Known paths return exact type | null. */
-  get_node_or_null<P extends string & keyof Tree>(path: P): Tree[P] | null;
+  get_node_or_null<P extends string & keyof Tree>(
+    path: P,
+  ): IsAny<Tree> extends true ? Node : Tree[P] | null;
   /** Get a child node or null by path. Unknown paths return Node | null. */
   get_node_or_null(path: string): Node | null;
   /** Get the parent node. Returns typed parent from scene tree if known. */
-  get_parent(): [Tree] extends [{ [__parent]: infer P }] ? [P] extends [Node] ? P : Node : Node;
+  get_parent(): IsAny<Tree> extends true
+    ? Node
+    : [Tree] extends [{ [__parent]: infer P }]
+      ? [P] extends [Node]
+        ? P
+        : Node
+      : Node;
   /** Duplicate this node. Returns same type as the original. */
   duplicate(flags?: int): this;
 }
