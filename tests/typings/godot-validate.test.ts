@@ -3,6 +3,8 @@ import {
   parseGodotErrors,
   remapError,
   validateGdFiles,
+  getAutoloadNames,
+  isAutoloadFalsePositive,
   type GodotRawError,
 } from '../../src/godot-validate/index.ts';
 import { convertTsToGd } from '../../src/converter/ts-to-gd/index.ts';
@@ -270,6 +272,115 @@ describe('remapError', () => {
   });
 });
 
+// ─── Autoload Error Filtering ──────────────────────────────────
+
+describe('isAutoloadFalsePositive', () => {
+  const autoloads = new Set(['GameManager', 'Globals', 'AudioManager']);
+
+  it('should detect "Identifier not found: GameManager"', () => {
+    const error: GodotRawError = {
+      file: '/project/test.gd',
+      line: 5,
+      column: 0,
+      errorType: 'Compile Error',
+      message: 'Identifier not found: GameManager',
+    };
+    expect(isAutoloadFalsePositive(error, autoloads)).toBe(true);
+  });
+
+  it('should detect "Identifier \"Globals\" not declared in the current scope."', () => {
+    const error: GodotRawError = {
+      file: '/project/test.gd',
+      line: 10,
+      column: 0,
+      errorType: 'Compile Error',
+      message: 'Identifier "Globals" not declared in the current scope.',
+    };
+    expect(isAutoloadFalsePositive(error, autoloads)).toBe(true);
+  });
+
+  it('should NOT filter errors for non-autoload identifiers', () => {
+    const error: GodotRawError = {
+      file: '/project/test.gd',
+      line: 5,
+      column: 0,
+      errorType: 'Compile Error',
+      message: 'Identifier not found: SomethingElse',
+    };
+    expect(isAutoloadFalsePositive(error, autoloads)).toBe(false);
+  });
+
+  it('should NOT filter unrelated errors', () => {
+    const error: GodotRawError = {
+      file: '/project/test.gd',
+      line: 5,
+      column: 0,
+      errorType: 'Parse Error',
+      message: 'Expected ":" after variable name.',
+    };
+    expect(isAutoloadFalsePositive(error, autoloads)).toBe(false);
+  });
+
+  it('should NOT filter when autoloads set is empty', () => {
+    const error: GodotRawError = {
+      file: '/project/test.gd',
+      line: 5,
+      column: 0,
+      errorType: 'Compile Error',
+      message: 'Identifier not found: GameManager',
+    };
+    expect(isAutoloadFalsePositive(error, new Set())).toBe(false);
+  });
+});
+
+describe('getAutoloadNames', () => {
+  it('should parse autoloads from project.godot', () => {
+    const projectDir = join(TMP_DIR, 'autoload-parse-test');
+    mkdirSync(projectDir, { recursive: true });
+    writeFileSync(
+      join(projectDir, 'project.godot'),
+      [
+        '; Engine configuration file.',
+        'config_version=5',
+        '',
+        '[application]',
+        'config/name="Test"',
+        '',
+        '[autoload]',
+        '',
+        'GameManager="*res://game_manager.gd"',
+        'AudioManager="*res://audio.tscn"',
+      ].join('\n'),
+    );
+
+    const names = getAutoloadNames(projectDir);
+    expect(names).toEqual(new Set(['GameManager', 'AudioManager']));
+  });
+
+  it('should return empty set when no project.godot', () => {
+    const names = getAutoloadNames('/nonexistent/path');
+    expect(names).toEqual(new Set());
+  });
+
+  it('should return empty set when no autoload section', () => {
+    const projectDir = join(TMP_DIR, 'no-autoload-test');
+    mkdirSync(projectDir, { recursive: true });
+    writeFileSync(
+      join(projectDir, 'project.godot'),
+      [
+        '; Engine configuration file.',
+        'config_version=5',
+        '',
+        '[application]',
+        'config/name="Test"',
+      ].join('\n'),
+    );
+
+    const names = getAutoloadNames(projectDir);
+    expect(names).toEqual(new Set());
+  });
+});
+
 // ─── Real Godot CLI integration tests ─────────────────────────
 
 try {
@@ -487,6 +598,60 @@ describe('Godot CLI integration', () => {
     expect(remappedDiag!.message).toContain(
       'Cannot assign a value of type "String" as "int".',
     );
+  });
+
+  it('should filter autoload false-positive errors (Godot bug #80319)', async () => {
+    const projectDir = join(TMP_DIR, 'godot-project-autoload');
+    mkdirSync(projectDir, { recursive: true });
+    // project.godot with autoload "GameManager"
+    writeFileSync(
+      join(projectDir, 'project.godot'),
+      [
+        '; Engine configuration file.',
+        'config_version=5',
+        '',
+        '[application]',
+        'config/name="Test"',
+        '',
+        '[autoload]',
+        '',
+        'GameManager="*res://game_manager.gd"',
+      ].join('\n'),
+    );
+    // Dummy autoload script (valid)
+    writeFileSync(
+      join(projectDir, 'game_manager.gd'),
+      [
+        'class_name GameManagerClass',
+        'extends Node',
+        '',
+        'var score: int = 0',
+      ].join('\n'),
+    );
+    // Script that references the autoload singleton — Godot --check-only will
+    // report "Identifier not found: GameManager" because it doesn't load autoloads.
+    writeFileSync(
+      join(projectDir, 'uses_autoload.gd'),
+      [
+        'class_name UsesAutoloadTest',
+        'extends Node',
+        '',
+        'func _ready() -> void:',
+        '\tGameManager.score = 10',
+      ].join('\n'),
+    );
+
+    const result = await validateGdFiles({
+      gdFiles: [join(projectDir, 'uses_autoload.gd')],
+      projectRoot: projectDir,
+      godotPath: GODOT_PATH,
+    });
+
+    // The "Identifier not found: GameManager" error should be filtered out
+    const autoloadErrors = result.diagnostics.filter(
+      (d) => d.message.includes('GameManager'),
+    );
+    expect(autoloadErrors).toHaveLength(0);
   });
 
   it('should validate multiple files', async () => {

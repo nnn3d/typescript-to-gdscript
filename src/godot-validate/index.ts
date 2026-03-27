@@ -3,6 +3,7 @@ import { promisify } from 'util';
 import { existsSync, readFileSync } from 'fs';
 import { resolve, basename, dirname, join, relative } from 'path';
 import { SourceMapReader } from '../sourcemap/index.ts';
+import { parseAutoloads } from '../typings/scenes.ts';
 import type { TransformDiagnostic } from '../converter/common/index.ts';
 
 var execFileAsync = promisify(execFile);
@@ -38,6 +39,39 @@ export interface GodotRawError {
   errorType: string;
   /** Error message */
   message: string;
+}
+
+// ─── Autoload Error Filtering ────────────────────────────────
+
+/**
+ * Collects autoload singleton names from project.godot.
+ * Used to filter false-positive "Identifier not found" errors caused by
+ * Godot bug https://github.com/godotengine/godot/issues/80319
+ * (--check-only --script doesn't load autoloads).
+ */
+export function getAutoloadNames(projectRoot: string): Set<string> {
+  var projectFile = join(projectRoot, 'project.godot');
+  if (!existsSync(projectFile)) return new Set();
+  var autoloads = parseAutoloads(projectFile);
+  return new Set(autoloads.map((a) => a.name));
+}
+
+/**
+ * Returns true if the error is a false positive caused by Godot not loading
+ * autoloads in --check-only mode.
+ */
+export function isAutoloadFalsePositive(
+  error: GodotRawError,
+  autoloadNames: Set<string>,
+): boolean {
+  if (autoloadNames.size === 0) return false;
+  // Format 1: "Identifier not found: GameManager"
+  // Format 2: "Identifier "Globals" not declared in the current scope."
+  var match1 = error.message.match(/^Identifier not found: (\w+)/);
+  if (match1 && autoloadNames.has(match1[1]!)) return true;
+  var match2 = error.message.match(/^Identifier "(\w+)" not declared/);
+  if (match2 && autoloadNames.has(match2[1]!)) return true;
+  return false;
 }
 
 // ─── Error Parsing ───────────────────────────────────────────
@@ -89,7 +123,7 @@ export function parseGodotErrors(
     if (scriptErrorMatch) {
       var nextLine = lines[i + 1];
       if (nextLine) {
-        // Match both "at: res://file.gd:15" and "at: GDScript::reload (res://file.gd:15)"
+        // Match "at: res://file.gd:15" and "at: GDScript::reload (res://file.gd:15)"
         var atMatch = nextLine.match(
           /^\s*at:\s*(?:\S+\s+\()?res:\/\/(.+?):(\d+)(?::(\d+))?\)?/,
         );
@@ -98,6 +132,21 @@ export function parseGodotErrors(
             file: resolveResPath('res://' + atMatch[1]!, projectRoot),
             line: parseInt(atMatch[2]!, 10),
             column: atMatch[3] ? parseInt(atMatch[3]!, 10) : 0,
+            errorType: scriptErrorMatch[1]!,
+            message: scriptErrorMatch[2]!.trim(),
+          });
+          i++; // Skip the "at:" line
+          continue;
+        }
+        // Match absolute path: "at: GDScript::reload (C:\path\file.gd:15)" or "at: C:\path\file.gd:15"
+        var atAbsMatch = nextLine.match(
+          /^\s*at:\s*(?:\S+\s+\()?(.+\.gd):(\d+)(?::(\d+))?\)?/,
+        );
+        if (atAbsMatch) {
+          errors.push({
+            file: resolve(atAbsMatch[1]!),
+            line: parseInt(atAbsMatch[2]!, 10),
+            column: atAbsMatch[3] ? parseInt(atAbsMatch[3]!, 10) : 0,
             errorType: scriptErrorMatch[1]!,
             message: scriptErrorMatch[2]!.trim(),
           });
@@ -225,6 +274,9 @@ export async function validateGdFiles(
     };
   }
 
+  // Collect autoload names to filter false-positive errors (Godot bug #80319)
+  var autoloadNames = getAutoloadNames(options.projectRoot);
+
   var allDiagnostics: TransformDiagnostic[] = [];
 
   for (var gdFile of options.gdFiles) {
@@ -271,21 +323,38 @@ export async function validateGdFiles(
       var output = stderr + '\n' + stdout;
 
       var rawErrors = parseGodotErrors(output, options.projectRoot);
+      // Filter false-positive autoload errors (Godot bug #80319)
+      rawErrors = rawErrors.filter(
+        (e) => !isAutoloadFalsePositive(e, autoloadNames),
+      );
 
       if (rawErrors.length === 0 && output.trim()) {
         // Unparsed error output — report first meaningful line
-        var firstLine = output
-          .trim()
-          .split('\n')
-          .find((l) => l.trim().length > 0);
-        if (firstLine) {
-          allDiagnostics.push({
-            message: `[Godot] ${firstLine.trim()}`,
-            severity: 'error',
-            file: resolvedFile,
-            line: 0,
-            column: 0,
-          });
+        // But first check if it's an autoload false positive
+        var isAutoloadFP = false;
+        if (autoloadNames.size > 0) {
+          for (var autoloadName of autoloadNames) {
+            if (output.includes('Identifier not found: ' + autoloadName) ||
+                output.includes('Identifier "' + autoloadName + '" not declared')) {
+              isAutoloadFP = true;
+              break;
+            }
+          }
+        }
+        if (!isAutoloadFP) {
+          var firstLine = output
+            .trim()
+            .split('\n')
+            .find((l) => l.trim().length > 0);
+          if (firstLine) {
+            allDiagnostics.push({
+              message: `[Godot] ${firstLine.trim()}`,
+              severity: 'error',
+              file: resolvedFile,
+              line: 0,
+              column: 0,
+            });
+          }
         }
       }
 
@@ -475,6 +544,9 @@ export function validateGdFilesSync(
     };
   }
 
+  // Collect autoload names to filter false-positive errors (Godot bug #80319)
+  var autoloadNames = getAutoloadNames(options.projectRoot);
+
   var allDiagnostics: TransformDiagnostic[] = [];
 
   for (var gdFile of options.gdFiles) {
@@ -527,20 +599,37 @@ export function validateGdFilesSync(
 
       var output = stderr + '\n' + stdout;
       var rawErrors = parseGodotErrors(output, options.projectRoot);
+      // Filter false-positive autoload errors (Godot bug #80319)
+      rawErrors = rawErrors.filter(
+        (e) => !isAutoloadFalsePositive(e, autoloadNames),
+      );
 
       if (rawErrors.length === 0 && output.trim()) {
-        var firstLine = output
-          .trim()
-          .split('\n')
-          .find((l) => l.trim().length > 0);
-        if (firstLine) {
-          allDiagnostics.push({
-            message: `[Godot] ${firstLine.trim()}`,
-            severity: 'error',
-            file: gdFile.tsFilePath ?? resolvedFile,
-            line: 0,
-            column: 0,
-          });
+        // Check if unparsed output is an autoload false positive
+        var isAutoloadFP = false;
+        if (autoloadNames.size > 0) {
+          for (var autoloadName of autoloadNames) {
+            if (output.includes('Identifier not found: ' + autoloadName) ||
+                output.includes('Identifier "' + autoloadName + '" not declared')) {
+              isAutoloadFP = true;
+              break;
+            }
+          }
+        }
+        if (!isAutoloadFP) {
+          var firstLine = output
+            .trim()
+            .split('\n')
+            .find((l) => l.trim().length > 0);
+          if (firstLine) {
+            allDiagnostics.push({
+              message: `[Godot] ${firstLine.trim()}`,
+              severity: 'error',
+              file: gdFile.tsFilePath ?? resolvedFile,
+              line: 0,
+              column: 0,
+            });
+          }
         }
       }
 
