@@ -106,12 +106,12 @@ describe('Scene typings generation', () => {
     expect(content).toContain('interface GodotResources');
     expect(content).toContain('"res://Player.tscn": PackedScene<_Player>');
 
-    // Script class entries in GodotResources (aliased)
-    expect(content).toContain('"res://Player.gd": _Player;');
-    expect(content).toContain('"res://Ball.gd": _Ball;');
-    expect(content).toContain('"res://Anonym.gd": _Anonym;');
-    expect(content).toContain('"res://Anonym2.gd": _Anonym2;');
-    expect(content).toContain('"res://GameManager.gd": _GameManager;');
+    // Script class entries in GodotResources (typeof = class/constructor type, not instance)
+    expect(content).toContain('"res://Player.gd": typeof _Player;');
+    expect(content).toContain('"res://Ball.gd": typeof _Ball;');
+    expect(content).toContain('"res://Anonym.gd": typeof _Anonym;');
+    expect(content).toContain('"res://Anonym2.gd": typeof _Anonym2;');
+    expect(content).toContain('"res://GameManager.gd": typeof _GameManager;');
 
     // .tres resources use gd_resource type header for precise typing
     expect(content).toContain('"res://player_material.tres": ShaderMaterial;');

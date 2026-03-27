@@ -1065,13 +1065,15 @@ export class TsToGdTransformer {
           continue;
         }
         if (ts.isPropertyAssignment(prop)) {
-          const key = prop.name.getText(this.ctx.sourceFile);
+          const key = ts.isStringLiteral(prop.name)
+            ? this.emitStringLiteral(prop.name)
+            : `"${this.escapeGdString(prop.name.getText(this.ctx.sourceFile))}"`;
           const val = this.emitMatchPatternExpr(prop.initializer, bindings);
           if (val === '_') {
             // { name: undefined } → just "name" as a key-only check
-            entries.push(`"${key}"`);
+            entries.push(key);
           } else {
-            entries.push(`"${key}": ${val}`);
+            entries.push(`${key}: ${val}`);
           }
         }
       }
@@ -1218,9 +1220,12 @@ export class TsToGdTransformer {
           if (ts.isComputedPropertyName(p.name)) {
             // {[expr]: value} -> expr: value (strip brackets, use raw expression)
             key = this.emitExpression(p.name.expression);
+          } else if (ts.isStringLiteral(p.name)) {
+            // String literal key: {'key': v} or {"key": v} -> "key": v
+            key = this.emitStringLiteral(p.name);
           } else {
             // Regular property: quote the key name
-            key = `"${p.name.getText(this.ctx.sourceFile)}"`;
+            key = `"${this.escapeGdString(p.name.getText(this.ctx.sourceFile))}"`;
           }
           const value = this.emitExpression(p.initializer);
           entries.push(`${key}: ${value}`);

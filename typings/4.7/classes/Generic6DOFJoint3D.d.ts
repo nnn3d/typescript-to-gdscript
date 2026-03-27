@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A physics joint that allows for complex movement and rotation between two 3D physics bodies. */
 declare class Generic6DOFJoint3D<Tree extends object = any> extends Joint3D<Tree> {

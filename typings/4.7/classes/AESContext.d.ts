@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Provides access to AES encryption/decryption of raw data. */
 declare class AESContext extends RefCounted {

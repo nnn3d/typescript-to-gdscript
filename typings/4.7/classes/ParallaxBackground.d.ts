@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node used to create a parallax scrolling background. */
 declare class ParallaxBackground<Tree extends object = any> extends CanvasLayer<Tree> {

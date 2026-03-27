@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A resource used for styling/skinning {@link Control}s and {@link Window}s. */
 declare class Theme extends Resource {

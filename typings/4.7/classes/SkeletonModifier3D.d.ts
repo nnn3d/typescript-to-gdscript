@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node that may modify a Skeleton3D's bones. */
 declare class SkeletonModifier3D<Tree extends object = any> extends Node3D<Tree> {

@@ -238,14 +238,16 @@ Typings are stored in `typings/<version>/` folders:
 
 ```
 typings/
-  index.d.ts          # Entry point (references latest)
-  gd-helpers.d.ts     # gd namespace types
-  4.6/
-    godot.d.ts
+  index.d.ts          # Entry point (references _globals/ + latest/)
+  _globals/           # Global type definitions
+    gd-helpers.d.ts   # gd namespace types
+    globals.d.ts      # Generated global class declarations
+  _overrides/         # Manual type overrides for generated typings
+  4.7/
+    classes/          # Per-class .d.ts files
     godot-class-registry.json
-  latest/             # Copy of active version
-    godot.d.ts
-    godot-class-registry.json
+  latest/             # Pointer to active version
+    index.d.ts
 ```
 
 ## ESLint Plugin

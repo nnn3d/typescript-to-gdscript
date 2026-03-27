@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A dialog used for confirmation of actions. */
 declare class ConfirmationDialog<Tree extends object = any> extends AcceptDialog<Tree> {

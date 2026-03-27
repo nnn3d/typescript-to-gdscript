@@ -55,14 +55,17 @@ vendor/
                        # Only vendor/godot/doc/classes/*.xml and version.py are used
 
 typings/               # Versioned Godot typings (committed to git, used as TS lib)
-  index.d.ts           # Entry point: references gd-helpers.d.ts + latest/godot.d.ts
-  gd-helpers.d.ts      # gd namespace type defs (signal, enum_, as, math, decorators)
-  4.6/                 # Godot 4.6 typings
-    godot.d.ts         # 25K-line declare class/function definitions
+  index.d.ts           # Entry point: references _globals/ + latest/
+  _globals/            # Global type definitions (not version-specific)
+    gd-helpers.d.ts    # gd namespace type defs (signal, enum_, as, math, decorators)
+    globals.d.ts       # Generated global class declarations + scene typings
+  _overrides/          # Manual type overrides applied during typings generation
+    *.d.ts             # Per-class override files (node.d.ts, array.d.ts, etc.)
+  4.7/                 # Godot 4.7 typings
+    classes/           # Per-class .d.ts files (916 classes)
     godot-class-registry.json  # Class hierarchy JSON (916 classes)
-  latest/              # Copy of active version (used by index.d.ts)
-    godot.d.ts
-    godot-class-registry.json
+  latest/              # Pointer to active version (used by index.d.ts)
+    index.d.ts
 
 src/
   config/
@@ -103,7 +106,7 @@ src/
   cli/
     index.ts           # Commander CLI: convert, convert-gd, lint, watch, generate-typings, set-latest, generate-class-typings
   types/
-    gd-helpers.d.ts    # gd namespace type defs (original, copied to typings/)
+    gd-helpers.d.ts    # gd namespace type defs (original, copied to typings/_globals/)
 
 tests/
   fixtures/ts-to-gd/   # 16 paired .ts/.gd fixture files (TS->GD)
@@ -141,7 +144,7 @@ Consumer projects add to their `tsconfig.json`:
 { "compilerOptions": { "types": ["typescript-to-gdscript/typings"] } }
 ```
 
-This loads `typings/index.d.ts` which references `gd-helpers.d.ts` + `latest/godot.d.ts`.
+This loads `typings/index.d.ts` which references `_globals/gd-helpers.d.ts` + `latest/` typings.
 
 ## Implementation Status
 

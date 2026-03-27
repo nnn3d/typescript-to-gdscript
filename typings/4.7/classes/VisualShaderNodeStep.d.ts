@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Calculates a Step function within the visual shader graph. */
 declare class VisualShaderNodeStep extends VisualShaderNode {

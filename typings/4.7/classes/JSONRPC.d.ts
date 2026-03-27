@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A helper to handle dictionaries which look like JSONRPC documents. */
 declare class JSONRPC extends GodotObject {

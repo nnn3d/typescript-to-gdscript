@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node used for advanced animation transitions in an {@link AnimationPlayer}. */
 declare class AnimationTree<Tree extends object = any> extends AnimationMixer<Tree> {

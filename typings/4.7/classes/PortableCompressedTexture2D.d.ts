@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Provides a compressed texture for disk and/or VRAM in a way that is portable. */
 declare class PortableCompressedTexture2D extends Texture2D {

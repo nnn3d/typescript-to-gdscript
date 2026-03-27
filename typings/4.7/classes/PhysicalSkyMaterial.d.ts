@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A material that defines a sky for a {@link Sky} resource by a set of physical properties. */
 declare class PhysicalSkyMaterial extends Material {

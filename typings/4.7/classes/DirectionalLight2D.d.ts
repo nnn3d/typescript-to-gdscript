@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Directional 2D light from a distance. */
 declare class DirectionalLight2D<Tree extends object = any> extends Light2D<Tree> {

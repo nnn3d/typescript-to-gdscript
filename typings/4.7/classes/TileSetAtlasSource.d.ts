@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Exposes a 2D atlas texture as a set of tiles for a {@link TileSet} resource. */
 declare class TileSetAtlasSource extends TileSetSource {

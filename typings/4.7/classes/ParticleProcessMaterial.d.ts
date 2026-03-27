@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Holds a particle configuration for {@link GPUParticles2D} or {@link GPUParticles3D} nodes. */
 declare class ParticleProcessMaterial extends Material {

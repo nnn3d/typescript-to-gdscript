@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A class used by the editor to define Node3D gizmo types. */
 declare class EditorNode3DGizmoPlugin extends Resource {

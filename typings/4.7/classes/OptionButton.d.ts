@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A button that brings up a dropdown with selectable options when pressed. */
 declare class OptionButton<Tree extends object = any> extends Button<Tree> {

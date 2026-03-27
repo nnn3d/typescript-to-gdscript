@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A dialog for selecting files or directories in the filesystem. */
 declare class FileDialog<Tree extends object = any> extends ConfirmationDialog<Tree> {

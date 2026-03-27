@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Node for 2D tile-based maps. */
 declare class TileMapLayer<Tree extends object = any> extends Node2D<Tree> {

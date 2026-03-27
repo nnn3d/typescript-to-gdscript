@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A {@link SkeletonModifier3D} to approach the goal by repeating small rotations. */
 declare class IterateIK3D<Tree extends object = any> extends ChainIK3D<Tree> {

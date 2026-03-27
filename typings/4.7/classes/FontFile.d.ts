@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Holds font source data and prerendered glyph cache, imported from a dynamic or a bitmap font. */
 declare class FontFile extends Font {

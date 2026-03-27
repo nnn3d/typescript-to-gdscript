@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** The parent of a hierarchy of {@link Bone2D}s, used to create a 2D skeletal animation. */
 declare class Skeleton2D<Tree extends object = any> extends Node2D<Tree> {

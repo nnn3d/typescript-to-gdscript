@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Class representing a capsule-shaped {@link PrimitiveMesh}. */
 declare class CapsuleMesh extends PrimitiveMesh {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** The origin point in AR/VR. */
 declare class XROrigin3D<Tree extends object = any> extends Node3D<Tree> {

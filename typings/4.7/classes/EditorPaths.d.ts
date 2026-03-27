@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Editor-only singleton that returns paths to various OS-specific data folders and files. */
 declare class EditorPaths extends GodotObject {

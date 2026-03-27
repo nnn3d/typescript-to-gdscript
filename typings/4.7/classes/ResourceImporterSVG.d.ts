@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Imports an SVG file as an automatically scalable texture for use in UI elements and 2D rendering. */
 declare class ResourceImporterSVG extends ResourceImporter {

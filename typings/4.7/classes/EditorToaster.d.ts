@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Manages toast notifications within the editor. */
 declare class EditorToaster<Tree extends object = any> extends HBoxContainer<Tree> {

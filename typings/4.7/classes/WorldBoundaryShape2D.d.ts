@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 2D world boundary (half-plane) shape used for physics collision. */
 declare class WorldBoundaryShape2D extends Shape2D {

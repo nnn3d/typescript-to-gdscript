@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A themed button that can contain text and an icon. */
 declare class Button<Tree extends object = any> extends BaseButton<Tree> {

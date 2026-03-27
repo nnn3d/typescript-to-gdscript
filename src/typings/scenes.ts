@@ -894,7 +894,7 @@ export function generateTypings(options: GenerateTypingsOptions): string {
         }
       }
       for (const [resPath, aliasEntry] of aliasMap) {
-        lines.push(`    "${resPath}": ${aliasEntry.alias};`);
+        lines.push(`    "${resPath}": typeof ${aliasEntry.alias};`);
       }
       // Asset resources (images, audio, fonts, etc.)
       for (const asset of assetEntries) {

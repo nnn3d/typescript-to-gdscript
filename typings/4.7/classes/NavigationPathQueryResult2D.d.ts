@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Represents the result of a 2D pathfinding query. */
 declare class NavigationPathQueryResult2D extends RefCounted {

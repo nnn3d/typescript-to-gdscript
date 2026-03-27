@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 1D texture that uses colors obtained from a {@link Gradient}. */
 declare class GradientTexture1D extends Texture2D {

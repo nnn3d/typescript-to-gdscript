@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A control that provides a horizontal bar with tabs. */
 declare class TabBar<Tree extends object = any> extends Control<Tree> {

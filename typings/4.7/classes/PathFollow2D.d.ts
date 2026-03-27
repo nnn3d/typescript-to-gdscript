@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Point sampler for a {@link Path2D}. */
 declare class PathFollow2D<Tree extends object = any> extends Node2D<Tree> {

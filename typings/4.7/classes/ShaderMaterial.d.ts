@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A material defined by a custom {@link Shader} program and the values of its shader parameters. */
 declare class ShaderMaterial extends Material {

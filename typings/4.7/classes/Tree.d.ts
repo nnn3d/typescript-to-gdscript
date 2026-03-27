@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A control used to show a set of internal {@link TreeItem}s in a hierarchical structure. */
 declare class Tree<Tree extends object = any> extends Control<Tree> {

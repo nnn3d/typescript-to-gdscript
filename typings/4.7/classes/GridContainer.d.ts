@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container that arranges its child controls in a grid layout. */
 declare class GridContainer<Tree extends object = any> extends Container<Tree> {

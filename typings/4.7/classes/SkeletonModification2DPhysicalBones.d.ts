@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A modification that applies the transforms of {@link PhysicalBone2D} nodes to {@link Bone2D} nodes. */
 declare class SkeletonModification2DPhysicalBones extends SkeletonModification2D {

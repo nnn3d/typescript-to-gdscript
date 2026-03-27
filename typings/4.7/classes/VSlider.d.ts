@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A vertical slider that goes from bottom (min) to top (max). */
 declare class VSlider<Tree extends object = any> extends Slider<Tree> {

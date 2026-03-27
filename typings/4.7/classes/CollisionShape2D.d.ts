@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node that provides a {@link Shape2D} to a {@link CollisionObject2D} parent. */
 declare class CollisionShape2D<Tree extends object = any> extends Node2D<Tree> {

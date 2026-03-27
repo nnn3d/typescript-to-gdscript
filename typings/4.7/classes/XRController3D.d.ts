@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 3D node representing a spatially-tracked controller. */
 declare class XRController3D<Tree extends object = any> extends XRNode3D<Tree> {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A multiline text editor designed for editing code. */
 declare class CodeEdit<Tree extends object = any> extends TextEdit<Tree> {

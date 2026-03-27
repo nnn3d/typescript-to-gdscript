@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Describes the motion and collision result from {@link PhysicsServer3D.body_test_motion}. */
 declare class PhysicsTestMotionResult3D extends RefCounted {

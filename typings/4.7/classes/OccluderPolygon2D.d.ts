@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Defines a 2D polygon for LightOccluder2D. */
 declare class OccluderPolygon2D extends Resource {

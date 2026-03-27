@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /**
  * A class used to provide {@link PhysicsServer3DExtension._soft_body_update_rendering_server} with a rendering handler for soft bodies.

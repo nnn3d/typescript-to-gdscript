@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Rotation based intersection of two circles inverse kinematics solver. */
 declare class TwoBoneIK3D<Tree extends object = any> extends IKModifier3D<Tree> {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 declare class PolygonPathFinder extends Resource {
   find_path(from_: Vector2, to: Vector2): PackedVector2Array;

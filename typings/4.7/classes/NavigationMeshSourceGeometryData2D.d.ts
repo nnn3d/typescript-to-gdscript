@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Container for parsed source geometry data used in navigation mesh baking. */
 declare class NavigationMeshSourceGeometryData2D extends Resource {

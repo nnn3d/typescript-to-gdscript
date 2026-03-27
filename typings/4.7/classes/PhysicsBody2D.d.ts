@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract base class for 2D game objects affected by physics. */
 declare class PhysicsBody2D<Tree extends object = any> extends CollisionObject2D<Tree> {

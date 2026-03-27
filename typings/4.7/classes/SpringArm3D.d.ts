@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 3D raycast that dynamically moves its children near the collision point. */
 declare class SpringArm3D<Tree extends object = any> extends Node3D<Tree> {

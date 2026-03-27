@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Pipeline multisample state (used by {@link RenderingDevice}). */
 declare class RDPipelineMultisampleState extends RefCounted {

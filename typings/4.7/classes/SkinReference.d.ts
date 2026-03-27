@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A reference-counted holder object for a skeleton RID used in the {@link RenderingServer}. */
 declare class SkinReference extends RefCounted {

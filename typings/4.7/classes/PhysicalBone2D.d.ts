@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /**
  * A {@link RigidBody2D}-derived node used to make {@link Bone2D}s in a {@link Skeleton2D} react to physics.

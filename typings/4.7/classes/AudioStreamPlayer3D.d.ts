@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Plays positional sound in 3D space. */
 declare class AudioStreamPlayer3D<Tree extends object = any> extends Node3D<Tree> {

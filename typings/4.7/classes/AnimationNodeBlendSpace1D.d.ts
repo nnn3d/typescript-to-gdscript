@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /**
  * A set of {@link AnimationRootNode}s placed on a virtual axis, crossfading between the two adjacent ones. Used by {@link AnimationTree}.

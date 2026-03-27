@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Base class for a profile of a virtual skeleton used as a target for retargeting. */
 declare class SkeletonProfile extends Resource {

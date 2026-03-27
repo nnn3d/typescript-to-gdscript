@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Godot editor's control for editing numeric values. */
 declare class EditorSpinSlider<Tree extends object = any> extends Range<Tree> {

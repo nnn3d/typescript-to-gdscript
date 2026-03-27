@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container used to provide scrollbars to a child control when needed. */
 declare class ScrollContainer<Tree extends object = any> extends Container<Tree> {

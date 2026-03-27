@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container used for displaying the contents of a {@link SubViewport}. */
 declare class SubViewportContainer<Tree extends object = any> extends Container<Tree> {

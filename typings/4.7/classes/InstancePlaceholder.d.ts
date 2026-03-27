@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Placeholder for the root {@link Node} of a {@link PackedScene}. */
 declare class InstancePlaceholder<Tree extends object = any> extends Node<Tree> {

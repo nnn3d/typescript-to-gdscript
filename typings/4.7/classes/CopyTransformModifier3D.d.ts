@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A {@link SkeletonModifier3D} that apply transform to the bone which copied from reference. */
 declare class CopyTransformModifier3D<Tree extends object = any> extends BoneConstraint3D<Tree> {

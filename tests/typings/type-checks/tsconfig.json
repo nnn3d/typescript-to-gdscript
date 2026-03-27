@@ -10,8 +10,8 @@
     "types": []
   },
   "include": [
-    "../../../typings/gd-helpers.d.ts",
-    "../../../typings/globals.d.ts",
+    "../../../typings/_globals/gd-helpers.d.ts",
+    "../../../typings/_globals/globals.d.ts",
     "../../../typings/4.7/classes/**/*.d.ts",
     "./**/*.ts"
   ]

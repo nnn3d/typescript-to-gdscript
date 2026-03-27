@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Singleton that connects the engine with Android plugins to interface with native Android code. */
 declare class JNISingleton extends GodotObject {

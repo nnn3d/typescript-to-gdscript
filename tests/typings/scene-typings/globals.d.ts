@@ -153,14 +153,14 @@ declare global {
     "res://nested/Anonym.tscn": PackedScene<_nested_Anonym>;
     "res://Player.tscn": PackedScene<_Player>;
     "res://TilesetObjects.tscn": PackedScene;
-    "res://Anonym.gd": _Anonym;
-    "res://Anonym2.gd": _Anonym2;
-    "res://Ball.gd": _Ball;
-    "res://Enemy.gd": _Enemy;
-    "res://GameManager.gd": _GameManager;
-    "res://Level.gd": _Level;
-    "res://Player.gd": _Player;
-    "res://nested/Anonym.gd": _nested_Anonym;
+    "res://Anonym.gd": typeof _Anonym;
+    "res://Anonym2.gd": typeof _Anonym2;
+    "res://Ball.gd": typeof _Ball;
+    "res://Enemy.gd": typeof _Enemy;
+    "res://GameManager.gd": typeof _GameManager;
+    "res://Level.gd": typeof _Level;
+    "res://Player.gd": typeof _Player;
+    "res://nested/Anonym.gd": typeof _nested_Anonym;
     "res://player_material.tres": ShaderMaterial;
   }
   // Autoload singletons from project.godot

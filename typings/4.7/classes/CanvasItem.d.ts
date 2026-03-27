@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract base class for everything in 2D space. */
 declare class CanvasItem<Tree extends object = any> extends Node<Tree> {

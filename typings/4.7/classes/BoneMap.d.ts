@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /**
  * Describes a mapping of bone names for retargeting {@link Skeleton3D} into common names defined by a {@link SkeletonProfile}.

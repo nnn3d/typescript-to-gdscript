@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Merges several 2D nodes into a single draw operation. */
 declare class CanvasGroup<Tree extends object = any> extends Node2D<Tree> {

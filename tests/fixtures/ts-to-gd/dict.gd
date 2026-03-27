@@ -15,3 +15,11 @@ func test_dict():
 		key1: "value",
 		"key2": "value",
 	}
+	var dict3 = {
+		"key": "value",
+		"key2": "value",
+	}
+	var dict4 = {
+		"it's": "value",
+		"say \"hello\"": "value",
+	}

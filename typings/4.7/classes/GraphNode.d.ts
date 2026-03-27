@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container with connection ports, representing a node in a {@link GraphEdit}. */
 declare class GraphNode<Tree extends object = any> extends GraphElement<Tree> {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A singleton for managing {@link NavigationServer3D} implementations. */
 declare interface NavigationServer3DManager extends GodotObject {

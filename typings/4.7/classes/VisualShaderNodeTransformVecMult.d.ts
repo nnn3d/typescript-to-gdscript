@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Multiplies a {@link Transform3D} and a {@link Vector3} within the visual shader graph. */
 declare class VisualShaderNodeTransformVecMult extends VisualShaderNode {

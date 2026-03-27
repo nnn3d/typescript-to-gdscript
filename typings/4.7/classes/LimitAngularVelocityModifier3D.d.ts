@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Limit bone rotation angular velocity. */
 declare class LimitAngularVelocityModifier3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {

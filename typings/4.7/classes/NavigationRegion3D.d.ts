@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A traversable 3D region that {@link NavigationAgent3D}s can use for pathfinding. */
 declare class NavigationRegion3D<Tree extends object = any> extends Node3D<Tree> {

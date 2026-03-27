@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Helper class for creating and clearing navigation meshes. */
 declare interface NavigationMeshGenerator extends GodotObject {

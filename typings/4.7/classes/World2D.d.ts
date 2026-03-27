@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A resource that holds all components of a 2D world, such as a canvas and a physics space. */
 declare class World2D extends Resource {

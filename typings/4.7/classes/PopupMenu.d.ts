@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A modal window used to display a list of options. */
 declare class PopupMenu<Tree extends object = any> extends Popup<Tree> {

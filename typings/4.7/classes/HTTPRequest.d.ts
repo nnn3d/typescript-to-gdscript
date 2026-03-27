@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node with the ability to send HTTP(S) requests. */
 declare class HTTPRequest<Tree extends object = any> extends Node<Tree> {

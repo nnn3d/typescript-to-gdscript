@@ -5,7 +5,7 @@ import { tmpdir } from 'os';
 import { generateGodotDocsTypings } from '../../src/typings/godot-docs.js';
 
 const GODOT_DOCS_DIR = join(__dirname, '../../vendor/godot/doc/classes');
-const OVERRIDE_DIR = join(__dirname, '../../typings/overrides');
+const OVERRIDE_DIR = join(__dirname, '../../typings/_overrides');
 const VERSION_CLASSES_DIR = join(__dirname, '../../typings/4.7/classes');
 
 describe('Godot Docs: typings generation', () => {

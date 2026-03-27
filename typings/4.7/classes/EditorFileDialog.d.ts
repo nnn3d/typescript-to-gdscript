@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A modified version of {@link FileDialog} used by the editor. */
 declare class EditorFileDialog<Tree extends object = any> extends FileDialog<Tree> {

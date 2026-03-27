@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Wraps a pool of audio streams with pitch and volume shifting. */
 declare class AudioStreamRandomizer extends AudioStream {

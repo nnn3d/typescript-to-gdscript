@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A region of 2D space that detects other {@link CollisionObject2D}s entering or exiting it. */
 declare class Area2D<Tree extends object = any> extends CollisionObject2D<Tree> {

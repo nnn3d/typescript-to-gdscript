@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Imports an OBJ 3D model as an independent {@link Mesh} or scene. */
 declare class ResourceImporterOBJ extends ResourceImporter {

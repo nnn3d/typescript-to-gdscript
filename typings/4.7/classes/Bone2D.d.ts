@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A joint used with {@link Skeleton2D} to control and animate other nodes. */
 declare class Bone2D<Tree extends object = any> extends Node2D<Tree> {

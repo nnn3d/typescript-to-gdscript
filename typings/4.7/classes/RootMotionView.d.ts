@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Editor-only helper for setting up root motion in {@link AnimationMixer}. */
 declare class RootMotionView<Tree extends object = any> extends VisualInstance3D<Tree> {

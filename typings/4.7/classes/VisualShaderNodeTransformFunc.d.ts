@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Computes a {@link Transform3D} function within the visual shader graph. */
 declare class VisualShaderNodeTransformFunc extends VisualShaderNode {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A control used to edit properties of an object. */
 declare class EditorInspector<Tree extends object = any> extends ScrollContainer<Tree> {

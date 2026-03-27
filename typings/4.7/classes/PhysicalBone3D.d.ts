@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A physics body used to make bones in a {@link Skeleton3D} react to physics. */
 declare class PhysicalBone3D<Tree extends object = any> extends PhysicsBody3D<Tree> {

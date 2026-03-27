@@ -15,5 +15,9 @@ export class MyClass extends Node {
       [key1]: 'value',
       key2: 'value',
     }
+
+    let dict3 = {'key': 'value', "key2": "value"};
+
+    let dict4 = {'it\'s': 'value', "say \"hello\"": 'value'};
   }
 }

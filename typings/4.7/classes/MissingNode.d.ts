@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** An internal editor class intended for keeping the data of unrecognized nodes. */
 declare class MissingNode<Tree extends object = any> extends Node<Tree> {

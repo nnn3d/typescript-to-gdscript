@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Godot editor's dock for managing files in the project. */
 declare class FileSystemDock<Tree extends object = any> extends EditorDock<Tree> {

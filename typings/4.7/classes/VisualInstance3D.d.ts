@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Parent of all visual 3D nodes. */
 declare class VisualInstance3D<Tree extends object = any> extends Node3D<Tree> {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A rectangular region of 2D space that, when visible on screen, enables a target node. */
 declare class VisibleOnScreenEnabler2D<Tree extends object = any> extends VisibleOnScreenNotifier2D<Tree> {

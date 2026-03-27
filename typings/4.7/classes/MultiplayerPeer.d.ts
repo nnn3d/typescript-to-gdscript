@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract class for specialized {@link PacketPeer}s used by the {@link MultiplayerAPI}. */
 declare class MultiplayerPeer extends PacketPeer {

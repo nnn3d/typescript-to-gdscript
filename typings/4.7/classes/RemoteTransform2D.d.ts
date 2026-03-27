@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /**
  * RemoteTransform2D pushes its own {@link Transform2D} to another {@link Node2D} derived node in the scene.

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** An automatically scalable {@link Texture2D} based on an SVG image. */
 declare class DPITexture extends Texture2D {

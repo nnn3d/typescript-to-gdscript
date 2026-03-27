@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container that creates a tab for each child control, displaying only the active tab's control. */
 declare class TabContainer<Tree extends object = any> extends Container<Tree> {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A modification that uses CCDIK to manipulate a series of bones to reach a target in 2D. */
 declare class SkeletonModification2DCCDIK extends SkeletonModification2D {

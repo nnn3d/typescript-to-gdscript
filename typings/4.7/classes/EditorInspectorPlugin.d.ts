@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Plugin for adding custom property editors on the inspector. */
 declare class EditorInspectorPlugin extends RefCounted {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Generic 3D position hint for editing. */
 declare class Marker3D<Tree extends object = any> extends Node3D<Tree> {

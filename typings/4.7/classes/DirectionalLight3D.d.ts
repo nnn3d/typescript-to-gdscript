@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Directional light from a distance, as from the Sun. */
 declare class DirectionalLight3D<Tree extends object = any> extends Light3D<Tree> {

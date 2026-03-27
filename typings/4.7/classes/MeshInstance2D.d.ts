@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Node used for displaying a {@link Mesh} in 2D. */
 declare class MeshInstance2D<Tree extends object = any> extends Node2D<Tree> {

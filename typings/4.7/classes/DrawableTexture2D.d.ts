@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 2D texture that supports drawing to itself via Blit calls. */
 declare class DrawableTexture2D extends Texture2D {

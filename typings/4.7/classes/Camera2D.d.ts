@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Camera node for 2D scenes. */
 declare class Camera2D<Tree extends object = any> extends Node2D<Tree> {

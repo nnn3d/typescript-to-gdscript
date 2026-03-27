@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Imports a {@link BitMap} resource (2D array of boolean values). */
 declare class ResourceImporterBitMap extends ResourceImporter {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A CPU-based 2D particle emitter. */
 declare class CPUParticles2D<Tree extends object = any> extends Node2D<Tree> {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Runs a {@link Tween} nested within another {@link Tween}. */
 declare class SubtweenTweener extends Tweener {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A control that displays a texture by keeping its corners intact, but tiling its edges and center. */
 declare class NinePatchRect<Tree extends object = any> extends Control<Tree> {

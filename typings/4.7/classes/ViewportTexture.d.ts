@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Provides the content of a {@link Viewport} as a dynamic texture. */
 declare class ViewportTexture extends Texture2D {

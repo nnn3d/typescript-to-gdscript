@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Version Control System (VCS) interface, which reads and writes to the local VCS in use. */
 declare class EditorVCSInterface extends GodotObject {

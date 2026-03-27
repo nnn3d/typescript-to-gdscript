@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Adds a soft-clip limiter audio effect to an audio bus. */
 declare class AudioEffectLimiter extends AudioEffect {

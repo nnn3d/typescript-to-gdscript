@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A box-shaped 3D particle collision shape affecting {@link GPUParticles3D} nodes. */
 declare class GPUParticlesCollisionBox3D<Tree extends object = any> extends GPUParticlesCollision3D<Tree> {

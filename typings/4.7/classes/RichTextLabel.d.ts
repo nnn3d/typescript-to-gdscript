@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A control for displaying text that can contain different font styles, images, and basic formatting. */
 declare class RichTextLabel<Tree extends object = any> extends Control<Tree> {

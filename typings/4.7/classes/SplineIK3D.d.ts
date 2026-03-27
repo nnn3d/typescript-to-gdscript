@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A {@link SkeletonModifier3D} for aligning bones along a {@link Path3D}. */
 declare class SplineIK3D<Tree extends object = any> extends ChainIK3D<Tree> {

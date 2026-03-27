@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Imports a bitmap font where all glyphs have the same width and height. */
 declare class ResourceImporterImageFont extends ResourceImporter {

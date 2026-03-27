@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Pipeline color blend state (used by {@link RenderingDevice}). */
 declare class RDPipelineColorBlendState extends RefCounted {

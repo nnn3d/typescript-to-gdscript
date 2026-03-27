@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Performs a fused multiply-add operation within the visual shader graph. */
 declare class VisualShaderNodeMultiplyAdd extends VisualShaderNode {

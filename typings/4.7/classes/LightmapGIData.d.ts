@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Contains baked lightmap and dynamic object probe data for {@link LightmapGI}. */
 declare class LightmapGIData extends Resource {

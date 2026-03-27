@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Contains functions to modify texture coordinates (`uv`) to be used within the visual shader graph. */
 declare class VisualShaderNodeUVFunc extends VisualShaderNode {

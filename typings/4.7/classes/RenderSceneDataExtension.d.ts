@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** This class allows for a RenderSceneData implementation to be made in GDExtension. */
 declare class RenderSceneDataExtension extends RenderSceneData {

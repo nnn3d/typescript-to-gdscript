@@ -4,13 +4,13 @@ import type { __CLASS__ as AnonymNested } from './nested/Anonym.ts';
 import type { __CLASS__ as GameManagerType } from './GameManager.ts';
 
 export class Player extends CharacterBody2D {
-  AnonymField: Anonym = load('res://Anonym.gd');
+  AnonymScript: typeof Anonym = load('res://Anonym.gd');
 
-  Anonym2Field: Anonym2 = load('res://Anonym2.gd');
+  Anonym2Script: typeof Anonym2 = load('res://Anonym2.gd');
 
-  AnonymNestedField: AnonymNested = load('res://nested/Anonym.gd');
+  AnonymNestedScript: typeof AnonymNested = load('res://nested/Anonym.gd');
 
-  BallField: Ball = load('res://Ball.gd');
+  BallScript: typeof Ball = load('res://Ball.gd');
 
   PlayerPackedScene: PackedScene<Player> = load('res://Player.tscn');
 
@@ -51,5 +51,9 @@ export class Player extends CharacterBody2D {
     let manager: GameManagerType = GameManager;
     manager.reset_game();
     let score: int = GameManager.get_score();
+
+    let Ball = preload('res://Ball.gd');
+    let ball = new Ball();
+    ball.do_from_ball();
   }
 }

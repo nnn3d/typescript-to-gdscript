@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node for driving standard face meshes from {@link XRFaceTracker} weights. */
 declare class XRFaceModifier3D<Tree extends object = any> extends Node3D<Tree> {

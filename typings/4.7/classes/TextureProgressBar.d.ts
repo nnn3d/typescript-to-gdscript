@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Texture-based progress bar. Useful for loading screens and life or stamina bars. */
 declare class TextureProgressBar<Tree extends object = any> extends Range<Tree> {

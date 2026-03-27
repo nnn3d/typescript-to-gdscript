@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 3D physics body specialized for characters moved by script. */
 declare class CharacterBody3D<Tree extends object = any> extends PhysicsBody3D<Tree> {

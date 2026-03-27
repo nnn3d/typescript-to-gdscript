@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Provides a base class for different kinds of light nodes. */
 declare class Light3D<Tree extends object = any> extends VisualInstance3D<Tree> {

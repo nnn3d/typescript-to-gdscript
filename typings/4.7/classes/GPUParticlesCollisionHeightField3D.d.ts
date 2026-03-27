@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A real-time heightmap-shaped 3D particle collision shape affecting {@link GPUParticles3D} nodes. */
 declare class GPUParticlesCollisionHeightField3D<Tree extends object = any> extends GPUParticlesCollision3D<Tree> {

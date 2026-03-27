@@ -145,9 +145,9 @@ function generateAllTypings(cfg: {
     cfg.tsFiles ?? findTsFiles(cfg.tsDir, cfg.rootDir, cfg.ignore);
   if (tsFiles.length === 0) return;
 
-  mkdirSync(cfg.typingsDir, { recursive: true });
+  mkdirSync(join(cfg.typingsDir, '_globals'), { recursive: true });
 
-  const outputPath = join(cfg.typingsDir, 'globals.d.ts');
+  const outputPath = join(cfg.typingsDir, '_globals', 'globals.d.ts');
 
   generateTypings({
     rootDir: cfg.rootDir,
@@ -493,7 +493,7 @@ function detectGodotVersion(docsDir: string): string | null {
  * Writes index.d.ts into a version folder so it can be used independently.
  */
 function writeVersionIndexDts(versionDir: string): void {
-  const content = `/// <reference path="../globals.d.ts" />\n/// <reference path="../gd-helpers.d.ts" />\n/// <reference path="classes/index.d.ts" />\n`;
+  const content = `/// <reference path="../_globals/globals.d.ts" />\n/// <reference path="../_globals/gd-helpers.d.ts" />\n/// <reference path="classes/index.d.ts" />\n`;
   writeFileSync(join(versionDir, 'index.d.ts'), content);
 }
 
@@ -543,7 +543,7 @@ program
     const registryPath = join(versionDir, 'godot-class-registry.json');
     const overrideDir = opts.overrideDir
       ? resolve(opts.overrideDir)
-      : join(typingsRoot, 'overrides');
+      : join(typingsRoot, '_overrides');
 
     generateGodotDocsTypings({
       classDocsDir: docsDir,
@@ -640,11 +640,11 @@ program
       return;
     }
 
-    mkdirSync(cfg.typingsDir, { recursive: true });
+    mkdirSync(join(cfg.typingsDir, '_globals'), { recursive: true });
 
     const outputPath = opts.output
       ? resolve(opts.output)
-      : join(cfg.typingsDir, 'globals.d.ts');
+      : join(cfg.typingsDir, '_globals', 'globals.d.ts');
 
     generateTypings({
       rootDir: cfg.rootDir,

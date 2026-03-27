@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 declare class ScriptLanguageExtension extends ScriptLanguage {
   _add_global_constant(name: string, value: unknown): void;

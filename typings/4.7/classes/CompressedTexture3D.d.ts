@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Texture with 3 dimensions, optionally compressed. */
 declare class CompressedTexture3D extends Texture3D {

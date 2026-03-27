@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Base editor for editing scripts in the {@link ScriptEditor}. */
 declare class ScriptEditorBase<Tree extends object = any> extends VBoxContainer<Tree> {

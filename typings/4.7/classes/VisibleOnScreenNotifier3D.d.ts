@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A box-shaped region of 3D space that detects whether it is visible on screen. */
 declare class VisibleOnScreenNotifier3D<Tree extends object = any> extends VisualInstance3D<Tree> {

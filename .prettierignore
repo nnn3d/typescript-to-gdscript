@@ -5,5 +5,5 @@ dist
 .claude
 vendor
 typings
-!typings/overrides
+!typings/_overrides
 !typings/*.ts

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 1D texture where pixel brightness corresponds to points on a curve. */
 declare class CurveTexture extends Texture2D {

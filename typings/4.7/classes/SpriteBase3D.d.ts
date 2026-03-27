@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** 2D sprite node in 3D environment. */
 declare class SpriteBase3D<Tree extends object = any> extends GeometryInstance3D<Tree> {

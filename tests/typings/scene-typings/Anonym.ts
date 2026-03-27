@@ -1,7 +1,7 @@
 import type { Player } from './Player.ts';
 
 export class __CLASS__ extends Node {
-  PlayerField: Player = preload('res://Player.gd');
+  PlayerScript: typeof Player = preload('res://Player.gd');
 
   do_from_anonym() {
     // get_node_or_null normally returns T | null, but scene overload returns Sprite2D directly

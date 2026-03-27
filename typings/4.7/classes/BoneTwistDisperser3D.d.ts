@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node that propagates and disperses the child bone's twist to the parent bones. */
 declare class BoneTwistDisperser3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {

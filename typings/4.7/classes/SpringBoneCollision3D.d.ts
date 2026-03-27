@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A base class of the collision that interacts with {@link SpringBoneSimulator3D}. */
 declare class SpringBoneCollision3D<Tree extends object = any> extends Node3D<Tree> {

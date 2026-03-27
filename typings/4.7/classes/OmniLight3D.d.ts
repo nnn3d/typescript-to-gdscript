@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Omnidirectional light, such as a light bulb or a candle. */
 declare class OmniLight3D<Tree extends object = any> extends Light3D<Tree> {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Provides direct access to a physics space in the {@link PhysicsServer3D}. */
 declare class PhysicsDirectSpaceState3D extends GodotObject {

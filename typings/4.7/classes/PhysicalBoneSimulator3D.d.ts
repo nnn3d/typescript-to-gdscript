@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /**
  * Node that can be the parent of {@link PhysicalBone3D} and can apply the simulation results to {@link Skeleton3D}.

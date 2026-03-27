@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A base class for particle emitters. */
 declare class VisualShaderNodeParticleEmitter extends VisualShaderNode {

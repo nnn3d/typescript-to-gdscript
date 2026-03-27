@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A visual shader node that forces to emit a particle from a sub-emitter. */
 declare class VisualShaderNodeParticleEmit extends VisualShaderNode {

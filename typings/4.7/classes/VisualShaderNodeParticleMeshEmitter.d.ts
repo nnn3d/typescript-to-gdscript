@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A visual shader node that makes particles emitted in a shape defined by a {@link Mesh}. */
 declare class VisualShaderNodeParticleMeshEmitter extends VisualShaderNodeParticleEmitter {

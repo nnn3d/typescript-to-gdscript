@@ -1411,7 +1411,7 @@ export function generateGodotDocsTypings(
   mkdirSync(classesDir, { recursive: true });
 
   const header =
-    '// AUTO-GENERATED from Godot class documentation.\n// Manual overrides applied from typings/overrides/*.d.ts\n';
+    '// AUTO-GENERATED from Godot class documentation.\n// Manual overrides applied from typings/_overrides/*.d.ts\n';
 
   // Track generated files for the index
   const generatedFiles: string[] = [];

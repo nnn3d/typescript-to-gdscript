@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 3D node that has its position automatically updated by the {@link XRServer}. */
 declare class XRNode3D<Tree extends object = any> extends Node3D<Tree> {

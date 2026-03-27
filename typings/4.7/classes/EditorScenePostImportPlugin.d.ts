@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Plugin to control and modifying the process of importing a scene. */
 declare class EditorScenePostImportPlugin extends RefCounted {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node for driving body meshes from {@link XRBodyTracker} data. */
 declare class XRBodyModifier3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {

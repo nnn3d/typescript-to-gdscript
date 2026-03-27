@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A material that provides a special texture to a {@link Sky}, usually an HDR panorama. */
 declare class PanoramaSkyMaterial extends Material {

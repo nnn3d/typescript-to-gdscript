@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /**
  * Imports a 3-dimensional texture ({@link Texture3D}), a {@link Texture2DArray}, a {@link Cubemap} or a {@link CubemapArray}.

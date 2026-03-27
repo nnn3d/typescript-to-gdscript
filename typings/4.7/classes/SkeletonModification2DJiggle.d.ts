@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A modification that jiggles {@link Bone2D} nodes as they move towards a target. */
 declare class SkeletonModification2DJiggle extends SkeletonModification2D {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from typings/overrides/*.d.ts
+// Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A button that represents a link. */
 declare class LinkButton<Tree extends object = any> extends BaseButton<Tree> {
