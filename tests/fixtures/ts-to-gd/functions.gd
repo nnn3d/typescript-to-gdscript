@@ -1,17 +1,6 @@
 extends Node
 class_name MyClass
 
-# Var as function
-var var_func = func(value: String) -> MyClass:
-	# Anonymous function
-	var inner_func = func(another_value: String):
-		var result = another_value + "."
-		return result
-	# Anonymous empty function
-	var inner_func_empty = func(another_value: String):
-		pass
-	return self
-
 # Method with no return
 func say_hello():
 	print("Hello!")
@@ -31,6 +20,17 @@ static func create_instance() -> MyClass:
 # Void return
 func do_nothing() -> void:
 	pass
+
+# Var as function
+var var_func = func(value: String) -> MyClass:
+	# Anonymous function
+	var inner_func = func(another_value: String):
+		var result = another_value + "."
+		return result
+	# Anonymous empty function
+	var inner_func_empty = func(another_value: String):
+		pass
+	return self
 
 func call(fn: Callable):
 	fn.call()

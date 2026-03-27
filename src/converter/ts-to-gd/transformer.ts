@@ -124,36 +124,36 @@ export class TsToGdTransformer {
 
     this.emitter.writeEmptyLine();
 
-    // Emit members in declaration order, preserving comments
-    // But group signals and enums before regular properties
-    const signals: ts.PropertyDeclaration[] = [];
-    const enums: ts.PropertyDeclaration[] = [];
-    const properties: ts.PropertyDeclaration[] = [];
-    const innerClasses: ts.PropertyDeclaration[] = [];
-    const methods: ts.MethodDeclaration[] = [];
-    const constructor_: ts.ConstructorDeclaration | undefined =
-      node.members.find(ts.isConstructorDeclaration) as
-        | ts.ConstructorDeclaration
-        | undefined;
+    // Emit members preserving declaration order.
+    // All members (signals, enums, properties, methods, inner classes, constructor)
+    // are emitted in their original interleaved order.
+    type OrderedMember =
+      | { kind: 'signal'; node: ts.PropertyDeclaration }
+      | { kind: 'enum'; node: ts.PropertyDeclaration }
+      | { kind: 'property'; node: ts.PropertyDeclaration }
+      | { kind: 'method'; node: ts.MethodDeclaration }
+      | { kind: 'constructor'; node: ts.ConstructorDeclaration }
+      | { kind: 'innerClass'; node: ts.PropertyDeclaration };
+    const orderedMembers: OrderedMember[] = [];
 
     for (const member of node.members) {
       if (ts.isPropertyDeclaration(member)) {
         if (this.isSignalProperty(member)) {
-          signals.push(member);
+          orderedMembers.push({ kind: 'signal', node: member });
         } else if (this.isEnumProperty(member)) {
-          enums.push(member);
+          orderedMembers.push({ kind: 'enum', node: member });
         } else if (
           member.initializer &&
           ts.isClassExpression(member.initializer)
         ) {
-          innerClasses.push(member);
+          orderedMembers.push({ kind: 'innerClass', node: member });
         } else {
-          properties.push(member);
+          orderedMembers.push({ kind: 'property', node: member });
         }
       } else if (ts.isMethodDeclaration(member)) {
-        methods.push(member);
+        orderedMembers.push({ kind: 'method', node: member });
       } else if (ts.isConstructorDeclaration(member)) {
-        // handled separately
+        orderedMembers.push({ kind: 'constructor', node: member });
       } else if (
         ts.isGetAccessorDeclaration(member) ||
         ts.isSetAccessorDeclaration(member)
@@ -166,61 +166,63 @@ export class TsToGdTransformer {
       }
     }
 
-    // Emit signals
-    for (const sig of signals) {
-      this.emitLeadingComments(sig);
-      this.visitSignalDeclaration(sig);
-    }
+    // Emit members in original declaration order
+    let lastEmittedTrailingBlank = false;
+    let lastKind: string = '';
+    for (let i = 0; i < orderedMembers.length; i++) {
+      const entry = orderedMembers[i]!;
+      const isLast = i === orderedMembers.length - 1;
 
-    // Emit enums
-    for (const en of enums) {
-      this.emitLeadingComments(en);
-      this.visitEnumDeclaration(en);
-    }
-
-    // Blank line between enums/signals and properties
-    if ((signals.length > 0 || enums.length > 0) && properties.length > 0) {
-      this.emitter.writeEmptyLine();
-    }
-
-    // Emit properties
-    for (const prop of properties) {
-      this.emitLeadingComments(prop);
-      this.visitPropertyDeclaration(prop);
-    }
-
-    if (signals.length > 0 || enums.length > 0 || properties.length > 0) {
-      this.emitter.writeEmptyLine();
-    }
-
-    // Emit constructor as _init
-    if (constructor_) {
-      this.emitLeadingComments(constructor_);
-      this.visitConstructor(constructor_);
-      this.emitter.writeEmptyLine();
-    }
-
-    // Emit methods
-    for (let i = 0; i < methods.length; i++) {
-      this.emitLeadingComments(methods[i]!);
-      this.visitMethodDeclaration(methods[i]!);
-      if (i < methods.length - 1) {
+      // Add blank line on kind transition (property↔method, before innerClass)
+      // but only if the previous member didn't already emit a trailing blank
+      const isFunc = entry.kind === 'method' || entry.kind === 'constructor';
+      const lastWasFunc = lastKind === 'method' || lastKind === 'constructor';
+      if (i > 0 && !lastEmittedTrailingBlank && (isFunc !== lastWasFunc || entry.kind === 'innerClass')) {
         this.emitter.writeEmptyLine();
       }
-    }
 
-    // Emit inner classes after methods
-    if (innerClasses.length > 0) {
-      if (methods.length > 0 || constructor_ || properties.length > 0 || signals.length > 0 || enums.length > 0) {
-        this.emitter.writeEmptyLine();
+      lastEmittedTrailingBlank = false;
+
+      switch (entry.kind) {
+        case 'signal':
+          this.emitLeadingComments(entry.node);
+          this.visitSignalDeclaration(entry.node);
+          break;
+        case 'enum':
+          this.emitLeadingComments(entry.node);
+          this.visitEnumDeclaration(entry.node);
+          break;
+        case 'property':
+          this.emitLeadingComments(entry.node);
+          this.visitPropertyDeclaration(entry.node);
+          break;
+        case 'method':
+          this.emitLeadingComments(entry.node);
+          this.visitMethodDeclaration(entry.node);
+          if (!isLast) {
+            this.emitter.writeEmptyLine();
+            lastEmittedTrailingBlank = true;
+          }
+          break;
+        case 'constructor':
+          this.emitLeadingComments(entry.node);
+          this.visitConstructor(entry.node);
+          if (!isLast) {
+            this.emitter.writeEmptyLine();
+            lastEmittedTrailingBlank = true;
+          }
+          break;
+        case 'innerClass':
+          this.emitLeadingComments(entry.node);
+          this.visitPropertyDeclaration(entry.node);
+          if (!isLast) {
+            this.emitter.writeEmptyLine();
+            lastEmittedTrailingBlank = true;
+          }
+          break;
       }
-      for (let i = 0; i < innerClasses.length; i++) {
-        this.emitLeadingComments(innerClasses[i]!);
-        this.visitPropertyDeclaration(innerClasses[i]!);
-        if (i < innerClasses.length - 1) {
-          this.emitter.writeEmptyLine();
-        }
-      }
+
+      lastKind = entry.kind;
     }
   }
 
