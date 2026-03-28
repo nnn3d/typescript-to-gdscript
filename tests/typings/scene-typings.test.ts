@@ -84,8 +84,8 @@ describe('Scene typings generation', () => {
     // Instanced scene roots: user classes stay plain (get_parent via module augmentation)
     expect(content).toContain('"Player": Player;');
     expect(content).toContain('"Enemy": Enemy;');
-    // Instanced scene without script → root node Godot type with [__parent]
-    expect(content).toContain('"TilesetObjects": TileMap<{[__parent]: _Level}>;');
+    // Instanced scene without script → synthetic type alias (scriptless scene)
+    expect(content).toContain('"TilesetObjects": _TilesetObjectsTscn;');
     // Regular Godot built-in child gets [__parent]
     expect(content).toContain('"Background": Sprite2D<{[__parent]: _Level}>;');
     // Nested children under non-script intermediate nodes
@@ -105,8 +105,8 @@ describe('Scene typings generation', () => {
     // Level.tscn has a TileMap node "TilesetObjectsMap" with a TileSetScenesCollectionSource
     // that references BallA.tscn. Ball's get_parent() should include TileMap.
     expect(content).toContain('interface _LevelSceneNodes');
-    // TileMap child should appear in Level's scene nodes
-    expect(content).toContain('"TilesetObjectsMap": TileMap<{[__parent]: _Level}>;');
+    // TileMap child (instanced TilesetObjects.tscn) should use synthetic type alias
+    expect(content).toContain('"TilesetObjectsMap": _TilesetObjectsTscn;');
 
     // Ball (from BallA.tscn) should get get_parent() → TileMap<{[__parent]: _Level}>
     // because it's referenced via TileSetScenesCollectionSource in Level.tscn
