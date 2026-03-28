@@ -582,6 +582,19 @@ export interface ScriptClassInfo {
   extendsClassName?: string;
 }
 
+interface ScriptlessSceneInfo {
+  alias: string;
+  rootType: string;
+  sceneMap?: Map<string, string>;
+}
+
+/** Derive a synthetic alias from a scene res:// path, e.g. "res://Level2.tscn" → "_Level2Tscn" */
+function sceneResPathToAlias(resPath: string): string {
+  const stripped = resPath.replace(/^res:\/\//, '').replace(/\.[^.]+$/, '');
+  const name = stripped.split('/').map(p => p.replace(/[^a-zA-Z0-9]/g, '_')).join('_');
+  return `_${name}Tscn`;
+}
+
 export interface BuildScriptClassMapOptions {
   /** TS source files to scan for class names */
   files: string[];
@@ -759,6 +772,17 @@ export function generateTypings(options: GenerateTypingsOptions): string {
         rootAlias = aliasEntry.alias;
       }
       sceneRootScripts.set(resPath, scene.rootScript.scriptResPath);
+    } else if (scene.inheritedSceneResPath) {
+      // Inherited scene (e.g. Level1.tscn inherits Level.tscn):
+      // root script comes from the base scene
+      const inheritedScriptPath = sceneRootScripts.get(scene.inheritedSceneResPath);
+      if (inheritedScriptPath) {
+        const aliasEntry = aliasMap.get(inheritedScriptPath);
+        if (aliasEntry) {
+          rootAlias = aliasEntry.alias;
+        }
+        sceneRootScripts.set(resPath, inheritedScriptPath);
+      }
     }
     // Track root node Godot type for instanced scene fallback
     const rootType = scene.nodeTypes.get('.');
@@ -767,6 +791,41 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     }
     resourceEntries.push({ resPath, alias: rootAlias });
     parsedScenes.push({ scenePath, resPath, scene });
+  }
+
+  // Identify scriptless scenes (no root script, no inherited script) that have children.
+  // These get synthetic types with get_node overloads so instanced nodes are properly typed.
+  const scriptlessSceneData = new Map<string, ScriptlessSceneInfo>();
+  for (const { resPath, scene } of parsedScenes) {
+    if (sceneRootScripts.has(resPath)) continue; // has a script, skip
+    // Check if scene has children (nodes other than root)
+    let hasChildren = false;
+    for (const fullPath of scene.nodeTypes.keys()) {
+      if (fullPath !== '.') { hasChildren = true; break; }
+    }
+    if (!hasChildren) {
+      for (const fullPath of scene.instancedNodes.keys()) {
+        if (fullPath !== '.') { hasChildren = true; break; }
+      }
+    }
+    if (!hasChildren) continue;
+    const rootType = scene.nodeTypes.get('.') ?? 'Node';
+    scriptlessSceneData.set(resPath, { alias: sceneResPathToAlias(resPath), rootType });
+  }
+
+  // Update resource entries: scriptless scenes with children get synthetic alias,
+  // scriptless scenes without children get root Godot type
+  for (const entry of resourceEntries) {
+    if (entry.alias) continue;
+    const slData = scriptlessSceneData.get(entry.resPath);
+    if (slData) {
+      entry.alias = slData.alias;
+    } else {
+      const rootType = sceneRootTypes.get(entry.resPath);
+      if (rootType) {
+        entry.alias = rootType;
+      }
+    }
   }
 
   // Track per-scene children for each script, so we can compute union types.
@@ -809,9 +868,19 @@ export function generateTypings(options: GenerateTypingsOptions): string {
             instancedParents.get(childScriptAlias)!.add(parentAliasEntry.alias);
           }
         }
-        // If we couldn't resolve via script, use the root node's Godot type
+        // If we couldn't resolve via script, check for scriptless scene with synthetic type
         if (!childType && child.instanceSceneResPath) {
-          childType = sceneRootTypes.get(child.instanceSceneResPath) ?? 'Node';
+          const slData = scriptlessSceneData.get(child.instanceSceneResPath);
+          if (slData) {
+            childType = slData.alias;
+            // Track parent relationship for get_parent()
+            if (!instancedParents.has(slData.alias)) {
+              instancedParents.set(slData.alias, new Set());
+            }
+            instancedParents.get(slData.alias)!.add(parentAliasEntry.alias);
+          } else {
+            childType = sceneRootTypes.get(child.instanceSceneResPath) ?? 'Node';
+          }
         }
         if (!childType) {
           childType = 'Node';
@@ -996,6 +1065,27 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     }
   }
 
+  // Pass 5: Resolve children for scriptless scenes (e.g. Level2.tscn has Node root + Sprite2D child).
+  // This builds scene maps so we can emit get_node overloads on synthetic instance types.
+  for (const { resPath, scene } of parsedScenes) {
+    const slData = scriptlessSceneData.get(resPath);
+    if (!slData) continue;
+
+    const children: ScriptNodeInfo['children'] = [];
+    for (const [fullPath, nodeType] of scene.nodeTypes) {
+      if (fullPath === '.') continue;
+      const instanceResPath = scene.instancedNodes.get(fullPath);
+      children.push({ path: fullPath, type: nodeType, instanceSceneResPath: instanceResPath });
+    }
+    for (const [fullPath, instanceResPath] of scene.instancedNodes) {
+      if (fullPath === '.' || scene.nodeTypes.has(fullPath)) continue;
+      children.push({ path: fullPath, type: '', instanceSceneResPath: instanceResPath });
+    }
+    if (children.length > 0) {
+      slData.sceneMap = resolveScriptChildren(children, { alias: slData.alias });
+    }
+  }
+
   // Parse autoloads from project.godot
   const autoloads = options.projectFile ? parseAutoloads(options.projectFile) : [];
   const autoloadDecls: Array<{ name: string; type: string }> = [];
@@ -1032,6 +1122,10 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     if (entry.className !== '__CLASS__') {
       userClassTypes.add(entry.className);
     }
+  }
+  // Scriptless scene synthetic types also behave like user classes (no Tree generic)
+  for (const [, slData] of scriptlessSceneData) {
+    userClassTypes.add(slData.alias);
   }
 
   // Collect named classes for global declarations (skip __CLASS__)
@@ -1123,6 +1217,59 @@ export function generateTypings(options: GenerateTypingsOptions): string {
       lines.push(`    get_parent(): ${parentType};`);
     }
     lines.push('  }');
+    lines.push('}');
+    lines.push('');
+  }
+
+  // Scriptless scene interfaces (synthetic types with get_node overloads)
+  for (const [, slData] of scriptlessSceneData) {
+    if (!slData.sceneMap || slData.sceneMap.size === 0) continue;
+
+    const nodesInterface = `${slData.alias}SceneNodes`;
+
+    // Build child type map for parent resolution
+    const childTypeMap = new Map<string, string>();
+    for (const [path, type] of slData.sceneMap) {
+      childTypeMap.set(path, type);
+    }
+
+    lines.push(`// Scene nodes for scriptless scene: ${slData.alias}`);
+    lines.push(`interface ${nodesInterface} {`);
+    for (const [path, type] of slData.sceneMap) {
+      let parentType: string;
+      if (path.startsWith('%') || !path.includes('/')) {
+        parentType = slData.alias;
+      } else {
+        const parentPath = path.substring(0, path.lastIndexOf('/'));
+        const rawParent = childTypeMap.get(parentPath);
+        parentType = rawParent
+          ? rawParent.split(' | ').find(t => t !== 'null') ?? 'Node'
+          : 'Node';
+      }
+      const annotatedType = type.split(' | ').map(t => {
+        if (t === 'null') return 'null';
+        if (userClassTypes.has(t)) return t;
+        return `${t}<{[__parent]: ${parentType}}>`;
+      }).join(' | ');
+      lines.push(`  "${path}": ${annotatedType};`);
+    }
+    lines.push('}');
+    lines.push('');
+
+    // Synthetic instance interface: extends root Godot type with get_node overloads
+    lines.push(`interface ${slData.alias} extends ${slData.rootType} {`);
+    lines.push(
+      `  get_node<P extends keyof ${nodesInterface}>(path: P): null extends ${nodesInterface}[P] ? NonNullable<${nodesInterface}[P]> | Node : ${nodesInterface}[P];`,
+    );
+    lines.push(`  get_node<T extends Node = Node>(path: string): T;`);
+    lines.push(`  get_node_or_null<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P] | null;`);
+    lines.push(`  get_node_or_null<T extends Node = Node>(path: string): T | null;`);
+    // Add get_parent() if instanced in known parent scenes
+    const parentAliases = instancedParents.get(slData.alias);
+    if (parentAliases && parentAliases.size > 0) {
+      const parentType = [...parentAliases].join(' | ');
+      lines.push(`  get_parent(): ${parentType};`);
+    }
     lines.push('}');
     lines.push('');
   }

@@ -58,6 +58,7 @@ declare module "./Ball.ts" {
     get_node<T extends Node = Node>(path: string): T;
     get_node_or_null<P extends keyof _BallSceneNodes>(path: P): _BallSceneNodes[P] | null;
     get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_parent(): TileMap<{[__parent]: _Level}>;
   }
 }
 
@@ -88,7 +89,7 @@ interface _LevelSceneNodes {
   "UI": CanvasLayer<{[__parent]: _Level}>;
   "UI/ScoreLabel": Label<{[__parent]: CanvasLayer}>;
   "TilesetObjectsMap": TileMap<{[__parent]: _Level}>;
-  "Level2": Node<{[__parent]: _Level}>;
+  "Level2": _Level2Tscn;
   "TilesetObjects2": TileMap<{[__parent]: _Level}> | null;
   "ExtraSprite": Sprite2D<{[__parent]: _Level}> | null;
 }
@@ -157,6 +158,12 @@ declare module "./BaseCharacter.ts" {
   }
 }
 
+// Scene nodes for scriptless scene: _Level2Tscn
+type _Level2Tscn = Node<{
+  [__parent]: _Level;
+  "ExtraSprite": Sprite2D<{[__parent]: _Level2Tscn}>;
+}>
+
 declare global {
   // From: Ball.ts
   class Ball extends _Ball {}
@@ -175,11 +182,11 @@ declare global {
     "res://BallB.tscn": PackedScene<_Ball>;
     "res://Enemy.tscn": PackedScene<_Enemy>;
     "res://Level.tscn": PackedScene<_Level>;
-    "res://Level1.tscn": PackedScene;
-    "res://Level2.tscn": PackedScene;
+    "res://Level1.tscn": PackedScene<_Level>;
+    "res://Level2.tscn": PackedScene<_Level2Tscn>;
     "res://nested/Anonym.tscn": PackedScene<_nested_Anonym>;
     "res://Player.tscn": PackedScene<_Player>;
-    "res://TilesetObjects.tscn": PackedScene;
+    "res://TilesetObjects.tscn": PackedScene<TileMap>;
     "res://Anonym.gd": typeof _Anonym;
     "res://Anonym2.gd": typeof _Anonym2;
     "res://Ball.gd": typeof _Ball;

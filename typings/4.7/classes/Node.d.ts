@@ -340,7 +340,9 @@ declare class Node<Tree extends object = any> extends GodotObject {
    */
   get_node_and_resource(path: string): Array<unknown>;
   /** Get a child node or null by path. Known paths return exact type | null. */
-  get_node_or_null<P extends string & keyof Tree>(path: P): Tree[P] | null;
+  get_node_or_null<P extends string & keyof Tree>(
+  path: P,
+  ): IsAny<Tree> extends true ? Node : Tree[P] | null;
   /** Get a child node or null by path. Unknown paths return Node | null. */
   get_node_or_null(path: string): Node | null;
   /**
@@ -354,7 +356,9 @@ declare class Node<Tree extends object = any> extends GodotObject {
    */
   static get_orphan_node_ids(): unknown;
   /** Get the parent node. Returns typed parent from scene tree if known. */
-  get_parent(): [Tree] extends [{ [__parent]: infer P }]
+  get_parent(): IsAny<Tree> extends true
+  ? Node
+  : [Tree] extends [{ [__parent]: infer P }]
   ? [P] extends [Node]
   ? P
   : Node
