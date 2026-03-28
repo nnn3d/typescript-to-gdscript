@@ -322,13 +322,9 @@ declare class Node<Tree extends object = any> extends GodotObject {
    */
   get_multiplayer_authority(): int;
   /** Get a child node by path. Known paths (from scene tree) return exact types with autocomplete. */
-  get_node<P extends string & keyof Tree>(
+  get_node<P extends string & _GDGetTreePaths<Tree>>(
   path: P,
-  ): IsAny<Tree> extends true
-  ? Node
-  : null extends Tree[P]
-  ? NonNullable<Tree[P]> | Node
-  : Tree[P];
+  ): _GDGetNode<Tree, P>;
   /** Get a child node by path. Unknown paths return Node. */
   get_node(path: string): Node;
   /**

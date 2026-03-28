@@ -44,5 +44,16 @@ export class Level extends Node2D {
     let tileMapScene = preload('res://TilesetObjects.tscn');
     let tileMap = tileMapScene.instantiate();
     let _tileMapLevel: Level = tileMap.get_parent();
+
+    // Deep path through scriptless scene: Level2/ExtraSprite → Sprite2D
+    let deepChildSceneNode = this.get_node('Level2/ExtraSprite');
+    let _deepChildCheck: Sprite2D = deepChildSceneNode;
+
+    // Deep path through scripted scene: Player/HealthBar → ProgressBar
+    let deepScriptSceneNode = this.get_node('Player/HealthBar');
+    let _deepScriptCheck: ProgressBar = deepScriptSceneNode;
+
+    // get_parent() on deep path result: HealthBar's parent is Player
+    let playerFromChild: Player = deepScriptSceneNode.get_parent();
   }
 }

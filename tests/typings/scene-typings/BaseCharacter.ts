@@ -1,4 +1,5 @@
 export class BaseCharacter extends CharacterBody2D {
+
   _ready() {
     // Sprite2D is in both Player and Enemy → typed, no null
     let sprite = this.get_node('Sprite2D');

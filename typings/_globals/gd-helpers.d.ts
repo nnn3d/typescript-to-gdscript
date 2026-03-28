@@ -50,6 +50,7 @@ declare function NodePath(value: string): string;
 
 /** Symbol key for parent node reference in tree types */
 declare const __parent: unique symbol;
+declare const __script_tree: unique symbol;
 
 // ─── Operator Symbols ─────────────────────────────────────────
 // Unique symbols used as branded keys for operator overload dispatch.

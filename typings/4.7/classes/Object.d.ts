@@ -85,6 +85,7 @@ declare class GodotObject {
   method: N,
   ...args: A
   ): R;
+  call(method: string, ...args: any[]): unknown;
   /**
    * Calls the `method` on the object during idle time. Always returns `null`, **not** the method's result.
    * Idle time happens mainly at the end of process and physics frames. In it, deferred calls will be run until there are none left, which means you can defer calls from other deferred calls and they'll still be run in the current idle time cycle. This means you should not call a method deferred from itself (or from a method called by it), as this causes infinite recursion the same way as if you had called the method directly.
@@ -94,16 +95,22 @@ declare class GodotObject {
    * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
    * **Note:** If you're looking to delay the function call by a frame, refer to the {@link SceneTree.process_frame} and {@link SceneTree.physics_frame} signals.
    */
-  call_deferred<const N extends string, A extends any[], R>(
+  call_deferred<N extends string, A extends any[], R>(
   this: Record<N, (...args: A) => R>,
   method: N,
   ...args: A
   ): R;
+  call_deferred(method: string, ...args: any[]): unknown;
   /**
    * Calls the `method` on the object and returns the result. Unlike {@link call}, this method expects all parameters to be contained inside `arg_array`.
    * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
    */
-  callv(method: string, arg_array: Array<unknown>): unknown;
+  callv<N extends string, A extends any[], R>(
+  this: Record<N, (...args: A) => R>,
+  method: N,
+  args: A
+  ): R;
+  callv(method: string, args: any[]): unknown;
   /**
    * Returns `true` if the object is allowed to translate messages with {@link tr} and {@link tr_n}. See also {@link set_message_translation}.
    */
@@ -133,7 +140,11 @@ declare class GodotObject {
   this: Record<N, Signal<A>>,
   signal: N,
   ...args: A
-  ): int;
+  ): GodotError.OK | GodotError.ERR_UNAVAILABLE;
+  emit_signal(
+  signal: string,
+  ...args: any[]
+  ): GodotError.OK | GodotError.ERR_UNAVAILABLE;
   /**
    * Deletes the object from memory. Pre-existing references to the object become invalid, and any attempt to access them will result in a runtime error. Checking the references with {@link @GlobalScope.is_instance_valid} will return `false`. This is equivalent to the `memdelete` function in GDExtension C++.
    */

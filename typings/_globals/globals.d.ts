@@ -183,3 +183,58 @@ interface ClassAccessorDecoratorContext {
   readonly static: boolean;
   readonly private: boolean;
 }
+
+// ─── Tree Helpers ───
+
+type _GDScriptTree<Tree extends object = object> = {
+  [__script_tree]: Tree
+}
+
+type _GDBaseTree = Partial<Record<string, Node | _GDScriptTree>> & {
+  [__parent]?: Node;
+};
+
+type _GDGetItemTree<Item> =
+  Item extends _GDScriptTree<infer ChildTree>
+    ? ChildTree
+    : Item extends Node<infer ChildTree>
+      ? ChildTree
+      : never;
+
+type _GDGetTreePaths<Tree extends object, Prefix extends string = ``> = {
+  [K in keyof Tree]: K extends string
+    ? string extends K
+      ? never
+      :
+          | `${Prefix}${K}`
+          | (_GDGetItemTree<Tree[K]> extends never
+              ? never
+              : _GDGetTreePaths<_GDGetItemTree<Tree[K]>, `${Prefix}${K}/`>)
+    : never;
+}[keyof Tree];
+
+type _GDGetNodeByPath<
+  Tree extends object,
+  Path,
+> = Path extends keyof Tree
+  ? Tree[Path]
+  : Path extends `${infer Start}/${infer Rest}`
+    ? Start extends keyof Tree
+      ? _GDGetItemTree<Tree[Start]> extends infer SubTree extends object
+        ? _GDGetNodeByPath<SubTree, Rest>
+        : never
+      : never
+    : never;
+
+/** Resolve get_node return type: known paths → exact type, unknown → Node.
+ *  Uses _GDGetNodeByPath directly (not _GDGetTreePaths) to avoid circular mapped types. */
+type _GDGetNode<
+  Tree extends object,
+  Path extends string,
+> = IsAny<Tree> extends true
+  ? Node
+  : _GDGetNodeByPath<Tree, Path> extends never
+    ? Node
+    : null extends _GDGetNodeByPath<Tree, Path>
+      ? NonNullable<_GDGetNodeByPath<Tree, Path>> | Node
+      : _GDGetNodeByPath<Tree, Path>;

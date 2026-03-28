@@ -21,10 +21,10 @@ interface _AnonymSceneNodes {
 
 declare module "./Anonym.ts" {
   interface __CLASS__ {
-    get_node<P extends keyof _AnonymSceneNodes>(path: P): null extends _AnonymSceneNodes[P] ? NonNullable<_AnonymSceneNodes[P]> | Node : _AnonymSceneNodes[P];
-    get_node<T extends Node = Node>(path: string): T;
+    get_node<P extends string & _GDGetTreePaths<_AnonymSceneNodes>>(path: P): _GDGetNode<_AnonymSceneNodes, P>;
+    get_node(path: string): Node;
     get_node_or_null<P extends keyof _AnonymSceneNodes>(path: P): _AnonymSceneNodes[P] | null;
-    get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_node_or_null(path: string): Node | null;
     get_parent(): _TilesetObjectsTscn;
   }
 }
@@ -38,10 +38,10 @@ interface _Anonym2SceneNodes {
 
 declare module "./Anonym2.ts" {
   interface __CLASS__ {
-    get_node<P extends keyof _Anonym2SceneNodes>(path: P): null extends _Anonym2SceneNodes[P] ? NonNullable<_Anonym2SceneNodes[P]> | Node : _Anonym2SceneNodes[P];
-    get_node<T extends Node = Node>(path: string): T;
+    get_node<P extends string & _GDGetTreePaths<_Anonym2SceneNodes>>(path: P): _GDGetNode<_Anonym2SceneNodes, P>;
+    get_node(path: string): Node;
     get_node_or_null<P extends keyof _Anonym2SceneNodes>(path: P): _Anonym2SceneNodes[P] | null;
-    get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_node_or_null(path: string): Node | null;
   }
 }
 
@@ -54,10 +54,10 @@ interface _BallSceneNodes {
 
 declare module "./Ball.ts" {
   interface Ball {
-    get_node<P extends keyof _BallSceneNodes>(path: P): null extends _BallSceneNodes[P] ? NonNullable<_BallSceneNodes[P]> | Node : _BallSceneNodes[P];
-    get_node<T extends Node = Node>(path: string): T;
+    get_node<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): _GDGetNode<_BallSceneNodes, P>;
+    get_node(path: string): Node;
     get_node_or_null<P extends keyof _BallSceneNodes>(path: P): _BallSceneNodes[P] | null;
-    get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_node_or_null(path: string): Node | null;
     get_parent(): _TilesetObjectsTscn;
   }
 }
@@ -72,18 +72,18 @@ interface _EnemySceneNodes {
 
 declare module "./Enemy.ts" {
   interface Enemy {
-    get_node<P extends keyof _EnemySceneNodes>(path: P): null extends _EnemySceneNodes[P] ? NonNullable<_EnemySceneNodes[P]> | Node : _EnemySceneNodes[P];
-    get_node<T extends Node = Node>(path: string): T;
+    get_node<P extends string & _GDGetTreePaths<_EnemySceneNodes>>(path: P): _GDGetNode<_EnemySceneNodes, P>;
+    get_node(path: string): Node;
     get_node_or_null<P extends keyof _EnemySceneNodes>(path: P): _EnemySceneNodes[P] | null;
-    get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_node_or_null(path: string): Node | null;
     get_parent(): _Level;
   }
 }
 
 // Scene nodes for: _Level
 interface _LevelSceneNodes {
-  "Player": Player;
-  "Enemy": Enemy;
+  "Player": Player & {[__script_tree]: _PlayerSceneNodes};
+  "Enemy": Enemy & {[__script_tree]: _EnemySceneNodes};
   "TilesetObjects": _TilesetObjectsTscn;
   "Background": Sprite2D<{[__parent]: _Level}>;
   "UI": CanvasLayer<{[__parent]: _Level}>;
@@ -96,10 +96,10 @@ interface _LevelSceneNodes {
 
 declare module "./Level.ts" {
   interface Level {
-    get_node<P extends keyof _LevelSceneNodes>(path: P): null extends _LevelSceneNodes[P] ? NonNullable<_LevelSceneNodes[P]> | Node : _LevelSceneNodes[P];
-    get_node<T extends Node = Node>(path: string): T;
+    get_node<P extends string & _GDGetTreePaths<_LevelSceneNodes>>(path: P): _GDGetNode<_LevelSceneNodes, P>;
+    get_node(path: string): Node;
     get_node_or_null<P extends keyof _LevelSceneNodes>(path: P): _LevelSceneNodes[P] | null;
-    get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_node_or_null(path: string): Node | null;
   }
 }
 
@@ -112,10 +112,10 @@ interface _nested_AnonymSceneNodes {
 
 declare module "./nested/Anonym.ts" {
   interface __CLASS__ {
-    get_node<P extends keyof _nested_AnonymSceneNodes>(path: P): null extends _nested_AnonymSceneNodes[P] ? NonNullable<_nested_AnonymSceneNodes[P]> | Node : _nested_AnonymSceneNodes[P];
-    get_node<T extends Node = Node>(path: string): T;
+    get_node<P extends string & _GDGetTreePaths<_nested_AnonymSceneNodes>>(path: P): _GDGetNode<_nested_AnonymSceneNodes, P>;
+    get_node(path: string): Node;
     get_node_or_null<P extends keyof _nested_AnonymSceneNodes>(path: P): _nested_AnonymSceneNodes[P] | null;
-    get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_node_or_null(path: string): Node | null;
   }
 }
 
@@ -130,10 +130,10 @@ interface _PlayerSceneNodes {
 
 declare module "./Player.ts" {
   interface Player {
-    get_node<P extends keyof _PlayerSceneNodes>(path: P): null extends _PlayerSceneNodes[P] ? NonNullable<_PlayerSceneNodes[P]> | Node : _PlayerSceneNodes[P];
-    get_node<T extends Node = Node>(path: string): T;
+    get_node<P extends string & _GDGetTreePaths<_PlayerSceneNodes>>(path: P): _GDGetNode<_PlayerSceneNodes, P>;
+    get_node(path: string): Node;
     get_node_or_null<P extends keyof _PlayerSceneNodes>(path: P): _PlayerSceneNodes[P] | null;
-    get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_node_or_null(path: string): Node | null;
     get_parent(): _Level;
   }
 }
@@ -151,10 +151,10 @@ interface _BaseCharacterSceneNodes {
 
 declare module "./BaseCharacter.ts" {
   interface BaseCharacter {
-    get_node<P extends keyof _BaseCharacterSceneNodes>(path: P): null extends _BaseCharacterSceneNodes[P] ? NonNullable<_BaseCharacterSceneNodes[P]> | Node : _BaseCharacterSceneNodes[P];
-    get_node<T extends Node = Node>(path: string): T;
+    get_node<P extends string & _GDGetTreePaths<_BaseCharacterSceneNodes>>(path: P): _GDGetNode<_BaseCharacterSceneNodes, P>;
+    get_node(path: string): Node;
     get_node_or_null<P extends keyof _BaseCharacterSceneNodes>(path: P): _BaseCharacterSceneNodes[P] | null;
-    get_node_or_null<T extends Node = Node>(path: string): T | null;
+    get_node_or_null(path: string): Node | null;
   }
 }
 

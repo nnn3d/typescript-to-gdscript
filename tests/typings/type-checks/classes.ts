@@ -128,9 +128,8 @@ class GodotObjectTest extends Object {
     const t: unknown = this.call('test_fn', 'sdf');
     // @ts-expect-error — problems with ts typings
     const t2: number = this.call('test_fn', 'sdf');
-    // @ts-expect-error — bad args
+    // String fallback overload accepts any args
     const t3 = this.call('test_fn', 0);
-    // @ts-expect-error — not a function
     const t4 = this.call('test_val');
   }
 }

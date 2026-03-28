@@ -1148,6 +1148,18 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     lines.push('');
   }
 
+  // Build lookup: script alias/className → scene nodes interface name
+  // Used to annotate user-class children with {[__script_tree]: _XSceneNodes}
+  const typeToSceneNodes = new Map<string, string>();
+  for (const [, data] of scriptData) {
+    if (data.sceneMaps.length === 0) continue;
+    const nodesName = `${data.alias}SceneNodes`;
+    typeToSceneNodes.set(data.alias, nodesName);
+    if (data.className !== '__CLASS__') {
+      typeToSceneNodes.set(data.className, nodesName);
+    }
+  }
+
   // Scene node interfaces + module augmentations (outside declare global)
   for (const [, data] of scriptData) {
     if (data.sceneMaps.length === 0) continue;
@@ -1181,13 +1193,18 @@ export function generateTypings(options: GenerateTypingsOptions): string {
           : 'Node';
       }
 
-      // Annotate types with parent info:
+      // Annotate types with parent info and script tree:
       // - Godot built-in types get <{[__parent]: ParentType}> (they have Tree generic from godot-docs)
-      // - User classes stay plain — their get_parent() is set via module augmentation
+      // - User classes with scene nodes get & {[__script_tree]: _XSceneNodes} for deep path resolution
+      // - User classes without scene nodes stay plain
       // - null stays as null
       const annotatedType = type.split(' | ').map(t => {
         if (t === 'null') return 'null';
         if (userClassTypes.has(t)) {
+          const sceneNodesName = typeToSceneNodes.get(t);
+          if (sceneNodesName) {
+            return `${t} & {[__script_tree]: ${sceneNodesName}}`;
+          }
           return t;
         }
         return `${t}<{[__parent]: ${parentType}}>`;
@@ -1201,11 +1218,11 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     lines.push(`declare module "${data.tsModulePath}" {`);
     lines.push(`  interface ${data.className} {`);
     lines.push(
-      `    get_node<P extends keyof ${nodesInterface}>(path: P): null extends ${nodesInterface}[P] ? NonNullable<${nodesInterface}[P]> | Node : ${nodesInterface}[P];`,
+      `    get_node<P extends string & _GDGetTreePaths<${nodesInterface}>>(path: P): _GDGetNode<${nodesInterface}, P>;`,
     );
-    lines.push(`    get_node<T extends Node = Node>(path: string): T;`);
+    lines.push(`    get_node(path: string): Node;`);
     lines.push(`    get_node_or_null<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P] | null;`);
-    lines.push(`    get_node_or_null<T extends Node = Node>(path: string): T | null;`);
+    lines.push(`    get_node_or_null(path: string): Node | null;`);
     // Add get_parent() if this script is instanced in other scenes
     const parentAliases = instancedParents.get(data.alias);
     if (parentAliases && parentAliases.size > 0) {

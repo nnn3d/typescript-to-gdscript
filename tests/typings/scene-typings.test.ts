@@ -58,7 +58,7 @@ describe('Scene typings generation', () => {
     // Module augmentation with typed overloads
     expect(content).toContain('declare module "./Player.ts"');
     expect(content).toContain('interface Player');
-    expect(content).toContain('get_node<P extends keyof _PlayerSceneNodes');
+    expect(content).toContain('get_node<P extends string & _GDGetTreePaths<_PlayerSceneNodes>>(path: P): _GDGetNode<_PlayerSceneNodes, P>');
     expect(content).toContain('get_node_or_null<P extends keyof _PlayerSceneNodes');
   });
 
@@ -81,9 +81,9 @@ describe('Scene typings generation', () => {
 
     // Level.tscn instances Player.tscn and Enemy.tscn
     expect(content).toContain('interface _LevelSceneNodes');
-    // Instanced scene roots: user classes stay plain (get_parent via module augmentation)
-    expect(content).toContain('"Player": Player;');
-    expect(content).toContain('"Enemy": Enemy;');
+    // Instanced scene roots: user classes with scene nodes get __script_tree annotation
+    expect(content).toContain('"Player": Player & {[__script_tree]: _PlayerSceneNodes};');
+    expect(content).toContain('"Enemy": Enemy & {[__script_tree]: _EnemySceneNodes};');
     // Instanced scene without script → synthetic type alias (scriptless scene)
     expect(content).toContain('"TilesetObjects": _TilesetObjectsTscn;');
     // Regular Godot built-in child gets [__parent]
@@ -139,7 +139,7 @@ describe('Scene typings generation', () => {
     // Module augmentation for BaseCharacter
     expect(content).toContain('declare module "./BaseCharacter.ts"');
     expect(content).toContain('interface BaseCharacter');
-    expect(content).toContain('get_node<P extends keyof _BaseCharacterSceneNodes');
+    expect(content).toContain('get_node<P extends string & _GDGetTreePaths<_BaseCharacterSceneNodes>>(path: P): _GDGetNode<_BaseCharacterSceneNodes, P>');
   });
 
   it('should generate GodotResources and autoload singletons', () => {
