@@ -25,7 +25,7 @@ declare module "./Anonym.ts" {
     get_node<T extends Node = Node>(path: string): T;
     get_node_or_null<P extends keyof _AnonymSceneNodes>(path: P): _AnonymSceneNodes[P] | null;
     get_node_or_null<T extends Node = Node>(path: string): T | null;
-    get_parent(): TileMap<{[__parent]: _Level}>;
+    get_parent(): _TilesetObjectsTscn;
   }
 }
 
@@ -58,7 +58,7 @@ declare module "./Ball.ts" {
     get_node<T extends Node = Node>(path: string): T;
     get_node_or_null<P extends keyof _BallSceneNodes>(path: P): _BallSceneNodes[P] | null;
     get_node_or_null<T extends Node = Node>(path: string): T | null;
-    get_parent(): TileMap<{[__parent]: _Level}>;
+    get_parent(): _TilesetObjectsTscn;
   }
 }
 

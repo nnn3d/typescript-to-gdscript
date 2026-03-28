@@ -978,9 +978,14 @@ export function generateTypings(options: GenerateTypingsOptions): string {
         }
       }
 
-      // Build the parent type with [__parent] for chain resolution
+      // Build the parent type with [__parent] for chain resolution.
+      // If the embedding node is the root of a scriptless scene, use its synthetic alias
+      // (which already encodes [__parent]) instead of building TileMap<{[__parent]: ...}>.
       let resolvedParentType: string;
-      if (grandparentAliases.size > 0) {
+      const slData = parentPath === '.' ? scriptlessSceneData.get(resPath) : undefined;
+      if (slData) {
+        resolvedParentType = slData.alias;
+      } else if (grandparentAliases.size > 0) {
         const gpType = [...grandparentAliases].join(' | ');
         resolvedParentType = `${parentType}<{[__parent]: ${gpType}}>`;
       } else {
