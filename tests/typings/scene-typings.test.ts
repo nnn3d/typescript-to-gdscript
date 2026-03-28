@@ -157,6 +157,13 @@ describe('Scene typings generation', () => {
     expect(content).toContain('"res://BaseCharacter.gd": typeof _BaseCharacter;');
     expect(content).toContain('"res://GameManager.gd": typeof _GameManager;');
 
+    // Inherited scenes get the base scene's root script type
+    // Level1.tscn inherits Level.tscn → root script is Level.gd → PackedScene<_Level>
+    expect(content).toContain('"res://Level1.tscn": PackedScene<_Level>');
+    // ALevel.tscn also inherits Level.tscn — sorted before Level.tscn alphabetically,
+    // tests forward-reference resolution (base scene processed after inheriting scene)
+    expect(content).toContain('"res://ALevel.tscn": PackedScene<_Level>');
+
     // .tres resources use gd_resource type header for precise typing
     expect(content).toContain('"res://player_material.tres": ShaderMaterial;');
 

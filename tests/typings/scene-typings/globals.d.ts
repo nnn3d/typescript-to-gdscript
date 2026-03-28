@@ -98,6 +98,7 @@ interface _LevelSceneNodes {
   "UI/ScoreLabel": Label<{[__parent]: CanvasLayer}>;
   "TilesetObjectsMap": _TilesetObjectsTscn;
   "Level2": _Level2Tscn;
+  "ExtraNode": Label<{[__parent]: _Level}> | null;
   "TilesetObjects2": _TilesetObjectsTscn | null;
   "ExtraSprite": Sprite2D<{[__parent]: _Level}> | null;
 }
@@ -197,6 +198,7 @@ declare global {
   // From: Player.ts
   class Player extends _Player {}
   interface GodotResources {
+    "res://ALevel.tscn": PackedScene<_Level>;
     "res://Anonym.tscn": PackedScene<_Anonym>;
     "res://Anonym2.tscn": PackedScene<_Anonym2>;
     "res://BallA.tscn": PackedScene<_Ball>;

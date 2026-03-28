@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://test_alevel_scene"]
+
+[ext_resource type="PackedScene" uid="uid://test_level_scene" path="res://Level.tscn" id="1"]
+
+[node name="ALevel" instance=ExtResource("1")]
+
+[node name="ExtraNode" type="Label" parent="."]

@@ -793,6 +793,36 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     parsedScenes.push({ scenePath, resPath, scene });
   }
 
+  // Second pass: resolve inherited root scripts that failed due to processing order.
+  // When scene A inherits scene B, but B was processed after A, sceneRootScripts
+  // wouldn't have B's entry yet. Walk inheritance chains until resolved.
+  for (let changed = true; changed; ) {
+    changed = false;
+    for (const { resPath, scene } of parsedScenes) {
+      if (sceneRootScripts.has(resPath)) continue;
+      if (!scene.inheritedSceneResPath) continue;
+      // Walk inheritance chain: follow inheritedSceneResPath until we find a root script
+      let baseResPath: string | undefined = scene.inheritedSceneResPath;
+      while (baseResPath) {
+        const baseScript = sceneRootScripts.get(baseResPath);
+        if (baseScript) {
+          sceneRootScripts.set(resPath, baseScript);
+          // Update the resource entry alias
+          const aliasEntry = aliasMap.get(baseScript);
+          const entry = resourceEntries.find((e) => e.resPath === resPath);
+          if (entry && aliasEntry) {
+            entry.alias = aliasEntry.alias;
+          }
+          changed = true;
+          break;
+        }
+        // Check if the base scene also inherits from another scene
+        const baseScene = parsedScenes.find((p) => p.resPath === baseResPath);
+        baseResPath = baseScene?.scene.inheritedSceneResPath;
+      }
+    }
+  }
+
   // Identify scriptless scenes (no root script, no inherited script).
   // These get synthetic type aliases using Node<Tree> / TileMap<Tree> etc. with [__parent] and children.
   const scriptlessSceneData = new Map<string, ScriptlessSceneInfo>();
