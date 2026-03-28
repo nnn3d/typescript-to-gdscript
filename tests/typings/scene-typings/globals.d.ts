@@ -25,6 +25,8 @@ declare module "./Anonym.ts" {
     get_node(path: string): Node;
     get_node_or_null<P extends keyof _AnonymSceneNodes>(path: P): _AnonymSceneNodes[P] | null;
     get_node_or_null(path: string): Node | null;
+    has_node<P extends string & _GDGetTreePaths<_AnonymSceneNodes>>(path: P): true;
+    has_node(path: string): boolean;
     get_parent(): _TilesetObjectsTscn;
   }
 }
@@ -42,6 +44,8 @@ declare module "./Anonym2.ts" {
     get_node(path: string): Node;
     get_node_or_null<P extends keyof _Anonym2SceneNodes>(path: P): _Anonym2SceneNodes[P] | null;
     get_node_or_null(path: string): Node | null;
+    has_node<P extends string & _GDGetTreePaths<_Anonym2SceneNodes>>(path: P): true;
+    has_node(path: string): boolean;
   }
 }
 
@@ -58,6 +62,8 @@ declare module "./Ball.ts" {
     get_node(path: string): Node;
     get_node_or_null<P extends keyof _BallSceneNodes>(path: P): _BallSceneNodes[P] | null;
     get_node_or_null(path: string): Node | null;
+    has_node<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): true;
+    has_node(path: string): boolean;
     get_parent(): _TilesetObjectsTscn;
   }
 }
@@ -76,6 +82,8 @@ declare module "./Enemy.ts" {
     get_node(path: string): Node;
     get_node_or_null<P extends keyof _EnemySceneNodes>(path: P): _EnemySceneNodes[P] | null;
     get_node_or_null(path: string): Node | null;
+    has_node<P extends string & _GDGetTreePaths<_EnemySceneNodes>>(path: P): true;
+    has_node(path: string): boolean;
     get_parent(): _Level;
   }
 }
@@ -100,6 +108,8 @@ declare module "./Level.ts" {
     get_node(path: string): Node;
     get_node_or_null<P extends keyof _LevelSceneNodes>(path: P): _LevelSceneNodes[P] | null;
     get_node_or_null(path: string): Node | null;
+    has_node<P extends string & _GDGetTreePaths<_LevelSceneNodes>>(path: P): true;
+    has_node(path: string): boolean;
   }
 }
 
@@ -116,6 +126,8 @@ declare module "./nested/Anonym.ts" {
     get_node(path: string): Node;
     get_node_or_null<P extends keyof _nested_AnonymSceneNodes>(path: P): _nested_AnonymSceneNodes[P] | null;
     get_node_or_null(path: string): Node | null;
+    has_node<P extends string & _GDGetTreePaths<_nested_AnonymSceneNodes>>(path: P): true;
+    has_node(path: string): boolean;
   }
 }
 
@@ -134,6 +146,8 @@ declare module "./Player.ts" {
     get_node(path: string): Node;
     get_node_or_null<P extends keyof _PlayerSceneNodes>(path: P): _PlayerSceneNodes[P] | null;
     get_node_or_null(path: string): Node | null;
+    has_node<P extends string & _GDGetTreePaths<_PlayerSceneNodes>>(path: P): true;
+    has_node(path: string): boolean;
     get_parent(): _Level;
   }
 }
@@ -155,6 +169,8 @@ declare module "./BaseCharacter.ts" {
     get_node(path: string): Node;
     get_node_or_null<P extends keyof _BaseCharacterSceneNodes>(path: P): _BaseCharacterSceneNodes[P] | null;
     get_node_or_null(path: string): Node | null;
+    has_node<P extends string & _GDGetTreePaths<_BaseCharacterSceneNodes>>(path: P): true;
+    has_node(path: string): boolean;
   }
 }
 

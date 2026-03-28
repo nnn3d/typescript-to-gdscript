@@ -1223,6 +1223,8 @@ export function generateTypings(options: GenerateTypingsOptions): string {
     lines.push(`    get_node(path: string): Node;`);
     lines.push(`    get_node_or_null<P extends keyof ${nodesInterface}>(path: P): ${nodesInterface}[P] | null;`);
     lines.push(`    get_node_or_null(path: string): Node | null;`);
+    lines.push(`    has_node<P extends string & _GDGetTreePaths<${nodesInterface}>>(path: P): true;`);
+    lines.push(`    has_node(path: string): boolean;`);
     // Add get_parent() if this script is instanced in other scenes
     const parentAliases = instancedParents.get(data.alias);
     if (parentAliases && parentAliases.size > 0) {

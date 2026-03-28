@@ -421,7 +421,9 @@ declare class Node<Tree extends object = any> extends GodotObject {
    * Returns the {@link Window} that contains this node. If the node is in the main window, this is equivalent to getting the root node (`get_tree().get_root()`).
    */
   get_window(): Window;
-  /** Returns `true` if the `path` points to a valid node. See also {@link get_node}. */
+  /** Check if a node exists at path. Known paths (from scene tree) provide autocomplete and return `true`. */
+  has_node<P extends string & _GDGetTreePaths<Tree>>(path: P): true;
+  /** Check if a node exists at path. Unknown paths return boolean. */
   has_node(path: string): boolean;
   /**
    * Returns `true` if `path` points to a valid node and its subnames point to a valid {@link Resource}, e.g. `Area2D/CollisionShape2D:shape`. Properties that are not {@link Resource} types (such as nodes or other {@link Variant} types) are not considered. See also {@link get_node_and_resource}.

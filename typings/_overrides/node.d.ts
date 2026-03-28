@@ -25,6 +25,10 @@ declare class Node<Tree extends object = any> extends GodotObject {
         ? P
         : Node
       : Node;
+  /** Check if a node exists at path. Known paths (from scene tree) provide autocomplete and return `true`. */
+  has_node<P extends string & _GDGetTreePaths<Tree>>(path: P): true;
+  /** Check if a node exists at path. Unknown paths return boolean. */
+  has_node(path: string): boolean;
   /** Duplicate this node. Returns same type as the original. */
   duplicate(flags?: int): this;
 }
