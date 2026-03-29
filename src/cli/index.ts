@@ -104,9 +104,9 @@ function resolveFiles(
     // Expand glob patterns
     const files: string[] = [];
     for (const pattern of patterns) {
-      const matches = globSync(pattern, { cwd: process.cwd() }).map((m) =>
-        resolve(m),
-      );
+      const matches = globSync(join(rootDir, pattern), {
+        cwd: process.cwd(),
+      }).map((m) => resolve(m));
       for (const match of matches) {
         const m = match.replace(/\\/g, '/');
         if (ext === '.ts' && m.endsWith('.d.ts')) continue;
