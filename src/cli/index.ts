@@ -9,9 +9,9 @@ import {
   statSync,
   existsSync,
   rmSync,
+  globSync,
 } from 'fs';
-import { resolve, dirname, relative, extname, join } from 'path';
-import { globSync } from 'glob';
+import { resolve, dirname, relative, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
 import {
@@ -50,11 +50,7 @@ function debugLog(message: string): void {
 }
 
 /** Recursively find all .ts files (excluding .d.ts, node_modules, hidden dirs, and ignored patterns) */
-function findTsFiles(
-  dir: string,
-  rootDir: string,
-  ignore: string[],
-): string[] {
+function findTsFiles(dir: string, rootDir: string, ignore: string[]): string[] {
   const results: string[] = [];
   try {
     for (const entry of readdirSync(dir)) {
@@ -74,11 +70,7 @@ function findTsFiles(
 }
 
 /** Recursively find all .gd files (excluding node_modules, hidden dirs, and ignored patterns) */
-function findGdFiles(
-  dir: string,
-  rootDir: string,
-  ignore: string[],
-): string[] {
+function findGdFiles(dir: string, rootDir: string, ignore: string[]): string[] {
   const results: string[] = [];
   try {
     for (const entry of readdirSync(dir)) {
@@ -112,7 +104,9 @@ function resolveFiles(
     // Expand glob patterns
     const files: string[] = [];
     for (const pattern of patterns) {
-      const matches = globSync(pattern, { cwd: process.cwd(), absolute: true });
+      const matches = globSync(pattern, { cwd: process.cwd() }).map((m) =>
+        resolve(m),
+      );
       for (const match of matches) {
         const m = match.replace(/\\/g, '/');
         if (ext === '.ts' && m.endsWith('.d.ts')) continue;
@@ -156,7 +150,9 @@ function generateAllTypings(cfg: {
     ignore: cfg.ignore,
     projectFile: cfg.projectFile,
   });
-  debugLog(`Generated ${writtenFiles.length} typings files in ${cfg.typingsDir}`);
+  debugLog(
+    `Generated ${writtenFiles.length} typings files in ${cfg.typingsDir}`,
+  );
 }
 
 // ─── Convert TS -> GD ──────────────────────────────────────
@@ -293,11 +289,7 @@ program
     const tsOutputFiles: string[] = [];
 
     // Find .tscn scene files for signal handler resolution
-    const sceneFiles = findSceneFiles(
-      cfg.scenesDir,
-      cfg.rootDir,
-      cfg.ignore,
-    );
+    const sceneFiles = findSceneFiles(cfg.scenesDir, cfg.rootDir, cfg.ignore);
 
     // Build project sources for user-defined class inheritance resolution
     const projectSources = resolvedFiles.map((f) => ({
@@ -309,11 +301,18 @@ program
     for (const { source, filePath } of projectSources) {
       // Resolve signal handler types from .tscn connections
       const scriptResPath = `res://${relative(cfg.rootDir, filePath).replace(/\\/g, '/')}`;
-      const signalHandlers = sceneFiles.length > 0
-        ? resolveSignalHandlers(scriptResPath, sceneFiles, registry)
-        : undefined;
+      const signalHandlers =
+        sceneFiles.length > 0
+          ? resolveSignalHandlers(scriptResPath, sceneFiles, registry)
+          : undefined;
 
-      const result = convertGdToTs({ source, filePath, registry, projectSources, signalHandlers });
+      const result = convertGdToTs({
+        source,
+        filePath,
+        registry,
+        projectSources,
+        signalHandlers,
+      });
 
       for (const diag of result.diagnostics) {
         const prefix =
@@ -636,9 +635,7 @@ program
       return;
     }
 
-    const outputDir = opts.output
-      ? resolve(opts.output)
-      : cfg.typingsDir;
+    const outputDir = opts.output ? resolve(opts.output) : cfg.typingsDir;
 
     const writtenFiles = generateTypings({
       rootDir: cfg.rootDir,

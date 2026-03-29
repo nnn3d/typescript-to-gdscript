@@ -1,4 +1,4 @@
 [submodule "vendor/godot"]
 	path = vendor/godot
 	url = https://github.com/godotengine/godot.git
-	branch = master
+	tag = 4.6-stable
