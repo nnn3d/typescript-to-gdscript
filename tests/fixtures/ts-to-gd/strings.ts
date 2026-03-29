@@ -3,6 +3,7 @@ export class MyClass extends Node {
     let simple: string = "Hello, World!";
     let with_quotes: string = "He said \"hi\"";
     let concat = "Hello" + " " + "World";
+    let template = `${concat}! === ${simple}`;
     let sn = StringName("my_action");
     let np = NodePath("Sprite2D/AnimationPlayer");
     let unique = this.get_node("%UniqueNode");

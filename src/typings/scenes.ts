@@ -609,7 +609,11 @@ function scriptResPathToOutputFile(resPath: string): string {
 
 /** Derive scene tree interface name from scene res:// path, e.g. "res://Player.tscn" → "_PlayerTscn_Tree" */
 function sceneResPathToTreeName(resPath: string): string {
-  const base = resPath.replace(/^res:\/\//, '').replace(/\.tscn$/, '').replace(/\//g, '_');
+  const base = resPath
+    .replace(/^res:\/\//, '')
+    .replace(/\.tscn$/, '')
+    .replaceAll('/', '_')
+    .replaceAll(' ', '_');
   return `_${base}Tscn_Tree`;
 }
 
@@ -795,7 +799,10 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
   const aliasMap = new Map<string, { alias: string; className: string; tsModulePath: string }>();
   const usedAliases = new Set<string>();
   for (const [resPath, info] of scriptClassMap) {
-    let alias = '_' + resPath.replace(/^res:\/\//, '').replace(/\.[^.]+$/, '').replace(/\//g, '_');
+    let alias = '_' + resPath.replace(/^res:\/\//, '')
+      .replace(/\.[^.]+$/, '')
+      .replaceAll('/', '_')
+      .replaceAll(' ', '_');
     let base = alias;
     let i = 2;
     while (usedAliases.has(alias)) {
