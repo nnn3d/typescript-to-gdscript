@@ -4,6 +4,6 @@ dist
 .idea
 .claude
 vendor
-typings
-!typings/_overrides
-!typings/*.ts
+./typings
+!./typings/_overrides
+!./typings/*.ts
