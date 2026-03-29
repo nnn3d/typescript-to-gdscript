@@ -145,22 +145,18 @@ function generateAllTypings(cfg: {
     cfg.tsFiles ?? findTsFiles(cfg.tsDir, cfg.rootDir, cfg.ignore);
   if (tsFiles.length === 0) return;
 
-  mkdirSync(join(cfg.typingsDir, '_globals'), { recursive: true });
-
-  const outputPath = join(cfg.typingsDir, '_globals', 'globals.d.ts');
-
-  generateTypings({
+  const writtenFiles = generateTypings({
     rootDir: cfg.rootDir,
     tsDir: cfg.tsDir,
     gdDir: cfg.gdDir,
     files: tsFiles,
-    outputPath,
+    outputDir: cfg.typingsDir,
     scenesDir: cfg.scenesDir,
     tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
     ignore: cfg.ignore,
     projectFile: cfg.projectFile,
   });
-  debugLog(`Generated: ${outputPath}`);
+  debugLog(`Generated ${writtenFiles.length} typings files in ${cfg.typingsDir}`);
 }
 
 // ─── Convert TS -> GD ──────────────────────────────────────
@@ -640,24 +636,22 @@ program
       return;
     }
 
-    mkdirSync(join(cfg.typingsDir, '_globals'), { recursive: true });
-
-    const outputPath = opts.output
+    const outputDir = opts.output
       ? resolve(opts.output)
-      : join(cfg.typingsDir, '_globals', 'globals.d.ts');
+      : cfg.typingsDir;
 
-    generateTypings({
+    const writtenFiles = generateTypings({
       rootDir: cfg.rootDir,
       tsDir: cfg.tsDir,
       gdDir: cfg.gdDir,
       files: resolvedFiles,
-      outputPath,
+      outputDir,
       scenesDir: cfg.scenesDir,
       tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
       ignore: cfg.ignore,
       projectFile: cfg.projectFile,
     });
-    debugLog(`Generated: ${outputPath}`);
+    debugLog(`Generated ${writtenFiles.length} typings files in ${outputDir}`);
   });
 
 // ─── Lint ──────────────────────────────────────────────────

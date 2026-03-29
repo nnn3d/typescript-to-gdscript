@@ -226,6 +226,10 @@ type _GDGetNodeByPath<
       : never
     : never;
 
+/** Resolve get_parent return type from declaration-merged _XParents interface.
+ *  Empty interface (no parents) → Node; otherwise union of all parent types. */
+type _GDParentType<T> = [keyof T] extends [never] ? Node : T[keyof T];
+
 /** Resolve get_node return type: known paths → exact type, unknown → Node.
  *  Uses _GDGetNodeByPath directly (not _GDGetTreePaths) to avoid circular mapped types. */
 type _GDGetNode<

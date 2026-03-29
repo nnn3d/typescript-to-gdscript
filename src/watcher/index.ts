@@ -185,14 +185,12 @@ export class Watcher {
     const files = [...this.tsFiles];
     const typingsDir = this.options.typingsDir;
 
-    mkdirSync(typingsDir, { recursive: true });
-
     generateTypings({
       rootDir: this.options.rootDir,
       tsDir: this.tsDir,
       gdDir: this.gdDir,
       files,
-      outputPath: join(typingsDir, 'globals.d.ts'),
+      outputDir: typingsDir,
       scenesDir: this.options.scenesDir ?? this.options.rootDir,
       tsConfigPath: this.options.tsConfigPath,
       ignore: this.options.ignore,

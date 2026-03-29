@@ -6,12 +6,12 @@ export class Ball extends Node {
     let sprite = this.get_node('Sprite2D');
     let _spriteAssign: Sprite2D = sprite;
 
-    // get_node: path only in one scene → Type | null (nullable, NonNullable<> | Node)
+    // get_node: path only in one scene → with per-file extends, type comes from that scene (no null)
     let timer = this.get_node('Timer');
-    const _checkTimer: IsExact<typeof timer, Timer | Node> = true;
+    let _timerAssign: Timer = timer;
 
     let label = this.get_node('Label');
-    const _checkLabel: IsExact<typeof label, Label | Node> = true;
+    let _labelAssign: Label = label;
 
     // get_node_or_null: path in both scenes → Type | null
     let spriteOrNull = this.get_node_or_null('Sprite2D');
