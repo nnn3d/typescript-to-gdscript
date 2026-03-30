@@ -6,3 +6,4 @@ func test_casting():
 	var sprite = node as Sprite2D
 	if sprite != null:
 		print("It is a Sprite2D")
+	var satisfies = "string"

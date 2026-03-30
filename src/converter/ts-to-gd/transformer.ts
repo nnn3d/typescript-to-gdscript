@@ -1255,6 +1255,11 @@ export class TsToGdTransformer {
       return this.emitExpression(node.expression);
     }
 
+    // Satisfies expression -> skip (type-only, no runtime effect)
+    if (ts.isSatisfiesExpression(node)) {
+      return this.emitExpression(node.expression);
+    }
+
     // Non-null assertion (!) -> skip
     if (ts.isNonNullExpression(node)) {
       return this.emitExpression(node.expression);

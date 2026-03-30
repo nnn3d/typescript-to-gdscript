@@ -5,5 +5,7 @@ export class MyClass extends Node {
     if (sprite !== null) {
       print("It is a Sprite2D");
     }
+
+    let satisfies = 'string' satisfies string;
   }
 }

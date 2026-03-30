@@ -14,6 +14,7 @@ func test_dict():
 	var dict2 = {
 		key1: "value",
 		"key2": "value",
+		key1 + key2: "value",
 	}
 	var dict3 = {
 		"key": "value",

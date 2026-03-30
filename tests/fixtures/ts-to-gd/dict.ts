@@ -14,6 +14,7 @@ export class MyClass extends Node {
     let dict2 = {
       [key1]: 'value',
       key2: 'value',
+      [key1 + key2]: 'value',
     }
 
     let dict3 = {'key': 'value', "key2": "value"};

@@ -17,3 +17,13 @@ func test_dict():
 		key1: "value",
 		"key2": "value",
 	}
+
+	var s1 = "key1"
+	var s2 = "key2"
+
+	var dict3 = {
+		s1 + "_" + s2 + str(1): "value",
+		s1[0]: "value",
+		s2.left(2): "value",
+		s2.left(2) + s1.left(1): "value",
+	}

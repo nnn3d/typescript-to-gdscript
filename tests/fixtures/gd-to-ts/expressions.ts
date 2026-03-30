@@ -9,5 +9,7 @@ export class Expressions extends Node {
     let child = this.get_node("Path/To/Node");
     let unique = this.get_node("%UniqueNode");
     let unique2 = this.get_node("%UniqueNode");
+    let unique3 = this.get_node("%UniqueNode/Child");
+    this.get_node("%UniqueNode/Child").text = "";
   }
 }

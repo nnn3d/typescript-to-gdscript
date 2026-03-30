@@ -11,3 +11,5 @@ func test_expressions():
 	var child = $"Path/To/Node"
 	var unique = %UniqueNode
 	var unique2 = %"UniqueNode"
+	var unique3 = %"UniqueNode"/Child
+	%"UniqueNode"/Child.text = ""
