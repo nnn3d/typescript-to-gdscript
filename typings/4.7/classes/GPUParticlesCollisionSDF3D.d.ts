@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A baked signed distance field 3D particle collision shape affecting {@link GPUParticles3D} nodes. */
-declare class GPUParticlesCollisionSDF3D<Tree extends object = any> extends GPUParticlesCollision3D<Tree> {
+declare class GPUParticlesCollisionSDF3D extends GPUParticlesCollision3D {
   /**
    * The visual layers to account for when baking the particle collision SDF. Only {@link MeshInstance3D}s whose {@link VisualInstance3D.layers} match with this {@link bake_mask} will be included in the generated particle collision SDF. By default, all objects are taken into account for the particle collision SDF baking.
    */

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 3D physics body for a {@link VehicleBody3D} that simulates the behavior of a wheel. */
-declare class VehicleWheel3D<Tree extends object = any> extends Node3D<Tree> {
+declare class VehicleWheel3D extends Node3D {
   /**
    * Slows down the wheel by applying a braking force. The wheel is only slowed down if it is in contact with a surface. The force you need to apply to adequately slow down your vehicle depends on the {@link RigidBody3D.mass} of the vehicle. For a vehicle with a mass set to 1000, try a value in the 25 - 30 range for hard braking.
    */

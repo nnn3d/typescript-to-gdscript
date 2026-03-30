@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Base class for {@link AnimationPlayer} and {@link AnimationTree}. */
-declare class AnimationMixer<Tree extends object = any> extends Node<Tree> {
+declare class AnimationMixer extends Node {
   /** If `true`, the {@link AnimationMixer} will be processing. */
   active: boolean;
   /**

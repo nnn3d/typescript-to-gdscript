@@ -16,8 +16,6 @@ import {
   gdDocToPlain,
   type GodotClassXml,
   type GodotMethodXml,
-  type GodotParamXml,
-  type GodotAnnotationXml,
   type GodotOperatorXml,
 } from './godot-registry.ts';
 
@@ -460,8 +458,6 @@ function generateClassDeclaration(
   dictOnlyOverrides?: Set<string>,
   /** All explicit method names from ancestor classes (to avoid setter/getter conflicts) */
   inheritedMethodNames?: Set<string>,
-  /** Whether this class is a Node descendant (adds Tree generic) */
-  isNodeDescendant?: boolean,
 ): string {
   const lines: string[] = [];
   const className = sanitizeClassName(cls.name);
@@ -469,13 +465,8 @@ function generateClassDeclaration(
 
   // Class-level JSDoc
   lines.push(...emitJsDoc(cls.briefDescription, ''));
-  if (isNodeDescendant) {
-    const extendsWithTree = extendsName ? ` extends ${extendsName}<Tree>` : '';
-    lines.push(`declare class ${className}<Tree extends object = any>${extendsWithTree} {`);
-  } else {
-    const extendsClause = extendsName ? ` extends ${extendsName}` : '';
-    lines.push(`declare class ${className}${extendsClause} {`);
-  }
+  const extendsClause = extendsName ? ` extends ${extendsName}` : '';
+  lines.push(`declare class ${className}${extendsClause} {`);
 
   // Properties
   const methodNames = new Set(cls.methods.map((m) => m.name));
@@ -1431,19 +1422,6 @@ export function generateGodotDocsTypings(
     }
   }
 
-  // Build set of Node descendants (including Node itself) for Tree generic propagation
-  const nodeDescendants = new Set<string>(['Node']);
-  let nodeChanged = true;
-  while (nodeChanged) {
-    nodeChanged = false;
-    for (const [name, cls] of classes) {
-      if (!nodeDescendants.has(name) && cls.inherits && nodeDescendants.has(cls.inherits)) {
-        nodeDescendants.add(name);
-        nodeChanged = true;
-      }
-    }
-  }
-
   // Sort class names for deterministic output
   const sortedNames = [...classes.keys()].sort();
 
@@ -1600,7 +1578,6 @@ export function generateGodotDocsTypings(
       cls,
       name === 'Object' ? dictOnlyOverrides : undefined,
       inheritedMemberNames,
-      nodeDescendants.has(name),
     );
 
     // Apply overrides if available (by TS class name)

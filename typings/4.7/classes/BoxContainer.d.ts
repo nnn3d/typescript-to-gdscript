@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container that arranges its child controls horizontally or vertically. */
-declare class BoxContainer<Tree extends object = any> extends Container<Tree> {
+declare class BoxContainer extends Container {
   /**
    * The alignment of the container's children (must be one of {@link ALIGNMENT_BEGIN}, {@link ALIGNMENT_CENTER}, or {@link ALIGNMENT_END}).
    */

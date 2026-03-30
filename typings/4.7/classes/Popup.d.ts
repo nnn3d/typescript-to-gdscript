@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Base class for contextual windows and panels with fixed position. */
-declare class Popup<Tree extends object = any> extends Window<Tree> {
+declare class Popup extends Window {
   borderless: boolean;
   maximize_disabled: boolean;
   minimize_disabled: boolean;

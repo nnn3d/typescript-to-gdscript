@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Custom control for editing properties that can be added to the {@link EditorInspector}. */
-declare class EditorProperty<Tree extends object = any> extends Container<Tree> {
+declare class EditorProperty extends Container {
   /** Used by the inspector, set to `true` when the property is checkable. */
   checkable: boolean;
   /** Used by the inspector, set to `true` when the property is checked. */

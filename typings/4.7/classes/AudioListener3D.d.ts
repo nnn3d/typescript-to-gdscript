@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Overrides the location sounds are heard from. */
-declare class AudioListener3D<Tree extends object = any> extends Node3D<Tree> {
+declare class AudioListener3D extends Node3D {
   /**
    * If not {@link DOPPLER_TRACKING_DISABLED}, this listener will simulate the Doppler effect (https://en.wikipedia.org/wiki/Doppler_effect) for objects changed in particular `_process` methods.
    * **Note:** The Doppler effect will only be heard on {@link AudioStreamPlayer3D}s if {@link AudioStreamPlayer3D.doppler_tracking} is not set to {@link AudioStreamPlayer3D.DOPPLER_TRACKING_DISABLED}.

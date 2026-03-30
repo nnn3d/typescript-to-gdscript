@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node that applies a color tint to a canvas. */
-declare class CanvasModulate<Tree extends object = any> extends Node2D<Tree> {
+declare class CanvasModulate extends Node2D {
   /** The tint color to apply. */
   color: Color;
   set_color(value: Color): void;

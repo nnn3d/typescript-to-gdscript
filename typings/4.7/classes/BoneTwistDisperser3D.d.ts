@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node that propagates and disperses the child bone's twist to the parent bones. */
-declare class BoneTwistDisperser3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
+declare class BoneTwistDisperser3D extends SkeletonModifier3D {
   /**
    * If `true`, the solver retrieves the bone axis from the bone pose every frame.
    * If `false`, the solver retrieves the bone axis from the bone rest and caches it.

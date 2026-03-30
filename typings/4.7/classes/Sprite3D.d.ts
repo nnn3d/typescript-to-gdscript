@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** 2D sprite node in a 3D world. */
-declare class Sprite3D<Tree extends object = any> extends SpriteBase3D<Tree> {
+declare class Sprite3D extends SpriteBase3D {
   /**
    * Current frame to display from sprite sheet. {@link hframes} or {@link vframes} must be greater than 1. This property is automatically adjusted when {@link hframes} or {@link vframes} are changed to keep pointing to the same visual frame (same column and row). If that's impossible, this value is reset to `0`.
    */

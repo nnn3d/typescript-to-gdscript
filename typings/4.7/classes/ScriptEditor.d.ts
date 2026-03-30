@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Godot editor's script editor. */
-declare class ScriptEditor<Tree extends object = any> extends PanelContainer<Tree> {
+declare class ScriptEditor extends PanelContainer {
   /**
    * Removes the documentation for the given `script`.
    * **Note:** This should be called whenever the script is changed to keep the open documentation state up to date.

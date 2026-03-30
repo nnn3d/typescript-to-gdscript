@@ -4,7 +4,7 @@
 /**
  * A physics joint that restricts the rotation of a 3D physics body around an axis relative to another physics body.
  */
-declare class HingeJoint3D<Tree extends object = any> extends Joint3D<Tree> {
+declare class HingeJoint3D extends Joint3D {
   /** The speed with which the rotation across the axis perpendicular to the hinge gets corrected. */
   'angular_limit/bias': float;
   /**

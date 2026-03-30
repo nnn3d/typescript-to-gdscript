@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Parent of all visual 3D nodes. */
-declare class VisualInstance3D<Tree extends object = any> extends Node3D<Tree> {
+declare class VisualInstance3D extends Node3D {
   /**
    * The render layer(s) this {@link VisualInstance3D} is drawn on.
    * This object will only be visible for {@link Camera3D}s whose cull mask includes any of the render layers this {@link VisualInstance3D} is set to.

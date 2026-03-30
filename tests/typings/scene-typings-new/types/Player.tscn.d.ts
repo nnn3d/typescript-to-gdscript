@@ -1,0 +1,69 @@
+// AUTO-GENERATED — do not edit manually.
+
+interface _PlayerTscn_Tree extends _GDBaseTree {
+  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Player.gd">;
+  [__node_parent]: _GDGetInterfaceParent<__PlayerTscn__Parents>
+  [__node_children]: [];
+  Sprite2D: {
+    [__node_type]: Sprite2D;
+    [__node_parent]: _PlayerTscn_Tree;
+    [__node_children]: [
+      _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']
+    ];
+    AnimationPlayer: {
+      [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://PlayerChild.gd">;
+      [__node_parent]: _PlayerTscn_Tree['Sprite2D'];
+      [__node_children]: [
+        _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']['Body']
+      ];
+      Body: {
+        [__node_type]: Sprite2D;
+        [__node_parent]: _PlayerTscn_Tree['Sprite2D']['AnimationPlayer'];
+        [__node_children]: [
+          _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']['Body']['Armor']
+        ];
+        Armor: {
+          [__node_type]: Sprite2D;
+          [__node_parent]: _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']['Body'];
+          [__node_children]: [];
+        }
+      }
+    };
+  };
+  CollisionShape2D: {
+    [__node_type]: CollisionShape2D;
+    [__node_parent]: _PlayerTscn_Tree;
+    [__node_children]: []
+  };
+  HealthBar: {
+    [__node_type]: ProgressBar;
+    [__node_parent]: _PlayerTscn_Tree;
+    [__node_children]: []
+  };
+  '%HealthBar': _PlayerTscn_Tree['HealthBar']
+}
+
+declare global {
+  // self parents
+  interface __PlayerTscn__Parents {}
+
+  // set trees for scene scripts
+  interface __PlayerGd__Trees {
+    // self res path for uniqueness
+    "res://Player.tscn": _PlayerTscn_Tree
+  }
+
+  interface __PlayerChildGd__Trees {
+    "res://Player.tscn": _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']
+  }
+
+  // global interfaces
+  interface _GodotSceneTrees {
+    "res://Player.tscn": _PlayerTscn_Tree
+  }
+  interface GodotResources {
+    "res://Player.tscn": PackedScene<_GDTreeNode<_PlayerTscn_Tree>>;
+  }
+}
+
+export {};

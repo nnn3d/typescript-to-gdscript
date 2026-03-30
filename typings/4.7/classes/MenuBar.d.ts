@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A horizontal menu bar that creates a menu for each {@link PopupMenu} child. */
-declare class MenuBar<Tree extends object = any> extends Control<Tree> {
+declare class MenuBar extends Control {
   /** Flat {@link MenuBar} don't display item decoration. */
   flat: boolean;
   /**

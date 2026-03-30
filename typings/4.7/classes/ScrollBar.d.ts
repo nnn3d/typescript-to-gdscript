@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract base class for scrollbars. */
-declare class ScrollBar<Tree extends object = any> extends Range<Tree> {
+declare class ScrollBar extends Range {
   /**
    * Overrides the step used when clicking increment and decrement buttons or when using arrow keys when the {@link ScrollBar} is focused.
    */

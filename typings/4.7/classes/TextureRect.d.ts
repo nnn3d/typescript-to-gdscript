@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A control that displays a texture. */
-declare class TextureRect<Tree extends object = any> extends Control<Tree> {
+declare class TextureRect extends Control {
   /** Defines how minimum size is determined based on the texture's size. */
   expand_mode: int;
   /** If `true`, texture is flipped horizontally. */

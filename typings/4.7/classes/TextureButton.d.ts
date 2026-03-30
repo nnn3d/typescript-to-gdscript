@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Texture-based button. Supports Pressed, Hover, Disabled and Focused states. */
-declare class TextureButton<Tree extends object = any> extends BaseButton<Tree> {
+declare class TextureButton extends BaseButton {
   /** If `true`, texture is flipped horizontally. */
   flip_h: boolean;
   /** If `true`, texture is flipped vertically. */

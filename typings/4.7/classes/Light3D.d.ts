@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Provides a base class for different kinds of light nodes. */
-declare class Light3D<Tree extends object = any> extends VisualInstance3D<Tree> {
+declare class Light3D extends VisualInstance3D {
   /**
    * The distance from the camera at which the light begins to fade away (in 3D units).
    * **Note:** Only effective for {@link OmniLight3D} and {@link SpotLight3D}.

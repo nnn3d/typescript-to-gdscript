@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node containing a bone hierarchy, used to create a 3D skeletal animation. */
-declare class Skeleton3D<Tree extends object = any> extends Node3D<Tree> {
+declare class Skeleton3D extends Node3D {
   /**
    * If you follow the recommended workflow and explicitly have {@link PhysicalBoneSimulator3D} as a child of {@link Skeleton3D}, you can control whether it is affected by raycasting without running {@link physical_bones_start_simulation}, by its {@link SkeletonModifier3D.active}.
    * However, for old (deprecated) configurations, {@link Skeleton3D} has an internal virtual {@link PhysicalBoneSimulator3D} for compatibility. This property controls the internal virtual {@link PhysicalBoneSimulator3D}'s {@link SkeletonModifier3D.active}.

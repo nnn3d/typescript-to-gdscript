@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A physics joint that restricts the movement of two 2D physics bodies to a fixed axis. */
-declare class GrooveJoint2D<Tree extends object = any> extends Joint2D<Tree> {
+declare class GrooveJoint2D extends Joint2D {
   /**
    * The body B's initial anchor position defined by the joint's origin and a local offset {@link initial_offset} along the joint's Y axis (along the groove).
    */

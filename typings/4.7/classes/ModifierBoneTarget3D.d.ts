@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** А node that dynamically copies the 3D transform of a bone in its parent {@link Skeleton3D}. */
-declare class ModifierBoneTarget3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
+declare class ModifierBoneTarget3D extends SkeletonModifier3D {
   /** The index of the attached bone. */
   bone: int;
   /** The name of the attached bone. */

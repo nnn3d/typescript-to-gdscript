@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node for driving body meshes from {@link XRBodyTracker} data. */
-declare class XRBodyModifier3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
+declare class XRBodyModifier3D extends SkeletonModifier3D {
   /**
    * The name of the {@link XRBodyTracker} registered with {@link XRServer} to obtain the body tracking data from.
    */

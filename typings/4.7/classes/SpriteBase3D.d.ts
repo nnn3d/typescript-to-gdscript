@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** 2D sprite node in 3D environment. */
-declare class SpriteBase3D<Tree extends object = any> extends GeometryInstance3D<Tree> {
+declare class SpriteBase3D extends GeometryInstance3D {
   /** Threshold at which antialiasing will be applied on the alpha channel. */
   alpha_antialiasing_edge: float;
   /** The type of alpha antialiasing to apply. */

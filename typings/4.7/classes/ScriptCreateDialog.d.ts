@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Godot editor's popup dialog for creating new {@link Script} files. */
-declare class ScriptCreateDialog<Tree extends object = any> extends ConfirmationDialog<Tree> {
+declare class ScriptCreateDialog extends ConfirmationDialog {
   dialog_hide_on_ok: boolean;
   ok_button_text: string;
   title: string;

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A rectangular region of 2D space that detects whether it is visible on screen. */
-declare class VisibleOnScreenNotifier2D<Tree extends object = any> extends Node2D<Tree> {
+declare class VisibleOnScreenNotifier2D extends Node2D {
   /** The VisibleOnScreenNotifier2D's bounding rectangle. */
   rect: Rect2;
   /**

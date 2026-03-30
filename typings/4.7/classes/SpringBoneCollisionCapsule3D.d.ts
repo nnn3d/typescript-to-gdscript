@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A capsule shape collision that interacts with {@link SpringBoneSimulator3D}. */
-declare class SpringBoneCollisionCapsule3D<Tree extends object = any> extends SpringBoneCollision3D<Tree> {
+declare class SpringBoneCollisionCapsule3D extends SpringBoneCollision3D {
   /**
    * The capsule's full height, including the hemispheres.
    * **Note:** The {@link height} of a capsule must be at least twice its {@link radius}. Otherwise, the capsule becomes a sphere. If the {@link height} is less than twice the {@link radius}, the properties adjust to a valid value.

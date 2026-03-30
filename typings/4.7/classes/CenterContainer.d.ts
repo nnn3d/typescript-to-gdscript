@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container that keeps child controls in its center. */
-declare class CenterContainer<Tree extends object = any> extends Container<Tree> {
+declare class CenterContainer extends Container {
   /** If `true`, centers children relative to the {@link CenterContainer}'s top left corner. */
   use_top_left: boolean;
   set_use_top_left(value: boolean): void;

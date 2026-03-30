@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A rectangular box for designing UIs. */
-declare class ReferenceRect<Tree extends object = any> extends Control<Tree> {
+declare class ReferenceRect extends Control {
   /** Sets the border color of the {@link ReferenceRect}. */
   border_color: Color;
   /**

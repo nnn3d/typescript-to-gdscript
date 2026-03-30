@@ -2,5 +2,5 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container that arranges its child controls horizontally. */
-declare class HBoxContainer<Tree extends object = any> extends BoxContainer<Tree> {
+declare class HBoxContainer extends BoxContainer {
 }

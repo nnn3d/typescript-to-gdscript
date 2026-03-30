@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container that preserves the proportions of its child controls. */
-declare class AspectRatioContainer<Tree extends object = any> extends Container<Tree> {
+declare class AspectRatioContainer extends Container {
   /** Specifies the horizontal relative position of child controls. */
   alignment_horizontal: int;
   /** Specifies the vertical relative position of child controls. */

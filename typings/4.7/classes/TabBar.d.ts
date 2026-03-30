@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A control that provides a horizontal bar with tabs. */
-declare class TabBar<Tree extends object = any> extends Control<Tree> {
+declare class TabBar extends Control {
   /**
    * If `true`, tabs overflowing this node's width will be hidden, displaying two navigation buttons instead. Otherwise, this node's minimum size is updated so that all tabs are visible.
    */

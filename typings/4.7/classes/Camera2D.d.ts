@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Camera node for 2D scenes. */
-declare class Camera2D<Tree extends object = any> extends Node2D<Tree> {
+declare class Camera2D extends Node2D {
   /** The Camera2D's anchor point. */
   anchor_mode: int;
   /**

@@ -4,7 +4,7 @@
 /**
  * GraphFrame is a special {@link GraphElement} that can be used to organize other {@link GraphElement}s inside a {@link GraphEdit}.
  */
-declare class GraphFrame<Tree extends object = any> extends GraphElement<Tree> {
+declare class GraphFrame extends GraphElement {
   /**
    * If `true`, the frame's rect will be adjusted automatically to enclose all attached {@link GraphElement}s.
    */

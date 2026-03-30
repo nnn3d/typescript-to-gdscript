@@ -2,5 +2,5 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract base class for separators. */
-declare class Separator<Tree extends object = any> extends Control<Tree> {
+declare class Separator extends Control {
 }

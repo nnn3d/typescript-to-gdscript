@@ -5,7 +5,7 @@
  * Application status indicator (aka notification area icon).
  * **Note:** Status indicator is implemented on macOS and Windows.
  */
-declare class StatusIndicator<Tree extends object = any> extends Node<Tree> {
+declare class StatusIndicator extends Node {
   /** Status indicator icon. */
   icon: Texture2D;
   /**

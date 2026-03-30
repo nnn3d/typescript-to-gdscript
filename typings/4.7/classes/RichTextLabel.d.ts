@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A control for displaying text that can contain different font styles, images, and basic formatting. */
-declare class RichTextLabel<Tree extends object = any> extends Control<Tree> {
+declare class RichTextLabel extends Control {
   /**
    * If set to something other than {@link TextServer.AUTOWRAP_OFF}, the text gets wrapped inside the node's bounding rectangle.
    */

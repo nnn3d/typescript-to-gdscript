@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node that provides a polygon shape to a {@link CollisionObject2D} parent. */
-declare class CollisionPolygon2D<Tree extends object = any> extends Node2D<Tree> {
+declare class CollisionPolygon2D extends Node2D {
   /** Collision build mode. */
   build_mode: int;
   /**

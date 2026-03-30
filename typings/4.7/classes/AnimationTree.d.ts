@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node used for advanced animation transitions in an {@link AnimationPlayer}. */
-declare class AnimationTree<Tree extends object = any> extends AnimationMixer<Tree> {
+declare class AnimationTree extends AnimationMixer {
   /**
    * The path to the {@link Node} used to evaluate the {@link AnimationNode} {@link Expression} if one is not explicitly specified internally.
    */

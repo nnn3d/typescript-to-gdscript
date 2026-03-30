@@ -4,7 +4,7 @@
 /**
  * А node that dynamically copies or overrides the 3D transform of a bone in its parent {@link Skeleton3D}.
  */
-declare class BoneAttachment3D<Tree extends object = any> extends Node3D<Tree> {
+declare class BoneAttachment3D extends Node3D {
   /** The index of the attached bone. */
   bone_idx: int;
   /** The name of the attached bone. */

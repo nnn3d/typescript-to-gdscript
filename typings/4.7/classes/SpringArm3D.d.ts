@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 3D raycast that dynamically moves its children near the collision point. */
-declare class SpringArm3D<Tree extends object = any> extends Node3D<Tree> {
+declare class SpringArm3D extends Node3D {
   /**
    * The layers against which the collision check will be done. See Collision layers and masks ($DOCS_URL/tutorials/physics/physics_introduction.html#collision-layers-and-masks) in the documentation for more information.
    */

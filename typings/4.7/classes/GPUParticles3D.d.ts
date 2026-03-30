@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 3D particle emitter. */
-declare class GPUParticles3D<Tree extends object = any> extends GeometryInstance3D<Tree> {
+declare class GPUParticles3D extends GeometryInstance3D {
   /**
    * The number of particles to emit in one emission cycle. The effective emission rate is `(amount * amount_ratio) / lifetime` particles per second. Higher values will increase GPU requirements, even if not all particles are visible at a given time or if {@link amount_ratio} is decreased.
    * **Note:** Changing this value will cause the particle system to restart. To avoid this, change {@link amount_ratio} instead.

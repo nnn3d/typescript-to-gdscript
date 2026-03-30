@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Omnidirectional light, such as a light bulb or a candle. */
-declare class OmniLight3D<Tree extends object = any> extends Light3D<Tree> {
+declare class OmniLight3D extends Light3D {
   /**
    * <member name="omni_attenuation" type="float" setter="set_param" getter="get_param" default="1.0">
    * Controls the distance attenuation function for omnilights.

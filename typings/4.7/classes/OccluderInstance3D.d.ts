@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Provides occlusion culling for 3D nodes, which improves performance in closed areas. */
-declare class OccluderInstance3D<Tree extends object = any> extends VisualInstance3D<Tree> {
+declare class OccluderInstance3D extends VisualInstance3D {
   /**
    * The visual layers to account for when baking for occluders. Only {@link MeshInstance3D}s whose {@link VisualInstance3D.layers} match with this {@link bake_mask} will be included in the generated occluder mesh. By default, all objects with *opaque* materials are taken into account for the occluder baking.
    * To improve performance and avoid artifacts, it is recommended to exclude dynamic objects, small objects and fixtures from the baking process by moving them to a separate visual layer and excluding this layer in {@link bake_mask}.

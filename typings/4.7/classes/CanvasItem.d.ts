@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract base class for everything in 2D space. */
-declare class CanvasItem<Tree extends object = any> extends Node<Tree> {
+declare class CanvasItem extends Node {
   /**
    * The mode in which this node clips its children, acting as a mask.
    * **Note:** Clipping nodes cannot be nested or placed within a {@link CanvasGroup}. If an ancestor of this node clips its children or is a {@link CanvasGroup}, then this node's clip mode should be set to {@link CLIP_CHILDREN_DISABLED} to avoid unexpected behavior.

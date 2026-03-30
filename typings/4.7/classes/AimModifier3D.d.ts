@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** The {@link AimModifier3D} rotates a bone to look at a reference bone. */
-declare class AimModifier3D<Tree extends object = any> extends BoneConstraint3D<Tree> {
+declare class AimModifier3D extends BoneConstraint3D {
   /** The number of settings in the modifier. */
   setting_count: int;
 

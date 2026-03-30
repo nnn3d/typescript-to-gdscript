@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Directional light from a distance, as from the Sun. */
-declare class DirectionalLight3D<Tree extends object = any> extends Light3D<Tree> {
+declare class DirectionalLight3D extends Light3D {
   /**
    * If `true`, shadow detail is sacrificed in exchange for smoother transitions between splits. Enabling shadow blend splitting also has a moderate performance cost. This is ignored when {@link directional_shadow_mode} is {@link SHADOW_ORTHOGONAL}.
    */

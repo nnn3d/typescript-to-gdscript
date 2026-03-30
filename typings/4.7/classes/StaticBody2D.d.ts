@@ -4,7 +4,7 @@
 /**
  * A 2D physics body that can't be moved by external forces. When moved manually, it doesn't affect other bodies in its path.
  */
-declare class StaticBody2D<Tree extends object = any> extends PhysicsBody2D<Tree> {
+declare class StaticBody2D extends PhysicsBody2D {
   /**
    * The body's constant angular velocity. This does not rotate the body, but affects touching bodies, as if it were rotating.
    */

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 3D agent used to pathfind to a position while avoiding obstacles. */
-declare class NavigationAgent3D<Tree extends object = any> extends Node<Tree> {
+declare class NavigationAgent3D extends Node {
   /**
    * If `true` the agent is registered for an RVO avoidance callback on the {@link NavigationServer3D}. When {@link velocity} is set and the processing is completed a `safe_velocity` Vector3 is received with a signal connection to {@link velocity_computed}. Avoidance processing with many registered agents has a significant performance cost and should only be enabled on agents that currently require it.
    */

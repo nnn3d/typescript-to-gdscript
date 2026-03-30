@@ -4,5 +4,5 @@
 /**
  * A container that splits two child controls horizontally and provides a grabber for adjusting the split ratio.
  */
-declare class HSplitContainer<Tree extends object = any> extends SplitContainer<Tree> {
+declare class HSplitContainer extends SplitContainer {
 }

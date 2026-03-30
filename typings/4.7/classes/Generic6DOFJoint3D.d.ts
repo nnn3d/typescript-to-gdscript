@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A physics joint that allows for complex movement and rotation between two 3D physics bodies. */
-declare class Generic6DOFJoint3D<Tree extends object = any> extends Joint3D<Tree> {
+declare class Generic6DOFJoint3D extends Joint3D {
   /**
    * The amount of rotational damping across the X axis.
    * The lower, the longer an impulse from one side takes to travel to the other side.

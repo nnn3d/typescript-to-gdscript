@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Computes and stores baked lightmaps for fast global illumination. */
-declare class LightmapGI<Tree extends object = any> extends VisualInstance3D<Tree> {
+declare class LightmapGI extends VisualInstance3D {
   /**
    * The bias to use when computing shadows. Increasing {@link bias} can fix shadow acne on the resulting baked lightmap, but can introduce peter-panning (shadows not connecting to their casters). Real-time {@link Light3D} shadows are not affected by this {@link bias} property.
    */

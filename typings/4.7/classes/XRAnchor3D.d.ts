@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** An anchor point in AR space. */
-declare class XRAnchor3D<Tree extends object = any> extends XRNode3D<Tree> {
+declare class XRAnchor3D extends XRNode3D {
   /** Returns a plane aligned with our anchor; handy for intersection testing. */
   get_plane(): Plane;
   /**

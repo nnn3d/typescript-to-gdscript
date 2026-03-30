@@ -1,7 +1,7 @@
 // AUTO-GENERATED from Godot class documentation.
 // Manual overrides applied from typings/_overrides/*.d.ts
 
-declare class ImporterMeshInstance3D<Tree extends object = any> extends Node3D<Tree> {
+declare class ImporterMeshInstance3D extends Node3D {
   cast_shadow: int;
   layer_mask: int;
   mesh: ImporterMesh;

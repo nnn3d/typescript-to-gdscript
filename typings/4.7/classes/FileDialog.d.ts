@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A dialog for selecting files or directories in the filesystem. */
-declare class FileDialog<Tree extends object = any> extends ConfirmationDialog<Tree> {
+declare class FileDialog extends ConfirmationDialog {
   /**
    * The file system access scope.
    * **Warning:** In Web builds, FileDialog cannot access the host file system. In sandboxed Linux and macOS environments, {@link use_native_dialog} is automatically used to allow limited access to host file system.

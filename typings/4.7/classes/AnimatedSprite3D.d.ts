@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** 2D sprite node in 3D world, that can use multiple 2D textures for animation. */
-declare class AnimatedSprite3D<Tree extends object = any> extends SpriteBase3D<Tree> {
+declare class AnimatedSprite3D extends SpriteBase3D {
   /**
    * The current animation from the {@link sprite_frames} resource. If this value is changed, the {@link frame} counter and the {@link frame_progress} are reset.
    */

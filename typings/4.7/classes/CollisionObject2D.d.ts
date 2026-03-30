@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract base class for 2D physics objects. */
-declare class CollisionObject2D<Tree extends object = any> extends Node2D<Tree> {
+declare class CollisionObject2D extends Node2D {
   /**
    * The physics layers this CollisionObject2D is in. Collision objects can exist in one or more of 32 different layers. See also {@link collision_mask}.
    * **Note:** Object A can detect a contact with object B only if object B is in any of the layers that object A scans. See Collision layers and masks ($DOCS_URL/tutorials/physics/physics_introduction.html#collision-layers-and-masks) in the documentation for more information.

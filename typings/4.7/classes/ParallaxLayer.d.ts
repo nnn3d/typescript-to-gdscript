@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A parallax scrolling layer to be used with {@link ParallaxBackground}. */
-declare class ParallaxLayer<Tree extends object = any> extends Node2D<Tree> {
+declare class ParallaxLayer extends Node2D {
   /**
    * The interval, in pixels, at which the {@link ParallaxLayer} is drawn repeatedly. Useful for creating an infinitely scrolling background. If an axis is set to `0`, the {@link ParallaxLayer} will be drawn only once along that direction.
    * **Note:** If you want the repetition to pixel-perfect match a {@link Texture2D} displayed by a child node, you should account for any scale applied to the texture when defining this interval. For example, if you use a child {@link Sprite2D} scaled to `0.5` to display a 600x600 texture, and want this sprite to be repeated continuously horizontally, you should set the mirroring to `Vector2(300, 0)`.

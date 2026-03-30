@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container with connection ports, representing a node in a {@link GraphEdit}. */
-declare class GraphNode<Tree extends object = any> extends GraphElement<Tree> {
+declare class GraphNode extends GraphElement {
   /**
    * <member name="ignore_invalid_connection_type" type="bool" setter="set_ignore_invalid_connection_type" getter="is_ignoring_valid_connection_type" default="false">
    * If `true`, you can connect ports with different types, even if the connection was not explicitly allowed in the parent {@link GraphEdit}.

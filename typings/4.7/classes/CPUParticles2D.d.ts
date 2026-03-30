@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A CPU-based 2D particle emitter. */
-declare class CPUParticles2D<Tree extends object = any> extends Node2D<Tree> {
+declare class CPUParticles2D extends Node2D {
   /** Number of particles emitted in one emission cycle. */
   amount: int;
   /** Each particle's rotation will be animated along this {@link Curve}. Should be a unit {@link Curve}. */

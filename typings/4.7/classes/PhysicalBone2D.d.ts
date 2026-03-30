@@ -4,7 +4,7 @@
 /**
  * A {@link RigidBody2D}-derived node used to make {@link Bone2D}s in a {@link Skeleton2D} react to physics.
  */
-declare class PhysicalBone2D<Tree extends object = any> extends RigidBody2D<Tree> {
+declare class PhysicalBone2D extends RigidBody2D {
   /**
    * If `true`, the {@link PhysicalBone2D} will automatically configure the first {@link Joint2D} child node. The automatic configuration is limited to setting up the node properties and positioning the {@link Joint2D}.
    */

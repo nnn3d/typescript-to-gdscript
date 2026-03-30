@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A traversable 2D region that {@link NavigationAgent2D}s can use for pathfinding. */
-declare class NavigationRegion2D<Tree extends object = any> extends Node2D<Tree> {
+declare class NavigationRegion2D extends Node2D {
   /** Determines if the {@link NavigationRegion2D} is enabled or disabled. */
   enabled: boolean;
   /**

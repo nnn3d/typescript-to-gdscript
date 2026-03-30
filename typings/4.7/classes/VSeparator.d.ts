@@ -2,5 +2,5 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A vertical line used for separating other controls. */
-declare class VSeparator<Tree extends object = any> extends Separator<Tree> {
+declare class VSeparator extends Separator {
 }

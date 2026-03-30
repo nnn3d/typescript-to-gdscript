@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Base editor for editing scripts in the {@link ScriptEditor}. */
-declare class ScriptEditorBase<Tree extends object = any> extends VBoxContainer<Tree> {
+declare class ScriptEditorBase extends VBoxContainer {
   /** Adds an {@link EditorSyntaxHighlighter} to the open script. */
   add_syntax_highlighter(highlighter: EditorSyntaxHighlighter): void;
   /**

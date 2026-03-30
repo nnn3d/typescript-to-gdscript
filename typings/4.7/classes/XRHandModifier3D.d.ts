@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node for driving hand meshes from {@link XRHandTracker} data. */
-declare class XRHandModifier3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
+declare class XRHandModifier3D extends SkeletonModifier3D {
   /** Specifies the type of updates to perform on the bones. */
   bone_update: int;
   /**

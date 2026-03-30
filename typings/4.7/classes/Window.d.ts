@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Base class for all windows, dialogs, and popups. */
-declare class Window<Tree extends object = any> extends Viewport<Tree> {
+declare class Window extends Viewport {
   /** The human-readable node description that is reported to assistive apps. */
   accessibility_description: string;
   /** The human-readable node name that is reported to assistive apps. */

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Node used for displaying a {@link Mesh} in 2D. */
-declare class MeshInstance2D<Tree extends object = any> extends Node2D<Tree> {
+declare class MeshInstance2D extends Node2D {
   /** The {@link Mesh} that will be drawn by the {@link MeshInstance2D}. */
   mesh: Mesh;
   /**

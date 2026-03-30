@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A control used for video playback. */
-declare class VideoStreamPlayer<Tree extends object = any> extends Control<Tree> {
+declare class VideoStreamPlayer extends Control {
   /** The embedded audio track to play. */
   audio_track: int;
   /** If `true`, playback starts when the scene loads. */

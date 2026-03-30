@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract base class for sliders. */
-declare class Slider<Tree extends object = any> extends Range<Tree> {
+declare class Slider extends Range {
   /** If `true`, the slider can be interacted with. If `false`, the value can be changed only by code. */
   editable: boolean;
   /**

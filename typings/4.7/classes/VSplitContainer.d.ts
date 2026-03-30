@@ -4,5 +4,5 @@
 /**
  * A container that splits two child controls vertically and provides a grabber for adjusting the split ratio.
  */
-declare class VSplitContainer<Tree extends object = any> extends SplitContainer<Tree> {
+declare class VSplitContainer extends SplitContainer {
 }

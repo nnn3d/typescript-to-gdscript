@@ -4,7 +4,7 @@
 /**
  * A physics joint that attaches two 3D physics bodies at a single point, allowing them to freely rotate.
  */
-declare class PinJoint3D<Tree extends object = any> extends Joint3D<Tree> {
+declare class PinJoint3D extends Joint3D {
   /**
    * The force with which the pinned objects stay in positional relation to each other. The higher, the stronger.
    */

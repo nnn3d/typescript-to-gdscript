@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A control used to edit properties of an object. */
-declare class EditorInspector<Tree extends object = any> extends ScrollContainer<Tree> {
+declare class EditorInspector extends ScrollContainer {
   draw_focus_border: boolean;
   focus_mode: int;
   follow_focus: boolean;

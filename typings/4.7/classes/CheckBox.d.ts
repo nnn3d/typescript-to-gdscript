@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A button that represents a binary choice. */
-declare class CheckBox<Tree extends object = any> extends Button<Tree> {
+declare class CheckBox extends Button {
   alignment: int;
   toggle_mode: boolean;
 }

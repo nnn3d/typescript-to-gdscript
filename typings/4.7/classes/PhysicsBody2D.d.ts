@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract base class for 2D game objects affected by physics. */
-declare class PhysicsBody2D<Tree extends object = any> extends CollisionObject2D<Tree> {
+declare class PhysicsBody2D extends CollisionObject2D {
   input_pickable: boolean;
 
   /** Adds a body to the list of bodies that this body can't collide with. */

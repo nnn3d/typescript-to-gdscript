@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node for inverse kinematics which may modify more than one bone. */
-declare class IKModifier3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
+declare class IKModifier3D extends SkeletonModifier3D {
   /**
    * If `true`, the solver retrieves the bone axis from the bone pose every frame.
    * If `false`, the solver retrieves the bone axis from the bone rest and caches it, which increases performance slightly, but position changes in the bone pose made before processing this {@link IKModifier3D} are ignored.

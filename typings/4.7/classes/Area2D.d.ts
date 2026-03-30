@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A region of 2D space that detects other {@link CollisionObject2D}s entering or exiting it. */
-declare class Area2D<Tree extends object = any> extends CollisionObject2D<Tree> {
+declare class Area2D extends CollisionObject2D {
   /**
    * The rate at which objects stop spinning in this area. Represents the angular velocity lost per second.
    * See {@link ProjectSettings.physics/2d/default_angular_damp} for more details about damping.

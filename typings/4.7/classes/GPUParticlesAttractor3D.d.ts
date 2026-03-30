@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract base class for 3D particle attractors. */
-declare class GPUParticlesAttractor3D<Tree extends object = any> extends VisualInstance3D<Tree> {
+declare class GPUParticlesAttractor3D extends VisualInstance3D {
   /**
    * The particle attractor's attenuation. Higher values result in more gradual pushing of particles as they come closer to the attractor's origin. Zero or negative values will cause particles to be pushed very fast as soon as the touch the attractor's edges.
    */

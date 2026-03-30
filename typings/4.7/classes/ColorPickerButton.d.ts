@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A button that brings up a {@link ColorPicker} when pressed. */
-declare class ColorPickerButton<Tree extends object = any> extends Button<Tree> {
+declare class ColorPickerButton extends Button {
   /** The currently selected color. */
   color: Color;
   /** If `true`, the alpha channel in the displayed {@link ColorPicker} will be visible. */

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node used to preload sub-resources inside a scene. */
-declare class ResourcePreloader<Tree extends object = any> extends Node<Tree> {
+declare class ResourcePreloader extends Node {
   /**
    * Adds a resource to the preloader with the given `name`. If a resource with the given `name` already exists, the new resource will be renamed to "`name` N" where N is an incrementing number starting from 2.
    */

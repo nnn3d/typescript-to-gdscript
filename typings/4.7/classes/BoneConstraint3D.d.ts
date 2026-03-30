@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node that may modify Skeleton3D's bone with associating the two bones. */
-declare class BoneConstraint3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
+declare class BoneConstraint3D extends SkeletonModifier3D {
   /** Clear all settings. */
   clear_setting(): void;
   /** Returns the apply amount of the setting at `index`. */

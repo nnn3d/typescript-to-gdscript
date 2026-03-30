@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node used to create a parallax scrolling background. */
-declare class ParallaxBackground<Tree extends object = any> extends CanvasLayer<Tree> {
+declare class ParallaxBackground extends CanvasLayer {
   /**
    * <member name="scroll_base_offset" type="Vector2" setter="set_scroll_base_offset" getter="get_scroll_base_offset" default="Vector2(0, 0)">
    * The base position offset for all {@link ParallaxLayer} children.

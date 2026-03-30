@@ -48,11 +48,9 @@ declare function NodePath(value: string): string;
 // ─── Node Tree Symbols ───────────────────────────────────────
 // Used by scene typings to encode parent-child relationships in Node<Tree> generics.
 
-/** Symbol key for parent node reference in tree types */
-declare const __parent: unique symbol;
-declare const __script_tree: unique symbol;
-/** Symbol key for ordered children tuple in tree types (for typed get_child) */
-declare const __children: unique symbol;
+declare const __node_type: unique symbol;
+declare const __node_children: unique symbol;
+declare const __node_parent: unique symbol;
 
 // ─── Operator Symbols ─────────────────────────────────────────
 // Unique symbols used as branded keys for operator overload dispatch.

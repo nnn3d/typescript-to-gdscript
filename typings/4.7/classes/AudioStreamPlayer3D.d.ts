@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Plays positional sound in 3D space. */
-declare class AudioStreamPlayer3D<Tree extends object = any> extends Node3D<Tree> {
+declare class AudioStreamPlayer3D extends Node3D {
   /**
    * Determines which {@link Area3D} layers affect the sound for reverb and audio bus effects. Areas can be used to redirect {@link AudioStream}s so that they play in a certain audio bus. An example of how you might use this is making a "water" area so that sounds played in the water are redirected through an audio bus to make them sound like they are being played underwater.
    */

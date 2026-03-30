@@ -2,5 +2,5 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container that keeps a margin around its child controls. */
-declare class MarginContainer<Tree extends object = any> extends Container<Tree> {
+declare class MarginContainer extends Container {
 }

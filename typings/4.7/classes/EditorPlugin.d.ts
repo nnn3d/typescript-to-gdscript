@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Used by the editor to extend its functionality. */
-declare class EditorPlugin<Tree extends object = any> extends Node<Tree> {
+declare class EditorPlugin extends Node {
   /**
    * This method is called when the editor is about to save the project, switch to another tab, etc. It asks the plugin to apply any pending state changes to ensure consistency.
    * This is used, for example, in shader editors to let the plugin know that it must apply the shader code being written by the user to the object.

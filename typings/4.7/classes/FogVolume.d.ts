@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A region that contributes to the default volumetric fog from the world environment. */
-declare class FogVolume<Tree extends object = any> extends VisualInstance3D<Tree> {
+declare class FogVolume extends VisualInstance3D {
   /**
    * The {@link Material} used by the {@link FogVolume}. Can be either a built-in {@link FogMaterial} or a custom {@link ShaderMaterial}.
    */

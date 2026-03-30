@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node with the ability to send HTTP(S) requests. */
-declare class HTTPRequest<Tree extends object = any> extends Node<Tree> {
+declare class HTTPRequest extends Node {
   /**
    * If `true`, this header will be added to each request: `Accept-Encoding: gzip, deflate` telling servers that it's okay to compress response bodies.
    * Any Response body declaring a `Content-Encoding` of either `gzip` or `deflate` will then be automatically decompressed, and the uncompressed bytes will be delivered via {@link request_completed}.

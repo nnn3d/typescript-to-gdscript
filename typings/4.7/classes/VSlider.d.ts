@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A vertical slider that goes from bottom (min) to top (max). */
-declare class VSlider<Tree extends object = any> extends Slider<Tree> {
+declare class VSlider extends Slider {
   size_flags_horizontal: int;
   size_flags_vertical: int;
 }

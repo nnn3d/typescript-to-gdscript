@@ -4,7 +4,7 @@
 /**
  * A box-shaped attractor with varying directions and strengths defined in it that influences particles from {@link GPUParticles3D} nodes.
  */
-declare class GPUParticlesAttractorVectorField3D<Tree extends object = any> extends GPUParticlesAttractor3D<Tree> {
+declare class GPUParticlesAttractorVectorField3D extends GPUParticlesAttractor3D {
   /** The size of the vector field box in 3D units. */
   size: Vector3;
   /**

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node used for animation playback. */
-declare class AnimationPlayer<Tree extends object = any> extends AnimationMixer<Tree> {
+declare class AnimationPlayer extends AnimationMixer {
   /**
    * If playing, the current animation's key, otherwise, the animation last played. When set, this changes the animation, but will not play it unless already playing. See also {@link current_animation}.
    */

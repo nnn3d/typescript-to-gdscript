@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Node for 2D tile-based maps. */
-declare class TileMap<Tree extends object = any> extends Node2D<Tree> {
+declare class TileMap extends Node2D {
   /**
    * If enabled, the TileMap will see its collisions synced to the physics tick and change its collision type from static to kinematic. This is required to create TileMap-based moving platform.
    * **Note:** Enabling {@link collision_animatable} may have a small performance impact, only do it if the TileMap is moving and has colliding tiles.

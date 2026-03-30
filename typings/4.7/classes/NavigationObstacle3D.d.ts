@@ -4,7 +4,7 @@
 /**
  * 3D obstacle used to affect navigation mesh baking or constrain velocities of avoidance controlled agents.
  */
-declare class NavigationObstacle3D<Tree extends object = any> extends Node3D<Tree> {
+declare class NavigationObstacle3D extends Node3D {
   /**
    * If enabled and parsed in a navigation mesh baking process the obstacle will discard source geometry inside its {@link vertices} and {@link height} defined shape.
    */

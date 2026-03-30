@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Dockable container for the editor. */
-declare class EditorDock<Tree extends object = any> extends MarginContainer<Tree> {
+declare class EditorDock extends MarginContainer {
   /**
    * The available layouts for this dock, as a bitmask. By default, the dock allows vertical and floating layouts.
    */

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A dialog used for confirmation of actions. */
-declare class ConfirmationDialog<Tree extends object = any> extends AcceptDialog<Tree> {
+declare class ConfirmationDialog extends AcceptDialog {
   /** The text displayed by the cancel button (see {@link get_cancel_button}). */
   cancel_button_text: string;
   min_size: Vector2i;

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Node for 2D tile-based maps. */
-declare class TileMapLayer<Tree extends object = any> extends Node2D<Tree> {
+declare class TileMapLayer extends Node2D {
   /** Enable or disable collisions. */
   collision_enabled: boolean;
   /**

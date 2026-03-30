@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract base class for 3D particle collision shapes affecting {@link GPUParticles3D} nodes. */
-declare class GPUParticlesCollision3D<Tree extends object = any> extends VisualInstance3D<Tree> {
+declare class GPUParticlesCollision3D extends VisualInstance3D {
   /**
    * The particle rendering layers ({@link VisualInstance3D.layers}) that will be affected by the collision shape. By default, all particles that have {@link ParticleProcessMaterial.collision_mode} set to {@link ParticleProcessMaterial.COLLISION_RIGID} or {@link ParticleProcessMaterial.COLLISION_HIDE_ON_CONTACT} will be affected by a collision shape.
    * After configuring particle nodes accordingly, specific layers can be unchecked to prevent certain particles from being affected by colliders. For example, this can be used if you're using a collider as part of a spell effect but don't want the collider to affect unrelated weather particles at the same position.

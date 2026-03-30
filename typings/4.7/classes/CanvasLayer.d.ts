@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node used for independent rendering of objects within a 2D scene. */
-declare class CanvasLayer<Tree extends object = any> extends Node<Tree> {
+declare class CanvasLayer extends Node {
   /**
    * The custom {@link Viewport} node assigned to the {@link CanvasLayer}. If `null`, uses the default viewport instead.
    */

@@ -2,5 +2,5 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node used to override global shader parameters' values in a scene. */
-declare class ShaderGlobalsOverride<Tree extends object = any> extends Node<Tree> {
+declare class ShaderGlobalsOverride extends Node {
 }

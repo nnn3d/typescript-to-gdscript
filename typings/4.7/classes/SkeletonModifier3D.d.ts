@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node that may modify a Skeleton3D's bones. */
-declare class SkeletonModifier3D<Tree extends object = any> extends Node3D<Tree> {
+declare class SkeletonModifier3D extends Node3D {
   /** If `true`, the {@link SkeletonModifier3D} will be processing. */
   active: boolean;
   /**

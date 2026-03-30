@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Base class for all GUI containers. */
-declare class Container<Tree extends object = any> extends Control<Tree> {
+declare class Container extends Control {
   /**
    * If `true`, this container is marked as a region for accessibility. Use {@link Control.accessibility_name} to give the region a descriptive name. Screen readers can navigate between regions using landmark navigation.
    */

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Limit bone rotation angular velocity. */
-declare class LimitAngularVelocityModifier3D<Tree extends object = any> extends SkeletonModifier3D<Tree> {
+declare class LimitAngularVelocityModifier3D extends SkeletonModifier3D {
   /** The number of chains. */
   chain_count: int;
   /**

@@ -4,7 +4,7 @@
 /**
  * Default environment properties for the entire scene (post-processing effects, lighting and background settings).
  */
-declare class WorldEnvironment<Tree extends object = any> extends Node<Tree> {
+declare class WorldEnvironment extends Node {
   /** The default {@link CameraAttributes} resource to use if none set on the {@link Camera3D}. */
   camera_attributes: CameraAttributes;
   /** The default {@link Compositor} resource to use if none set on the {@link Camera3D}. */

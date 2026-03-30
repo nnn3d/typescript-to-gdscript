@@ -2,5 +2,5 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container that arranges its child controls horizontally and wraps them around at the borders. */
-declare class HFlowContainer<Tree extends object = any> extends FlowContainer<Tree> {
+declare class HFlowContainer extends FlowContainer {
 }

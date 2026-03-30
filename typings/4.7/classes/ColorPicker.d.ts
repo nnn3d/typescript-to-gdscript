@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A widget that provides an interface for selecting or modifying a color. */
-declare class ColorPicker<Tree extends object = any> extends VBoxContainer<Tree> {
+declare class ColorPicker extends VBoxContainer {
   /**
    * If `true`, it's possible to add presets under Swatches. If `false`, the button to add presets is disabled.
    */

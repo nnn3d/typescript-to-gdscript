@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Abstract base class for GUI buttons. */
-declare class BaseButton<Tree extends object = any> extends Control<Tree> {
+declare class BaseButton extends Control {
   /** Determines when the button is considered clicked. */
   action_mode: int;
   /**

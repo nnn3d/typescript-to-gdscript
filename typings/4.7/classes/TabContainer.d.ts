@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A container that creates a tab for each child control, displaying only the active tab's control. */
-declare class TabContainer<Tree extends object = any> extends Container<Tree> {
+declare class TabContainer extends Container {
   /**
    * If `true`, all tabs are drawn in front of the panel. If `false`, inactive tabs are drawn behind the panel.
    */

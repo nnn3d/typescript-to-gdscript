@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A control for displaying plain text. */
-declare class Label<Tree extends object = any> extends Control<Tree> {
+declare class Label extends Control {
   /**
    * If set to something other than {@link TextServer.AUTOWRAP_OFF}, the text gets wrapped inside the node's bounding rectangle. If you resize the node, it will change its height automatically to show all the text.
    */

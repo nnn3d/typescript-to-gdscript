@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A 2D game object, inherited by all 2D-related nodes. Has a position, rotation, scale, and skew. */
-declare class Node2D<Tree extends object = any> extends CanvasItem<Tree> {
+declare class Node2D extends CanvasItem {
   /** Global position. See also {@link position}. */
   global_position: Vector2;
   /** Global rotation in radians. See also {@link rotation}. */

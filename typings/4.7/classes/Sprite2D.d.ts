@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** General-purpose sprite node. */
-declare class Sprite2D<Tree extends object = any> extends Node2D<Tree> {
+declare class Sprite2D extends Node2D {
   /**
    * If `true`, texture is centered.
    * **Note:** For games with a pixel art aesthetic, textures may appear deformed when centered. This is caused by their position being between pixels. To prevent this, set this property to `false`, or consider enabling {@link ProjectSettings.rendering/2d/snap/snap_2d_vertices_to_pixel} and {@link ProjectSettings.rendering/2d/snap/snap_2d_transforms_to_pixel}.

@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** A node used to generate previews of resources or files. */
-declare class EditorResourcePreview<Tree extends object = any> extends Node<Tree> {
+declare class EditorResourcePreview extends Node {
   /** Create an own, custom preview generator. */
   add_preview_generator(generator: EditorResourcePreviewGenerator): void;
   /** Check if the resource changed, if so, it will be invalidated and the corresponding signal emitted. */
