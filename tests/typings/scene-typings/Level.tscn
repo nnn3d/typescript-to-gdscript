@@ -21,6 +21,8 @@ script = ExtResource("1")
 
 [node name="ScoreLabel" type="Label" parent="UI"]
 
+[node name="ScoreSprite" type="Sprite2D" parent="UI/ScoreLabel"]
+
 [node name="TilesetObjectsMap" parent="." instance=ExtResource("4")]
 
 [node name="Level2" parent="." instance=ExtResource("5")]

@@ -55,5 +55,11 @@ export class Level extends Node2D {
 
     // get_parent() on deep path result: HealthBar's parent is Player
     let playerFromChild: Player = deepScriptSceneNode.get_parent();
+
+    let t = this.get_node('UI/ScoreLabel');
+
+    let checkDeepTree1: Label = this.get_node('UI/ScoreLabel').get_parent().get_node('ScoreLabel');
+    let checkDeepTree2: Sprite2D = this.get_node('UI/ScoreLabel').get_node('ScoreSprite');
+    let checkDeepTree3: Label = this.get_node('UI/ScoreLabel').get_node('ScoreSprite').get_parent();
   }
 }

@@ -10,7 +10,7 @@ declare module "../Ball.ts" {
   interface Ball {
     get_node<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): _GDGetNode<_BallSceneNodes, P>;
     get_node(path: string): Node;
-    get_node_or_null<P extends keyof _BallSceneNodes>(path: P): _BallSceneNodes[P] | null;
+    get_node_or_null<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): _GDGetNode<_BallSceneNodes, P> | null;
     get_node_or_null(path: string): Node | null;
     has_node<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): true;
     has_node(path: string): boolean;

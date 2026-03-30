@@ -59,11 +59,12 @@ describe('Scene typings generation', () => {
     expect(playerScene).toContain('interface _PlayerTscn_Tree');
 
     // Direct children get [__parent] pointing to script class alias
-    expect(playerScene).toContain('"Sprite2D": Sprite2D<{[__parent]: _Player}>;');
+    // Sprite2D has a subtree with AnimationPlayer embedded in its generic
+    expect(playerScene).toContain('"Sprite2D": Sprite2D<{[__parent]: _Player; "AnimationPlayer": AnimationPlayer<{[__parent]: _PlayerTscn_Tree["Sprite2D"]}>}>;');
     expect(playerScene).toContain('"CollisionShape2D": CollisionShape2D<{[__parent]: _Player}>;');
 
-    // Nested path: AnimationPlayer's parent is Sprite2D (intermediate node), not Player
-    expect(playerScene).toContain('"Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: Sprite2D}>;');
+    // Flat path also present for direct key lookup by _GDGetNodeByPath
+    expect(playerScene).toContain('"Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: _PlayerTscn_Tree["Sprite2D"]}>;');
 
     // Unique nodes (%Name) also get [__parent] pointing to script class
     expect(playerScene).toContain('"%HealthBar": ProgressBar<{[__parent]: _Player}>;');
@@ -75,7 +76,7 @@ describe('Scene typings generation', () => {
     expect(playerScript).toContain('declare module "../Player.ts"');
     expect(playerScript).toContain('interface Player');
     expect(playerScript).toContain('get_node<P extends string & _GDGetTreePaths<_PlayerSceneNodes>>(path: P): _GDGetNode<_PlayerSceneNodes, P>');
-    expect(playerScript).toContain('get_node_or_null<P extends keyof _PlayerSceneNodes');
+    expect(playerScript).toContain('get_node_or_null<P extends string & _GDGetTreePaths<_PlayerSceneNodes>>(path: P): _GDGetNode<_PlayerSceneNodes, P> | null');
   });
 
   it('should generate scene tree interfaces for scripts used in multiple scenes', () => {
@@ -111,9 +112,11 @@ describe('Scene typings generation', () => {
     expect(levelScene).toContain('"TilesetObjects": _TilesetObjectsTscn;');
     // Regular Godot built-in child gets [__parent]
     expect(levelScene).toContain('"Background": Sprite2D<{[__parent]: _Level}>;');
-    // Nested children under non-script intermediate nodes
-    expect(levelScene).toContain('"UI": CanvasLayer<{[__parent]: _Level}>;');
-    expect(levelScene).toContain('"UI/ScoreLabel": Label<{[__parent]: CanvasLayer}>;');
+    // Nested children under non-script intermediate nodes — subtrees embedded in generics
+    expect(levelScene).toContain('"UI": CanvasLayer<{[__parent]: _Level; "ScoreLabel": Label<{[__parent]: _LevelTscn_Tree["UI"]; "ScoreSprite": Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>}>}>');
+    // Flat paths also present for direct key lookup by _GDGetNodeByPath
+    expect(levelScene).toContain('"UI/ScoreLabel": Label<{[__parent]: _LevelTscn_Tree["UI"]');
+    expect(levelScene).toContain('"UI/ScoreLabel/ScoreSprite": Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>;');
 
     // Level script: scene nodes extends multiple scene trees (Level.tscn, ALevel.tscn, Level1.tscn)
     expect(levelScript).toContain('interface _LevelSceneNodes extends');
@@ -154,17 +157,17 @@ describe('Scene typings generation', () => {
     // BaseCharacter has no scene but Player and Enemy extend it
     expect(baseCharScript).toContain('interface _BaseCharacterSceneNodes');
 
-    // Sprite2D is in both Player and Enemy → no null
-    expect(baseCharScript).toMatch(/"Sprite2D": Sprite2D<\{\[__parent\]: _BaseCharacter\}>;/);
+    // Sprite2D is in both Player and Enemy → no null (has nested AnimationPlayer subtree)
+    expect(baseCharScript).toContain('"Sprite2D": Sprite2D<{[__parent]: _BaseCharacter; "AnimationPlayer": AnimationPlayer<{[__parent]: _BaseCharacterSceneNodes["Sprite2D"]}>}>;');
 
-    // Sprite2D/AnimationPlayer is in both → no null
-    expect(baseCharScript).toMatch(/"Sprite2D\/AnimationPlayer": AnimationPlayer<\{\[__parent\]: Sprite2D\}>;/);
+    // Sprite2D/AnimationPlayer flat path for direct key lookup
+    expect(baseCharScript).toContain('"Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: _BaseCharacterSceneNodes["Sprite2D"]}>;');
 
     // CollisionShape2D is only in Player → | null
-    expect(baseCharScript).toMatch(/"CollisionShape2D": CollisionShape2D<\{\[__parent\]: _BaseCharacter\}> \| null;/);
+    expect(baseCharScript).toContain('"CollisionShape2D": CollisionShape2D<{[__parent]: _BaseCharacter}> | null;');
 
-    // HitBox is only in Enemy → | null
-    expect(baseCharScript).toMatch(/"HitBox": Area2D<\{\[__parent\]: _BaseCharacter\}> \| null;/);
+    // HitBox is only in Enemy → | null (has nested CollisionShape2D subtree)
+    expect(baseCharScript).toContain('"HitBox": Area2D<{[__parent]: _BaseCharacter; "CollisionShape2D": CollisionShape2D<{[__parent]: _BaseCharacterSceneNodes["HitBox"]}> | null}> | null;');
 
     // Module augmentation for BaseCharacter
     expect(baseCharScript).toContain('declare module "../BaseCharacter.ts"');

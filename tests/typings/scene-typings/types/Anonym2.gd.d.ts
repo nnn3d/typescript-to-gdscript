@@ -9,7 +9,7 @@ declare module "../Anonym2.ts" {
   interface __CLASS__ {
     get_node<P extends string & _GDGetTreePaths<_Anonym2SceneNodes>>(path: P): _GDGetNode<_Anonym2SceneNodes, P>;
     get_node(path: string): Node;
-    get_node_or_null<P extends keyof _Anonym2SceneNodes>(path: P): _Anonym2SceneNodes[P] | null;
+    get_node_or_null<P extends string & _GDGetTreePaths<_Anonym2SceneNodes>>(path: P): _GDGetNode<_Anonym2SceneNodes, P> | null;
     get_node_or_null(path: string): Node | null;
     has_node<P extends string & _GDGetTreePaths<_Anonym2SceneNodes>>(path: P): true;
     has_node(path: string): boolean;

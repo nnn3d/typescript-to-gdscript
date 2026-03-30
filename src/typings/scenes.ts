@@ -657,12 +657,13 @@ function resolveChildParentType(
     : 'Node';
 }
 
-/** Annotate a raw type string with [__parent] and [__script_tree] */
+/** Annotate a raw type string with [__parent], [__script_tree], and nested subtree entries */
 function annotateChildType(
   type: string,
   parentType: string,
   userClassTypes: Set<string>,
   typeToSceneNodes: Map<string, string>,
+  subtreeEntries?: Array<{ name: string; annotatedType: string }>,
 ): string {
   return type.split(' | ').map(t => {
     if (t === 'null') return 'null';
@@ -671,7 +672,13 @@ function annotateChildType(
       if (sceneNodesName) return `${t} & {[__script_tree]: ${sceneNodesName}}`;
       return t;
     }
-    return `${t}<{[__parent]: ${parentType}}>`;
+    const entries: string[] = [`[__parent]: ${parentType}`];
+    if (subtreeEntries) {
+      for (const child of subtreeEntries) {
+        entries.push(`"${child.name}": ${child.annotatedType}`);
+      }
+    }
+    return `${t}<{${entries.join('; ')}}>`;
   }).join(' | ');
 }
 
@@ -1318,21 +1325,62 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
     writtenFiles.push(filePath);
   }
 
-  /** Build annotated children list from a raw children map */
+  /** Build annotated children list from a raw children map.
+   *  Intermediate (non-user-class) nodes get nested subtrees in their generic parameter,
+   *  enabling chained get_node/get_parent on intermediate nodes.
+   *  @param treeName - Name of the tree interface (e.g. "_LevelTscn_Tree") for parent references.
+   *    When set, nested children use `TreeName["ParentPath"]` as [__parent] so chained
+   *    get_node/get_parent on intermediate nodes resolves to the full annotated type. */
   function buildAnnotatedChildren(
     childrenMap: Map<string, string>,
     defaultParent: string,
+    treeName?: string,
   ): Array<{ path: string; annotatedType: string }> {
     // Build lookup for parent resolution
     const childTypeMap = new Map<string, string>();
     for (const [path, type] of childrenMap) {
       childTypeMap.set(path, type);
     }
+
+    /** Resolve the parent type for a child path.
+     *  For nested paths with a treeName, uses tree member reference so the parent
+     *  carries its full subtree (e.g. `_LevelTscn_Tree["UI"]` instead of raw `CanvasLayer`). */
+    function resolveParent(path: string): string {
+      if (path.startsWith('%') || !path.includes('/')) return defaultParent;
+      const parentPath = path.substring(0, path.lastIndexOf('/'));
+      if (treeName && childTypeMap.has(parentPath)) {
+        // Use tree interface member reference for full annotated parent type (lazy lookup)
+        return `${treeName}["${parentPath}"]`;
+      }
+      return resolveChildParentType(path, childTypeMap, defaultParent);
+    }
+
+    /** Recursively annotate a node, embedding its immediate children as subtree entries */
+    function annotateNode(path: string, type: string): string {
+      const parentType = resolveParent(path);
+      // Find immediate children of this path (one level deeper, no further nesting)
+      const prefix = path + '/';
+      const immediateChildren: Array<{ name: string; annotatedType: string }> = [];
+      for (const [childPath, childType] of childrenMap) {
+        if (!childPath.startsWith(prefix)) continue;
+        const rest = childPath.substring(prefix.length);
+        // Only immediate children (no further '/' in the rest)
+        if (rest.includes('/')) continue;
+        immediateChildren.push({
+          name: rest,
+          annotatedType: annotateNode(childPath, childType),
+        });
+      }
+
+      return annotateChildType(
+        type, parentType, userClassTypes, typeToSceneNodes,
+        immediateChildren.length > 0 ? immediateChildren : undefined,
+      );
+    }
+
     const result: Array<{ path: string; annotatedType: string }> = [];
     for (const [path, type] of childrenMap) {
-      const parentType = resolveChildParentType(path, childTypeMap, defaultParent);
-      const at = annotateChildType(type, parentType, userClassTypes, typeToSceneNodes);
-      result.push({ path, annotatedType: at });
+      result.push({ path, annotatedType: annotateNode(path, type) });
     }
     return result;
   }
@@ -1445,11 +1493,10 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
         lines.push(`  [__parent]: ${parentType};`);
       }
 
-      if (slData.sceneMap) {
-        for (const [path, type] of slData.sceneMap) {
-          const childParentType = resolveChildParentType(path, childTypeMap, slData.alias);
-          const at = annotateChildType(type, childParentType, userClassTypes, typeToSceneNodes);
-          lines.push(`  "${path}": ${at};`);
+      if (slData.sceneMap && slData.sceneMap.size > 0) {
+        const annotated = buildAnnotatedChildren(slData.sceneMap, slData.alias);
+        for (const { path, annotatedType } of annotated) {
+          lines.push(`  "${path}": ${annotatedType};`);
         }
       }
 
@@ -1530,9 +1577,12 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
 
     lines.push('');
 
-    // Emit tree interface
+    // Emit tree interface with all entries (including flat paths for nested children).
+    // Flat paths are needed for _GDGetNodeByPath direct key lookup — removing them
+    // forces _GDGetItemTree inference on self-referencing interface members, which
+    // causes TypeScript to bail on circular type resolution.
     if (childrenMap && childrenMap.size > 0) {
-      const annotated = buildAnnotatedChildren(childrenMap, rootAliasEntry.alias);
+      const annotated = buildAnnotatedChildren(childrenMap, rootAliasEntry.alias, treeName);
       lines.push(`export interface ${treeName} {`);
       for (const { path, annotatedType } of annotated) {
         lines.push(`  "${path}": ${annotatedType};`);
@@ -1651,15 +1701,14 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       } else {
         // Fallback: inline merged children (sub-script occurrences or edge cases)
         const mergedChildren = mergeSceneChildren(data!.sceneMaps);
-        const childTypeMap = new Map<string, string>();
+        const mergedMap = new Map<string, string>();
         for (const { path, type } of mergedChildren) {
-          childTypeMap.set(path, type);
+          mergedMap.set(path, type);
         }
+        const annotated = buildAnnotatedChildren(mergedMap, aliasEntry.alias, nodesName);
         lines.push(`export interface ${nodesName} {`);
-        for (const { path, type } of mergedChildren) {
-          const parentType = resolveChildParentType(path, childTypeMap, aliasEntry.alias);
-          const at = annotateChildType(type, parentType, userClassTypes, typeToSceneNodes);
-          lines.push(`  "${path}": ${at};`);
+        for (const { path, annotatedType } of annotated) {
+          lines.push(`  "${path}": ${annotatedType};`);
         }
         lines.push('}');
       }
@@ -1672,7 +1721,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       lines.push(`  interface ${aliasEntry.className} {`);
       lines.push(`    get_node<P extends string & _GDGetTreePaths<${nodesName}>>(path: P): _GDGetNode<${nodesName}, P>;`);
       lines.push(`    get_node(path: string): Node;`);
-      lines.push(`    get_node_or_null<P extends keyof ${nodesName}>(path: P): ${nodesName}[P] | null;`);
+      lines.push(`    get_node_or_null<P extends string & _GDGetTreePaths<${nodesName}>>(path: P): _GDGetNode<${nodesName}, P> | null;`);
       lines.push(`    get_node_or_null(path: string): Node | null;`);
       lines.push(`    has_node<P extends string & _GDGetTreePaths<${nodesName}>>(path: P): true;`);
       lines.push(`    has_node(path: string): boolean;`);
