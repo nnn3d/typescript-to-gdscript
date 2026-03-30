@@ -59,8 +59,8 @@ describe('Scene typings generation', () => {
     expect(playerScene).toContain('interface _PlayerTscn_Tree');
 
     // Direct children get [__parent] pointing to script class alias
-    // Sprite2D has a subtree with AnimationPlayer embedded in its generic
-    expect(playerScene).toContain('"Sprite2D": Sprite2D<{[__parent]: _Player; "AnimationPlayer": AnimationPlayer<{[__parent]: _PlayerTscn_Tree["Sprite2D"]}>}>;');
+    // Sprite2D has a subtree with AnimationPlayer embedded in its generic, including [__children]
+    expect(playerScene).toContain('"Sprite2D": Sprite2D<{[__parent]: _Player; [__children]: [AnimationPlayer<{[__parent]: _PlayerTscn_Tree["Sprite2D"]}>]; "AnimationPlayer": AnimationPlayer<{[__parent]: _PlayerTscn_Tree["Sprite2D"]}>}>;');
     expect(playerScene).toContain('"CollisionShape2D": CollisionShape2D<{[__parent]: _Player}>;');
 
     // Flat path also present for direct key lookup by _GDGetNodeByPath
@@ -69,14 +69,16 @@ describe('Scene typings generation', () => {
     // Unique nodes (%Name) also get [__parent] pointing to script class
     expect(playerScene).toContain('"%HealthBar": ProgressBar<{[__parent]: _Player}>;');
 
-    // Per-script .gd.d.ts: scene nodes interface extends scene tree
+    // Per-script .gd.d.ts: scene nodes interface extends scene tree with [__children] tuple
     expect(playerScript).toContain('interface _PlayerSceneNodes extends _PlayerTscn_Tree');
+    expect(playerScript).toContain('[__children]: [_PlayerTscn_Tree["Sprite2D"], _PlayerTscn_Tree["CollisionShape2D"], _PlayerTscn_Tree["HealthBar"]]');
 
     // Module augmentation with typed overloads
     expect(playerScript).toContain('declare module "../Player.ts"');
     expect(playerScript).toContain('interface Player');
     expect(playerScript).toContain('get_node<P extends string & _GDGetTreePaths<_PlayerSceneNodes>>(path: P): _GDGetNode<_PlayerSceneNodes, P>');
     expect(playerScript).toContain('get_node_or_null<P extends string & _GDGetTreePaths<_PlayerSceneNodes>>(path: P): _GDGetNode<_PlayerSceneNodes, P> | null');
+    expect(playerScript).toContain('get_child<Idx extends number & _GDChildIndices<_GDGetChildren<_PlayerSceneNodes>>>(idx: Idx): _GDGetChild<_PlayerSceneNodes, Idx>');
   });
 
   it('should generate scene tree interfaces for scripts used in multiple scenes', () => {
@@ -112,8 +114,9 @@ describe('Scene typings generation', () => {
     expect(levelScene).toContain('"TilesetObjects": _TilesetObjectsTscn;');
     // Regular Godot built-in child gets [__parent]
     expect(levelScene).toContain('"Background": Sprite2D<{[__parent]: _Level}>;');
-    // Nested children under non-script intermediate nodes — subtrees embedded in generics
-    expect(levelScene).toContain('"UI": CanvasLayer<{[__parent]: _Level; "ScoreLabel": Label<{[__parent]: _LevelTscn_Tree["UI"]; "ScoreSprite": Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>}>}>');
+    // Nested children under non-script intermediate nodes — subtrees embedded with [__children]
+    expect(levelScene).toContain('"UI": CanvasLayer<{[__parent]: _Level; [__children]: [Label<{[__parent]: _LevelTscn_Tree["UI"]');
+    expect(levelScene).toContain('"ScoreLabel": Label<{[__parent]: _LevelTscn_Tree["UI"]; [__children]: [Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>]');
     // Flat paths also present for direct key lookup by _GDGetNodeByPath
     expect(levelScene).toContain('"UI/ScoreLabel": Label<{[__parent]: _LevelTscn_Tree["UI"]');
     expect(levelScene).toContain('"UI/ScoreLabel/ScoreSprite": Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>;');
@@ -157,8 +160,8 @@ describe('Scene typings generation', () => {
     // BaseCharacter has no scene but Player and Enemy extend it
     expect(baseCharScript).toContain('interface _BaseCharacterSceneNodes');
 
-    // Sprite2D is in both Player and Enemy → no null (has nested AnimationPlayer subtree)
-    expect(baseCharScript).toContain('"Sprite2D": Sprite2D<{[__parent]: _BaseCharacter; "AnimationPlayer": AnimationPlayer<{[__parent]: _BaseCharacterSceneNodes["Sprite2D"]}>}>;');
+    // Sprite2D is in both Player and Enemy → no null (has nested AnimationPlayer subtree + [__children])
+    expect(baseCharScript).toContain('"Sprite2D": Sprite2D<{[__parent]: _BaseCharacter; [__children]: [AnimationPlayer<{[__parent]: _BaseCharacterSceneNodes["Sprite2D"]}>]; "AnimationPlayer": AnimationPlayer<{[__parent]: _BaseCharacterSceneNodes["Sprite2D"]}>}>;');
 
     // Sprite2D/AnimationPlayer flat path for direct key lookup
     expect(baseCharScript).toContain('"Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: _BaseCharacterSceneNodes["Sprite2D"]}>;');
@@ -166,13 +169,17 @@ describe('Scene typings generation', () => {
     // CollisionShape2D is only in Player → | null
     expect(baseCharScript).toContain('"CollisionShape2D": CollisionShape2D<{[__parent]: _BaseCharacter}> | null;');
 
-    // HitBox is only in Enemy → | null (has nested CollisionShape2D subtree)
-    expect(baseCharScript).toContain('"HitBox": Area2D<{[__parent]: _BaseCharacter; "CollisionShape2D": CollisionShape2D<{[__parent]: _BaseCharacterSceneNodes["HitBox"]}> | null}> | null;');
+    // HitBox is only in Enemy → | null (has nested CollisionShape2D subtree + [__children])
+    expect(baseCharScript).toContain('"HitBox": Area2D<{[__parent]: _BaseCharacter; [__children]: [CollisionShape2D<{[__parent]: _BaseCharacterSceneNodes["HitBox"]}> | null]; "CollisionShape2D": CollisionShape2D<{[__parent]: _BaseCharacterSceneNodes["HitBox"]}> | null}> | null;');
+
+    // [__children] tuple on merged interface
+    expect(baseCharScript).toContain('[__children]: [_BaseCharacterSceneNodes["Sprite2D"]');
 
     // Module augmentation for BaseCharacter
     expect(baseCharScript).toContain('declare module "../BaseCharacter.ts"');
     expect(baseCharScript).toContain('interface BaseCharacter');
     expect(baseCharScript).toContain('get_node<P extends string & _GDGetTreePaths<_BaseCharacterSceneNodes>>(path: P): _GDGetNode<_BaseCharacterSceneNodes, P>');
+    expect(baseCharScript).toContain('get_child<Idx extends number & _GDChildIndices<_GDGetChildren<_BaseCharacterSceneNodes>>>(idx: Idx): _GDGetChild<_BaseCharacterSceneNodes, Idx>');
   });
 
   it('should generate GodotResources and autoload singletons', () => {

@@ -7,7 +7,7 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": false,
-    "types": []
+    "types": ["../../../typings/latest"]
   },
-  "include": ["../../../typings/latest", "./**/*.ts", "./**/*.d.ts"]
+  "include": ["./*.ts", "./**/*.ts", "./**/*.d.ts"]
 }

@@ -29,6 +29,13 @@ declare class Node<Tree extends object = any> extends GodotObject {
   has_node<P extends string & _GDGetTreePaths<Tree>>(path: P): true;
   /** Check if a node exists at path. Unknown paths return boolean. */
   has_node(path: string): boolean;
+  /** Get a child node by index. Known indices (from scene tree) return exact types. */
+  get_child<Idx extends number & _GDChildIndices<_GDGetChildren<Tree>>>(
+    idx: Idx,
+    include_internal?: boolean,
+  ): _GDGetChild<Tree, Idx>;
+  /** Get a child node by index. Unknown indices return Node. */
+  get_child(idx: int, include_internal?: boolean): Node;
   /** Duplicate this node. Returns same type as the original. */
   duplicate(flags?: int): this;
 }

@@ -226,6 +226,27 @@ type _GDGetNodeByPath<
       : never
     : never;
 
+/** Extract the [__children] tuple from a tree type. Returns never if absent or Tree is any. */
+type _GDGetChildren<Tree> =
+  IsAny<Tree> extends true ? never
+    : Tree extends { [__children]: infer C extends readonly any[] } ? C : never;
+
+/** Extract valid numeric tuple indices (0, 1, 2, ...) from a tuple type.
+ *  Excludes non-numeric keys and the generic `number` index. */
+type _GDChildIndices<T extends readonly any[]> =
+  Extract<keyof T, `${number}`> extends infer K
+    ? K extends `${infer N extends number}` ? N : never
+    : never;
+
+/** Resolve get_child return type by numeric index into [__children] tuple.
+ *  Known indices → exact type, unknown → Node. */
+type _GDGetChild<Tree extends object, Idx extends number> =
+  _GDGetChildren<Tree> extends never
+    ? Node
+    : `${Idx}` extends keyof _GDGetChildren<Tree>
+      ? _GDGetChildren<Tree>[Idx]
+      : Node;
+
 /** Resolve get_parent return type from declaration-merged _XParents interface.
  *  Empty interface (no parents) → Node; otherwise union of all parent types. */
 type _GDParentType<T> = [keyof T] extends [never] ? Node : T[keyof T];

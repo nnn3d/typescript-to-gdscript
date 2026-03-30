@@ -5,7 +5,9 @@ import type { _LevelTscn_Tree } from "./Level.tscn.js";
 import type { _ALevelTscn_Tree } from "./ALevel.tscn.js";
 import type { _Level1Tscn_Tree } from "./Level1.tscn.js";
 
-export interface _LevelSceneNodes extends _LevelTscn_Tree, _ALevelTscn_Tree, _Level1Tscn_Tree {}
+export interface _LevelSceneNodes extends _LevelTscn_Tree, _ALevelTscn_Tree, _Level1Tscn_Tree {
+  [__children]: [_LevelTscn_Tree["Player"] | _ALevelTscn_Tree["Player"] | _Level1Tscn_Tree["Player"], _LevelTscn_Tree["Enemy"] | _ALevelTscn_Tree["Enemy"] | _Level1Tscn_Tree["Enemy"], _LevelTscn_Tree["TilesetObjects"] | _ALevelTscn_Tree["TilesetObjects"] | _Level1Tscn_Tree["TilesetObjects"], _LevelTscn_Tree["Background"] | _ALevelTscn_Tree["Background"] | _Level1Tscn_Tree["Background"], _LevelTscn_Tree["UI"] | _ALevelTscn_Tree["UI"] | _Level1Tscn_Tree["UI"], _LevelTscn_Tree["TilesetObjectsMap"] | _ALevelTscn_Tree["TilesetObjectsMap"] | _Level1Tscn_Tree["TilesetObjectsMap"], _LevelTscn_Tree["Level2"] | _ALevelTscn_Tree["Level2"] | _Level1Tscn_Tree["Level2"], _ALevelTscn_Tree["ExtraNode"] | _Level1Tscn_Tree["TilesetObjects2"] | null, _Level1Tscn_Tree["ExtraSprite"] | null];
+}
 
 declare module "../Level.ts" {
   interface Level {
@@ -15,6 +17,8 @@ declare module "../Level.ts" {
     get_node_or_null(path: string): Node | null;
     has_node<P extends string & _GDGetTreePaths<_LevelSceneNodes>>(path: P): true;
     has_node(path: string): boolean;
+    get_child<Idx extends number & _GDChildIndices<_GDGetChildren<_LevelSceneNodes>>>(idx: Idx): _GDGetChild<_LevelSceneNodes, Idx>;
+    get_child(idx: int, include_internal?: boolean): Node;
     get_parent(): _GDParentType<_LevelParents>;
   }
 }

@@ -11,8 +11,8 @@ export interface _ALevelTscn_Tree {
   "Enemy": Enemy & {[__script_tree]: _EnemySceneNodes};
   "TilesetObjects": _TilesetObjectsTscn;
   "Background": Sprite2D<{[__parent]: _Level}>;
-  "UI": CanvasLayer<{[__parent]: _Level; "ScoreLabel": Label<{[__parent]: _ALevelTscn_Tree["UI"]; "ScoreSprite": Sprite2D<{[__parent]: _ALevelTscn_Tree["UI/ScoreLabel"]}>}>}>;
-  "UI/ScoreLabel": Label<{[__parent]: _ALevelTscn_Tree["UI"]; "ScoreSprite": Sprite2D<{[__parent]: _ALevelTscn_Tree["UI/ScoreLabel"]}>}>;
+  "UI": CanvasLayer<{[__parent]: _Level; [__children]: [Label<{[__parent]: _ALevelTscn_Tree["UI"]; [__children]: [Sprite2D<{[__parent]: _ALevelTscn_Tree["UI/ScoreLabel"]}>]; "ScoreSprite": Sprite2D<{[__parent]: _ALevelTscn_Tree["UI/ScoreLabel"]}>}>]; "ScoreLabel": Label<{[__parent]: _ALevelTscn_Tree["UI"]; [__children]: [Sprite2D<{[__parent]: _ALevelTscn_Tree["UI/ScoreLabel"]}>]; "ScoreSprite": Sprite2D<{[__parent]: _ALevelTscn_Tree["UI/ScoreLabel"]}>}>}>;
+  "UI/ScoreLabel": Label<{[__parent]: _ALevelTscn_Tree["UI"]; [__children]: [Sprite2D<{[__parent]: _ALevelTscn_Tree["UI/ScoreLabel"]}>]; "ScoreSprite": Sprite2D<{[__parent]: _ALevelTscn_Tree["UI/ScoreLabel"]}>}>;
   "UI/ScoreLabel/ScoreSprite": Sprite2D<{[__parent]: _ALevelTscn_Tree["UI/ScoreLabel"]}>;
   "TilesetObjectsMap": _TilesetObjectsTscn;
   "Level2": _Level2Tscn;

@@ -286,11 +286,12 @@ declare class Node<Tree extends object = any> extends GodotObject {
    * **Note:** This method should be called only during accessibility information updates ({@link NOTIFICATION_ACCESSIBILITY_UPDATE}).
    */
   get_accessibility_element(): RID;
-  /**
-   * Fetches a child node by its index. Each child node has an index relative to its siblings (see {@link get_index}). The first child is at index 0. Negative values can also be used to start from the end of the list. This method can be used in combination with {@link get_child_count} to iterate over this node's children. If no child exists at the given index, this method returns `null` and an error is generated.
-   * If `include_internal` is `false`, internal children are ignored (see {@link add_child}'s `internal` parameter).
-   * **Note:** To fetch a node by {@link NodePath}, use {@link get_node}.
-   */
+  /** Get a child node by index. Known indices (from scene tree) return exact types. */
+  get_child<Idx extends number & _GDChildIndices<_GDGetChildren<Tree>>>(
+  idx: Idx,
+  include_internal?: boolean,
+  ): _GDGetChild<Tree, Idx>;
+  /** Get a child node by index. Unknown indices return Node. */
   get_child(idx: int, include_internal?: boolean): Node;
   /**
    * Returns the number of children of this node.

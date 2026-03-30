@@ -3,7 +3,9 @@
 import type { Enemy as _Enemy } from "../Enemy.js";
 import type { _EnemyTscn_Tree } from "./Enemy.tscn.js";
 
-export interface _EnemySceneNodes extends _EnemyTscn_Tree {}
+export interface _EnemySceneNodes extends _EnemyTscn_Tree {
+  [__children]: [_EnemyTscn_Tree["Sprite2D"], _EnemyTscn_Tree["HitBox"]];
+}
 
 declare module "../Enemy.ts" {
   interface Enemy {
@@ -13,6 +15,8 @@ declare module "../Enemy.ts" {
     get_node_or_null(path: string): Node | null;
     has_node<P extends string & _GDGetTreePaths<_EnemySceneNodes>>(path: P): true;
     has_node(path: string): boolean;
+    get_child<Idx extends number & _GDChildIndices<_GDGetChildren<_EnemySceneNodes>>>(idx: Idx): _GDGetChild<_EnemySceneNodes, Idx>;
+    get_child(idx: int, include_internal?: boolean): Node;
     get_parent(): _GDParentType<_EnemyParents>;
   }
 }

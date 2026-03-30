@@ -55,5 +55,12 @@ export class Player extends BaseCharacter {
     let Ball = preload('res://Ball.gd');
     let ball = new Ball();
     ball.do_from_ball();
+
+    // get_child: typed by index (scene order: 0=Sprite2D, 1=CollisionShape2D, 2=HealthBar)
+    let child0: Sprite2D = this.get_child(0);
+    let child1: CollisionShape2D = this.get_child(1);
+    let child2: ProgressBar = this.get_child(2);
+    // Unknown index falls back to Node
+    let childUnknown: Node = this.get_child(99);
   }
 }

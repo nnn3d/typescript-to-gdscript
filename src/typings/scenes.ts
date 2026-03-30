@@ -657,6 +657,66 @@ function resolveChildParentType(
     : 'Node';
 }
 
+/** Build `[__children]: [...]` line for a tree interface.
+ *  Only includes immediate children (no flat paths, no %Name aliases).
+ *  @param treeName  Interface name for member references (e.g. `_PlayerTscn_Tree`)
+ *  @param annotated Annotated children from buildAnnotatedChildren()
+ */
+function buildChildrenTupleLine(
+  treeName: string,
+  annotated: Array<{ path: string; annotatedType: string }>,
+): string | null {
+  const immediateChildren: string[] = [];
+  for (const { path } of annotated) {
+    if (path.includes('/') || path.startsWith('%')) continue;
+    immediateChildren.push(`${treeName}["${path}"]`);
+  }
+  if (immediateChildren.length === 0) return null;
+  return `  [__children]: [${immediateChildren.join(', ')}];`;
+}
+
+/** Build a merged `[__children]` tuple for scripts used in multiple scenes.
+ *  Takes the union of types at each position across all scenes.
+ *  Shorter scenes get `| null` padding for missing positions. */
+function buildMergedChildrenTuple(
+  sceneMaps: Array<Map<string, string>>,
+  treeNames: string[],
+  sceneResPaths: string[],
+): string | null {
+  // Collect immediate children (in order) per scene
+  const perScene: Array<string[]> = [];
+  for (let i = 0; i < sceneMaps.length; i++) {
+    const immediate: string[] = [];
+    const treeName = treeNames[i];
+    for (const path of sceneMaps[i].keys()) {
+      if (path.includes('/') || path.startsWith('%')) continue;
+      immediate.push(`${treeName}["${path}"]`);
+    }
+    perScene.push(immediate);
+  }
+
+  const maxLen = Math.max(0, ...perScene.map(s => s.length));
+  if (maxLen === 0) return null;
+
+  const tupleEntries: string[] = [];
+  for (let idx = 0; idx < maxLen; idx++) {
+    const typesAtIdx = new Set<string>();
+    let hasMissing = false;
+    for (const scene of perScene) {
+      if (idx < scene.length) {
+        typesAtIdx.add(scene[idx]);
+      } else {
+        hasMissing = true;
+      }
+    }
+    let entry = [...typesAtIdx].join(' | ');
+    if (hasMissing) entry += ' | null';
+    tupleEntries.push(entry);
+  }
+
+  return `[__children]: [${tupleEntries.join(', ')}];`;
+}
+
 /** Annotate a raw type string with [__parent], [__script_tree], and nested subtree entries */
 function annotateChildType(
   type: string,
@@ -673,7 +733,9 @@ function annotateChildType(
       return t;
     }
     const entries: string[] = [`[__parent]: ${parentType}`];
-    if (subtreeEntries) {
+    if (subtreeEntries && subtreeEntries.length > 0) {
+      const childrenTuple = subtreeEntries.map(c => c.annotatedType).join(', ');
+      entries.push(`[__children]: [${childrenTuple}]`);
       for (const child of subtreeEntries) {
         entries.push(`"${child.name}": ${child.annotatedType}`);
       }
@@ -1495,6 +1557,16 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
 
       if (slData.sceneMap && slData.sceneMap.size > 0) {
         const annotated = buildAnnotatedChildren(slData.sceneMap, slData.alias);
+        // [__children] tuple for scriptless scenes — inline types (no named interface to reference)
+        const immediateChildTypes: string[] = [];
+        for (const { path, annotatedType } of annotated) {
+          if (!path.includes('/') && !path.startsWith('%')) {
+            immediateChildTypes.push(annotatedType);
+          }
+        }
+        if (immediateChildTypes.length > 0) {
+          lines.push(`  [__children]: [${immediateChildTypes.join(', ')}];`);
+        }
         for (const { path, annotatedType } of annotated) {
           lines.push(`  "${path}": ${annotatedType};`);
         }
@@ -1584,6 +1656,8 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
     if (childrenMap && childrenMap.size > 0) {
       const annotated = buildAnnotatedChildren(childrenMap, rootAliasEntry.alias, treeName);
       lines.push(`export interface ${treeName} {`);
+      // [__children] is NOT emitted on per-scene trees — it goes on the merged SceneNodes
+      // interface only, to avoid conflicts when SceneNodes extends multiple scene trees
       for (const { path, annotatedType } of annotated) {
         lines.push(`  "${path}": ${annotatedType};`);
       }
@@ -1697,7 +1771,17 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       if (sceneTreeImports.length > 0) {
         // Use extends for scene trees (same script, different scenes — no type conflicts)
         const extendsList = sceneTreeImports.map(i => i.treeName);
-        lines.push(`export interface ${nodesName} extends ${extendsList.join(', ')} {}`);
+        // Build merged [__children] tuple: union-per-position across all scenes
+        const mergedChildrenTuple = buildMergedChildrenTuple(
+          data!.sceneMaps, sceneTreeImports.map(i => i.treeName), rootScenes,
+        );
+        if (mergedChildrenTuple) {
+          lines.push(`export interface ${nodesName} extends ${extendsList.join(', ')} {`);
+          lines.push(`  ${mergedChildrenTuple}`);
+          lines.push('}');
+        } else {
+          lines.push(`export interface ${nodesName} extends ${extendsList.join(', ')} {}`);
+        }
       } else {
         // Fallback: inline merged children (sub-script occurrences or edge cases)
         const mergedChildren = mergeSceneChildren(data!.sceneMaps);
@@ -1707,6 +1791,8 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
         }
         const annotated = buildAnnotatedChildren(mergedMap, aliasEntry.alias, nodesName);
         lines.push(`export interface ${nodesName} {`);
+        const childrenLine = buildChildrenTupleLine(nodesName, annotated);
+        if (childrenLine) lines.push(childrenLine);
         for (const { path, annotatedType } of annotated) {
           lines.push(`  "${path}": ${annotatedType};`);
         }
@@ -1725,6 +1811,8 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       lines.push(`    get_node_or_null(path: string): Node | null;`);
       lines.push(`    has_node<P extends string & _GDGetTreePaths<${nodesName}>>(path: P): true;`);
       lines.push(`    has_node(path: string): boolean;`);
+      lines.push(`    get_child<Idx extends number & _GDChildIndices<_GDGetChildren<${nodesName}>>>(idx: Idx): _GDGetChild<${nodesName}, Idx>;`);
+      lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
       lines.push(`    get_parent(): _GDParentType<${parentsName}>;`);
       lines.push('  }');
       lines.push('}');

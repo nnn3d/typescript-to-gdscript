@@ -4,7 +4,9 @@ import type { Ball as _Ball } from "../Ball.js";
 import type { _BallATscn_Tree } from "./BallA.tscn.js";
 import type { _BallBTscn_Tree } from "./BallB.tscn.js";
 
-export interface _BallSceneNodes extends _BallATscn_Tree, _BallBTscn_Tree {}
+export interface _BallSceneNodes extends _BallATscn_Tree, _BallBTscn_Tree {
+  [__children]: [_BallATscn_Tree["Sprite2D"] | _BallBTscn_Tree["Sprite2D"], _BallATscn_Tree["Timer"] | _BallBTscn_Tree["Label"]];
+}
 
 declare module "../Ball.ts" {
   interface Ball {
@@ -14,6 +16,8 @@ declare module "../Ball.ts" {
     get_node_or_null(path: string): Node | null;
     has_node<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): true;
     has_node(path: string): boolean;
+    get_child<Idx extends number & _GDChildIndices<_GDGetChildren<_BallSceneNodes>>>(idx: Idx): _GDGetChild<_BallSceneNodes, Idx>;
+    get_child(idx: int, include_internal?: boolean): Node;
     get_parent(): _GDParentType<_BallParents>;
   }
 }

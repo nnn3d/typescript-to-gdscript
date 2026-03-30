@@ -61,5 +61,10 @@ export class Level extends Node2D {
     let checkDeepTree1: Label = this.get_node('UI/ScoreLabel').get_parent().get_node('ScoreLabel');
     let checkDeepTree2: Sprite2D = this.get_node('UI/ScoreLabel').get_node('ScoreSprite');
     let checkDeepTree3: Label = this.get_node('UI/ScoreLabel').get_node('ScoreSprite').get_parent();
+
+    // get_child: typed by index on intermediate node (UI has 1 child: ScoreLabel)
+    let uiChild0: Label = this.get_node('UI').get_child(0);
+    // get_child on ScoreLabel (1 child: ScoreSprite)
+    let scoreLabelChild0: Sprite2D = this.get_node('UI/ScoreLabel').get_child(0);
   }
 }
