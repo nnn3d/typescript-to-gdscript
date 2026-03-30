@@ -104,7 +104,7 @@ function resolveFiles(
     // Expand glob patterns
     const files: string[] = [];
     for (const pattern of patterns) {
-      const matches = globSync(join(rootDir, pattern), {
+      const matches = globSync(pattern, {
         cwd: process.cwd(),
       }).map((m) => resolve(m));
       for (const match of matches) {
