@@ -1,6 +1,6 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Enemy as _Enemy } from "../Enemy.js";
+import type { __CLASS__ as _Enemy } from "../Enemy.js";
 
 export interface _EnemyTscn_Tree {
   "Sprite2D": Sprite2D<{[__parent]: _Enemy; [__children]: [AnimationPlayer<{[__parent]: _EnemyTscn_Tree["Sprite2D"]}>]; "AnimationPlayer": AnimationPlayer<{[__parent]: _EnemyTscn_Tree["Sprite2D"]}>}>;

@@ -17,7 +17,7 @@ declare module "../BaseCharacter.ts" {
   interface BaseCharacter {
     get_node<P extends string & _GDGetTreePaths<_BaseCharacterSceneNodes>>(path: P): _GDGetNode<_BaseCharacterSceneNodes, P>;
     get_node(path: string): Node;
-    get_node_or_null<P extends string & _GDGetTreePaths<_BaseCharacterSceneNodes>>(path: P): _GDGetNode<_BaseCharacterSceneNodes, P> | null;
+    get_node_or_null<P extends string & _GDGetTreePaths<_BaseCharacterSceneNodes>>(path: P): _GDGetNodeOrNull<_BaseCharacterSceneNodes, P>;
     get_node_or_null(path: string): Node | null;
     has_node<P extends string & _GDGetTreePaths<_BaseCharacterSceneNodes>>(path: P): true;
     has_node(path: string): boolean;

@@ -252,7 +252,8 @@ type _GDGetChild<Tree extends object, Idx extends number> =
 type _GDParentType<T> = [keyof T] extends [never] ? Node : T[keyof T];
 
 /** Resolve get_node return type: known paths → exact type, unknown → Node.
- *  Uses _GDGetNodeByPath directly (not _GDGetTreePaths) to avoid circular mapped types. */
+ *  Uses _GDGetNodeByPath directly (not _GDGetTreePaths) to avoid circular mapped types.
+ *  Nullable tree entries (node not in all scenes) → NonNullable<T> | Node (uncertain). */
 type _GDGetNode<
   Tree extends object,
   Path extends string,
@@ -263,3 +264,17 @@ type _GDGetNode<
     : null extends _GDGetNodeByPath<Tree, Path>
       ? NonNullable<_GDGetNodeByPath<Tree, Path>> | Node
       : _GDGetNodeByPath<Tree, Path>;
+
+/** Resolve get_node_or_null return type: known paths → exact type | null, unknown → Node | null.
+ *  Unlike _GDGetNode, nullable tree entries (node not in all scenes) → NonNullable<T> | null
+ *  (no Node fallback — the node is either the expected type or absent). */
+type _GDGetNodeOrNull<
+  Tree extends object,
+  Path extends string,
+> = IsAny<Tree> extends true
+  ? Node | null
+  : _GDGetNodeByPath<Tree, Path> extends never
+    ? Node | null
+    : null extends _GDGetNodeByPath<Tree, Path>
+      ? NonNullable<_GDGetNodeByPath<Tree, Path>> | null
+      : _GDGetNodeByPath<Tree, Path> | null;

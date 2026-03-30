@@ -11,7 +11,7 @@ declare module "../../nested/Anonym.ts" {
   interface __CLASS__ {
     get_node<P extends string & _GDGetTreePaths<_nested_AnonymSceneNodes>>(path: P): _GDGetNode<_nested_AnonymSceneNodes, P>;
     get_node(path: string): Node;
-    get_node_or_null<P extends string & _GDGetTreePaths<_nested_AnonymSceneNodes>>(path: P): _GDGetNode<_nested_AnonymSceneNodes, P> | null;
+    get_node_or_null<P extends string & _GDGetTreePaths<_nested_AnonymSceneNodes>>(path: P): _GDGetNodeOrNull<_nested_AnonymSceneNodes, P>;
     get_node_or_null(path: string): Node | null;
     has_node<P extends string & _GDGetTreePaths<_nested_AnonymSceneNodes>>(path: P): true;
     has_node(path: string): boolean;

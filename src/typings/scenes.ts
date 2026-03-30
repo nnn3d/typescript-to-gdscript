@@ -717,6 +717,41 @@ function buildMergedChildrenTuple(
   return `[__children]: [${tupleEntries.join(', ')}];`;
 }
 
+/** Build merged property lookups for scripts used in multiple scenes.
+ *  Instead of `extends Tree1, Tree2` (which breaks on conflicting types),
+ *  emits each property as a union of tree interface lookups:
+ *  `"Label": _Tree1["Label"] | _Tree2["Label"]`
+ *  Paths not present in all scenes get `| null`. */
+function buildMergedTreeLookups(
+  sceneMaps: Array<Map<string, string>>,
+  treeNames: string[],
+): Array<{ path: string; typeExpr: string }> {
+  const totalScenes = sceneMaps.length;
+  // Collect all paths (preserving insertion order from first scene)
+  const pathToTrees = new Map<string, string[]>();
+  for (let i = 0; i < sceneMaps.length; i++) {
+    for (const path of sceneMaps[i].keys()) {
+      let trees = pathToTrees.get(path);
+      if (!trees) {
+        trees = [];
+        pathToTrees.set(path, trees);
+      }
+      trees.push(treeNames[i]);
+    }
+  }
+
+  const result: Array<{ path: string; typeExpr: string }> = [];
+  for (const [path, trees] of pathToTrees) {
+    const lookups = trees.map(t => `${t}["${path}"]`);
+    let typeExpr = lookups.join(' | ');
+    if (trees.length < totalScenes) {
+      typeExpr += ' | null';
+    }
+    result.push({ path, typeExpr });
+  }
+  return result;
+}
+
 /** Annotate a raw type string with [__parent], [__script_tree], and nested subtree entries */
 function annotateChildType(
   type: string,
@@ -1451,9 +1486,15 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
   function collectChildImports(
     childrenMap: Map<string, string>,
     outputFileName: string,
-  ): { sceneNodeImports: Map<string, string>; scriptlessImports: Map<string, string> } {
+  ): {
+    sceneNodeImports: Map<string, string>;
+    scriptlessImports: Map<string, string>;
+    /** Anonymous class aliases (__CLASS__) that need importing from source .ts files */
+    anonClassImports: Map<string, { className: string; from: string }>;
+  } {
     const sceneNodeImports = new Map<string, string>();
     const scriptlessImports = new Map<string, string>();
+    const anonClassImports = new Map<string, { className: string; from: string }>();
 
     for (const [, rawType] of childrenMap) {
       for (const t of rawType.split(' | ')) {
@@ -1470,6 +1511,18 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
             }
           }
         }
+        // Check if it's an anonymous class alias (__CLASS__) — not globally declared,
+        // needs explicit import from source .ts file
+        for (const [scriptResPath, entry] of aliasMap) {
+          if (entry.alias === t && entry.className === '__CLASS__' && !anonClassImports.has(t)) {
+            const classInfo = scriptClassMap.get(scriptResPath);
+            if (classInfo) {
+              const tsImport = computeTsImport(outputDir, outputFileName, classInfo.tsAbsPath);
+              anonClassImports.set(entry.alias, { className: entry.className, from: tsImport });
+            }
+            break;
+          }
+        }
         // Check if it's a scriptless scene alias — needs import from its .tscn.d.ts file
         for (const [sceneResPath, slInfo] of scriptlessSceneData) {
           if (slInfo.alias === t && !scriptlessImports.has(t)) {
@@ -1480,7 +1533,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       }
     }
 
-    return { sceneNodeImports, scriptlessImports };
+    return { sceneNodeImports, scriptlessImports, anonClassImports };
   }
 
   // ── Emit per-scene .tscn.d.ts files ──
@@ -1633,9 +1686,10 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       lines.push(`import type { ${rootAliasEntry.className} as ${rootAliasEntry.alias} } from "${tsImport}";`);
     }
 
-    // Collect and emit imports for __script_tree references and scriptless scene aliases
+    // Collect and emit imports for __script_tree references, scriptless scene aliases,
+    // and anonymous class aliases (__CLASS__) that aren't globally declared
     if (childrenMap && childrenMap.size > 0) {
-      const { sceneNodeImports, scriptlessImports } = collectChildImports(
+      const { sceneNodeImports, scriptlessImports, anonClassImports } = collectChildImports(
         childrenMap,
         fileName,
       );
@@ -1644,6 +1698,9 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       }
       for (const [name, from] of scriptlessImports) {
         lines.push(`import type { ${name} } from "${from}";`);
+      }
+      for (const [alias, { className, from }] of anonClassImports) {
+        lines.push(`import type { ${className} as ${alias} } from "${from}";`);
       }
     }
 
@@ -1768,20 +1825,33 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
 
     // Emit scene nodes interface
     if (hasScenes) {
-      if (sceneTreeImports.length > 0) {
-        // Use extends for scene trees (same script, different scenes — no type conflicts)
-        const extendsList = sceneTreeImports.map(i => i.treeName);
-        // Build merged [__children] tuple: union-per-position across all scenes
+      if (sceneTreeImports.length === 1) {
+        // Single scene: safe to use extends (no conflicts possible)
+        const treeName = sceneTreeImports[0]!.treeName;
         const mergedChildrenTuple = buildMergedChildrenTuple(
-          data!.sceneMaps, sceneTreeImports.map(i => i.treeName), rootScenes,
+          data!.sceneMaps, [treeName], rootScenes,
         );
         if (mergedChildrenTuple) {
-          lines.push(`export interface ${nodesName} extends ${extendsList.join(', ')} {`);
+          lines.push(`export interface ${nodesName} extends ${treeName} {`);
           lines.push(`  ${mergedChildrenTuple}`);
           lines.push('}');
         } else {
-          lines.push(`export interface ${nodesName} extends ${extendsList.join(', ')} {}`);
+          lines.push(`export interface ${nodesName} extends ${treeName} {}`);
         }
+      } else if (sceneTreeImports.length > 1) {
+        // Multiple scenes: use tree interface lookups to avoid extends conflicts
+        // when different scenes have different types for the same node name
+        const treeNamesList = sceneTreeImports.map(i => i.treeName);
+        const mergedLookups = buildMergedTreeLookups(data!.sceneMaps, treeNamesList);
+        lines.push(`export interface ${nodesName} {`);
+        const mergedChildrenTuple = buildMergedChildrenTuple(
+          data!.sceneMaps, treeNamesList, rootScenes,
+        );
+        if (mergedChildrenTuple) lines.push(`  ${mergedChildrenTuple}`);
+        for (const { path, typeExpr } of mergedLookups) {
+          lines.push(`  "${path}": ${typeExpr};`);
+        }
+        lines.push('}');
       } else {
         // Fallback: inline merged children (sub-script occurrences or edge cases)
         const mergedChildren = mergeSceneChildren(data!.sceneMaps);
@@ -1807,7 +1877,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       lines.push(`  interface ${aliasEntry.className} {`);
       lines.push(`    get_node<P extends string & _GDGetTreePaths<${nodesName}>>(path: P): _GDGetNode<${nodesName}, P>;`);
       lines.push(`    get_node(path: string): Node;`);
-      lines.push(`    get_node_or_null<P extends string & _GDGetTreePaths<${nodesName}>>(path: P): _GDGetNode<${nodesName}, P> | null;`);
+      lines.push(`    get_node_or_null<P extends string & _GDGetTreePaths<${nodesName}>>(path: P): _GDGetNodeOrNull<${nodesName}, P>;`);
       lines.push(`    get_node_or_null(path: string): Node | null;`);
       lines.push(`    has_node<P extends string & _GDGetTreePaths<${nodesName}>>(path: P): true;`);
       lines.push(`    has_node(path: string): boolean;`);

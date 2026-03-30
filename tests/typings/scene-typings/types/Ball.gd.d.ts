@@ -4,15 +4,18 @@ import type { Ball as _Ball } from "../Ball.js";
 import type { _BallATscn_Tree } from "./BallA.tscn.js";
 import type { _BallBTscn_Tree } from "./BallB.tscn.js";
 
-export interface _BallSceneNodes extends _BallATscn_Tree, _BallBTscn_Tree {
-  [__children]: [_BallATscn_Tree["Sprite2D"] | _BallBTscn_Tree["Sprite2D"], _BallATscn_Tree["Timer"] | _BallBTscn_Tree["Label"]];
+export interface _BallSceneNodes {
+  [__children]: [_BallATscn_Tree["Sprite2D"] | _BallBTscn_Tree["Sprite2D"], _BallATscn_Tree["Label"] | _BallBTscn_Tree["Label"], _BallATscn_Tree["Timer"] | null];
+  "Sprite2D": _BallATscn_Tree["Sprite2D"] | _BallBTscn_Tree["Sprite2D"];
+  "Label": _BallATscn_Tree["Label"] | _BallBTscn_Tree["Label"];
+  "Timer": _BallATscn_Tree["Timer"] | null;
 }
 
 declare module "../Ball.ts" {
   interface Ball {
     get_node<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): _GDGetNode<_BallSceneNodes, P>;
     get_node(path: string): Node;
-    get_node_or_null<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): _GDGetNode<_BallSceneNodes, P> | null;
+    get_node_or_null<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): _GDGetNodeOrNull<_BallSceneNodes, P>;
     get_node_or_null(path: string): Node | null;
     has_node<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): true;
     has_node(path: string): boolean;

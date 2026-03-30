@@ -77,7 +77,7 @@ describe('Scene typings generation', () => {
     expect(playerScript).toContain('declare module "../Player.ts"');
     expect(playerScript).toContain('interface Player');
     expect(playerScript).toContain('get_node<P extends string & _GDGetTreePaths<_PlayerSceneNodes>>(path: P): _GDGetNode<_PlayerSceneNodes, P>');
-    expect(playerScript).toContain('get_node_or_null<P extends string & _GDGetTreePaths<_PlayerSceneNodes>>(path: P): _GDGetNode<_PlayerSceneNodes, P> | null');
+    expect(playerScript).toContain('get_node_or_null<P extends string & _GDGetTreePaths<_PlayerSceneNodes>>(path: P): _GDGetNodeOrNull<_PlayerSceneNodes, P>');
     expect(playerScript).toContain('get_child<Idx extends number & _GDChildIndices<_GDGetChildren<_PlayerSceneNodes>>>(idx: Idx): _GDGetChild<_PlayerSceneNodes, Idx>');
   });
 
@@ -87,8 +87,12 @@ describe('Scene typings generation', () => {
     const ballA = readOutput('BallA.tscn.d.ts');
     const ballB = readOutput('BallB.tscn.d.ts');
 
-    // Ball.gd is used in BallA.tscn (Sprite2D, Timer) and BallB.tscn (Sprite2D, Label)
-    expect(ballScript).toContain('interface _BallSceneNodes extends _BallATscn_Tree, _BallBTscn_Tree');
+    // Ball.gd is used in BallA.tscn (Sprite2D, Label:Sprite2D, Timer) and BallB.tscn (Sprite2D, Label:Label)
+    // Multiple trees: merged via lookup types (no extends, avoids property conflicts)
+    expect(ballScript).toContain('interface _BallSceneNodes {');
+    expect(ballScript).toContain('"Sprite2D": _BallATscn_Tree["Sprite2D"] | _BallBTscn_Tree["Sprite2D"];');
+    expect(ballScript).toContain('"Label": _BallATscn_Tree["Label"] | _BallBTscn_Tree["Label"];');
+    expect(ballScript).toContain('"Timer": _BallATscn_Tree["Timer"] | null;');
 
     // Sprite2D is in both scenes with the same type — with [__parent]
     expect(ballA).toContain('"Sprite2D": Sprite2D<{[__parent]: _Ball}>;');
@@ -109,7 +113,7 @@ describe('Scene typings generation', () => {
     expect(levelScene).toContain('interface _LevelTscn_Tree');
     // Instanced scene roots: user classes with scene nodes get __script_tree annotation
     expect(levelScene).toContain('"Player": Player & {[__script_tree]: _PlayerSceneNodes};');
-    expect(levelScene).toContain('"Enemy": Enemy & {[__script_tree]: _EnemySceneNodes};');
+    expect(levelScene).toContain('"Enemy": _Enemy & {[__script_tree]: _EnemySceneNodes};');
     // Instanced scene without script → synthetic type alias (scriptless scene)
     expect(levelScene).toContain('"TilesetObjects": _TilesetObjectsTscn;');
     // Regular Godot built-in child gets [__parent]
@@ -121,8 +125,8 @@ describe('Scene typings generation', () => {
     expect(levelScene).toContain('"UI/ScoreLabel": Label<{[__parent]: _LevelTscn_Tree["UI"]');
     expect(levelScene).toContain('"UI/ScoreLabel/ScoreSprite": Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>;');
 
-    // Level script: scene nodes extends multiple scene trees (Level.tscn, ALevel.tscn, Level1.tscn)
-    expect(levelScript).toContain('interface _LevelSceneNodes extends');
+    // Level script: multiple scene trees merged via lookup types (no extends, avoids conflicts)
+    expect(levelScript).toContain('interface _LevelSceneNodes {');
 
     // Level1.tscn inherits Level.tscn and adds extra children
     const level1Scene = readOutput('Level1.tscn.d.ts');

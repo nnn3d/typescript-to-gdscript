@@ -339,7 +339,7 @@ declare class Node<Tree extends object = any> extends GodotObject {
   /** Get a child node or null by path. Known paths return exact type | null. */
   get_node_or_null<P extends string & _GDGetTreePaths<Tree>>(
   path: P,
-  ): _GDGetNode<Tree, P> | null;
+  ): _GDGetNodeOrNull<Tree, P>;
   /** Get a child node or null by path. Unknown paths return Node | null. */
   get_node_or_null(path: string): Node | null;
   /**

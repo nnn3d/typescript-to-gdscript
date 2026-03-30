@@ -1,25 +1,27 @@
 export class Ball extends Node {
   do_from_ball() {
-    // Ball.gd is used in BallA.tscn (Sprite2D, Timer) and BallB.tscn (Sprite2D, Label)
+    // Ball.gd is used in BallA.tscn (Sprite2D, Label:Sprite2D, Timer) and BallB.tscn (Sprite2D, Label:Label)
+    // Multiple scenes → properties are unions of tree lookups (no extends)
 
-    // get_node: path in both scenes with same type → Godot type with [__parent] (no null)
+    // get_node: path in both scenes with same type → union of identical types
     let sprite = this.get_node('Sprite2D');
     let _spriteAssign: Sprite2D = sprite;
 
-    // get_node: path only in one scene → with per-file extends, type comes from that scene (no null)
+    // get_node: path only in one scene → nullable in tree → NonNullable<T> | Node
     let timer = this.get_node('Timer');
-    let _timerAssign: Timer = timer;
+    let _timerAssign: Timer | Node = timer;
 
+    // get_node: path in both scenes with different types → union of both types
     let label = this.get_node('Label');
-    let _labelAssign: Label = label;
+    let _labelAssign: Sprite2D | Label = label;
 
     // get_node_or_null: path in both scenes → Type | null
     let spriteOrNull = this.get_node_or_null('Sprite2D');
-    const _checkSpriteOrNull: IsExact<typeof spriteOrNull, Sprite2D | null> = true;
+    const _checkSpriteOrNull: Sprite2D | null = spriteOrNull;
 
-    // get_node_or_null: path only in one scene → Type | null (already nullable)
+    // get_node_or_null: path only in one scene → nullable in tree → NonNullable<T> | Node | null
     let timerOrNull = this.get_node_or_null('Timer');
-    let _timerOrNullAssign: IsExact<typeof timerOrNull, Timer | null> = true;
+    let _timerOrNullAssign: Timer | null = timerOrNull;
 
     // get_parent() on a child resolves to Ball (script class) via [__parent]
     let spriteParent = sprite.get_parent();

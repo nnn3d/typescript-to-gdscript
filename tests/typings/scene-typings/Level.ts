@@ -1,3 +1,5 @@
+import type {__CLASS__ as Enemy} from './Enemy.js'
+
 export class Level extends Node2D {
   _ready() {
     // get_node for instanced scene root → script class with get_parent() intersection

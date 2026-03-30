@@ -1,4 +1,4 @@
-export class Enemy extends BaseCharacter {
+export class __CLASS__ extends BaseCharacter {
   _ready() {
     // get_node for direct children
     let sprite = this.get_node('Sprite2D');
