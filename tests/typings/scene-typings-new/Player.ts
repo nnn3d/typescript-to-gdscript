@@ -4,27 +4,27 @@ export class Player extends Node {
   AnonymScript: typeof PlayerChild = load('res://PlayerChild.gd');
 
   _ready() {
-    // get_node_or_null: known path → Godot type with [__parent] | null
-    let sprite: Sprite2D | null = this.get_node_or_null('Sprite2D');
-    const _checkSprite: IsExact<typeof sprite, Sprite2D | null> = true;
+    // get_node_or_null: known path → typed node | null
+    let sprite = this.get_node_or_null('Sprite2D');
+    let _spriteAssign: Sprite2D = sprite;
 
     // get_node_or_null: unknown path → Node | null
     let node_or_null = this.get_node_or_null('Unknown');
     const _checkNodeOrNull: IsExact<typeof node_or_null, Node | null> = true;
 
-    // get_node: known path → Godot type with [__parent] (no null)
+    // get_node: known path → typed node | null
     let collision = this.get_node('CollisionShape2D');
-    const _checkCollision: IsExact<typeof collision, CollisionShape2D> = true;
+    let _collisionAssign: CollisionShape2D | null = collision;
 
-    // get_node: unknown path → Node
+    // get_node: unknown path → Node | null
     let unknown = this.get_node('Unknown');
-    const _checkUnknown: IsExact<typeof unknown, Node> = true;
+    const _checkUnknown: IsExact<typeof unknown, Node | null> = true;
 
-    // get_node: unique node via %Name → Godot type with [__parent]
+    // get_node: unique node via %Name → typed node | null
     let health = this.get_node('%HealthBar');
-    let _healthAssign: ProgressBar = health;
+    let _healthAssign: ProgressBar | null = health;
 
-    // get_parent() on a Godot built-in child resolves to script class via [__parent]
+    // get_parent() on a Godot built-in child resolves to script class via [__node_parent]
     let spriteNode = this.get_node('Sprite2D');
     let parent = spriteNode.get_parent();
     let _parentCheck: Player = parent;

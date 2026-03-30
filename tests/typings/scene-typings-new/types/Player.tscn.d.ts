@@ -1,9 +1,12 @@
 // AUTO-GENERATED — do not edit manually.
 
+import type { Player as _Player } from "../Player.ts";
+import type { __CLASS__ as _PlayerChild } from "../PlayerChild.ts";
+
 interface _PlayerTscn_Tree extends _GDBaseTree {
-  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Player.gd">;
+  [__node_type]: _Player;
   [__node_parent]: _GDGetInterfaceParent<__PlayerTscn__Parents>
-  [__node_children]: [];
+  [__node_children]: [_PlayerTscn_Tree['Sprite2D'], _PlayerTscn_Tree['CollisionShape2D'], _PlayerTscn_Tree['HealthBar']];
   Sprite2D: {
     [__node_type]: Sprite2D;
     [__node_parent]: _PlayerTscn_Tree;
@@ -11,7 +14,7 @@ interface _PlayerTscn_Tree extends _GDBaseTree {
       _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']
     ];
     AnimationPlayer: {
-      [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://PlayerChild.gd">;
+      [__node_type]: _PlayerChild;
       [__node_parent]: _PlayerTscn_Tree['Sprite2D'];
       [__node_children]: [
         _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']['Body']

@@ -7,7 +7,7 @@ type ScriptTree = _GDGetInterfaceTree<__PlayerGd__Trees>;
 declare module "../Player.ts" {
   interface Player {
     get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;
-    get_node(path: string): Node;
+    get_node(path: string): Node | null;
     get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;
     get_node_or_null(path: string): Node | null;
     has_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): true;
