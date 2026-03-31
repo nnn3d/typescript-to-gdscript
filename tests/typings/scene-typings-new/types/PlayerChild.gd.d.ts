@@ -18,17 +18,17 @@ declare module "../PlayerChild.ts" {
 }
 
 
-// remove unnecessary typings from global class
-/** @see import("../Player.ts") */
-declare class PlayerChild extends _PlayerChild {
-  get_node(path: string): Node | null;
-  get_node_or_null(path: string): Node | null;
-  has_node(path: string): boolean;
-  get_child(idx: int, include_internal?: boolean): Node;
-  get_parent(): Node;
-}
-
 declare global {
+
+  // remove unnecessary typings from global class
+  /** @see import("../PlayerChild.ts") */
+  class PlayerChild extends _PlayerChild {
+    get_node(path: string): Node | null;
+    get_node_or_null(path: string): Node | null;
+    has_node(path: string): boolean;
+    get_child(idx: int, include_internal?: boolean): Node;
+    get_parent(): Node;
+  }
 
   interface __PlayerChildGd__Trees {}
 

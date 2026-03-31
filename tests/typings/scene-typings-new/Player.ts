@@ -16,7 +16,7 @@ export class Player extends Node {
 
     // get_node: unknown path → Node
     let unknown = this.get_node('Unknown');
-    const _checkUnknown: IsExact<typeof unknown, Node> = true;
+    const _checkUnknown: IsExact<typeof unknown, Node | null> = true;
 
     // get_node: unique node via %Name → Godot type with [__parent]
     let health = this.get_node('%HealthBar');

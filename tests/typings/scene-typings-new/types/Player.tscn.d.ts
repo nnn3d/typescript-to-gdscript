@@ -57,6 +57,12 @@ declare global {
     "res://Player.tscn": _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']
   }
 
+  // script class instances for tree [__node_type] resolution
+  interface _GodotScripts {
+    "res://Player.gd": Player;
+    "res://PlayerChild.gd": PlayerChild;
+  }
+
   // global interfaces
   interface _GodotSceneTrees {
     "res://Player.tscn": _PlayerTscn_Tree

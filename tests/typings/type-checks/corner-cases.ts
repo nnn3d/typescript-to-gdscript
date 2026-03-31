@@ -164,16 +164,16 @@ class OpsEdgeCases extends Node {
   }
 }
 
-// ─── Node get_node returns Node ─────────────────────────────
+// ─── Node get_node returns Node | null ──────────────────────
 
 class GetNodeTest extends Node {
   test_get_node() {
-    let child: Node = this.get_node('Child');
+    let child: Node | null = this.get_node('Child');
     let maybe: Node | null = this.get_node_or_null('Maybe');
 
-    // Can add retrieved nodes
-    let other: Node = this.get_node('Other');
-    this.add_child(other);
+    // Can add retrieved nodes (with null check)
+    let other: Node | null = this.get_node('Other');
+    if (other) this.add_child(other);
   }
 }
 

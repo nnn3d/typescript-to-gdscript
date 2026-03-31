@@ -305,7 +305,7 @@ type _GDGetNode<
   ? Node | null
   : null extends _GDGetNodeByPath<Tree, Path>
     ? NonNullable<_GDGetNodeByPath<Tree, Path>> | null
-    : _GDGetNodeByPath<Tree, Path> | null;
+    : _GDGetNodeByPath<Tree, Path>;
 // // old version
 // type _GDGetNode<
 //   Tree extends _GDBaseTree,
@@ -326,7 +326,7 @@ type _GDGetNodeOrNull<
     ? Node | null
     : null extends _GDGetNodeByPath<Tree, Path>
       ? NonNullable<_GDGetNodeByPath<Tree, Path>> | null
-      : _GDGetNodeByPath<Tree, Path> | null;
+      : _GDGetNodeByPath<Tree, Path>;
 
 type __GDGetInterfaceNodeInternal<
   Interface,

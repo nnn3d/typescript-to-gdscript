@@ -33,7 +33,7 @@ class NodeMethodsTest extends Node {
     let child = new Node();
     this.add_child(child);
     this.remove_child(child);
-    let found: Node = this.get_node('Path/To/Node');
+    let found: Node | null = this.get_node('Path/To/Node');
     let maybe: Node | null = this.get_node_or_null('Maybe');
     let count: int = this.get_child_count();
     let parent: Node = this.get_parent();
