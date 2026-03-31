@@ -232,18 +232,18 @@ type _GDTreeHandlers<Tree> = {
   get_child(idx: int, include_internal?: boolean): Node;
 }
 
-type _GDTreeNode<Tree> = Omit<
-  _GDTreeGetType<Tree>,
-  keyof _GDTreeHandlers<object>
-> &
-  _GDTreeHandlers<Tree>;
+type TreeNode<Type, Tree> = Omit<
+    Type,
+    keyof _GDTreeHandlers<object>
+  > &
+  _GDTreeHandlers<Tree>
 
 type _GDTreeNodeOrNull<Tree> =
   Tree extends null
     ? null
     : Tree extends undefined
       ? never
-      : _GDTreeNode<NonNullable<Tree>>;
+      : TreeNode<_GDTreeGetType<NonNullable<Tree>>, NonNullable<Tree>>;
 
 type _GDGetTreePaths<Tree, Prefix extends string = ``> =
   IsAny<Tree> extends true
@@ -294,7 +294,7 @@ type _GDGetChild<Tree, Idx extends number> =
   _GDTreeGetChildren<Tree> extends never
     ? Node
     : `${Idx}` extends keyof _GDTreeGetChildren<Tree>
-      ? _GDTreeNode<_GDTreeGetChildren<Tree>[Idx]>
+      ? TreeNode<_GDTreeGetType<_GDTreeGetChildren<Tree>[Idx]>, _GDTreeGetChildren<Tree>[Idx]>
       : Node;
 
 /** Resolve get_parent return type from declaration-merged _XParents interface.
@@ -304,7 +304,7 @@ type _GDParentType<Tree> =
     ? Node
     : [_GDTreeGetParent<Tree>] extends [null]
       ? Node
-      : _GDTreeNode<NonNullable<_GDTreeGetParent<Tree>>>;
+      : TreeNode<_GDTreeGetType<NonNullable<_GDTreeGetParent<Tree>>>, NonNullable<_GDTreeGetParent<Tree>>>;
 
 /** Resolve get_node return type: known paths → exact type, unknown → Node.
  *  Uses _GDGetNodeByPath directly (not _GDGetTreePaths) to avoid circular mapped types.
