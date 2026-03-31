@@ -187,26 +187,22 @@ interface ClassAccessorDecoratorContext {
 // ─── Tree Helpers ───
 
 
-type _GDBaseTree = {
-  [__node_type]: Node;
-  [__node_parent]: _GDBaseTree | null;
-  [__node_children]: _GDBaseTree[];
-};
 
-type _GDCheckTree<Tree extends _GDBaseTree> = Tree;
+// type _GDBaseTree = {[K in string]?: _GDBaseTree} & {
+//   [__node_type]: Node;
+//   [__node_parent]: _GDBaseTree | null;
+//   [__node_children]: _GDBaseTree[];
+// };
 
-type _GDTree<
-  Type extends Node,
-  Parent extends _GDBaseTree | null,
-  Children extends _GDBaseTree[],
-  PathDecl extends { [K in string]?: _GDBaseTree },
-> = PathDecl & {
-  [__node_type]: Type;
-  [__node_parent]: Parent;
-  [__node_children]: Children;
-};
+type _GDTreeGetType<T> = T extends {[__node_type]: infer R extends Node} ? R : Node;
 
-type _GDTreeHandlers<Tree extends _GDBaseTree> = {
+type _GDTreeGetParent<T> = T extends {[__node_parent]: infer R} ? R : null;
+
+type _GDTreeGetChildren<T> = T extends {[__node_children]: infer R extends any[]} ? R : [];
+
+
+
+type _GDTreeHandlers<Tree> = {
   /** Get a child node by path. Known paths (from scene tree) return exact types with autocomplete. */
   get_node<P extends string & _GDGetTreePaths<Tree>>(
     path: P,
@@ -222,7 +218,7 @@ type _GDTreeHandlers<Tree extends _GDBaseTree> = {
   /** Get the parent node. Returns typed parent from scene tree if known. */
   get_parent(): _GDParentType<Tree>;
   /** Check if a node exists at path. Known paths (from scene tree) provide autocomplete and return `true`. */
-  has_node<P extends string & _GDGetTreePaths<Tree>>(path: P): true;
+  has_node<P extends string & _GDGetTreePaths<Tree>>(path: P): boolean;
   /** Check if a node exists at path. Unknown paths return boolean. */
   has_node(path: string): boolean;
   /** Get a child node by index. Known indices (from scene tree) return exact types. */
@@ -234,52 +230,49 @@ type _GDTreeHandlers<Tree extends _GDBaseTree> = {
   get_child(idx: int, include_internal?: boolean): Node;
 }
 
-type _GDTreeNode<Tree extends _GDBaseTree> = Omit<
-  Tree[typeof __node_type],
-  keyof _GDTreeHandlers<_GDBaseTree>
+type _GDTreeNode<Tree> = Omit<
+  _GDTreeGetType<Tree>,
+  keyof _GDTreeHandlers<object>
 > &
   _GDTreeHandlers<Tree>;
 
-type _GDTreeNodeOrNull<Tree extends _GDBaseTree | null | undefined> =
+type _GDTreeNodeOrNull<Tree> =
   Tree extends null
     ? null
     : Tree extends undefined
       ? never
       : _GDTreeNode<NonNullable<Tree>>;
 
-type _GDGetTreePaths<Tree extends _GDBaseTree, Prefix extends string = ``> = {
+type _GDGetTreePaths<Tree, Prefix extends string = ``> = {
   [K in keyof Tree]: K extends string
     ? string extends K
       ? never
       :
           | `${Prefix}${K}`
-          | _GDGetTreePaths<NonNullable<Tree[K]> & _GDBaseTree, `${Prefix}${K}/`>
+          | _GDGetTreePaths<NonNullable<Tree[K]>, `${Prefix}${K}/`>
     : never;
 }[keyof Tree];
 
 type _GDGetNodeByPath<
-  Tree extends _GDBaseTree,
+  Tree,
   Path extends string,
   HasNull extends boolean = false,
 > = Path extends keyof Tree
-  ? _GDTreeNodeOrNull<(HasNull extends true ? (Tree[Path] & _GDBaseTree) | null : Tree[Path] & _GDBaseTree)>
+  ? _GDTreeNodeOrNull<HasNull extends true ? Tree[Path] | null : Tree[Path]>
   : Path extends `${infer Start}/${infer Rest}`
     ? Start extends keyof Tree
       ? _GDGetNodeByPath<
-          NonNullable<Tree[Start]> & _GDBaseTree,
+          NonNullable<Tree[Start]>,
           Rest,
           Tree[Start] extends null ? true : HasNull
         >
       : never
     : never;
 
-/** Extract the [__children] tuple from a tree type. Returns never if absent or Tree is any. */
-type _GDGetChildren<Tree extends _GDBaseTree> = Tree[typeof __node_children];
-
 /** Extract valid numeric tuple indices (0, 1, 2, ...) from a tuple type.
  *  Excludes non-numeric keys and the generic `number` index. */
-type _GDChildIndices<Tree extends _GDBaseTree> =
-  Extract<keyof _GDGetChildren<Tree>, `${number}`> extends infer K
+type _GDChildIndices<Tree> =
+  Extract<keyof _GDTreeGetChildren<Tree>, `${number}`> extends infer K
     ? K extends `${infer N extends number}`
       ? N
       : never
@@ -287,32 +280,32 @@ type _GDChildIndices<Tree extends _GDBaseTree> =
 
 /** Resolve get_child return type by numeric index into [__children] tuple.
  *  Known indices → _GDTreeNode of child subtree, unknown → Node. */
-type _GDGetChild<Tree extends _GDBaseTree, Idx extends number> =
-  _GDGetChildren<Tree> extends never
+type _GDGetChild<Tree, Idx extends number> =
+  _GDTreeGetChildren<Tree> extends never
     ? Node
-    : `${Idx}` extends keyof _GDGetChildren<Tree>
-      ? _GDTreeNode<_GDGetChildren<Tree>[Idx] & _GDBaseTree>
+    : `${Idx}` extends keyof _GDTreeGetChildren<Tree>
+      ? _GDTreeNode<_GDTreeGetChildren<Tree>[Idx]>
       : Node;
 
-/** Resolve get_parent return type from tree's [__node_parent].
- *  null parent → Node; otherwise → _GDTreeNode of parent tree. */
-type _GDParentType<Tree extends _GDBaseTree> = [
-  Tree[typeof __node_parent],
+/** Resolve get_parent return type from declaration-merged _XParents interface.
+ *  Empty interface (no parents) → Node; otherwise union of all parent types. */
+type _GDParentType<Tree> = [
+  _GDTreeGetParent<Tree>,
 ] extends [null]
   ? Node
-  : _GDTreeNode<NonNullable<Tree[typeof __node_parent]> & _GDBaseTree>;
+  : _GDTreeNode<NonNullable<_GDTreeGetParent<Tree>>>;
 
 /** Resolve get_node return type: known paths → exact type, unknown → Node.
  *  Uses _GDGetNodeByPath directly (not _GDGetTreePaths) to avoid circular mapped types.
  *  Nullable tree entries (node not in all scenes) → NonNullable<T> | Node (uncertain). */
 type _GDGetNode<
-  Tree extends _GDBaseTree,
+  Tree,
   Path extends string,
 > = _GDGetNodeByPath<Tree, Path> extends never
   ? Node | null
   : null extends _GDGetNodeByPath<Tree, Path>
     ? NonNullable<_GDGetNodeByPath<Tree, Path>> | null
-    : _GDGetNodeByPath<Tree, Path>;
+    : _GDGetNodeByPath<Tree, Path> | null;
 // // old version
 // type _GDGetNode<
 //   Tree extends _GDBaseTree,
@@ -327,7 +320,7 @@ type _GDGetNode<
  *  Unlike _GDGetNode, nullable tree entries (node not in all scenes) → NonNullable<T> | null
  *  (no Node fallback — the node is either the expected type or absent). */
 type _GDGetNodeOrNull<
-  Tree extends _GDBaseTree,
+  Tree,
   Path extends string,
 > = _GDGetNodeByPath<Tree, Path> extends never
     ? Node | null
@@ -353,7 +346,7 @@ type __GDGetInterfaceParentInternal<
   Interface,
   Key extends keyof Interface,
 > = Key extends string
-  ? Interface[Key] extends _GDBaseTree
+  ? Interface[Key] extends object
     ? Interface[Key]
     : never
   : never;
@@ -366,19 +359,19 @@ type __GDGetInterfaceTreeInternal<
   Interface,
   Key extends keyof Interface,
 > = Key extends string
-  ? Interface[Key] extends _GDBaseTree
+  ? Interface[Key] extends object
     ? Interface[Key]
     : never
   : never;
 
 type _GDGetInterfaceTree<
   Interface
-> = __GDGetInterfaceParentInternal<Interface, keyof Interface> extends never ? _GDBaseTree : __GDGetInterfaceParentInternal<Interface, keyof Interface>
+> = __GDGetInterfaceParentInternal<Interface, keyof Interface> extends never ? object : __GDGetInterfaceParentInternal<Interface, keyof Interface>
 
 declare function GetExternalScriptClass<TArgs extends any[], TBase extends abstract new (...args: TArgs) => any>(Base: TBase): TBase & {
   new (...args: any[]): Omit<
     TBase,
-    keyof _GDTreeHandlers<_GDBaseTree>
+    keyof _GDTreeHandlers<object>
   > &
-    Pick<Node, keyof _GDTreeHandlers<_GDBaseTree>>;
+    Pick<Node, keyof _GDTreeHandlers<object>>;
 }
