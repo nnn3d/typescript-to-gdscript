@@ -245,33 +245,39 @@ type _GDTreeNodeOrNull<Tree> =
       ? never
       : _GDTreeNode<NonNullable<Tree>>;
 
-type _GDGetTreePaths<Tree, Prefix extends string = ``> = {
-  [K in keyof Tree]: K extends string
-    ? string extends K
-      ? never
-      :
-          | `${Prefix}${K}`
-          | (_GDTreeGetRoot<Tree[K]> extends true
-              ? _GDGetTreePaths<NonNullable<Tree[K]>, `${Prefix}${K}/`>
-              : never)
-    : never;
-}[keyof Tree];
+type _GDGetTreePaths<Tree, Prefix extends string = ``> =
+  IsAny<Tree> extends true
+    ? string
+    : {
+        [K in keyof Tree]: K extends string
+          ? string extends K
+            ? never
+            :
+                | `${Prefix}${K}`
+                | (_GDTreeGetRoot<Tree[K]> extends true
+                    ? _GDGetTreePaths<NonNullable<Tree[K]>, `${Prefix}${K}/`>
+                    : never)
+          : never;
+      }[keyof Tree];
 
 type _GDGetNodeByPath<
   Tree,
   Path extends string,
   HasNull extends boolean = false,
-> = Path extends keyof Tree
-  ? _GDTreeNodeOrNull<HasNull extends true ? Tree[Path] | null : Tree[Path]>
-  : Path extends `${infer Start extends keyof Tree & string}/${infer Rest}`
-    ? _GDTreeGetRoot<Tree[Start]> extends true
-      ? _GDGetNodeByPath<
-          NonNullable<Tree[Start]>,
-          Rest,
-          Tree[Start] extends null ? true : HasNull
-        >
-      : never
-    : never;
+> =
+  IsAny<Tree> extends true
+    ? Node | null
+    : Path extends keyof Tree
+      ? _GDTreeNodeOrNull<HasNull extends true ? Tree[Path] | null : Tree[Path]>
+      : Path extends `${infer Start extends keyof Tree & string}/${infer Rest}`
+        ? _GDTreeGetRoot<Tree[Start]> extends true
+          ? _GDGetNodeByPath<
+              NonNullable<Tree[Start]>,
+              Rest,
+              Tree[Start] extends null ? true : HasNull
+            >
+          : never
+        : never;
 
 /** Extract valid numeric tuple indices (0, 1, 2, ...) from a tuple type.
  *  Excludes non-numeric keys and the generic `number` index. */
@@ -372,11 +378,3 @@ type __GDGetInterfaceTreeInternal<
 type _GDGetInterfaceTree<
   Interface
 > = __GDGetInterfaceParentInternal<Interface, keyof Interface> extends never ? object : __GDGetInterfaceParentInternal<Interface, keyof Interface>
-
-declare function GetExternalScriptClass<TArgs extends any[], TBase extends abstract new (...args: TArgs) => any>(Base: TBase): TBase & {
-  new (...args: any[]): Omit<
-    TBase,
-    keyof _GDTreeHandlers<object>
-  > &
-    Pick<Node, keyof _GDTreeHandlers<object>>;
-}
