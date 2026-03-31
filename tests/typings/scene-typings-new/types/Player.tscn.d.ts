@@ -1,6 +1,7 @@
 // AUTO-GENERATED — do not edit manually.
 
 type _PlayerTscn_Tree = {
+  [__node_root]: true,
   [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Player.gd">;
   [__node_parent]: _GDGetInterfaceParent<__PlayerTscn__Parents>
   [__node_children]: [_PlayerTscn_Tree['Sprite2D'], _PlayerTscn_Tree['CollisionShape2D'], _PlayerTscn_Tree['HealthBar']];
@@ -8,28 +9,34 @@ type _PlayerTscn_Tree = {
     [__node_type]: Sprite2D;
     [__node_parent]: _PlayerTscn_Tree;
     [__node_children]: [
-      _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']
+      _PlayerTscn_Tree['Sprite2D/AnimationPlayer']
     ];
-    AnimationPlayer: {
-      [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://PlayerChild.gd">;
-      [__node_parent]: _PlayerTscn_Tree['Sprite2D'];
-      [__node_children]: [
-        _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']['Body']
-      ];
-      Body: {
-        [__node_type]: Sprite2D;
-        [__node_parent]: _PlayerTscn_Tree['Sprite2D']['AnimationPlayer'];
-        [__node_children]: [
-          _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']['Body']['Armor']
-        ];
-        Armor: {
-          [__node_type]: Sprite2D;
-          [__node_parent]: _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']['Body'];
-          [__node_children]: [];
-        }
-      }
-    };
+    "AnimationPlayer": _PlayerTscn_Tree['Sprite2D/AnimationPlayer'],
+    "AnimationPlayer/Body": _PlayerTscn_Tree['Sprite2D/AnimationPlayer/Body'],
+    "AnimationPlayer/Body/Armor": _PlayerTscn_Tree['Sprite2D/AnimationPlayer/Body/Armor'],
   };
+  "Sprite2D/AnimationPlayer": {
+    [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://PlayerChild.gd">;
+    [__node_parent]: _PlayerTscn_Tree['Sprite2D'];
+    [__node_children]: [
+      _PlayerTscn_Tree['Sprite2D/AnimationPlayer/Body']
+    ];
+    "Body": _PlayerTscn_Tree['Sprite2D/AnimationPlayer/Body'],
+    "Body/Armor": _PlayerTscn_Tree['Sprite2D/AnimationPlayer/Body/Armor'],
+  };
+  "Sprite2D/AnimationPlayer/Body": {
+    [__node_type]: Sprite2D;
+    [__node_parent]: _PlayerTscn_Tree['Sprite2D/AnimationPlayer'];
+    [__node_children]: [
+      _PlayerTscn_Tree['Sprite2D/AnimationPlayer/Body/Armor']
+    ];
+    "Armor": _PlayerTscn_Tree['Sprite2D/AnimationPlayer/Body/Armor'],
+  }
+  "Sprite2D/AnimationPlayer/Body/Armor": {
+    [__node_type]: Sprite2D;
+    [__node_parent]: _PlayerTscn_Tree['Sprite2D/AnimationPlayer/Body'];
+    [__node_children]: [];
+  }
   CollisionShape2D: {
     [__node_type]: CollisionShape2D;
     [__node_parent]: _PlayerTscn_Tree;
@@ -54,7 +61,7 @@ declare global {
   }
 
   interface __PlayerChildGd__Trees {
-    "res://Player.tscn": _PlayerTscn_Tree['Sprite2D']['AnimationPlayer']
+    "res://Player.tscn": _PlayerTscn_Tree['Sprite2D/AnimationPlayer']
   }
 
   // script class instances for tree [__node_type] resolution

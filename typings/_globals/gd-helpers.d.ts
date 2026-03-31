@@ -48,6 +48,7 @@ declare function NodePath(value: string): string;
 // ─── Node Tree Symbols ───────────────────────────────────────
 // Used by scene typings to encode parent-child relationships in Node<Tree> generics.
 
+declare const __node_root: unique symbol;
 declare const __node_type: unique symbol;
 declare const __node_children: unique symbol;
 declare const __node_parent: unique symbol;

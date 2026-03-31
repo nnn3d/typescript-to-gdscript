@@ -194,6 +194,8 @@ interface ClassAccessorDecoratorContext {
 //   [__node_children]: _GDBaseTree[];
 // };
 
+type _GDTreeGetRoot<T> = T extends {[__node_type]: infer R extends boolean} ? R : false;
+
 type _GDTreeGetType<T> = T extends {[__node_type]: infer R extends Node} ? R : Node;
 
 type _GDTreeGetParent<T> = T extends {[__node_parent]: infer R} ? R : null;
@@ -249,7 +251,9 @@ type _GDGetTreePaths<Tree, Prefix extends string = ``> = {
       ? never
       :
           | `${Prefix}${K}`
-          | _GDGetTreePaths<NonNullable<Tree[K]>, `${Prefix}${K}/`>
+          | (_GDTreeGetRoot<Tree[K]> extends true
+              ? _GDGetTreePaths<NonNullable<Tree[K]>, `${Prefix}${K}/`>
+              : never)
     : never;
 }[keyof Tree];
 
@@ -259,8 +263,8 @@ type _GDGetNodeByPath<
   HasNull extends boolean = false,
 > = Path extends keyof Tree
   ? _GDTreeNodeOrNull<HasNull extends true ? Tree[Path] | null : Tree[Path]>
-  : Path extends `${infer Start}/${infer Rest}`
-    ? Start extends keyof Tree
+  : Path extends `${infer Start extends keyof Tree & string}/${infer Rest}`
+    ? _GDTreeGetRoot<Tree[Start]> extends true
       ? _GDGetNodeByPath<
           NonNullable<Tree[Start]>,
           Rest,
@@ -289,11 +293,12 @@ type _GDGetChild<Tree, Idx extends number> =
 
 /** Resolve get_parent return type from declaration-merged _XParents interface.
  *  Empty interface (no parents) → Node; otherwise union of all parent types. */
-type _GDParentType<Tree> = [
-  _GDTreeGetParent<Tree>,
-] extends [null]
-  ? Node
-  : _GDTreeNode<NonNullable<_GDTreeGetParent<Tree>>>;
+type _GDParentType<Tree> =
+  IsAny<Tree> extends true
+    ? Node
+    : [_GDTreeGetParent<Tree>] extends [null]
+      ? Node
+      : _GDTreeNode<NonNullable<_GDTreeGetParent<Tree>>>;
 
 /** Resolve get_node return type: known paths → exact type, unknown → Node.
  *  Uses _GDGetNodeByPath directly (not _GDGetTreePaths) to avoid circular mapped types.
