@@ -19,6 +19,15 @@ function fixCommentIndentation(source: string): string {
 
     // Check if this is a comment line (# or ##)
     if (trimmed.startsWith('#')) {
+      // tree-sitter-gdscript bug: `#"` (no space) is not parsed as a comment.
+      // Workaround: ensure a space after # or ## before non-space characters.
+      const commentPrefix = trimmed.startsWith('##') ? '##' : '#';
+      const afterPrefix = trimmed.slice(commentPrefix.length);
+      let fixedTrimmed = trimmed;
+      if (afterPrefix.length > 0 && afterPrefix[0] !== ' ' && afterPrefix[0] !== '\t') {
+        fixedTrimmed = commentPrefix + ' ' + afterPrefix;
+      }
+
       // Find the next non-empty, non-comment line
       let nextIndent: string | null = null;
       for (let j = i + 1; j < lines.length; j++) {
@@ -37,9 +46,14 @@ function fixCommentIndentation(source: string): string {
         const currentIndent = line.substring(0, line.length - trimmed.length);
         // If comment has less indentation than the next code line, re-indent it
         if (currentIndent.length < nextIndent.length) {
-          result.push(nextIndent + trimmed);
+          result.push(nextIndent + fixedTrimmed);
           continue;
         }
+      }
+      if (fixedTrimmed !== trimmed) {
+        const currentIndent = line.substring(0, line.length - trimmed.length);
+        result.push(currentIndent + fixedTrimmed);
+        continue;
       }
     }
 

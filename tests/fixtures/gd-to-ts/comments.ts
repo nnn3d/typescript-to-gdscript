@@ -3,6 +3,8 @@ export class Comments extends Node {
   health: int = 100;
   // Regular comment
   speed: float = 5.0;
+  // "comment" without spacing
+  velocity: float = 5.0;
 
   _ready() {
     // Initialize
