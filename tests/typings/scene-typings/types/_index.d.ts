@@ -5,9 +5,7 @@ import type { __CLASS__ as _GameManager } from "../GameManager.js";
 declare global {
   interface _GodotScripts {}
   interface _GodotSceneTrees {}
-  interface GodotResources {
-    "res://player_material.tres": ShaderMaterial;
-  }
+  interface GodotResources {}
   // Autoload singletons from project.godot
   const GameManager: _GameManager;
 }
