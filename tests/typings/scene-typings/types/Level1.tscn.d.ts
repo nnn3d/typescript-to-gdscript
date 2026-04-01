@@ -7,6 +7,7 @@ type _Level1Tscn_ExtraSprite = {
 };
 
 type _Level1Tscn_Tree = {
+  [__node_extends]: _GodotSceneTrees["res://Level.tscn"];
   [__node_root]: true;
   [__node_type]: Node;
   [__node_parent]: _GDGetInterfaceParent<__Level1Tscn__Parents>;

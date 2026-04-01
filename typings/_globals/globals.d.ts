@@ -202,7 +202,14 @@ type _GDTreeGetParent<T> = T extends {[__node_parent]: infer R} ? R : null;
 
 type _GDTreeGetChildren<T> = T extends {[__node_children]: infer R extends any[]} ? R : [];
 
+/** Extract the base tree from an extended scene tree, or `never` if not extended. */
+type _GDTreeGetExtends<T> = T extends {[__node_extends]: infer E extends object} ? E : never;
 
+/** Get merged children: own + base tree (if extended). */
+type _GDTreeGetAllChildren<T> =
+  _GDTreeGetExtends<T> extends never
+    ? _GDTreeGetChildren<T>
+    : [..._GDTreeGetChildren<_GDTreeGetExtends<T>>, ..._GDTreeGetChildren<T>];
 
 type _GDTreeHandlers<Tree> = {
   /** Get a child node by path. Known paths (from scene tree) return exact types with autocomplete. */
@@ -256,6 +263,8 @@ type _GDGetTreePaths<Tree, Prefix extends string = ``> =
                       : never)
             : never;
         }[keyof Tree]
+      // Include paths from base tree if extended
+      | (_GDTreeGetExtends<Tree> extends never ? never : _GDGetTreePaths<_GDTreeGetExtends<Tree>, Prefix>)
     : never;
 
 type _GDGetNullByPath<
@@ -276,7 +285,10 @@ type _GDGetNullByPath<
                 Tree[Start] extends null ? true : HasNull
               >
             : null // path segment not traversable in this tree
-          : null // path not found in this tree (contributes null to union)
+          // Fall back to base tree if extended
+          : _GDTreeGetExtends<Tree> extends never
+            ? null // path not found in this tree (contributes null to union)
+            : _GDGetNullByPath<_GDTreeGetExtends<Tree>, Path, HasNull>
     : never;
 
 type _GDGetTreeByPath<
@@ -295,7 +307,10 @@ type _GDGetTreeByPath<
                 Rest
               >
             : never // path segment not traversable in this tree
-          : never // path not found in this tree (contributes null to union)
+          // Fall back to base tree if extended
+          : _GDTreeGetExtends<Tree> extends never
+            ? never // path not found in this tree (contributes null to union)
+            : _GDGetTreeByPath<_GDTreeGetExtends<Tree>, Path>
     : never;
 
 type _GDGetNodeByPath<Tree, Path extends string> =
@@ -306,10 +321,11 @@ type _GDGetNodeByPath<Tree, Path extends string> =
 
 
 /** Extract valid numeric tuple indices (0, 1, 2, ...) from a tuple type.
- *  Excludes non-numeric keys and the generic `number` index. */
+ *  Excludes non-numeric keys and the generic `number` index.
+ *  Uses _GDTreeGetAllChildren to include base tree children for extended scenes. */
 type _GDChildIndices<Tree> =
   Tree extends any // distributive over union trees
-    ? Extract<keyof _GDTreeGetChildren<Tree>, `${number}`> extends infer K
+    ? Extract<keyof _GDTreeGetAllChildren<Tree>, `${number}`> extends infer K
       ? K extends `${infer N extends number}`
         ? N
         : never
@@ -317,13 +333,14 @@ type _GDChildIndices<Tree> =
     : never;
 
 /** Resolve get_child return type by numeric index into [__children] tuple.
- *  Known indices → _GDTreeNode of child subtree, unknown → Node. */
+ *  Known indices → _GDTreeNode of child subtree, unknown → Node.
+ *  Uses _GDTreeGetAllChildren to include base tree children for extended scenes. */
 type _GDGetChild<Tree, Idx extends number> =
   Tree extends any // distributive over union trees
-    ? _GDTreeGetChildren<Tree> extends never
+    ? _GDTreeGetAllChildren<Tree> extends never
       ? Node
-      : `${Idx}` extends keyof _GDTreeGetChildren<Tree>
-        ? _GDTreeNode<_GDTreeGetChildren<Tree>[Idx]>
+      : `${Idx}` extends keyof _GDTreeGetAllChildren<Tree>
+        ? _GDTreeNode<_GDTreeGetAllChildren<Tree>[Idx]>
         : Node
     : never;
 
@@ -398,3 +415,4 @@ type __GDGetInterfaceTreeInternal<
 type _GDGetInterfaceTree<
   Interface
 > = __GDGetInterfaceParentInternal<Interface, keyof Interface> extends never ? object : __GDGetInterfaceParentInternal<Interface, keyof Interface>
+

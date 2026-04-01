@@ -1,0 +1,41 @@
+// AUTO-GENERATED — do not edit manually.
+
+import type { Level3 as ScriptClass } from "../Level3.js";
+
+type ScriptTree = _GDGetInterfaceTree<__Level3Gd__Trees>;
+
+declare module "../Level3.ts" {
+  interface Level3 {
+    get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;
+    get_node(path: string): Node | null;
+    get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;
+    get_node_or_null(path: string): Node | null;
+    has_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): boolean;
+    has_node(path: string): boolean;
+    get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;
+    get_child(idx: int, include_internal?: boolean): Node;
+    get_parent(): _GDParentType<ScriptTree>;
+  }
+}
+
+declare global {
+  interface __Level3Gd__Trees {}
+
+  /** @see import("../Level3.ts") */
+  class Level3 extends ScriptClass {
+    get_node(path: string): Node | null;
+    get_node_or_null(path: string): Node | null;
+    has_node(path: string): boolean;
+    get_child(idx: int, include_internal?: boolean): Node;
+  }
+
+  interface _GodotScripts {
+    "res://Level3.gd": Level3;
+  }
+
+  interface GodotResources {
+    "res://Level3.gd": typeof Level3;
+  }
+}
+
+export {};

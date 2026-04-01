@@ -900,8 +900,12 @@ function generateSceneTypingContent(
   }
 
   const rootDescendantPaths = collectDescendantPaths(root, alias, instancedSceneTreeNames);
+  const inheritedSceneResPath = sceneData.inheritedSceneResPath;
 
   lines.push(`type ${treeName} = {`);
+  if (inheritedSceneResPath) {
+    lines.push(`  [__node_extends]: _GodotSceneTrees["${inheritedSceneResPath}"];`);
+  }
   lines.push(`  [__node_root]: true;`);
   lines.push(`  [__node_type]: ${rootNodeType};`);
   lines.push(`  [__node_parent]: _GDGetInterfaceParent<${parentsInterface}>;`);

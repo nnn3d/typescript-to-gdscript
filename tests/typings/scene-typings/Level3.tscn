@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://test_level3_scene"]
+
+[ext_resource type="PackedScene" uid="uid://test_alevel_scene" path="res://ALevel.tscn" id="1"]
+[ext_resource type="Script" uid="uid://test_level3_script" path="res://Level3.gd" id="2"]
+
+[node name="Level3" type="Node2D"]
+script = ExtResource("2")
+
+[node name="ALevel" parent="." instance=ExtResource("1")]
+
+[node name="Level3Label" type="Label" parent="ALevel"]
+
+[node name="OwnChild" type="Sprite2D" parent="."]
