@@ -10,7 +10,7 @@ type _TilesetObjectsTscn_Tree = {
 declare global {
   interface __TilesetObjectsTscn__Parents {}
 
-// TileMap scenes: Anonym and Ball get_parent() resolves through TilesetObjects
+  // Instanced scene parents
   interface __AnonymTscn__Parents { "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree; }
   interface __BallATscn__Parents { "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree; }
 

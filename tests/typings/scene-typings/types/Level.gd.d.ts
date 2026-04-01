@@ -27,7 +27,6 @@ declare global {
     get_node_or_null(path: string): Node | null;
     has_node(path: string): boolean;
     get_child(idx: int, include_internal?: boolean): Node;
-    get_parent<N extends Node = Node>(): N;
   }
 
   interface _GodotScripts {

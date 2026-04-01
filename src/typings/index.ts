@@ -4,12 +4,10 @@ export {
 } from './classes.ts';
 export {
   generateTypings,
-  buildScriptClassMap,
   parseAutoloads,
   resolveSignalHandlers,
   type GenerateTypingsOptions,
   type SignalHandlerInfo,
-  type BuildScriptClassMapOptions,
   type ScriptClassInfo,
   type AutoloadEntry,
 } from './scenes.ts';

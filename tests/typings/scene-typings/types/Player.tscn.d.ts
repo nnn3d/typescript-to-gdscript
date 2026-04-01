@@ -1,23 +1,16 @@
 // AUTO-GENERATED — do not edit manually.
 
-// Player.tscn tree:
-//   Player (CharacterBody2D, script: Player.gd)
-//     Sprite2D
-//       AnimationPlayer
-//     CollisionShape2D
-//     HealthBar (ProgressBar, unique_name_in_owner)
+type _PlayerTscn_Sprite2D_AnimationPlayer = {
+  [__node_type]: AnimationPlayer;
+  [__node_parent]: _PlayerTscn_Sprite2D;
+  [__node_children]: [];
+};
 
 type _PlayerTscn_Sprite2D = {
   [__node_type]: Sprite2D;
   [__node_parent]: _PlayerTscn_Tree;
-  [__node_children]: [_PlayerTscn_AnimationPlayer];
-  "AnimationPlayer": _PlayerTscn_AnimationPlayer;
-};
-
-type _PlayerTscn_AnimationPlayer = {
-  [__node_type]: AnimationPlayer;
-  [__node_parent]: _PlayerTscn_Sprite2D;
-  [__node_children]: [];
+  [__node_children]: [_PlayerTscn_Sprite2D_AnimationPlayer];
+  "AnimationPlayer": _PlayerTscn_Sprite2D_AnimationPlayer;
 };
 
 type _PlayerTscn_CollisionShape2D = {
@@ -38,7 +31,7 @@ type _PlayerTscn_Tree = {
   [__node_parent]: _GDGetInterfaceParent<__PlayerTscn__Parents>;
   [__node_children]: [_PlayerTscn_Sprite2D, _PlayerTscn_CollisionShape2D, _PlayerTscn_HealthBar];
   "Sprite2D": _PlayerTscn_Sprite2D;
-  "Sprite2D/AnimationPlayer": _PlayerTscn_AnimationPlayer;
+  "Sprite2D/AnimationPlayer": _PlayerTscn_Sprite2D_AnimationPlayer;
   "CollisionShape2D": _PlayerTscn_CollisionShape2D;
   "HealthBar": _PlayerTscn_HealthBar;
   "%HealthBar": _PlayerTscn_HealthBar;
@@ -54,7 +47,6 @@ declare global {
   interface _GodotSceneTrees {
     "res://Player.tscn": _PlayerTscn_Tree;
   }
-
   interface GodotResources {
     "res://Player.tscn": PackedScene<_GDTreeNode<_PlayerTscn_Tree>>;
   }

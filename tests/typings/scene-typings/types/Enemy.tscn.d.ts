@@ -1,11 +1,10 @@
 // AUTO-GENERATED — do not edit manually.
 
-// Enemy.tscn tree:
-//   Enemy (CharacterBody2D, script: Enemy.gd)
-//     Sprite2D
-//       AnimationPlayer
-//     HitBox (Area2D)
-//       CollisionShape2D
+type _EnemyTscn_Sprite2D_AnimationPlayer = {
+  [__node_type]: AnimationPlayer;
+  [__node_parent]: _EnemyTscn_Sprite2D;
+  [__node_children]: [];
+};
 
 type _EnemyTscn_Sprite2D = {
   [__node_type]: Sprite2D;
@@ -14,9 +13,9 @@ type _EnemyTscn_Sprite2D = {
   "AnimationPlayer": _EnemyTscn_Sprite2D_AnimationPlayer;
 };
 
-type _EnemyTscn_Sprite2D_AnimationPlayer = {
-  [__node_type]: AnimationPlayer;
-  [__node_parent]: _EnemyTscn_Sprite2D;
+type _EnemyTscn_HitBox_CollisionShape2D = {
+  [__node_type]: CollisionShape2D;
+  [__node_parent]: _EnemyTscn_HitBox;
   [__node_children]: [];
 };
 
@@ -25,12 +24,6 @@ type _EnemyTscn_HitBox = {
   [__node_parent]: _EnemyTscn_Tree;
   [__node_children]: [_EnemyTscn_HitBox_CollisionShape2D];
   "CollisionShape2D": _EnemyTscn_HitBox_CollisionShape2D;
-};
-
-type _EnemyTscn_HitBox_CollisionShape2D = {
-  [__node_type]: CollisionShape2D;
-  [__node_parent]: _EnemyTscn_HitBox;
-  [__node_children]: [];
 };
 
 type _EnemyTscn_Tree = {

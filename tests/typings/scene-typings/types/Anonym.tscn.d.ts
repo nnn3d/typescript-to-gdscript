@@ -1,16 +1,16 @@
 // AUTO-GENERATED — do not edit manually.
 
-type _AnonymTscn_Sprite2D = {
-  [__node_type]: Sprite2D;
-  [__node_parent]: _AnonymTscn_Tree;
-  [__node_children]: [_AnonymTscn_AnimationPlayer];
-  "AnimationPlayer": _AnonymTscn_AnimationPlayer;
-};
-
-type _AnonymTscn_AnimationPlayer = {
+type _AnonymTscn_Sprite2D_AnimationPlayer = {
   [__node_type]: AnimationPlayer;
   [__node_parent]: _AnonymTscn_Sprite2D;
   [__node_children]: [];
+};
+
+type _AnonymTscn_Sprite2D = {
+  [__node_type]: Sprite2D;
+  [__node_parent]: _AnonymTscn_Tree;
+  [__node_children]: [_AnonymTscn_Sprite2D_AnimationPlayer];
+  "AnimationPlayer": _AnonymTscn_Sprite2D_AnimationPlayer;
 };
 
 type _AnonymTscn_CollisionShape2D = {
@@ -25,7 +25,7 @@ type _AnonymTscn_Tree = {
   [__node_parent]: _GDGetInterfaceParent<__AnonymTscn__Parents>;
   [__node_children]: [_AnonymTscn_Sprite2D, _AnonymTscn_CollisionShape2D];
   "Sprite2D": _AnonymTscn_Sprite2D;
-  "Sprite2D/AnimationPlayer": _AnonymTscn_AnimationPlayer;
+  "Sprite2D/AnimationPlayer": _AnonymTscn_Sprite2D_AnimationPlayer;
   "CollisionShape2D": _AnonymTscn_CollisionShape2D;
 };
 

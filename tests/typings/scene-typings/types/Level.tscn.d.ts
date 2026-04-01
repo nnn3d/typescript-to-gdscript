@@ -6,30 +6,33 @@ type _LevelTscn_Background = {
   [__node_children]: [];
 };
 
-type _LevelTscn_ScoreSprite = {
+type _LevelTscn_UI_ScoreLabel_ScoreSprite = {
   [__node_type]: Sprite2D;
-  [__node_parent]: _LevelTscn_ScoreLabel;
+  [__node_parent]: _LevelTscn_UI_ScoreLabel;
   [__node_children]: [];
 };
 
-type _LevelTscn_ScoreLabel = {
+type _LevelTscn_UI_ScoreLabel = {
   [__node_type]: Label;
   [__node_parent]: _LevelTscn_UI;
-  [__node_children]: [_LevelTscn_ScoreSprite];
-  "ScoreSprite": _LevelTscn_ScoreSprite;
+  [__node_children]: [_LevelTscn_UI_ScoreLabel_ScoreSprite];
+  "ScoreSprite": _LevelTscn_UI_ScoreLabel_ScoreSprite;
 };
 
 type _LevelTscn_UI = {
   [__node_type]: CanvasLayer;
   [__node_parent]: _LevelTscn_Tree;
-  [__node_children]: [_LevelTscn_ScoreLabel];
-  "ScoreLabel": _LevelTscn_ScoreLabel;
-  "ScoreLabel/ScoreSprite": _LevelTscn_ScoreSprite;
+  [__node_children]: [_LevelTscn_UI_ScoreLabel];
+  "ScoreLabel": _LevelTscn_UI_ScoreLabel;
+  "ScoreLabel/ScoreSprite": _LevelTscn_UI_ScoreLabel_ScoreSprite;
 };
 
 type _PlayerTscn_Tree = _GodotSceneTrees["res://Player.tscn"];
+
 type _EnemyTscn_Tree = _GodotSceneTrees["res://Enemy.tscn"];
+
 type _TilesetObjectsTscn_Tree = _GodotSceneTrees["res://TilesetObjects.tscn"];
+
 type _Level2Tscn_Tree = _GodotSceneTrees["res://Level2.tscn"];
 
 type _LevelTscn_Tree = {
@@ -40,12 +43,12 @@ type _LevelTscn_Tree = {
   "Player": _PlayerTscn_Tree;
   "Enemy": _EnemyTscn_Tree;
   "TilesetObjects": _TilesetObjectsTscn_Tree;
-  "TilesetObjectsMap": _TilesetObjectsTscn_Tree;
-  "Level2": _Level2Tscn_Tree;
   "Background": _LevelTscn_Background;
   "UI": _LevelTscn_UI;
-  "UI/ScoreLabel": _LevelTscn_ScoreLabel;
-  "UI/ScoreLabel/ScoreSprite": _LevelTscn_ScoreSprite;
+  "UI/ScoreLabel": _LevelTscn_UI_ScoreLabel;
+  "UI/ScoreLabel/ScoreSprite": _LevelTscn_UI_ScoreLabel_ScoreSprite;
+  "TilesetObjectsMap": _TilesetObjectsTscn_Tree;
+  "Level2": _Level2Tscn_Tree;
 };
 
 declare global {
@@ -58,6 +61,7 @@ declare global {
   // Instanced scene parents
   interface __PlayerTscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }
   interface __EnemyTscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }
+  interface __TilesetObjectsTscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }
   interface __TilesetObjectsTscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }
   interface __Level2Tscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }
 

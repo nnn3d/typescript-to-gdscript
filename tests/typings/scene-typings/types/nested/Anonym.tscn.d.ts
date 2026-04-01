@@ -1,16 +1,16 @@
 // AUTO-GENERATED — do not edit manually.
 
-type _nested_AnonymTscn_Sprite2D = {
-  [__node_type]: Sprite2D;
-  [__node_parent]: _nested_AnonymTscn_Tree;
-  [__node_children]: [_nested_AnonymTscn_AnimationPlayer];
-  "AnimationPlayer": _nested_AnonymTscn_AnimationPlayer;
-};
-
-type _nested_AnonymTscn_AnimationPlayer = {
+type _nested_AnonymTscn_Sprite2D_AnimationPlayer = {
   [__node_type]: AnimationPlayer;
   [__node_parent]: _nested_AnonymTscn_Sprite2D;
   [__node_children]: [];
+};
+
+type _nested_AnonymTscn_Sprite2D = {
+  [__node_type]: Sprite2D;
+  [__node_parent]: _nested_AnonymTscn_Tree;
+  [__node_children]: [_nested_AnonymTscn_Sprite2D_AnimationPlayer];
+  "AnimationPlayer": _nested_AnonymTscn_Sprite2D_AnimationPlayer;
 };
 
 type _nested_AnonymTscn_CollisionShape2D = {
@@ -25,7 +25,7 @@ type _nested_AnonymTscn_Tree = {
   [__node_parent]: _GDGetInterfaceParent<__nested_AnonymTscn__Parents>;
   [__node_children]: [_nested_AnonymTscn_Sprite2D, _nested_AnonymTscn_CollisionShape2D];
   "Sprite2D": _nested_AnonymTscn_Sprite2D;
-  "Sprite2D/AnimationPlayer": _nested_AnonymTscn_AnimationPlayer;
+  "Sprite2D/AnimationPlayer": _nested_AnonymTscn_Sprite2D_AnimationPlayer;
   "CollisionShape2D": _nested_AnonymTscn_CollisionShape2D;
 };
 

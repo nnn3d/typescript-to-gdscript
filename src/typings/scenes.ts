@@ -590,6 +590,8 @@ interface ScriptlessSceneInfo {
   sceneMap?: Map<string, string>;
 }
 
+// ─── Naming Helpers ─────────────────────────────────────────
+
 /** Derive a synthetic alias from a scene res:// path, e.g. "res://Level2.tscn" → "_Level2Tscn" */
 function sceneResPathToAlias(resPath: string): string {
   const stripped = resPath.replace(/^res:\/\//, '').replace(/\.[^.]+$/, '');
@@ -617,22 +619,30 @@ function sceneResPathToTreeName(resPath: string): string {
   return `_${base}Tscn_Tree`;
 }
 
-/** Derive scene nodes interface name from script alias, e.g. "_Player" → "_PlayerSceneNodes" */
-function aliasToSceneNodesName(alias: string): string {
-  return `${alias}SceneNodes`;
+/** Derive __Trees interface name from script res:// path, e.g. "res://Player.gd" → "__PlayerGd__Trees" */
+function scriptResPathToTreesInterfaceName(resPath: string): string {
+  const base = resPath
+    .replace(/^res:\/\//, '')
+    .replace(/\.gd$/, '')
+    .replaceAll('/', '_')
+    .replaceAll(' ', '_');
+  return `__${base}Gd__Trees`;
 }
 
-/** Derive parents interface name from script alias, e.g. "_Player" → "_PlayerParents" */
-function aliasToParentsName(alias: string): string {
-  return `${alias}Parents`;
+/** Derive __Parents interface name from scene res:// path, e.g. "res://Player.tscn" → "__PlayerTscn__Parents" */
+function sceneResPathToParentsInterfaceName(resPath: string): string {
+  const alias = sceneResPathToAlias(resPath);
+  return `_${alias}__Parents`;
 }
 
-/** Compute a relative import path between two files within the same output directory */
-function computeRelImport(fromFile: string, toFile: string): string {
-  const fromDir = dirname(fromFile);
-  let rel = relative(fromDir, toFile).replace(/\\/g, '/');
-  if (!rel.startsWith('.')) rel = './' + rel;
-  return rel.replace(/\.d\.ts$/, '.js');
+/** Derive a type name for a node in a scene, e.g. ("_PlayerTscn", "Sprite2D/AnimationPlayer") → "_PlayerTscn_Sprite2D_AnimationPlayer" */
+function nodePathToTypeName(sceneAlias: string, nodePath: string): string {
+  return `${sceneAlias}_${nodePath.replaceAll('/', '_').replace(/[^a-zA-Z0-9_]/g, '_')}`;
+}
+
+/** Derive output file name from a resource res:// path, e.g. "res://material.tres" → "material.tres.d.ts" */
+function resourceResPathToOutputFile(resPath: string): string {
+  return resPath.replace(/^res:\/\//, '') + '.d.ts';
 }
 
 /** Compute a relative import path from an output file to a TS source file */
@@ -641,6 +651,474 @@ function computeTsImport(outputDir: string, fromOutputFile: string, tsAbsPath: s
   let rel = relative(fromAbsDir, tsAbsPath).replace(/\\/g, '/');
   if (!rel.startsWith('.')) rel = './' + rel;
   return rel.replace(/\.ts$/, '.js');
+}
+
+/** Convert an absolute file path to a res:// path relative to rootDir */
+function absPathToResPath(absPath: string, rootDir: string): string {
+  return 'res://' + relative(rootDir, absPath).replace(/\\/g, '/');
+}
+
+// ─── Tree Node Structure ────────────────────────────────────
+
+interface TreeNodeInfo {
+  name: string;
+  /** Full path relative to scene root, e.g. "Sprite2D/AnimationPlayer" */
+  fullPath: string;
+  /** Godot class type name */
+  type: string;
+  /** Full path of parent node, or null for root */
+  parentPath: string | null;
+  /** Direct children */
+  children: TreeNodeInfo[];
+  /** Whether this node instances another scene */
+  isInstanced: boolean;
+  /** res:// path of instanced scene */
+  instanceSceneResPath?: string;
+  /** Whether this node has unique_name_in_owner */
+  uniqueInOwner?: boolean;
+}
+
+/**
+ * Build a tree structure from the flat node list returned by parseScene().
+ */
+function buildNodeTree(
+  sceneData: NonNullable<ReturnType<typeof parseScene>>,
+): TreeNodeInfo {
+  const { nodeTypes, instancedNodes } = sceneData;
+
+  // Find root node type
+  const rootType = nodeTypes.get('.') ?? 'Node';
+
+  const root: TreeNodeInfo = {
+    name: '',
+    fullPath: '.',
+    type: rootType,
+    parentPath: null,
+    children: [],
+    isInstanced: false,
+  };
+
+  // Build map of full path → TreeNodeInfo
+  const nodeMap = new Map<string, TreeNodeInfo>();
+  nodeMap.set('.', root);
+
+  // Collect all non-root nodes from the scene scripts' children (for the root script)
+  const rootScript = sceneData.scripts.find(s => s.nodePath === '.');
+  if (!rootScript) {
+    // No root script — use nodeTypes to build tree
+    for (const [fullPath, type] of nodeTypes) {
+      if (fullPath === '.') continue;
+      const parts = fullPath.split('/');
+      const name = parts[parts.length - 1]!;
+      const parentPath = parts.length === 1 ? '.' : parts.slice(0, -1).join('/');
+      const instanceResPath = instancedNodes.get(fullPath);
+
+      const node: TreeNodeInfo = {
+        name,
+        fullPath,
+        type,
+        parentPath,
+        children: [],
+        isInstanced: !!instanceResPath,
+        instanceSceneResPath: instanceResPath,
+      };
+      nodeMap.set(fullPath, node);
+    }
+  } else {
+    // Build from root script's children
+    for (const child of rootScript.children) {
+      const parts = child.path.split('/');
+      const name = parts[parts.length - 1]!;
+      const parentPath = parts.length === 1 ? '.' : parts.slice(0, -1).join('/');
+
+      // Skip unique name entries (start with %)
+      if (name.startsWith('%')) continue;
+
+      const node: TreeNodeInfo = {
+        name,
+        fullPath: child.path,
+        type: child.type,
+        parentPath,
+        children: [],
+        isInstanced: !!child.instanceSceneResPath,
+        instanceSceneResPath: child.instanceSceneResPath,
+      };
+      nodeMap.set(child.path, node);
+    }
+  }
+
+  // Check for unique names from nodeTypes
+  // We need to re-scan the original parsed nodes for uniqueInOwner
+  // Since we don't have that info in rootScript.children, use nodeTypes + instancedNodes
+
+  // Link children to parents
+  for (const [path, node] of nodeMap) {
+    if (path === '.') continue;
+    const parent = nodeMap.get(node.parentPath!);
+    if (parent) {
+      parent.children.push(node);
+    }
+  }
+
+  return root;
+}
+
+/**
+ * Collect all descendant paths relative to a given node (non-instanced subtrees only).
+ * Returns flat path → type name pairs for the node's type properties.
+ */
+function collectDescendantPaths(
+  node: TreeNodeInfo,
+  sceneAlias: string,
+  instancedSceneTreeNames: Map<string, string>,
+): Array<{ relativePath: string; typeName: string }> {
+  const paths: Array<{ relativePath: string; typeName: string }> = [];
+
+  function walk(current: TreeNodeInfo, prefix: string) {
+    for (const child of current.children) {
+      const childRelPath = prefix ? `${prefix}/${child.name}` : child.name;
+      const typeName = child.isInstanced && child.instanceSceneResPath
+        ? (instancedSceneTreeNames.get(child.instanceSceneResPath) ?? sceneResPathToTreeName(child.instanceSceneResPath))
+        : nodePathToTypeName(sceneAlias, child.fullPath);
+      paths.push({ relativePath: childRelPath, typeName });
+
+      // Only recurse into non-instanced children (instanced scenes handle their own subtrees)
+      if (!child.isInstanced) {
+        walk(child, childRelPath);
+      }
+    }
+  }
+
+  walk(node, '');
+  return paths;
+}
+
+// ─── Content Generators ─────────────────────────────────────
+
+/**
+ * Generate .tscn.d.ts file content for a single scene.
+ */
+function generateSceneTypingContent(
+  sceneResPath: string,
+  sceneData: NonNullable<ReturnType<typeof parseScene>>,
+  uniqueNameNodes: Set<string>,
+): string {
+  const lines: string[] = [];
+  lines.push('// AUTO-GENERATED — do not edit manually.\n');
+
+  const alias = sceneResPathToAlias(sceneResPath);
+  const treeName = sceneResPathToTreeName(sceneResPath);
+  const parentsInterface = sceneResPathToParentsInterfaceName(sceneResPath);
+
+  const root = buildNodeTree(sceneData);
+
+  // Collect all instanced scene res:// paths → local type alias names
+  const instancedSceneTreeNames = new Map<string, string>();
+  function findInstancedScenes(node: TreeNodeInfo) {
+    for (const child of node.children) {
+      if (child.isInstanced && child.instanceSceneResPath) {
+        if (!instancedSceneTreeNames.has(child.instanceSceneResPath)) {
+          instancedSceneTreeNames.set(
+            child.instanceSceneResPath,
+            sceneResPathToTreeName(child.instanceSceneResPath),
+          );
+        }
+      }
+      if (!child.isInstanced) {
+        findInstancedScenes(child);
+      }
+    }
+  }
+  findInstancedScenes(root);
+
+  // Emit non-instanced node type aliases (bottom-up order: leaves first)
+  const nonInstancedNodes: TreeNodeInfo[] = [];
+  function collectNonInstanced(node: TreeNodeInfo) {
+    for (const child of node.children) {
+      if (!child.isInstanced) {
+        collectNonInstanced(child);
+        nonInstancedNodes.push(child);
+      }
+    }
+  }
+  collectNonInstanced(root);
+
+  for (const node of nonInstancedNodes) {
+    const typeName = nodePathToTypeName(alias, node.fullPath);
+    const parentTypeName = node.parentPath === '.'
+      ? treeName
+      : nodePathToTypeName(alias, node.parentPath!);
+
+    const childTupleEntries: string[] = [];
+    for (const child of node.children) {
+      if (child.isInstanced && child.instanceSceneResPath) {
+        childTupleEntries.push(instancedSceneTreeNames.get(child.instanceSceneResPath)!);
+      } else {
+        childTupleEntries.push(nodePathToTypeName(alias, child.fullPath));
+      }
+    }
+
+    const descendantPaths = collectDescendantPaths(node, alias, instancedSceneTreeNames);
+
+    lines.push(`type ${typeName} = {`);
+    lines.push(`  [__node_type]: ${node.type};`);
+    lines.push(`  [__node_parent]: ${parentTypeName};`);
+    lines.push(`  [__node_children]: [${childTupleEntries.join(', ')}];`);
+    for (const { relativePath, typeName: childType } of descendantPaths) {
+      if (!relativePath.includes('/')) {
+        // Direct children only in the non-root nodes' string keys
+        lines.push(`  "${relativePath}": ${childType};`);
+      }
+    }
+    // Also add nested paths for non-root intermediate nodes
+    for (const { relativePath, typeName: childType } of descendantPaths) {
+      if (relativePath.includes('/')) {
+        lines.push(`  "${relativePath}": ${childType};`);
+      }
+    }
+    lines.push(`};\n`);
+  }
+
+  // Emit instanced scene tree type aliases (via _GodotSceneTrees lookup)
+  for (const [instanceResPath, localTreeName] of instancedSceneTreeNames) {
+    lines.push(`type ${localTreeName} = _GodotSceneTrees["${instanceResPath}"];\n`);
+  }
+
+  // Emit root _Tree type
+  const rootScriptResPath = sceneData.rootScript?.scriptResPath;
+  const rootNodeType = rootScriptResPath
+    ? `_GDGetInterfaceNode<_GodotScripts, "${rootScriptResPath}">`
+    : (sceneData.nodeTypes.get('.') ?? 'Node');
+
+  const rootChildTupleEntries: string[] = [];
+  for (const child of root.children) {
+    if (child.isInstanced && child.instanceSceneResPath) {
+      rootChildTupleEntries.push(instancedSceneTreeNames.get(child.instanceSceneResPath)!);
+    } else {
+      rootChildTupleEntries.push(nodePathToTypeName(alias, child.fullPath));
+    }
+  }
+
+  const rootDescendantPaths = collectDescendantPaths(root, alias, instancedSceneTreeNames);
+
+  lines.push(`type ${treeName} = {`);
+  lines.push(`  [__node_root]: true;`);
+  lines.push(`  [__node_type]: ${rootNodeType};`);
+  lines.push(`  [__node_parent]: _GDGetInterfaceParent<${parentsInterface}>;`);
+  lines.push(`  [__node_children]: [${rootChildTupleEntries.join(', ')}];`);
+  for (const { relativePath, typeName } of rootDescendantPaths) {
+    lines.push(`  "${relativePath}": ${typeName};`);
+  }
+  // Unique name entries
+  for (const uniqueName of uniqueNameNodes) {
+    const matchingPath = rootDescendantPaths.find(p => {
+      const parts = p.relativePath.split('/');
+      return parts[parts.length - 1] === uniqueName;
+    });
+    if (matchingPath) {
+      lines.push(`  "%${uniqueName}": ${matchingPath.typeName};`);
+    }
+  }
+  lines.push(`};\n`);
+
+  // Emit declare global block
+  lines.push(`declare global {`);
+  lines.push(`  interface ${parentsInterface} {}\n`);
+
+  // __ScriptGd__Trees entry (if root has a script)
+  if (rootScriptResPath) {
+    const treesInterface = scriptResPathToTreesInterfaceName(rootScriptResPath);
+    lines.push(`  interface ${treesInterface} {`);
+    lines.push(`    "${sceneResPath}": ${treeName};`);
+    lines.push(`  }\n`);
+  }
+
+  // Instanced scene parent entries
+  const instancedParentEntries: Array<{ parentsInterface: string; sceneResPath: string }> = [];
+  for (const child of root.children) {
+    if (child.isInstanced && child.instanceSceneResPath) {
+      instancedParentEntries.push({
+        parentsInterface: sceneResPathToParentsInterfaceName(child.instanceSceneResPath),
+        sceneResPath,
+      });
+    }
+  }
+
+  // TileMap embedded scene parent entries
+  for (const [, { sceneResPaths }] of sceneData.embeddedScenes) {
+    for (const embeddedResPath of sceneResPaths) {
+      instancedParentEntries.push({
+        parentsInterface: sceneResPathToParentsInterfaceName(embeddedResPath),
+        sceneResPath,
+      });
+    }
+  }
+
+  if (instancedParentEntries.length > 0) {
+    lines.push(`  // Instanced scene parents`);
+    for (const { parentsInterface: pi, sceneResPath: srp } of instancedParentEntries) {
+      lines.push(`  interface ${pi} { "${srp}": ${treeName}; }`);
+    }
+    lines.push('');
+  }
+
+  // _GodotSceneTrees entry
+  lines.push(`  interface _GodotSceneTrees {`);
+  lines.push(`    "${sceneResPath}": ${treeName};`);
+  lines.push(`  }`);
+
+  // GodotResources entry
+  lines.push(`  interface GodotResources {`);
+  lines.push(`    "${sceneResPath}": PackedScene<_GDTreeNode<${treeName}>>;`);
+  lines.push(`  }`);
+
+  lines.push(`}\n`);
+  lines.push(`export {}`);
+
+  return lines.join('\n');
+}
+
+/**
+ * Generate .gd.d.ts file content for a single script.
+ */
+function generateScriptTypingContent(
+  scriptResPath: string,
+  className: string,
+  isAnonymous: boolean,
+  tsImportPath: string,
+  tsModulePath: string,
+): string {
+  const lines: string[] = [];
+  lines.push('// AUTO-GENERATED — do not edit manually.\n');
+
+  const treesInterface = scriptResPathToTreesInterfaceName(scriptResPath);
+  const importName = isAnonymous ? '__CLASS__' : className;
+
+  // Import
+  lines.push(`import type { ${importName} as ScriptClass } from "${tsImportPath}";\n`);
+
+  // ScriptTree + module augmentation
+  lines.push(`type ScriptTree = _GDGetInterfaceTree<${treesInterface}>;\n`);
+
+  lines.push(`declare module "${tsModulePath}" {`);
+  lines.push(`  interface ${importName} {`);
+  lines.push(`    get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;`);
+  lines.push(`    get_node(path: string): Node | null;`);
+  lines.push(`    get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;`);
+  lines.push(`    get_node_or_null(path: string): Node | null;`);
+  lines.push(`    has_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): boolean;`);
+  lines.push(`    has_node(path: string): boolean;`);
+  lines.push(`    get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;`);
+  lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
+  lines.push(`    get_parent(): _GDParentType<ScriptTree>;`);
+  lines.push(`  }`);
+  lines.push(`}\n`);
+
+  // Class declaration
+  if (isAnonymous) {
+    // Module-level _Script class (not in declare global)
+    lines.push(`declare class _Script extends ScriptClass {`);
+    lines.push(`  get_node(path: string): Node | null;`);
+    lines.push(`  get_node_or_null(path: string): Node | null;`);
+    lines.push(`  has_node(path: string): boolean;`);
+    lines.push(`  get_child(idx: int, include_internal?: boolean): Node;`);
+    lines.push(`}\n`);
+
+    lines.push(`declare global {`);
+    lines.push(`  interface ${treesInterface} {}\n`);
+    lines.push(`  interface _GodotScripts {`);
+    lines.push(`    "${scriptResPath}": _Script;`);
+    lines.push(`  }\n`);
+    lines.push(`  interface GodotResources {`);
+    lines.push(`    "${scriptResPath}": typeof _Script;`);
+    lines.push(`  }`);
+    lines.push(`}`);
+  } else {
+    // Named class in declare global
+    lines.push(`declare global {`);
+    lines.push(`  interface ${treesInterface} {}\n`);
+    lines.push(`  /** @see import("${tsModulePath}") */`);
+    lines.push(`  class ${className} extends ScriptClass {`);
+    lines.push(`    get_node(path: string): Node | null;`);
+    lines.push(`    get_node_or_null(path: string): Node | null;`);
+    lines.push(`    has_node(path: string): boolean;`);
+    lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
+    lines.push(`  }\n`);
+    lines.push(`  interface _GodotScripts {`);
+    lines.push(`    "${scriptResPath}": ${className};`);
+    lines.push(`  }\n`);
+    lines.push(`  interface GodotResources {`);
+    lines.push(`    "${scriptResPath}": typeof ${className};`);
+    lines.push(`  }`);
+    lines.push(`}`);
+  }
+
+  lines.push('\nexport {};');
+
+  return lines.join('\n');
+}
+
+/**
+ * Generate .d.ts file content for a resource or asset file.
+ */
+function generateResourceTypingContent(
+  resPath: string,
+  godotType: string,
+): string {
+  const lines: string[] = [];
+  lines.push(`declare global {`);
+  lines.push(`  interface GodotResources {`);
+  lines.push(`    "${resPath}": ${godotType};`);
+  lines.push(`  }`);
+  lines.push(`}\n`);
+  lines.push(`export {}`);
+  return lines.join('\n');
+}
+
+/**
+ * Generate _index.d.ts file content with empty global interfaces and autoload declarations.
+ */
+function generateIndexTypingContent(
+  autoloads: AutoloadEntry[],
+  outputDir: string,
+  rootDir: string,
+  tsDir: string,
+): string {
+  const lines: string[] = [];
+  lines.push('// AUTO-GENERATED — do not edit manually.\n');
+
+  // Import autoload scripts
+  for (const autoload of autoloads) {
+    if (!autoload.resPath.endsWith('.gd')) continue;
+    // Resolve the .ts source file path from the .gd res path
+    const tsRelPath = autoload.resPath
+      .replace(/^res:\/\//, '')
+      .replace(/\.gd$/, '.ts');
+    const tsAbsPath = resolve(tsDir, tsRelPath);
+    const importPath = computeTsImport(outputDir, '_index.d.ts', tsAbsPath);
+    lines.push(`import type { __CLASS__ as _${autoload.name} } from "${importPath}";`);
+  }
+
+  if (autoloads.length > 0) lines.push('');
+
+  lines.push(`declare global {`);
+  lines.push(`  interface _GodotScripts {}`);
+  lines.push(`  interface _GodotSceneTrees {}`);
+  lines.push(`  interface GodotResources {}`);
+
+  // Autoload singletons
+  const gdAutoloads = autoloads.filter(a => a.resPath.endsWith('.gd'));
+  if (gdAutoloads.length > 0) {
+    lines.push(`  // Autoload singletons from project.godot`);
+    for (const autoload of gdAutoloads) {
+      lines.push(`  const ${autoload.name}: _${autoload.name};`);
+    }
+  }
+
+  lines.push(`}\n`);
+  lines.push(`export {};`);
+
+  return lines.join('\n');
 }
 
 // ─── Combined Typings Generator ─────────────────────────────
@@ -673,12 +1151,137 @@ export interface GenerateTypingsOptions {
 /**
  * Generates per-file .d.ts typings in outputDir:
  * - Per-scene .tscn.d.ts files (scene tree interfaces, GodotResources, parent entries)
- * - Per-script .d.ts files (merged scene nodes, module augmentation, global class)
- * - _index.d.ts (asset GodotResources, autoload singletons)
+ * - Per-script .gd.d.ts files (module augmentation, global class, GodotScripts)
+ * - Per-resource .d.ts files (GodotResources entries)
+ * - _index.d.ts (empty global interfaces, autoload singletons)
  * Returns list of written file paths.
  */
 export function generateTypings(options: GenerateTypingsOptions): string[] {
+  const { rootDir, tsDir, outputDir, scenesDir, ignore = [] } = options;
+  const writtenFiles: string[] = [];
 
+  mkdirSync(outputDir, { recursive: true });
+
+  // 1. Scan TS files for class declarations
+  const program = createTsProgram({
+    rootDir: tsDir,
+    files: options.files,
+    tsConfigPath: options.tsConfigPath,
+  });
+
+  // Map: script res:// path → { className, isAnonymous, tsAbsPath }
+  const scriptClassMap = new Map<string, {
+    className: string;
+    isAnonymous: boolean;
+    tsAbsPath: string;
+  }>();
+
+  for (const filePath of options.files) {
+    const sourceFile = program.getSourceFile(filePath);
+    if (!sourceFile) continue;
+
+    for (const statement of sourceFile.statements) {
+      if (!ts.isClassDeclaration(statement) || !statement.name) continue;
+      const className = statement.name.text;
+
+      // Derive the .gd res:// path from the .ts file path
+      const relPath = relative(tsDir, filePath).replace(/\\/g, '/');
+      const scriptResPath = 'res://' + relPath.replace(/\.ts$/, '.gd');
+
+      scriptClassMap.set(scriptResPath, {
+        className,
+        isAnonymous: className === '__CLASS__',
+        tsAbsPath: filePath,
+      });
+    }
+  }
+
+  // 2. Find and process all .tscn files
+  const sceneFiles = findSceneFiles(scenesDir, rootDir, ignore);
+
+  // Track unique names per scene (need to scan raw parsed data)
+  for (const sceneFile of sceneFiles) {
+    const sceneData = parseScene(sceneFile);
+    if (!sceneData) continue;
+
+    const sceneResPath = absPathToResPath(sceneFile, rootDir)
+      .replace(/\.ts$/, '.tscn'); // normalize
+    // Fix: use the actual .tscn extension from the file
+    const actualResPath = absPathToResPath(sceneFile, rootDir);
+
+    // Collect unique name nodes from the parsed data
+    const uniqueNames = new Set<string>();
+    for (const script of sceneData.scripts) {
+      for (const child of script.children) {
+        if (child.path.startsWith('%')) {
+          uniqueNames.add(child.path.slice(1));
+        }
+      }
+    }
+
+    const content = generateSceneTypingContent(actualResPath, sceneData, uniqueNames);
+    const outputFile = sceneResPathToOutputFile(actualResPath);
+    const outputPath = resolve(outputDir, outputFile);
+    mkdirSync(dirname(outputPath), { recursive: true });
+    writeFileSync(outputPath, content);
+    writtenFiles.push(outputPath);
+  }
+
+  // 3. Generate .gd.d.ts for each script
+  for (const [scriptResPath, classInfo] of scriptClassMap) {
+    const outputFile = scriptResPathToOutputFile(scriptResPath);
+    const tsImportPath = computeTsImport(outputDir, outputFile, classInfo.tsAbsPath);
+    // Module path for declare module (uses .ts extension)
+    const tsModulePath = tsImportPath.replace(/\.js$/, '.ts');
+
+    const content = generateScriptTypingContent(
+      scriptResPath,
+      classInfo.className,
+      classInfo.isAnonymous,
+      tsImportPath,
+      tsModulePath,
+    );
+
+    const outputPath = resolve(outputDir, outputFile);
+    mkdirSync(dirname(outputPath), { recursive: true });
+    writeFileSync(outputPath, content);
+    writtenFiles.push(outputPath);
+  }
+
+  // 4. Generate resource .d.ts files
+  const assetFiles = findAssetFiles(rootDir, rootDir, ignore);
+  for (const assetFile of assetFiles) {
+    const resPath = absPathToResPath(assetFile, rootDir);
+    const ext = extname(assetFile).toLowerCase();
+
+    let godotType: string;
+    if (ext === '.tres' || ext === '.res') {
+      godotType = parseGdResourceType(assetFile) ?? ASSET_EXTENSION_MAP[ext] ?? 'Resource';
+    } else {
+      godotType = ASSET_EXTENSION_MAP[ext] ?? 'Resource';
+    }
+
+    // Skip .tscn files (handled by scene generator) and .gd files (handled by script generator)
+    if (ext === '.tscn' || ext === '.gd') continue;
+
+    const content = generateResourceTypingContent(resPath, godotType);
+    const outputFile = resourceResPathToOutputFile(resPath);
+    const outputPath = resolve(outputDir, outputFile);
+    mkdirSync(dirname(outputPath), { recursive: true });
+    writeFileSync(outputPath, content);
+    writtenFiles.push(outputPath);
+  }
+
+  // 5. Generate _index.d.ts
+  const projectFile = options.projectFile ?? join(rootDir, 'project.godot');
+  const autoloads = existsSync(projectFile) ? parseAutoloads(projectFile) : [];
+
+  const indexContent = generateIndexTypingContent(autoloads, outputDir, rootDir, tsDir);
+  const indexPath = resolve(outputDir, '_index.d.ts');
+  writeFileSync(indexPath, indexContent);
+  writtenFiles.push(indexPath);
+
+  return writtenFiles;
 }
 
 /** Known Godot asset extensions → Godot resource type name */
