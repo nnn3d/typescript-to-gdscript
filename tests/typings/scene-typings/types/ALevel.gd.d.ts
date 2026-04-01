@@ -4,8 +4,10 @@ import type { ALevel as ScriptClass } from "../ALevel.js";
 
 type ScriptTree = _GDGetInterfaceTree<__ALevelGd__Trees>;
 
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
+
 declare module "../ALevel.ts" {
-  interface ALevel {
+  interface ALevel extends StaticProps {
     get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;
     get_node(path: string): Node | null;
     get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;

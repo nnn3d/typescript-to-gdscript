@@ -4,8 +4,10 @@ import type { __CLASS__ as ScriptClass } from "../GameManager.js";
 
 type ScriptTree = _GDGetInterfaceTree<__GameManagerGd__Trees>;
 
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
+
 declare module "../GameManager.ts" {
-  interface __CLASS__ {
+  interface __CLASS__ extends StaticProps {
     get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;
     get_node(path: string): Node | null;
     get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;

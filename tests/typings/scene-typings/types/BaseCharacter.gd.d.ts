@@ -4,8 +4,10 @@ import type { BaseCharacter as ScriptClass } from "../BaseCharacter.js";
 
 type ScriptTree = _GDGetInterfaceTree<__BaseCharacterGd__Trees>;
 
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
+
 declare module "../BaseCharacter.ts" {
-  interface BaseCharacter {
+  interface BaseCharacter extends StaticProps {
     get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;
     get_node(path: string): Node | null;
     get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;

@@ -771,18 +771,26 @@ function collectDescendantPaths(
   node: TreeNodeInfo,
   sceneAlias: string,
   instancedSceneTreeNames: Map<string, string>,
+  extendedInstancedNodes: Set<string>,
 ): Array<{ relativePath: string; typeName: string }> {
   const paths: Array<{ relativePath: string; typeName: string }> = [];
 
   function walk(current: TreeNodeInfo, prefix: string) {
     for (const child of current.children) {
       const childRelPath = prefix ? `${prefix}/${child.name}` : child.name;
-      const typeName = child.isInstanced && child.instanceSceneResPath
-        ? (instancedSceneTreeNames.get(child.instanceSceneResPath) ?? sceneResPathToTreeName(child.instanceSceneResPath))
-        : nodePathToTypeName(sceneAlias, child.fullPath);
+      let typeName: string;
+      if (child.isInstanced && child.instanceSceneResPath) {
+        if (extendedInstancedNodes.has(child.fullPath)) {
+          typeName = nodePathToTypeName(sceneAlias, child.fullPath);
+        } else {
+          typeName = instancedSceneTreeNames.get(child.instanceSceneResPath) ?? sceneResPathToTreeName(child.instanceSceneResPath);
+        }
+      } else {
+        typeName = nodePathToTypeName(sceneAlias, child.fullPath);
+      }
       paths.push({ relativePath: childRelPath, typeName });
 
-      // Only recurse into non-instanced children (instanced scenes handle their own subtrees)
+      // Don't recurse into instanced scenes (they handle their own subtrees via __node_extends)
       if (!child.isInstanced) {
         walk(child, childRelPath);
       }
@@ -812,12 +820,20 @@ function generateSceneTypingContent(
 
   const root = buildNodeTree(sceneData);
 
-  // Collect all instanced scene res:// paths → local type alias names
+  // Collect instanced scenes. Two kinds:
+  // 1. Plain instanced scenes (no extra children) → _GodotSceneTrees lookup
+  // 2. Extended instanced scenes (has extra children added by parent scene) → local __node_extends type
   const instancedSceneTreeNames = new Map<string, string>();
+  // Set of instanced node fullPaths that have extra children (need __node_extends)
+  const extendedInstancedNodes = new Set<string>();
+
   function findInstancedScenes(node: TreeNodeInfo) {
     for (const child of node.children) {
       if (child.isInstanced && child.instanceSceneResPath) {
-        if (!instancedSceneTreeNames.has(child.instanceSceneResPath)) {
+        if (child.children.length > 0) {
+          // Instanced scene with extra children added → needs local extension type
+          extendedInstancedNodes.add(child.fullPath);
+        } else if (!instancedSceneTreeNames.has(child.instanceSceneResPath)) {
           instancedSceneTreeNames.set(
             child.instanceSceneResPath,
             sceneResPathToTreeName(child.instanceSceneResPath),
@@ -831,55 +847,63 @@ function generateSceneTypingContent(
   }
   findInstancedScenes(root);
 
-  // Emit non-instanced node type aliases (bottom-up order: leaves first)
-  const nonInstancedNodes: TreeNodeInfo[] = [];
-  function collectNonInstanced(node: TreeNodeInfo) {
-    for (const child of node.children) {
-      if (!child.isInstanced) {
-        collectNonInstanced(child);
-        nonInstancedNodes.push(child);
+  /** Get the type name for a child node, handling instanced/extended cases */
+  function childTypeName(child: TreeNodeInfo): string {
+    if (child.isInstanced && child.instanceSceneResPath) {
+      if (extendedInstancedNodes.has(child.fullPath)) {
+        return nodePathToTypeName(alias, child.fullPath);
       }
+      return instancedSceneTreeNames.get(child.instanceSceneResPath) ?? sceneResPathToTreeName(child.instanceSceneResPath);
+    }
+    return nodePathToTypeName(alias, child.fullPath);
+  }
+
+  // Collect all non-instanced nodes AND nodes under extended instanced scenes
+  const emittableNodes: TreeNodeInfo[] = [];
+  function collectEmittable(node: TreeNodeInfo) {
+    for (const child of node.children) {
+      if (child.isInstanced && !extendedInstancedNodes.has(child.fullPath)) {
+        continue; // Plain instanced: skip, handled as _GodotSceneTrees lookup
+      }
+      collectEmittable(child);
+      emittableNodes.push(child);
     }
   }
-  collectNonInstanced(root);
+  collectEmittable(root);
 
-  for (const node of nonInstancedNodes) {
+  for (const node of emittableNodes) {
     const typeName = nodePathToTypeName(alias, node.fullPath);
     const parentTypeName = node.parentPath === '.'
       ? treeName
       : nodePathToTypeName(alias, node.parentPath!);
+    const isExtendedInstanced = extendedInstancedNodes.has(node.fullPath);
 
-    const childTupleEntries: string[] = [];
-    for (const child of node.children) {
-      if (child.isInstanced && child.instanceSceneResPath) {
-        childTupleEntries.push(instancedSceneTreeNames.get(child.instanceSceneResPath)!);
-      } else {
-        childTupleEntries.push(nodePathToTypeName(alias, child.fullPath));
-      }
+    const childTupleEntries = node.children.map(c => childTypeName(c));
+    const descendantPaths = collectDescendantPaths(node, alias, instancedSceneTreeNames, extendedInstancedNodes);
+
+    if (isExtendedInstanced) {
+      // Extended instanced scene: local type with __node_extends
+      const baseResPath = node.instanceSceneResPath!;
+      lines.push(`type ${typeName} = {`);
+      lines.push(`  [__node_extends]: _GodotSceneTrees["${baseResPath}"];`);
+      lines.push(`  [__node_root]: true;`);
+      lines.push(`  [__node_type]: _GodotSceneTrees["${baseResPath}"][typeof __node_type];`);
+      lines.push(`  [__node_parent]: ${parentTypeName};`);
+      lines.push(`  [__node_children]: [${childTupleEntries.join(', ')}];`);
+    } else {
+      lines.push(`type ${typeName} = {`);
+      lines.push(`  [__node_type]: ${node.type};`);
+      lines.push(`  [__node_parent]: ${parentTypeName};`);
+      lines.push(`  [__node_children]: [${childTupleEntries.join(', ')}];`);
     }
 
-    const descendantPaths = collectDescendantPaths(node, alias, instancedSceneTreeNames);
-
-    lines.push(`type ${typeName} = {`);
-    lines.push(`  [__node_type]: ${node.type};`);
-    lines.push(`  [__node_parent]: ${parentTypeName};`);
-    lines.push(`  [__node_children]: [${childTupleEntries.join(', ')}];`);
     for (const { relativePath, typeName: childType } of descendantPaths) {
-      if (!relativePath.includes('/')) {
-        // Direct children only in the non-root nodes' string keys
-        lines.push(`  "${relativePath}": ${childType};`);
-      }
-    }
-    // Also add nested paths for non-root intermediate nodes
-    for (const { relativePath, typeName: childType } of descendantPaths) {
-      if (relativePath.includes('/')) {
-        lines.push(`  "${relativePath}": ${childType};`);
-      }
+      lines.push(`  "${relativePath}": ${childType};`);
     }
     lines.push(`};\n`);
   }
 
-  // Emit instanced scene tree type aliases (via _GodotSceneTrees lookup)
+  // Emit plain instanced scene tree type aliases (via _GodotSceneTrees lookup)
   for (const [instanceResPath, localTreeName] of instancedSceneTreeNames) {
     lines.push(`type ${localTreeName} = _GodotSceneTrees["${instanceResPath}"];\n`);
   }
@@ -890,16 +914,9 @@ function generateSceneTypingContent(
     ? `_GDGetInterfaceNode<_GodotScripts, "${rootScriptResPath}">`
     : (sceneData.nodeTypes.get('.') ?? 'Node');
 
-  const rootChildTupleEntries: string[] = [];
-  for (const child of root.children) {
-    if (child.isInstanced && child.instanceSceneResPath) {
-      rootChildTupleEntries.push(instancedSceneTreeNames.get(child.instanceSceneResPath)!);
-    } else {
-      rootChildTupleEntries.push(nodePathToTypeName(alias, child.fullPath));
-    }
-  }
+  const rootChildTupleEntries = root.children.map(c => childTypeName(c));
 
-  const rootDescendantPaths = collectDescendantPaths(root, alias, instancedSceneTreeNames);
+  const rootDescendantPaths = collectDescendantPaths(root, alias, instancedSceneTreeNames, extendedInstancedNodes);
   const inheritedSceneResPath = sceneData.inheritedSceneResPath;
 
   lines.push(`type ${treeName} = {`);
@@ -1001,11 +1018,12 @@ function generateScriptTypingContent(
   // Import
   lines.push(`import type { ${importName} as ScriptClass } from "${tsImportPath}";\n`);
 
-  // ScriptTree + module augmentation
+  // ScriptTree + StaticProps + module augmentation
   lines.push(`type ScriptTree = _GDGetInterfaceTree<${treesInterface}>;\n`);
+  lines.push(`type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;\n`);
 
   lines.push(`declare module "${tsModulePath}" {`);
-  lines.push(`  interface ${importName} {`);
+  lines.push(`  interface ${importName} extends StaticProps {`);
   lines.push(`    get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;`);
   lines.push(`    get_node(path: string): Node | null;`);
   lines.push(`    get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;`);

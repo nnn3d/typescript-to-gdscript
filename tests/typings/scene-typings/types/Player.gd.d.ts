@@ -4,8 +4,10 @@ import type { Player as ScriptClass } from "../Player.js";
 
 type ScriptTree = _GDGetInterfaceTree<__PlayerGd__Trees>;
 
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
+
 declare module "../Player.ts" {
-  interface Player {
+  interface Player extends StaticProps {
     get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;
     get_node(path: string): Node | null;
     get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;

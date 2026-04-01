@@ -4,8 +4,10 @@ import type { Level3 as ScriptClass } from "../Level3.js";
 
 type ScriptTree = _GDGetInterfaceTree<__Level3Gd__Trees>;
 
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
+
 declare module "../Level3.ts" {
-  interface Level3 {
+  interface Level3 extends StaticProps {
     get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;
     get_node(path: string): Node | null;
     get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;

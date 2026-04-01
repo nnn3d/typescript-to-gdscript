@@ -4,6 +4,8 @@ import type { __CLASS__ as AnonymNested } from './nested/Anonym.ts';
 import type { __CLASS__ as GameManagerType } from './GameManager.ts';
 
 export class Player extends BaseCharacter {
+  static TEST_ENUM = gd.enum('TEST', 'TEST2');
+
   AnonymScript: typeof Anonym = load('res://Anonym.gd');
 
   Anonym2Script: typeof Anonym2 = load('res://Anonym2.gd');
@@ -62,5 +64,7 @@ export class Player extends BaseCharacter {
     let child2: ProgressBar = this.get_child(2);
     // Unknown index falls back to Node
     let childUnknown: Node = this.get_child(99);
+
+    const thisEnum: number = this.TEST_ENUM.TEST;
   }
 }

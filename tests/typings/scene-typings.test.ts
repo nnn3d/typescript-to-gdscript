@@ -110,9 +110,12 @@ describe('Scene typings generation', () => {
     // ScriptTree type alias
     expect(playerScript).toContain('type ScriptTree = _GDGetInterfaceTree<__PlayerGd__Trees>;');
 
+    // StaticProps for static fields on instances
+    expect(playerScript).toContain("type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;");
+
     // Module augmentation with typed overloads
     expect(playerScript).toContain('declare module "../Player.ts"');
-    expect(playerScript).toContain('interface Player {');
+    expect(playerScript).toContain('interface Player extends StaticProps {');
     expect(playerScript).toContain('get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;');
     expect(playerScript).toContain('get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;');
     expect(playerScript).toContain('get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;');
@@ -134,8 +137,8 @@ describe('Scene typings generation', () => {
     // Import as ScriptClass
     expect(anonymScript).toContain('__CLASS__ as ScriptClass');
 
-    // Module augmentation targets __CLASS__ interface
-    expect(anonymScript).toContain('interface __CLASS__ {');
+    // Module augmentation targets __CLASS__ interface (extends StaticProps for static fields on instances)
+    expect(anonymScript).toContain('interface __CLASS__ extends StaticProps {');
 
     // _Script class at module level (not in declare global)
     expect(anonymScript).toContain('declare class _Script extends ScriptClass {');
