@@ -29,19 +29,19 @@ type _Anonym2Tscn_Tree = {
   "CollisionShape2D": _Anonym2Tscn_CollisionShape2D;
 };
 
-interface __Anonym2Tscn__Parents {}
+declare global {
+  interface __Anonym2Tscn__Parents {}
 
-interface __Anonym2Gd__Trees {
-  "res://Anonym2.tscn": _Anonym2Tscn_Tree;
+  interface __Anonym2Gd__Trees {
+    "res://Anonym2.tscn": _Anonym2Tscn_Tree;
+  }
+
+  interface _GodotSceneTrees {
+    "res://Anonym2.tscn": _Anonym2Tscn_Tree;
+  }
+  interface GodotResources {
+    "res://Anonym2.tscn": PackedScene<_GDTreeNode<_Anonym2Tscn_Tree>>;
+  }
 }
 
-interface _GodotScripts {
-  "res://Anonym2.gd": Anonym2;
-}
-
-interface _GodotSceneTrees {
-  "res://Anonym2.tscn": _Anonym2Tscn_Tree;
-}
-interface GodotResources {
-  "res://Anonym2.tscn": PackedScene<_GDTreeNode<_Anonym2Tscn_Tree>>;
-}
+export {}

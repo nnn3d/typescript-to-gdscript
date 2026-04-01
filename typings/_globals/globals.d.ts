@@ -230,8 +230,6 @@ type _GDTreeHandlers<Tree> = {
   ): _GDGetChild<Tree, Idx>;
   /** Get a child node by index. Unknown indices return Node. */
   get_child(idx: int, include_internal?: boolean): Node;
-  /** Duplicate returns the base node type (without tree context). */
-  duplicate(flags?: int): _GDTreeGetType<Tree>;
 }
 
 type _GDTreeNode<Tree> = _GDTreeHandlers<Tree> & _GDTreeGetType<Tree>

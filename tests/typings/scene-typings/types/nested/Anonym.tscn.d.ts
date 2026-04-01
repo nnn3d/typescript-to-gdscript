@@ -29,19 +29,19 @@ type _nested_AnonymTscn_Tree = {
   "CollisionShape2D": _nested_AnonymTscn_CollisionShape2D;
 };
 
-interface __nested_AnonymTscn__Parents {}
+declare global {
+  interface __nested_AnonymTscn__Parents {}
 
-interface __nested_AnonymGd__Trees {
-  "res://nested/Anonym.tscn": _nested_AnonymTscn_Tree;
+  interface __nested_AnonymGd__Trees {
+    "res://nested/Anonym.tscn": _nested_AnonymTscn_Tree;
+  }
+
+  interface _GodotSceneTrees {
+    "res://nested/Anonym.tscn": _nested_AnonymTscn_Tree;
+  }
+  interface GodotResources {
+    "res://nested/Anonym.tscn": PackedScene<_GDTreeNode<_nested_AnonymTscn_Tree>>;
+  }
 }
 
-interface _GodotScripts {
-  "res://nested/Anonym.gd": nested_Anonym;
-}
-
-interface _GodotSceneTrees {
-  "res://nested/Anonym.tscn": _nested_AnonymTscn_Tree;
-}
-interface GodotResources {
-  "res://nested/Anonym.tscn": PackedScene<_GDTreeNode<_nested_AnonymTscn_Tree>>;
-}
+export {}

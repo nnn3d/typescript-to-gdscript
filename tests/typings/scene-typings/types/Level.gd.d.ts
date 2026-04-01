@@ -1,6 +1,6 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Level as _Level } from "../Level.js";
+import type { Level as ScriptClass } from "../Level.js";
 
 type ScriptTree = _GDGetInterfaceTree<__LevelGd__Trees>;
 
@@ -22,15 +22,20 @@ declare global {
   interface __LevelGd__Trees {}
 
   /** @see import("../Level.ts") */
-  class Level extends _Level {
+  class Level extends ScriptClass {
     get_node(path: string): Node | null;
     get_node_or_null(path: string): Node | null;
     has_node(path: string): boolean;
     get_child(idx: int, include_internal?: boolean): Node;
+    get_parent<N extends Node = Node>(): N;
+  }
+
+  interface _GodotScripts {
+    "res://Level.gd": Level;
   }
 
   interface GodotResources {
-    "res://Level.gd": typeof _Level;
+    "res://Level.gd": typeof Level;
   }
 }
 

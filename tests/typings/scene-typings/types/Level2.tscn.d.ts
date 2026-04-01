@@ -14,11 +14,15 @@ type _Level2Tscn_Tree = {
   "ExtraSprite": _Level2Tscn_ExtraSprite;
 };
 
-interface __Level2Tscn__Parents {}
+declare global {
+  interface __Level2Tscn__Parents {}
 
-interface _GodotSceneTrees {
-  "res://Level2.tscn": _Level2Tscn_Tree;
+  interface _GodotSceneTrees {
+    "res://Level2.tscn": _Level2Tscn_Tree;
+  }
+  interface GodotResources {
+    "res://Level2.tscn": PackedScene<_GDTreeNode<_Level2Tscn_Tree>>;
+  }
 }
-interface GodotResources {
-  "res://Level2.tscn": PackedScene<_GDTreeNode<_Level2Tscn_Tree>>;
-}
+
+export {}

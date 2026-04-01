@@ -1,6 +1,6 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { __CLASS__ as _Anonym } from "../Anonym.js";
+import type { __CLASS__ as ScriptClass } from "../Anonym.js";
 
 type ScriptTree = _GDGetInterfaceTree<__AnonymGd__Trees>;
 
@@ -18,19 +18,23 @@ declare module "../Anonym.ts" {
   }
 }
 
+declare class _Script extends ScriptClass {
+  get_node(path: string): Node | null;
+  get_node_or_null(path: string): Node | null;
+  has_node(path: string): boolean;
+  get_child(idx: int, include_internal?: boolean): Node;
+  get_parent<N extends Node = Node>(): N;
+}
+
 declare global {
   interface __AnonymGd__Trees {}
 
-  /** @see import("../Anonym.ts") */
-  class Anonym extends _Anonym {
-    get_node(path: string): Node | null;
-    get_node_or_null(path: string): Node | null;
-    has_node(path: string): boolean;
-    get_child(idx: int, include_internal?: boolean): Node;
+  interface _GodotScripts {
+    "res://Anonym.gd": _Script;
   }
 
   interface GodotResources {
-    "res://Anonym.gd": typeof _Anonym;
+    "res://Anonym.gd": typeof _Script;
   }
 }
 

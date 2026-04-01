@@ -1,6 +1,6 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { __CLASS__ as _Enemy } from "../Enemy.js";
+import type { __CLASS__ as ScriptClass } from "../Enemy.js";
 
 type ScriptTree = _GDGetInterfaceTree<__EnemyGd__Trees>;
 
@@ -18,19 +18,23 @@ declare module "../Enemy.ts" {
   }
 }
 
+declare class _Script extends ScriptClass {
+  get_node(path: string): Node | null;
+  get_node_or_null(path: string): Node | null;
+  has_node(path: string): boolean;
+  get_child(idx: int, include_internal?: boolean): Node;
+  get_parent<N extends Node = Node>(): N;
+}
+
 declare global {
   interface __EnemyGd__Trees {}
 
-  /** @see import("../Enemy.ts") */
-  class Enemy extends _Enemy {
-    get_node(path: string): Node | null;
-    get_node_or_null(path: string): Node | null;
-    has_node(path: string): boolean;
-    get_child(idx: int, include_internal?: boolean): Node;
+  interface _GodotScripts {
+    "res://Enemy.gd": _Script;
   }
 
   interface GodotResources {
-    "res://Enemy.gd": typeof _Enemy;
+    "res://Enemy.gd": typeof _Script;
   }
 }
 

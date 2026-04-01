@@ -257,7 +257,7 @@ declare class Node extends GodotObject {
    * **Note:** For nodes with a {@link Script} attached, if {@link Object._init} has been defined with required parameters, the duplicated node will not have a {@link Script}.
    * **Note:** By default, this method will duplicate only properties marked for serialization (i.e. using {@link @GlobalScope.PROPERTY_USAGE_STORAGE}, or in GDScript, ). If you want to duplicate all properties, use {@link DUPLICATE_INTERNAL_STATE}.
    */
-  duplicate(flags?: int): this;
+  duplicate(flags?: int): Node;
   /**
    * Finds the first descendant of this node whose {@link name} matches `pattern`, returning `null` if no match is found. The matching is done against node names, *not* their paths, through {@link String.match}. As such, it is case-sensitive, `"*"` matches zero or more characters, and `"?"` matches any single character.
    * If `recursive` is `false`, only this node's direct children are checked. Nodes are checked in tree order, so this node's first direct child is checked first, then its own direct children, etc., before moving to the second direct child, and so on. Internal children are also included in the search (see `internal` parameter in {@link add_child}).

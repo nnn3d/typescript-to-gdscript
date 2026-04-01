@@ -33,6 +33,11 @@ type _Level1Tscn_ExtraSprite = {
   [__node_children]: [];
 };
 
+type _PlayerTscn_Tree = _GodotSceneTrees["res://Player.tscn"];
+type _EnemyTscn_Tree = _GodotSceneTrees["res://Enemy.tscn"];
+type _TilesetObjectsTscn_Tree = _GodotSceneTrees["res://TilesetObjects.tscn"];
+type _Level2Tscn_Tree = _GodotSceneTrees["res://Level2.tscn"];
+
 type _Level1Tscn_Tree = {
   [__node_root]: true;
   [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Level.gd">;
@@ -51,18 +56,22 @@ type _Level1Tscn_Tree = {
   "ExtraSprite": _Level1Tscn_ExtraSprite;
 };
 
-interface __Level1Tscn__Parents {}
+declare global {
+  interface __Level1Tscn__Parents {}
 
-interface __LevelGd__Trees {
-  "res://Level1.tscn": _Level1Tscn_Tree;
+  interface __LevelGd__Trees {
+    "res://Level1.tscn": _Level1Tscn_Tree;
+  }
+
+  // Instanced scene parents
+  interface __TilesetObjectsTscn__Parents { "res://Level1.tscn": _Level1Tscn_Tree; }
+
+  interface _GodotSceneTrees {
+    "res://Level1.tscn": _Level1Tscn_Tree;
+  }
+  interface GodotResources {
+    "res://Level1.tscn": PackedScene<_GDTreeNode<_Level1Tscn_Tree>>;
+  }
 }
 
-// Instanced scene parents
-interface __TilesetObjectsTscn__Parents { "res://Level1.tscn": _Level1Tscn_Tree; }
-
-interface _GodotSceneTrees {
-  "res://Level1.tscn": _Level1Tscn_Tree;
-}
-interface GodotResources {
-  "res://Level1.tscn": PackedScene<_GDTreeNode<_Level1Tscn_Tree>>;
-}
+export {}

@@ -7,15 +7,19 @@ type _TilesetObjectsTscn_Tree = {
   [__node_children]: [];
 };
 
-interface __TilesetObjectsTscn__Parents {}
+declare global {
+  interface __TilesetObjectsTscn__Parents {}
 
 // TileMap scenes: Anonym and Ball get_parent() resolves through TilesetObjects
-interface __AnonymTscn__Parents { "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree; }
-interface __BallATscn__Parents { "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree; }
+  interface __AnonymTscn__Parents { "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree; }
+  interface __BallATscn__Parents { "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree; }
 
-interface _GodotSceneTrees {
-  "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree;
+  interface _GodotSceneTrees {
+    "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree;
+  }
+  interface GodotResources {
+    "res://TilesetObjects.tscn": PackedScene<_GDTreeNode<_TilesetObjectsTscn_Tree>>;
+  }
 }
-interface GodotResources {
-  "res://TilesetObjects.tscn": PackedScene<_GDTreeNode<_TilesetObjectsTscn_Tree>>;
-}
+
+export {}

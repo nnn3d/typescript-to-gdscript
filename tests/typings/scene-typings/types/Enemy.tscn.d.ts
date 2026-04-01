@@ -44,24 +44,19 @@ type _EnemyTscn_Tree = {
   "HitBox/CollisionShape2D": _EnemyTscn_HitBox_CollisionShape2D;
 };
 
-interface __EnemyTscn__Parents {}
+declare global {
+  interface __EnemyTscn__Parents {}
 
-interface __EnemyGd__Trees {
-  "res://Enemy.tscn": _EnemyTscn_Tree;
+  interface __EnemyGd__Trees {
+    "res://Enemy.tscn": _EnemyTscn_Tree;
+  }
+
+  interface _GodotSceneTrees {
+    "res://Enemy.tscn": _EnemyTscn_Tree;
+  }
+  interface GodotResources {
+    "res://Enemy.tscn": PackedScene<_GDTreeNode<_EnemyTscn_Tree>>;
+  }
 }
 
-// BaseCharacter is a parent class of Enemy
-// interface __BaseCharacterGd__Trees {
-//   "res://Enemy.tscn": _EnemyTscn_Tree;
-// }
-
-interface _GodotScripts {
-  "res://Enemy.gd": Enemy;
-}
-
-interface _GodotSceneTrees {
-  "res://Enemy.tscn": _EnemyTscn_Tree;
-}
-interface GodotResources {
-  "res://Enemy.tscn": PackedScene<_GDTreeNode<_EnemyTscn_Tree>>;
-}
+export {}

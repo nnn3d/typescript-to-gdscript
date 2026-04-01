@@ -21,15 +21,19 @@ type _BallBTscn_Tree = {
   "Label": _BallBTscn_Label;
 };
 
-interface __BallBTscn__Parents {}
+declare global {
+  interface __BallBTscn__Parents {}
 
-interface __BallGd__Trees {
-  "res://BallB.tscn": _BallBTscn_Tree;
+  interface __BallGd__Trees {
+    "res://BallB.tscn": _BallBTscn_Tree;
+  }
+
+  interface _GodotSceneTrees {
+    "res://BallB.tscn": _BallBTscn_Tree;
+  }
+  interface GodotResources {
+    "res://BallB.tscn": PackedScene<_GDTreeNode<_BallBTscn_Tree>>;
+  }
 }
 
-interface _GodotSceneTrees {
-  "res://BallB.tscn": _BallBTscn_Tree;
-}
-interface GodotResources {
-  "res://BallB.tscn": PackedScene<_GDTreeNode<_BallBTscn_Tree>>;
-}
+export {}

@@ -1,6 +1,6 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Ball as _Ball } from "../Ball.js";
+import type { Ball as ScriptClass } from "../Ball.js";
 
 type ScriptTree = _GDGetInterfaceTree<__BallGd__Trees>;
 
@@ -22,15 +22,20 @@ declare global {
   interface __BallGd__Trees {}
 
   /** @see import("../Ball.ts") */
-  class Ball extends _Ball {
+  class Ball extends ScriptClass {
     get_node(path: string): Node | null;
     get_node_or_null(path: string): Node | null;
     has_node(path: string): boolean;
     get_child(idx: int, include_internal?: boolean): Node;
+    get_parent<N extends Node = Node>(): N;
+  }
+
+  interface _GodotScripts {
+    "res://Ball.gd": Ball;
   }
 
   interface GodotResources {
-    "res://Ball.gd": typeof _Ball;
+    "res://Ball.gd": typeof Ball;
   }
 }
 

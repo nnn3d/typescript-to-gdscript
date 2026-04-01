@@ -1,6 +1,6 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { __CLASS__ as _nested_Anonym } from "../../nested/Anonym.js";
+import type { __CLASS__ as ScriptClass } from "../../nested/Anonym.js";
 
 type ScriptTree = _GDGetInterfaceTree<__nested_AnonymGd__Trees>;
 
@@ -18,19 +18,23 @@ declare module "../../nested/Anonym.ts" {
   }
 }
 
+declare class _Script extends ScriptClass {
+  get_node(path: string): Node | null;
+  get_node_or_null(path: string): Node | null;
+  has_node(path: string): boolean;
+  get_child(idx: int, include_internal?: boolean): Node;
+  get_parent<N extends Node = Node>(): N;
+}
+
 declare global {
   interface __nested_AnonymGd__Trees {}
 
-  /** @see import("../../nested/Anonym.ts") */
-  class nested_Anonym extends _nested_Anonym {
-    get_node(path: string): Node | null;
-    get_node_or_null(path: string): Node | null;
-    has_node(path: string): boolean;
-    get_child(idx: int, include_internal?: boolean): Node;
+  interface _GodotScripts {
+    "res://nested/Anonym.gd": _Script;
   }
 
   interface GodotResources {
-    "res://nested/Anonym.gd": typeof _nested_Anonym;
+    "res://nested/Anonym.gd": typeof _Script;
   }
 }
 

@@ -28,19 +28,19 @@ type _BallATscn_Tree = {
   "Timer": _BallATscn_Timer;
 };
 
-interface __BallATscn__Parents {}
+declare global {
+  interface __BallATscn__Parents {}
 
-interface __BallGd__Trees {
-  "res://BallA.tscn": _BallATscn_Tree;
+  interface __BallGd__Trees {
+    "res://BallA.tscn": _BallATscn_Tree;
+  }
+
+  interface _GodotSceneTrees {
+    "res://BallA.tscn": _BallATscn_Tree;
+  }
+  interface GodotResources {
+    "res://BallA.tscn": PackedScene<_GDTreeNode<_BallATscn_Tree>>;
+  }
 }
 
-interface _GodotScripts {
-  "res://Ball.gd": Ball;
-}
-
-interface _GodotSceneTrees {
-  "res://BallA.tscn": _BallATscn_Tree;
-}
-interface GodotResources {
-  "res://BallA.tscn": PackedScene<_GDTreeNode<_BallATscn_Tree>>;
-}
+export {}

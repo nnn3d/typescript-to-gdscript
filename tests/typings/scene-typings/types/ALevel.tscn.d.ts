@@ -33,6 +33,14 @@ type _ALevelTscn_UI = {
   "ScoreLabel/ScoreSprite": _ALevelTscn_ScoreSprite;
 };
 
+type _PlayerTscn_Tree = _GodotSceneTrees["res://Player.tscn"];
+
+type _EnemyTscn_Tree = _GodotSceneTrees["res://Enemy.tscn"];
+
+type _TilesetObjectsTscn_Tree = _GodotSceneTrees["res://TilesetObjects.tscn"];
+
+type _Level2Tscn_Tree = _GodotSceneTrees["res://Level2.tscn"];
+
 type _ALevelTscn_Tree = {
   [__node_root]: true;
   [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Level.gd">;
@@ -50,21 +58,25 @@ type _ALevelTscn_Tree = {
   "ExtraNode": _ALevelTscn_ExtraNode;
 };
 
-interface __ALevelTscn__Parents {}
+declare global {
+  interface __ALevelTscn__Parents {}
 
-interface __LevelGd__Trees {
-  "res://ALevel.tscn": _ALevelTscn_Tree;
-}
+  interface __LevelGd__Trees {
+    "res://ALevel.tscn": _ALevelTscn_Tree;
+  }
 
 // Instanced scene parents
-interface __PlayerTscn__Parents { "res://ALevel.tscn": _ALevelTscn_Tree; }
-interface __EnemyTscn__Parents { "res://ALevel.tscn": _ALevelTscn_Tree; }
-interface __TilesetObjectsTscn__Parents { "res://ALevel.tscn": _ALevelTscn_Tree; }
-interface __Level2Tscn__Parents { "res://ALevel.tscn": _ALevelTscn_Tree; }
+  interface __PlayerTscn__Parents { "res://ALevel.tscn": _ALevelTscn_Tree; }
+  interface __EnemyTscn__Parents { "res://ALevel.tscn": _ALevelTscn_Tree; }
+  interface __TilesetObjectsTscn__Parents { "res://ALevel.tscn": _ALevelTscn_Tree; }
+  interface __Level2Tscn__Parents { "res://ALevel.tscn": _ALevelTscn_Tree; }
 
-interface _GodotSceneTrees {
-  "res://ALevel.tscn": _ALevelTscn_Tree;
+  interface _GodotSceneTrees {
+    "res://ALevel.tscn": _ALevelTscn_Tree;
+  }
+  interface GodotResources {
+    "res://ALevel.tscn": PackedScene<_GDTreeNode<_ALevelTscn_Tree>>;
+  }
 }
-interface GodotResources {
-  "res://ALevel.tscn": PackedScene<_GDTreeNode<_ALevelTscn_Tree>>;
-}
+
+export {}

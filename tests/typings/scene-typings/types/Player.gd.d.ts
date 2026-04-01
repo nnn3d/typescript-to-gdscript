@@ -1,6 +1,6 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Player as _Player } from "../Player.js";
+import type { Player as ScriptClass } from "../Player.js";
 
 type ScriptTree = _GDGetInterfaceTree<__PlayerGd__Trees>;
 
@@ -22,11 +22,16 @@ declare global {
   interface __PlayerGd__Trees {}
 
   /** @see import("../Player.ts") */
-  class Player extends _Player {
+  class Player extends ScriptClass {
     get_node(path: string): Node | null;
     get_node_or_null(path: string): Node | null;
     has_node(path: string): boolean;
     get_child(idx: int, include_internal?: boolean): Node;
+    get_parent<N extends Node = Node>(): N;
+  }
+
+  interface _GodotScripts {
+    "res://Player.gd": Player;
   }
 
   interface GodotResources {

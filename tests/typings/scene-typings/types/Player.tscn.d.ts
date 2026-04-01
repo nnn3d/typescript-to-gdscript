@@ -44,24 +44,20 @@ type _PlayerTscn_Tree = {
   "%HealthBar": _PlayerTscn_HealthBar;
 };
 
-interface __PlayerTscn__Parents {}
+declare global {
+  interface __PlayerTscn__Parents {}
 
-interface __PlayerGd__Trees {
-  "res://Player.tscn": _PlayerTscn_Tree;
+  interface __PlayerGd__Trees {
+    "res://Player.tscn": _PlayerTscn_Tree;
+  }
+
+  interface _GodotSceneTrees {
+    "res://Player.tscn": _PlayerTscn_Tree;
+  }
+
+  interface GodotResources {
+    "res://Player.tscn": PackedScene<_GDTreeNode<_PlayerTscn_Tree>>;
+  }
 }
 
-// BaseCharacter is a parent class of Player
-// interface __BaseCharacterGd__Trees {
-//   "res://Player.tscn": _PlayerTscn_Tree;
-// }
-
-interface _GodotScripts {
-  "res://Player.gd": Player;
-}
-
-interface _GodotSceneTrees {
-  "res://Player.tscn": _PlayerTscn_Tree;
-}
-interface GodotResources {
-  "res://Player.tscn": PackedScene<_GDTreeNode<_PlayerTscn_Tree>>;
-}
+export {}
