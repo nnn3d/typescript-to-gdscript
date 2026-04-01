@@ -1070,26 +1070,26 @@ function generateSceneTypingContent(
   lines.push(`    "${sceneResPath}": PackedScene<_GDTreeNode<${treeName}>>;`);
   lines.push(`  }`);
 
-  // GodotGroups entry (if any nodes have groups)
+  // GodotGroups entry (if any nodes have groups) — values are TREE types
   if (sceneData.nodeGroups.size > 0) {
     lines.push(`\n  interface GodotGroups {`);
     lines.push(`    "${sceneResPath}": {`);
     for (const [groupName, groupNodes] of sceneData.nodeGroups) {
-      const typeExprs: string[] = [];
+      const treeExprs: string[] = [];
       for (const node of groupNodes) {
-        if (node.scriptResPath) {
-          // Scripted node → resolve via _GodotScripts
-          typeExprs.push(`_GDGetInterfaceNode<_GodotScripts, "${node.scriptResPath}">`);
-        } else if (node.instanceSceneResPath) {
-          // Instanced scene → resolve root type via scene tree
-          typeExprs.push(`_GDTreeGetType<_GodotSceneTrees["${node.instanceSceneResPath}"]>`);
-        } else if (node.nodeType) {
-          // Plain Godot class
-          typeExprs.push(node.nodeType);
+        if (node.instanceSceneResPath) {
+          // Instanced scene → its scene tree
+          treeExprs.push(`_GodotSceneTrees["${node.instanceSceneResPath}"]`);
+        } else if (node.nodePath === '.') {
+          // Root node → this scene's tree
+          treeExprs.push(treeName);
+        } else {
+          // Non-instanced node → local tree type alias
+          treeExprs.push(nodePathToTypeName(alias, node.nodePath));
         }
       }
-      if (typeExprs.length > 0) {
-        const uniqueExprs = [...new Set(typeExprs)];
+      if (treeExprs.length > 0) {
+        const uniqueExprs = [...new Set(treeExprs)];
         lines.push(`      "${groupName}": ${uniqueExprs.join(' | ')};`);
       }
     }

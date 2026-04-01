@@ -74,8 +74,8 @@ declare global {
 
   interface GodotGroups {
     "res://Level.tscn": {
-      "entities": _GDTreeGetType<_GodotSceneTrees["res://Player.tscn"]> | _GDTreeGetType<_GodotSceneTrees["res://Enemy.tscn"]>;
-      "damageable": _GDTreeGetType<_GodotSceneTrees["res://Player.tscn"]> | _GDTreeGetType<_GodotSceneTrees["res://Enemy.tscn"]> | Sprite2D;
+      "entities": _GodotSceneTrees["res://Player.tscn"] | _GodotSceneTrees["res://Enemy.tscn"];
+      "damageable": _GodotSceneTrees["res://Player.tscn"] | _GodotSceneTrees["res://Enemy.tscn"] | _LevelTscn_Background;
     }
   }
 }
