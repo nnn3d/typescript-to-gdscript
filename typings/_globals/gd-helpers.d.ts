@@ -23,21 +23,20 @@ type GodotScenePaths = {
 }[keyof GodotResources];
 
 /**
- * Maps scene paths to their group→tree-type mappings.
- * Populated by the scene typings generator.
- * Each scene contributes its nodes' group memberships as tree types.
- * Values are tree types (not node types) so _GDTreeNode can wrap them.
+ * Maps group names to scene→tree-type mappings.
+ * Populated by the scene typings generator via declaration merging.
+ * Top-level keys are group names, values map scene paths to tree types.
  * @example
- * // "res://Level.tscn": { "enemies": _PlayerTscn_Tree | _EnemyTscn_Tree }
+ * // "enemies": { "res://Level.tscn": _PlayerTscn_Tree | _EnemyTscn_Tree }
  */
 interface GodotGroups {}
 
 /** Union of all group names across all scenes. */
-type GodotGroupNames = { [K in keyof GodotGroups]: keyof GodotGroups[K] & string }[keyof GodotGroups];
+type GodotGroupNames = keyof GodotGroups & string;
 
 /** Resolve the union of tree types belonging to a group, then wrap in _GDTreeNode.
  *  Unknown groups (not in any scene) return Node. */
-type _GDGroupTrees<G extends string> = { [K in keyof GodotGroups]: G extends keyof GodotGroups[K] ? GodotGroups[K][G] : never }[keyof GodotGroups];
+type _GDGroupTrees<G extends string> = G extends keyof GodotGroups ? GodotGroups[G][keyof GodotGroups[G]] : never;
 type GodotGroupNodes<G extends string> = [_GDGroupTrees<G>] extends [never] ? Node : _GDTreeNode<_GDGroupTrees<G>>;
 
 /** Type that gets removed during transformation — for TS-only type info */

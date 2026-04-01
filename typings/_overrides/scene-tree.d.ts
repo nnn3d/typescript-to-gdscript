@@ -3,10 +3,8 @@
  */
 declare class SceneTree {
   // Group query methods with typed group names and return types
-  get_nodes_in_group<G extends GodotGroupNames>(group: G): Array<GodotGroupNodes<G>>;
-  get_nodes_in_group(group: string): Array<Node>;
-  get_first_node_in_group<G extends GodotGroupNames>(group: G): GodotGroupNodes<G>;
-  get_first_node_in_group(group: string): Node;
+  get_nodes_in_group<G extends string>(group: G): Array<GodotGroupNodes<G>>;
+  get_first_node_in_group<G extends string>(group: G): GodotGroupNodes<G>;
   has_group(name: GodotGroupNames): boolean;
   has_group(name: string): boolean;
   get_node_count_in_group(group: GodotGroupNames): int;

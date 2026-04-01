@@ -1076,31 +1076,36 @@ function generateSceneTypingContent(
   lines.push(`    "${sceneResPath}": PackedScene<_GDTreeNode<${treeName}>>;`);
   lines.push(`  }`);
 
-  // GodotGroups entry (if any nodes have groups) — values are TREE types
+  // GodotGroups entries — per-group interfaces + GodotGroups mapping
   if (sceneData.nodeGroups.size > 0) {
-    lines.push(`\n  interface GodotGroups {`);
-    lines.push(`    "${sceneResPath}": {`);
+    const groupEntries: Array<{ groupName: string; interfaceName: string; typeExpr: string }> = [];
     for (const [groupName, groupNodes] of sceneData.nodeGroups) {
       const treeExprs: string[] = [];
       for (const node of groupNodes) {
         if (node.instanceSceneResPath) {
-          // Instanced scene → its scene tree
           treeExprs.push(`GodotSceneTrees["${node.instanceSceneResPath}"]`);
         } else if (node.nodePath === '.') {
-          // Root node → this scene's tree
           treeExprs.push(treeName);
         } else {
-          // Non-instanced node → local tree type alias
           treeExprs.push(nodePathToTypeName(alias, node.nodePath));
         }
       }
       if (treeExprs.length > 0) {
         const uniqueExprs = [...new Set(treeExprs)];
-        lines.push(`      "${groupName}": ${uniqueExprs.join(' | ')};`);
+        const interfaceName = `__GodotGroup_${groupName.replace(/[^a-zA-Z0-9_]/g, '_')}`;
+        lines.push(`  interface ${interfaceName} {`);
+        lines.push(`    "${sceneResPath}": ${uniqueExprs.join(' | ')}`);
+        lines.push(`  }`);
+        groupEntries.push({ groupName, interfaceName, typeExpr: uniqueExprs.join(' | ') });
       }
     }
-    lines.push(`    }`);
-    lines.push(`  }`);
+    if (groupEntries.length > 0) {
+      lines.push(`  interface GodotGroups {`);
+      for (const { groupName, interfaceName } of groupEntries) {
+        lines.push(`    ${groupName}: ${interfaceName};`);
+      }
+      lines.push(`  }`);
+    }
   }
 
   lines.push(`}\n`);

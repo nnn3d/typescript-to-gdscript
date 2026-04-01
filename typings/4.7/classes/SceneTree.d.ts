@@ -136,8 +136,7 @@ declare class SceneTree extends MainLoop {
   /**
    * Returns the first {@link Node} found inside the tree, that has been added to the given `group`, in scene hierarchy order. Returns `null` if no match is found. See also {@link get_nodes_in_group}.
    */
-  get_first_node_in_group<G extends GodotGroupNames>(group: G): GodotGroupNodes<G>;
-  get_first_node_in_group(group: string): Node;
+  get_first_node_in_group<G extends string>(group: G): GodotGroupNodes<G>;
   /**
    * Returns how many physics process steps have been processed, since the application started. This is *not* a measurement of elapsed time. See also {@link physics_frame}. For the number of frames rendered, see {@link Engine.get_process_frames}.
    */
@@ -154,8 +153,7 @@ declare class SceneTree extends MainLoop {
   /**
    * Returns an {@link Array} containing all nodes inside this tree, that have been added to the given `group`, in scene hierarchy order.
    */
-  get_nodes_in_group<G extends GodotGroupNames>(group: G): Array<GodotGroupNodes<G>>;
-  get_nodes_in_group(group: string): Array<Node>;
+  get_nodes_in_group<G extends string>(group: G): Array<GodotGroupNodes<G>>;
   /** Returns an {@link Array} of currently existing {@link Tween}s in the tree, including paused tweens. */
   get_processed_tweens(): Array<Tween>;
   /** Returns `true` if a node added to the given group `name` exists in the tree. */
