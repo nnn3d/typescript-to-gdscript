@@ -42,5 +42,5 @@ interface _GodotSceneTrees {
   "res://BallA.tscn": _BallATscn_Tree;
 }
 interface GodotResources {
-  "res://BallA.tscn": PackedScene<TreeNode<_BallATscn_Tree>>;
+  "res://BallA.tscn": PackedScene<_GDTreeNode<_BallATscn_Tree>>;
 }

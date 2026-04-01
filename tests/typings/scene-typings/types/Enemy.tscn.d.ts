@@ -63,5 +63,5 @@ interface _GodotSceneTrees {
   "res://Enemy.tscn": _EnemyTscn_Tree;
 }
 interface GodotResources {
-  "res://Enemy.tscn": PackedScene<TreeNode<_EnemyTscn_Tree>>;
+  "res://Enemy.tscn": PackedScene<_GDTreeNode<_EnemyTscn_Tree>>;
 }

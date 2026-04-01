@@ -43,5 +43,5 @@ interface _GodotSceneTrees {
   "res://Anonym2.tscn": _Anonym2Tscn_Tree;
 }
 interface GodotResources {
-  "res://Anonym2.tscn": PackedScene<TreeNode<_Anonym2Tscn_Tree>>;
+  "res://Anonym2.tscn": PackedScene<_GDTreeNode<_Anonym2Tscn_Tree>>;
 }

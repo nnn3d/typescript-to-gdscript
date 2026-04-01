@@ -87,7 +87,7 @@ declare global {
     "res://Player.tscn": _PlayerTscn_Tree
   }
   interface GodotResources {
-    "res://Player.tscn": PackedScene<TreeNode<_PlayerTscn_Tree>>;
+    "res://Player.tscn": PackedScene<_GDTreeNode<_PlayerTscn_Tree>>;
   }
 }
 

@@ -17,5 +17,5 @@ interface _GodotSceneTrees {
   "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree;
 }
 interface GodotResources {
-  "res://TilesetObjects.tscn": PackedScene<TreeNode<_TilesetObjectsTscn_Tree>>;
+  "res://TilesetObjects.tscn": PackedScene<_GDTreeNode<_TilesetObjectsTscn_Tree>>;
 }

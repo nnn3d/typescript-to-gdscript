@@ -63,5 +63,5 @@ interface _GodotSceneTrees {
   "res://Level.tscn": _LevelTscn_Tree;
 }
 interface GodotResources {
-  "res://Level.tscn": PackedScene<TreeNode<_LevelTscn_Tree>>;
+  "res://Level.tscn": PackedScene<_GDTreeNode<_LevelTscn_Tree>>;
 }

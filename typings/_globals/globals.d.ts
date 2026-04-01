@@ -234,14 +234,14 @@ type _GDTreeHandlers<Tree> = {
   duplicate(flags?: int): _GDTreeGetType<Tree>;
 }
 
-type TreeNode<Tree> = _GDTreeHandlers<Tree> & _GDTreeGetType<Tree>
+type _GDTreeNode<Tree> = _GDTreeHandlers<Tree> & _GDTreeGetType<Tree>
 
 type _GDTreeNodeOrNull<Tree> =
   Tree extends null
     ? null
     : Tree extends undefined
       ? never
-      : TreeNode<NonNullable<Tree>>;
+      : _GDTreeNode<NonNullable<Tree>>;
 
 type _GDGetTreePaths<Tree, Prefix extends string = ``> =
   Tree extends any // distributive over union trees
@@ -303,7 +303,7 @@ type _GDGetTreeByPath<
 type _GDGetNodeByPath<Tree, Path extends string> =
   | (_GDGetTreeByPath<Tree, Path> extends never
       ? Node | null
-      : TreeNode<_GDGetTreeByPath<Tree, Path>>)
+      : _GDTreeNode<_GDGetTreeByPath<Tree, Path>>)
   | _GDGetNullByPath<Tree, Path>;
 
 
@@ -325,7 +325,7 @@ type _GDGetChild<Tree, Idx extends number> =
     ? _GDTreeGetChildren<Tree> extends never
       ? Node
       : `${Idx}` extends keyof _GDTreeGetChildren<Tree>
-        ? TreeNode<_GDTreeGetChildren<Tree>[Idx]>
+        ? _GDTreeNode<_GDTreeGetChildren<Tree>[Idx]>
         : Node
     : never;
 
@@ -337,7 +337,7 @@ type _GDParentType<Tree> =
       ? Node
       : [_GDTreeGetParent<Tree>] extends [null]
         ? Node
-        : TreeNode<NonNullable<_GDTreeGetParent<Tree>>>
+        : _GDTreeNode<NonNullable<_GDTreeGetParent<Tree>>>
     : never;
 
 /** Resolve get_node return type: known paths → exact type, unknown → Node | null.
