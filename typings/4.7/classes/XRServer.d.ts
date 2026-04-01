@@ -56,7 +56,7 @@ declare interface XRServer extends GodotObject {
    */
   get_interface_count(): int;
   /** Returns a list of available interfaces the ID and name of each interface. */
-  get_interfaces(): Dictionary;
+  get_interfaces(): Array<Dictionary>;
   /**
    * Returns the reference frame transform. Mostly used internally and exposed for GDExtension build interfaces.
    */

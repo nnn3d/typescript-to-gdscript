@@ -14,7 +14,7 @@ declare class EditorNode3DGizmo extends Node3DGizmo {
    * Override this method to commit a group of subgizmos being edited (see {@link _subgizmos_intersect_ray} and {@link _subgizmos_intersect_frustum}). This usually means creating an {@link UndoRedo} action for the change, using the current transforms as "do" and the `restores` transforms as "undo".
    * If the `cancel` argument is `true`, the `restores` transforms should be directly set, without any {@link UndoRedo} action.
    */
-  _commit_subgizmos(ids: PackedInt32Array, restores: unknown, cancel: boolean): void;
+  _commit_subgizmos(ids: PackedInt32Array, restores: Array<Transform3D>, cancel: boolean): void;
   /**
    * Override this method to return the name of an edited handle (handles must have been previously added by {@link add_handles}). Handles can be named for reference to the user when editing.
    * The `secondary` argument is `true` when the requested handle is secondary (see {@link add_handles} for more information).
@@ -50,7 +50,7 @@ declare class EditorNode3DGizmo extends Node3DGizmo {
   /**
    * Override this method to allow selecting subgizmos using mouse drag box selection. Given a `camera` and a `frustum`, this method should return which subgizmos are contained within the frustum. The `frustum` argument consists of an array with all the {@link Plane}s that make up the selection frustum. The returned value should contain a list of unique subgizmo identifiers, which can have any non-negative value and will be used in other virtual methods like {@link _get_subgizmo_transform} or {@link _commit_subgizmos}.
    */
-  _subgizmos_intersect_frustum(camera: Camera3D, frustum: unknown): PackedInt32Array;
+  _subgizmos_intersect_frustum(camera: Camera3D, frustum: Array<Plane>): PackedInt32Array;
   /**
    * Override this method to allow selecting subgizmos using mouse clicks. Given a `camera` and a `point` in screen coordinates, this method should return which subgizmo should be selected. The returned value should be a unique subgizmo identifier, which can have any non-negative value and will be used in other virtual methods like {@link _get_subgizmo_transform} or {@link _commit_subgizmos}.
    */

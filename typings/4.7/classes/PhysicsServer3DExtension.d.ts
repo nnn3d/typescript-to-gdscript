@@ -45,7 +45,7 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _body_attach_object_instance_id(body: RID, id: int): void;
   _body_clear_shapes(body: RID): void;
   _body_create(): RID;
-  _body_get_collision_exceptions(body: RID): unknown;
+  _body_get_collision_exceptions(body: RID): Array<RID>;
   _body_get_collision_layer(body: RID): int;
   _body_get_collision_mask(body: RID): int;
   _body_get_collision_priority(body: RID): float;
@@ -153,7 +153,7 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _soft_body_apply_point_impulse(body: RID, point_index: int, impulse: Vector3): void;
   _soft_body_create(): RID;
   _soft_body_get_bounds(body: RID): AABB;
-  _soft_body_get_collision_exceptions(body: RID): unknown;
+  _soft_body_get_collision_exceptions(body: RID): Array<RID>;
   _soft_body_get_collision_layer(body: RID): int;
   _soft_body_get_collision_mask(body: RID): int;
   _soft_body_get_damping_coefficient(body: RID): float;

@@ -26,7 +26,7 @@ declare class RDPipelineMultisampleState extends RefCounted {
   /**
    * The sample mask array. See the sample mask Vulkan documentation (https://registry.khronos.org/vulkan/specs/1.3-extensions/html/vkspec.html#fragops-samplemask) for more details.
    */
-  sample_masks: unknown;
+  sample_masks: Array<int>;
   set_enable_alpha_to_coverage(value: boolean): void;
   get_enable_alpha_to_coverage(): boolean;
   set_enable_alpha_to_one(value: boolean): void;
@@ -37,6 +37,6 @@ declare class RDPipelineMultisampleState extends RefCounted {
   get_min_sample_shading(): float;
   set_sample_count(value: int): void;
   get_sample_count(): int;
-  set_sample_masks(value: unknown): void;
-  get_sample_masks(): unknown;
+  set_sample_masks(value: Array<int>): void;
+  get_sample_masks(): Array<int>;
 }

@@ -3726,7 +3726,7 @@ declare interface ProjectSettings {
    * - `path` is a path to a file containing the global class.
    * **Note:** Both the script and the icon paths are local to the project filesystem, i.e. they start with `res://`.
    */
-  get_global_class_list(): Dictionary;
+  get_global_class_list(): Array<Dictionary>;
   /** Returns the order of a configuration value (influences when saved to the config file). */
   get_order<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T): int;
   get_order(name: string): int;

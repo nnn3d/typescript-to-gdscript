@@ -73,7 +73,7 @@ declare class Skeleton3D extends Node3D {
   /** Returns the metadata with the given `key` for the bone at index `bone_idx`. */
   get_bone_meta(bone_idx: int, key: string): unknown;
   /** Returns the list of all metadata keys for the bone at index `bone_idx`. */
-  get_bone_meta_list(bone_idx: int): unknown;
+  get_bone_meta_list(bone_idx: int): Array<string>;
   /** Returns the name of the bone at index `bone_idx`. */
   get_bone_name(bone_idx: int): string;
   /**
@@ -133,7 +133,7 @@ declare class Skeleton3D extends Node3D {
    * Tells the {@link PhysicalBone3D} nodes in the Skeleton to start simulating and reacting to the physics world.
    * Optionally, a list of bone names can be passed-in, allowing only the passed-in bones to be simulated.
    */
-  physical_bones_start_simulation(bones?: unknown): void;
+  physical_bones_start_simulation(bones?: Array<string>): void;
   /** Tells the {@link PhysicalBone3D} nodes in the Skeleton to stop simulating. */
   physical_bones_stop_simulation(): void;
   /** Binds the given Skin to the Skeleton. */

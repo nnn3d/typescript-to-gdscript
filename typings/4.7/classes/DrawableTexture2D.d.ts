@@ -12,7 +12,7 @@ declare class DrawableTexture2D extends Texture2D {
   /**
    * Draws to the given `rect` on this texture, as well as on up to 3 DrawableTexture `extra_targets`. All `extra_targets` must be the same size and DrawableFormat as the original target, otherwise the Shader may fail. Expects up to 4 Texture `sources`, but will replace missing `sources` with default Black Textures.
    */
-  blit_rect_multi(rect: Rect2i, sources: unknown, extra_targets: unknown, modulate?: Color, mipmap?: int, material?: Material): void;
+  blit_rect_multi(rect: Rect2i, sources: Array<Texture2D>, extra_targets: Array<DrawableTexture2D>, modulate?: Color, mipmap?: int, material?: Material): void;
   /** Re-calculates the mipmaps for this texture on demand. */
   generate_mipmaps(): void;
   /** Returns `true` if mipmaps are set to be used on this DrawableTexture. */

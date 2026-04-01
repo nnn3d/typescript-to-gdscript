@@ -340,7 +340,7 @@ declare class Viewport extends Node {
    * Returns a list of the visible embedded {@link Window}s inside the viewport.
    * **Note:** {@link Window}s inside other viewports will not be listed.
    */
-  get_embedded_subwindows(): unknown;
+  get_embedded_subwindows(): Array<Window>;
   /** Returns the transform from the viewport's coordinate system to the embedder's coordinate system. */
   get_final_transform(): Transform2D;
   /**

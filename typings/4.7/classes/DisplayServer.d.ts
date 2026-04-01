@@ -299,7 +299,7 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** On macOS, native file dialogs have no title.
    * **Note:** On macOS, sandboxed apps will save security-scoped bookmarks to retain access to the opened folders across multiple sessions. Use {@link OS.get_granted_permissions} to get a list of saved bookmarks.
    */
-  file_dialog_with_options_show(title: string, current_directory: string, root: string, filename: string, show_hidden: boolean, mode: int, filters: PackedStringArray, options: Dictionary, callback: Callable, parent_window_id?: int): int;
+  file_dialog_with_options_show(title: string, current_directory: string, root: string, filename: string, show_hidden: boolean, mode: int, filters: PackedStringArray, options: Array<Dictionary>, callback: Callable, parent_window_id?: int): int;
   /**
    * Forces window manager processing while ignoring all {@link InputEvent}s. See also {@link process_events}.
    * **Note:** This method is implemented on Windows and macOS.
@@ -319,7 +319,7 @@ declare interface DisplayServer extends GodotObject {
    * Returns an {@link Array} of {@link Rect2}, each of which is the bounding rectangle for a display cutout or notch. These are non-functional areas on edge-to-edge screens used by cameras and sensors. Returns an empty array if the device does not have cutouts. See also {@link get_display_safe_area}.
    * **Note:** Currently only implemented on Android. Other platforms will return an empty array even if they do have display cutouts or notches.
    */
-  get_display_cutouts(): unknown;
+  get_display_cutouts(): Array<Rect2>;
   /**
    * Returns the unobscured area of the display where interactive controls should be rendered. See also {@link get_display_cutouts}.
    * **Note:** Currently only implemented on Android and iOS. On other platforms, `screen_get_usable_rect(SCREEN_OF_MAIN_WINDOW)` will be returned as a fallback. See also {@link screen_get_usable_rect}.
@@ -1040,7 +1040,7 @@ declare interface DisplayServer extends GodotObject {
    * Note that Godot depends on system libraries for text-to-speech functionality. These libraries are installed by default on Windows and macOS, but not on all Linux distributions. If they are not present, this method will return an empty list. This applies to both Godot users on Linux, as well as end-users on Linux running Godot games that use text-to-speech.
    * **Note:** This method is implemented on Android, iOS, Web, Linux (X11/Wayland), macOS, and Windows.
    */
-  tts_get_voices(): Dictionary;
+  tts_get_voices(): Array<Dictionary>;
   /**
    * Returns a {@link PackedStringArray} of voice identifiers for the `language`.
    * **Note:** This method is implemented on Android, iOS, Web, Linux (X11/Wayland), macOS, and Windows.

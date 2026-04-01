@@ -93,7 +93,7 @@ declare class SoftBody3D extends MeshInstance3D {
    */
   apply_impulse(point_index: int, impulse: Vector3): void;
   /** Returns an array of nodes that were added as collision exceptions for this body. */
-  get_collision_exceptions(): unknown;
+  get_collision_exceptions(): Array<PhysicsBody3D>;
   /**
    * Returns whether or not the specified layer of the {@link collision_layer} is enabled, given a `layer_number` between 1 and 32.
    */

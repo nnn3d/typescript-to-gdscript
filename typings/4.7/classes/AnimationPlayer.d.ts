@@ -85,7 +85,7 @@ declare class AnimationPlayer extends AnimationMixer {
   /** Returns the process notification in which to update animations. */
   get_process_callback(): int;
   /** Returns a list of the animation keys that are currently queued to play. */
-  get_queue(): unknown;
+  get_queue(): Array<string>;
   /** Returns the node which node path references will travel from. */
   get_root(): string;
   /** Returns the end time of the section currently being played. */

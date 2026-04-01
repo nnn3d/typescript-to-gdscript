@@ -10,7 +10,7 @@ declare class AnimationLibrary extends Resource {
    */
   get_animation(name: string): Animation;
   /** Returns the keys for the {@link Animation}s stored in the library. */
-  get_animation_list(): unknown;
+  get_animation_list(): Array<string>;
   /** Returns the key count for the {@link Animation}s stored in the library. */
   get_animation_list_size(): int;
   /** Returns `true` if the library stores an {@link Animation} with `name` as the key. */

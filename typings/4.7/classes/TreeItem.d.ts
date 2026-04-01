@@ -86,7 +86,7 @@ declare class TreeItem extends GodotObject {
   /** Returns the number of child items. */
   get_child_count(): int;
   /** Returns an array of references to the item's children. */
-  get_children(): unknown;
+  get_children(): Array<TreeItem>;
   /** Returns the custom background color of column `column`. */
   get_custom_bg_color(column: int): Color;
   /** Returns the custom color of column `column`. */

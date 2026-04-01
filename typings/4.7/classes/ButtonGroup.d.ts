@@ -12,7 +12,7 @@ declare class ButtonGroup extends Resource {
   /**
    * Returns an {@link Array} of {@link Button}s who have this as their {@link ButtonGroup} (see {@link BaseButton.button_group}).
    */
-  get_buttons(): unknown;
+  get_buttons(): Array<BaseButton>;
   /** Returns the current pressed button. */
   get_pressed_button(): BaseButton;
 

@@ -22,7 +22,7 @@ declare class AudioStream extends Resource {
   /**
    * Return the controllable parameters of this stream. This array contains dictionaries with a property info description format (see {@link Object.get_property_list}). Additionally, the default value for this parameter must be added tho each dictionary in "default_value" field.
    */
-  _get_parameter_list(): Dictionary;
+  _get_parameter_list(): Array<Dictionary>;
   /** Override this method to customize the name assigned to this audio stream. Unused by the engine. */
   _get_stream_name(): string;
   /**

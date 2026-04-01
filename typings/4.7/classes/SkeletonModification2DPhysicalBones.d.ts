@@ -23,10 +23,10 @@ declare class SkeletonModification2DPhysicalBones extends SkeletonModification2D
    * Tell the {@link PhysicalBone2D} nodes to start simulating and interacting with the physics world.
    * Optionally, an array of bone names can be passed to this function, and that will cause only {@link PhysicalBone2D} nodes with those names to start simulating.
    */
-  start_simulation(bones?: unknown): void;
+  start_simulation(bones?: Array<string>): void;
   /**
    * Tell the {@link PhysicalBone2D} nodes to stop simulating and interacting with the physics world.
    * Optionally, an array of bone names can be passed to this function, and that will cause only {@link PhysicalBone2D} nodes with those names to stop simulating.
    */
-  stop_simulation(bones?: unknown): void;
+  stop_simulation(bones?: Array<string>): void;
 }

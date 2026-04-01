@@ -19,7 +19,7 @@ declare class EditorImportPlugin extends ResourceImporter {
   /**
    * Gets the options and default values for the preset at this index. Returns an Array of Dictionaries with the following keys: `name`, `default_value`, `property_hint` (optional), `hint_string` (optional), `usage` (optional).
    */
-  _get_import_options(path: string, preset_index: int): Dictionary;
+  _get_import_options(path: string, preset_index: int): Array<Dictionary>;
   /**
    * Gets the order of this importer to be run when importing resources. Importers with *lower* import orders will be called first, and higher values will be called later. Use this to ensure the importer runs after the dependencies are already imported. The default import order is `0` unless overridden by a specific importer. See {@link ResourceImporter.ImportOrder} for some predefined values.
    */
@@ -59,7 +59,7 @@ declare class EditorImportPlugin extends ResourceImporter {
    * If additional resource files are generated in the resource filesystem (`res://`), add their full path to `gen_files` so that the editor knows they depend on `source_file`.
    * This method must be overridden to do the actual importing work. See this class' description for an example of overriding this method.
    */
-  _import(source_file: string, save_path: string, options: Dictionary, platform_variants: unknown, gen_files: unknown): int;
+  _import(source_file: string, save_path: string, options: Dictionary, platform_variants: Array<string>, gen_files: Array<string>): int;
   /**
    * This function can only be called during the {@link _import} callback and it allows manually importing resources from it. This is useful when the imported file generates external resources that require importing (as example, images). Custom parameters for the ".import" file can be passed via the `custom_options`. Additionally, in cases where multiple importers can handle a file, the `custom_importer` can be specified to force a specific one. This function performs a resource import and returns immediately with a success or error code. `generator_parameters` defines optional extra metadata which will be stored as [code skip-lint]generator_parameters[/code] in the `remap` section of the `.import` file, for example to store a md5 hash of the source data.
    */

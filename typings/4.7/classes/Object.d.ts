@@ -19,7 +19,7 @@ declare class GodotObject {
    * **Note:** If the object's script is not , this method will not be called in the editor.
    * **Note:** Unlike other virtual methods, this method is called automatically for every script that overrides it. This means that the base implementation should not be called via `super` in GDScript or its equivalents in other languages. The bottom-most sub-class will be called first, with subsequent calls ascending the class hierarchy.
    */
-  _get_property_list(): Dictionary;
+  _get_property_list(): Array<Dictionary>;
   /**
    * Called when the object's script is instantiated, oftentimes after the object is initialized in memory (through `Object.new()` in GDScript, or `new GodotObject` in C#). It can be also defined to take in parameters. This method is similar to a constructor in most programming languages.
    * **Note:** If {@link _init} is defined with *required* parameters, the Object with script may only be created directly. If any other means (such as {@link PackedScene.instantiate} or {@link Node.duplicate}) are used, the script's initialization will fail.
@@ -165,7 +165,7 @@ declare class GodotObject {
    * - `callable` is a reference to the {@link Callable};
    * - `flags` is a combination of {@link ConnectFlags}.
    */
-  get_incoming_connections(): Dictionary;
+  get_incoming_connections(): Array<Dictionary>;
   /**
    * Gets the object's property indexed by the given `property_path`. The path should be a {@link NodePath} relative to the current object and can use the colon character (`:`) to access nested properties.
    * **Examples:** `"position:x"` or `"material:next_pass:blend_mode"`.
@@ -185,7 +185,7 @@ declare class GodotObject {
    */
   get_meta<T = unknown>(name: string, default_?: T): T;
   /** Returns the object's metadata entry names as an {@link Array} of {@link StringName}s. */
-  get_meta_list(): unknown;
+  get_meta_list(): Array<string>;
   /**
    * Returns the number of arguments of the given `method` by name.
    * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
@@ -201,7 +201,7 @@ declare class GodotObject {
    * - `return` is the returned value, as a {@link Dictionary};
    * **Note:** The dictionaries of `args` and `return` are formatted identically to the results of {@link get_property_list}, although not all entries are used.
    */
-  get_method_list(): Dictionary;
+  get_method_list(): Array<Dictionary>;
   /**
    * Returns the object's property list as an {@link Array} of dictionaries. Each {@link Dictionary} contains the following entries:
    * - `name` is the property's name, as a {@link String};
@@ -212,7 +212,7 @@ declare class GodotObject {
    * - `usage` is a combination of {@link PropertyUsageFlags}.
    * **Note:** In GDScript, all class members are treated as properties. In C# and GDExtension, it may be necessary to explicitly mark class members as Godot properties using decorators or attributes.
    */
-  get_property_list(): Dictionary;
+  get_property_list(): Array<Dictionary>;
   /** Returns the object's {@link Script} instance, or `null` if no script is attached. */
   get_script(): unknown;
   /**
@@ -221,12 +221,12 @@ declare class GodotObject {
    * - `callable` is a reference to the connected {@link Callable};
    * - `flags` is a combination of {@link ConnectFlags}.
    */
-  get_signal_connection_list(signal: string): Dictionary;
+  get_signal_connection_list(signal: string): Array<Dictionary>;
   /**
    * Returns the list of existing signals as an {@link Array} of dictionaries.
    * **Note:** Due to the implementation, each {@link Dictionary} is formatted very similarly to the returned values of {@link get_method_list}.
    */
-  get_signal_list(): Dictionary;
+  get_signal_list(): Array<Dictionary>;
   /**
    * Returns the name of the translation domain used by {@link tr} and {@link tr_n}. See also {@link TranslationServer}.
    */

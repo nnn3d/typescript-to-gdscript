@@ -11,7 +11,7 @@ declare class SurfaceTool extends RefCounted {
    * Inserts a triangle fan made of array data into {@link Mesh} being constructed.
    * Requires the primitive type be set to {@link Mesh.PRIMITIVE_TRIANGLES}.
    */
-  add_triangle_fan(vertices: PackedVector3Array, uvs?: PackedVector2Array, colors?: PackedColorArray, uv2s?: PackedVector2Array, normals?: PackedVector3Array, tangents?: unknown): void;
+  add_triangle_fan(vertices: PackedVector3Array, uvs?: PackedVector2Array, colors?: PackedColorArray, uv2s?: PackedVector2Array, normals?: PackedVector3Array, tangents?: Array<Plane>): void;
   /**
    * Specifies the position of current vertex. Should be called after specifying other vertex properties (e.g. Color, UV).
    */

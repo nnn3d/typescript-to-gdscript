@@ -8,12 +8,12 @@ declare class ScriptExtension extends Script {
   _get_class_icon_path(): string;
   _get_constants(): Dictionary;
   _get_doc_class_name(): string;
-  _get_documentation(): Dictionary;
+  _get_documentation(): Array<Dictionary>;
   _get_global_name(): string;
   _get_instance_base_type(): string;
   _get_language(): ScriptLanguage;
   _get_member_line(member: string): int;
-  _get_members(): unknown;
+  _get_members(): Array<string>;
   _get_method_info(method: string): Dictionary;
   _get_property_default_value(property: string): unknown;
   _get_rpc_config(): unknown;
@@ -21,9 +21,9 @@ declare class ScriptExtension extends Script {
    * Return the expected argument count for the given `method`, or `null` if it can't be determined (which will then fall back to the default behavior).
    */
   _get_script_method_argument_count(method: string): unknown;
-  _get_script_method_list(): Dictionary;
-  _get_script_property_list(): Dictionary;
-  _get_script_signal_list(): Dictionary;
+  _get_script_method_list(): Array<Dictionary>;
+  _get_script_property_list(): Array<Dictionary>;
+  _get_script_signal_list(): Array<Dictionary>;
   _get_source_code(): string;
   _has_method(method: string): boolean;
   _has_property_default_value(property: string): boolean;

@@ -9,7 +9,7 @@ declare class ImageTextureLayered extends TextureLayered {
    * Creates an {@link ImageTextureLayered} from an array of {@link Image}s. See {@link Image.create} for the expected data format. The first image decides the width, height, image format and mipmapping setting. The other images *must* have the same width, height, image format and mipmapping setting.
    * Each {@link Image} represents one `layer`.
    */
-  create_from_images(images: unknown): int;
+  create_from_images(images: Array<Image>): int;
   /**
    * Replaces the existing {@link Image} data at the given `layer` with this new image.
    * The given {@link Image} must have the same width, height, image format, and mipmapping flag as the rest of the referenced images.

@@ -37,7 +37,7 @@ declare interface ClassDB extends GodotObject {
    * Returns an array with all the methods of `class` or its ancestry if `no_inheritance` is `false`. Every element of the array is a {@link Dictionary} with the following keys: `args`, `default_args`, `flags`, `id`, `name`, `return: (class_name, hint, hint_string, name, type, usage)`.
    * **Note:** In exported release builds the debug info is not available, so the returned dictionaries will contain only method names.
    */
-  class_get_method_list(class_: string, no_inheritance?: boolean): Dictionary;
+  class_get_method_list(class_: string, no_inheritance?: boolean): Array<Dictionary>;
   /** Returns the value of `property` of `object` or its ancestry. */
   class_get_property<V = unknown>(
   object: GodotObject,
@@ -51,7 +51,7 @@ declare interface ClassDB extends GodotObject {
   /** Returns the getter method name of `property` of `class`. */
   class_get_property_getter(class_: string, property: string): string;
   /** Returns an array with all the properties of `class` or its ancestry if `no_inheritance` is `false`. */
-  class_get_property_list(class_: string, no_inheritance?: boolean): Dictionary;
+  class_get_property_list(class_: string, no_inheritance?: boolean): Array<Dictionary>;
   /** Returns the setter method name of `property` of `class`. */
   class_get_property_setter(class_: string, property: string): string;
   /**
@@ -61,7 +61,7 @@ declare interface ClassDB extends GodotObject {
   /**
    * Returns an array with all the signals of `class` or its ancestry if `no_inheritance` is `false`. Every element of the array is a {@link Dictionary} as described in {@link class_get_signal}.
    */
-  class_get_signal_list(class_: string, no_inheritance?: boolean): Dictionary;
+  class_get_signal_list(class_: string, no_inheritance?: boolean): Array<Dictionary>;
   /** Returns whether `class` or its ancestry has an enum called `name` or not. */
   class_has_enum(class_: string, name: string, no_inheritance?: boolean): boolean;
   /** Returns whether `class` or its ancestry has an integer constant called `name` or not. */

@@ -198,7 +198,7 @@ declare class RigidBody2D extends PhysicsBody2D {
    * Returns a list of the bodies colliding with this one. Requires {@link contact_monitor} to be set to `true` and {@link max_contacts_reported} to be set high enough to detect all the collisions.
    * **Note:** The result of this test is not immediate after moving objects. For performance, list of collisions is updated once per frame and before the physics step. Consider using signals instead.
    */
-  get_colliding_bodies(): unknown;
+  get_colliding_bodies(): Array<Node2D>;
   /**
    * Returns the number of contacts this body has with other bodies. By default, this returns 0 unless bodies are configured to monitor contacts (see {@link contact_monitor}).
    * **Note:** To retrieve the colliding bodies, use {@link get_colliding_bodies}.

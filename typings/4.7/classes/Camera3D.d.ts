@@ -116,7 +116,7 @@ declare class Camera3D extends Node3D {
   /**
    * Returns the camera's frustum planes in world space units as an array of {@link Plane}s in the following order: near, far, left, top, right, bottom. Not to be confused with {@link frustum_offset}.
    */
-  get_frustum(): unknown;
+  get_frustum(): Array<Plane>;
   /**
    * Returns the RID of a pyramid shape encompassing the camera's view frustum, ignoring the camera's near plane. The tip of the pyramid represents the position of the camera.
    */

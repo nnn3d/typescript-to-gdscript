@@ -398,7 +398,7 @@ declare class TextEdit extends Control {
    * Returns an {@link Array} of line ranges where `x` is the first line and `y` is the last line. All lines within these ranges will have a caret on them or be part of a selection. Each line will only be part of one line range, even if it has multiple carets on it.
    * If a selection's end column ({@link get_selection_to_column}) is at column `0`, that line will not be included. If a selection begins on the line after another selection ends and `merge_adjacent` is `true`, or they begin and end on the same line, one line range will include both selections.
    */
-  get_line_ranges_from_carets(only_selections?: boolean, merge_adjacent?: boolean): unknown;
+  get_line_ranges_from_carets(only_selections?: boolean, merge_adjacent?: boolean): Array<Vector2i>;
   /** Returns the width in pixels of the `wrap_index` on `line`. */
   get_line_width(line: int, wrap_index?: int): int;
   /** Returns line text as it is currently displayed, including IME composition string. */

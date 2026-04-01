@@ -64,7 +64,7 @@ declare class EditorExportPlatformExtension extends EditorExportPlatform {
    * - `required: bool`, if set to `true`, this property warnings are critical, and should be resolved to make export possible. This value is a hint for the {@link _has_valid_export_configuration} implementation, and not used by the engine directly.
    * See also {@link Object._get_property_list}.
    */
-  _get_export_options(): Dictionary;
+  _get_export_options(): Array<Dictionary>;
   /**
    * Returns the platform logo displayed in the export dialog. The logo should be 32×32 pixels, adjusted for the current editor scale (see {@link EditorInterface.get_editor_scale}).
    */

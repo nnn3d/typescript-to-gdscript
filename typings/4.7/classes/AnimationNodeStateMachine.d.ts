@@ -32,7 +32,7 @@ declare class AnimationNodeStateMachine extends AnimationRootNode {
   /** Returns the animation node with the given name. */
   get_node(name: string): AnimationNode;
   /** Returns a list containing the names of all animation nodes in this state machine. */
-  get_node_list(): unknown;
+  get_node_list(): Array<string>;
   /** Returns the given animation node's name. */
   get_node_name(node: AnimationNode): string;
   /** Returns the given animation node's coordinates. Used for display in the editor. */

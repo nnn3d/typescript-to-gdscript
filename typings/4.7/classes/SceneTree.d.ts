@@ -155,9 +155,9 @@ declare class SceneTree extends MainLoop {
   /**
    * Returns an {@link Array} containing all nodes inside this tree, that have been added to the given `group`, in scene hierarchy order.
    */
-  get_nodes_in_group(group: string): unknown;
+  get_nodes_in_group(group: string): Array<Node>;
   /** Returns an {@link Array} of currently existing {@link Tween}s in the tree, including paused tweens. */
-  get_processed_tweens(): unknown;
+  get_processed_tweens(): Array<Tween>;
   /** Returns `true` if a node added to the given group `name` exists in the tree. */
   has_group(name: string): boolean;
   /**

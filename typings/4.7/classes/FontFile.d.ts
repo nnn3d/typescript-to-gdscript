@@ -171,7 +171,7 @@ declare class FontFile extends Font {
   /** Returns kerning for the pair of glyphs. */
   get_kerning(cache_index: int, size: int, glyph_pair: Vector2i): Vector2;
   /** Returns list of the kerning overrides. */
-  get_kerning_list(cache_index: int, size: int): unknown;
+  get_kerning_list(cache_index: int, size: int): Array<Vector2i>;
   /** Returns `true` if support override is enabled for the `language`. */
   get_language_support_override(language: string): boolean;
   /** Returns list of language support overrides. */
@@ -183,7 +183,7 @@ declare class FontFile extends Font {
   /**
    * Returns list of the font sizes in the cache. Each size is {@link Vector2i} with font size and outline size.
    */
-  get_size_cache_list(cache_index: int): unknown;
+  get_size_cache_list(cache_index: int): Array<Vector2i>;
   /** Returns number of textures used by font cache entry. */
   get_texture_count(cache_index: int, size: Vector2i): int;
   /** Returns a copy of the font cache texture image. */

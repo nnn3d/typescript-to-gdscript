@@ -19,5 +19,5 @@ declare class RDUniform extends RefCounted {
   /** Unbinds all ids currently bound to the uniform. */
   clear_ids(): void;
   /** Returns an array of all ids currently bound to the uniform. */
-  get_ids(): unknown;
+  get_ids(): Array<RID>;
 }

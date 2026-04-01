@@ -112,7 +112,7 @@ declare interface NavigationServer2D extends GodotObject {
   /**
    * Returns all created navigation map {@link RID}s on the NavigationServer. This returns both 2D and 3D created navigation maps as there is technically no distinction between them.
    */
-  get_maps(): unknown;
+  get_maps(): Array<RID>;
   /** Returns information about the current state of the NavigationServer. */
   get_process_info(process_info: int): int;
   /** Returns `true` when the provided navigation polygon is being baked on a background thread. */
@@ -174,7 +174,7 @@ declare interface NavigationServer2D extends GodotObject {
   /**
    * Returns all navigation agents {@link RID}s that are currently assigned to the requested navigation `map`.
    */
-  map_get_agents(map: RID): unknown;
+  map_get_agents(map: RID): Array<RID>;
   /** Returns the map cell size used to rasterize the navigation mesh vertices. */
   map_get_cell_size(map: RID): float;
   /**
@@ -201,13 +201,13 @@ declare interface NavigationServer2D extends GodotObject {
   /**
    * Returns all navigation link {@link RID}s that are currently assigned to the requested navigation `map`.
    */
-  map_get_links(map: RID): unknown;
+  map_get_links(map: RID): Array<RID>;
   /** Returns map's internal merge rasterizer cell scale. */
   map_get_merge_rasterizer_cell_scale(map: RID): float;
   /**
    * Returns all navigation obstacle {@link RID}s that are currently assigned to the requested navigation `map`.
    */
-  map_get_obstacles(map: RID): unknown;
+  map_get_obstacles(map: RID): Array<RID>;
   /**
    * Returns the navigation path to reach the destination from the origin. `navigation_layers` is a bitmask of all region navigation layers that are allowed to be in the path.
    */
@@ -221,7 +221,7 @@ declare interface NavigationServer2D extends GodotObject {
   /**
    * Returns all navigation regions {@link RID}s that are currently assigned to the requested navigation `map`.
    */
-  map_get_regions(map: RID): unknown;
+  map_get_regions(map: RID): Array<RID>;
   /** Returns `true` if the `map` synchronization uses an async process that runs on a background thread. */
   map_get_use_async_iterations(map: RID): boolean;
   /**

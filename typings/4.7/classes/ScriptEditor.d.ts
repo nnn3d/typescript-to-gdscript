@@ -15,9 +15,9 @@ declare class ScriptEditor extends PanelContainer {
   /** Returns a {@link Script} that is currently active in editor. */
   get_current_script(): Script;
   /** Returns an array with all {@link ScriptEditorBase} objects which are currently open in editor. */
-  get_open_script_editors(): unknown;
+  get_open_script_editors(): Array<ScriptEditorBase>;
   /** Returns an array with all {@link Script} objects which are currently open in editor. */
-  get_open_scripts(): unknown;
+  get_open_scripts(): Array<Script>;
   /**
    * Opens help for the given topic. The `topic` is an encoded string that controls which class, method, constant, signal, annotation, property, or theme item should be focused.
    * The supported `topic` formats include `class_name:class`, `class_method:class:method`, `class_constant:class:constant`, `class_signal:class:signal`, `class_annotation:class:@annotation`, `class_property:class:property`, and `class_theme_item:class:item`, where `class` is the class name, `method` is the method name, `constant` is the constant name, `signal` is the signal name, `annotation` is the annotation name, `property` is the property name, and `item` is the theme item.

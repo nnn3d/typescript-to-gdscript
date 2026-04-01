@@ -80,7 +80,7 @@ declare class TranslationDomain extends RefCounted {
   /**
    * Returns the {@link Translation} instances that match `locale` (see {@link TranslationServer.compare_locales}). If `exact` is `true`, only instances whose locale exactly equals `locale` will be returned.
    */
-  find_translations(locale: string, exact: boolean): unknown;
+  find_translations(locale: string, exact: boolean): Array<Translation>;
   /** Returns the locale override of the domain. Returns an empty string if locale override is disabled. */
   get_locale_override(): string;
   /**
@@ -88,7 +88,7 @@ declare class TranslationDomain extends RefCounted {
    */
   get_translation_object(locale: string): Translation;
   /** Returns all available {@link Translation} instances as added by {@link add_translation}. */
-  get_translations(): unknown;
+  get_translations(): Array<Translation>;
   /** Returns `true` if this translation domain contains the given `translation`. */
   has_translation(translation: Translation): boolean;
   /**

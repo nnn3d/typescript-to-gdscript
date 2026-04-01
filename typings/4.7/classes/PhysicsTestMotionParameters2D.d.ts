@@ -11,11 +11,11 @@ declare class PhysicsTestMotionParameters2D extends RefCounted {
   /**
    * Optional array of body {@link RID} to exclude from collision. Use {@link CollisionObject2D.get_rid} to get the {@link RID} associated with a {@link CollisionObject2D}-derived node.
    */
-  exclude_bodies: unknown;
+  exclude_bodies: Array<RID>;
   /**
    * Optional array of object unique instance ID to exclude from collision. See {@link Object.get_instance_id}.
    */
-  exclude_objects: unknown;
+  exclude_objects: Array<int>;
   /**
    * Transform in global space where the motion should start. Usually set to {@link Node2D.global_transform} for the current body's transform.
    */
@@ -31,10 +31,10 @@ declare class PhysicsTestMotionParameters2D extends RefCounted {
   recovery_as_collision: boolean;
   set_collide_separation_ray_enabled(value: boolean): void;
   is_collide_separation_ray_enabled(): boolean;
-  set_exclude_bodies(value: unknown): void;
-  get_exclude_bodies(): unknown;
-  set_exclude_objects(value: unknown): void;
-  get_exclude_objects(): unknown;
+  set_exclude_bodies(value: Array<RID>): void;
+  get_exclude_bodies(): Array<RID>;
+  set_exclude_objects(value: Array<int>): void;
+  get_exclude_objects(): Array<int>;
   set_from(value: Transform2D): void;
   get_from(): Transform2D;
   set_margin(value: float): void;

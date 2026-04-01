@@ -19,7 +19,7 @@ declare class EditorNode3DGizmoPlugin extends Resource {
    * Override this method to commit a group of subgizmos being edited (see {@link _subgizmos_intersect_ray} and {@link _subgizmos_intersect_frustum}). This usually means creating an {@link UndoRedo} action for the change, using the current transforms as "do" and the `restores` transforms as "undo".
    * If the `cancel` argument is `true`, the `restores` transforms should be directly set, without any {@link UndoRedo} action. As with all subgizmo methods, transforms are given in local space respect to the gizmo's Node3D. Called for this plugin's active gizmos.
    */
-  _commit_subgizmos(gizmo: EditorNode3DGizmo, ids: PackedInt32Array, restores: unknown, cancel: boolean): void;
+  _commit_subgizmos(gizmo: EditorNode3DGizmo, ids: PackedInt32Array, restores: Array<Transform3D>, cancel: boolean): void;
   /**
    * Override this method to return a custom {@link EditorNode3DGizmo} for the 3D nodes of your choice, return `null` for the rest of nodes. See also {@link _has_gizmo}.
    */
@@ -74,7 +74,7 @@ declare class EditorNode3DGizmoPlugin extends Resource {
   /**
    * Override this method to allow selecting subgizmos using mouse drag box selection. Given a `camera` and `frustum_planes`, this method should return which subgizmos are contained within the frustums. The `frustum_planes` argument consists of an array with all the {@link Plane}s that make up the selection frustum. The returned value should contain a list of unique subgizmo identifiers, these identifiers can have any non-negative value and will be used in other virtual methods like {@link _get_subgizmo_transform} or {@link _commit_subgizmos}. Called for this plugin's active gizmos.
    */
-  _subgizmos_intersect_frustum(gizmo: EditorNode3DGizmo, camera: Camera3D, frustum_planes: unknown): PackedInt32Array;
+  _subgizmos_intersect_frustum(gizmo: EditorNode3DGizmo, camera: Camera3D, frustum_planes: Array<Plane>): PackedInt32Array;
   /**
    * Override this method to allow selecting subgizmos using mouse clicks. Given a `camera` and a `screen_pos` in screen coordinates, this method should return which subgizmo should be selected. The returned value should be a unique subgizmo identifier, which can have any non-negative value and will be used in other virtual methods like {@link _get_subgizmo_transform} or {@link _commit_subgizmos}. Called for this plugin's active gizmos.
    */

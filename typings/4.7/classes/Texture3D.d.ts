@@ -4,7 +4,7 @@
 /** Base class for 3-dimensional textures. */
 declare class Texture3D extends Texture {
   /** Called when the {@link Texture3D}'s data is queried. */
-  _get_data(): unknown;
+  _get_data(): Array<Image>;
   /** Called when the {@link Texture3D}'s depth is queried. */
   _get_depth(): int;
   /** Called when the {@link Texture3D}'s format is queried. */
@@ -20,7 +20,7 @@ declare class Texture3D extends Texture {
   /**
    * Returns the {@link Texture3D}'s data as an array of {@link Image}s. Each {@link Image} represents a *slice* of the {@link Texture3D}, with different slices mapping to different depth (Z axis) levels.
    */
-  get_data(): unknown;
+  get_data(): Array<Image>;
   /**
    * Returns the {@link Texture3D}'s depth in pixels. Depth is typically represented by the Z axis (a dimension not present in {@link Texture2D}).
    */

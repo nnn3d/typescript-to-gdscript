@@ -21,7 +21,7 @@ declare class PhysicsBody3D extends CollisionObject3D {
   /** Returns `true` if the specified linear or rotational `axis` is locked. */
   get_axis_lock(axis: int): boolean;
   /** Returns an array of nodes that were added as collision exceptions for this body. */
-  get_collision_exceptions(): unknown;
+  get_collision_exceptions(): Array<PhysicsBody3D>;
   /**
    * Returns the gravity vector computed from all sources that can affect the body, including all gravity overrides from {@link Area3D} nodes and the global world gravity.
    */

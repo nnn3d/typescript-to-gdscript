@@ -101,7 +101,7 @@ declare class AnimationMixer extends Node {
    */
   get_animation_library(name: string): AnimationLibrary;
   /** Returns the list of stored library keys. */
-  get_animation_library_list(): unknown;
+  get_animation_library_list(): Array<string>;
   /** Returns the list of stored animation keys. */
   get_animation_list(): PackedStringArray;
   /**

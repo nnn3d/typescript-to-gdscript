@@ -140,7 +140,7 @@ declare class Node3D extends Node {
    */
   force_update_transform(): void;
   /** Returns all the {@link EditorNode3DGizmo} objects attached to this node. Only works in the editor. */
-  get_gizmos(): unknown;
+  get_gizmos(): Array<Node3DGizmo>;
   /**
    * When using physics interpolation, there will be circumstances in which you want to know the interpolated (displayed) transform of a node rather than the standard transform (which may only be accurate to the most recent physics tick).
    * This is particularly important for frame-based operations that take place in {@link Node._process}, rather than {@link Node._physics_process}. Examples include {@link Camera3D}s focusing on a node, or finding where to fire lasers from on a frame rather than physics tick.

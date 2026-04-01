@@ -34,7 +34,7 @@ declare class AnimationNodeStateMachinePlayback extends Resource {
    */
   get_fading_position(): float;
   /** Returns the current travel path as computed internally by the A* algorithm. */
-  get_travel_path(): unknown;
+  get_travel_path(): Array<string>;
   /** Returns `true` if an animation is playing. */
   is_playing(): boolean;
   /**

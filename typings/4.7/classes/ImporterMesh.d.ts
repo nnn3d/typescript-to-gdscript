@@ -16,7 +16,7 @@ declare class ImporterMesh extends Resource {
    * The `flags` argument is the bitwise OR of, as required: One value of {@link Mesh.ArrayCustomFormat} left shifted by `ARRAY_FORMAT_CUSTOMn_SHIFT` for each custom channel in use, {@link Mesh.ARRAY_FLAG_USE_DYNAMIC_UPDATE}, {@link Mesh.ARRAY_FLAG_USE_8_BONE_WEIGHTS}, or {@link Mesh.ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY}.
    * **Note:** When using indices, it is recommended to only use points, lines, or triangles.
    */
-  add_surface(primitive: int, arrays: Array<unknown>, blend_shapes?: Array<void>, lods?: Dictionary, material?: Material, name?: string, flags?: int): void;
+  add_surface(primitive: int, arrays: Array<unknown>, blend_shapes?: Array<Array<unknown>>, lods?: Dictionary, material?: Material, name?: string, flags?: int): void;
   /** Removes all surfaces and blend shapes from this {@link ImporterMesh}. */
   clear(): void;
   /**
@@ -72,7 +72,7 @@ declare class ImporterMesh extends Resource {
    * If `deduplicate_surfaces` is `true` and multiple meshes have surfaces with the same names and formats, the surfaces will be merged together when the meshes are merged, and will use the material from the first matching surface. This is useful for reducing the number of surfaces in the resulting mesh, and avoids duplicating materials. Surfaces with bone weights will never be deduplicated. If `deduplicate_surfaces` is `false`, the surfaces will always be kept separate, and will be given unique names.
    * **Warning:** Blend shapes and LODs are not supported and will be discarded. Do not use this function to discard blend shapes and LODs, as support for these may be added in the future.
    */
-  static merge_importer_meshes(importer_meshes: unknown, relative_transforms: unknown, deduplicate_surfaces?: boolean): ImporterMesh;
+  static merge_importer_meshes(importer_meshes: Array<ImporterMesh>, relative_transforms: Array<Transform3D>, deduplicate_surfaces?: boolean): ImporterMesh;
   /** Sets the blend shape mode. */
   set_blend_shape_mode(mode: int): void;
   /** Sets the size hint of this mesh for lightmap-unwrapping in UV-space. */

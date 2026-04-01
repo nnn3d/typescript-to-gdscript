@@ -105,7 +105,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
    * Returns the {@link RID}s of all bodies added as collision exceptions for the given `body`. See also {@link _body_add_collision_exception} and {@link _body_remove_collision_exception}.
    * Overridable version of {@link PhysicsServer2D}'s internal `body_get_collision_exceptions` method. Corresponds to {@link PhysicsBody2D.get_collision_exceptions}.
    */
-  _body_get_collision_exceptions(body: RID): unknown;
+  _body_get_collision_exceptions(body: RID): Array<RID>;
   /** Overridable version of {@link PhysicsServer2D.body_get_collision_layer}. */
   _body_get_collision_layer(body: RID): int;
   /** Overridable version of {@link PhysicsServer2D.body_get_collision_mask}. */

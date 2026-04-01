@@ -9,7 +9,7 @@ declare class ScriptLanguageExtension extends ScriptLanguage {
   _can_make_function(): boolean;
   _complete_code(code: string, path: string, owner: GodotObject): Dictionary;
   _create_script(): GodotObject;
-  _debug_get_current_stack_info(): Dictionary;
+  _debug_get_current_stack_info(): Array<Dictionary>;
   _debug_get_error(): string;
   _debug_get_globals(max_subitems: int, max_depth: int): Dictionary;
   _debug_get_stack_level_count(): int;
@@ -25,15 +25,15 @@ declare class ScriptLanguageExtension extends ScriptLanguage {
   _find_function(function_: string, code: string): int;
   _finish(): void;
   _frame(): void;
-  _get_built_in_templates(object: string): Dictionary;
+  _get_built_in_templates(object: string): Array<Dictionary>;
   _get_comment_delimiters(): PackedStringArray;
   _get_doc_comment_delimiters(): PackedStringArray;
   _get_extension(): string;
   _get_global_class_name(path: string): Dictionary;
   _get_name(): string;
-  _get_public_annotations(): Dictionary;
+  _get_public_annotations(): Array<Dictionary>;
   _get_public_constants(): Dictionary;
-  _get_public_functions(): Dictionary;
+  _get_public_functions(): Array<Dictionary>;
   _get_recognized_extensions(): PackedStringArray;
   _get_reserved_words(): PackedStringArray;
   _get_string_delimiters(): PackedStringArray;

@@ -22,29 +22,29 @@ declare class EditorVCSInterface extends GodotObject {
   /**
    * Gets an instance of an {@link Array} of {@link String}s containing available branch names in the VCS.
    */
-  _get_branch_list(): unknown;
+  _get_branch_list(): Array<string>;
   /** Gets the current branch name defined in the VCS. */
   _get_current_branch_name(): string;
   /**
    * Returns an array of {@link Dictionary} items (see {@link create_diff_file}, {@link create_diff_hunk}, {@link create_diff_line}, {@link add_line_diffs_into_diff_hunk} and {@link add_diff_hunks_into_diff_file}), each containing information about a diff. If `identifier` is a file path, returns a file diff, and if it is a commit identifier, then returns a commit diff.
    */
-  _get_diff(identifier: string, area: int): Dictionary;
+  _get_diff(identifier: string, area: int): Array<Dictionary>;
   /**
    * Returns an {@link Array} of {@link Dictionary} items (see {@link create_diff_hunk}), each containing a line diff between a file at `file_path` and the `text` which is passed in.
    */
-  _get_line_diff(file_path: string, text: string): Dictionary;
+  _get_line_diff(file_path: string, text: string): Array<Dictionary>;
   /**
    * Returns an {@link Array} of {@link Dictionary} items (see {@link create_status_file}), each containing the status data of every modified file in the project folder.
    */
-  _get_modified_files_data(): Dictionary;
+  _get_modified_files_data(): Array<Dictionary>;
   /**
    * Returns an {@link Array} of {@link Dictionary} items (see {@link create_commit}), each containing the data for a past commit.
    */
-  _get_previous_commits(max_commits: int): Dictionary;
+  _get_previous_commits(max_commits: int): Array<Dictionary>;
   /**
    * Returns an {@link Array} of {@link String}s, each containing the name of a remote configured in the VCS.
    */
-  _get_remotes(): unknown;
+  _get_remotes(): Array<string>;
   /** Returns the name of the underlying VCS provider. */
   _get_vcs_name(): string;
   /**
@@ -74,9 +74,9 @@ declare class EditorVCSInterface extends GodotObject {
   /** Unstages the file present at `file_path` from the staged area to the unstaged area. */
   _unstage_file(file_path: string): void;
   /** Helper function to add an array of `diff_hunks` into a `diff_file`. */
-  add_diff_hunks_into_diff_file(diff_file: Dictionary, diff_hunks: Dictionary): Dictionary;
+  add_diff_hunks_into_diff_file(diff_file: Dictionary, diff_hunks: Array<Dictionary>): Dictionary;
   /** Helper function to add an array of `line_diffs` into a `diff_hunk`. */
-  add_line_diffs_into_diff_hunk(diff_hunk: Dictionary, line_diffs: Dictionary): Dictionary;
+  add_line_diffs_into_diff_hunk(diff_hunk: Dictionary, line_diffs: Array<Dictionary>): Dictionary;
   /**
    * Helper function to create a commit {@link Dictionary} item. `msg` is the commit message of the commit. `author` is a single human-readable string containing all the author's details, e.g. the email and name configured in the VCS. `id` is the identifier of the commit, in whichever format your VCS may provide an identifier to commits. `unix_timestamp` is the UTC Unix timestamp of when the commit was created. `offset_minutes` is the timezone offset in minutes, recorded from the system timezone where the commit was created.
    */

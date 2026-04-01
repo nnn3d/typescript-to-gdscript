@@ -15,7 +15,7 @@ declare class VisualShaderNodeCustom extends VisualShaderNode {
    * You can customize the generated code based on the shader `mode` and/or `type`.
    * Defining this method is **required**.
    */
-  _get_code(input_vars: unknown, output_vars: unknown, mode: int, type_: int): string;
+  _get_code(input_vars: Array<string>, output_vars: Array<string>, mode: int, type_: int): string;
   /**
    * Override this method to define the input port which should be connected by default when this node is created as a result of dragging a connection from an existing node to the empty space on the graph.
    * Defining this method is **optional**. If not overridden, the connection will be created to the first valid port.

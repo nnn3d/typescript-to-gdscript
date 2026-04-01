@@ -4,15 +4,15 @@
 /** Base class for all GUI controls. Adapts its position and size based on its parent control. */
 declare class Control extends CanvasItem {
   /** The paths to the nodes which are controlled by this node. */
-  accessibility_controls_nodes: unknown;
+  accessibility_controls_nodes: Array<string>;
   /** The paths to the nodes which are describing this node. */
-  accessibility_described_by_nodes: unknown;
+  accessibility_described_by_nodes: Array<string>;
   /** The human-readable node description that is reported to assistive apps. */
   accessibility_description: string;
   /** The paths to the nodes which this node flows into. */
-  accessibility_flow_to_nodes: unknown;
+  accessibility_flow_to_nodes: Array<string>;
   /** The paths to the nodes which label this node. */
-  accessibility_labeled_by_nodes: unknown;
+  accessibility_labeled_by_nodes: Array<string>;
   /**
    * The mode with which a live region updates. A live region is a {@link Node} that is updated as a result of an external event when the user's focus may be elsewhere.
    */
@@ -254,16 +254,16 @@ declare class Control extends CanvasItem {
    * The tooltip popup will use either a default implementation, or a custom one that you can provide by overriding {@link _make_custom_tooltip}. The default tooltip includes a {@link PopupPanel} and {@link Label} whose theme properties can be customized using {@link Theme} methods with the `"TooltipPanel"` and `"TooltipLabel"` respectively. For example:
    */
   tooltip_text: string;
-  set_accessibility_controls_nodes(value: unknown): void;
-  get_accessibility_controls_nodes(): unknown;
-  set_accessibility_described_by_nodes(value: unknown): void;
-  get_accessibility_described_by_nodes(): unknown;
+  set_accessibility_controls_nodes(value: Array<string>): void;
+  get_accessibility_controls_nodes(): Array<string>;
+  set_accessibility_described_by_nodes(value: Array<string>): void;
+  get_accessibility_described_by_nodes(): Array<string>;
   set_accessibility_description(value: string): void;
   get_accessibility_description(): string;
-  set_accessibility_flow_to_nodes(value: unknown): void;
-  get_accessibility_flow_to_nodes(): unknown;
-  set_accessibility_labeled_by_nodes(value: unknown): void;
-  get_accessibility_labeled_by_nodes(): unknown;
+  set_accessibility_flow_to_nodes(value: Array<string>): void;
+  get_accessibility_flow_to_nodes(): Array<string>;
+  set_accessibility_labeled_by_nodes(value: Array<string>): void;
+  get_accessibility_labeled_by_nodes(): Array<string>;
   set_accessibility_live(value: int): void;
   get_accessibility_live(): int;
   set_accessibility_name(value: string): void;
@@ -416,7 +416,7 @@ declare class Control extends CanvasItem {
    * User defined BiDi algorithm override function.
    * Returns an {@link Array} of {@link Vector3i} text ranges and text base directions, in the left-to-right order. Ranges should cover full source `text` without overlaps. BiDi algorithm will be used on each range separately.
    */
-  _structured_text_parser(args: Array<unknown>, text: string): unknown;
+  _structured_text_parser(args: Array<unknown>, text: string): Array<Vector3i>;
   /**
    * Marks an input event as handled. Once you accept an input event, it stops propagating, even to nodes listening to {@link Node._unhandled_input} or {@link Node._unhandled_key_input}.
    * **Note:** This does not affect the methods in {@link Input}, only the way events are propagated.

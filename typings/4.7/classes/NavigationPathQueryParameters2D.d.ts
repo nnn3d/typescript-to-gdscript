@@ -7,12 +7,12 @@ declare class NavigationPathQueryParameters2D extends RefCounted {
    * The list of region {@link RID}s that will be excluded from the path query. Use {@link NavigationRegion2D.get_rid} to get the {@link RID} associated with a {@link NavigationRegion2D} node.
    * **Note:** The returned array is copied and any changes to it will not update the original property value. To update the value you need to modify the returned array, and then set it to the property again.
    */
-  excluded_regions: unknown;
+  excluded_regions: Array<RID>;
   /**
    * The list of region {@link RID}s that will be included by the path query. Use {@link NavigationRegion2D.get_rid} to get the {@link RID} associated with a {@link NavigationRegion2D} node. If left empty all regions are included. If a region ends up being both included and excluded at the same time it will be excluded.
    * **Note:** The returned array is copied and any changes to it will not update the original property value. To update the value you need to modify the returned array, and then set it to the property again.
    */
-  included_regions: unknown;
+  included_regions: Array<RID>;
   /** The navigation map {@link RID} used in the path query. */
   map: RID;
   /** Additional information to include with the navigation path. */
@@ -53,10 +53,10 @@ declare class NavigationPathQueryParameters2D extends RefCounted {
   start_position: Vector2;
   /** The pathfinding target position in global coordinates. */
   target_position: Vector2;
-  set_excluded_regions(value: unknown): void;
-  get_excluded_regions(): unknown;
-  set_included_regions(value: unknown): void;
-  get_included_regions(): unknown;
+  set_excluded_regions(value: Array<RID>): void;
+  get_excluded_regions(): Array<RID>;
+  set_included_regions(value: Array<RID>): void;
+  get_included_regions(): Array<RID>;
   set_map(value: RID): void;
   get_map(): RID;
   set_metadata_flags(value: int): void;

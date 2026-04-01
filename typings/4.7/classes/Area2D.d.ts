@@ -83,12 +83,12 @@ declare class Area2D extends CollisionObject2D {
    * Returns a list of intersecting {@link Area2D}s. The overlapping area's {@link CollisionObject2D.collision_layer} must be part of this area's {@link CollisionObject2D.collision_mask} in order to be detected.
    * For performance reasons (collisions are all processed at the same time) this list is modified once during the physics step, not immediately after objects are moved. Consider using signals instead.
    */
-  get_overlapping_areas(): unknown;
+  get_overlapping_areas(): Array<Area2D>;
   /**
    * Returns a list of intersecting {@link PhysicsBody2D}s and {@link TileMap}s. The overlapping body's {@link CollisionObject2D.collision_layer} must be part of this area's {@link CollisionObject2D.collision_mask} in order to be detected.
    * For performance reasons (collisions are all processed at the same time) this list is modified once during the physics step, not immediately after objects are moved. Consider using signals instead.
    */
-  get_overlapping_bodies(): unknown;
+  get_overlapping_bodies(): Array<Node2D>;
   /**
    * Returns `true` if intersecting any {@link Area2D}s, otherwise returns `false`. The overlapping area's {@link CollisionObject2D.collision_layer} must be part of this area's {@link CollisionObject2D.collision_mask} in order to be detected.
    * For performance reasons (collisions are all processed at the same time) the list of overlapping areas is modified once during the physics step, not immediately after objects are moved. Consider using signals instead.

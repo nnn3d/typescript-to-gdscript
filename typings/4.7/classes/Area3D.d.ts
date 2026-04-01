@@ -124,13 +124,13 @@ declare class Area3D extends CollisionObject3D {
    * Returns a list of intersecting {@link Area3D}s. The overlapping area's {@link CollisionObject3D.collision_layer} must be part of this area's {@link CollisionObject3D.collision_mask} in order to be detected.
    * For performance reasons (collisions are all processed at the same time) this list is modified once during the physics step, not immediately after objects are moved. Consider using signals instead.
    */
-  get_overlapping_areas(): unknown;
+  get_overlapping_areas(): Array<Area3D>;
   /**
    * Returns a list of intersecting {@link PhysicsBody3D}s, {@link SoftBody3D}s, and {@link GridMap}s. The overlapping body's {@link CollisionObject3D.collision_layer} must be part of this area's {@link CollisionObject3D.collision_mask} in order to be detected.
    * For performance reasons (collisions are all processed at the same time) this list is modified once during the physics step, not immediately after objects are moved. Consider using signals instead.
    * **Note:** Godot Physics does not support reporting overlaps with {@link SoftBody3D}, so will not return any such bodies.
    */
-  get_overlapping_bodies(): unknown;
+  get_overlapping_bodies(): Array<Node3D>;
   /**
    * Returns `true` if intersecting any {@link Area3D}s, otherwise returns `false`. The overlapping area's {@link CollisionObject3D.collision_layer} must be part of this area's {@link CollisionObject3D.collision_mask} in order to be detected.
    * For performance reasons (collisions are all processed at the same time) the list of overlapping areas is modified once during the physics step, not immediately after objects are moved. Consider using signals instead.

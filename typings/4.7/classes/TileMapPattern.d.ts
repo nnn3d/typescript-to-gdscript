@@ -12,7 +12,7 @@ declare class TileMapPattern extends Resource {
   /** Returns the size, in cells, of the pattern. */
   get_size(): Vector2i;
   /** Returns the list of used cell coordinates in the pattern. */
-  get_used_cells(): unknown;
+  get_used_cells(): Array<Vector2i>;
   /** Returns whether the pattern has a tile at the given coordinates. */
   has_cell(coords: Vector2i): boolean;
   /** Returns whether the pattern is empty or not. */

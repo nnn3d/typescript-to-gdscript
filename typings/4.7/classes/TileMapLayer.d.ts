@@ -95,7 +95,7 @@ declare class TileMapLayer extends Node2D {
    * Note that any internal update happening while one of these conditions is verified is considered to be a "cleanup". See also {@link update_internals}.
    * **Warning:** Implementing this method may degrade the {@link TileMapLayer}'s performance.
    */
-  _update_cells(coords: unknown, forced_cleanup: boolean): void;
+  _update_cells(coords: Array<Vector2i>, forced_cleanup: boolean): void;
   /**
    * Should return `true` if the tile at coordinates `coords` requires a runtime update.
    * **Warning:** Make sure this function only returns `true` when needed. Any tile processed at runtime without a need for it will imply a significant performance penalty.
@@ -139,21 +139,21 @@ declare class TileMapLayer extends Node2D {
   /**
    * Creates and returns a new {@link TileMapPattern} from the given array of cells. See also {@link set_pattern}.
    */
-  get_pattern(coords_array: unknown): TileMapPattern;
+  get_pattern(coords_array: Array<Vector2i>): TileMapPattern;
   /**
    * Returns the list of all neighboring cells to the one at `coords`. Any neighboring cell is one that is touching edges, so for a square cell 4 cells would be returned, for a hexagon 6 cells are returned.
    */
-  get_surrounding_cells(coords: Vector2i): unknown;
+  get_surrounding_cells(coords: Vector2i): Array<Vector2i>;
   /**
    * Returns a {@link Vector2i} array with the positions of all cells containing a tile. A cell is considered empty if its source identifier equals `-1`, its atlas coordinate identifier is `Vector2(-1, -1)` and its alternative identifier is `-1`.
    */
-  get_used_cells(): unknown;
+  get_used_cells(): Array<Vector2i>;
   /**
    * Returns a {@link Vector2i} array with the positions of all cells containing a tile. Tiles may be filtered according to their source (`source_id`), their atlas coordinates (`atlas_coords`), or alternative id (`alternative_tile`).
    * If a parameter has its value set to the default one, this parameter is not used to filter a cell. Thus, if all parameters have their respective default values, this method returns the same result as {@link get_used_cells}.
    * A cell is considered empty if its source identifier equals `-1`, its atlas coordinate identifier is `Vector2(-1, -1)` and its alternative identifier is `-1`.
    */
-  get_used_cells_by_id(source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): unknown;
+  get_used_cells_by_id(source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): Array<Vector2i>;
   /** Returns a rectangle enclosing the used (non-empty) tiles of the map. */
   get_used_rect(): Rect2i;
   /**
@@ -204,13 +204,13 @@ declare class TileMapLayer extends Node2D {
    * If `ignore_empty_terrains` is `true`, empty terrains will be ignored when trying to find the best fitting tile for the given terrain constraints.
    * **Note:** To work correctly, this method requires the {@link TileMapLayer}'s TileSet to have terrains set up with all required terrain combinations. Otherwise, it may produce unexpected results.
    */
-  set_cells_terrain_connect(cells: unknown, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
+  set_cells_terrain_connect(cells: Array<Vector2i>, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
   /**
    * Update all the cells in the `path` coordinates array so that they use the given `terrain` for the given `terrain_set`. The function will also connect two successive cell in the path with the same terrain. This function might update neighboring tiles if needed to create correct terrain transitions.
    * If `ignore_empty_terrains` is `true`, empty terrains will be ignored when trying to find the best fitting tile for the given terrain constraints.
    * **Note:** To work correctly, this method requires the {@link TileMapLayer}'s TileSet to have terrains set up with all required terrain combinations. Otherwise, it may produce unexpected results.
    */
-  set_cells_terrain_path(path: unknown, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
+  set_cells_terrain_path(path: Array<Vector2i>, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
   /**
    * Sets a custom `map` as a {@link NavigationServer2D} navigation map. If not set, uses the default {@link World2D} navigation map instead.
    */

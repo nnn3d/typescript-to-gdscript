@@ -23,7 +23,7 @@ declare class PhysicalBoneSimulator3D extends SkeletonModifier3D {
    * Tells the {@link PhysicalBone3D} nodes in the Skeleton to start simulating and reacting to the physics world.
    * Optionally, a list of bone names can be passed-in, allowing only the passed-in bones to be simulated.
    */
-  physical_bones_start_simulation(bones?: unknown): void;
+  physical_bones_start_simulation(bones?: Array<string>): void;
   /** Tells the {@link PhysicalBone3D} nodes in the Skeleton to stop simulating. */
   physical_bones_stop_simulation(): void;
 }

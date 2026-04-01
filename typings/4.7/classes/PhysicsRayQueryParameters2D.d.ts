@@ -15,7 +15,7 @@ declare class PhysicsRayQueryParameters2D extends RefCounted {
    * The list of object {@link RID}s that will be excluded from collisions. Use {@link CollisionObject2D.get_rid} to get the {@link RID} associated with a {@link CollisionObject2D}-derived node.
    * **Note:** The returned array is copied and any changes to it will not update the original property value. To update the value you need to modify the returned array, and then assign it to the property again.
    */
-  exclude: unknown;
+  exclude: Array<RID>;
   /** The starting point of the ray being queried for, in global coordinates. */
   from: Vector2;
   /**
@@ -30,8 +30,8 @@ declare class PhysicsRayQueryParameters2D extends RefCounted {
   is_collide_with_bodies_enabled(): boolean;
   set_collision_mask(value: int): void;
   get_collision_mask(): int;
-  set_exclude(value: unknown): void;
-  get_exclude(): unknown;
+  set_exclude(value: Array<RID>): void;
+  get_exclude(): Array<RID>;
   set_from(value: Vector2): void;
   get_from(): Vector2;
   set_hit_from_inside(value: boolean): void;
@@ -42,5 +42,5 @@ declare class PhysicsRayQueryParameters2D extends RefCounted {
   /**
    * Returns a new, pre-configured {@link PhysicsRayQueryParameters2D} object. Use it to quickly create query parameters using the most common options.
    */
-  static create(from_: Vector2, to: Vector2, collision_mask?: int, exclude?: unknown): PhysicsRayQueryParameters2D;
+  static create(from_: Vector2, to: Vector2, collision_mask?: int, exclude?: Array<RID>): PhysicsRayQueryParameters2D;
 }

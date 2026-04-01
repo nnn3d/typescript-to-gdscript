@@ -93,7 +93,7 @@ declare class RenderingDevice extends GodotObject {
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    * This will be freed automatically when the `shader` is freed.
    */
-  compute_pipeline_create(shader: RID, specialization_constants?: unknown): RID;
+  compute_pipeline_create(shader: RID, specialization_constants?: Array<RDPipelineSpecializationConstant>): RID;
   /**
    * Returns `true` if the compute pipeline specified by the `compute_pipeline` RID is valid, `false` otherwise.
    */
@@ -126,7 +126,7 @@ declare class RenderingDevice extends GodotObject {
    */
   draw_list_begin_for_screen(screen?: int, clear_color?: Color): int;
   /** This method does nothing and always returns an empty {@link PackedInt64Array}. */
-  draw_list_begin_split(framebuffer: RID, splits: int, initial_color_action: int, final_color_action: int, initial_depth_action: int, final_depth_action: int, clear_color_values?: PackedColorArray, clear_depth?: float, clear_stencil?: int, region?: Rect2, storage_textures?: unknown): PackedInt64Array;
+  draw_list_begin_split(framebuffer: RID, splits: int, initial_color_action: int, final_color_action: int, initial_depth_action: int, final_depth_action: int, clear_color_values?: PackedColorArray, clear_depth?: float, clear_stencil?: int, region?: Rect2, storage_textures?: Array<RID>): PackedInt64Array;
   /** Binds `index_array` to the specified `draw_list`. */
   draw_list_bind_index_array(draw_list: int, index_array: RID): void;
   /** Binds `render_pipeline` to the specified `draw_list`. */
@@ -140,7 +140,7 @@ declare class RenderingDevice extends GodotObject {
   /**
    * Binds a set of `vertex_buffers` directly to the specified `draw_list` using `vertex_format` without creating a vertex array RID. Provide the number of vertices in `vertex_count`; optional per-buffer byte `offsets` may also be supplied.
    */
-  draw_list_bind_vertex_buffers_format(draw_list: int, vertex_format: int, vertex_count: int, vertex_buffers: unknown, offsets?: PackedInt64Array): void;
+  draw_list_bind_vertex_buffers_format(draw_list: int, vertex_format: int, vertex_count: int, vertex_buffers: Array<RID>, offsets?: PackedInt64Array): void;
   /**
    * Removes and disables the scissor rectangle for the specified `draw_list`. See also {@link draw_list_enable_scissor}.
    */
@@ -177,7 +177,7 @@ declare class RenderingDevice extends GodotObject {
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    * This will be freed automatically when any of the `textures` is freed.
    */
-  framebuffer_create(textures: unknown, validate_with_format?: int, view_count?: int): RID;
+  framebuffer_create(textures: Array<RID>, validate_with_format?: int, view_count?: int): RID;
   /**
    * Creates a new empty framebuffer. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
@@ -188,18 +188,18 @@ declare class RenderingDevice extends GodotObject {
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    * This will be freed automatically when any of the `textures` is freed.
    */
-  framebuffer_create_multipass(textures: unknown, passes: unknown, validate_with_format?: int, view_count?: int): RID;
+  framebuffer_create_multipass(textures: Array<RID>, passes: Array<RDFramebufferPass>, validate_with_format?: int, view_count?: int): RID;
   /**
    * Creates a new framebuffer format with the specified `attachments` and `view_count`. Returns the new framebuffer's unique framebuffer format ID.
    * If `view_count` is greater than or equal to `2`, enables multiview which is used for VR rendering. This requires support for the Vulkan multiview extension.
    */
-  framebuffer_format_create(attachments: unknown, view_count?: int): int;
+  framebuffer_format_create(attachments: Array<RDAttachmentFormat>, view_count?: int): int;
   /** Creates a new empty framebuffer format with the specified number of `samples` and returns its ID. */
   framebuffer_format_create_empty(samples: int): int;
   /**
    * Creates a multipass framebuffer format with the specified `attachments`, `passes` and `view_count` and returns its ID. If `view_count` is greater than or equal to `2`, enables multiview which is used for VR rendering. This requires support for the Vulkan multiview extension.
    */
-  framebuffer_format_create_multipass(attachments: unknown, passes: unknown, view_count?: int): int;
+  framebuffer_format_create_multipass(attachments: Array<RDAttachmentFormat>, passes: Array<RDFramebufferPass>, view_count?: int): int;
   /**
    * Returns the number of texture samples used for the given framebuffer `format` ID (returned by {@link framebuffer_get_format}).
    */
@@ -376,7 +376,7 @@ declare class RenderingDevice extends GodotObject {
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    * **Note:**: Recursive raytracing is not permitted.
    */
-  raytracing_pipeline_create(shader: RID, specialization_constants?: unknown): RID;
+  raytracing_pipeline_create(shader: RID, specialization_constants?: Array<RDPipelineSpecializationConstant>): RID;
   /**
    * Returns `true` if the raytracing pipeline specified by the `raytracing_pipeline` RID is valid, `false` otherwise.
    */
@@ -386,7 +386,7 @@ declare class RenderingDevice extends GodotObject {
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    * This will be freed automatically when the `shader` is freed.
    */
-  render_pipeline_create(shader: RID, framebuffer_format: int, vertex_format: int, primitive: int, rasterization_state: RDPipelineRasterizationState, multisample_state: RDPipelineMultisampleState, stencil_state: RDPipelineDepthStencilState, color_blend_state: RDPipelineColorBlendState, dynamic_state_flags: int, for_render_pass?: int, specialization_constants?: unknown): RID;
+  render_pipeline_create(shader: RID, framebuffer_format: int, vertex_format: int, primitive: int, rasterization_state: RDPipelineRasterizationState, multisample_state: RDPipelineMultisampleState, stencil_state: RDPipelineDepthStencilState, color_blend_state: RDPipelineColorBlendState, dynamic_state_flags: int, for_render_pass?: int, specialization_constants?: Array<RDPipelineSpecializationConstant>): RID;
   /**
    * Returns `true` if the render pipeline specified by the `render_pipeline` RID is valid, `false` otherwise.
    */
@@ -490,7 +490,7 @@ declare class RenderingDevice extends GodotObject {
    * **Note:** `data` takes an {@link Array} of {@link PackedByteArray}s. For {@link TEXTURE_TYPE_1D}, {@link TEXTURE_TYPE_2D}, and {@link TEXTURE_TYPE_3D} types, this array should only have one element, a {@link PackedByteArray} containing all the data for the texture. For `_ARRAY` and `_CUBE` types, the length should be the same as the number of {@link RDTextureFormat.array_layers} in `format`.
    * **Note:** Not to be confused with {@link RenderingServer.texture_2d_create}, which creates the Godot-specific {@link Texture2D} resource as opposed to the graphics API's own texture type.
    */
-  texture_create(format: RDTextureFormat, view: RDTextureView, data?: unknown): RID;
+  texture_create(format: RDTextureFormat, view: RDTextureView, data?: Array<PackedByteArray>): RID;
   /**
    * Returns an RID for an existing `image` (`VkImage`) with the given `type`, `format`, `samples`, `usage_flags`, `width`, `height`, `depth`, `layers`, and `mipmaps`. This can be used to allow Godot to render onto foreign images.
    */
@@ -577,7 +577,7 @@ declare class RenderingDevice extends GodotObject {
   /**
    * Fills the content of an instances buffer. The number of BLASes and transforms passed as input should be the same and should equal the instance count used at instance buffer creation time.
    */
-  tlas_instances_buffer_fill(instances_buffer: RID, blases: unknown, transforms: unknown): void;
+  tlas_instances_buffer_fill(instances_buffer: RID, blases: Array<RID>, transforms: Array<Transform3D>): void;
   /**
    * Creates a new uniform buffer. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
@@ -588,7 +588,7 @@ declare class RenderingDevice extends GodotObject {
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    * This will be freed automatically when the `shader` or any of the RIDs in the `uniforms` is freed.
    */
-  uniform_set_create(uniforms: unknown, shader: RID, shader_set: int): RID;
+  uniform_set_create(uniforms: Array<RDUniform>, shader: RID, shader_set: int): RID;
   /** Checks if the `uniform_set` is valid, i.e. is owned. */
   uniform_set_is_valid(uniform_set: RID): boolean;
   /**
@@ -596,7 +596,7 @@ declare class RenderingDevice extends GodotObject {
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    * This will be freed automatically when any of the `src_buffers` is freed.
    */
-  vertex_array_create(vertex_count: int, vertex_format: int, src_buffers: unknown, offsets?: PackedInt64Array): RID;
+  vertex_array_create(vertex_count: int, vertex_format: int, src_buffers: Array<RID>, offsets?: PackedInt64Array): RID;
   /**
    * Creates a new vertex buffer. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
@@ -605,7 +605,7 @@ declare class RenderingDevice extends GodotObject {
   /**
    * Creates a new vertex format with the specified `vertex_descriptions`. Returns a unique vertex format ID corresponding to the newly created vertex format.
    */
-  vertex_format_create(vertex_descriptions: unknown): int;
+  vertex_format_create(vertex_descriptions: Array<RDVertexAttribute>): int;
 
   // enum DeviceType
   /** Rendering device type does not match any of the other enum values or is unknown. */

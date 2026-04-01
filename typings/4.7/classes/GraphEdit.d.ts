@@ -17,7 +17,7 @@ declare class GraphEdit extends Control {
    * A connection is represented as a {@link Dictionary} in the form of:
    * Connections with `keep_alive` set to `false` may be deleted automatically if invalid during a redraw.
    */
-  connections: Dictionary;
+  connections: Array<Dictionary>;
   /**
    * <member name="grid_pattern" type="int" setter="set_grid_pattern" getter="get_grid_pattern" enum="GraphEdit.GridPattern" default="0">
    * The pattern used for drawing the grid.
@@ -73,8 +73,8 @@ declare class GraphEdit extends Control {
   get_connection_lines_curvature(): float;
   set_connection_lines_thickness(value: float): void;
   get_connection_lines_thickness(): float;
-  set_connections(value: Dictionary): void;
-  get_connection_list(): Dictionary;
+  set_connections(value: Array<Dictionary>): void;
+  get_connection_list(): Array<Dictionary>;
   set_minimap_enabled(value: boolean): void;
   is_minimap_enabled(): boolean;
   set_minimap_opacity(value: float): void;
@@ -176,7 +176,7 @@ declare class GraphEdit extends Control {
    */
   force_connection_drag_end(): void;
   /** Returns an array of node names that are attached to the {@link GraphFrame} with the given name. */
-  get_attached_nodes_of_frame(frame: string): unknown;
+  get_attached_nodes_of_frame(frame: string): Array<string>;
   /**
    * Returns the closest connection to the given point in screen space. If no connection is found within `max_distance` pixels, an empty {@link Dictionary} is returned.
    * A connection is represented as a {@link Dictionary} in the form of:
@@ -192,12 +192,12 @@ declare class GraphEdit extends Control {
    * A connection is represented as a {@link Dictionary} in the form of:
    * **Example:** Get all connections on a specific port:
    */
-  get_connection_list_from_node(node: string): Dictionary;
+  get_connection_list_from_node(node: string): Array<Dictionary>;
   /**
    * Returns an {@link Array} containing the list of connections that intersect with the given {@link Rect2}.
    * A connection is represented as a {@link Dictionary} in the form of:
    */
-  get_connections_intersecting_with_rect(rect: Rect2): Dictionary;
+  get_connections_intersecting_with_rect(rect: Rect2): Array<Dictionary>;
   /** Returns the {@link GraphFrame} that contains the {@link GraphElement} with the given name. */
   get_element_frame(element: string): GraphFrame;
   /**
@@ -260,7 +260,7 @@ declare class GraphEdit extends Control {
    * Emitted when this {@link GraphEdit} captures a `ui_graph_delete` action (`Delete` by default).
    * `nodes` is an array of node names that should be removed. These usually include all selected nodes.
    */
-  delete_nodes_request: Signal<[unknown]>;
+  delete_nodes_request: Signal<[Array<string>]>;
   /**
    * Emitted to the GraphEdit when the connection between `from_port` of `from_node` {@link GraphNode} and `to_port` of `to_node` {@link GraphNode} is attempted to be removed.
    */

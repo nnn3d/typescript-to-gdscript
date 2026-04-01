@@ -7,9 +7,9 @@ declare class Font extends Resource {
    * Array of fallback {@link Font}s to use as a substitute if a glyph is not found in this current {@link Font}.
    * If this array is empty in a {@link FontVariation}, the {@link FontVariation.base_font}'s fallbacks are used instead.
    */
-  fallbacks: unknown;
-  set_fallbacks(value: unknown): void;
-  get_fallbacks(): unknown;
+  fallbacks: Array<Font>;
+  set_fallbacks(value: Array<Font>): void;
+  get_fallbacks(): Array<Font>;
 
   /**
    * Draw a single Unicode character `char` into a canvas item using the font, at a given position, with `modulate` color. `pos` specifies the baseline, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
@@ -95,7 +95,7 @@ declare class Font extends Resource {
   /**
    * Returns {@link Array} of valid {@link Font} {@link RID}s, which can be passed to the {@link TextServer} methods.
    */
-  get_rids(): unknown;
+  get_rids(): Array<RID>;
   /** Returns the amount of spacing for the given `spacing` type. */
   get_spacing(spacing: int): int;
   /**

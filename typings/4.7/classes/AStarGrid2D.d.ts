@@ -87,11 +87,11 @@ declare class AStarGrid2D extends RefCounted {
    * If `from_id` point is not disabled, there is no valid path to the target, and `allow_partial_path` is `true`, returns a path to the point closest to the target that can be reached.
    * **Note:** When `allow_partial_path` is `true` and `to_id` is solid the search may take an unusually long time to finish.
    */
-  get_id_path(from_id: Vector2i, to_id: Vector2i, allow_partial_path?: boolean): unknown;
+  get_id_path(from_id: Vector2i, to_id: Vector2i, allow_partial_path?: boolean): Array<Vector2i>;
   /**
    * Returns an array of dictionaries with point data (`id`: {@link Vector2i}, `position`: {@link Vector2}, `solid`: [bool], `weight_scale`: [float]) within a `region`.
    */
-  get_point_data_in_region(region: Rect2i): Dictionary;
+  get_point_data_in_region(region: Rect2i): Array<Dictionary>;
   /**
    * Returns an array with the points that are in the path found by {@link AStarGrid2D} between the given points. The array is ordered from the starting point to the ending point of the path.
    * If `from_id` point is disabled, returns an empty array (even if `from_id == to_id`).

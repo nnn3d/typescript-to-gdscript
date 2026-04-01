@@ -15,7 +15,7 @@ declare class PhysicsShapeQueryParameters3D extends RefCounted {
    * The list of object {@link RID}s that will be excluded from collisions. Use {@link CollisionObject3D.get_rid} to get the {@link RID} associated with a {@link CollisionObject3D}-derived node.
    * **Note:** The returned array is copied and any changes to it will not update the original property value. To update the value you need to modify the returned array, and then assign it to the property again.
    */
-  exclude: unknown;
+  exclude: Array<RID>;
   /** The collision margin for the shape. */
   margin: float;
   /** The motion of the shape being queried for. */
@@ -36,8 +36,8 @@ declare class PhysicsShapeQueryParameters3D extends RefCounted {
   is_collide_with_bodies_enabled(): boolean;
   set_collision_mask(value: int): void;
   get_collision_mask(): int;
-  set_exclude(value: unknown): void;
-  get_exclude(): unknown;
+  set_exclude(value: Array<RID>): void;
+  get_exclude(): Array<RID>;
   set_margin(value: float): void;
   get_margin(): float;
   set_motion(value: Vector3): void;

@@ -12,7 +12,7 @@ declare class FoldableGroup extends Resource {
   /**
    * Returns an {@link Array} of {@link FoldableContainer}s that have this as their FoldableGroup (see {@link FoldableContainer.foldable_group}). This is equivalent to {@link ButtonGroup} but for FoldableContainers.
    */
-  get_containers(): unknown;
+  get_containers(): Array<FoldableContainer>;
   /** Returns the current expanded container. */
   get_expanded_container(): FoldableContainer;
 

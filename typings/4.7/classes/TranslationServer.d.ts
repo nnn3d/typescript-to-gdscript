@@ -19,7 +19,7 @@ declare interface TranslationServer extends GodotObject {
   /**
    * Returns the {@link Translation} instances in the main translation domain that match `locale` (see {@link compare_locales}). If `exact` is `true`, only instances whose locale exactly equals `locale` will be returned.
    */
-  find_translations(locale: string, exact: boolean): unknown;
+  find_translations(locale: string, exact: boolean): Array<Translation>;
   /** Converts a number from Western Arabic (0..9) to the numeral system used in the given `locale`. */
   format_number(number: string, locale: string): string;
   /** Returns an array of known country codes. */
@@ -65,7 +65,7 @@ declare interface TranslationServer extends GodotObject {
   /**
    * Returns all available {@link Translation} instances in the main translation domain as added by {@link add_translation}.
    */
-  get_translations(): unknown;
+  get_translations(): Array<Translation>;
   /** Returns `true` if a translation domain with the specified name exists. */
   has_domain(domain: string): boolean;
   /** Returns `true` if the main translation domain contains the given `translation`. */

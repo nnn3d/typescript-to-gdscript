@@ -15,7 +15,7 @@ declare class PhysicsRayQueryParameters3D extends RefCounted {
    * The list of object {@link RID}s that will be excluded from collisions. Use {@link CollisionObject3D.get_rid} to get the {@link RID} associated with a {@link CollisionObject3D}-derived node.
    * **Note:** The returned array is copied and any changes to it will not update the original property value. To update the value you need to modify the returned array, and then assign it to the property again.
    */
-  exclude: unknown;
+  exclude: Array<RID>;
   /** The starting point of the ray being queried for, in global coordinates. */
   from: Vector3;
   /**
@@ -34,8 +34,8 @@ declare class PhysicsRayQueryParameters3D extends RefCounted {
   is_collide_with_bodies_enabled(): boolean;
   set_collision_mask(value: int): void;
   get_collision_mask(): int;
-  set_exclude(value: unknown): void;
-  get_exclude(): unknown;
+  set_exclude(value: Array<RID>): void;
+  get_exclude(): Array<RID>;
   set_from(value: Vector3): void;
   get_from(): Vector3;
   set_hit_back_faces(value: boolean): void;
@@ -48,5 +48,5 @@ declare class PhysicsRayQueryParameters3D extends RefCounted {
   /**
    * Returns a new, pre-configured {@link PhysicsRayQueryParameters3D} object. Use it to quickly create query parameters using the most common options.
    */
-  static create(from_: Vector3, to: Vector3, collision_mask?: int, exclude?: unknown): PhysicsRayQueryParameters3D;
+  static create(from_: Vector3, to: Vector3, collision_mask?: int, exclude?: Array<RID>): PhysicsRayQueryParameters3D;
 }

@@ -15,7 +15,7 @@ declare interface InputMap extends GodotObject {
    * Returns an array of {@link InputEvent}s associated with a given action.
    * **Note:** When used in the editor (e.g. a tool script or {@link EditorPlugin}), this method will return events for the editor action. If you want to access your project's input binds from the editor, read the `input/*` settings from {@link ProjectSettings}.
    */
-  action_get_events(action: string): unknown;
+  action_get_events(action: string): Array<InputEvent>;
   /** Returns `true` if the action has the given {@link InputEvent} associated with it. */
   action_has_event(action: string, event: InputEvent): boolean;
   /** Sets a deadzone value for the action. */
@@ -35,7 +35,7 @@ declare interface InputMap extends GodotObject {
   /** Returns the human-readable description of the given action. */
   get_action_description(action: string): string;
   /** Returns an array of all actions in the {@link InputMap}. */
-  get_actions(): unknown;
+  get_actions(): Array<string>;
   /** Returns `true` if the {@link InputMap} has a registered action with the given name. */
   has_action(action: string): boolean;
   /**

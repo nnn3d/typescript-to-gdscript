@@ -7,16 +7,16 @@ declare interface Geometry2D extends GodotObject {
    * Returns the Bresenham line (https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm) between the `from` and `to` points. A Bresenham line is a series of pixels that draws a line and is always 1-pixel thick on every row and column of the drawing (never more, never less).
    * Example code to draw a line between two {@link Marker2D} nodes using a series of {@link CanvasItem.draw_rect} calls:
    */
-  bresenham_line(from_: Vector2i, to: Vector2i): unknown;
+  bresenham_line(from_: Vector2i, to: Vector2i): Array<Vector2i>;
   /**
    * Clips `polygon_a` against `polygon_b` and returns an array of clipped polygons. This performs {@link OPERATION_DIFFERENCE} between polygons. Returns an empty array if `polygon_b` completely overlaps `polygon_a`.
    * If `polygon_b` is enclosed by `polygon_a`, returns an outer polygon (boundary) and inner polygon (hole) which could be distinguished by calling {@link is_polygon_clockwise}.
    */
-  clip_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): unknown;
+  clip_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): Array<PackedVector2Array>;
   /**
    * Clips `polyline` against `polygon` and returns an array of clipped polylines. This performs {@link OPERATION_DIFFERENCE} between the polyline and the polygon. This operation can be thought of as cutting a line with a closed shape.
    */
-  clip_polyline_with_polygon(polyline: PackedVector2Array, polygon: PackedVector2Array): unknown;
+  clip_polyline_with_polygon(polyline: PackedVector2Array, polygon: PackedVector2Array): Array<PackedVector2Array>;
   /**
    * Given an array of {@link Vector2}s, returns the convex hull as a list of points in counterclockwise order. The last point is the same as the first one.
    */
@@ -24,12 +24,12 @@ declare interface Geometry2D extends GodotObject {
   /**
    * Decomposes the `polygon` into multiple convex hulls and returns an array of {@link PackedVector2Array}.
    */
-  decompose_polygon_in_convex(polygon: PackedVector2Array): unknown;
+  decompose_polygon_in_convex(polygon: PackedVector2Array): Array<PackedVector2Array>;
   /**
    * Mutually excludes common area defined by intersection of `polygon_a` and `polygon_b` (see {@link intersect_polygons}) and returns an array of excluded polygons. This performs {@link OPERATION_XOR} between polygons. In other words, returns all but common area between polygons.
    * The operation may result in an outer polygon (boundary) and inner polygon (hole) produced which could be distinguished by calling {@link is_polygon_clockwise}.
    */
-  exclude_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): unknown;
+  exclude_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): Array<PackedVector2Array>;
   /**
    * Returns the 2D point on the 2D segment (`s1`, `s2`) that is closest to `point`. The returned point will always be inside the specified segment.
    */
@@ -46,11 +46,11 @@ declare interface Geometry2D extends GodotObject {
    * Intersects `polygon_a` with `polygon_b` and returns an array of intersected polygons. This performs {@link OPERATION_INTERSECTION} between polygons. In other words, returns common area shared by polygons. Returns an empty array if no intersection occurs.
    * The operation may result in an outer polygon (boundary) and inner polygon (hole) produced which could be distinguished by calling {@link is_polygon_clockwise}.
    */
-  intersect_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): unknown;
+  intersect_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): Array<PackedVector2Array>;
   /**
    * Intersects `polyline` with `polygon` and returns an array of intersected polylines. This performs {@link OPERATION_INTERSECTION} between the polyline and the polygon. This operation can be thought of as chopping a line with a closed shape.
    */
-  intersect_polyline_with_polygon(polyline: PackedVector2Array, polygon: PackedVector2Array): unknown;
+  intersect_polyline_with_polygon(polyline: PackedVector2Array, polygon: PackedVector2Array): Array<PackedVector2Array>;
   /**
    * Returns `true` if `point` is inside the circle or if it's located exactly *on* the circle's boundary, otherwise returns `false`.
    */
@@ -77,21 +77,21 @@ declare interface Geometry2D extends GodotObject {
    * Merges (combines) `polygon_a` and `polygon_b` and returns an array of merged polygons. This performs {@link OPERATION_UNION} between polygons.
    * The operation may result in an outer polygon (boundary) and multiple inner polygons (holes) produced which could be distinguished by calling {@link is_polygon_clockwise}.
    */
-  merge_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): unknown;
+  merge_polygons(polygon_a: PackedVector2Array, polygon_b: PackedVector2Array): Array<PackedVector2Array>;
   /**
    * Inflates or deflates `polygon` by `delta` units (pixels). If `delta` is positive, makes the polygon grow outward. If `delta` is negative, shrinks the polygon inward. Returns an array of polygons because inflating/deflating may result in multiple discrete polygons. Returns an empty array if `delta` is negative and the absolute value of it approximately exceeds the minimum bounding rectangle dimensions of the polygon.
    * Each polygon's vertices will be rounded as determined by `join_type`.
    * The operation may result in an outer polygon (boundary) and inner polygon (hole) produced which could be distinguished by calling {@link is_polygon_clockwise}.
    * **Note:** To translate the polygon's vertices specifically, multiply them to a {@link Transform2D}:
    */
-  offset_polygon(polygon: PackedVector2Array, delta: float, join_type: int): unknown;
+  offset_polygon(polygon: PackedVector2Array, delta: float, join_type: int): Array<PackedVector2Array>;
   /**
    * Inflates or deflates `polyline` by `delta` units (pixels), producing polygons. If `delta` is positive, makes the polyline grow outward. Returns an array of polygons because inflating/deflating may result in multiple discrete polygons. If `delta` is negative, returns an empty array.
    * Each polygon's vertices will be rounded as determined by `join_type`.
    * Each polygon's endpoints will be rounded as determined by `end_type`.
    * The operation may result in an outer polygon (boundary) and inner polygon (hole) produced which could be distinguished by calling {@link is_polygon_clockwise}.
    */
-  offset_polyline(polyline: PackedVector2Array, delta: float, join_type: int, end_type: int): unknown;
+  offset_polyline(polyline: PackedVector2Array, delta: float, join_type: int, end_type: int): Array<PackedVector2Array>;
   /** Returns if `point` is inside the triangle specified by `a`, `b` and `c`. */
   point_is_inside_triangle(point: Vector2, a: Vector2, b: Vector2, c: Vector2): boolean;
   /**

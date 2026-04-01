@@ -125,7 +125,7 @@ declare class TextServer extends RefCounted {
   /** Returns kerning for the pair of glyphs. */
   font_get_kerning(font_rid: RID, size: int, glyph_pair: Vector2i): Vector2;
   /** Returns list of the kerning overrides. */
-  font_get_kerning_list(font_rid: RID, size: int): unknown;
+  font_get_kerning_list(font_rid: RID, size: int): Array<Vector2i>;
   /** Returns `true` if support override is enabled for the `language`. */
   font_get_language_support_override(font_rid: RID, language: string): boolean;
   /** Returns list of language support overrides. */
@@ -157,11 +157,11 @@ declare class TextServer extends RefCounted {
   /**
    * Returns font cache information, each entry contains the following fields: `Vector2i size_px` - font size in pixels, `float viewport_oversampling` - viewport oversampling factor, `int glyphs` - number of rendered glyphs, `int textures` - number of used textures, `int textures_size` - size of texture data in bytes.
    */
-  font_get_size_cache_info(font_rid: RID): Dictionary;
+  font_get_size_cache_info(font_rid: RID): Array<Dictionary>;
   /**
    * Returns list of the font sizes in the cache. Each size is {@link Vector2i} with font size and outline size.
    */
-  font_get_size_cache_list(font_rid: RID): unknown;
+  font_get_size_cache_list(font_rid: RID): Array<Vector2i>;
   /** Returns the spacing for `spacing` in pixels (not relative to the font size). */
   font_get_spacing(font_rid: RID, spacing: int): int;
   /**
@@ -432,7 +432,7 @@ declare class TextServer extends RefCounted {
    */
   parse_number(number: string, language?: string): string;
   /** Default implementation of the BiDi algorithm override function. */
-  parse_structured_text(parser_type: int, args: Array<unknown>, text: string): unknown;
+  parse_structured_text(parser_type: int, args: Array<unknown>, text: string): Array<Vector3i>;
   /**
    * Returns the percent sign used in the given `language`.
    * If `language` is an empty string, the active locale will be used.
@@ -476,13 +476,13 @@ declare class TextServer extends RefCounted {
   /** Returns the text buffer source text, including object replacement characters. */
   shaped_get_text(shaped: RID): string;
   /** Changes text span font, font size, and OpenType features, without changing the text. */
-  shaped_set_span_update_font(shaped: RID, index: int, fonts: unknown, size: int, opentype_features?: Dictionary): void;
+  shaped_set_span_update_font(shaped: RID, index: int, fonts: Array<RID>, size: int, opentype_features?: Dictionary): void;
   /**
    * Adds inline object to the text buffer, `key` must be unique. In the text, object is represented as `length` object replacement characters.
    */
   shaped_text_add_object(shaped: RID, key: unknown, size: Vector2, inline_align: int, length?: int, baseline?: float): boolean;
   /** Adds text span and font to draw it to the text buffer. */
-  shaped_text_add_string(shaped: RID, text: string, fonts: unknown, size: int, opentype_features?: Dictionary, language?: string, meta?: unknown): boolean;
+  shaped_text_add_string(shaped: RID, text: string, fonts: Array<RID>, size: int, opentype_features?: Dictionary, language?: string, meta?: unknown): boolean;
   /** Clears text buffer (removes text and inline objects). */
   shaped_text_clear(rid: RID): void;
   /** Returns composite character position closest to the `pos`. */
@@ -530,13 +530,13 @@ declare class TextServer extends RefCounted {
   /** Returns number of glyphs in the ellipsis. */
   shaped_text_get_ellipsis_glyph_count(shaped: RID): int;
   /** Returns array of the glyphs in the ellipsis. */
-  shaped_text_get_ellipsis_glyphs(shaped: RID): Dictionary;
+  shaped_text_get_ellipsis_glyphs(shaped: RID): Array<Dictionary>;
   /** Returns position of the ellipsis. */
   shaped_text_get_ellipsis_pos(shaped: RID): int;
   /** Returns number of glyphs in the buffer. */
   shaped_text_get_glyph_count(shaped: RID): int;
   /** Returns an array of glyphs in the visual order. */
-  shaped_text_get_glyphs(shaped: RID): Dictionary;
+  shaped_text_get_glyphs(shaped: RID): Array<Dictionary>;
   /** Returns composite character's bounds as offsets from the start of the line. */
   shaped_text_get_grapheme_bounds(shaped: RID, pos: int): Vector2;
   /** Returns direction of the text, inferred by the BiDi algorithm. */
@@ -643,7 +643,7 @@ declare class TextServer extends RefCounted {
    */
   shaped_text_shape(shaped: RID): boolean;
   /** Returns text glyphs in the logical order. */
-  shaped_text_sort_logical(shaped: RID): Dictionary;
+  shaped_text_sort_logical(shaped: RID): Array<Dictionary>;
   /**
    * Returns text buffer for the substring of the text in the `shaped` text buffer (including inline objects).
    */

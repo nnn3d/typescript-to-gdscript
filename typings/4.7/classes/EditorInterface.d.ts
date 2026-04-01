@@ -109,7 +109,7 @@ declare interface EditorInterface extends GodotObject {
   /** Returns the amount of units the 3D editor's translation snapping is set to. */
   get_node_3d_translate_snap(): float;
   /** Returns an array with references to the root nodes of the currently opened scenes. */
-  get_open_scene_roots(): unknown;
+  get_open_scene_roots(): Array<Node>;
   /** Returns an array with the file paths of the currently opened scenes. */
   get_open_scenes(): PackedStringArray;
   /**
@@ -157,7 +157,7 @@ declare interface EditorInterface extends GodotObject {
    */
   is_plugin_enabled(plugin: string): boolean;
   /** Returns mesh previews rendered at the given size as an {@link Array} of {@link Texture2D}s. */
-  make_mesh_previews(meshes: unknown, preview_size: int): unknown;
+  make_mesh_previews(meshes: Array<Mesh>, preview_size: int): Array<Texture2D>;
   /** Marks the current scene tab as unsaved. */
   mark_scene_as_unsaved(): void;
   /** Opens the scene at the given path. If `set_inherited` is `true`, creates a new inherited scene. */
@@ -177,7 +177,7 @@ declare interface EditorInterface extends GodotObject {
    * The `type_blocklist` contains a list of type names, and the types in the blocklist will be hidden from the create dialog.
    * **Note:** Trying to list the base type in the `type_blocklist` will hide all types derived from the base type from the create dialog.
    */
-  popup_create_dialog(callback: Callable, base_type?: string, current_type?: string, dialog_title?: string, type_blocklist?: unknown): void;
+  popup_create_dialog(callback: Callable, base_type?: string, current_type?: string, dialog_title?: string, type_blocklist?: Array<string>): void;
   /**
    * Pops up the `dialog` in the editor UI with {@link Window.popup_exclusive}. The dialog must have no current parent, otherwise the method fails.
    * See also {@link Window.set_unparent_when_invisible}.
@@ -206,7 +206,7 @@ declare interface EditorInterface extends GodotObject {
    * Pops up an editor dialog for selecting a {@link Node} from the edited scene. The `callback` must take a single argument of type {@link NodePath}. It is called on the selected {@link NodePath} or the empty path `^""` if the dialog is canceled. If `valid_types` is provided, the dialog will only show Nodes that match one of the listed Node types. If `current_value` is provided, the Node will be automatically selected in the tree, if it exists.
    * **Example:** Display the node selection dialog as soon as this node is added to the tree for the first time:
    */
-  popup_node_selector(callback: Callable, valid_types?: unknown, current_value?: Node): void;
+  popup_node_selector(callback: Callable, valid_types?: Array<string>, current_value?: Node): void;
   /**
    * Pops up an editor dialog for selecting properties from `object`. The `callback` must take a single argument of type {@link NodePath}. It is called on the selected property path (see {@link NodePath.get_as_property_path}) or the empty path `^""` if the dialog is canceled. If `type_filter` is provided, the dialog will only show properties that match one of the listed {@link Variant.Type} values. If `current_value` is provided, the property will be selected automatically in the property list, if it exists.
    */
@@ -214,7 +214,7 @@ declare interface EditorInterface extends GodotObject {
   /**
    * Pops up an editor dialog for quick selecting a resource file. The `callback` must take a single argument of type {@link String} which will contain the path of the selected resource or be empty if the dialog is canceled. If `base_types` is provided, the dialog will only show resources that match these types. Only types deriving from {@link Resource} are supported.
    */
-  popup_quick_open(callback: Callable, base_types?: unknown): void;
+  popup_quick_open(callback: Callable, base_types?: Array<string>): void;
   /** Reloads the scene at the given path. */
   reload_scene_from_path(scene_filepath: string): void;
   /**

@@ -13,7 +13,7 @@ declare class PhysicsDirectSpaceState2D extends GodotObject {
    * Checks the intersections of a shape, given through a {@link PhysicsShapeQueryParameters2D} object, against the space. The resulting array contains a list of points where the shape intersects another. Like with {@link intersect_shape}, the number of returned results can be limited to save processing time.
    * Returned points are a list of pairs of contact points. For each pair the first one is in the shape passed in {@link PhysicsShapeQueryParameters2D} object, second one is in the collided shape from the physics space.
    */
-  collide_shape(parameters: PhysicsShapeQueryParameters2D, max_results?: int): unknown;
+  collide_shape(parameters: PhysicsShapeQueryParameters2D, max_results?: int): Array<Vector2>;
   /**
    * Checks the intersections of a shape, given through a {@link PhysicsShapeQueryParameters2D} object, against the space. If it collides with more than one shape, the nearest one is selected. The returned object is a dictionary containing the following fields:
    * `collider_id`: The colliding object's ID.
@@ -34,7 +34,7 @@ declare class PhysicsDirectSpaceState2D extends GodotObject {
    * The number of intersections can be limited with the `max_results` parameter, to reduce the processing time.
    * **Note:** {@link ConcavePolygonShape2D}s and {@link CollisionPolygon2D}s in `Segments` build mode are not solid shapes. Therefore, they will not be detected.
    */
-  intersect_point(parameters: PhysicsPointQueryParameters2D, max_results?: int): Dictionary;
+  intersect_point(parameters: PhysicsPointQueryParameters2D, max_results?: int): Array<Dictionary>;
   /**
    * Intersects a ray in a given space. Ray position and other parameters are defined through {@link PhysicsRayQueryParameters2D}. The returned object is a dictionary with the following fields:
    * `collider`: The colliding object.
@@ -54,5 +54,5 @@ declare class PhysicsDirectSpaceState2D extends GodotObject {
    * `shape`: The shape index of the colliding shape.
    * The number of intersections can be limited with the `max_results` parameter, to reduce the processing time.
    */
-  intersect_shape(parameters: PhysicsShapeQueryParameters2D, max_results?: int): Dictionary;
+  intersect_shape(parameters: PhysicsShapeQueryParameters2D, max_results?: int): Array<Dictionary>;
 }

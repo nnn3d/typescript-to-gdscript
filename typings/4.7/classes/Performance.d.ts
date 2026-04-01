@@ -14,7 +14,7 @@ declare interface Performance extends GodotObject {
    */
   get_custom_monitor(id: string): unknown;
   /** Returns the names of active custom monitors in an {@link Array}. */
-  get_custom_monitor_names(): unknown;
+  get_custom_monitor_names(): Array<string>;
   /** Returns the {@link MonitorType} values of active custom monitors in an {@link Array}. */
   get_custom_monitor_types(): PackedInt32Array;
   /**

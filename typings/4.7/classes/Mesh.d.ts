@@ -29,7 +29,7 @@ declare class Mesh extends Resource {
   /** Virtual method to override the surface arrays for a custom class extending {@link Mesh}. */
   _surface_get_arrays(index: int): Array<unknown>;
   /** Virtual method to override the blend shape arrays for a custom class extending {@link Mesh}. */
-  _surface_get_blend_shape_arrays(index: int): Array<void>;
+  _surface_get_blend_shape_arrays(index: int): Array<Array<unknown>>;
   /** Virtual method to override the surface format for a custom class extending {@link Mesh}. */
   _surface_get_format(index: int): int;
   /** Virtual method to override the surface LODs for a custom class extending {@link Mesh}. */
@@ -79,7 +79,7 @@ declare class Mesh extends Resource {
    */
   surface_get_arrays(surf_idx: int): Array<unknown>;
   /** Returns the blend shape arrays for the requested surface. */
-  surface_get_blend_shape_arrays(surf_idx: int): Array<void>;
+  surface_get_blend_shape_arrays(surf_idx: int): Array<Array<unknown>>;
   /**
    * Returns a {@link Material} in a given surface. Surface is rendered using this material.
    * **Note:** This returns the material within the {@link Mesh} resource, not the {@link Material} associated to the {@link MeshInstance3D}'s Surface Material Override properties. To get the {@link Material} associated to the {@link MeshInstance3D}'s Surface Material Override properties, use {@link MeshInstance3D.get_surface_override_material} instead.

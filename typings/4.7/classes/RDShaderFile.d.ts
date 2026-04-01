@@ -15,7 +15,7 @@ declare class RDShaderFile extends Resource {
   /** Returns the SPIR-V intermediate representation for the specified shader `version`. */
   get_spirv(version?: string): RDShaderSPIRV;
   /** Returns the list of compiled versions for this shader. */
-  get_version_list(): unknown;
+  get_version_list(): Array<string>;
   /** Sets the SPIR-V `bytecode` that will be compiled for the specified `version`. */
   set_bytecode(bytecode: RDShaderSPIRV, version?: string): void;
 }

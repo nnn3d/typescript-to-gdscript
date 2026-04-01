@@ -71,7 +71,7 @@ declare interface Engine extends GodotObject {
    * If `include_variables` is `true`, the backtrace will also include the names and values of any global variables (e.g. autoload singletons) at the point of the capture, as well as local variables and class member variables at each stack frame. This will however will only be respected when running the game with a debugger attached, like when running the game from the editor. To enable it for export builds as well, you need to enable {@link ProjectSettings.debug/settings/gdscript/always_track_local_variables}.
    * **Warning:** When `include_variables` is `true`, any captured variables can potentially (e.g. with GDScript backtraces) be their actual values, including any object references. This means that storing such a {@link ScriptBacktrace} will prevent those objects from being deallocated, so it's generally recommended not to do so.
    */
-  capture_script_backtraces(include_variables?: boolean): unknown;
+  capture_script_backtraces(include_variables?: boolean): Array<ScriptBacktrace>;
   /**
    * Returns the name of the CPU architecture the Godot binary was built for. Possible return values include `"x86_64"`, `"x86_32"`, `"arm64"`, `"arm32"`, `"rv64"`, `"ppc64"`, `"loongarch64"`, `"wasm64"`, and `"wasm32"`.
    * To detect whether the current build is 64-bit, or the type of architecture, don't use the architecture name. Instead, use {@link OS.has_feature} to check for the `"64"` feature tag, or tags such as `"x86"` or `"arm"`. See the Feature Tags ($DOCS_URL/tutorials/export/feature_tags.html) documentation for more details.
@@ -89,7 +89,7 @@ declare interface Engine extends GodotObject {
    * - `copyright` - {@link Array} of owners of this component;
    * - `license` - The license applied to this component (such as "Expat (https://en.wikipedia.org/wiki/MIT_License#Ambiguity_and_variants)" or "CC-BY-4.0 (https://creativecommons.org/licenses/by/4.0/)").
    */
-  get_copyright_info(): Dictionary;
+  get_copyright_info(): Array<Dictionary>;
   /**
    * Returns a {@link Dictionary} of categorized donor names. Each entry is an {@link Array} of strings:
    * {`platinum_sponsors`, `gold_sponsors`, `silver_sponsors`, `bronze_sponsors`, `mini_sponsors`, `gold_donors`, `silver_donors`, `bronze_donors`}

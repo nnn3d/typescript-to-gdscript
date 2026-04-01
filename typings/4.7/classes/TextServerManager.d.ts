@@ -12,7 +12,7 @@ declare interface TextServerManager extends GodotObject {
   /** Returns the number of interfaces currently registered. */
   get_interface_count(): int;
   /** Returns a list of available interfaces, with the index and name of each interface. */
-  get_interfaces(): Dictionary;
+  get_interfaces(): Array<Dictionary>;
   /** Returns the primary {@link TextServer} interface currently in use. */
   get_primary_interface(): TextServer;
   /**

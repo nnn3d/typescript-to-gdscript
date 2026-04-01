@@ -20,7 +20,7 @@ declare class PhysicsPointQueryParameters2D extends RefCounted {
    * The list of object {@link RID}s that will be excluded from collisions. Use {@link CollisionObject2D.get_rid} to get the {@link RID} associated with a {@link CollisionObject2D}-derived node.
    * **Note:** The returned array is copied and any changes to it will not update the original property value. To update the value you need to modify the returned array, and then assign it to the property again.
    */
-  exclude: unknown;
+  exclude: Array<RID>;
   /** The position being queried for, in global coordinates. */
   position: Vector2;
   set_canvas_instance_id(value: int): void;
@@ -31,8 +31,8 @@ declare class PhysicsPointQueryParameters2D extends RefCounted {
   is_collide_with_bodies_enabled(): boolean;
   set_collision_mask(value: int): void;
   get_collision_mask(): int;
-  set_exclude(value: unknown): void;
-  get_exclude(): unknown;
+  set_exclude(value: Array<RID>): void;
+  get_exclude(): Array<RID>;
   set_position(value: Vector2): void;
   get_position(): Vector2;
 }

@@ -111,7 +111,7 @@ declare class EditorExportPlugin extends RefCounted {
    * - `default_value`: The default value for this option.
    * - `update_visibility`: An optional boolean value. If set to `true`, the preset will emit {@link Object.property_list_changed} when the option is changed.
    */
-  _get_export_options(platform: EditorExportPlatform): Dictionary;
+  _get_export_options(platform: EditorExportPlatform): Array<Dictionary>;
   /**
    * Return a {@link Dictionary} of override values for export options, that will be used instead of user-provided values. Overridden options will be hidden from the user interface.
    */

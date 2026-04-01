@@ -83,7 +83,7 @@ declare interface Input extends GodotObject {
    * Returns an {@link Array} containing the device IDs of all currently connected joypads.
    * **Note:** The order of connected joypads can not be guaranteed to be the same after a project and/or the editor is restarted, because Godot doesn't save the order of joypad connections. Joypads are registered in the order they are discovered by Godot.
    */
-  get_connected_joypads(): unknown;
+  get_connected_joypads(): Array<int>;
   /** Returns the currently assigned cursor shape. */
   get_current_cursor_shape(): int;
   /**

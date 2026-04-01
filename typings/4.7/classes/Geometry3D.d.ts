@@ -6,21 +6,21 @@ declare interface Geometry3D extends GodotObject {
   /**
    * Returns an array with 6 {@link Plane}s that describe the sides of a box centered at the origin. The box size is defined by `extents`, which represents one (positive) corner of the box (i.e. half its actual size).
    */
-  build_box_planes(extents: Vector3): unknown;
+  build_box_planes(extents: Vector3): Array<Plane>;
   /**
    * Returns an array of {@link Plane}s closely bounding a faceted capsule centered at the origin with radius `radius` and height `height`. The parameter `sides` defines how many planes will be generated for the side part of the capsule, whereas `lats` gives the number of latitudinal steps at the bottom and top of the capsule. The parameter `axis` describes the axis along which the capsule is oriented (0 for X, 1 for Y, 2 for Z).
    */
-  build_capsule_planes(radius: float, height: float, sides: int, lats: int, axis: int): unknown;
+  build_capsule_planes(radius: float, height: float, sides: int, lats: int, axis: int): Array<Plane>;
   /**
    * Returns an array of {@link Plane}s closely bounding a faceted cylinder centered at the origin with radius `radius` and height `height`. The parameter `sides` defines how many planes will be generated for the round part of the cylinder. The parameter `axis` describes the axis along which the cylinder is oriented (0 for X, 1 for Y, 2 for Z).
    */
-  build_cylinder_planes(radius: float, height: float, sides: int, axis: int): unknown;
+  build_cylinder_planes(radius: float, height: float, sides: int, axis: int): Array<Plane>;
   /**
    * Clips the polygon defined by the points in `points` against the `plane` and returns the points of the clipped polygon.
    */
   clip_polygon(points: PackedVector3Array, plane: Plane): PackedVector3Array;
   /** Calculates and returns all the vertex points of a convex shape defined by an array of `planes`. */
-  compute_convex_mesh_points(planes: unknown): PackedVector3Array;
+  compute_convex_mesh_points(planes: Array<Plane>): PackedVector3Array;
   /**
    * Returns the 3D point on the 3D segment (`s1`, `s2`) that is closest to `point`. The returned point will always be inside the specified segment.
    */
@@ -45,7 +45,7 @@ declare interface Geometry3D extends GodotObject {
   /**
    * Given a convex hull defined though the {@link Plane}s in the array `planes`, tests if the segment (`from`, `to`) intersects with that hull. If an intersection is found, returns a {@link PackedVector3Array} containing the point the intersection and the hull's normal. Otherwise, returns an empty array.
    */
-  segment_intersects_convex(from_: Vector3, to: Vector3, planes: unknown): PackedVector3Array;
+  segment_intersects_convex(from_: Vector3, to: Vector3, planes: Array<Plane>): PackedVector3Array;
   /**
    * Checks if the segment (`from`, `to`) intersects the cylinder with height `height` that is centered at the origin and has radius `radius`. If no, returns an empty {@link PackedVector3Array}. If an intersection takes place, the returned array contains the point of intersection and the cylinder's normal at the point of intersection.
    */

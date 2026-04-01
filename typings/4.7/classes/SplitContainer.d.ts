@@ -88,7 +88,7 @@ declare class SplitContainer extends Container {
    * **Note:** The drag area {@link Control}s are drawn over the {@link SplitContainer}'s children, so {@link CanvasItem} draw objects called from a drag area and children added to it will also appear over the {@link SplitContainer}'s children. Try setting {@link Control.mouse_filter} of custom children to {@link Control.MOUSE_FILTER_IGNORE} to prevent blocking the mouse from dragging if desired.
    * **Warning:** These are required internal nodes, removing or freeing them may cause a crash.
    */
-  get_drag_area_controls(): unknown;
+  get_drag_area_controls(): Array<Control>;
 
   /** Emitted when the user ends dragging. */
   drag_ended: Signal<[]>;

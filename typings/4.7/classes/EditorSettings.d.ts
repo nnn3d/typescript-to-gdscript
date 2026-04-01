@@ -1793,7 +1793,7 @@ declare class EditorSettings extends Resource {
   /** Removes the shortcut specified by `path`. */
   remove_shortcut(path: string): void;
   /** Overrides the built-in editor action `name` with the input actions defined in `actions_list`. */
-  set_builtin_action_override(name: string, actions_list: unknown): void;
+  set_builtin_action_override(name: string, actions_list: Array<InputEvent>): void;
   /** Sets the list of favorite files and directories for this project. */
   set_favorites(dirs: PackedStringArray): void;
   /**

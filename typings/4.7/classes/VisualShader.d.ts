@@ -29,7 +29,7 @@ declare class VisualShader extends Shader {
   /** Returns the shader node instance with specified `type` and `id`. */
   get_node(type_: int, id: int): VisualShaderNode;
   /** Returns the list of connected nodes with the specified type. */
-  get_node_connections(type_: int): Dictionary;
+  get_node_connections(type_: int): Array<Dictionary>;
   /** Returns the list of all nodes in the shader with the specified type. */
   get_node_list(type_: int): PackedInt32Array;
   /** Returns the position of the specified node within the shader graph. */

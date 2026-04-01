@@ -13,7 +13,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Bakes the material data of the Mesh passed in the `base` parameter with optional `material_overrides` to a set of {@link Image}s of size `image_size`. Returns an array of {@link Image}s containing material properties as specified in {@link BakeChannels}.
    */
-  bake_render_uv2(base: RID, material_overrides: unknown, image_size: Vector2i): unknown;
+  bake_render_uv2(base: RID, material_overrides: Array<RID>, image_size: Vector2i): Array<Image>;
   /**
    * As the RenderingServer actual logic may run on a separate thread, accessing its internals from the main (or any other) thread will result in errors. To make it easier to run code that can safely access the rendering internals (such as {@link RenderingDevice} and similar RD classes), push a callable via this function so it will be executed on the render thread.
    */
@@ -180,7 +180,7 @@ declare interface RenderingServer extends GodotObject {
    * Returns a dictionary of per-instance shader uniform names of the per-instance shader uniform from the specified canvas item instance.
    * The returned dictionary is in PropertyInfo format, with the keys `name`, `class_name`, `type`, `hint`, `hint_string`, and `usage`.
    */
-  canvas_item_get_instance_shader_parameter_list(instance: RID): Dictionary;
+  canvas_item_get_instance_shader_parameter_list(instance: RID): Array<Dictionary>;
   /**
    * Prevents physics interpolation for the current physics tick.
    * This is useful when moving a canvas item to a new location, to give an instantaneous change rather than interpolation from the previous location.
@@ -436,7 +436,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the compositor effects for the specified compositor RID. `effects` should be an array containing RIDs created with {@link compositor_effect_create}.
    */
-  compositor_set_compositor_effects(compositor: RID, effects: unknown): void;
+  compositor_set_compositor_effects(compositor: RID, effects: Array<RID>): void;
   /**
    * Creates a RenderingDevice that can be used to do draw and compute operations on a separate thread. Cannot draw to the screen nor share data with the global RenderingDevice.
    * **Note:** When using the OpenGL rendering driver or when running in headless mode, this function always returns `null`.
@@ -681,7 +681,7 @@ declare interface RenderingServer extends GodotObject {
    */
   get_rendering_info(info: int): int;
   /** Returns the parameters of a shader. */
-  get_shader_parameter_list(shader: RID): Dictionary;
+  get_shader_parameter_list(shader: RID): Array<Dictionary>;
   /**
    * Returns the RID of the test cube. This mesh will be created and returned on the first call to {@link get_test_cube}, then it will be cached for subsequent calls. See also {@link make_sphere_mesh}.
    */
@@ -735,7 +735,7 @@ declare interface RenderingServer extends GodotObject {
    * Returns the list of global shader uniform names.
    * **Note:** {@link global_shader_parameter_get} has a large performance penalty as the rendering thread needs to synchronize with the calling thread, which is slow. Do not use this method during gameplay to avoid stuttering. If you need to read values in a script after setting them, consider creating an autoload where you store the values you need to query at the same time you're setting them as global parameters.
    */
-  global_shader_parameter_get_list(): unknown;
+  global_shader_parameter_get_list(): Array<string>;
   /**
    * Returns the type associated to the global shader uniform specified by `name`.
    * **Note:** {@link global_shader_parameter_get} has a large performance penalty as the rendering thread needs to synchronize with the calling thread, which is slow. Do not use this method during gameplay to avoid stuttering. If you need to read values in a script after setting them, consider creating an autoload where you store the values you need to query at the same time you're setting them as global parameters.
@@ -787,7 +787,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Returns a dictionary of per-instance shader uniform names of the per-instance shader uniform from the specified 3D geometry instance. The returned dictionary is in PropertyInfo format, with the keys `name`, `class_name`, `type`, `hint`, `hint_string` and `usage`. Equivalent to {@link GeometryInstance3D.get_instance_shader_parameter}.
    */
-  instance_geometry_get_shader_parameter_list(instance: RID): Dictionary;
+  instance_geometry_get_shader_parameter_list(instance: RID): Array<Dictionary>;
   /** Sets the shadow casting setting. Equivalent to {@link GeometryInstance3D.cast_shadow}. */
   instance_geometry_set_cast_shadows_setting(instance: RID, shadow_casting_setting: int): void;
   /** Sets the `flag` for a given `instance` to `enabled`. */
@@ -876,7 +876,7 @@ declare interface RenderingServer extends GodotObject {
    * Returns an array of object IDs intersecting with the provided convex shape. Only 3D nodes that inherit from {@link VisualInstance3D} are considered, such as {@link MeshInstance3D} or {@link DirectionalLight3D}. Use {@link @GlobalScope.instance_from_id} to obtain the actual nodes. A scenario RID must be provided, which is available in the {@link World3D} you want to query. This forces an update for all resources queued to update.
    * **Warning:** This function is primarily intended for editor usage. For in-game use cases, prefer physics collision.
    */
-  instances_cull_convex(convex: unknown, scenario?: RID): PackedInt64Array;
+  instances_cull_convex(convex: Array<Plane>, scenario?: RID): PackedInt64Array;
   /**
    * Returns an array of object IDs intersecting with the provided 3D ray. Only 3D nodes that inherit from {@link VisualInstance3D} are considered, such as {@link MeshInstance3D} or {@link DirectionalLight3D}. Use {@link @GlobalScope.instance_from_id} to obtain the actual nodes. A scenario RID must be provided, which is available in the {@link World3D} you want to query. This forces an update for all resources queued to update.
    * **Warning:** This function is primarily intended for editor usage. For in-game use cases, prefer physics collision.
@@ -1050,7 +1050,7 @@ declare interface RenderingServer extends GodotObject {
    * To place in a scene, attach this mesh to an instance using {@link instance_set_base} using the returned RID.
    * **Note:** The equivalent resource is {@link Mesh}.
    */
-  mesh_create_from_surfaces(surfaces: Dictionary, blend_shape_count?: int): RID;
+  mesh_create_from_surfaces(surfaces: Array<Dictionary>, blend_shape_count?: int): RID;
   /** Returns a mesh's blend shape count. */
   mesh_get_blend_shape_count(mesh: RID): int;
   /** Returns a mesh's blend shape mode. */
@@ -1075,7 +1075,7 @@ declare interface RenderingServer extends GodotObject {
   /** Returns a mesh's surface's buffer arrays. */
   mesh_surface_get_arrays(mesh: RID, surface: int): Array<unknown>;
   /** Returns a mesh's surface's arrays for blend shapes. */
-  mesh_surface_get_blend_shape_arrays(mesh: RID, surface: int): Array<void>;
+  mesh_surface_get_blend_shape_arrays(mesh: RID, surface: int): Array<Array<unknown>>;
   /** Returns the stride of the attribute buffer for a mesh with given `format`. */
   mesh_surface_get_format_attribute_stride(format: int, vertex_count: int): int;
   /** Returns the stride of the index buffer for a mesh with the given `format`. */
@@ -1424,7 +1424,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the trail bind poses for the particle system. This specified as an array of {@link Transform3D}s representing the bind pose for each draw pass. See {@link GPUParticles3D.draw_skin}, {@link Skin.get_bind_count}, and {@link Skin.get_bind_pose}. Set the value for each draw pass to {@link Transform3D.IDENTITY} to use the default behavior, which is what built-in trails use ({@link RibbonTrailMesh} and {@link TubeTrailMesh}).
    */
-  particles_set_trail_bind_poses(particles: RID, bind_poses: unknown): void;
+  particles_set_trail_bind_poses(particles: RID, bind_poses: Array<Transform3D>): void;
   /**
    * If `enable` is `true`, enables trails for the `particles` with the specified `length_sec` in seconds. Equivalent to {@link GPUParticles3D.trail_enabled} and {@link GPUParticles3D.trail_lifetime}.
    */
@@ -1650,7 +1650,7 @@ declare interface RenderingServer extends GodotObject {
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
    * **Note:** The equivalent resource is {@link TextureLayered}.
    */
-  texture_2d_layered_create(layers: unknown, layered_type: int): RID;
+  texture_2d_layered_create(layers: Array<Image>, layered_type: int): RID;
   /**
    * Creates a placeholder for a 2-dimensional layered texture and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `texture_2d_layered_*` RenderingServer functions, although it does nothing when used. See also {@link texture_2d_placeholder_create}.
    * **Note:** The equivalent resource is {@link PlaceholderTextureLayered}.
@@ -1668,9 +1668,9 @@ declare interface RenderingServer extends GodotObject {
    */
   texture_2d_update(texture: RID, image: Image, layer: int): void;
   /** **Note:** The equivalent resource is {@link Texture3D}. */
-  texture_3d_create(format: int, width: int, height: int, depth: int, mipmaps: boolean, data: unknown): RID;
+  texture_3d_create(format: int, width: int, height: int, depth: int, mipmaps: boolean, data: Array<Image>): RID;
   /** Returns 3D texture data as an array of {@link Image}s for the specified texture {@link RID}. */
-  texture_3d_get(texture: RID): unknown;
+  texture_3d_get(texture: RID): Array<Image>;
   /**
    * Creates a placeholder for a 3-dimensional texture and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `texture_3d_*` RenderingServer functions, although it does nothing when used.
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
@@ -1681,7 +1681,7 @@ declare interface RenderingServer extends GodotObject {
    * Updates the texture specified by the `texture` {@link RID}'s data with the data in `data`. All the texture's layers must be replaced at once.
    * **Note:** The `texture` must have the same width, height, depth and format as the current texture data. Otherwise, an error will be printed and the original texture won't be modified. If you need to use different width, height, depth or format, use {@link texture_replace} instead.
    */
-  texture_3d_update(texture: RID, data: unknown): void;
+  texture_3d_update(texture: RID, data: Array<Image>): void;
   /**
    * Creates a texture based on a native handle that was created outside of Godot's renderer.
    * **Note:** If using only the rendering device renderer, it's recommend to use {@link RenderingDevice.texture_create_from_extension} together with {@link RenderingServer.texture_rd_create}, rather than this method. This way, the texture's format and usage can be controlled more effectively.
@@ -1691,7 +1691,7 @@ declare interface RenderingServer extends GodotObject {
    * Draws to `rect` on up to 4 given Drawable `textures`, using a TextureBlit Shader from `material`. `modulate` and up to 4 `source_textures` are uniforms for the Shader to process with. `to_mipmap` can specify to perform this draw to a lower mipmap level.
    * **Note:** All `textures` must be the same size and format.
    */
-  texture_drawable_blit_rect(textures: unknown, rect: Rect2i, material: RID, modulate: Color, source_textures: unknown, to_mipmap?: int): void;
+  texture_drawable_blit_rect(textures: Array<RID>, rect: Rect2i, material: RID, modulate: Color, source_textures: Array<RID>, to_mipmap?: int): void;
   /**
    * Creates a 2-dimensional texture and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `texture_drawable*` RenderingServer functions.
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.

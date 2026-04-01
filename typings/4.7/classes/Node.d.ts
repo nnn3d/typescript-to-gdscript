@@ -274,7 +274,7 @@ declare class Node extends GodotObject {
    * **Note:** This method can be very slow. Consider storing references to the found nodes in a variable.
    * **Note:** To find a single descendant node matching a pattern, see {@link find_child}.
    */
-  find_children(pattern: string, type_?: string, recursive?: boolean, owned?: boolean): unknown;
+  find_children(pattern: string, type_?: string, recursive?: boolean, owned?: boolean): Array<Node>;
   /**
    * Finds the first ancestor of this node whose {@link name} matches `pattern`, returning `null` if no match is found. The matching is done through {@link String.match}. As such, it is case-sensitive, `"*"` matches zero or more characters, and `"?"` matches any single character. See also {@link find_child} and {@link find_children}.
    * **Note:** As this method walks upwards in the scene tree, it can be slow in large, deeply nested nodes. Consider storing a reference to the found node in a variable. Alternatively, use {@link get_node} with unique names (see {@link unique_name_in_owner}).
@@ -300,13 +300,13 @@ declare class Node extends GodotObject {
    * Returns all children of this node inside an {@link Array}.
    * If `include_internal` is `false`, excludes internal children from the returned array (see {@link add_child}'s `internal` parameter).
    */
-  get_children(include_internal?: boolean): unknown;
+  get_children(include_internal?: boolean): Array<Node>;
   /**
    * Returns an {@link Array} of group names that the node has been added to.
    * **Note:** To improve performance, the order of group names is *not* guaranteed and may vary between project runs. Therefore, do not rely on the group order.
    * **Note:** This method may also return some group names starting with an underscore (`_`). These are internally used by the engine. To avoid conflicts, do not use custom groups starting with underscores. To exclude internal groups, see the following code snippet:
    */
-  get_groups(): unknown;
+  get_groups(): Array<string>;
   /**
    * Returns this node's order among its siblings. The first node's index is `0`. See also {@link get_child}.
    * If `include_internal` is `false`, returns the index ignoring internal children. The first, non-internal child will have an index of `0` (see {@link add_child}'s `internal` parameter).
@@ -360,7 +360,7 @@ declare class Node extends GodotObject {
    * Returns object IDs of all orphan nodes (nodes outside the {@link SceneTree}). Used for debugging.
    * **Note:** {@link get_orphan_node_ids} only works in debug builds. When called in a project exported in release mode, {@link get_orphan_node_ids} will return an empty array.
    */
-  static get_orphan_node_ids(): unknown;
+  static get_orphan_node_ids(): Array<int>;
   /** Returns this node's parent node, or `null` if the node doesn't have a parent. */
   get_parent(): Node;
   /**

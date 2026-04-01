@@ -20,11 +20,11 @@ declare class CodeEdit extends TextEdit {
    */
   code_completion_enabled: boolean;
   /** Sets prefixes that will trigger code completion. */
-  code_completion_prefixes: unknown;
+  code_completion_prefixes: Array<string>;
   /** Sets the comment delimiters. All existing comment delimiters will be removed. */
-  delimiter_comments: unknown;
+  delimiter_comments: Array<string>;
   /** Sets the string delimiters. All existing string delimiters will be removed. */
-  delimiter_strings: unknown;
+  delimiter_strings: Array<string>;
   /**
    * If `true`, bookmarks are drawn in the gutter. This gutter is shared with breakpoints and executing lines. See {@link set_line_as_bookmarked}.
    */
@@ -56,7 +56,7 @@ declare class CodeEdit extends TextEdit {
    */
   indent_automatic: boolean;
   /** Prefixes to trigger an automatic indent. Used when {@link indent_automatic} is set to `true`. */
-  indent_automatic_prefixes: unknown;
+  indent_automatic_prefixes: Array<string>;
   /**
    * Size of the tabulation indent (one `Tab` press) in characters. If {@link indent_use_spaces} is enabled the number of spaces to use.
    */
@@ -71,7 +71,7 @@ declare class CodeEdit extends TextEdit {
   /**
    * Draws vertical lines at the provided columns. The first entry is considered a main hard guideline and is drawn more prominently.
    */
-  line_length_guidelines: unknown;
+  line_length_guidelines: Array<int>;
   /**
    * Set when a validated word from {@link symbol_validate} is clicked, the {@link symbol_lookup} should be emitted.
    */
@@ -87,12 +87,12 @@ declare class CodeEdit extends TextEdit {
   get_auto_brace_completion_pairs(): Dictionary;
   set_code_completion_enabled(value: boolean): void;
   is_code_completion_enabled(): boolean;
-  set_code_completion_prefixes(value: unknown): void;
-  get_code_completion_prefixes(): unknown;
-  set_comment_delimiters(value: unknown): void;
-  get_comment_delimiters(): unknown;
-  set_string_delimiters(value: unknown): void;
-  get_string_delimiters(): unknown;
+  set_code_completion_prefixes(value: Array<string>): void;
+  get_code_completion_prefixes(): Array<string>;
+  set_comment_delimiters(value: Array<string>): void;
+  get_comment_delimiters(): Array<string>;
+  set_string_delimiters(value: Array<string>): void;
+  get_string_delimiters(): Array<string>;
   set_draw_bookmarks_gutter(value: boolean): void;
   is_drawing_bookmarks_gutter(): boolean;
   set_draw_breakpoints_gutter(value: boolean): void;
@@ -109,14 +109,14 @@ declare class CodeEdit extends TextEdit {
   is_line_numbers_zero_padded(): boolean;
   set_auto_indent_enabled(value: boolean): void;
   is_auto_indent_enabled(): boolean;
-  set_auto_indent_prefixes(value: unknown): void;
-  get_auto_indent_prefixes(): unknown;
+  set_auto_indent_prefixes(value: Array<string>): void;
+  get_auto_indent_prefixes(): Array<string>;
   set_indent_size(value: int): void;
   get_indent_size(): int;
   set_indent_using_spaces(value: boolean): void;
   is_indent_using_spaces(): boolean;
-  set_line_length_guidelines(value: unknown): void;
-  get_line_length_guidelines(): unknown;
+  set_line_length_guidelines(value: Array<int>): void;
+  get_line_length_guidelines(): Array<int>;
   set_symbol_lookup_on_click_enabled(value: boolean): void;
   is_symbol_lookup_on_click_enabled(): boolean;
   set_symbol_tooltip_on_hover_enabled(value: boolean): void;
@@ -130,7 +130,7 @@ declare class CodeEdit extends TextEdit {
    * Override this method to define what items in `candidates` should be displayed.
    * Both `candidates` and the return is an {@link Array} of {@link Dictionary}, see {@link get_code_completion_option} for {@link Dictionary} content.
    */
-  _filter_code_completion_candidates(candidates: Dictionary): Dictionary;
+  _filter_code_completion_candidates(candidates: Array<Dictionary>): Array<Dictionary>;
   /**
    * Override this method to define what happens when the user requests code completion. If `force` is `true`, any checks should be bypassed.
    */
@@ -221,7 +221,7 @@ declare class CodeEdit extends TextEdit {
    */
   get_code_completion_option(index: int): Dictionary;
   /** Gets all completion options, see {@link get_code_completion_option} for return content. */
-  get_code_completion_options(): Dictionary;
+  get_code_completion_options(): Array<Dictionary>;
   /** Gets the index of the current selected completion option. */
   get_code_completion_selected_index(): int;
   /** Returns the code region end tag (without comment delimiter). */
@@ -243,7 +243,7 @@ declare class CodeEdit extends TextEdit {
   /** Gets all executing lines. */
   get_executing_lines(): PackedInt32Array;
   /** Returns all lines that are currently folded. */
-  get_folded_lines(): unknown;
+  get_folded_lines(): Array<int>;
   /** Returns the full text with char `0xFFFF` at the caret location. */
   get_text_for_code_completion(): string;
   /** Returns the full text with char `0xFFFF` at the cursor location. */

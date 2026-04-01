@@ -8,7 +8,7 @@ declare class PhysicsBody2D extends CollisionObject2D {
   /** Adds a body to the list of bodies that this body can't collide with. */
   add_collision_exception_with(body: Node): void;
   /** Returns an array of nodes that were added as collision exceptions for this body. */
-  get_collision_exceptions(): unknown;
+  get_collision_exceptions(): Array<PhysicsBody2D>;
   /**
    * Returns the gravity vector computed from all sources that can affect the body, including all gravity overrides from {@link Area2D} nodes and the global world gravity.
    */

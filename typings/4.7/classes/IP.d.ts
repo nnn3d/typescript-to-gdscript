@@ -17,7 +17,7 @@ declare interface IP extends GodotObject {
    * Returns all network adapters as an array.
    * Each adapter is a dictionary of the form:
    */
-  get_local_interfaces(): Dictionary;
+  get_local_interfaces(): Array<Dictionary>;
   /**
    * Returns a queued hostname's IP address, given its queue `id`. Returns an empty string on error or if resolution hasn't happened yet (see {@link get_resolve_item_status}).
    */

@@ -34,7 +34,7 @@ declare class ArrayMesh extends Mesh {
    * The `flags` argument is the bitwise OR of, as required: One value of {@link Mesh.ArrayCustomFormat} left shifted by `ARRAY_FORMAT_CUSTOMn_SHIFT` for each custom channel in use, {@link Mesh.ARRAY_FLAG_USE_DYNAMIC_UPDATE}, {@link Mesh.ARRAY_FLAG_USE_8_BONE_WEIGHTS}, or {@link Mesh.ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY}.
    * **Note:** When using indices, it is recommended to only use points, lines, or triangles.
    */
-  add_surface_from_arrays(primitive: int, arrays: Array<unknown>, blend_shapes?: Array<void>, lods?: Dictionary, flags?: int): void;
+  add_surface_from_arrays(primitive: int, arrays: Array<unknown>, blend_shapes?: Array<Array<unknown>>, lods?: Dictionary, flags?: int): void;
   /** Removes all blend shapes from this {@link ArrayMesh}. */
   clear_blend_shapes(): void;
   /** Removes all surfaces from this {@link ArrayMesh}. */

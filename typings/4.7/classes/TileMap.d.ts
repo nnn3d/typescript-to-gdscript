@@ -143,21 +143,21 @@ declare class TileMap extends Node2D {
    * Creates a new {@link TileMapPattern} from the given layer and set of cells.
    * If `layer` is negative, the layers are accessed from the last one.
    */
-  get_pattern(layer: int, coords_array: unknown): TileMapPattern;
+  get_pattern(layer: int, coords_array: Array<Vector2i>): TileMapPattern;
   /** Returns the list of all neighbourings cells to the one at `coords`. */
-  get_surrounding_cells(coords: Vector2i): unknown;
+  get_surrounding_cells(coords: Vector2i): Array<Vector2i>;
   /**
    * Returns a {@link Vector2i} array with the positions of all cells containing a tile in the given layer. A cell is considered empty if its source identifier equals -1, its atlas coordinates identifiers is `Vector2(-1, -1)` and its alternative identifier is -1.
    * If `layer` is negative, the layers are accessed from the last one.
    */
-  get_used_cells(layer: int): unknown;
+  get_used_cells(layer: int): Array<Vector2i>;
   /**
    * Returns a {@link Vector2i} array with the positions of all cells containing a tile in the given layer. Tiles may be filtered according to their source (`source_id`), their atlas coordinates (`atlas_coords`) or alternative id (`alternative_tile`).
    * If a parameter has its value set to the default one, this parameter is not used to filter a cell. Thus, if all parameters have their respective default value, this method returns the same result as {@link get_used_cells}.
    * A cell is considered empty if its source identifier equals -1, its atlas coordinates identifiers is `Vector2(-1, -1)` and its alternative identifier is -1.
    * If `layer` is negative, the layers are accessed from the last one.
    */
-  get_used_cells_by_id(layer: int, source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): unknown;
+  get_used_cells_by_id(layer: int, source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): Array<Vector2i>;
   /** Returns a rectangle enclosing the used (non-empty) tiles of the map, including all layers. */
   get_used_rect(): Rect2i;
   /**
@@ -223,14 +223,14 @@ declare class TileMap extends Node2D {
    * If `layer` is negative, the layers are accessed from the last one.
    * **Note:** To work correctly, this method requires the TileMap's TileSet to have terrains set up with all required terrain combinations. Otherwise, it may produce unexpected results.
    */
-  set_cells_terrain_connect(layer: int, cells: unknown, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
+  set_cells_terrain_connect(layer: int, cells: Array<Vector2i>, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
   /**
    * Update all the cells in the `path` coordinates array so that they use the given `terrain` for the given `terrain_set`. The function will also connect two successive cell in the path with the same terrain. This function might update neighboring tiles if needed to create correct terrain transitions.
    * If `ignore_empty_terrains` is `true`, empty terrains will be ignored when trying to find the best fitting tile for the given terrain constraints.
    * If `layer` is negative, the layers are accessed from the last one.
    * **Note:** To work correctly, this method requires the TileMap's TileSet to have terrains set up with all required terrain combinations. Otherwise, it may produce unexpected results.
    */
-  set_cells_terrain_path(layer: int, path: unknown, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
+  set_cells_terrain_path(layer: int, path: Array<Vector2i>, terrain_set: int, terrain: int, ignore_empty_terrains?: boolean): void;
   /**
    * Enables or disables the layer `layer`. A disabled layer is not processed at all (no rendering, no physics, etc.).
    * If `layer` is negative, the layers are accessed from the last one.

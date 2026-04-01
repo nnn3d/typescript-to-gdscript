@@ -45,6 +45,12 @@ export function godotTypeToTs(type: string): string {
     .replace(/^const\s+/, '')
     .trim();
 
+  // Typed array suffix notation: "Node[]" → Array<Node>
+  if (cleaned.endsWith('[]')) {
+    const inner = cleaned.slice(0, -2);
+    return `Array<${godotTypeToTs(inner)}>`;
+  }
+
   switch (cleaned) {
     case 'int':
       return 'int';

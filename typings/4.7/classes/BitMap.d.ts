@@ -30,7 +30,7 @@ declare class BitMap extends Resource {
    * To get polygons covering the whole bitmap, pass:
    * `epsilon` is passed to RDP to control how accurately the polygons cover the bitmap: a lower `epsilon` corresponds to more points in the polygons.
    */
-  opaque_to_polygons(rect: Rect2i, epsilon?: float): unknown;
+  opaque_to_polygons(rect: Rect2i, epsilon?: float): Array<PackedVector2Array>;
   /** Resizes the image to `new_size`. */
   resize(new_size: Vector2i): void;
   /** Sets the bitmap's element at the specified position, to the specified value. */

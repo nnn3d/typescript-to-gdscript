@@ -14,11 +14,11 @@ declare class NavigationMeshSourceGeometryData2D extends Resource {
   /**
    * Appends another array of `obstruction_outlines` at the end of the existing obstruction outlines array.
    */
-  append_obstruction_outlines(obstruction_outlines: unknown): void;
+  append_obstruction_outlines(obstruction_outlines: Array<PackedVector2Array>): void;
   /**
    * Appends another array of `traversable_outlines` at the end of the existing traversable outlines array.
    */
-  append_traversable_outlines(traversable_outlines: unknown): void;
+  append_traversable_outlines(traversable_outlines: Array<PackedVector2Array>): void;
   /** Clears the internal data. */
   clear(): void;
   /** Clears all projected obstructions. */
@@ -28,7 +28,7 @@ declare class NavigationMeshSourceGeometryData2D extends Resource {
    */
   get_bounds(): Rect2;
   /** Returns all the obstructed area outlines arrays. */
-  get_obstruction_outlines(): unknown;
+  get_obstruction_outlines(): Array<PackedVector2Array>;
   /**
    * Returns the projected obstructions as an {@link Array} of dictionaries. Each {@link Dictionary} contains the following entries:
    * - `vertices` - A {@link PackedFloat32Array} that defines the outline points of the projected shape.
@@ -36,7 +36,7 @@ declare class NavigationMeshSourceGeometryData2D extends Resource {
    */
   get_projected_obstructions(): Array<unknown>;
   /** Returns all the traversable area outlines arrays. */
-  get_traversable_outlines(): unknown;
+  get_traversable_outlines(): Array<PackedVector2Array>;
   /** Returns `true` when parsed source geometry data exists. */
   has_data(): boolean;
   /**
@@ -44,9 +44,9 @@ declare class NavigationMeshSourceGeometryData2D extends Resource {
    */
   merge(other_geometry: NavigationMeshSourceGeometryData2D): void;
   /** Sets all the obstructed area outlines arrays. */
-  set_obstruction_outlines(obstruction_outlines: unknown): void;
+  set_obstruction_outlines(obstruction_outlines: Array<PackedVector2Array>): void;
   /** Sets the projected obstructions with an Array of Dictionaries with the following key value pairs: */
   set_projected_obstructions(projected_obstructions: Array<unknown>): void;
   /** Sets all the traversable area outlines arrays. */
-  set_traversable_outlines(traversable_outlines: unknown): void;
+  set_traversable_outlines(traversable_outlines: Array<PackedVector2Array>): void;
 }

@@ -23,7 +23,7 @@ declare class AnimationNodeBlendTree extends AnimationRootNode {
   /** Returns the sub animation node with the specified `name`. */
   get_node(name: string): AnimationNode;
   /** Returns a list containing the names of all sub animation nodes in this blend tree. */
-  get_node_list(): unknown;
+  get_node_list(): Array<string>;
   /** Returns the position of the sub animation node with the specified `name`. */
   get_node_position(name: string): Vector2;
   /** Returns `true` if a sub animation node with specified `name` exists. */

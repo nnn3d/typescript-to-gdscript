@@ -14,7 +14,7 @@ declare class NavigationPathQueryResult2D extends RefCounted {
    */
   path_owner_ids: PackedInt64Array;
   /** The {@link RID}s of the regions and links that each point of the path goes through. */
-  path_rids: unknown;
+  path_rids: Array<RID>;
   /** The type of navigation primitive (region or link) that each point of the path goes through. */
   path_types: PackedInt32Array;
   set_path(value: PackedVector2Array): void;
@@ -23,8 +23,8 @@ declare class NavigationPathQueryResult2D extends RefCounted {
   get_path_length(): float;
   set_path_owner_ids(value: PackedInt64Array): void;
   get_path_owner_ids(): PackedInt64Array;
-  set_path_rids(value: unknown): void;
-  get_path_rids(): unknown;
+  set_path_rids(value: Array<RID>): void;
+  get_path_rids(): Array<RID>;
   set_path_types(value: PackedInt32Array): void;
   get_path_types(): PackedInt32Array;
 
