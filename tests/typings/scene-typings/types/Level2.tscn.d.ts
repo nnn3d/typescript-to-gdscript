@@ -17,7 +17,7 @@ type _Level2Tscn_Tree = {
 declare global {
   interface __Level2Tscn__Parents {}
 
-  interface _GodotSceneTrees {
+  interface GodotSceneTrees {
     "res://Level2.tscn": _Level2Tscn_Tree;
   }
   interface GodotResources {

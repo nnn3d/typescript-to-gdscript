@@ -20,7 +20,7 @@ type _BallATscn_Timer = {
 
 type _BallATscn_Tree = {
   [__node_root]: "BallA";
-  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Ball.gd">;
+  [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://Ball.gd">;
   [__node_parent]: _GDGetInterfaceParent<__BallATscn__Parents>;
   [__node_children]: [_BallATscn_Sprite2D, _BallATscn_Label, _BallATscn_Timer];
   "Sprite2D": _BallATscn_Sprite2D;
@@ -35,7 +35,7 @@ declare global {
     "res://BallA.tscn": _BallATscn_Tree;
   }
 
-  interface _GodotSceneTrees {
+  interface GodotSceneTrees {
     "res://BallA.tscn": _BallATscn_Tree;
   }
   interface GodotResources {

@@ -28,7 +28,7 @@ type _EnemyTscn_HitBox = {
 
 type _EnemyTscn_Tree = {
   [__node_root]: "Enemy";
-  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Enemy.gd">;
+  [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://Enemy.gd">;
   [__node_parent]: _GDGetInterfaceParent<__EnemyTscn__Parents>;
   [__node_children]: [_EnemyTscn_Sprite2D, _EnemyTscn_HitBox];
   "Sprite2D": _EnemyTscn_Sprite2D;
@@ -44,7 +44,7 @@ declare global {
     "res://Enemy.tscn": _EnemyTscn_Tree;
   }
 
-  interface _GodotSceneTrees {
+  interface GodotSceneTrees {
     "res://Enemy.tscn": _EnemyTscn_Tree;
   }
   interface GodotResources {

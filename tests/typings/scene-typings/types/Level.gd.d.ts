@@ -34,7 +34,7 @@ declare global {
     get_child(idx: int, include_internal?: boolean): Node;
   }
 
-  interface _GodotScripts {
+  interface GodotScripts {
     "res://Level.gd": Level;
   }
 

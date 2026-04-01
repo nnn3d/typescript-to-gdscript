@@ -14,7 +14,7 @@ declare global {
   interface __AnonymTscn__Parents { "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree; }
   interface __BallATscn__Parents { "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree; }
 
-  interface _GodotSceneTrees {
+  interface GodotSceneTrees {
     "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree;
   }
   interface GodotResources {

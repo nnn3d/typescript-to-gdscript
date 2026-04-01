@@ -21,7 +21,7 @@ type _nested_AnonymTscn_CollisionShape2D = {
 
 type _nested_AnonymTscn_Tree = {
   [__node_root]: "Player";
-  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://nested/Anonym.gd">;
+  [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://nested/Anonym.gd">;
   [__node_parent]: _GDGetInterfaceParent<__nested_AnonymTscn__Parents>;
   [__node_children]: [_nested_AnonymTscn_Sprite2D, _nested_AnonymTscn_CollisionShape2D];
   "Sprite2D": _nested_AnonymTscn_Sprite2D;
@@ -36,7 +36,7 @@ declare global {
     "res://nested/Anonym.tscn": _nested_AnonymTscn_Tree;
   }
 
-  interface _GodotSceneTrees {
+  interface GodotSceneTrees {
     "res://nested/Anonym.tscn": _nested_AnonymTscn_Tree;
   }
   interface GodotResources {

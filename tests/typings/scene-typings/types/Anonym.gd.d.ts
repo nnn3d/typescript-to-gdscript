@@ -33,7 +33,7 @@ declare class _Script extends ScriptClass {
 declare global {
   interface __AnonymGd__Trees {}
 
-  interface _GodotScripts {
+  interface GodotScripts {
     "res://Anonym.gd": _Script;
   }
 

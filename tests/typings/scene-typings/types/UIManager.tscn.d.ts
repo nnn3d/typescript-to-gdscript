@@ -17,7 +17,7 @@ type _UIManagerTscn_Tree = {
 declare global {
   interface __UIManagerTscn__Parents {}
 
-  interface _GodotSceneTrees {
+  interface GodotSceneTrees {
     "res://UIManager.tscn": _UIManagerTscn_Tree;
   }
   interface GodotResources {

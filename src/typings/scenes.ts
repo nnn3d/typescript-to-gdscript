@@ -902,7 +902,7 @@ function generateSceneTypingContent(
   const root = buildNodeTree(sceneData);
 
   // Collect instanced scenes. Two kinds:
-  // 1. Plain instanced scenes (no extra children) → _GodotSceneTrees lookup
+  // 1. Plain instanced scenes (no extra children) → GodotSceneTrees lookup
   // 2. Extended instanced scenes (has extra children added by parent scene) → local __node_extends type
   const instancedSceneTreeNames = new Map<string, string>();
   // Set of instanced node fullPaths that have extra children (need __node_extends)
@@ -944,7 +944,7 @@ function generateSceneTypingContent(
   function collectEmittable(node: TreeNodeInfo) {
     for (const child of node.children) {
       if (child.isInstanced && !extendedInstancedNodes.has(child.fullPath)) {
-        continue; // Plain instanced: skip, handled as _GodotSceneTrees lookup
+        continue; // Plain instanced: skip, handled as GodotSceneTrees lookup
       }
       collectEmittable(child);
       emittableNodes.push(child);
@@ -966,9 +966,9 @@ function generateSceneTypingContent(
       // Extended instanced scene: local type with __node_extends
       const baseResPath = node.instanceSceneResPath!;
       lines.push(`type ${typeName} = {`);
-      lines.push(`  [__node_extends]: _GodotSceneTrees["${baseResPath}"];`);
+      lines.push(`  [__node_extends]: GodotSceneTrees["${baseResPath}"];`);
       lines.push(`  [__node_root]: "${node.name}";`);
-      lines.push(`  [__node_type]: _GodotSceneTrees["${baseResPath}"][typeof __node_type];`);
+      lines.push(`  [__node_type]: _GDTreeGetType<GodotSceneTrees["${baseResPath}"]>;`);
       lines.push(`  [__node_parent]: ${parentTypeName};`);
       lines.push(`  [__node_children]: [${childTupleEntries.join(', ')}];`);
     } else {
@@ -984,25 +984,27 @@ function generateSceneTypingContent(
     lines.push(`};\n`);
   }
 
-  // Emit plain instanced scene tree type aliases (via _GodotSceneTrees lookup)
+  // Emit plain instanced scene tree type aliases (via GodotSceneTrees lookup)
   for (const [instanceResPath, localTreeName] of instancedSceneTreeNames) {
-    lines.push(`type ${localTreeName} = _GodotSceneTrees["${instanceResPath}"];\n`);
+    lines.push(`type ${localTreeName} = GodotSceneTrees["${instanceResPath}"];\n`);
   }
 
   // Emit root _Tree type
   const rootScriptResPath = sceneData.rootScript?.scriptResPath;
+  const inheritedSceneResPath = sceneData.inheritedSceneResPath;
   const rootNodeType = rootScriptResPath
-    ? `_GDGetInterfaceNode<_GodotScripts, "${rootScriptResPath}">`
-    : (sceneData.nodeTypes.get('.') ?? 'Node');
+    ? `_GDGetInterfaceNode<GodotScripts, "${rootScriptResPath}">`
+    : inheritedSceneResPath
+      ? `_GDTreeGetType<GodotSceneTrees["${inheritedSceneResPath}"]>`
+      : (sceneData.nodeTypes.get('.') ?? 'Node');
 
   const rootChildTupleEntries = root.children.map(c => childTypeName(c));
 
   const rootDescendantPaths = collectDescendantPaths(root, alias, instancedSceneTreeNames, extendedInstancedNodes);
-  const inheritedSceneResPath = sceneData.inheritedSceneResPath;
 
   lines.push(`type ${treeName} = {`);
   if (inheritedSceneResPath) {
-    lines.push(`  [__node_extends]: _GodotSceneTrees["${inheritedSceneResPath}"];`);
+    lines.push(`  [__node_extends]: GodotSceneTrees["${inheritedSceneResPath}"];`);
   }
   lines.push(`  [__node_root]: "${sceneData.rootNodeName}";`);
   lines.push(`  [__node_type]: ${rootNodeType};`);
@@ -1064,8 +1066,8 @@ function generateSceneTypingContent(
     lines.push('');
   }
 
-  // _GodotSceneTrees entry
-  lines.push(`  interface _GodotSceneTrees {`);
+  // GodotSceneTrees entry
+  lines.push(`  interface GodotSceneTrees {`);
   lines.push(`    "${sceneResPath}": ${treeName};`);
   lines.push(`  }`);
 
@@ -1083,7 +1085,7 @@ function generateSceneTypingContent(
       for (const node of groupNodes) {
         if (node.instanceSceneResPath) {
           // Instanced scene → its scene tree
-          treeExprs.push(`_GodotSceneTrees["${node.instanceSceneResPath}"]`);
+          treeExprs.push(`GodotSceneTrees["${node.instanceSceneResPath}"]`);
         } else if (node.nodePath === '.') {
           // Root node → this scene's tree
           treeExprs.push(treeName);
@@ -1159,7 +1161,7 @@ function generateScriptTypingContent(
 
     lines.push(`declare global {`);
     lines.push(`  interface ${treesInterface} {}\n`);
-    lines.push(`  interface _GodotScripts {`);
+    lines.push(`  interface GodotScripts {`);
     lines.push(`    "${scriptResPath}": _Script;`);
     lines.push(`  }\n`);
     lines.push(`  interface GodotResources {`);
@@ -1177,7 +1179,7 @@ function generateScriptTypingContent(
     lines.push(`    has_node(path: string): boolean;`);
     lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
     lines.push(`  }\n`);
-    lines.push(`  interface _GodotScripts {`);
+    lines.push(`  interface GodotScripts {`);
     lines.push(`    "${scriptResPath}": ${className};`);
     lines.push(`  }\n`);
     lines.push(`  interface GodotResources {`);
@@ -1220,7 +1222,7 @@ function generateIndexTypingContent(
   const lines: string[] = [];
   lines.push('// AUTO-GENERATED — do not edit manually.\n');
 
-  // Import autoload scripts (.gd autoloads need imports; .tscn autoloads use _GodotSceneTrees)
+  // Import autoload scripts (.gd autoloads need imports; .tscn autoloads use GodotSceneTrees)
   const gdAutoloads = autoloads.filter(a => a.resPath.endsWith('.gd'));
   const sceneAutoloads = autoloads.filter(a => a.resPath.endsWith('.tscn'));
 
@@ -1237,8 +1239,8 @@ function generateIndexTypingContent(
   if (autoloads.length > 0) lines.push('');
 
   lines.push(`declare global {`);
-  lines.push(`  interface _GodotScripts {}`);
-  lines.push(`  interface _GodotSceneTrees {}`);
+  lines.push(`  interface GodotScripts {}`);
+  lines.push(`  interface GodotSceneTrees {}`);
   lines.push(`  interface GodotResources {}`);
   lines.push(`  interface GodotGroups {}`);
 
@@ -1249,7 +1251,7 @@ function generateIndexTypingContent(
       lines.push(`  const ${autoload.name}: _${autoload.name};`);
     }
     for (const autoload of sceneAutoloads) {
-      lines.push(`  const ${autoload.name}: _GDTreeNode<_GodotSceneTrees["${autoload.resPath}"]>;`);
+      lines.push(`  const ${autoload.name}: _GDTreeNode<GodotSceneTrees["${autoload.resPath}"]>;`);
     }
   }
 

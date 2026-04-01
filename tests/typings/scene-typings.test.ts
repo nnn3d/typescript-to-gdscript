@@ -80,7 +80,7 @@ describe('Scene typings generation', () => {
     // Root tree type
     expect(playerScene).toContain('type _PlayerTscn_Tree = {');
     expect(playerScene).toContain('[__node_root]: "Player";');
-    expect(playerScene).toContain('[__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Player.gd">;');
+    expect(playerScene).toContain('[__node_type]: _GDGetInterfaceNode<GodotScripts, "res://Player.gd">;');
     expect(playerScene).toContain('[__node_parent]: _GDGetInterfaceParent<__PlayerTscn__Parents>;');
 
     // Flat paths on root
@@ -99,7 +99,7 @@ describe('Scene typings generation', () => {
     expect(playerScene).toContain('interface __PlayerTscn__Parents {}');
     expect(playerScene).toContain('interface __PlayerGd__Trees {');
     expect(playerScene).toContain('"res://Player.tscn": _PlayerTscn_Tree;');
-    expect(playerScene).toContain('interface _GodotSceneTrees {');
+    expect(playerScene).toContain('interface GodotSceneTrees {');
     expect(playerScene).toContain('PackedScene<_GDTreeNode<_PlayerTscn_Tree>>');
   });
 
@@ -125,7 +125,7 @@ describe('Scene typings generation', () => {
     expect(playerScript).toContain('class Player extends ScriptClass {');
     expect(playerScript).toContain('interface __PlayerGd__Trees {}');
 
-    // _GodotScripts and GodotResources
+    // GodotScripts and GodotResources
     expect(playerScript).toContain('"res://Player.gd": Player;');
     expect(playerScript).toContain('"res://Player.gd": typeof Player;');
   });
@@ -143,7 +143,7 @@ describe('Scene typings generation', () => {
     // _Script class at module level (not in declare global)
     expect(anonymScript).toContain('declare class _Script extends ScriptClass {');
 
-    // _GodotScripts maps to _Script
+    // GodotScripts maps to _Script
     expect(anonymScript).toContain('"res://Anonym.gd": _Script;');
     expect(anonymScript).toContain('"res://Anonym.gd": typeof _Script;');
 
@@ -151,15 +151,15 @@ describe('Scene typings generation', () => {
     expect(anonymScript).not.toMatch(/class Anonym extends/);
   });
 
-  it('should resolve instanced scenes via _GodotSceneTrees lookup', () => {
+  it('should resolve instanced scenes via GodotSceneTrees lookup', () => {
     generate();
     const levelScene = readOutput('Level.tscn.d.ts');
 
-    // Instanced scene tree type aliases via _GodotSceneTrees lookup
-    expect(levelScene).toContain('type _PlayerTscn_Tree = _GodotSceneTrees["res://Player.tscn"];');
-    expect(levelScene).toContain('type _EnemyTscn_Tree = _GodotSceneTrees["res://Enemy.tscn"];');
-    expect(levelScene).toContain('type _TilesetObjectsTscn_Tree = _GodotSceneTrees["res://TilesetObjects.tscn"];');
-    expect(levelScene).toContain('type _Level2Tscn_Tree = _GodotSceneTrees["res://Level2.tscn"];');
+    // Instanced scene tree type aliases via GodotSceneTrees lookup
+    expect(levelScene).toContain('type _PlayerTscn_Tree = GodotSceneTrees["res://Player.tscn"];');
+    expect(levelScene).toContain('type _EnemyTscn_Tree = GodotSceneTrees["res://Enemy.tscn"];');
+    expect(levelScene).toContain('type _TilesetObjectsTscn_Tree = GodotSceneTrees["res://TilesetObjects.tscn"];');
+    expect(levelScene).toContain('type _Level2Tscn_Tree = GodotSceneTrees["res://Level2.tscn"];');
 
     // Instanced scenes in root tree
     expect(levelScene).toContain('"Player": _PlayerTscn_Tree;');
@@ -208,7 +208,7 @@ describe('Scene typings generation', () => {
     expect(all).toContain('"res://Anonym.gd": typeof _Script;');
     expect(all).toContain('"res://GameManager.gd": typeof _Script;');
 
-    // _GodotScripts entries
+    // GodotScripts entries
     expect(all).toContain('"res://Player.gd": Player;');
     expect(all).toContain('"res://Ball.gd": Ball;');
 
@@ -221,8 +221,8 @@ describe('Scene typings generation', () => {
     expect(index).toContain('const GameManager: _GameManager;');
 
     // Empty global interfaces in _index.d.ts
-    expect(index).toContain('interface _GodotScripts {}');
-    expect(index).toContain('interface _GodotSceneTrees {}');
+    expect(index).toContain('interface GodotScripts {}');
+    expect(index).toContain('interface GodotSceneTrees {}');
     expect(index).toContain('interface GodotResources {}');
   });
 

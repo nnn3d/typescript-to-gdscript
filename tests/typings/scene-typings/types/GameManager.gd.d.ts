@@ -33,7 +33,7 @@ declare class _Script extends ScriptClass {
 declare global {
   interface __GameManagerGd__Trees {}
 
-  interface _GodotScripts {
+  interface GodotScripts {
     "res://GameManager.gd": _Script;
   }
 

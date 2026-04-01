@@ -27,17 +27,17 @@ type _LevelTscn_UI = {
   "ScoreLabel/ScoreSprite": _LevelTscn_UI_ScoreLabel_ScoreSprite;
 };
 
-type _PlayerTscn_Tree = _GodotSceneTrees["res://Player.tscn"];
+type _PlayerTscn_Tree = GodotSceneTrees["res://Player.tscn"];
 
-type _EnemyTscn_Tree = _GodotSceneTrees["res://Enemy.tscn"];
+type _EnemyTscn_Tree = GodotSceneTrees["res://Enemy.tscn"];
 
-type _TilesetObjectsTscn_Tree = _GodotSceneTrees["res://TilesetObjects.tscn"];
+type _TilesetObjectsTscn_Tree = GodotSceneTrees["res://TilesetObjects.tscn"];
 
-type _Level2Tscn_Tree = _GodotSceneTrees["res://Level2.tscn"];
+type _Level2Tscn_Tree = GodotSceneTrees["res://Level2.tscn"];
 
 type _LevelTscn_Tree = {
   [__node_root]: "Level";
-  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Level.gd">;
+  [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://Level.gd">;
   [__node_parent]: _GDGetInterfaceParent<__LevelTscn__Parents>;
   [__node_children]: [_PlayerTscn_Tree, _EnemyTscn_Tree, _TilesetObjectsTscn_Tree, _LevelTscn_Background, _LevelTscn_UI, _TilesetObjectsTscn_Tree, _Level2Tscn_Tree];
   "Player": _PlayerTscn_Tree;
@@ -65,7 +65,7 @@ declare global {
   interface __TilesetObjectsTscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }
   interface __Level2Tscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }
 
-  interface _GodotSceneTrees {
+  interface GodotSceneTrees {
     "res://Level.tscn": _LevelTscn_Tree;
   }
   interface GodotResources {
@@ -74,8 +74,8 @@ declare global {
 
   interface GodotGroups {
     "res://Level.tscn": {
-      "entities": _GodotSceneTrees["res://Player.tscn"] | _GodotSceneTrees["res://Enemy.tscn"];
-      "damageable": _GodotSceneTrees["res://Player.tscn"] | _GodotSceneTrees["res://Enemy.tscn"] | _LevelTscn_Background;
+      "entities": GodotSceneTrees["res://Player.tscn"] | GodotSceneTrees["res://Enemy.tscn"];
+      "damageable": GodotSceneTrees["res://Player.tscn"] | GodotSceneTrees["res://Enemy.tscn"] | _LevelTscn_Background;
     }
   }
 }
