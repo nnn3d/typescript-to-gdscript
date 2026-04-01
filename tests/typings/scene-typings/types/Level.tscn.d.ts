@@ -71,6 +71,13 @@ declare global {
   interface GodotResources {
     "res://Level.tscn": PackedScene<_GDTreeNode<_LevelTscn_Tree>>;
   }
+
+  interface GodotGroups {
+    "res://Level.tscn": {
+      "entities": _GDTreeGetType<_GodotSceneTrees["res://Player.tscn"]> | _GDTreeGetType<_GodotSceneTrees["res://Enemy.tscn"]>;
+      "damageable": _GDTreeGetType<_GodotSceneTrees["res://Player.tscn"]> | _GDTreeGetType<_GodotSceneTrees["res://Enemy.tscn"]> | Sprite2D;
+    }
+  }
 }
 
 export {}

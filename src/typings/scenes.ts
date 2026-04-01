@@ -19,6 +19,8 @@ interface SceneNode {
   instanceExtId?: string;
   /** Whether this node has `unique_name_in_owner = true` */
   uniqueInOwner?: boolean;
+  /** Group names from `groups = ["name1", "name2"]` property */
+  groups?: string[];
   /** AST section node (for post-processing sub_resource chains) */
   section?: SyntaxNode;
 }
@@ -78,6 +80,41 @@ function getSectionProp(section: SyntaxNode, name: string): string | undefined {
     }
   }
   return undefined;
+}
+
+/**
+ * Extract a string array from a section attribute or property.
+ * Checks attributes first (e.g. `[node groups=["a", "b"]]`),
+ * then properties (e.g. `groups = ["a", "b"]`).
+ */
+function getSectionStringArray(section: SyntaxNode, name: string): string[] {
+  for (const child of section.namedChildren) {
+    // Check attributes (on section header line)
+    if (child.type === SyntaxType.Attribute) {
+      const parts = child.namedChildren;
+      if (parts.length >= 2 && parts[0]!.type === SyntaxType.Identifier && parts[0]!.text === name) {
+        const val = parts[1]!;
+        if (val.type === SyntaxType.Array) {
+          return val.namedChildren
+            .filter(c => c.type === SyntaxType.String)
+            .map(c => c.text.slice(1, -1));
+        }
+      }
+    }
+    // Check properties (in section body)
+    if (child.type === SyntaxType.Property) {
+      const parts = child.namedChildren;
+      if (parts.length >= 2 && parts[0]!.type === SyntaxType.Path && parts[0]!.text === name) {
+        const val = parts[1]!;
+        if (val.type === SyntaxType.Array) {
+          return val.namedChildren
+            .filter(c => c.type === SyntaxType.String)
+            .map(c => c.text.slice(1, -1));
+        }
+      }
+    }
+  }
+  return [];
 }
 
 /**
@@ -243,6 +280,8 @@ function parseScene(
   instancedNodes: Map<string, string>;
   /** Scenes embedded via sub_resource chains (TileMap tiles, etc.) — parentNodePath → { parentType, sceneResPaths } */
   embeddedScenes: Map<string, { parentType: string; sceneResPaths: string[] }>;
+  /** Map of group name → array of { nodePath, nodeType, scriptResPath?, instanceSceneResPath? } */
+  nodeGroups: Map<string, Array<{ nodePath: string; nodeType: string; scriptResPath?: string; instanceSceneResPath?: string }>>;
 } | null {
   const content = readFileSync(filePath, 'utf-8');
   const root = resourceParser.parse(content);
@@ -293,8 +332,11 @@ function parseScene(
       const uniqueVal = getSectionProp(section, 'unique_name_in_owner');
       const uniqueInOwner = uniqueVal === 'true' || undefined;
 
+      // Check for groups = ["group1", "group2"]
+      const groups = getSectionStringArray(section, 'groups');
+
       if (name) {
-        nodes.push({ name, type: type ?? '', parent: parent ?? '', scriptExtId, instanceExtId, uniqueInOwner, section });
+        nodes.push({ name, type: type ?? '', parent: parent ?? '', scriptExtId, instanceExtId, uniqueInOwner, groups: groups.length > 0 ? groups : undefined, section });
       }
     } else if (sectionType === 'sub_resource') {
       const id = getSectionAttr(section, 'id');
@@ -442,7 +484,42 @@ function parseScene(
     instancedNodes.set(fullPath, extRes.path);
   }
 
-  return { filePath, scripts, rootScript, inheritedSceneResPath, connections, nodeTypes, instancedNodes, embeddedScenes };
+  // Build node groups map (group name → nodes in that group)
+  const nodeGroups = new Map<string, Array<{ nodePath: string; nodeType: string; scriptResPath?: string; instanceSceneResPath?: string }>>();
+  for (const node of nodes) {
+    if (!node.groups || node.groups.length === 0) continue;
+    const fullPath =
+      node.parent === '' ? '.' : node.parent === '.' ? node.name : `${node.parent}/${node.name}`;
+
+    // Resolve script res path if this node has a script
+    let scriptResPath: string | undefined;
+    if (node.scriptExtId) {
+      const extRes = extResources.get(node.scriptExtId);
+      if (extRes && extRes.type === 'Script' && extRes.path.endsWith('.gd')) {
+        scriptResPath = extRes.path;
+      }
+    }
+
+    // Resolve instanced scene res path
+    let instanceSceneResPath: string | undefined;
+    if (node.instanceExtId) {
+      const extRes = extResources.get(node.instanceExtId);
+      if (extRes && extRes.type === 'PackedScene') {
+        instanceSceneResPath = extRes.path;
+      }
+    }
+
+    for (const group of node.groups) {
+      let entries = nodeGroups.get(group);
+      if (!entries) {
+        entries = [];
+        nodeGroups.set(group, entries);
+      }
+      entries.push({ nodePath: fullPath, nodeType: node.type, scriptResPath, instanceSceneResPath });
+    }
+  }
+
+  return { filePath, scripts, rootScript, inheritedSceneResPath, connections, nodeTypes, instancedNodes, embeddedScenes, nodeGroups };
 }
 
 /**
@@ -993,6 +1070,33 @@ function generateSceneTypingContent(
   lines.push(`    "${sceneResPath}": PackedScene<_GDTreeNode<${treeName}>>;`);
   lines.push(`  }`);
 
+  // GodotGroups entry (if any nodes have groups)
+  if (sceneData.nodeGroups.size > 0) {
+    lines.push(`\n  interface GodotGroups {`);
+    lines.push(`    "${sceneResPath}": {`);
+    for (const [groupName, groupNodes] of sceneData.nodeGroups) {
+      const typeExprs: string[] = [];
+      for (const node of groupNodes) {
+        if (node.scriptResPath) {
+          // Scripted node → resolve via _GodotScripts
+          typeExprs.push(`_GDGetInterfaceNode<_GodotScripts, "${node.scriptResPath}">`);
+        } else if (node.instanceSceneResPath) {
+          // Instanced scene → resolve root type via scene tree
+          typeExprs.push(`_GDTreeGetType<_GodotSceneTrees["${node.instanceSceneResPath}"]>`);
+        } else if (node.nodeType) {
+          // Plain Godot class
+          typeExprs.push(node.nodeType);
+        }
+      }
+      if (typeExprs.length > 0) {
+        const uniqueExprs = [...new Set(typeExprs)];
+        lines.push(`      "${groupName}": ${uniqueExprs.join(' | ')};`);
+      }
+    }
+    lines.push(`    }`);
+    lines.push(`  }`);
+  }
+
   lines.push(`}\n`);
   lines.push(`export {}`);
 
@@ -1129,6 +1233,7 @@ function generateIndexTypingContent(
   lines.push(`  interface _GodotScripts {}`);
   lines.push(`  interface _GodotSceneTrees {}`);
   lines.push(`  interface GodotResources {}`);
+  lines.push(`  interface GodotGroups {}`);
 
   // Autoload singletons
   if (autoloads.length > 0) {

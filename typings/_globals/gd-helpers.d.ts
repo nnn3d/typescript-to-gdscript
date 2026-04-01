@@ -22,6 +22,21 @@ type GodotScenePaths = {
   [K in keyof GodotResources]: GodotResources[K] extends PackedScene<any> ? K : never;
 }[keyof GodotResources];
 
+/**
+ * Maps scene paths to their group→node-type mappings.
+ * Populated by the scene typings generator.
+ * Each scene contributes its nodes' group memberships.
+ * @example
+ * // "res://Level.tscn": { "enemies": Player | Enemy; "damageable": Player }
+ */
+interface GodotGroups {}
+
+/** Union of all group names across all scenes. */
+type GodotGroupNames = { [K in keyof GodotGroups]: keyof GodotGroups[K] & string }[keyof GodotGroups];
+
+/** Resolve the union of node types belonging to a group across all scenes. */
+type GodotGroupNodes<G extends string> = { [K in keyof GodotGroups]: G extends keyof GodotGroups[K] ? GodotGroups[K][G] : never }[keyof GodotGroups];
+
 /** Type that gets removed during transformation — for TS-only type info */
 type TSOnly<T> = T;
 

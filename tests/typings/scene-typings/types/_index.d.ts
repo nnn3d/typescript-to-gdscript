@@ -6,6 +6,7 @@ declare global {
   interface _GodotScripts {}
   interface _GodotSceneTrees {}
   interface GodotResources {}
+  interface GodotGroups {}
   // Autoload singletons from project.godot
   const GameManager: _GameManager;
   const UIManager: _GDTreeNode<_GodotSceneTrees["res://UIManager.tscn"]>;

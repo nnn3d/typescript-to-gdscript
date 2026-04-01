@@ -206,6 +206,7 @@ declare class Node extends GodotObject {
    * **Note:** To improve performance, the order of group names is *not* guaranteed and may vary between project runs. Therefore, do not rely on the group order.
    * **Note:** {@link SceneTree}'s group methods will *not* work on this node if not inside the tree (see {@link is_inside_tree}).
    */
+  add_to_group(group: GodotGroupNames, persistent?: boolean): void;
   add_to_group(group: string, persistent?: boolean): void;
   /**
    * Translates a `message`, using the translation catalogs configured in the Project Settings. Further `context` can be specified to help with the translation. Note that most {@link Control} nodes automatically translate their strings, so this method is mostly useful for formatted strings or custom drawn text.
@@ -448,6 +449,7 @@ declare class Node extends GodotObject {
   /**
    * Returns `true` if this node has been added to the given `group`. See {@link add_to_group} and {@link remove_from_group}. See also notes in the description, and the {@link SceneTree}'s group methods.
    */
+  is_in_group(group: GodotGroupNames): boolean;
   is_in_group(group: string): boolean;
   /** Returns `true` if this node is currently inside a {@link SceneTree}. See also {@link get_tree}. */
   is_inside_tree(): boolean;
@@ -554,6 +556,7 @@ declare class Node extends GodotObject {
   /**
    * Removes the node from the given `group`. Does nothing if the node is not in the `group`. See also notes in the description, and the {@link SceneTree}'s group methods.
    */
+  remove_from_group(group: GodotGroupNames): void;
   remove_from_group(group: string): void;
   /**
    * Changes the parent of this {@link Node} to the `new_parent`. The node needs to already have a parent. The node's {@link owner} is preserved if its owner is still reachable from the new location (i.e., the node is still a descendant of the new parent after the operation).

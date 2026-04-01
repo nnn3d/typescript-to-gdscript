@@ -87,17 +87,14 @@ declare class SceneTree extends MainLoop {
    * **Note:** This method acts immediately on all selected nodes at once, which may cause stuttering in some performance-intensive situations.
    * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
    */
+  call_group(group: GodotGroupNames, method: string, ...args: any[]): void;
   call_group(group: string, method: string, ...args: any[]): void;
   /**
    * Calls the given `method` on each node inside this tree added to the given `group`. Use `flags` to customize this method's behavior (see {@link GroupCallFlags}). Additional arguments for `method` can be passed at the end of this method. Nodes that cannot call `method` (either because the method doesn't exist or the arguments do not match) are ignored.
    * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
    */
-  call_group_flags(
-  flags: int,
-  group: string,
-  method: string,
-  ...args: any[]
-  ): void;
+  call_group_flags(flags: int, group: GodotGroupNames, method: string, ...args: any[]): void;
+  call_group_flags(flags: int, group: string, method: string, ...args: any[]): void;
   /**
    * Changes the running scene to the one at the given `path`, after loading it into a {@link PackedScene} and creating a new instance.
    * Returns {@link OK} on success, {@link ERR_CANT_OPEN} if the `path` cannot be loaded into a {@link PackedScene}, or {@link ERR_CANT_CREATE} if that scene cannot be instantiated.
@@ -139,6 +136,7 @@ declare class SceneTree extends MainLoop {
   /**
    * Returns the first {@link Node} found inside the tree, that has been added to the given `group`, in scene hierarchy order. Returns `null` if no match is found. See also {@link get_nodes_in_group}.
    */
+  get_first_node_in_group<G extends GodotGroupNames>(group: G): GodotGroupNodes<G>;
   get_first_node_in_group(group: string): Node;
   /**
    * Returns how many physics process steps have been processed, since the application started. This is *not* a measurement of elapsed time. See also {@link physics_frame}. For the number of frames rendered, see {@link Engine.get_process_frames}.
@@ -151,14 +149,17 @@ declare class SceneTree extends MainLoop {
   /** Returns the number of nodes inside this tree. */
   get_node_count(): int;
   /** Returns the number of nodes assigned to the given group. */
+  get_node_count_in_group(group: GodotGroupNames): int;
   get_node_count_in_group(group: string): int;
   /**
    * Returns an {@link Array} containing all nodes inside this tree, that have been added to the given `group`, in scene hierarchy order.
    */
+  get_nodes_in_group<G extends GodotGroupNames>(group: G): Array<GodotGroupNodes<G>>;
   get_nodes_in_group(group: string): Array<Node>;
   /** Returns an {@link Array} of currently existing {@link Tween}s in the tree, including paused tweens. */
   get_processed_tweens(): Array<Tween>;
   /** Returns `true` if a node added to the given group `name` exists in the tree. */
+  has_group(name: GodotGroupNames): boolean;
   has_group(name: string): boolean;
   /**
    * Returns `true` if accessibility features are enabled, and accessibility information updates are actively processed.
@@ -170,10 +171,12 @@ declare class SceneTree extends MainLoop {
    * Calls {@link Object.notification} with the given `notification` to all nodes inside this tree added to the `group`. See also Godot notifications ($DOCS_URL/tutorials/best_practices/godot_notifications.html) and {@link call_group} and {@link set_group}.
    * **Note:** This method acts immediately on all selected nodes at once, which may cause stuttering in some performance-intensive situations.
    */
+  notify_group(group: GodotGroupNames, notification: int): void;
   notify_group(group: string, notification: int): void;
   /**
    * Calls {@link Object.notification} with the given `notification` to all nodes inside this tree added to the `group`. Use `call_flags` to customize this method's behavior (see {@link GroupCallFlags}).
    */
+  notify_group_flags(call_flags: int, group: GodotGroupNames, notification: int): void;
   notify_group_flags(call_flags: int, group: string, notification: int): void;
   /**
    * Queues the given `obj` to be deleted, calling its {@link Object.free} at the end of the current frame. This method is similar to {@link Node.queue_free}.
@@ -195,11 +198,13 @@ declare class SceneTree extends MainLoop {
    * **Note:** This method acts immediately on all selected nodes at once, which may cause stuttering in some performance-intensive situations.
    * **Note:** In C#, `property` must be in snake_case when referring to built-in Godot properties. Prefer using the names exposed in the `PropertyName` class to avoid allocating a new {@link StringName} on each call.
    */
+  set_group(group: GodotGroupNames, property: string, value: unknown): void;
   set_group(group: string, property: string, value: unknown): void;
   /**
    * Sets the given `property` to `value` on all nodes inside this tree added to the given `group`. Nodes that do not have the `property` are ignored. Use `call_flags` to customize this method's behavior (see {@link GroupCallFlags}).
    * **Note:** In C#, `property` must be in snake_case when referring to built-in Godot properties. Prefer using the names exposed in the `PropertyName` class to avoid allocating a new {@link StringName} on each call.
    */
+  set_group_flags(call_flags: int, group: GodotGroupNames, property: string, value: unknown): void;
   set_group_flags(call_flags: int, group: string, property: string, value: unknown): void;
   /**
    * Sets a custom {@link MultiplayerAPI} with the given `root_path` (controlling also the relative subpaths), or override the default one if `root_path` is empty.

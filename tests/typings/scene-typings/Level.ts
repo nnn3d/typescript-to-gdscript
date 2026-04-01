@@ -66,5 +66,17 @@ export class Level extends Node2D {
     // get_child: typed by index on intermediate node
     let uiNode = this.get_node('UI');
     let uiChild0: Label = uiNode.get_child(0);
+
+    // Group-typed methods: autocomplete for group names, typed return values
+    let entities: Array<Player | Enemy> = this.get_tree().get_nodes_in_group('entities');
+    let damageable: Array<Player | Enemy | Sprite2D> = this.get_tree().get_nodes_in_group('damageable');
+    let firstEntity: Player | Enemy = this.get_tree().get_first_node_in_group('entities');
+
+    // Unknown group falls back to Array<Node>
+    let unknown: Array<Node> = this.get_tree().get_nodes_in_group('nonexistent');
+
+    // Node group methods also get autocomplete
+    this.add_to_group('entities');
+    let inGroup: boolean = this.is_in_group('entities');
   }
 }
