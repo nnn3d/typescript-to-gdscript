@@ -8,6 +8,7 @@ declare global {
   interface GodotResources {}
   // Autoload singletons from project.godot
   const GameManager: _GameManager;
+  const UIManager: _GDTreeNode<_GodotSceneTrees["res://UIManager.tscn"]>;
 }
 
 export {};

@@ -1109,9 +1109,11 @@ function generateIndexTypingContent(
   const lines: string[] = [];
   lines.push('// AUTO-GENERATED — do not edit manually.\n');
 
-  // Import autoload scripts
-  for (const autoload of autoloads) {
-    if (!autoload.resPath.endsWith('.gd')) continue;
+  // Import autoload scripts (.gd autoloads need imports; .tscn autoloads use _GodotSceneTrees)
+  const gdAutoloads = autoloads.filter(a => a.resPath.endsWith('.gd'));
+  const sceneAutoloads = autoloads.filter(a => a.resPath.endsWith('.tscn'));
+
+  for (const autoload of gdAutoloads) {
     // Resolve the .ts source file path from the .gd res path
     const tsRelPath = autoload.resPath
       .replace(/^res:\/\//, '')
@@ -1129,11 +1131,13 @@ function generateIndexTypingContent(
   lines.push(`  interface GodotResources {}`);
 
   // Autoload singletons
-  const gdAutoloads = autoloads.filter(a => a.resPath.endsWith('.gd'));
-  if (gdAutoloads.length > 0) {
+  if (autoloads.length > 0) {
     lines.push(`  // Autoload singletons from project.godot`);
     for (const autoload of gdAutoloads) {
       lines.push(`  const ${autoload.name}: _${autoload.name};`);
+    }
+    for (const autoload of sceneAutoloads) {
+      lines.push(`  const ${autoload.name}: _GDTreeNode<_GodotSceneTrees["${autoload.resPath}"]>;`);
     }
   }
 

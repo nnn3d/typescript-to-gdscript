@@ -66,5 +66,9 @@ export class Player extends BaseCharacter {
     let childUnknown: Node = this.get_child(99);
 
     const thisEnum: number = this.TEST_ENUM.TEST;
+
+    // Autoload scene singleton — UIManager is a scene autoload, typed as tree node
+    let uiManager: Control = UIManager;
+    let healthBar: ProgressBar = UIManager.get_node('HealthBar');
   }
 }

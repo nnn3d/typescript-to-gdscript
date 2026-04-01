@@ -10,3 +10,4 @@ run/main_scene="res://Player.tscn"
 [autoload]
 
 GameManager="*res://GameManager.gd"
+UIManager="*res://UIManager.tscn"
