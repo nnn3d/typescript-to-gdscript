@@ -1,28 +1,34 @@
 // AUTO-GENERATED — do not edit manually.
 
 import type { __CLASS__ as _nested_Anonym } from "../../nested/Anonym.js";
-import type { _nested_AnonymTscn_Tree } from "./Anonym.tscn.js";
 
-export interface _nested_AnonymSceneNodes extends _nested_AnonymTscn_Tree {
-  [__children]: [_nested_AnonymTscn_Tree["Sprite2D"], _nested_AnonymTscn_Tree["CollisionShape2D"]];
-}
+type ScriptTree = _GDGetInterfaceTree<__nested_AnonymGd__Trees>;
 
 declare module "../../nested/Anonym.ts" {
   interface __CLASS__ {
-    get_node<P extends string & _GDGetTreePaths<_nested_AnonymSceneNodes>>(path: P): _GDGetNode<_nested_AnonymSceneNodes, P>;
-    get_node(path: string): Node;
-    get_node_or_null<P extends string & _GDGetTreePaths<_nested_AnonymSceneNodes>>(path: P): _GDGetNodeOrNull<_nested_AnonymSceneNodes, P>;
+    get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;
+    get_node(path: string): Node | null;
+    get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;
     get_node_or_null(path: string): Node | null;
-    has_node<P extends string & _GDGetTreePaths<_nested_AnonymSceneNodes>>(path: P): true;
+    has_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): boolean;
     has_node(path: string): boolean;
-    get_child<Idx extends number & _GDChildIndices<_GDGetChildren<_nested_AnonymSceneNodes>>>(idx: Idx): _GDGetChild<_nested_AnonymSceneNodes, Idx>;
+    get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;
     get_child(idx: int, include_internal?: boolean): Node;
-    get_parent(): _GDParentType<_nested_AnonymParents>;
+    get_parent(): _GDParentType<ScriptTree>;
   }
 }
 
 declare global {
-  interface _nested_AnonymParents {}
+  interface __nested_AnonymGd__Trees {}
+
+  /** @see import("../../nested/Anonym.ts") */
+  class nested_Anonym extends _nested_Anonym {
+    get_node(path: string): Node | null;
+    get_node_or_null(path: string): Node | null;
+    has_node(path: string): boolean;
+    get_child(idx: int, include_internal?: boolean): Node;
+  }
+
   interface GodotResources {
     "res://nested/Anonym.gd": typeof _nested_Anonym;
   }

@@ -1,16 +1,35 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Ball as _Ball } from "../Ball.js";
+type _BallBTscn_Sprite2D = {
+  [__node_type]: Sprite2D;
+  [__node_parent]: _BallBTscn_Tree;
+  [__node_children]: [];
+};
 
-export interface _BallBTscn_Tree {
-  "Sprite2D": Sprite2D<{[__parent]: _Ball}>;
-  "Label": Label<{[__parent]: _Ball}>;
+type _BallBTscn_Label = {
+  [__node_type]: Label;
+  [__node_parent]: _BallBTscn_Tree;
+  [__node_children]: [];
+};
+
+type _BallBTscn_Tree = {
+  [__node_root]: true;
+  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Ball.gd">;
+  [__node_parent]: _GDGetInterfaceParent<__BallBTscn__Parents>;
+  [__node_children]: [_BallBTscn_Sprite2D, _BallBTscn_Label];
+  "Sprite2D": _BallBTscn_Sprite2D;
+  "Label": _BallBTscn_Label;
+};
+
+interface __BallBTscn__Parents {}
+
+interface __BallGd__Trees {
+  "res://BallB.tscn": _BallBTscn_Tree;
 }
 
-declare global {
-  interface GodotResources {
-    "res://BallB.tscn": PackedScene<_Ball>;
-  }
+interface _GodotSceneTrees {
+  "res://BallB.tscn": _BallBTscn_Tree;
 }
-
-export {};
+interface GodotResources {
+  "res://BallB.tscn": PackedScene<TreeNode<_BallBTscn_Tree>>;
+}

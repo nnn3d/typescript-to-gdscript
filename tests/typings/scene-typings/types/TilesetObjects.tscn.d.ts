@@ -1,18 +1,21 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Level as _Level } from "../Level.js";
+type _TilesetObjectsTscn_Tree = {
+  [__node_root]: true;
+  [__node_type]: TileMap;
+  [__node_parent]: _GDGetInterfaceParent<__TilesetObjectsTscn__Parents>;
+  [__node_children]: [];
+};
 
-// Scriptless scene: _TilesetObjectsTscn
-export type _TilesetObjectsTscn = TileMap<{
-  [__parent]: _Level;
-}>
+interface __TilesetObjectsTscn__Parents {}
 
-declare global {
-  interface GodotResources {
-    "res://TilesetObjects.tscn": PackedScene<_TilesetObjectsTscn>;
-  }
-  interface _AnonymParents { "res://TilesetObjects.tscn": _TilesetObjectsTscn; }
-  interface _BallParents { "res://TilesetObjects.tscn": _TilesetObjectsTscn; }
+// TileMap scenes: Anonym and Ball get_parent() resolves through TilesetObjects
+interface __AnonymTscn__Parents { "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree; }
+interface __BallATscn__Parents { "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree; }
+
+interface _GodotSceneTrees {
+  "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree;
 }
-
-export {};
+interface GodotResources {
+  "res://TilesetObjects.tscn": PackedScene<TreeNode<_TilesetObjectsTscn_Tree>>;
+}

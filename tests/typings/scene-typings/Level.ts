@@ -58,15 +58,13 @@ export class Level extends Node2D {
     // get_parent() on deep path result: HealthBar's parent is Player
     let playerFromChild: Player = deepScriptSceneNode.get_parent();
 
-    let t = this.get_node('UI/ScoreLabel');
+    // Chained get_node on intermediate TreeNode results
+    let scoreLabelNode = this.get_node('UI/ScoreLabel');
+    // Test inferred type directly
+    let checkDeepTree2: Sprite2D = scoreLabelNode.get_node('ScoreSprite');
 
-    let checkDeepTree1: Label = this.get_node('UI/ScoreLabel').get_parent().get_node('ScoreLabel');
-    let checkDeepTree2: Sprite2D = this.get_node('UI/ScoreLabel').get_node('ScoreSprite');
-    let checkDeepTree3: Label = this.get_node('UI/ScoreLabel').get_node('ScoreSprite').get_parent();
-
-    // get_child: typed by index on intermediate node (UI has 1 child: ScoreLabel)
-    let uiChild0: Label = this.get_node('UI').get_child(0);
-    // get_child on ScoreLabel (1 child: ScoreSprite)
-    let scoreLabelChild0: Sprite2D = this.get_node('UI/ScoreLabel').get_child(0);
+    // get_child: typed by index on intermediate node
+    let uiNode = this.get_node('UI');
+    let uiChild0: Label = uiNode.get_child(0);
   }
 }

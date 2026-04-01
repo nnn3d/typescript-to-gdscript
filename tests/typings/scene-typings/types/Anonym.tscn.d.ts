@@ -1,17 +1,47 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { __CLASS__ as _Anonym } from "../Anonym.js";
+type _AnonymTscn_Sprite2D = {
+  [__node_type]: Sprite2D;
+  [__node_parent]: _AnonymTscn_Tree;
+  [__node_children]: [_AnonymTscn_AnimationPlayer];
+  "AnimationPlayer": _AnonymTscn_AnimationPlayer;
+};
 
-export interface _AnonymTscn_Tree {
-  "Sprite2D": Sprite2D<{[__parent]: _Anonym; [__children]: [AnimationPlayer<{[__parent]: _AnonymTscn_Tree["Sprite2D"]}>]; "AnimationPlayer": AnimationPlayer<{[__parent]: _AnonymTscn_Tree["Sprite2D"]}>}>;
-  "CollisionShape2D": CollisionShape2D<{[__parent]: _Anonym}>;
-  "Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: _AnonymTscn_Tree["Sprite2D"]}>;
+type _AnonymTscn_AnimationPlayer = {
+  [__node_type]: AnimationPlayer;
+  [__node_parent]: _AnonymTscn_Sprite2D;
+  [__node_children]: [];
+};
+
+type _AnonymTscn_CollisionShape2D = {
+  [__node_type]: CollisionShape2D;
+  [__node_parent]: _AnonymTscn_Tree;
+  [__node_children]: [];
+};
+
+type _AnonymTscn_Tree = {
+  [__node_root]: true;
+  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Anonym.gd">;
+  [__node_parent]: _GDGetInterfaceParent<__AnonymTscn__Parents>;
+  [__node_children]: [_AnonymTscn_Sprite2D, _AnonymTscn_CollisionShape2D];
+  "Sprite2D": _AnonymTscn_Sprite2D;
+  "Sprite2D/AnimationPlayer": _AnonymTscn_AnimationPlayer;
+  "CollisionShape2D": _AnonymTscn_CollisionShape2D;
+};
+
+interface __AnonymTscn__Parents {}
+
+interface __AnonymGd__Trees {
+  "res://Anonym.tscn": _AnonymTscn_Tree;
 }
 
-declare global {
-  interface GodotResources {
-    "res://Anonym.tscn": PackedScene<_Anonym>;
-  }
+interface _GodotScripts {
+  "res://Anonym.gd": Anonym;
 }
 
-export {};
+interface _GodotSceneTrees {
+  "res://Anonym.tscn": _AnonymTscn_Tree;
+}
+interface GodotResources {
+  "res://Anonym.tscn": PackedScene<TreeNode<_AnonymTscn_Tree>>;
+}

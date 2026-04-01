@@ -1,33 +1,67 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Level as _Level } from "../Level.js";
-import type { _PlayerSceneNodes } from "./Player.gd.js";
-import type { _EnemySceneNodes } from "./Enemy.gd.js";
-import type { _TilesetObjectsTscn } from "./TilesetObjects.tscn.js";
-import type { _Level2Tscn } from "./Level2.tscn.js";
-import type { __CLASS__ as _Enemy } from "../Enemy.js";
+type _LevelTscn_Background = {
+  [__node_type]: Sprite2D;
+  [__node_parent]: _LevelTscn_Tree;
+  [__node_children]: [];
+};
 
-export interface _LevelTscn_Tree {
-  "Player": Player & {[__script_tree]: _PlayerSceneNodes};
-  "Enemy": _Enemy & {[__script_tree]: _EnemySceneNodes};
-  "TilesetObjects": _TilesetObjectsTscn;
-  "Background": Sprite2D<{[__parent]: _Level}>;
-  "UI": CanvasLayer<{[__parent]: _Level; [__children]: [Label<{[__parent]: _LevelTscn_Tree["UI"]; [__children]: [Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>]; "ScoreSprite": Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>}>]; "ScoreLabel": Label<{[__parent]: _LevelTscn_Tree["UI"]; [__children]: [Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>]; "ScoreSprite": Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>}>}>;
-  "UI/ScoreLabel": Label<{[__parent]: _LevelTscn_Tree["UI"]; [__children]: [Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>]; "ScoreSprite": Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>}>;
-  "UI/ScoreLabel/ScoreSprite": Sprite2D<{[__parent]: _LevelTscn_Tree["UI/ScoreLabel"]}>;
-  "TilesetObjectsMap": _TilesetObjectsTscn;
-  "Level2": _Level2Tscn;
+type _LevelTscn_ScoreSprite = {
+  [__node_type]: Sprite2D;
+  [__node_parent]: _LevelTscn_ScoreLabel;
+  [__node_children]: [];
+};
+
+type _LevelTscn_ScoreLabel = {
+  [__node_type]: Label;
+  [__node_parent]: _LevelTscn_UI;
+  [__node_children]: [_LevelTscn_ScoreSprite];
+  "ScoreSprite": _LevelTscn_ScoreSprite;
+};
+
+type _LevelTscn_UI = {
+  [__node_type]: CanvasLayer;
+  [__node_parent]: _LevelTscn_Tree;
+  [__node_children]: [_LevelTscn_ScoreLabel];
+  "ScoreLabel": _LevelTscn_ScoreLabel;
+  "ScoreLabel/ScoreSprite": _LevelTscn_ScoreSprite;
+};
+
+type _LevelTscn_Tree = {
+  [__node_root]: true;
+  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Level.gd">;
+  [__node_parent]: _GDGetInterfaceParent<__LevelTscn__Parents>;
+  [__node_children]: [_PlayerTscn_Tree, _EnemyTscn_Tree, _TilesetObjectsTscn_Tree, _LevelTscn_Background, _LevelTscn_UI, _TilesetObjectsTscn_Tree, _Level2Tscn_Tree];
+  "Player": _PlayerTscn_Tree;
+  "Enemy": _EnemyTscn_Tree;
+  "TilesetObjects": _TilesetObjectsTscn_Tree;
+  "TilesetObjectsMap": _TilesetObjectsTscn_Tree;
+  "Level2": _Level2Tscn_Tree;
+  "Background": _LevelTscn_Background;
+  "UI": _LevelTscn_UI;
+  "UI/ScoreLabel": _LevelTscn_ScoreLabel;
+  "UI/ScoreLabel/ScoreSprite": _LevelTscn_ScoreSprite;
+};
+
+interface __LevelTscn__Parents {}
+
+interface __LevelGd__Trees {
+  "res://Level.tscn": _LevelTscn_Tree;
 }
 
-declare global {
-  interface GodotResources {
-    "res://Level.tscn": PackedScene<_Level>;
-  }
-  interface _PlayerParents { "res://Level.tscn": _Level; }
-  interface _EnemyParents { "res://Level.tscn": _Level; }
-  interface _TilesetObjectsTscnParents { "res://Level.tscn": _Level; }
-  interface _TilesetObjectsTscnParents { "res://Level.tscn": _Level; }
-  interface _Level2TscnParents { "res://Level.tscn": _Level; }
+interface _GodotScripts {
+  "res://Level.gd": Level;
 }
 
-export {};
+// Instanced scene parents
+interface __PlayerTscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }
+interface __EnemyTscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }
+interface __TilesetObjectsTscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }
+interface __Level2Tscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }
+
+interface _GodotSceneTrees {
+  "res://Level.tscn": _LevelTscn_Tree;
+}
+interface GodotResources {
+  "res://Level.tscn": PackedScene<TreeNode<_LevelTscn_Tree>>;
+}

@@ -1,28 +1,34 @@
 // AUTO-GENERATED — do not edit manually.
 
 import type { __CLASS__ as _Anonym } from "../Anonym.js";
-import type { _AnonymTscn_Tree } from "./Anonym.tscn.js";
 
-export interface _AnonymSceneNodes extends _AnonymTscn_Tree {
-  [__children]: [_AnonymTscn_Tree["Sprite2D"], _AnonymTscn_Tree["CollisionShape2D"]];
-}
+type ScriptTree = _GDGetInterfaceTree<__AnonymGd__Trees>;
 
 declare module "../Anonym.ts" {
   interface __CLASS__ {
-    get_node<P extends string & _GDGetTreePaths<_AnonymSceneNodes>>(path: P): _GDGetNode<_AnonymSceneNodes, P>;
-    get_node(path: string): Node;
-    get_node_or_null<P extends string & _GDGetTreePaths<_AnonymSceneNodes>>(path: P): _GDGetNodeOrNull<_AnonymSceneNodes, P>;
+    get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;
+    get_node(path: string): Node | null;
+    get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;
     get_node_or_null(path: string): Node | null;
-    has_node<P extends string & _GDGetTreePaths<_AnonymSceneNodes>>(path: P): true;
+    has_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): boolean;
     has_node(path: string): boolean;
-    get_child<Idx extends number & _GDChildIndices<_GDGetChildren<_AnonymSceneNodes>>>(idx: Idx): _GDGetChild<_AnonymSceneNodes, Idx>;
+    get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;
     get_child(idx: int, include_internal?: boolean): Node;
-    get_parent(): _GDParentType<_AnonymParents>;
+    get_parent(): _GDParentType<ScriptTree>;
   }
 }
 
 declare global {
-  interface _AnonymParents {}
+  interface __AnonymGd__Trees {}
+
+  /** @see import("../Anonym.ts") */
+  class Anonym extends _Anonym {
+    get_node(path: string): Node | null;
+    get_node_or_null(path: string): Node | null;
+    has_node(path: string): boolean;
+    get_child(idx: int, include_internal?: boolean): Node;
+  }
+
   interface GodotResources {
     "res://Anonym.gd": typeof _Anonym;
   }

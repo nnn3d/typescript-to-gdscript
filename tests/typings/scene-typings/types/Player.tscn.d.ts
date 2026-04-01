@@ -1,19 +1,67 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Player as _Player } from "../Player.js";
+// Player.tscn tree:
+//   Player (CharacterBody2D, script: Player.gd)
+//     Sprite2D
+//       AnimationPlayer
+//     CollisionShape2D
+//     HealthBar (ProgressBar, unique_name_in_owner)
 
-export interface _PlayerTscn_Tree {
-  "Sprite2D": Sprite2D<{[__parent]: _Player; [__children]: [AnimationPlayer<{[__parent]: _PlayerTscn_Tree["Sprite2D"]}>]; "AnimationPlayer": AnimationPlayer<{[__parent]: _PlayerTscn_Tree["Sprite2D"]}>}>;
-  "CollisionShape2D": CollisionShape2D<{[__parent]: _Player}>;
-  "Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: _PlayerTscn_Tree["Sprite2D"]}>;
-  "HealthBar": ProgressBar<{[__parent]: _Player}>;
-  "%HealthBar": ProgressBar<{[__parent]: _Player}>;
+type _PlayerTscn_Sprite2D = {
+  [__node_type]: Sprite2D;
+  [__node_parent]: _PlayerTscn_Tree;
+  [__node_children]: [_PlayerTscn_AnimationPlayer];
+  "AnimationPlayer": _PlayerTscn_AnimationPlayer;
+};
+
+type _PlayerTscn_AnimationPlayer = {
+  [__node_type]: AnimationPlayer;
+  [__node_parent]: _PlayerTscn_Sprite2D;
+  [__node_children]: [];
+};
+
+type _PlayerTscn_CollisionShape2D = {
+  [__node_type]: CollisionShape2D;
+  [__node_parent]: _PlayerTscn_Tree;
+  [__node_children]: [];
+};
+
+type _PlayerTscn_HealthBar = {
+  [__node_type]: ProgressBar;
+  [__node_parent]: _PlayerTscn_Tree;
+  [__node_children]: [];
+};
+
+type _PlayerTscn_Tree = {
+  [__node_root]: true;
+  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Player.gd">;
+  [__node_parent]: _GDGetInterfaceParent<__PlayerTscn__Parents>;
+  [__node_children]: [_PlayerTscn_Sprite2D, _PlayerTscn_CollisionShape2D, _PlayerTscn_HealthBar];
+  "Sprite2D": _PlayerTscn_Sprite2D;
+  "Sprite2D/AnimationPlayer": _PlayerTscn_AnimationPlayer;
+  "CollisionShape2D": _PlayerTscn_CollisionShape2D;
+  "HealthBar": _PlayerTscn_HealthBar;
+  "%HealthBar": _PlayerTscn_HealthBar;
+};
+
+interface __PlayerTscn__Parents {}
+
+interface __PlayerGd__Trees {
+  "res://Player.tscn": _PlayerTscn_Tree;
 }
 
-declare global {
-  interface GodotResources {
-    "res://Player.tscn": PackedScene<_Player>;
-  }
+// BaseCharacter is a parent class of Player
+// interface __BaseCharacterGd__Trees {
+//   "res://Player.tscn": _PlayerTscn_Tree;
+// }
+
+interface _GodotScripts {
+  "res://Player.gd": Player;
 }
 
-export {};
+interface _GodotSceneTrees {
+  "res://Player.tscn": _PlayerTscn_Tree;
+}
+interface GodotResources {
+  "res://Player.tscn": PackedScene<TreeNode<_PlayerTscn_Tree>>;
+}

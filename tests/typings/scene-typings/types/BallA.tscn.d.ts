@@ -1,17 +1,46 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Ball as _Ball } from "../Ball.js";
+type _BallATscn_Sprite2D = {
+  [__node_type]: Sprite2D;
+  [__node_parent]: _BallATscn_Tree;
+  [__node_children]: [];
+};
 
-export interface _BallATscn_Tree {
-  "Sprite2D": Sprite2D<{[__parent]: _Ball}>;
-  "Label": Sprite2D<{[__parent]: _Ball}>;
-  "Timer": Timer<{[__parent]: _Ball}>;
+type _BallATscn_Label = {
+  [__node_type]: Sprite2D;
+  [__node_parent]: _BallATscn_Tree;
+  [__node_children]: [];
+};
+
+type _BallATscn_Timer = {
+  [__node_type]: Timer;
+  [__node_parent]: _BallATscn_Tree;
+  [__node_children]: [];
+};
+
+type _BallATscn_Tree = {
+  [__node_root]: true;
+  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Ball.gd">;
+  [__node_parent]: _GDGetInterfaceParent<__BallATscn__Parents>;
+  [__node_children]: [_BallATscn_Sprite2D, _BallATscn_Label, _BallATscn_Timer];
+  "Sprite2D": _BallATscn_Sprite2D;
+  "Label": _BallATscn_Label;
+  "Timer": _BallATscn_Timer;
+};
+
+interface __BallATscn__Parents {}
+
+interface __BallGd__Trees {
+  "res://BallA.tscn": _BallATscn_Tree;
 }
 
-declare global {
-  interface GodotResources {
-    "res://BallA.tscn": PackedScene<_Ball>;
-  }
+interface _GodotScripts {
+  "res://Ball.gd": Ball;
 }
 
-export {};
+interface _GodotSceneTrees {
+  "res://BallA.tscn": _BallATscn_Tree;
+}
+interface GodotResources {
+  "res://BallA.tscn": PackedScene<TreeNode<_BallATscn_Tree>>;
+}

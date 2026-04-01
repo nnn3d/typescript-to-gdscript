@@ -1,34 +1,34 @@
 // AUTO-GENERATED — do not edit manually.
 
 import type { Ball as _Ball } from "../Ball.js";
-import type { _BallATscn_Tree } from "./BallA.tscn.js";
-import type { _BallBTscn_Tree } from "./BallB.tscn.js";
 
-export interface _BallSceneNodes {
-  [__children]: [_BallATscn_Tree["Sprite2D"] | _BallBTscn_Tree["Sprite2D"], _BallATscn_Tree["Label"] | _BallBTscn_Tree["Label"], _BallATscn_Tree["Timer"] | null];
-  "Sprite2D": _BallATscn_Tree["Sprite2D"] | _BallBTscn_Tree["Sprite2D"];
-  "Label": _BallATscn_Tree["Label"] | _BallBTscn_Tree["Label"];
-  "Timer": _BallATscn_Tree["Timer"] | null;
-}
+type ScriptTree = _GDGetInterfaceTree<__BallGd__Trees>;
 
 declare module "../Ball.ts" {
   interface Ball {
-    get_node<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): _GDGetNode<_BallSceneNodes, P>;
-    get_node(path: string): Node;
-    get_node_or_null<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): _GDGetNodeOrNull<_BallSceneNodes, P>;
+    get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;
+    get_node(path: string): Node | null;
+    get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;
     get_node_or_null(path: string): Node | null;
-    has_node<P extends string & _GDGetTreePaths<_BallSceneNodes>>(path: P): true;
+    has_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): boolean;
     has_node(path: string): boolean;
-    get_child<Idx extends number & _GDChildIndices<_GDGetChildren<_BallSceneNodes>>>(idx: Idx): _GDGetChild<_BallSceneNodes, Idx>;
+    get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;
     get_child(idx: int, include_internal?: boolean): Node;
-    get_parent(): _GDParentType<_BallParents>;
+    get_parent(): _GDParentType<ScriptTree>;
   }
 }
 
 declare global {
-  // From: Ball.ts
-  class Ball extends _Ball {}
-  interface _BallParents {}
+  interface __BallGd__Trees {}
+
+  /** @see import("../Ball.ts") */
+  class Ball extends _Ball {
+    get_node(path: string): Node | null;
+    get_node_or_null(path: string): Node | null;
+    has_node(path: string): boolean;
+    get_child(idx: int, include_internal?: boolean): Node;
+  }
+
   interface GodotResources {
     "res://Ball.gd": typeof _Ball;
   }

@@ -1,17 +1,47 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { __CLASS__ as _nested_Anonym } from "../../nested/Anonym.js";
+type _nested_AnonymTscn_Sprite2D = {
+  [__node_type]: Sprite2D;
+  [__node_parent]: _nested_AnonymTscn_Tree;
+  [__node_children]: [_nested_AnonymTscn_AnimationPlayer];
+  "AnimationPlayer": _nested_AnonymTscn_AnimationPlayer;
+};
 
-export interface _nested_AnonymTscn_Tree {
-  "Sprite2D": Sprite2D<{[__parent]: _nested_Anonym; [__children]: [AnimationPlayer<{[__parent]: _nested_AnonymTscn_Tree["Sprite2D"]}>]; "AnimationPlayer": AnimationPlayer<{[__parent]: _nested_AnonymTscn_Tree["Sprite2D"]}>}>;
-  "CollisionShape2D": CollisionShape2D<{[__parent]: _nested_Anonym}>;
-  "Sprite2D/AnimationPlayer": AnimationPlayer<{[__parent]: _nested_AnonymTscn_Tree["Sprite2D"]}>;
+type _nested_AnonymTscn_AnimationPlayer = {
+  [__node_type]: AnimationPlayer;
+  [__node_parent]: _nested_AnonymTscn_Sprite2D;
+  [__node_children]: [];
+};
+
+type _nested_AnonymTscn_CollisionShape2D = {
+  [__node_type]: CollisionShape2D;
+  [__node_parent]: _nested_AnonymTscn_Tree;
+  [__node_children]: [];
+};
+
+type _nested_AnonymTscn_Tree = {
+  [__node_root]: true;
+  [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://nested/Anonym.gd">;
+  [__node_parent]: _GDGetInterfaceParent<__nested_AnonymTscn__Parents>;
+  [__node_children]: [_nested_AnonymTscn_Sprite2D, _nested_AnonymTscn_CollisionShape2D];
+  "Sprite2D": _nested_AnonymTscn_Sprite2D;
+  "Sprite2D/AnimationPlayer": _nested_AnonymTscn_AnimationPlayer;
+  "CollisionShape2D": _nested_AnonymTscn_CollisionShape2D;
+};
+
+interface __nested_AnonymTscn__Parents {}
+
+interface __nested_AnonymGd__Trees {
+  "res://nested/Anonym.tscn": _nested_AnonymTscn_Tree;
 }
 
-declare global {
-  interface GodotResources {
-    "res://nested/Anonym.tscn": PackedScene<_nested_Anonym>;
-  }
+interface _GodotScripts {
+  "res://nested/Anonym.gd": nested_Anonym;
 }
 
-export {};
+interface _GodotSceneTrees {
+  "res://nested/Anonym.tscn": _nested_AnonymTscn_Tree;
+}
+interface GodotResources {
+  "res://nested/Anonym.tscn": PackedScene<TreeNode<_nested_AnonymTscn_Tree>>;
+}

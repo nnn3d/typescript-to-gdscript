@@ -5,7 +5,7 @@ export class __CLASS__ extends Node {
     let node_or_null: Node | null = this.get_node_or_null('Unknown');
     // get_node also has typed overload
     let collision: CollisionShape2D = this.get_node('CollisionShape2D');
-    // Unknown path for get_node returns Node
-    let unknown: Node = this.get_node('Unknown');
+    // Unknown path for get_node returns Node | null
+    let unknown: Node | null = this.get_node('Unknown');
   }
 }

@@ -1,18 +1,24 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Level as _Level } from "../Level.js";
+type _Level2Tscn_ExtraSprite = {
+  [__node_type]: Sprite2D;
+  [__node_parent]: _Level2Tscn_Tree;
+  [__node_children]: [];
+};
 
-// Scriptless scene: _Level2Tscn
-export type _Level2Tscn = Node<{
-  [__parent]: _Level;
-  [__children]: [Sprite2D<{[__parent]: _Level2Tscn}>];
-  "ExtraSprite": Sprite2D<{[__parent]: _Level2Tscn}>;
-}>
+type _Level2Tscn_Tree = {
+  [__node_root]: true;
+  [__node_type]: Node;
+  [__node_parent]: _GDGetInterfaceParent<__Level2Tscn__Parents>;
+  [__node_children]: [_Level2Tscn_ExtraSprite];
+  "ExtraSprite": _Level2Tscn_ExtraSprite;
+};
 
-declare global {
-  interface GodotResources {
-    "res://Level2.tscn": PackedScene<_Level2Tscn>;
-  }
+interface __Level2Tscn__Parents {}
+
+interface _GodotSceneTrees {
+  "res://Level2.tscn": _Level2Tscn_Tree;
 }
-
-export {};
+interface GodotResources {
+  "res://Level2.tscn": PackedScene<TreeNode<_Level2Tscn_Tree>>;
+}
