@@ -26,7 +26,7 @@ type _PlayerTscn_HealthBar = {
 };
 
 type _PlayerTscn_Tree = {
-  [__node_root]: true;
+  [__node_root]: "Player";
   [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Player.gd">;
   [__node_parent]: _GDGetInterfaceParent<__PlayerTscn__Parents>;
   [__node_children]: [_PlayerTscn_Sprite2D, _PlayerTscn_CollisionShape2D, _PlayerTscn_HealthBar];

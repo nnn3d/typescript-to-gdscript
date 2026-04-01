@@ -78,5 +78,12 @@ export class Level extends Node2D {
     // Node group methods also get autocomplete
     this.add_to_group('entities');
     let inGroup: boolean = this.is_in_group('entities');
+
+    // Absolute /root/ paths — resolve from root scene tree
+    let rootPlayer: Player = this.get_node('/root/Level/Player');
+    let rootBg: Sprite2D = this.get_node('/root/Level/Background');
+    let rootScoreLabel: Label = this.get_node('/root/Level/UI/ScoreLabel');
+    // /root/Level itself → the root scene node (Level)
+    let rootSelf: Level = this.get_node('/root/Level');
   }
 }

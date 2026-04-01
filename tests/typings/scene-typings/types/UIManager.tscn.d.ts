@@ -7,7 +7,7 @@ type _UIManagerTscn_HealthBar = {
 };
 
 type _UIManagerTscn_Tree = {
-  [__node_root]: true;
+  [__node_root]: "UIManager";
   [__node_type]: Control;
   [__node_parent]: _GDGetInterfaceParent<__UIManagerTscn__Parents>;
   [__node_children]: [_UIManagerTscn_HealthBar];

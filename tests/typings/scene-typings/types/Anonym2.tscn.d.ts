@@ -20,7 +20,7 @@ type _Anonym2Tscn_CollisionShape2D = {
 };
 
 type _Anonym2Tscn_Tree = {
-  [__node_root]: true;
+  [__node_root]: "Player";
   [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Anonym2.gd">;
   [__node_parent]: _GDGetInterfaceParent<__Anonym2Tscn__Parents>;
   [__node_children]: [_Anonym2Tscn_Sprite2D, _Anonym2Tscn_CollisionShape2D];

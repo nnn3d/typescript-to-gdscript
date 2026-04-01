@@ -7,7 +7,7 @@ type _Level2Tscn_ExtraSprite = {
 };
 
 type _Level2Tscn_Tree = {
-  [__node_root]: true;
+  [__node_root]: "Level";
   [__node_type]: Node;
   [__node_parent]: _GDGetInterfaceParent<__Level2Tscn__Parents>;
   [__node_children]: [_Level2Tscn_ExtraSprite];

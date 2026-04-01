@@ -1,7 +1,7 @@
 // AUTO-GENERATED — do not edit manually.
 
 type _TilesetObjectsTscn_Tree = {
-  [__node_root]: true;
+  [__node_root]: "tileset_objects";
   [__node_type]: TileMap;
   [__node_parent]: _GDGetInterfaceParent<__TilesetObjectsTscn__Parents>;
   [__node_children]: [];

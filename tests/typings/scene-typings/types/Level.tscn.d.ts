@@ -36,7 +36,7 @@ type _TilesetObjectsTscn_Tree = _GodotSceneTrees["res://TilesetObjects.tscn"];
 type _Level2Tscn_Tree = _GodotSceneTrees["res://Level2.tscn"];
 
 type _LevelTscn_Tree = {
-  [__node_root]: true;
+  [__node_root]: "Level";
   [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Level.gd">;
   [__node_parent]: _GDGetInterfaceParent<__LevelTscn__Parents>;
   [__node_children]: [_PlayerTscn_Tree, _EnemyTscn_Tree, _TilesetObjectsTscn_Tree, _LevelTscn_Background, _LevelTscn_UI, _TilesetObjectsTscn_Tree, _Level2Tscn_Tree];

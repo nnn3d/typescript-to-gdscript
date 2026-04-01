@@ -270,6 +270,8 @@ function parseScene(
   filePath: string;
   scripts: ScriptNodeInfo[];
   rootScript?: { scriptResPath: string };
+  /** Name of the root node (e.g. "Level", "Player") */
+  rootNodeName: string;
   /** When root node instances another scene (inherited scene), this is the instanced scene's res:// path.
    *  E.g. RI1_1.tscn inherits world.tscn → inheritedSceneResPath = "res://world.tscn" */
   inheritedSceneResPath?: string;
@@ -519,7 +521,9 @@ function parseScene(
     }
   }
 
-  return { filePath, scripts, rootScript, inheritedSceneResPath, connections, nodeTypes, instancedNodes, embeddedScenes, nodeGroups };
+  const rootNodeName = rootNode?.name ?? '';
+
+  return { filePath, scripts, rootScript, rootNodeName, inheritedSceneResPath, connections, nodeTypes, instancedNodes, embeddedScenes, nodeGroups };
 }
 
 /**
@@ -963,7 +967,7 @@ function generateSceneTypingContent(
       const baseResPath = node.instanceSceneResPath!;
       lines.push(`type ${typeName} = {`);
       lines.push(`  [__node_extends]: _GodotSceneTrees["${baseResPath}"];`);
-      lines.push(`  [__node_root]: true;`);
+      lines.push(`  [__node_root]: "${node.name}";`);
       lines.push(`  [__node_type]: _GodotSceneTrees["${baseResPath}"][typeof __node_type];`);
       lines.push(`  [__node_parent]: ${parentTypeName};`);
       lines.push(`  [__node_children]: [${childTupleEntries.join(', ')}];`);
@@ -1000,7 +1004,7 @@ function generateSceneTypingContent(
   if (inheritedSceneResPath) {
     lines.push(`  [__node_extends]: _GodotSceneTrees["${inheritedSceneResPath}"];`);
   }
-  lines.push(`  [__node_root]: true;`);
+  lines.push(`  [__node_root]: "${sceneData.rootNodeName}";`);
   lines.push(`  [__node_type]: ${rootNodeType};`);
   lines.push(`  [__node_parent]: _GDGetInterfaceParent<${parentsInterface}>;`);
   lines.push(`  [__node_children]: [${rootChildTupleEntries.join(', ')}];`);
@@ -1129,10 +1133,13 @@ function generateScriptTypingContent(
   lines.push(`declare module "${tsModulePath}" {`);
   lines.push(`  interface ${importName} extends StaticProps {`);
   lines.push(`    get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;`);
+  lines.push(`    get_node<P extends '/root' | \`/root/\${string}\`>(path: P): _GDGetRootNode<ScriptTree, P>;`);
   lines.push(`    get_node(path: string): Node | null;`);
   lines.push(`    get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;`);
+  lines.push(`    get_node_or_null<P extends '/root' | \`/root/\${string}\`>(path: P): _GDGetRootNode<ScriptTree, P> | null;`);
   lines.push(`    get_node_or_null(path: string): Node | null;`);
   lines.push(`    has_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): boolean;`);
+  lines.push(`    has_node(path: \`/root/\${string}\`): boolean;`);
   lines.push(`    has_node(path: string): boolean;`);
   lines.push(`    get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;`);
   lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);

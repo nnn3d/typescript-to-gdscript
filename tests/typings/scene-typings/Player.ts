@@ -2,6 +2,7 @@ import type { __CLASS__ as Anonym } from './Anonym.ts';
 import type { __CLASS__ as Anonym2 } from './Anonym2.ts';
 import type { __CLASS__ as AnonymNested } from './nested/Anonym.ts';
 import type { __CLASS__ as GameManagerType } from './GameManager.ts';
+import type { __CLASS__ as Enemy } from './Enemy.ts';
 
 export class Player extends BaseCharacter {
   static TEST_ENUM = gd.enum('TEST', 'TEST2');
@@ -70,5 +71,9 @@ export class Player extends BaseCharacter {
     // Autoload scene singleton — UIManager is a scene autoload, typed as tree node
     let uiManager: Control = UIManager;
     let healthBar: ProgressBar = UIManager.get_node('HealthBar');
+
+    // Absolute /root/ path from instanced scene — traverses parent chain to root
+    let rootEnemy: Enemy = this.get_node('/root/Level/Enemy');
+    let rootBg: Sprite2D = this.get_node('/root/Level/Background');
   }
 }

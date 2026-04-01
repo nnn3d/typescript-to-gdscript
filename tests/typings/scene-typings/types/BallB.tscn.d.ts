@@ -13,7 +13,7 @@ type _BallBTscn_Label = {
 };
 
 type _BallBTscn_Tree = {
-  [__node_root]: true;
+  [__node_root]: "BallB";
   [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Ball.gd">;
   [__node_parent]: _GDGetInterfaceParent<__BallBTscn__Parents>;
   [__node_children]: [_BallBTscn_Sprite2D, _BallBTscn_Label];

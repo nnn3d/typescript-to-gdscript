@@ -79,7 +79,7 @@ describe('Scene typings generation', () => {
 
     // Root tree type
     expect(playerScene).toContain('type _PlayerTscn_Tree = {');
-    expect(playerScene).toContain('[__node_root]: true;');
+    expect(playerScene).toContain('[__node_root]: "Player";');
     expect(playerScene).toContain('[__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Player.gd">;');
     expect(playerScene).toContain('[__node_parent]: _GDGetInterfaceParent<__PlayerTscn__Parents>;');
 

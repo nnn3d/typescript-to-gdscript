@@ -194,7 +194,8 @@ interface ClassAccessorDecoratorContext {
 //   [__node_children]: _GDBaseTree[];
 // };
 
-type _GDTreeGetRoot<T> = T extends {[__node_root]: infer R extends boolean} ? R : false;
+/** Extract root node name (string) or false if not a root tree. */
+type _GDTreeGetRoot<T> = T extends {[__node_root]: infer R extends string} ? R : never;
 
 type _GDTreeGetType<T> = T extends {[__node_type]: infer R extends Node} ? R : Node;
 
@@ -216,12 +217,16 @@ type _GDTreeHandlers<Tree> = {
   get_node<P extends string & _GDGetTreePaths<Tree>>(
     path: P,
   ): _GDGetNode<Tree, P>;
+  /** Get a child node by absolute `/root/...` path. Type-inferred from root scene tree. */
+  get_node<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<Tree, P>;
   /** Get a child node by path. Unknown paths return Node | null. */
   get_node(path: string): Node | null;
   /** Get a child node or null by path. Known paths return exact type | null. */
   get_node_or_null<P extends string & _GDGetTreePaths<Tree>>(
     path: P,
   ): _GDGetNodeOrNull<Tree, P>;
+  /** Get a child node or null by absolute `/root/...` path. */
+  get_node_or_null<P extends string>(path: `/root/${P}`): _GDGetRootNode<Tree, P> | null;
   /** Get a child node or null by path. Unknown paths return Node | null. */
   get_node_or_null(path: string): Node | null;
   /** Get the parent node. Returns typed parent from scene tree if known. */
@@ -258,7 +263,7 @@ type _GDGetTreePaths<Tree, Prefix extends string = ``> =
               ? never
               :
                   | `${Prefix}${K}`
-                  | (_GDTreeGetRoot<Tree[K]> extends true
+                  | (_GDTreeGetRoot<Tree[K]> extends string
                       ? _GDGetTreePaths<NonNullable<Tree[K]>, `${Prefix}${K}/`>
                       : never)
             : never;
@@ -278,7 +283,7 @@ type _GDGetNullByPath<
       : Path extends keyof Tree
         ? HasNull extends true ? null : never
         : Path extends `${infer Start extends keyof Tree & string}/${infer Rest}`
-          ? _GDTreeGetRoot<Tree[Start]> extends true
+          ? _GDTreeGetRoot<Tree[Start]> extends string
             ? _GDGetNullByPath<
                 Tree[Start],
                 Rest,
@@ -301,7 +306,7 @@ type _GDGetTreeByPath<
       : Path extends keyof Tree
         ? Tree[Path]
         : Path extends `${infer Start extends keyof Tree & string}/${infer Rest}`
-          ? _GDTreeGetRoot<Tree[Start]> extends true
+          ? _GDTreeGetRoot<Tree[Start]> extends string
             ? _GDGetTreeByPath<
                 Tree[Start],
                 Rest
@@ -319,6 +324,30 @@ type _GDGetNodeByPath<Tree, Path extends string> =
       : _GDTreeNode<_GDGetTreeByPath<Tree, Path>>)
   | _GDGetNullByPath<Tree, Path>;
 
+/** Walk up __node_parent chain to find the root scene tree (where parent is null). */
+type _GDFindRootTree<Tree> =
+  [_GDTreeGetParent<Tree>] extends [null]
+    ? Tree
+    : _GDTreeGetParent<Tree> extends object
+      ? _GDFindRootTree<_GDTreeGetParent<Tree>>
+      : never;
+
+type _GDCreateRootTree<Tree> = {
+  root: {
+    [__node_root]: 'root',
+    [__node_type]: Window,
+    [__node_parent]: null,
+  } & {
+    [T in Tree as _GDTreeGetRoot<T>]: T
+  }
+};
+
+/** Resolve `/root/RootName/rest` paths by finding the root tree and traversing from there.
+ *  Strips leading `/` from path before resolving through the virtual root tree. */
+type _GDGetRootNode<Tree, Path extends string> =
+  Path extends `/${infer Rest}`
+    ? _GDGetNodeByPath<_GDCreateRootTree<_GDFindRootTree<Tree>>, Rest>
+    : _GDGetNodeByPath<_GDCreateRootTree<_GDFindRootTree<Tree>>, Path>;
 
 /** Extract valid numeric tuple indices (0, 1, 2, ...) from a tuple type.
  *  Excludes non-numeric keys and the generic `number` index.

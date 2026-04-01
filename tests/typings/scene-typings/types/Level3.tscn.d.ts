@@ -8,7 +8,7 @@ type _Level3Tscn_ALevel_Level3Label = {
 
 type _Level3Tscn_ALevel = {
   [__node_extends]: _GodotSceneTrees["res://ALevel.tscn"];
-  [__node_root]: true;
+  [__node_root]: "ALevel";
   [__node_type]: _GodotSceneTrees["res://ALevel.tscn"][typeof __node_type];
   [__node_parent]: _Level3Tscn_Tree;
   [__node_children]: [_Level3Tscn_ALevel_Level3Label];
@@ -22,7 +22,7 @@ type _Level3Tscn_OwnChild = {
 };
 
 type _Level3Tscn_Tree = {
-  [__node_root]: true;
+  [__node_root]: "Level3";
   [__node_type]: _GDGetInterfaceNode<_GodotScripts, "res://Level3.gd">;
   [__node_parent]: _GDGetInterfaceParent<__Level3Tscn__Parents>;
   [__node_children]: [_Level3Tscn_ALevel, _Level3Tscn_OwnChild];
