@@ -363,7 +363,7 @@ declare class Node extends GodotObject {
    */
   static get_orphan_node_ids(): Array<int>;
   /** Returns this node's parent node, or `null` if the node doesn't have a parent. */
-  get_parent(): Node;
+  get_parent<N extends Node = Node>(): N;
   /**
    * Returns the node's absolute path, relative to the {@link SceneTree.root}. If the node is not inside the scene tree, this method fails and returns an empty {@link NodePath}.
    */

@@ -230,7 +230,7 @@ type _GDTreeHandlers<Tree> = {
   /** Get a child node or null by path. Unknown paths return Node | null. */
   get_node_or_null(path: string): Node | null;
   /** Get the parent node. Returns typed parent from scene tree if known. */
-  get_parent(): _GDParentType<Tree>;
+  get_parent<N extends Node = _GDParentType<Tree>>(): N;
   /** Check if a node exists at path. Known paths (from scene tree) provide autocomplete and return `true`. */
   has_node<P extends string & _GDGetTreePaths<Tree>>(path: P): boolean;
   /** Check if a node exists at path. Unknown paths return boolean. */

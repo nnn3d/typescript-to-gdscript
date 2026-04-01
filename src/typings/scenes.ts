@@ -1145,7 +1145,7 @@ function generateScriptTypingContent(
   lines.push(`    has_node(path: string): boolean;`);
   lines.push(`    get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;`);
   lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
-  lines.push(`    get_parent(): _GDParentType<ScriptTree>;`);
+  lines.push(`    get_parent<N extends Node = _GDParentType<ScriptTree>>(): N;`);
   lines.push(`  }`);
   lines.push(`}\n`);
 
@@ -1157,6 +1157,7 @@ function generateScriptTypingContent(
     lines.push(`  get_node_or_null(path: string): Node | null;`);
     lines.push(`  has_node(path: string): boolean;`);
     lines.push(`  get_child(idx: int, include_internal?: boolean): Node;`);
+    lines.push(`  get_parent<N extends Node = Node>(): N;`);
     lines.push(`}\n`);
 
     lines.push(`declare global {`);
@@ -1178,6 +1179,7 @@ function generateScriptTypingContent(
     lines.push(`    get_node_or_null(path: string): Node | null;`);
     lines.push(`    has_node(path: string): boolean;`);
     lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
+    lines.push(`    get_parent<N extends Node = Node>(): N;`);
     lines.push(`  }\n`);
     lines.push(`  interface GodotScripts {`);
     lines.push(`    "${scriptResPath}": ${className};`);

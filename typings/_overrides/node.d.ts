@@ -7,4 +7,5 @@ declare class Node extends GodotObject {
   is_in_group(group: string): boolean;
   remove_from_group(group: GodotGroupNames): void;
   remove_from_group(group: string): void;
+  get_parent<N extends Node = Node>(): N;
 }
