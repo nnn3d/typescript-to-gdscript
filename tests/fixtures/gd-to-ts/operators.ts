@@ -32,6 +32,12 @@ export class Operators extends Node {
     let v6 = gd.ops.add(gd.ops.sub(this.v1, 2 * 1), gd.ops.div(this.v1, this.v2));
     let _a1 = gd.ops.add(this.a1, this.a2);
     let _a2 = this.get_tree().get_nodes_in_group("a") + this.get_tree().get_nodes_in_group("b");
+    for (let n of gd.ops.add(this.get_tree().get_nodes_in_group("a"), this.get_tree().get_nodes_in_group("b"))) {
+      print(n);
+    }
+    for (let n of gd.ops.add(gd.ops.add(this.get_tree().get_nodes_in_group("a"), this.get_tree().get_nodes_in_group("b")), this.get_tree().get_nodes_in_group("c"))) {
+      print(n);
+    }
   }
 
   test_not_precedence() {

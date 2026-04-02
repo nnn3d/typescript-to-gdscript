@@ -38,6 +38,10 @@ func test_multiple_vector_math():
     var v6 = v1 - 2 * 1 + v1 / v2
     var _a1 = a1 + a2
     var _a2 = get_tree().get_nodes_in_group("a") + get_tree().get_nodes_in_group("b")
+    for n in get_tree().get_nodes_in_group("a") + get_tree().get_nodes_in_group("b"):
+      print(n)
+    for n in get_tree().get_nodes_in_group("a") + get_tree().get_nodes_in_group("b") + get_tree().get_nodes_in_group("c"):
+      print(n)
 
 func test_not_precedence():
     var a: int = 10

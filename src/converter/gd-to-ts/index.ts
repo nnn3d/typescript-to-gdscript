@@ -1179,7 +1179,21 @@ function emitForStatement(
   const body = node.childForFieldName('body');
 
   const varName = left?.text ?? 'item';
-  const iterable = right ? emitExpr(right, ctx) : '[]';
+
+  // In `for x in a + b + c`, `+` is always array concatenation → gd.ops.add (recursive)
+  function emitArrayConcat(node: SyntaxNode): string {
+    if (node.type === SyntaxType.BinaryOperator) {
+      const opNode = node.children.find(c => !c.isNamed);
+      if (opNode?.text === '+') {
+        const lhs = node.childForFieldName('left');
+        const rhs = node.childForFieldName('right');
+        return `gd.ops.add(${lhs ? emitArrayConcat(lhs) : ''}, ${rhs ? emitExpr(rhs, ctx) : ''})`;
+      }
+    }
+    return emitExpr(node, ctx);
+  }
+  const iterable = right ? emitArrayConcat(right) : '[]';
+
   const bodyStr = body ? emitBody(body, ctx, depth + 1) : '';
 
   return `${indent}for (let ${varName} of ${iterable}) {\n${bodyStr}\n${indent}}`;
