@@ -4,6 +4,7 @@ type _PlayerTscn_Sprite2D_AnimationPlayer = {
   [__node_type]: AnimationPlayer;
   [__node_parent]: _PlayerTscn_Sprite2D;
   [__node_children]: [];
+  "%HealthBar": _PlayerTscn_HealthBar;
 };
 
 type _PlayerTscn_Sprite2D = {
@@ -11,12 +12,14 @@ type _PlayerTscn_Sprite2D = {
   [__node_parent]: _PlayerTscn_Tree;
   [__node_children]: [_PlayerTscn_Sprite2D_AnimationPlayer];
   "AnimationPlayer": _PlayerTscn_Sprite2D_AnimationPlayer;
+  "%HealthBar": _PlayerTscn_HealthBar;
 };
 
 type _PlayerTscn_CollisionShape2D = {
   [__node_type]: CollisionShape2D;
   [__node_parent]: _PlayerTscn_Tree;
   [__node_children]: [];
+  "%HealthBar": _PlayerTscn_HealthBar;
 };
 
 type _PlayerTscn_HealthBar = {

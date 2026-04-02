@@ -952,6 +952,21 @@ function generateSceneTypingContent(
   }
   collectEmittable(root);
 
+  // Build unique name entries (available from every subtree in the scene)
+  const uniqueEntries: Array<{ name: string; typeName: string }> = [];
+  {
+    const allRootDescendants = collectDescendantPaths(root, alias, instancedSceneTreeNames, extendedInstancedNodes);
+    for (const uniqueName of uniqueNameNodes) {
+      const match = allRootDescendants.find(p => {
+        const parts = p.relativePath.split('/');
+        return parts[parts.length - 1] === uniqueName;
+      });
+      if (match) {
+        uniqueEntries.push({ name: uniqueName, typeName: match.typeName });
+      }
+    }
+  }
+
   for (const node of emittableNodes) {
     const typeName = nodePathToTypeName(alias, node.fullPath);
     const parentTypeName = node.parentPath === '.'
@@ -980,6 +995,12 @@ function generateSceneTypingContent(
 
     for (const { relativePath, typeName: childType } of descendantPaths) {
       lines.push(`  "${relativePath}": ${childType};`);
+    }
+    // Unique name entries (accessible from any subtree, skip self-reference to avoid circularity)
+    for (const { name, typeName: uTypeName } of uniqueEntries) {
+      if (uTypeName !== typeName) {
+        lines.push(`  "%${name}": ${uTypeName};`);
+      }
     }
     lines.push(`};\n`);
   }
@@ -1013,15 +1034,9 @@ function generateSceneTypingContent(
   for (const { relativePath, typeName } of rootDescendantPaths) {
     lines.push(`  "${relativePath}": ${typeName};`);
   }
-  // Unique name entries
-  for (const uniqueName of uniqueNameNodes) {
-    const matchingPath = rootDescendantPaths.find(p => {
-      const parts = p.relativePath.split('/');
-      return parts[parts.length - 1] === uniqueName;
-    });
-    if (matchingPath) {
-      lines.push(`  "%${uniqueName}": ${matchingPath.typeName};`);
-    }
+  // Unique name entries (accessible from any subtree)
+  for (const { name, typeName: uTypeName } of uniqueEntries) {
+    lines.push(`  "%${name}": ${uTypeName};`);
   }
   lines.push(`};\n`);
 

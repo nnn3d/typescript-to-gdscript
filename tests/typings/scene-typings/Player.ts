@@ -38,8 +38,13 @@ export class Player extends BaseCharacter {
     let health = this.get_node('%HealthBar');
     let _healthAssign: ProgressBar = health;
 
-    // get_parent() on a Godot built-in child resolves to script class via [__node_parent]
+    // Unique node accessible from child subtree (not just root)
     let spriteNode = this.get_node('Sprite2D');
+    let healthFromSprite: ProgressBar = spriteNode.get_node('%HealthBar');
+    let animNode = this.get_node('Sprite2D/AnimationPlayer');
+    let healthFromAnim: ProgressBar = animNode.get_node('%HealthBar');
+
+    // get_parent() on a Godot built-in child resolves to script class via [__node_parent]
     let parent = spriteNode.get_parent();
     let _parentCheck: Player = parent;
 
