@@ -179,7 +179,11 @@ For operator overloading on value types (Vector2, Color, etc.):
 ```typescript
 let result = gd.ops.add(Vector2(1, 1), Vector2(2, 3));
 let scaled = gd.ops.mul(position, 2.0);
+let remainder = gd.ops.rem(Vector2i(10, 20), Vector2i(3, 7));
+let concat = gd.ops.add([1, 2], [3, 4]); // Array concatenation
 ```
+
+Available operators: `add`, `sub`, `mul`, `div`, `rem`, `eq`, `ne`, `gt`, `gte`, `lt`, `lte`, `plus` (unary), `minus` (unary).
 
 ### Type casting (`as`)
 
@@ -256,6 +260,74 @@ typings/
     godot-class-registry.json
   latest/             # Pointer to active version
     index.d.ts
+```
+
+## Scene Typings
+
+The scene typings generator creates per-file `.d.ts` declarations that provide typed `get_node()`, `get_parent()`, `get_child()`, and group methods based on your `.tscn` scene structure.
+
+### Generate scene typings
+
+```bash
+ts2gd generate-typings
+```
+
+This generates in your `typingsDir`:
+- **`.tscn.d.ts`** — Tree type structure for each scene (node types, parent/child relationships, flat paths)
+- **`.gd.d.ts`** — Module augmentation per script with typed `get_node()` overloads
+- **`_resources.d.ts`** — Bundled `GodotResources` entries for all asset files
+- **`_index.d.ts`** — Empty global interfaces + autoload singleton declarations
+
+### Features
+
+- **Typed `get_node()`**: autocomplete for node paths, returns exact node types
+  ```typescript
+  let sprite: Sprite2D = this.get_node('Sprite2D');
+  let label: Label = this.get_node('UI/ScoreLabel');
+  ```
+
+- **Typed `get_node_or_null()`**: same as `get_node()` but always includes `| null`
+
+- **Absolute `/root/` paths**: type-inferred from the root scene tree
+  ```typescript
+  let player: Player = this.get_node('/root/Level/Player');
+  ```
+
+- **Unique name nodes (`%Name`)**: accessible from any node in the scene
+  ```typescript
+  let health: ProgressBar = this.get_node('%HealthBar');
+  ```
+
+- **Typed `get_parent()`**: resolves to parent scene's script class
+
+- **Typed `get_child(idx)`**: resolves to child node type by index
+
+- **Instanced scene support**: instanced scene nodes carry their full tree, enabling deep path traversal
+
+- **Scene inheritance (`__node_extends`)**: extended scenes inherit base scene paths lazily
+
+- **Group typing**: `get_nodes_in_group()` returns typed arrays based on which nodes are in each group
+  ```typescript
+  let enemies: Array<Player | Enemy> = this.get_tree().get_nodes_in_group('entities');
+  ```
+
+- **Autoload scenes**: scene autoloads typed as tree nodes with `get_node()` support
+  ```typescript
+  let bar: ProgressBar = UIManager.get_node('HealthBar');
+  ```
+
+- **Static fields on instances**: class static members (enums, etc.) accessible on instances via `StaticProps`
+
+### Configuration
+
+Add `helpers` to `tstogd.json` to control GD-to-TS conversion helpers:
+
+```json
+{
+  "helpers": {
+    "signalHandler": true
+  }
+}
 ```
 
 ## ESLint Plugin
