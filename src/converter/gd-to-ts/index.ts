@@ -237,6 +237,7 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
     className: '',
     staticMembers: new Set(),
     signalHandlers: options.signalHandlers ?? new Map(),
+    globalEnumMap: buildGlobalEnumMap(options.registry),
   };
 
   const code = emitSourceFile(root, ctx);
@@ -271,6 +272,21 @@ interface GdToTsContext {
   staticMembers: Set<string>;
   /** Signal handler type info from .tscn connections (method name → param types) */
   signalHandlers: Map<string, { params: Array<{ name: string; gdType: string }> }>;
+  /** Global enum constant → qualified name (e.g. "KEY_F21" → "Key.KEY_F21") */
+  globalEnumMap: Map<string, string>;
+}
+
+/** Build a map of bare global enum constant names → qualified TS names (e.g. "KEY_F21" → "Key.KEY_F21") */
+function buildGlobalEnumMap(registry: GodotClassRegistry): Map<string, string> {
+  const map = new Map<string, string>();
+  const data = registry.getData();
+  for (const e of data.globalEnums) {
+    const enumName = e.name.includes('.') ? e.name.replace(/\./g, '_') : e.name;
+    for (const v of e.values) {
+      map.set(v.name, `${enumName}.${v.name}`);
+    }
+  }
+  return map;
 }
 
 /**
@@ -1420,6 +1436,9 @@ function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
       }
       return `this.${node.text}`;
     }
+    // Global enum constant → qualified name (e.g. KEY_F21 → Key.KEY_F21)
+    const enumQualified = ctx.globalEnumMap.get(node.text);
+    if (enumQualified) return enumQualified;
     return node.text;
   }
 

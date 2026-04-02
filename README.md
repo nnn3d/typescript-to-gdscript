@@ -98,12 +98,15 @@ Options:
 - `--registry <path>` — Path to `godot-class-registry.json`
 - `--no-helpers` — Disable all GD-to-TS conversion helpers
 - `--no-signal-handler-helper` — Disable signal handler type inference from `.tscn` connections
+- `--no-operator-fix-helper` — Disable TS-based operator type error auto-fix
 
 #### Conversion Helpers
 
 GD-to-TS conversion includes optional helpers that enhance the output:
 
 - **Signal handler helper** (default: enabled) — Scans `.tscn` scene files for signal connections and adds typed parameter annotations to signal handler methods (e.g., `_on_area_entered(area: Area2D)` instead of untyped `_on_area_entered(area)`).
+
+- **Operator fix helper** (default: enabled) — After conversion and typings generation, runs the TypeScript type-checker on converted files to find operator type errors (e.g., `Vector2 + Vector2`). Automatically wraps them in `gd.ops.X()` calls (e.g., `gd.ops.add(v1, v2)`). Catches cases that GDScript-time type inference misses (inherited members, method return values, etc.).
 
 ### `ts2gd watch`
 

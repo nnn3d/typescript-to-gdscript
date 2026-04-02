@@ -8,4 +8,11 @@ export class Enums extends Node {
   _ready() {
     return Enums.Direction.UP || Enums.Status.IDLE || Enums.UNIT_NEUTRAL;
   }
+
+  test_global_enums() {
+    let v1 = Key.KEY_F21;
+    let v2 = Error.OK;
+    let v3 = Error.OK;
+    let v4 = Side.SIDE_LEFT;
+  }
 }
