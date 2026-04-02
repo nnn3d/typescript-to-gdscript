@@ -14,6 +14,7 @@ import {
 import { resolve, dirname, relative, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
+import { runTsHelpers } from '../converter/gd-to-ts/ts-helpers.ts';
 import {
   generateTypings,
   resolveSignalHandlers,
@@ -266,6 +267,10 @@ program
     '--no-signal-handler-helper',
     'Disable signal handler type inference from .tscn connections',
   )
+  .option(
+    '--no-operator-fix-helper',
+    'Disable TS-based operator type error auto-fix (gd.ops wrapping)',
+  )
   .action((files: string[], opts) => {
     const cfg = resolveConfig({
       overrides: {
@@ -353,6 +358,20 @@ program
       ...cfg,
       tsFiles: tsOutputFiles,
     });
+
+    // Run TS-based post-processing helpers (operator fix, etc.)
+    const operatorFixEnabled = !opts.noHelpers && !opts.noOperatorFixHelper;
+    if (operatorFixEnabled && tsOutputFiles.length > 0) {
+      const helperResult = runTsHelpers({
+        files: tsOutputFiles,
+        rootDir: cfg.tsDir,
+        tsConfigPath: cfg.tsconfig,
+        helpers: { operatorFix: true },
+      });
+      if (helperResult.fixedFiles.length > 0) {
+        debugLog(`Operator fix: patched ${helperResult.fixedFiles.length} file(s)`);
+      }
+    }
 
     if (hasErrors) process.exit(1);
   });

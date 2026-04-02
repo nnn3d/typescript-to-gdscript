@@ -182,3 +182,71 @@ describe('GD to TS: Signal handler typing', () => {
     expect(actualLines.length).toBe(expectedLines.length);
   });
 });
+
+describe('GD to TS: Operator fix helper', () => {
+  it('should fix operator type errors using gd.ops wrappers', async () => {
+    const { runTsHelpers } = await import('../../src/converter/gd-to-ts/ts-helpers.js');
+    const { mkdirSync, writeFileSync, readFileSync: readFile, rmSync } = await import('fs');
+
+    // Create a temp directory with a TS file that has operator errors
+    const tmpDir = join(__dirname, '..', '.tmp-ts-helper-test');
+    mkdirSync(tmpDir, { recursive: true });
+
+    try {
+      // Write a tsconfig that references Godot typings
+      const typingsDir = join(__dirname, '..', '..', 'typings', 'latest');
+      writeFileSync(join(tmpDir, 'tsconfig.json'), JSON.stringify({
+        compilerOptions: {
+          target: 'ES2022',
+          module: 'Node16',
+          moduleResolution: 'Node16',
+          strict: true,
+          noEmit: true,
+          types: [typingsDir],
+        },
+        include: ['./*.ts'],
+      }));
+
+      // Write a TS file with Vector2 + Vector2 (which TS can't handle natively)
+      const tsContent = [
+        'export class TestOps extends Node {',
+        '  v1: Vector2 = Vector2(1, 2);',
+        '  v2: Vector2 = Vector2(3, 4);',
+        '',
+        '  test() {',
+        '    let v3 = this.v1 + this.v2;',
+        '    let v4 = this.v1 - this.v2;',
+        '    let v5 = this.v1 * this.v2;',
+        '    let ok = 1 + 2;',
+        '  }',
+        '}',
+      ].join('\n');
+
+      const filePath = join(tmpDir, 'test-ops.ts');
+      writeFileSync(filePath, tsContent);
+
+      // Run the helper
+      const result = runTsHelpers({
+        files: [filePath],
+        rootDir: tmpDir,
+        tsConfigPath: join(tmpDir, 'tsconfig.json'),
+      });
+
+      // Should have fixed the file
+      expect(result.fixedFiles.length).toBe(1);
+
+      // Read the fixed file
+      const fixed = readFile(filePath, 'utf-8');
+
+      // Operator errors should be wrapped in gd.ops
+      expect(fixed).toContain('gd.ops.add(this.v1, this.v2)');
+      expect(fixed).toContain('gd.ops.sub(this.v1, this.v2)');
+      expect(fixed).toContain('gd.ops.mul(this.v1, this.v2)');
+
+      // Primitive operations should NOT be wrapped
+      expect(fixed).toContain('let ok = 1 + 2;');
+    } finally {
+      rmSync(tmpDir, { recursive: true, force: true });
+    }
+  });
+});

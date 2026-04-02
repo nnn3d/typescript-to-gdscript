@@ -31,11 +31,6 @@ export interface TsToGdConfig {
   ignore?: string[];
   /** Path to project.godot file (relative to rootDir). Defaults to "project.godot". */
   projectFile?: string;
-  /** GD-to-TS conversion helpers. Each can be disabled individually. */
-  helpers?: {
-    /** Infer signal handler parameter types from .tscn connections. Default: true. */
-    signalHandler?: boolean;
-  };
 }
 
 // ─── Resolved Config ─────────────────────────────────────────
