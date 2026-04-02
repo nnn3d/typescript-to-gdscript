@@ -120,7 +120,8 @@ describe('Scene typings generation', () => {
     expect(playerScript).toContain('get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;');
     expect(playerScript).toContain('get_node_or_null<P extends string & ScriptPaths>(path: P): _GDGetNodeOrNull<ScriptTree, P>;');
     expect(playerScript).toContain('get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;');
-    expect(playerScript).toContain('get_parent<N extends Node = _GDParentType<ScriptTree>>(): N;');
+    expect(playerScript).toContain('get_parent(): _GDParentType<ScriptTree>;');
+    expect(playerScript).toContain('get_parent<N extends Node = Node>(): N;');
 
     // Global class declaration
     expect(playerScript).toContain('class Player extends ScriptClass {');

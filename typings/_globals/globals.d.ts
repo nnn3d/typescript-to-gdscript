@@ -187,12 +187,41 @@ interface ClassAccessorDecoratorContext {
 // ─── Tree Helpers ───
 
 
+/**
+ * Maps `res://` resource paths to their loaded types.
+ * Populated by the scene typings generator (`ts2gd generate-typings`).
+ * Consumer projects extend this via generated `scene-typings.d.ts`.
+ * @example
+ * // After generation, contains entries like:
+ * // "res://scenes/Player.tscn": PackedScene<Player>
+ * // "res://assets/music.ogg": AudioStreamWAV
+ */
+interface GodotResources {}
 
-// type _GDBaseTree = {[K in string]?: _GDBaseTree} & {
-//   [__node_type]: Node;
-//   [__node_parent]: _GDBaseTree | null;
-//   [__node_children]: _GDBaseTree[];
-// };
+/**
+ * Union of all scene file paths (keys in GodotResources whose value is a PackedScene).
+ * Used to type-check `SceneTree.change_scene_to_file()`.
+ */
+type GodotScenePaths = {
+  [K in keyof GodotResources]: GodotResources[K] extends PackedScene<any> ? K : never;
+}[keyof GodotResources];
+
+/**
+ * Maps group names to scene→tree-type mappings.
+ * Populated by the scene typings generator via declaration merging.
+ * Top-level keys are group names, values map scene paths to tree types.
+ * @example
+ * // "enemies": { "res://Level.tscn": _PlayerTscn_Tree | _EnemyTscn_Tree }
+ */
+interface GodotGroups {}
+
+/** Union of all group names across all scenes. */
+type GodotGroupNames = keyof GodotGroups & string;
+
+/** Resolve the union of tree types belonging to a group, then wrap in _GDTreeNode.
+ *  Unknown groups (not in any scene) return Node. */
+type _GDGroupTrees<G extends string> = G extends keyof GodotGroups ? GodotGroups[G][keyof GodotGroups[G]] : never;
+type GodotGroupNodes<G extends string> = [_GDGroupTrees<G>] extends [never] ? Node : _GDTreeNode<_GDGroupTrees<G>>;
 
 /** Extract root node name (string) or false if not a root tree. */
 type _GDTreeGetRoot<T> = T extends {[__node_root]: infer R extends string} ? R : never;
@@ -230,7 +259,8 @@ type _GDTreeHandlers<Tree> = {
   /** Get a child node or null by path. Unknown paths return Node | null. */
   get_node_or_null(path: string): Node | null;
   /** Get the parent node. Returns typed parent from scene tree if known. */
-  get_parent<N extends Node = _GDParentType<Tree>>(): N;
+  get_parent(): _GDParentType<Tree>;
+  get_parent<N extends Node = Node>(): N;
   /** Check if a node exists at path. Known paths (from scene tree) provide autocomplete and return `true`. */
   has_node<P extends string & _GDGetTreePaths<Tree>>(path: P): boolean;
   /** Check if a node exists at path. Unknown paths return boolean. */
