@@ -975,7 +975,15 @@ function collectParamNames(
       const name = child.namedChildren.find((c) =>
         c.type === SyntaxType.Identifier,
       )?.text;
-      if (name) ctx.localVars.add(name);
+      if (name) {
+        ctx.localVars.add(name);
+        // Track param type for operator overload inference
+        const typeNode = child.childForFieldName('type');
+        if (typeNode) {
+          const typeName = extractGdTypeName(typeNode);
+          if (typeName) ctx.localVarTypes.set(name, typeName);
+        }
+      }
     }
   }
 }
@@ -1844,8 +1852,15 @@ function emitLambda(node: SyntaxNode, ctx: GdToTsContext): string {
   const returnTypeNode = node.childForFieldName('return_type');
   const bodyNode = node.childForFieldName('body');
 
+  // Register lambda params in scope for type inference (e.g. operator overload detection)
+  const savedLocalVars = new Set(ctx.localVars);
+  const savedLocalVarTypes = new Map(ctx.localVarTypes);
+  collectParamNames(paramsNode, ctx);
+
   const params = paramsNode ? emitParams(paramsNode, ctx) : '';
   const returnType = returnTypeNode ? emitReturnType(returnTypeNode) : '';
+
+  let result: string;
 
   // Check if body is a single return expression
   if (bodyNode && bodyNode.namedChildren.length === 1) {
@@ -1855,20 +1870,27 @@ function emitLambda(node: SyntaxNode, ctx: GdToTsContext): string {
       stmt.namedChildren.length > 0
     ) {
       const expr = stmt.namedChildren[0]!;
-      return `(${params})${returnType} => ${emitExpr(expr, ctx)}`;
-    }
-    if (
+      result = `(${params})${returnType} => ${emitExpr(expr, ctx)}`;
+    } else if (
       stmt.type === SyntaxType.ExpressionStatement &&
       stmt.namedChildren.length > 0
     ) {
       const expr = stmt.namedChildren[0]!;
-      return `(${params})${returnType} => { ${emitExpr(expr, ctx)}; }`;
+      result = `(${params})${returnType} => { ${emitExpr(expr, ctx)}; }`;
+    } else {
+      const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
+      result = `(${params})${returnType} => {\n${body}\n  }`;
     }
+  } else {
+    // Multi-statement lambda
+    const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
+    result = `(${params})${returnType} => {\n${body}\n  }`;
   }
 
-  // Multi-statement lambda
-  const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
-  return `(${params})${returnType} => {\n${body}\n  }`;
+  // Restore scope
+  ctx.localVars = savedLocalVars;
+  ctx.localVarTypes = savedLocalVarTypes;
+  return result;
 }
 
 // ─── Comments (inline) ───────────────────────────────────────
@@ -1945,6 +1967,11 @@ function inferExprType(node: SyntaxNode, ctx: GdToTsContext): string | null {
   if (node.type === SyntaxType.Array) {
     return 'Array';
   }
+  // Numeric/string/boolean literals
+  if (node.type === SyntaxType.Integer) return 'int';
+  if (node.type === SyntaxType.Float) return 'float';
+  if (node.type === SyntaxType.String) return 'String';
+  if (node.type === SyntaxType.True || node.type === SyntaxType.False) return 'bool';
   // Identifier: look up tracked type (local vars first, then class members)
   if (node.type === SyntaxType.Identifier) {
     if (ctx.localVarTypes.has(node.text))
