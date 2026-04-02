@@ -515,7 +515,7 @@ declare function var_to_str(variable: unknown): string;
  * Returns a {@link WeakRef} instance holding a weak reference to `obj`. Returns an empty {@link WeakRef} instance if `obj` is `null`. Prints an error and returns `null` if `obj` is neither {@link Object}-derived nor `null`.
  * A weak reference to an object is not enough to keep the object alive: when the only remaining references to a referent are weak references, garbage collection is free to destroy the referent and reuse its memory for something else. However, until the object is actually destroyed the weak reference may return the object even if there are no strong references to it.
  */
-declare function weakref(obj: GodotObject): GodotWeakRef;
+declare function weakref(obj: GodotObject): WeakRef;
 /**
  * Wraps the {@link Variant} `value` between `min` and `max`. `min` is *inclusive* while `max` is *exclusive*. This can be used for creating loop-like behavior or infinite surfaces.
  * Variant types [int] and [float] are supported. If any of the arguments is [float], this function returns a [float], otherwise it returns an [int].
@@ -1308,7 +1308,7 @@ declare const enum MIDIMessage {
   MIDI_MESSAGE_SYSTEM_RESET = 255,
 }
 
-declare const enum GodotError {
+declare const enum Error {
   /**
    * Methods that return {@link Error} return {@link OK} when no error occurred.
    * Since {@link OK} has value `0`, and all other error constants are positive integers, it can also be used in boolean checks.

@@ -282,7 +282,6 @@ declare interface Array<T = unknown> {
   [index: number]: T;
 }
 
-type GodotArray = Array<unknown>;
 declare interface ArrayConstructor {
   new <T>(): Array<T>;
   new <T>(...items: T[]): Array<T>;

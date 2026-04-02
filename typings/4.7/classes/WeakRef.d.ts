@@ -4,7 +4,7 @@
 /**
  * Holds an {@link Object}. If the object is {@link RefCounted}, it doesn't update the reference count.
  */
-declare class GodotWeakRef extends RefCounted {
+declare class WeakRef extends RefCounted {
   /**
    * Returns the {@link Object} this weakref is referring to. Returns `null` if that object no longer exists.
    */

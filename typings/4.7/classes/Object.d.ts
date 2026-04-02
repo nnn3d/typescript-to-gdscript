@@ -140,11 +140,11 @@ declare class GodotObject {
   this: Record<N, Signal<A>>,
   signal: N,
   ...args: A
-  ): GodotError.OK | GodotError.ERR_UNAVAILABLE;
+  ): Error.OK | Error.ERR_UNAVAILABLE;
   emit_signal(
   signal: string,
   ...args: any[]
-  ): GodotError.OK | GodotError.ERR_UNAVAILABLE;
+  ): Error.OK | Error.ERR_UNAVAILABLE;
   /**
    * Deletes the object from memory. Pre-existing references to the object become invalid, and any attempt to access them will result in a runtime error. Checking the references with {@link @GlobalScope.is_instance_valid} will return `false`. This is equivalent to the `memdelete` function in GDExtension C++.
    */

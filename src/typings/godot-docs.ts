@@ -76,10 +76,6 @@ export function godotTypeToTs(type: string): string {
       return 'string';
     case 'Object':
       return 'GodotObject';
-    case 'Signal':
-      return 'GodotSignal';
-    case 'Error':
-      return 'GodotError';
     case '':
       return 'void';
     // C++ internal types that leak from Godot docs
@@ -373,12 +369,6 @@ const INTERFACE_CLASSES = new Map<string, string>([
 /** Names that conflict with TS/JS built-in globals and need prefixing */
 const CLASS_NAME_CONFLICTS = new Map<string, string>([
   ['Object', 'GodotObject'],
-  ['Signal', 'GodotSignal'],
-  ['Error', 'GodotError'],
-  ['Array', 'GodotArray'],
-  ['String', 'GodotString'],
-  ['JSON', 'GodotJSON'],
-  ['WeakRef', 'GodotWeakRef'],
 ]);
 
 function sanitizeClassName(name: string): string {
@@ -785,8 +775,6 @@ function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
     lines.push('');
     for (const e of cls.enums) {
       let enumName = e.name.includes('.') ? e.name.replace(/\./g, '_') : e.name;
-      // Avoid conflicts with TS builtins
-      if (enumName === 'Error') enumName = 'GodotError';
       lines.push(`declare const enum ${enumName} {`);
       for (const v of e.values) {
         // Find description from constants

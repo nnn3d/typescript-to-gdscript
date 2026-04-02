@@ -25,9 +25,9 @@ declare class GodotObject {
     this: Record<N, Signal<A>>,
     signal: N,
     ...args: A
-  ): GodotError.OK | GodotError.ERR_UNAVAILABLE;
+  ): Error.OK | Error.ERR_UNAVAILABLE;
   emit_signal(
     signal: string,
     ...args: any[]
-  ): GodotError.OK | GodotError.ERR_UNAVAILABLE;
+  ): Error.OK | Error.ERR_UNAVAILABLE;
 }

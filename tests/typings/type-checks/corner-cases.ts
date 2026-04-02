@@ -56,7 +56,7 @@ class RenamedClassTest extends Node {
     obj2.has_method('test');
 
     // GodotArray is the untyped array class
-    let arr = new GodotArray();
+    let arr = new Array();
     arr.append('value');
     arr.size();
 

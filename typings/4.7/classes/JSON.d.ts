@@ -2,7 +2,7 @@
 // Manual overrides applied from typings/_overrides/*.d.ts
 
 /** Helper class for creating and parsing JSON data. */
-declare class GodotJSON extends Resource {
+declare class JSON extends Resource {
   /** Contains the parsed JSON data in {@link Variant} form. */
   data: unknown;
   set_data(value: unknown): void;

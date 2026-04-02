@@ -111,7 +111,7 @@ declare class Tween extends RefCounted {
    * **Example:** A character walks to a specific point, says some lines and walks back when the player closes the message box.
    * **Note:** If you are awaiting a signal from a callback called in the same {@link Tween}, make sure the signal is emitted *after* the await starts. If it can't be reasonably guaranteed, you can await and emit in the same step:
    */
-  tween_await(signal: GodotSignal): AwaitTweener;
+  tween_await(signal: Signal): AwaitTweener;
   /**
    * Creates and appends a {@link CallbackTweener}. This method can be used to call an arbitrary method in any object. Use {@link Callable.bind} to bind additional arguments for the call.
    * **Example:** Object that keeps shooting every 1 second:

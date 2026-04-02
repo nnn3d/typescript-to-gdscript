@@ -471,4 +471,3 @@ declare interface String {
   [__ops_gte]: { right: string; ret: boolean };
 }
 
-type GodotString = String;

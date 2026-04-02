@@ -35,7 +35,7 @@ declare function sign<T extends int | float | Vector2 | Vector2i | Vector3 | Vec
 
 declare function snapped<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T, step: T): T;
 
-declare function weakref(obj: GodotObject): GodotWeakRef;
+declare function weakref(obj: GodotObject): WeakRef;
 
 declare function wrap<T extends int | float>(value: T, min: T, max: T): T;
 

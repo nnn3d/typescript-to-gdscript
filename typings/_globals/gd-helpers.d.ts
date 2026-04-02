@@ -12,14 +12,6 @@ type int = number;
 /** Alias for number representing a float in GDScript */
 type float = number;
 
-/** GDScript Signal type with typed parameters */
-type Signal<T extends any[] = any[]> = {
-  emit(...args: T): void;
-  connect(callable: (...args: T) => void): void;
-  disconnect(callable: (...args: T) => void): void;
-  is_connected(callable: (...args: T) => void): boolean;
-};
-
 /** Global helper for StringName */
 declare function StringName(value: string): string;
 
