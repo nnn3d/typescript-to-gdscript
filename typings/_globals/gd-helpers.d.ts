@@ -8,9 +8,14 @@ type TSOnly<T> = T;
 
 /** Alias for number representing an integer in GDScript */
 type int = number;
+/** GDScript `int()` cast function — truncates to integer */
+declare function int(from?: int | float | String | boolean): int;
+
 
 /** Alias for number representing a float in GDScript */
 type float = number;
+/** GDScript `float()` cast function — converts to float */
+declare function float(from?: int | float | String | boolean): float;
 
 /** Global helper for StringName */
 declare function StringName(value: string): string;

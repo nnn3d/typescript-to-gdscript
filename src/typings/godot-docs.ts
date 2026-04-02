@@ -1506,6 +1506,7 @@ export function generateGodotDocsTypings(
         const typeParam = hasGenerics ? '<T>' : '';
         const unknownParam = hasGenerics ? '<unknown>' : '';
         fileLines.push('declare interface ArrayConstructor {');
+        fileLines.push(`  ${typeParam}(): Array${typeParam};`);
         fileLines.push(`  new ${typeParam}(): Array${typeParam};`);
         fileLines.push(
           `  new ${typeParam}(...items: ${hasGenerics ? 'T' : 'unknown'}[]): Array${typeParam};`,

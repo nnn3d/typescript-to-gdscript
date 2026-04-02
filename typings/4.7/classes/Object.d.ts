@@ -153,6 +153,7 @@ declare class GodotObject {
    * Returns the {@link Variant} value of the given `property`. If the `property` does not exist, this method returns `null`.
    * **Note:** In C#, `property` must be in snake_case when referring to built-in Godot properties. Prefer using the names exposed in the `PropertyName` class to avoid allocating a new {@link StringName} on each call.
    */
+  get<P extends keyof this>(property: P): this[P];
   get(property: string): unknown;
   /**
    * Returns the object's built-in class name, as a {@link String}. See also {@link is_class}.

@@ -30,4 +30,6 @@ declare class GodotObject {
     signal: string,
     ...args: any[]
   ): Error.OK | Error.ERR_UNAVAILABLE;
+  get<P extends keyof this>(property: P): this[P];
+  get(property: string): unknown;
 }

@@ -283,6 +283,7 @@ declare interface Array<T = unknown> {
 }
 
 declare interface ArrayConstructor {
+  <T>(): Array<T>;
   new <T>(): Array<T>;
   new <T>(...items: T[]): Array<T>;
 }

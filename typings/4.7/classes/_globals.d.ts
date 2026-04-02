@@ -4,8 +4,7 @@
 // @GlobalScope — global functions and constants
 
 /**
- * Returns the absolute value of a {@link Variant} parameter `x` (i.e. non-negative value). Supported types: [int], [float], {@link Vector2}, {@link Vector2i}, {@link Vector3}, {@link Vector3i}, {@link Vector4}, {@link Vector4i}.
- * **Note:** For better type safety, use {@link absf}, {@link absi}, {@link Vector2.abs}, {@link Vector2i.abs}, {@link Vector3.abs}, {@link Vector3i.abs}, {@link Vector4.abs}, or {@link Vector4i.abs}.
+ * Override: Global functions — adds generic type parameters to polymorphic functions.
  */
 declare function abs<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T): T;
 /** Returns the absolute value of float parameter `x` (i.e. positive value). */
