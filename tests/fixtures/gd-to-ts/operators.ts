@@ -3,6 +3,8 @@ export class Operators extends Node {
   v2 = Vector2(3, 4);
   i1 = 1;
   i2 = 2;
+  a1 = [0, 1];
+  a2 = ['a', 'b'];
 
   test_operators() {
     let a: int = 10;
@@ -28,6 +30,7 @@ export class Operators extends Node {
     let v4 = gd.ops.sub(gd.ops.mul(this.v1, this.v2), this.v1);
     let v5 = gd.ops.add(gd.ops.sub(this.v1, gd.ops.mul(this.v2, this.v2)), gd.ops.div(this.v1, this.v2));
     let v6 = gd.ops.add(gd.ops.sub(this.v1, 2 * 1), gd.ops.div(this.v1, this.v2));
+    let v7 = gd.ops.add(this.a1, this.a2);
   }
 
   test_not_precedence() {

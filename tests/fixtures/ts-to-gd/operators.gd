@@ -46,6 +46,11 @@ func test_vector_math():
 	var vi3 = (vi1 % vi2)
 	var vi4 = (vi1 % 3)
 
+func test_array_concat():
+	var a1 = [0, 1]
+	var a2 = ["a", "b"]
+	var a3 = (a1 + a2)
+
 func test_multipple_vector_math():
 	var v3 = ((self.v1 + self.v2) + self.v1)
 	var v4 = ((self.v1 * self.v2) - self.v1)

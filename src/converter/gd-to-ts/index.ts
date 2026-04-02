@@ -1899,6 +1899,7 @@ const OPERATOR_OVERLOAD_TYPES = new Set([
   'Transform2D',
   'Transform3D',
   'Projection',
+  'Array',
 ]);
 
 /** Extract raw GD type name from a type node */
@@ -1939,6 +1940,10 @@ function inferExprType(node: SyntaxNode, ctx: GdToTsContext): string | null {
     ) {
       return callee.text;
     }
+  }
+  // Array literal: [...]
+  if (node.type === SyntaxType.Array) {
+    return 'Array';
   }
   // Identifier: look up tracked type (local vars first, then class members)
   if (node.type === SyntaxType.Identifier) {

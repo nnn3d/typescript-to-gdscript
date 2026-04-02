@@ -9,6 +9,10 @@ var i1 = 1
 
 var i2 = 2
 
+var a1 = [0, 1]
+
+var a2 = ['a', 'b']
+
 func test_operators():
 	var a: int = 10
 	var b: int = 3
@@ -32,6 +36,7 @@ func test_multiple_vector_math():
     var v4 = v1 * v2 - v1
     var v5 = v1 - v2 * v2 + v1 / v2
     var v6 = v1 - 2 * 1 + v1 / v2
+    var v7 = a1 + a2
 
 func test_not_precedence():
     var a: int = 10

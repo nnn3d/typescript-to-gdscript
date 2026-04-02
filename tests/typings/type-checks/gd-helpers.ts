@@ -81,6 +81,11 @@ class OpsTest extends Node {
     let v8: Vector2 = gd.ops.mul(2.0, v1);
     let v9: float = gd.ops.mul(2.0, 1);
 
+    // Arrays
+    let v10: Array<string> = gd.ops.add([''], ['']);
+    let v11: Array<string | number> = gd.ops.add([''], ['', 2]);
+    let v12: Array<string | number | Vector2> = gd.ops.add(['', v1], ['', 3]);
+
     // @ts-expect-error — can't multiply Vector2 and Vector3
     gd.ops.mul(Vector2(), Vector3());
 

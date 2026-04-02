@@ -135,18 +135,18 @@ declare const gd: {
     value: unknown,
     cases: Array<
       | {
-        match: unknown;
-        do: () => void;
-      }
+          match: unknown;
+          do: () => void;
+        }
       | {
-        matchMany: unknown[];
-        do: () => void;
-      }
+          matchMany: unknown[];
+          do: () => void;
+        }
       | ((...args: unknown[]) => {
-        match: unknown;
-        when?: unknown;
-        do: () => void;
-      })
+          match: unknown;
+          when?: unknown;
+          do: () => void;
+        })
     >,
   ) => void;
 
@@ -157,102 +157,103 @@ declare const gd: {
   ) => T extends U ? U : U | null;
 
   readonly ops: {
+    /** Transforms to `[] + []` in GDScript */
+    add<A, B>(a: Array<A>, b: Array<B>): Array<A | B>;
     /** Transforms to `a + b` in GDScript */
-    readonly add: <
+    add<
       L extends Record<typeof __ops_add, any>,
       R extends OpRight<typeof __ops_add, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ops_add, L, R>;
+    ): OpResult<typeof __ops_add, L, R>;
     /** Transforms to `a - b` in GDScript */
-    readonly sub: <
+    sub<
       L extends Record<typeof __ops_sub, any>,
       R extends OpRight<typeof __ops_sub, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ops_sub, L, R>;
+    ): OpResult<typeof __ops_sub, L, R>;
     /** Transforms to `a * b` in GDScript */
-    readonly mul: <
+    mul<
       L extends Record<typeof __ops_mul, any>,
       R extends OpRight<typeof __ops_mul, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ops_mul, L, R>;
+    ): OpResult<typeof __ops_mul, L, R>;
     /** Transforms to `a / b` in GDScript */
-    readonly div: <
+    div<
       L extends Record<typeof __ops_div, any>,
       R extends OpRight<typeof __ops_div, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ops_div, L, R>;
+    ): OpResult<typeof __ops_div, L, R>;
     /** Transforms to `a % b` in GDScript (remainder/modulo) */
-    readonly rem: <
+    rem<
       L extends Record<typeof __ops_rem, any>,
       R extends OpRight<typeof __ops_rem, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ops_rem, L, R>;
+    ): OpResult<typeof __ops_rem, L, R>;
     /** Transforms to `a == b` in GDScript */
-    readonly eq: <
+    eq<
       L extends Record<typeof __ops_eq, any>,
       R extends OpRight<typeof __ops_eq, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ops_eq, L, R>;
+    ): OpResult<typeof __ops_eq, L, R>;
     /** Transforms to `a != b` in GDScript */
-    readonly ne: <
+    ne<
       L extends Record<typeof __ops_ne, any>,
       R extends OpRight<typeof __ops_ne, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ops_ne, L, R>;
+    ): OpResult<typeof __ops_ne, L, R>;
     /** Transforms to `a > b` in GDScript */
-    readonly gt: <
+    gt<
       L extends Record<typeof __ops_gt, any>,
       R extends OpRight<typeof __ops_gt, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ops_gt, L, R>;
+    ): OpResult<typeof __ops_gt, L, R>;
     /** Transforms to `a >= b` in GDScript */
-    readonly gte: <
+    gte<
       L extends Record<typeof __ops_gte, any>,
       R extends OpRight<typeof __ops_gte, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ops_gte, L, R>;
+    ): OpResult<typeof __ops_gte, L, R>;
     /** Transforms to `a < b` in GDScript */
-    readonly lt: <
+    lt<
       L extends Record<typeof __ops_lt, any>,
       R extends OpRight<typeof __ops_lt, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ops_lt, L, R>;
+    ): OpResult<typeof __ops_lt, L, R>;
     /** Transforms to `a <= b` in GDScript */
-    readonly lte: <
+    lte<
       L extends Record<typeof __ops_lte, any>,
       R extends OpRight<typeof __ops_lte, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ops_lte, L, R>;
+    ): OpResult<typeof __ops_lte, L, R>;
     /** Transforms to `+a` in GDScript (unary plus) */
-    readonly plus: <T extends Record<typeof __ops_plus, any>>(
+    plus<T extends Record<typeof __ops_plus, any>>(
       a: T,
-    ) => UnaryOpResult<typeof __ops_plus, T>;
+    ): UnaryOpResult<typeof __ops_plus, T>;
     /** Transforms to `-a` in GDScript (unary minus) */
-    readonly minus: <T extends Record<typeof __ops_minus, any>>(
+    minus<T extends Record<typeof __ops_minus, any>>(
       a: T,
-    ) => UnaryOpResult<typeof __ops_minus, T>;
+    ): UnaryOpResult<typeof __ops_minus, T>;
   };
-
 };
