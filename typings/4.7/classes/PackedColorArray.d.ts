@@ -74,9 +74,9 @@ declare interface PackedColorArray {
   to_byte_array(): PackedByteArray;
 
   // Operator overloads
-  [__ne]: { right: PackedColorArray; ret: boolean };
-  [__add]: { right: PackedColorArray; ret: PackedColorArray };
-  [__eq]: { right: PackedColorArray; ret: boolean };
+  [__ops_ne]: { right: PackedColorArray; ret: boolean };
+  [__ops_add]: { right: PackedColorArray; ret: PackedColorArray };
+  [__ops_eq]: { right: PackedColorArray; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

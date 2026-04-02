@@ -70,18 +70,19 @@ declare interface Vector3i {
   snappedi(step: int): Vector3i;
 
   // Operator overloads
-  [__ne]: { right: Vector3i; ret: boolean };
-  [__mul]: { right: Vector3i; ret: Vector3i } | { right: float; ret: Vector3 } | { right: int; ret: Vector3i };
-  [__add]: { right: Vector3i; ret: Vector3i };
-  [__sub]: { right: Vector3i; ret: Vector3i };
-  [__div]: { right: Vector3i; ret: Vector3i } | { right: float; ret: Vector3 } | { right: int; ret: Vector3i };
-  [__lt]: { right: Vector3i; ret: boolean };
-  [__lte]: { right: Vector3i; ret: boolean };
-  [__eq]: { right: Vector3i; ret: boolean };
-  [__gt]: { right: Vector3i; ret: boolean };
-  [__gte]: { right: Vector3i; ret: boolean };
-  [__plus]: { ret: Vector3i };
-  [__minus]: { ret: Vector3i };
+  [__ops_ne]: { right: Vector3i; ret: boolean };
+  [__ops_rem]: { right: Vector3i; ret: Vector3i } | { right: int; ret: Vector3i };
+  [__ops_mul]: { right: Vector3i; ret: Vector3i } | { right: float; ret: Vector3 } | { right: int; ret: Vector3i };
+  [__ops_add]: { right: Vector3i; ret: Vector3i };
+  [__ops_sub]: { right: Vector3i; ret: Vector3i };
+  [__ops_div]: { right: Vector3i; ret: Vector3i } | { right: float; ret: Vector3 } | { right: int; ret: Vector3i };
+  [__ops_lt]: { right: Vector3i; ret: boolean };
+  [__ops_lte]: { right: Vector3i; ret: boolean };
+  [__ops_eq]: { right: Vector3i; ret: boolean };
+  [__ops_gt]: { right: Vector3i; ret: boolean };
+  [__ops_gte]: { right: Vector3i; ret: boolean };
+  [__ops_plus]: { ret: Vector3i };
+  [__ops_minus]: { ret: Vector3i };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

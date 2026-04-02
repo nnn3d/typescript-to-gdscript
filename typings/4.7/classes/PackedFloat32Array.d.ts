@@ -90,9 +90,9 @@ declare interface PackedFloat32Array {
   to_byte_array(): PackedByteArray;
 
   // Operator overloads
-  [__ne]: { right: PackedFloat32Array; ret: boolean };
-  [__add]: { right: PackedFloat32Array; ret: PackedFloat32Array };
-  [__eq]: { right: PackedFloat32Array; ret: boolean };
+  [__ops_ne]: { right: PackedFloat32Array; ret: boolean };
+  [__ops_add]: { right: PackedFloat32Array; ret: PackedFloat32Array };
+  [__ops_eq]: { right: PackedFloat32Array; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

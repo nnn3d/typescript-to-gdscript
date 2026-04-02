@@ -83,10 +83,10 @@ declare interface Transform3D {
   translated_local(offset: Vector3): Transform3D;
 
   // Operator overloads
-  [__ne]: { right: Transform3D; ret: boolean };
-  [__mul]: { right: AABB; ret: AABB } | { right: PackedVector3Array; ret: PackedVector3Array } | { right: Plane; ret: Plane } | { right: Transform3D; ret: Transform3D } | { right: Vector3; ret: Vector3 } | { right: float; ret: Transform3D } | { right: int; ret: Transform3D };
-  [__div]: { right: float; ret: Transform3D } | { right: int; ret: Transform3D };
-  [__eq]: { right: Transform3D; ret: boolean };
+  [__ops_ne]: { right: Transform3D; ret: boolean };
+  [__ops_mul]: { right: AABB; ret: AABB } | { right: PackedVector3Array; ret: PackedVector3Array } | { right: Plane; ret: Plane } | { right: Transform3D; ret: Transform3D } | { right: Vector3; ret: Vector3 } | { right: float; ret: Transform3D } | { right: int; ret: Transform3D };
+  [__ops_div]: { right: float; ret: Transform3D } | { right: int; ret: Transform3D };
+  [__ops_eq]: { right: Transform3D; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

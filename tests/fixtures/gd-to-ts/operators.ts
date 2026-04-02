@@ -47,4 +47,13 @@ export class Operators extends Node {
     let v5 = gd.ops.lt(this.v1, this.v2);
     let v6 = gd.ops.lte(this.v1, this.v2);
   }
+
+  test_remainder() {
+    let vi1 = Vector2i(10, 20);
+    let vi2 = Vector2i(3, 7);
+    let vi3 = gd.ops.rem(vi1, vi2);
+    let a: int = 10;
+    let b: int = 3;
+    let c = a % b;
+  }
 }

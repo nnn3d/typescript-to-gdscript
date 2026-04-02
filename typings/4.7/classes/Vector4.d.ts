@@ -133,18 +133,18 @@ declare interface Vector4 {
   snappedf(step: float): Vector4;
 
   // Operator overloads
-  [__ne]: { right: Vector4; ret: boolean };
-  [__mul]: { right: Projection; ret: Vector4 } | { right: Vector4; ret: Vector4 } | { right: float; ret: Vector4 } | { right: int; ret: Vector4 };
-  [__add]: { right: Vector4; ret: Vector4 };
-  [__sub]: { right: Vector4; ret: Vector4 };
-  [__div]: { right: Vector4; ret: Vector4 } | { right: float; ret: Vector4 } | { right: int; ret: Vector4 };
-  [__lt]: { right: Vector4; ret: boolean };
-  [__lte]: { right: Vector4; ret: boolean };
-  [__eq]: { right: Vector4; ret: boolean };
-  [__gt]: { right: Vector4; ret: boolean };
-  [__gte]: { right: Vector4; ret: boolean };
-  [__plus]: { ret: Vector4 };
-  [__minus]: { ret: Vector4 };
+  [__ops_ne]: { right: Vector4; ret: boolean };
+  [__ops_mul]: { right: Projection; ret: Vector4 } | { right: Vector4; ret: Vector4 } | { right: float; ret: Vector4 } | { right: int; ret: Vector4 };
+  [__ops_add]: { right: Vector4; ret: Vector4 };
+  [__ops_sub]: { right: Vector4; ret: Vector4 };
+  [__ops_div]: { right: Vector4; ret: Vector4 } | { right: float; ret: Vector4 } | { right: int; ret: Vector4 };
+  [__ops_lt]: { right: Vector4; ret: boolean };
+  [__ops_lte]: { right: Vector4; ret: boolean };
+  [__ops_eq]: { right: Vector4; ret: boolean };
+  [__ops_gt]: { right: Vector4; ret: boolean };
+  [__ops_gte]: { right: Vector4; ret: boolean };
+  [__ops_plus]: { ret: Vector4 };
+  [__ops_minus]: { ret: Vector4 };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

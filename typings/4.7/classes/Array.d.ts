@@ -271,13 +271,13 @@ declare interface Array<T = unknown> {
   sort_custom(func: (a: T, b: T) => boolean): void;
 
   // Operator overloads
-  [__ne]: { right: Array<unknown>; ret: boolean };
-  [__add]: { right: Array<unknown>; ret: Array<unknown> };
-  [__lt]: { right: Array<unknown>; ret: boolean };
-  [__lte]: { right: Array<unknown>; ret: boolean };
-  [__eq]: { right: Array<unknown>; ret: boolean };
-  [__gt]: { right: Array<unknown>; ret: boolean };
-  [__gte]: { right: Array<unknown>; ret: boolean };
+  [__ops_ne]: { right: Array<unknown>; ret: boolean };
+  [__ops_add]: { right: Array<unknown>; ret: Array<unknown> };
+  [__ops_lt]: { right: Array<unknown>; ret: boolean };
+  [__ops_lte]: { right: Array<unknown>; ret: boolean };
+  [__ops_eq]: { right: Array<unknown>; ret: boolean };
+  [__ops_gt]: { right: Array<unknown>; ret: boolean };
+  [__ops_gte]: { right: Array<unknown>; ret: boolean };
   [Symbol.iterator](): IterableIterator<T>;
   [index: number]: T;
 }

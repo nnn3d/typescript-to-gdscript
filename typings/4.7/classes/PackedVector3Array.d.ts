@@ -87,10 +87,10 @@ declare interface PackedVector3Array {
   to_byte_array(): PackedByteArray;
 
   // Operator overloads
-  [__ne]: { right: PackedVector3Array; ret: boolean };
-  [__mul]: { right: Transform3D; ret: PackedVector3Array };
-  [__add]: { right: PackedVector3Array; ret: PackedVector3Array };
-  [__eq]: { right: PackedVector3Array; ret: boolean };
+  [__ops_ne]: { right: PackedVector3Array; ret: boolean };
+  [__ops_mul]: { right: Transform3D; ret: PackedVector3Array };
+  [__ops_add]: { right: PackedVector3Array; ret: PackedVector3Array };
+  [__ops_eq]: { right: PackedVector3Array; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

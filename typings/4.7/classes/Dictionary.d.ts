@@ -134,8 +134,8 @@ declare interface Object {
   values(): Array<unknown>;
 
   // Operator overloads
-  [__ne]: { right: Dictionary; ret: boolean };
-  [__eq]: { right: Dictionary; ret: boolean };
+  [__ops_ne]: { right: Dictionary; ret: boolean };
+  [__ops_eq]: { right: Dictionary; ret: boolean };
 }
 
 type Dictionary = Object;

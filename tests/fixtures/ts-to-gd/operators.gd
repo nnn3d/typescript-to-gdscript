@@ -41,6 +41,10 @@ func test_vector_math():
 	var v3 = (v1 + v2)
 	var v4 = (v1 * v2)
 	var v5 = (v1 - v2)
+	var vi1 = Vector2i(10, 20)
+	var vi2 = Vector2i(3, 7)
+	var vi3 = (vi1 % vi2)
+	var vi4 = (vi1 % 3)
 
 func test_multipple_vector_math():
 	var v3 = ((self.v1 + self.v2) + self.v1)

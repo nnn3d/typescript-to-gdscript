@@ -48,3 +48,11 @@ func test_ops_helpers():
     var v4 = v1 >= v2
     var v5 = v1 < v2
     var v6 = v1 <= v2
+
+func test_remainder():
+    var vi1 = Vector2i(10, 20)
+    var vi2 = Vector2i(3, 7)
+    var vi3 = vi1 % vi2
+    var a: int = 10
+    var b: int = 3
+    var c = a % b

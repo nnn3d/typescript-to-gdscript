@@ -1960,6 +1960,7 @@ const GD_OPS_MAP: Record<string, string> = {
   '-': 'sub',
   '*': 'mul',
   '/': 'div',
+  '%': 'rem',
   '==': 'eq',
   '!=': 'ne',
   '>': 'gt',

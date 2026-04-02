@@ -1449,6 +1449,7 @@ export class TsToGdTransformer {
       sub: ' - ',
       mul: ' * ',
       div: ' / ',
+      rem: ' % ',
       eq: ' == ',
       ne: ' != ',
       gt: ' > ',

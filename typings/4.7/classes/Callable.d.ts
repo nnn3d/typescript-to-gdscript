@@ -100,8 +100,8 @@ declare interface Function {
   unbind(argcount: int): Callable;
 
   // Operator overloads
-  [__ne]: { right: Callable; ret: boolean };
-  [__eq]: { right: Callable; ret: boolean };
+  [__ops_ne]: { right: Callable; ret: boolean };
+  [__ops_eq]: { right: Callable; ret: boolean };
 }
 
 type Callable = Function;

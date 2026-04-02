@@ -121,10 +121,10 @@ declare interface Transform2D {
   translated_local(offset: Vector2): Transform2D;
 
   // Operator overloads
-  [__ne]: { right: Transform2D; ret: boolean };
-  [__mul]: { right: PackedVector2Array; ret: PackedVector2Array } | { right: Rect2; ret: Rect2 } | { right: Transform2D; ret: Transform2D } | { right: Vector2; ret: Vector2 } | { right: float; ret: Transform2D } | { right: int; ret: Transform2D };
-  [__div]: { right: float; ret: Transform2D } | { right: int; ret: Transform2D };
-  [__eq]: { right: Transform2D; ret: boolean };
+  [__ops_ne]: { right: Transform2D; ret: boolean };
+  [__ops_mul]: { right: PackedVector2Array; ret: PackedVector2Array } | { right: Rect2; ret: Rect2 } | { right: Transform2D; ret: Transform2D } | { right: Vector2; ret: Vector2 } | { right: float; ret: Transform2D } | { right: int; ret: Transform2D };
+  [__ops_div]: { right: float; ret: Transform2D } | { right: int; ret: Transform2D };
+  [__ops_eq]: { right: Transform2D; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

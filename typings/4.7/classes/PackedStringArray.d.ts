@@ -74,9 +74,9 @@ declare interface PackedStringArray {
   to_byte_array(): PackedByteArray;
 
   // Operator overloads
-  [__ne]: { right: PackedStringArray; ret: boolean };
-  [__add]: { right: PackedStringArray; ret: PackedStringArray };
-  [__eq]: { right: PackedStringArray; ret: boolean };
+  [__ops_ne]: { right: PackedStringArray; ret: boolean };
+  [__ops_add]: { right: PackedStringArray; ret: PackedStringArray };
+  [__ops_eq]: { right: PackedStringArray; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

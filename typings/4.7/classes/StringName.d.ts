@@ -457,11 +457,12 @@ declare class StringName {
   xml_unescape(): string;
 
   // Operator overloads
-  [__ne]: { right: string; ret: boolean } | { right: string; ret: boolean };
-  [__add]: { right: string; ret: string } | { right: string; ret: string };
-  [__lt]: { right: string; ret: boolean };
-  [__lte]: { right: string; ret: boolean };
-  [__eq]: { right: string; ret: boolean } | { right: string; ret: boolean };
-  [__gt]: { right: string; ret: boolean };
-  [__gte]: { right: string; ret: boolean };
+  [__ops_ne]: { right: string; ret: boolean } | { right: string; ret: boolean };
+  [__ops_rem]: { right: unknown; ret: string };
+  [__ops_add]: { right: string; ret: string } | { right: string; ret: string };
+  [__ops_lt]: { right: string; ret: boolean };
+  [__ops_lte]: { right: string; ret: boolean };
+  [__ops_eq]: { right: string; ret: boolean } | { right: string; ret: boolean };
+  [__ops_gt]: { right: string; ret: boolean };
+  [__ops_gte]: { right: string; ret: boolean };
 }

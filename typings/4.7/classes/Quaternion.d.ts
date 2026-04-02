@@ -98,14 +98,14 @@ declare interface Quaternion {
   spherical_cubic_interpolate_in_time(b: Quaternion, pre_a: Quaternion, post_b: Quaternion, weight: float, b_t: float, pre_a_t: float, post_b_t: float): Quaternion;
 
   // Operator overloads
-  [__ne]: { right: Quaternion; ret: boolean };
-  [__mul]: { right: Quaternion; ret: Quaternion } | { right: Vector3; ret: Vector3 } | { right: float; ret: Quaternion } | { right: int; ret: Quaternion };
-  [__add]: { right: Quaternion; ret: Quaternion };
-  [__sub]: { right: Quaternion; ret: Quaternion };
-  [__div]: { right: float; ret: Quaternion } | { right: int; ret: Quaternion };
-  [__eq]: { right: Quaternion; ret: boolean };
-  [__plus]: { ret: Quaternion };
-  [__minus]: { ret: Quaternion };
+  [__ops_ne]: { right: Quaternion; ret: boolean };
+  [__ops_mul]: { right: Quaternion; ret: Quaternion } | { right: Vector3; ret: Vector3 } | { right: float; ret: Quaternion } | { right: int; ret: Quaternion };
+  [__ops_add]: { right: Quaternion; ret: Quaternion };
+  [__ops_sub]: { right: Quaternion; ret: Quaternion };
+  [__ops_div]: { right: float; ret: Quaternion } | { right: int; ret: Quaternion };
+  [__ops_eq]: { right: Quaternion; ret: boolean };
+  [__ops_plus]: { ret: Quaternion };
+  [__ops_minus]: { ret: Quaternion };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

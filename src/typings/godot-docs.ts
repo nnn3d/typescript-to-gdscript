@@ -259,18 +259,19 @@ function emitMethodSignature(method: GodotMethodXml): string[] {
 
 /** Maps GDScript operator names to unique symbol names */
 const OPERATOR_SYMBOL_MAP: Record<string, string> = {
-  '+': '__add',
-  '-': '__sub',
-  '*': '__mul',
-  '/': '__div',
-  '==': '__eq',
-  '!=': '__ne',
-  '>': '__gt',
-  '>=': '__gte',
-  '<': '__lt',
-  '<=': '__lte',
-  'unary+': '__plus',
-  'unary-': '__minus',
+  '+': '__ops_add',
+  '-': '__ops_sub',
+  '*': '__ops_mul',
+  '/': '__ops_div',
+  '==': '__ops_eq',
+  '!=': '__ops_ne',
+  '>': '__ops_gt',
+  '>=': '__ops_gte',
+  '<': '__ops_lt',
+  '<=': '__ops_lte',
+  '%': '__ops_rem',
+  'unary+': '__ops_plus',
+  'unary-': '__ops_minus',
 };
 
 /**

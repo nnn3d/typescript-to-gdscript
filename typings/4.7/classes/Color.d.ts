@@ -109,14 +109,14 @@ declare interface Color {
   to_rgba64(): int;
 
   // Operator overloads
-  [__ne]: { right: Color; ret: boolean };
-  [__mul]: { right: Color; ret: Color } | { right: float; ret: Color } | { right: int; ret: Color };
-  [__add]: { right: Color; ret: Color };
-  [__sub]: { right: Color; ret: Color };
-  [__div]: { right: Color; ret: Color } | { right: float; ret: Color } | { right: int; ret: Color };
-  [__eq]: { right: Color; ret: boolean };
-  [__plus]: { ret: Color };
-  [__minus]: { ret: Color };
+  [__ops_ne]: { right: Color; ret: boolean };
+  [__ops_mul]: { right: Color; ret: Color } | { right: float; ret: Color } | { right: int; ret: Color };
+  [__ops_add]: { right: Color; ret: Color };
+  [__ops_sub]: { right: Color; ret: Color };
+  [__ops_div]: { right: Color; ret: Color } | { right: float; ret: Color } | { right: int; ret: Color };
+  [__ops_eq]: { right: Color; ret: boolean };
+  [__ops_plus]: { ret: Color };
+  [__ops_minus]: { ret: Color };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

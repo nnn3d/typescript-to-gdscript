@@ -111,10 +111,10 @@ declare interface Basis {
   transposed(): Basis;
 
   // Operator overloads
-  [__ne]: { right: Basis; ret: boolean };
-  [__mul]: { right: Basis; ret: Basis } | { right: Vector3; ret: Vector3 } | { right: float; ret: Basis } | { right: int; ret: Basis };
-  [__div]: { right: float; ret: Basis } | { right: int; ret: Basis };
-  [__eq]: { right: Basis; ret: boolean };
+  [__ops_ne]: { right: Basis; ret: boolean };
+  [__ops_mul]: { right: Basis; ret: Basis } | { right: Vector3; ret: Vector3 } | { right: float; ret: Basis } | { right: int; ret: Basis };
+  [__ops_div]: { right: float; ret: Basis } | { right: int; ret: Basis };
+  [__ops_eq]: { right: Basis; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

@@ -61,9 +61,9 @@ declare interface Projection {
   perspective_znear_adjusted(new_znear: float): Projection;
 
   // Operator overloads
-  [__ne]: { right: Projection; ret: boolean };
-  [__mul]: { right: Projection; ret: Projection } | { right: Vector4; ret: Vector4 };
-  [__eq]: { right: Projection; ret: boolean };
+  [__ops_ne]: { right: Projection; ret: boolean };
+  [__ops_mul]: { right: Projection; ret: Projection } | { right: Vector4; ret: Vector4 };
+  [__ops_eq]: { right: Projection; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

@@ -9,12 +9,12 @@ declare interface RID {
   is_valid(): boolean;
 
   // Operator overloads
-  [__ne]: { right: RID; ret: boolean };
-  [__lt]: { right: RID; ret: boolean };
-  [__lte]: { right: RID; ret: boolean };
-  [__eq]: { right: RID; ret: boolean };
-  [__gt]: { right: RID; ret: boolean };
-  [__gte]: { right: RID; ret: boolean };
+  [__ops_ne]: { right: RID; ret: boolean };
+  [__ops_lt]: { right: RID; ret: boolean };
+  [__ops_lte]: { right: RID; ret: boolean };
+  [__ops_eq]: { right: RID; ret: boolean };
+  [__ops_gt]: { right: RID; ret: boolean };
+  [__ops_gte]: { right: RID; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

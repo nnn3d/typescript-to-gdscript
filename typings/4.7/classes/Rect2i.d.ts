@@ -67,8 +67,8 @@ declare interface Rect2i {
   merge(b: Rect2i): Rect2i;
 
   // Operator overloads
-  [__ne]: { right: Rect2i; ret: boolean };
-  [__eq]: { right: Rect2i; ret: boolean };
+  [__ops_ne]: { right: Rect2i; ret: boolean };
+  [__ops_eq]: { right: Rect2i; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

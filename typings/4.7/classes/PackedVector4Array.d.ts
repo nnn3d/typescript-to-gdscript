@@ -87,9 +87,9 @@ declare interface PackedVector4Array {
   to_byte_array(): PackedByteArray;
 
   // Operator overloads
-  [__ne]: { right: PackedVector4Array; ret: boolean };
-  [__add]: { right: PackedVector4Array; ret: PackedVector4Array };
-  [__eq]: { right: PackedVector4Array; ret: boolean };
+  [__ops_ne]: { right: PackedVector4Array; ret: boolean };
+  [__ops_add]: { right: PackedVector4Array; ret: PackedVector4Array };
+  [__ops_eq]: { right: PackedVector4Array; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

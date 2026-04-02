@@ -76,9 +76,9 @@ declare interface Rect2 {
   merge(b: Rect2): Rect2;
 
   // Operator overloads
-  [__ne]: { right: Rect2; ret: boolean };
-  [__mul]: { right: Transform2D; ret: Rect2 };
-  [__eq]: { right: Rect2; ret: boolean };
+  [__ops_ne]: { right: Rect2; ret: boolean };
+  [__ops_mul]: { right: Transform2D; ret: Rect2 };
+  [__ops_eq]: { right: Rect2; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

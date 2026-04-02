@@ -43,6 +43,10 @@ export class MyClass extends Node {
     let v3 = gd.ops.add(v1, v2);
     let v4 = gd.ops.mul(v1, v2);
     let v5 = gd.ops.sub(v1, v2);
+    let vi1 = Vector2i(10, 20);
+    let vi2 = Vector2i(3, 7);
+    let vi3 = gd.ops.rem(vi1, vi2);
+    let vi4 = gd.ops.rem(vi1, 3);
   }
 
   test_multipple_vector_math() {

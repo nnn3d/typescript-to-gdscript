@@ -40,6 +40,6 @@ declare class GodotSignal {
   is_null(): boolean;
 
   // Operator overloads
-  [__ne]: { right: GodotSignal; ret: boolean };
-  [__eq]: { right: GodotSignal; ret: boolean };
+  [__ops_ne]: { right: GodotSignal; ret: boolean };
+  [__ops_eq]: { right: GodotSignal; ret: boolean };
 }

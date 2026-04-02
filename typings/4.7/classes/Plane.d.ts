@@ -60,11 +60,11 @@ declare interface Plane {
   project(point: Vector3): Vector3;
 
   // Operator overloads
-  [__ne]: { right: Plane; ret: boolean };
-  [__mul]: { right: Transform3D; ret: Plane };
-  [__eq]: { right: Plane; ret: boolean };
-  [__plus]: { ret: Plane };
-  [__minus]: { ret: Plane };
+  [__ops_ne]: { right: Plane; ret: boolean };
+  [__ops_mul]: { right: Transform3D; ret: Plane };
+  [__ops_eq]: { right: Plane; ret: boolean };
+  [__ops_plus]: { ret: Plane };
+  [__ops_minus]: { ret: Plane };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

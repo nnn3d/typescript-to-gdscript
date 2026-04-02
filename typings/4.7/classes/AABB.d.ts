@@ -124,9 +124,9 @@ declare interface AABB {
   merge(with_: AABB): AABB;
 
   // Operator overloads
-  [__ne]: { right: AABB; ret: boolean };
-  [__mul]: { right: Transform3D; ret: AABB };
-  [__eq]: { right: AABB; ret: boolean };
+  [__ops_ne]: { right: AABB; ret: boolean };
+  [__ops_mul]: { right: Transform3D; ret: AABB };
+  [__ops_eq]: { right: AABB; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

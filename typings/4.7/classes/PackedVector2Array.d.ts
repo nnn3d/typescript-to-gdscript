@@ -87,10 +87,10 @@ declare interface PackedVector2Array {
   to_byte_array(): PackedByteArray;
 
   // Operator overloads
-  [__ne]: { right: PackedVector2Array; ret: boolean };
-  [__mul]: { right: Transform2D; ret: PackedVector2Array };
-  [__add]: { right: PackedVector2Array; ret: PackedVector2Array };
-  [__eq]: { right: PackedVector2Array; ret: boolean };
+  [__ops_ne]: { right: PackedVector2Array; ret: boolean };
+  [__ops_mul]: { right: Transform2D; ret: PackedVector2Array };
+  [__ops_add]: { right: PackedVector2Array; ret: PackedVector2Array };
+  [__ops_eq]: { right: PackedVector2Array; ret: boolean };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

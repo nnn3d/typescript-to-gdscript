@@ -50,6 +50,6 @@ declare class NodePath {
   slice(begin: int, end?: int): string;
 
   // Operator overloads
-  [__ne]: { right: string; ret: boolean };
-  [__eq]: { right: string; ret: boolean };
+  [__ops_ne]: { right: string; ret: boolean };
+  [__ops_eq]: { right: string; ret: boolean };
 }

@@ -198,18 +198,18 @@ declare interface Vector3 {
   snappedf(step: float): Vector3;
 
   // Operator overloads
-  [__ne]: { right: Vector3; ret: boolean };
-  [__mul]: { right: Basis; ret: Vector3 } | { right: Quaternion; ret: Vector3 } | { right: Transform3D; ret: Vector3 } | { right: Vector3; ret: Vector3 } | { right: float; ret: Vector3 } | { right: int; ret: Vector3 };
-  [__add]: { right: Vector3; ret: Vector3 };
-  [__sub]: { right: Vector3; ret: Vector3 };
-  [__div]: { right: Vector3; ret: Vector3 } | { right: float; ret: Vector3 } | { right: int; ret: Vector3 };
-  [__lt]: { right: Vector3; ret: boolean };
-  [__lte]: { right: Vector3; ret: boolean };
-  [__eq]: { right: Vector3; ret: boolean };
-  [__gt]: { right: Vector3; ret: boolean };
-  [__gte]: { right: Vector3; ret: boolean };
-  [__plus]: { ret: Vector3 };
-  [__minus]: { ret: Vector3 };
+  [__ops_ne]: { right: Vector3; ret: boolean };
+  [__ops_mul]: { right: Basis; ret: Vector3 } | { right: Quaternion; ret: Vector3 } | { right: Transform3D; ret: Vector3 } | { right: Vector3; ret: Vector3 } | { right: float; ret: Vector3 } | { right: int; ret: Vector3 };
+  [__ops_add]: { right: Vector3; ret: Vector3 };
+  [__ops_sub]: { right: Vector3; ret: Vector3 };
+  [__ops_div]: { right: Vector3; ret: Vector3 } | { right: float; ret: Vector3 } | { right: int; ret: Vector3 };
+  [__ops_lt]: { right: Vector3; ret: boolean };
+  [__ops_lte]: { right: Vector3; ret: boolean };
+  [__ops_eq]: { right: Vector3; ret: boolean };
+  [__ops_gt]: { right: Vector3; ret: boolean };
+  [__ops_gte]: { right: Vector3; ret: boolean };
+  [__ops_plus]: { ret: Vector3 };
+  [__ops_minus]: { ret: Vector3 };
 
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;

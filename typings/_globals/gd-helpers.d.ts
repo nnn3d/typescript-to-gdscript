@@ -38,20 +38,21 @@ declare const __node_extends: unique symbol;
 
 // ─── Operator Symbols ─────────────────────────────────────────
 // Unique symbols used as branded keys for operator overload dispatch.
-// Godot classes declare [__add](right: T): R overloads keyed by these symbols.
+// Godot classes declare [__ops_add](right: T): R overloads keyed by these symbols.
 
-declare const __add: unique symbol;
-declare const __sub: unique symbol;
-declare const __mul: unique symbol;
-declare const __div: unique symbol;
-declare const __eq: unique symbol;
-declare const __ne: unique symbol;
-declare const __gt: unique symbol;
-declare const __gte: unique symbol;
-declare const __lt: unique symbol;
-declare const __lte: unique symbol;
-declare const __plus: unique symbol;
-declare const __minus: unique symbol;
+declare const __ops_add: unique symbol;
+declare const __ops_sub: unique symbol;
+declare const __ops_mul: unique symbol;
+declare const __ops_div: unique symbol;
+declare const __ops_eq: unique symbol;
+declare const __ops_ne: unique symbol;
+declare const __ops_gt: unique symbol;
+declare const __ops_gte: unique symbol;
+declare const __ops_lt: unique symbol;
+declare const __ops_lte: unique symbol;
+declare const __ops_rem: unique symbol;
+declare const __ops_plus: unique symbol;
+declare const __ops_minus: unique symbol;
 
 // ─── Operator Type Dispatch ───────────────────────────────────
 
@@ -158,92 +159,100 @@ declare const gd: {
   readonly ops: {
     /** Transforms to `a + b` in GDScript */
     readonly add: <
-      L extends Record<typeof __add, any>,
-      R extends OpRight<typeof __add, L>,
+      L extends Record<typeof __ops_add, any>,
+      R extends OpRight<typeof __ops_add, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __add, L, R>;
+    ) => OpResult<typeof __ops_add, L, R>;
     /** Transforms to `a - b` in GDScript */
     readonly sub: <
-      L extends Record<typeof __sub, any>,
-      R extends OpRight<typeof __sub, L>,
+      L extends Record<typeof __ops_sub, any>,
+      R extends OpRight<typeof __ops_sub, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __sub, L, R>;
+    ) => OpResult<typeof __ops_sub, L, R>;
     /** Transforms to `a * b` in GDScript */
     readonly mul: <
-      L extends Record<typeof __mul, any>,
-      R extends OpRight<typeof __mul, L>,
+      L extends Record<typeof __ops_mul, any>,
+      R extends OpRight<typeof __ops_mul, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __mul, L, R>;
+    ) => OpResult<typeof __ops_mul, L, R>;
     /** Transforms to `a / b` in GDScript */
     readonly div: <
-      L extends Record<typeof __div, any>,
-      R extends OpRight<typeof __div, L>,
+      L extends Record<typeof __ops_div, any>,
+      R extends OpRight<typeof __ops_div, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __div, L, R>;
+    ) => OpResult<typeof __ops_div, L, R>;
+    /** Transforms to `a % b` in GDScript (remainder/modulo) */
+    readonly rem: <
+      L extends Record<typeof __ops_rem, any>,
+      R extends OpRight<typeof __ops_rem, L>,
+    >(
+      a: L,
+      b: R,
+    ) => OpResult<typeof __ops_rem, L, R>;
     /** Transforms to `a == b` in GDScript */
     readonly eq: <
-      L extends Record<typeof __eq, any>,
-      R extends OpRight<typeof __eq, L>,
+      L extends Record<typeof __ops_eq, any>,
+      R extends OpRight<typeof __ops_eq, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __eq, L, R>;
+    ) => OpResult<typeof __ops_eq, L, R>;
     /** Transforms to `a != b` in GDScript */
     readonly ne: <
-      L extends Record<typeof __ne, any>,
-      R extends OpRight<typeof __ne, L>,
+      L extends Record<typeof __ops_ne, any>,
+      R extends OpRight<typeof __ops_ne, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __ne, L, R>;
+    ) => OpResult<typeof __ops_ne, L, R>;
     /** Transforms to `a > b` in GDScript */
     readonly gt: <
-      L extends Record<typeof __gt, any>,
-      R extends OpRight<typeof __gt, L>,
+      L extends Record<typeof __ops_gt, any>,
+      R extends OpRight<typeof __ops_gt, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __gt, L, R>;
+    ) => OpResult<typeof __ops_gt, L, R>;
     /** Transforms to `a >= b` in GDScript */
     readonly gte: <
-      L extends Record<typeof __gte, any>,
-      R extends OpRight<typeof __gte, L>,
+      L extends Record<typeof __ops_gte, any>,
+      R extends OpRight<typeof __ops_gte, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __gte, L, R>;
+    ) => OpResult<typeof __ops_gte, L, R>;
     /** Transforms to `a < b` in GDScript */
     readonly lt: <
-      L extends Record<typeof __lt, any>,
-      R extends OpRight<typeof __lt, L>,
+      L extends Record<typeof __ops_lt, any>,
+      R extends OpRight<typeof __ops_lt, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __lt, L, R>;
+    ) => OpResult<typeof __ops_lt, L, R>;
     /** Transforms to `a <= b` in GDScript */
     readonly lte: <
-      L extends Record<typeof __lte, any>,
-      R extends OpRight<typeof __lte, L>,
+      L extends Record<typeof __ops_lte, any>,
+      R extends OpRight<typeof __ops_lte, L>,
     >(
       a: L,
       b: R,
-    ) => OpResult<typeof __lte, L, R>;
+    ) => OpResult<typeof __ops_lte, L, R>;
     /** Transforms to `+a` in GDScript (unary plus) */
-    readonly plus: <T extends Record<typeof __plus, any>>(
+    readonly plus: <T extends Record<typeof __ops_plus, any>>(
       a: T,
-    ) => UnaryOpResult<typeof __plus, T>;
+    ) => UnaryOpResult<typeof __ops_plus, T>;
     /** Transforms to `-a` in GDScript (unary minus) */
-    readonly minus: <T extends Record<typeof __minus, any>>(
+    readonly minus: <T extends Record<typeof __ops_minus, any>>(
       a: T,
-    ) => UnaryOpResult<typeof __minus, T>;
+    ) => UnaryOpResult<typeof __ops_minus, T>;
   };
 
 };
