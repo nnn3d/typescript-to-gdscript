@@ -1133,20 +1133,20 @@ function generateScriptTypingContent(
   // Import
   lines.push(`import type { ${importName} as ScriptClass } from "${tsImportPath}";\n`);
 
-  // ScriptTree + StaticProps + module augmentation
-  lines.push(`type ScriptTree = _GDGetInterfaceTree<${treesInterface}>;\n`);
+  // ScriptTree + ScriptPaths (pre-computed) + StaticProps + module augmentation
+  lines.push(`type ScriptTree = _GDGetInterfaceTree<${treesInterface}>;`);
+  lines.push(`type ScriptPaths = _GDGetTreePaths<ScriptTree>;\n`);
   lines.push(`type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;\n`);
 
   lines.push(`declare module "${tsModulePath}" {`);
   lines.push(`  interface ${importName} extends StaticProps {`);
-  lines.push(`    get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;`);
+  lines.push(`    get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;`);
   lines.push(`    get_node<P extends '/root' | \`/root/\${string}\`>(path: P): _GDGetRootNode<ScriptTree, P>;`);
   lines.push(`    get_node(path: string): Node | null;`);
-  lines.push(`    get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;`);
+  lines.push(`    get_node_or_null<P extends string & ScriptPaths>(path: P): _GDGetNodeOrNull<ScriptTree, P>;`);
   lines.push(`    get_node_or_null<P extends '/root' | \`/root/\${string}\`>(path: P): _GDGetRootNode<ScriptTree, P> | null;`);
   lines.push(`    get_node_or_null(path: string): Node | null;`);
-  lines.push(`    has_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): boolean;`);
-  lines.push(`    has_node(path: \`/root/\${string}\`): boolean;`);
+  lines.push(`    has_node<P extends string & ScriptPaths>(path: P): boolean;`);
   lines.push(`    has_node(path: string): boolean;`);
   lines.push(`    get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;`);
   lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
@@ -1395,11 +1395,15 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
     writtenFiles.push(outputPath);
   }
 
-  // 4. Generate resource .d.ts files
+  // 4. Generate bundled _resources.d.ts for all asset files
   const assetFiles = findAssetFiles(rootDir, rootDir, ignore);
+  const resourceEntries: Array<{ resPath: string; godotType: string }> = [];
   for (const assetFile of assetFiles) {
     const resPath = absPathToResPath(assetFile, rootDir);
     const ext = extname(assetFile).toLowerCase();
+
+    // Skip .tscn files (handled by scene generator) and .gd files (handled by script generator)
+    if (ext === '.tscn' || ext === '.gd') continue;
 
     let godotType: string;
     if (ext === '.tres' || ext === '.res') {
@@ -1408,15 +1412,23 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       godotType = ASSET_EXTENSION_MAP[ext] ?? 'Resource';
     }
 
-    // Skip .tscn files (handled by scene generator) and .gd files (handled by script generator)
-    if (ext === '.tscn' || ext === '.gd') continue;
+    resourceEntries.push({ resPath, godotType });
+  }
 
-    const content = generateResourceTypingContent(resPath, godotType);
-    const outputFile = resourceResPathToOutputFile(resPath);
-    const outputPath = resolve(outputDir, outputFile);
-    mkdirSync(dirname(outputPath), { recursive: true });
-    writeFileSync(outputPath, content);
-    writtenFiles.push(outputPath);
+  if (resourceEntries.length > 0) {
+    const resLines: string[] = [];
+    resLines.push('// AUTO-GENERATED — do not edit manually.\n');
+    resLines.push('declare global {');
+    resLines.push('  interface GodotResources {');
+    for (const { resPath, godotType } of resourceEntries) {
+      resLines.push(`    "${resPath}": ${godotType};`);
+    }
+    resLines.push('  }');
+    resLines.push('}\n');
+    resLines.push('export {}');
+    const resourcesPath = resolve(outputDir, '_resources.d.ts');
+    writeFileSync(resourcesPath, resLines.join('\n'));
+    writtenFiles.push(resourcesPath);
   }
 
   // 5. Generate _index.d.ts

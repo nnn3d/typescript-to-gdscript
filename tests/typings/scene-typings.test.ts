@@ -107,17 +107,18 @@ describe('Scene typings generation', () => {
     generate();
     const playerScript = readOutput('Player.gd.d.ts');
 
-    // ScriptTree type alias
+    // ScriptTree + ScriptPaths type aliases
     expect(playerScript).toContain('type ScriptTree = _GDGetInterfaceTree<__PlayerGd__Trees>;');
+    expect(playerScript).toContain('type ScriptPaths = _GDGetTreePaths<ScriptTree>;');
 
     // StaticProps for static fields on instances
     expect(playerScript).toContain("type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;");
 
-    // Module augmentation with typed overloads
+    // Module augmentation with typed overloads using pre-computed ScriptPaths
     expect(playerScript).toContain('declare module "../Player.ts"');
     expect(playerScript).toContain('interface Player extends StaticProps {');
-    expect(playerScript).toContain('get_node<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNode<ScriptTree, P>;');
-    expect(playerScript).toContain('get_node_or_null<P extends string & _GDGetTreePaths<ScriptTree>>(path: P): _GDGetNodeOrNull<ScriptTree, P>;');
+    expect(playerScript).toContain('get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;');
+    expect(playerScript).toContain('get_node_or_null<P extends string & ScriptPaths>(path: P): _GDGetNodeOrNull<ScriptTree, P>;');
     expect(playerScript).toContain('get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;');
     expect(playerScript).toContain('get_parent<N extends Node = _GDParentType<ScriptTree>>(): N;');
 

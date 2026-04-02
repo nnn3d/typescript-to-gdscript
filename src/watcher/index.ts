@@ -60,6 +60,16 @@ export class Watcher {
     const patterns = [
       `${this.tsDir}/**/*.ts`,
       `${this.options.rootDir}/**/*.tscn`,
+      `${this.options.rootDir}/**/*.tres`,
+      `${this.options.rootDir}/**/*.res`,
+      `${this.options.rootDir}/**/*.png`,
+      `${this.options.rootDir}/**/*.jpg`,
+      `${this.options.rootDir}/**/*.ogg`,
+      `${this.options.rootDir}/**/*.wav`,
+      `${this.options.rootDir}/**/*.mp3`,
+      `${this.options.rootDir}/**/*.gdshader`,
+      `${this.options.rootDir}/**/*.theme`,
+      `${this.options.rootDir}/**/project.godot`,
     ];
 
     this.fsWatcher = watch(patterns, {
@@ -95,6 +105,10 @@ export class Watcher {
     } else if (ext === '.tscn') {
       // Scene file changed — regenerate class typings (includes scene overloads)
       this.log(filePath, 'Scene changed, regenerating typings', 'info');
+      this.regenerateClassTypings();
+    } else if (filePath.endsWith('project.godot') || ['.tres', '.res', '.png', '.jpg', '.ogg', '.wav', '.mp3', '.gdshader', '.theme'].includes(ext)) {
+      // Asset/resource/project file changed — regenerate typings (bundled _resources.d.ts + _index.d.ts)
+      this.log(filePath, 'Resource changed, regenerating typings', 'info');
       this.regenerateClassTypings();
     }
   }
