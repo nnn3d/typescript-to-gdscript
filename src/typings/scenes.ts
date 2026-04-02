@@ -612,6 +612,70 @@ export function resolveSignalHandlers(
   return handlers;
 }
 
+/**
+ * Pre-collects signal handler types for ALL scripts by parsing all scenes ONCE.
+ * Returns Map<scriptResPath, Map<methodName, SignalHandlerInfo>>.
+ * This is much faster than calling resolveSignalHandlers() per script file,
+ * which would re-parse all scenes for every .gd file.
+ */
+export function collectAllSignalHandlers(
+  sceneFiles: string[],
+  registry: GodotClassRegistry,
+): Map<string, Map<string, SignalHandlerInfo>> {
+  const allHandlers = new Map<string, Map<string, SignalHandlerInfo>>();
+
+  for (const scenePath of sceneFiles) {
+    const scene = parseScene(scenePath);
+    if (!scene) continue;
+
+    for (const conn of scene.connections) {
+      // Find which script(s) handle this connection's "to" node
+      for (const script of scene.scripts) {
+        const nodePath = script.nodePath;
+        let targetMatch = false;
+
+        if (conn.toPath === '.' && nodePath === '.') {
+          targetMatch = true;
+        } else if (conn.toPath === nodePath) {
+          targetMatch = true;
+        } else if (nodePath === '.') {
+          // Root script handles any "to" path not handled by a more specific script
+          targetMatch = true;
+        } else if (conn.toPath.startsWith(nodePath + '/')) {
+          targetMatch = true;
+        }
+
+        if (!targetMatch) continue;
+
+        // Get or create handler map for this script
+        let handlers = allHandlers.get(script.scriptResPath);
+        if (!handlers) {
+          handlers = new Map();
+          allHandlers.set(script.scriptResPath, handlers);
+        }
+
+        // Skip if already resolved this method for this script
+        if (handlers.has(conn.method)) continue;
+
+        // Resolve "from" node path → Godot type
+        const fromType = scene.nodeTypes.get(conn.fromPath);
+        if (!fromType) continue;
+
+        // Look up signal parameters on the emitter's type
+        const signalParams = registry.getSignalParams(fromType, conn.signal);
+        if (!signalParams) continue;
+
+        handlers.set(conn.method, {
+          method: conn.method,
+          params: signalParams.map((p) => ({ name: p.name, gdType: p.type })),
+        });
+      }
+    }
+  }
+
+  return allHandlers;
+}
+
 export interface AutoloadEntry {
   /** Global singleton name (e.g. "Globals", "LevelTransition") */
   name: string;

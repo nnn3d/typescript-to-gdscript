@@ -6,6 +6,7 @@ export {
   generateTypings,
   parseAutoloads,
   resolveSignalHandlers,
+  collectAllSignalHandlers,
   type GenerateTypingsOptions,
   type SignalHandlerInfo,
   type ScriptClassInfo,

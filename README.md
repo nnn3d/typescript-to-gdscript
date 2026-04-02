@@ -96,6 +96,14 @@ Options:
 
 - `-o, --output-dir <dir>` — Output directory
 - `--registry <path>` — Path to `godot-class-registry.json`
+- `--no-helpers` — Disable all GD-to-TS conversion helpers
+- `--no-signal-handler-helper` — Disable signal handler type inference from `.tscn` connections
+
+#### Conversion Helpers
+
+GD-to-TS conversion includes optional helpers that enhance the output:
+
+- **Signal handler helper** (default: enabled) — Scans `.tscn` scene files for signal connections and adds typed parameter annotations to signal handler methods (e.g., `_on_area_entered(area: Area2D)` instead of untyped `_on_area_entered(area)`).
 
 ### `ts2gd watch`
 

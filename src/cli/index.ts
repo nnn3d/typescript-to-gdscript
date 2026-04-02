@@ -17,6 +17,7 @@ import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
 import {
   generateTypings,
   resolveSignalHandlers,
+  collectAllSignalHandlers,
   findSceneFiles,
 } from '../typings/scenes.ts';
 import { generateGodotDocsTypings } from '../typings/godot-docs.ts';
@@ -260,6 +261,11 @@ program
     '--registry <path>',
     'Path to godot-class-registry.json (overrides tstogd.json and bundled)',
   )
+  .option('--no-helpers', 'Disable all GD-to-TS conversion helpers')
+  .option(
+    '--no-signal-handler-helper',
+    'Disable signal handler type inference from .tscn connections',
+  )
   .action((files: string[], opts) => {
     const cfg = resolveConfig({
       overrides: {
@@ -291,6 +297,12 @@ program
     // Find .tscn scene files for signal handler resolution
     const sceneFiles = findSceneFiles(cfg.scenesDir, cfg.rootDir, cfg.ignore);
 
+    // Pre-collect all signal handlers once (instead of re-parsing scenes per file)
+    const signalHelperEnabled = !opts.noHelpers && !opts.noSignalHandlerHelper;
+    const allSignalHandlers = signalHelperEnabled && sceneFiles.length > 0
+      ? collectAllSignalHandlers(sceneFiles, registry)
+      : undefined;
+
     // Build project sources for user-defined class inheritance resolution
     const projectSources = resolvedFiles.map((f) => ({
       source: readFileSync(f, 'utf-8'),
@@ -299,12 +311,8 @@ program
 
     let hasErrors = false;
     for (const { source, filePath } of projectSources) {
-      // Resolve signal handler types from .tscn connections
       const scriptResPath = `res://${relative(cfg.rootDir, filePath).replace(/\\/g, '/')}`;
-      const signalHandlers =
-        sceneFiles.length > 0
-          ? resolveSignalHandlers(scriptResPath, sceneFiles, registry)
-          : undefined;
+      const signalHandlers = allSignalHandlers?.get(scriptResPath);
 
       const result = convertGdToTs({
         source,
