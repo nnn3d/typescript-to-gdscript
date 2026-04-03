@@ -15,6 +15,7 @@ import { resolve, dirname, relative, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
 import { runTsHelpers } from '../converter/gd-to-ts/ts-helpers.ts';
+import { runInit } from './init.ts';
 import {
   generateTypings,
   resolveSignalHandlers,
@@ -815,6 +816,15 @@ program
     }
 
     if (totalErrors > 0) process.exit(1);
+  });
+
+// ─── Init ───────────────────────────────────────────────────
+
+program
+  .command('init')
+  .description('Initialize a Godot project for typescript-to-gdscript')
+  .action(async () => {
+    await runInit();
   });
 
 program.parse();

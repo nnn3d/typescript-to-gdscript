@@ -62,6 +62,24 @@ Create a `tstogd.json` in your project root to configure the converter:
 
 The CLI binary is `ts2gd`.
 
+### `ts2gd init`
+
+Initialize a Godot project for typescript-to-gdscript. Walks through an interactive setup:
+
+```bash
+ts2gd init
+```
+
+The command will:
+
+1. **Create `tstogd.json`** — asks for TypeScript source directory, GDScript output directory, typings directory, source maps, and Godot version
+2. **Create `tsconfig.json`** — from a template with proper settings for Godot development (`noLib`, strict mode, typings reference)
+3. **Create `eslint.config.js`** — from a template with the ts2gd ESLint plugin configured
+4. **Install npm packages** — TypeScript, ESLint, and @typescript-eslint/parser as dev dependencies
+5. **Create `node_modules/.gdignore`** — to exclude node_modules from Godot's file scanner
+
+If any of these files already exist, the command will skip them and remind you to check the README for configuration options.
+
 ### `ts2gd convert <files...>`
 
 Convert TypeScript files to GDScript.
