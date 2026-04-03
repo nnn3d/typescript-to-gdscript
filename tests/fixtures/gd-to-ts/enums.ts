@@ -6,7 +6,7 @@ export class Enums extends Node {
   static UNIT_ALLY: int = 2;
 
   _ready() {
-    return Enums.Direction.UP || Enums.Status.IDLE || Enums.UNIT_NEUTRAL;
+    return this.Direction.UP || this.Status.IDLE || this.UNIT_NEUTRAL;
   }
 
   test_global_enums() {

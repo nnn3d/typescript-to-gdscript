@@ -1431,9 +1431,6 @@ function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
     if (node.text === 'false') return 'false';
     // If identifier is a known class member AND not a local variable, prefix with this/ClassName
     if (ctx.classMembers.has(node.text) && !ctx.localVars.has(node.text)) {
-      if (ctx.staticMembers.has(node.text)) {
-        return `${ctx.className}.${node.text}`;
-      }
       return `this.${node.text}`;
     }
     // Global enum constant → qualified name (e.g. KEY_F21 → Key.KEY_F21)
@@ -1671,11 +1668,7 @@ function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
         nextChild && nextChild.type === SyntaxType.Identifier
           ? nextChild.text
           : '';
-      if (nextName && ctx.staticMembers.has(nextName)) {
-        parts.push(ctx.className);
-      } else {
-        parts.push('this');
-      }
+      parts.push('this');
       selfSeen = true;
       continue;
     }
@@ -1714,11 +1707,7 @@ function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
 
   // If the first part is a known class member and no self was used, prefix with this/ClassName
   if (!selfSeen && parts.length >= 1 && ctx.classMembers.has(parts[0]!)) {
-    if (ctx.staticMembers.has(parts[0]!)) {
-      parts.unshift(ctx.className);
-    } else {
-      parts.unshift('this');
-    }
+    parts.unshift('this');
   }
 
   return parts.join('.');
