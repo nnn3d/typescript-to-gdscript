@@ -486,7 +486,7 @@ function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
     // Triple-quoted string as standalone expression → block comment
     if (child.type === SyntaxType.ExpressionStatement) {
       const expr = child.namedChildren[0];
-      if (expr?.type === SyntaxType.String && expr.text.startsWith('"""')) {
+      if (expr?.type === SyntaxType.String && (expr.text.startsWith('"""') || expr.text.startsWith("'''"))) {
         memberLines.push(emitBlockComment(expr.text, '  '));
         hasNonFunctionMembers = true;
         lastWasFunction = false;
@@ -1117,7 +1117,7 @@ function emitBody(node: SyntaxNode, ctx: GdToTsContext, depth: number): string {
       const expr = child.namedChildren[0];
       if (expr) {
         // Triple-quoted string as standalone expression → block comment
-        if (expr.type === SyntaxType.String && expr.text.startsWith('"""')) {
+        if (expr.type === SyntaxType.String && (expr.text.startsWith('"""') || expr.text.startsWith("'''"))) {
           lines.push(emitBlockComment(expr.text, indent));
           continue;
         }
@@ -1640,6 +1640,14 @@ function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
 
   if (node.type === SyntaxType.Lambda) {
     return emitLambda(node, ctx);
+  }
+
+  // Inline comment in expression context — emit as trailing comment
+  if (node.type === SyntaxType.Comment) {
+    const content = node.text.startsWith('##')
+      ? node.text.slice(2).trim()
+      : node.text.slice(1).trim();
+    return `/* ${content} */`;
   }
 
   // Fallback: return raw text with warning
