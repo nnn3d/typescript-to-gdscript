@@ -21,7 +21,7 @@ const TSCONFIG_TEMPLATE = `{
     "strict": true,
     "noEmit": true,
     "skipLibCheck": false,
-    "types": ["typescript-to-gdscript/typings"]
+    "types": ["typescript-to-gdscript/typings/latest"]
   },
   "include": ["{{tsDir}}/**/*.ts", "{{typingsDir}}/**/*.d.ts"]
 }
