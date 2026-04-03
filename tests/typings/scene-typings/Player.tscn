@@ -13,3 +13,5 @@ script = ExtResource("1")
 
 [node name="HealthBar" type="ProgressBar" parent="."]
 unique_name_in_owner = true
+
+[node name="HealthLabel" type="Label" parent="HealthBar"]

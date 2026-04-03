@@ -1016,7 +1016,7 @@ function generateSceneTypingContent(
   }
   collectEmittable(root);
 
-  // Build unique name entries (available from every subtree in the scene)
+  // Build unique name entries and emit shared type (available from every subtree via intersection)
   const uniqueEntries: Array<{ name: string; typeName: string }> = [];
   {
     const allRootDescendants = collectDescendantPaths(root, alias, instancedSceneTreeNames, extendedInstancedNodes);
@@ -1030,6 +1030,17 @@ function generateSceneTypingContent(
       }
     }
   }
+  const uniqueNodesTypeName = `${alias}_UniqueNodes`;
+  const hasUniqueNodes = uniqueEntries.length > 0;
+  if (hasUniqueNodes) {
+    lines.push(`type ${uniqueNodesTypeName} = {`);
+    for (const { name, typeName: uTypeName } of uniqueEntries) {
+      lines.push(`  "%${name}": ${uTypeName};`);
+    }
+    lines.push(`};\n`);
+  }
+  // Helper to emit __node_unique property on a node type
+  const uniqueProp = hasUniqueNodes ? `  [__node_unique]: ${uniqueNodesTypeName};` : '';
 
   for (const node of emittableNodes) {
     const typeName = nodePathToTypeName(alias, node.fullPath);
@@ -1042,7 +1053,6 @@ function generateSceneTypingContent(
     const descendantPaths = collectDescendantPaths(node, alias, instancedSceneTreeNames, extendedInstancedNodes);
 
     if (isExtendedInstanced) {
-      // Extended instanced scene: local type with __node_extends
       const baseResPath = node.instanceSceneResPath!;
       lines.push(`type ${typeName} = {`);
       lines.push(`  [__node_extends]: GodotSceneTrees["${baseResPath}"];`);
@@ -1056,15 +1066,9 @@ function generateSceneTypingContent(
       lines.push(`  [__node_parent]: ${parentTypeName};`);
       lines.push(`  [__node_children]: [${childTupleEntries.join(', ')}];`);
     }
-
+    lines.push(uniqueProp);
     for (const { relativePath, typeName: childType } of descendantPaths) {
       lines.push(`  "${relativePath}": ${childType};`);
-    }
-    // Unique name entries (accessible from any subtree, skip self-reference to avoid circularity)
-    for (const { name, typeName: uTypeName } of uniqueEntries) {
-      if (uTypeName !== typeName) {
-        lines.push(`  "%${name}": ${uTypeName};`);
-      }
     }
     lines.push(`};\n`);
   }
@@ -1095,12 +1099,9 @@ function generateSceneTypingContent(
   lines.push(`  [__node_type]: ${rootNodeType};`);
   lines.push(`  [__node_parent]: _GDGetInterfaceParent<${parentsInterface}>;`);
   lines.push(`  [__node_children]: [${rootChildTupleEntries.join(', ')}];`);
+  lines.push(uniqueProp);
   for (const { relativePath, typeName } of rootDescendantPaths) {
     lines.push(`  "${relativePath}": ${typeName};`);
-  }
-  // Unique name entries (accessible from any subtree)
-  for (const { name, typeName: uTypeName } of uniqueEntries) {
-    lines.push(`  "%${name}": ${uTypeName};`);
   }
   lines.push(`};\n`);
 

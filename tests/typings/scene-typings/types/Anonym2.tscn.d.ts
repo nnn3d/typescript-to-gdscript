@@ -4,12 +4,14 @@ type _Anonym2Tscn_Sprite2D_AnimationPlayer = {
   [__node_type]: AnimationPlayer;
   [__node_parent]: _Anonym2Tscn_Sprite2D;
   [__node_children]: [];
+
 };
 
 type _Anonym2Tscn_Sprite2D = {
   [__node_type]: Sprite2D;
   [__node_parent]: _Anonym2Tscn_Tree;
   [__node_children]: [_Anonym2Tscn_Sprite2D_AnimationPlayer];
+
   "AnimationPlayer": _Anonym2Tscn_Sprite2D_AnimationPlayer;
 };
 
@@ -17,6 +19,7 @@ type _Anonym2Tscn_CollisionShape2D = {
   [__node_type]: CollisionShape2D;
   [__node_parent]: _Anonym2Tscn_Tree;
   [__node_children]: [];
+
 };
 
 type _Anonym2Tscn_Tree = {
@@ -24,6 +27,7 @@ type _Anonym2Tscn_Tree = {
   [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://Anonym2.gd">;
   [__node_parent]: _GDGetInterfaceParent<__Anonym2Tscn__Parents>;
   [__node_children]: [_Anonym2Tscn_Sprite2D, _Anonym2Tscn_CollisionShape2D];
+
   "Sprite2D": _Anonym2Tscn_Sprite2D;
   "Sprite2D/AnimationPlayer": _Anonym2Tscn_Sprite2D_AnimationPlayer;
   "CollisionShape2D": _Anonym2Tscn_CollisionShape2D;

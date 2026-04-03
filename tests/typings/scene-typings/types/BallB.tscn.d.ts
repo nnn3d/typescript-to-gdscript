@@ -4,12 +4,14 @@ type _BallBTscn_Sprite2D = {
   [__node_type]: Sprite2D;
   [__node_parent]: _BallBTscn_Tree;
   [__node_children]: [];
+
 };
 
 type _BallBTscn_Label = {
   [__node_type]: Label;
   [__node_parent]: _BallBTscn_Tree;
   [__node_children]: [];
+
 };
 
 type _BallBTscn_Tree = {
@@ -17,6 +19,7 @@ type _BallBTscn_Tree = {
   [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://Ball.gd">;
   [__node_parent]: _GDGetInterfaceParent<__BallBTscn__Parents>;
   [__node_children]: [_BallBTscn_Sprite2D, _BallBTscn_Label];
+
   "Sprite2D": _BallBTscn_Sprite2D;
   "Label": _BallBTscn_Label;
 };

@@ -4,6 +4,7 @@ type _Level2Tscn_ExtraSprite = {
   [__node_type]: Sprite2D;
   [__node_parent]: _Level2Tscn_Tree;
   [__node_children]: [];
+
 };
 
 type _Level2Tscn_Tree = {
@@ -11,6 +12,7 @@ type _Level2Tscn_Tree = {
   [__node_type]: Node;
   [__node_parent]: _GDGetInterfaceParent<__Level2Tscn__Parents>;
   [__node_children]: [_Level2Tscn_ExtraSprite];
+
   "ExtraSprite": _Level2Tscn_ExtraSprite;
 };
 

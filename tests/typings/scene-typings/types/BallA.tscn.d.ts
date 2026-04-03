@@ -4,18 +4,21 @@ type _BallATscn_Sprite2D = {
   [__node_type]: Sprite2D;
   [__node_parent]: _BallATscn_Tree;
   [__node_children]: [];
+
 };
 
 type _BallATscn_Label = {
   [__node_type]: Sprite2D;
   [__node_parent]: _BallATscn_Tree;
   [__node_children]: [];
+
 };
 
 type _BallATscn_Timer = {
   [__node_type]: Timer;
   [__node_parent]: _BallATscn_Tree;
   [__node_children]: [];
+
 };
 
 type _BallATscn_Tree = {
@@ -23,6 +26,7 @@ type _BallATscn_Tree = {
   [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://Ball.gd">;
   [__node_parent]: _GDGetInterfaceParent<__BallATscn__Parents>;
   [__node_children]: [_BallATscn_Sprite2D, _BallATscn_Label, _BallATscn_Timer];
+
   "Sprite2D": _BallATscn_Sprite2D;
   "Label": _BallATscn_Label;
   "Timer": _BallATscn_Timer;

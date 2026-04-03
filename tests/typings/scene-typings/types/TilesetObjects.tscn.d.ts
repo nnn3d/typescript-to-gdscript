@@ -5,6 +5,7 @@ type _TilesetObjectsTscn_Tree = {
   [__node_type]: TileMap;
   [__node_parent]: _GDGetInterfaceParent<__TilesetObjectsTscn__Parents>;
   [__node_children]: [];
+
 };
 
 declare global {

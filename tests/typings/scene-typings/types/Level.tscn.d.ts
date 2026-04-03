@@ -4,18 +4,21 @@ type _LevelTscn_Background = {
   [__node_type]: Sprite2D;
   [__node_parent]: _LevelTscn_Tree;
   [__node_children]: [];
+
 };
 
 type _LevelTscn_UI_ScoreLabel_ScoreSprite = {
   [__node_type]: Sprite2D;
   [__node_parent]: _LevelTscn_UI_ScoreLabel;
   [__node_children]: [];
+
 };
 
 type _LevelTscn_UI_ScoreLabel = {
   [__node_type]: Label;
   [__node_parent]: _LevelTscn_UI;
   [__node_children]: [_LevelTscn_UI_ScoreLabel_ScoreSprite];
+
   "ScoreSprite": _LevelTscn_UI_ScoreLabel_ScoreSprite;
 };
 
@@ -23,6 +26,7 @@ type _LevelTscn_UI = {
   [__node_type]: CanvasLayer;
   [__node_parent]: _LevelTscn_Tree;
   [__node_children]: [_LevelTscn_UI_ScoreLabel];
+
   "ScoreLabel": _LevelTscn_UI_ScoreLabel;
   "ScoreLabel/ScoreSprite": _LevelTscn_UI_ScoreLabel_ScoreSprite;
 };
@@ -40,6 +44,7 @@ type _LevelTscn_Tree = {
   [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://Level.gd">;
   [__node_parent]: _GDGetInterfaceParent<__LevelTscn__Parents>;
   [__node_children]: [_PlayerTscn_Tree, _EnemyTscn_Tree, _TilesetObjectsTscn_Tree, _LevelTscn_Background, _LevelTscn_UI, _TilesetObjectsTscn_Tree, _Level2Tscn_Tree];
+
   "Player": _PlayerTscn_Tree;
   "Enemy": _EnemyTscn_Tree;
   "TilesetObjects": _TilesetObjectsTscn_Tree;

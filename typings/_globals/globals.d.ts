@@ -232,6 +232,9 @@ type _GDTreeGetParent<T> = T extends {[__node_parent]: infer R} ? R : null;
 
 type _GDTreeGetChildren<T> = T extends {[__node_children]: infer R extends any[]} ? R : [];
 
+/** Extract unique name nodes object from a tree, or `never` if none. */
+type _GDTreeGetUnique<T> = T extends {[__node_unique]: infer U extends object} ? U : never;
+
 /** Extract the base tree from an extended scene tree, or `never` if not extended. */
 type _GDTreeGetExtends<T> = T extends {[__node_extends]: infer E extends object} ? E : never;
 
@@ -283,24 +286,39 @@ type _GDTreeNodeOrNull<Tree> =
       ? never
       : _GDTreeNode<NonNullable<Tree>>;
 
-type _GDGetTreePaths<Tree, Prefix extends string = ``> =
-  Tree extends any // distributive over union trees
-    ? IsAny<Tree> extends true
-      ? string
-      : {
-          [K in keyof Tree]: K extends string
-            ? string extends K
+type _GDGetTreePaths<Tree, Prefix extends string = ``> = Tree extends any // distributive over union trees
+  ? IsAny<Tree> extends true
+    ? string
+    :
+        | {
+            [K in keyof Tree]: K extends string
+              ? string extends K
+                ? never
+                :
+                    | `${Prefix}${K}`
+                    | (_GDTreeGetRoot<Tree[K]> extends string
+                        ? _GDGetTreePaths<
+                            NonNullable<Tree[K]>,
+                            `${Prefix}${K}/`
+                          >
+                        : never)
+              : never;
+          }[keyof Tree]
+        // Include paths from base tree if extended
+        | (_GDTreeGetExtends<Tree> extends never
+            ? never
+            : _GDGetTreePaths<_GDTreeGetExtends<Tree>, Prefix>)
+        // Include unique node paths (e.g. "%HealthBar") and their descendants (e.g. "%HealthBar/HealthLabel")
+        | (Prefix extends ''
+            ? _GDTreeGetUnique<Tree> extends never
               ? never
-              :
-                  | `${Prefix}${K}`
-                  | (_GDTreeGetRoot<Tree[K]> extends string
-                      ? _GDGetTreePaths<NonNullable<Tree[K]>, `${Prefix}${K}/`>
-                      : never)
-            : never;
-        }[keyof Tree]
-      // Include paths from base tree if extended
-      | (_GDTreeGetExtends<Tree> extends never ? never : _GDGetTreePaths<_GDTreeGetExtends<Tree>, Prefix>)
-    : never;
+              : {
+                  [K in keyof _GDTreeGetUnique<Tree> & string]:
+                    | K
+                    | _GDGetTreePaths<_GDTreeGetUnique<Tree>[K], `${K}/`>;
+                }[keyof _GDTreeGetUnique<Tree> & string]
+            : never)
+  : never;
 
 type _GDGetNullByPath<
   Tree,
@@ -320,10 +338,18 @@ type _GDGetNullByPath<
                 Tree[Start] extends null ? true : HasNull
               >
             : null // path segment not traversable in this tree
-          // Fall back to base tree if extended
-          : _GDTreeGetExtends<Tree> extends never
-            ? null // path not found in this tree (contributes null to union)
-            : _GDGetNullByPath<_GDTreeGetExtends<Tree>, Path, HasNull>
+          // Check unique nodes (%Name and %Name/rest)
+          : _GDTreeGetUnique<Tree> extends never
+            ? _GDTreeGetExtends<Tree> extends never
+              ? null
+              : _GDGetNullByPath<_GDTreeGetExtends<Tree>, Path, HasNull>
+            : Path extends keyof _GDTreeGetUnique<Tree>
+              ? HasNull extends true ? null : never
+              : Path extends `${infer UName extends keyof _GDTreeGetUnique<Tree> & string}/${infer URest}`
+                ? _GDGetNullByPath<_GDTreeGetUnique<Tree>[UName], URest, HasNull>
+                : _GDTreeGetExtends<Tree> extends never
+                  ? null
+                  : _GDGetNullByPath<_GDTreeGetExtends<Tree>, Path, HasNull>
     : never;
 
 type _GDGetTreeByPath<
@@ -342,10 +368,19 @@ type _GDGetTreeByPath<
                 Rest
               >
             : never // path segment not traversable in this tree
-          // Fall back to base tree if extended
-          : _GDTreeGetExtends<Tree> extends never
-            ? never // path not found in this tree (contributes null to union)
-            : _GDGetTreeByPath<_GDTreeGetExtends<Tree>, Path>
+          // Check unique nodes (%Name and %Name/rest)
+          : _GDTreeGetUnique<Tree> extends never
+            ? _GDTreeGetExtends<Tree> extends never
+              ? never
+              : _GDGetTreeByPath<_GDTreeGetExtends<Tree>, Path>
+            : Path extends keyof _GDTreeGetUnique<Tree>
+              ? _GDTreeGetUnique<Tree>[Path]
+              : Path extends `${infer UName extends keyof _GDTreeGetUnique<Tree> & string}/${infer URest}`
+                ? _GDGetTreeByPath<_GDTreeGetUnique<Tree>[UName], URest>
+                // Fall back to base tree if extended
+                : _GDTreeGetExtends<Tree> extends never
+                  ? never
+                  : _GDGetTreeByPath<_GDTreeGetExtends<Tree>, Path>
     : never;
 
 type _GDGetNodeByPath<Tree, Path extends string> =

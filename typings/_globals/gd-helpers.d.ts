@@ -30,6 +30,8 @@ declare const __node_root: unique symbol;
 declare const __node_type: unique symbol;
 declare const __node_children: unique symbol;
 declare const __node_parent: unique symbol;
+/** Symbol for unique name nodes accessible from any subtree */
+declare const __node_unique: unique symbol;
 /** Symbol for scene tree inheritance: extended scene references its base scene's tree */
 declare const __node_extends: unique symbol;
 

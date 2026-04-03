@@ -4,6 +4,7 @@ type _ALevelTscn_ExtraNode = {
   [__node_type]: Label;
   [__node_parent]: _ALevelTscn_Tree;
   [__node_children]: [];
+
 };
 
 type _ALevelTscn_Tree = {
@@ -12,6 +13,7 @@ type _ALevelTscn_Tree = {
   [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://ALevel.gd">;
   [__node_parent]: _GDGetInterfaceParent<__ALevelTscn__Parents>;
   [__node_children]: [_ALevelTscn_ExtraNode];
+
   "ExtraNode": _ALevelTscn_ExtraNode;
 };
 

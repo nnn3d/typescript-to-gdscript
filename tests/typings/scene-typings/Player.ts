@@ -37,6 +37,7 @@ export class Player extends BaseCharacter {
     // get_node: unique node via %Name → Godot type
     let health = this.get_node('%HealthBar');
     let _healthAssign: ProgressBar = health;
+    let healthLabel: Label = this.get_node('%HealthBar/HealthLabel');
 
     // Unique node accessible from child subtree (not just root)
     let spriteNode = this.get_node('Sprite2D');
