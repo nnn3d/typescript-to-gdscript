@@ -14,3 +14,11 @@ func update_speed(new_speed: float):
 ## Calculate the total damage
 func calculate_damage(base: float, multiplier: float) -> float:
 	return base * multiplier
+
+func test_block_comments():
+	"""Block comment"""
+	var x: int = 1
+	"""
+	Multiline block
+	comment inside function
+	"""

@@ -15,4 +15,13 @@ export class MyClass extends Node {
   calculate_damage(base: float, multiplier: float): float {
     return base * multiplier;
   }
+
+  test_block_comments() {
+    /* Block comment */
+    let x: int = 1;
+    /*
+    Multiline block
+    comment inside function
+    */
+  }
 }

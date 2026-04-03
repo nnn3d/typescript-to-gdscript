@@ -483,6 +483,17 @@ function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
       continue;
     }
 
+    // Triple-quoted string as standalone expression → block comment
+    if (child.type === SyntaxType.ExpressionStatement) {
+      const expr = child.namedChildren[0];
+      if (expr?.type === SyntaxType.String && expr.text.startsWith('"""')) {
+        memberLines.push(emitBlockComment(expr.text, '  '));
+        hasNonFunctionMembers = true;
+        lastWasFunction = false;
+        continue;
+      }
+    }
+
     const isFunction =
       child.type === SyntaxType.FunctionDefinition ||
       child.type === SyntaxType.ConstructorDefinition;
@@ -696,6 +707,31 @@ function emitInnerClass(node: SyntaxNode, ctx: GdToTsContext, isAbstractFromPare
 }
 
 // ─── Comments ─────────────────────────────────────────────────
+
+/** Convert a triple-quoted GDScript string to a JS block comment */
+function emitBlockComment(text: string, indent: string): string {
+  const content = text.slice(3, -3);
+  // Single-line: /* content */
+  if (!content.includes('\n')) {
+    return `${indent}/* ${content.trim()} */`;
+  }
+  // Multiline: strip common leading whitespace, then re-indent
+  const rawLines = content.split('\n');
+  const nonEmptyLines = rawLines.filter(l => l.trim() !== '');
+  const minIndent = nonEmptyLines.reduce((min, l) => {
+    const leading = l.match(/^(\s*)/)?.[1]?.length ?? 0;
+    return Math.min(min, leading);
+  }, Infinity);
+  const stripped = nonEmptyLines.map(l => l.slice(minIndent));
+
+  const result: string[] = [];
+  result.push(`${indent}/*`);
+  for (const line of stripped) {
+    result.push(`${indent}${line.trimEnd()}`);
+  }
+  result.push(`${indent}*/`);
+  return result.join('\n');
+}
 
 function emitComment(node: SyntaxNode): string {
   const text = node.text;
@@ -1080,6 +1116,11 @@ function emitBody(node: SyntaxNode, ctx: GdToTsContext, depth: number): string {
     if (child.type === SyntaxType.ExpressionStatement) {
       const expr = child.namedChildren[0];
       if (expr) {
+        // Triple-quoted string as standalone expression → block comment
+        if (expr.type === SyntaxType.String && expr.text.startsWith('"""')) {
+          lines.push(emitBlockComment(expr.text, indent));
+          continue;
+        }
         if (expr.type === SyntaxType.Assignment) {
           lines.push(`${indent}${emitAssignment(expr, ctx)};`);
         } else if (expr.type === SyntaxType.AugmentedAssignment) {

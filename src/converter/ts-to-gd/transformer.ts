@@ -245,13 +245,37 @@ export class TsToGdTransformer {
         const content = commentText.replace(/^\/\/\s?/, '');
         this.emitter.writeLine(`# ${content}`, origLine, origCol);
       } else if (range.kind === ts.SyntaxKind.MultiLineCommentTrivia) {
-        // /** comment */ -> ## comment
-        const content = commentText
-          .replace(/^\/\*\*\s*/, '')
-          .replace(/\s*\*\/$/, '')
-          .replace(/^\s*\*\s?/gm, '')
-          .trim();
-        this.emitter.writeLine(`## ${content}`, origLine, origCol);
+        if (commentText.startsWith('/**')) {
+          // /** comment */ -> ## comment (doc comment)
+          const content = commentText
+            .replace(/^\/\*\*\s*/, '')
+            .replace(/\s*\*\/$/, '')
+            .replace(/^\s*\*\s?/gm, '')
+            .trim();
+          this.emitter.writeLine(`## ${content}`, origLine, origCol);
+        } else {
+          // /* comment */ -> """comment""" (block comment)
+          const content = commentText
+            .replace(/^\/\*\s?/, '')
+            .replace(/\s?\*\/$/, '');
+          if (!content.includes('\n')) {
+            // Single-line block comment
+            this.emitter.writeLine(`"""${content.trim()}"""`, origLine, origCol);
+          } else {
+            // Multiline block comment — strip common indentation
+            const rawLines = content.split('\n');
+            const nonEmpty = rawLines.filter(l => l.trim() !== '');
+            const minIndent = nonEmpty.reduce((min, l) => {
+              const leading = l.match(/^(\s*)/)?.[1]?.length ?? 0;
+              return Math.min(min, leading);
+            }, Infinity);
+            this.emitter.writeLine(`"""`, origLine, origCol);
+            for (const line of nonEmpty) {
+              this.emitter.writeLine(line.slice(minIndent).trimEnd(), origLine, origCol);
+            }
+            this.emitter.writeLine(`"""`, origLine, origCol);
+          }
+        }
       }
     }
   }
@@ -596,6 +620,11 @@ export class TsToGdTransformer {
     for (const stmt of block.statements) {
       this.emitLeadingComments(stmt);
       this.visitStatement(stmt);
+    }
+    // Emit trailing comments before the closing brace
+    const closeBrace = block.getLastToken();
+    if (closeBrace) {
+      this.emitLeadingComments(closeBrace);
     }
   }
 
