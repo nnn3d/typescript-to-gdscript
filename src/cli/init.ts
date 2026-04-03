@@ -3,9 +3,10 @@
  * Walks through config creation, tsconfig, eslint, npm install, and .gdignore setup.
  */
 
+import type { Command } from 'commander';
 import * as readline from 'node:readline/promises';
 import { stdin, stdout } from 'node:process';
-import { existsSync, writeFileSync, mkdirSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join, basename } from 'path';
 import { execSync } from 'child_process';
 
@@ -115,7 +116,7 @@ async function stepTstogdJson(
     console.log('  See README.md for available configuration options.\n');
     // Parse existing config to use in later steps
     try {
-      const existing = JSON.parse(require('fs').readFileSync(configPath, 'utf-8'));
+      const existing = JSON.parse(readFileSync(configPath, 'utf-8'));
       return {
         tsDir: existing.tsDir ?? defaults.tsDir,
         gdDir: existing.gdDir ?? defaults.gdDir,
@@ -274,6 +275,39 @@ async function stepGdignore(
   console.log('  ✓ Created node_modules/.gdignore');
 }
 
+// ─── Step: .gitignore ────────────────────────────────────────
+
+async function stepGitignore(
+  rl: readline.Interface,
+  cwd: string,
+): Promise<void> {
+  const gitignorePath = join(cwd, '.gitignore');
+  const hasGitignore = existsSync(gitignorePath);
+  const content = hasGitignore ? readFileSync(gitignorePath, 'utf-8') : '';
+
+  // Check if node_modules is already ignored
+  const lines = content.split('\n').map(l => l.trim());
+  const hasNodeModulesIgnore = lines.some(l =>
+    l === 'node_modules' || l === 'node_modules/' || l === '/node_modules' || l === '/node_modules/',
+  );
+
+  if (hasNodeModulesIgnore) return;
+
+  console.log('');
+  const add = await askYesNo(rl, 'Add node_modules to .gitignore?');
+  if (!add) return;
+
+  const newContent = hasGitignore
+    ? content.trimEnd() + '\nnode_modules/\n'
+    : 'node_modules/\n';
+
+  writeFileSync(gitignorePath, newContent);
+  console.log(hasGitignore
+    ? '  ✓ Added node_modules/ to .gitignore'
+    : '  ✓ Created .gitignore with node_modules/',
+  );
+}
+
 // ─── Main ────────────────────────────────────────────────────
 
 export async function runInit(): Promise<void> {
@@ -302,6 +336,9 @@ export async function runInit(): Promise<void> {
     // Step 5: .gdignore in node_modules
     await stepGdignore(rl, cwd);
 
+    // Step 6: .gitignore
+    await stepGitignore(rl, cwd);
+
     // Done
     console.log('\n✅ Initialization complete!');
     console.log('');
@@ -314,4 +351,13 @@ export async function runInit(): Promise<void> {
   } finally {
     rl.close();
   }
+}
+
+export function registerInitCommand(program: Command): void {
+  program
+    .command('init')
+    .description('Initialize a Godot project for typescript-to-gdscript')
+    .action(async () => {
+      await runInit();
+    });
 }
