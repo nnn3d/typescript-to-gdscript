@@ -74,7 +74,7 @@ export function resolveConfig(options?: {
   const tsDir = resolve(rootDir, overrides.tsDir ?? config?.tsDir ?? '.');
   const gdDir = resolve(
     rootDir,
-    overrides.gdDir ?? config?.gdDir ?? (relative(rootDir, tsDir) || '.'),
+    overrides.gdDir ?? config?.gdDir ?? '.',
   );
   const typingsDir = resolve(
     rootDir,

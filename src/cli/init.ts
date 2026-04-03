@@ -105,7 +105,7 @@ async function stepTstogdJson(
   const configPath = join(cwd, 'tstogd.json');
   const defaults: InitConfig = {
     tsDir: 'ts',
-    gdDir: 'ts',
+    gdDir: '.',
     typingsDir: 'ts/_typings',
     sourceMap: false,
     godotVersion: 'latest',
@@ -132,7 +132,7 @@ async function stepTstogdJson(
   console.log('\n📝 Creating tstogd.json...\n');
 
   const tsDir = await ask(rl, 'TypeScript source directory', defaults.tsDir);
-  const gdDir = await ask(rl, 'GDScript output directory', tsDir);
+  const gdDir = await ask(rl, 'GDScript output directory', defaults.gdDir);
   const typingsDir = await ask(rl, 'Typings output directory', defaults.typingsDir);
   const sourceMap = await askYesNo(rl, 'Generate source maps?', false);
   const godotVersion = await ask(rl, 'Godot version', defaults.godotVersion);

@@ -41,6 +41,8 @@ export function registerConvertGdCommand(program: Command): void {
         },
       });
 
+      console.log(cfg);
+
       const resolvedFiles = resolveFiles(
         files.length > 0 ? files : undefined,
         '.gd',
@@ -58,6 +60,7 @@ export function registerConvertGdCommand(program: Command): void {
 
       const registry = resolveRegistry({ registryPath: cfg.registryPath });
       const tsOutputFiles: string[] = [];
+      const collectedErrors: string[] = [];
 
       // Find .tscn scene files for signal handler resolution
       const sceneFiles = findSceneFiles(cfg.scenesDir, cfg.rootDir, cfg.ignore);
@@ -87,6 +90,7 @@ export function registerConvertGdCommand(program: Command): void {
           signalHandlers,
         });
 
+        // Collect diagnostics for summary at end
         for (const diag of result.diagnostics) {
           const prefix =
             diag.severity === 'error'
@@ -94,7 +98,7 @@ export function registerConvertGdCommand(program: Command): void {
               : diag.severity === 'warning'
                 ? 'WARN'
                 : 'INFO';
-          console.error(
+          collectedErrors.push(
             `[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`,
           );
         }
@@ -109,7 +113,7 @@ export function registerConvertGdCommand(program: Command): void {
 
         mkdirSync(dirname(outputPath), { recursive: true });
         writeFileSync(outputPath, result.code);
-        debugLog(`Written: ${outputPath}`);
+        console.log(`Writing ${relative(process.cwd(), outputPath)}`);
         tsOutputFiles.push(outputPath);
       }
 
@@ -130,6 +134,14 @@ export function registerConvertGdCommand(program: Command): void {
         });
         if (helperResult.fixedFiles.length > 0) {
           debugLog(`Operator fix: patched ${helperResult.fixedFiles.length} file(s)`);
+        }
+      }
+
+      // Print collected errors at the end
+      if (collectedErrors.length > 0) {
+        console.error('');
+        for (const msg of collectedErrors) {
+          console.error(msg);
         }
       }
 
