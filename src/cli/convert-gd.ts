@@ -41,8 +41,6 @@ export function registerConvertGdCommand(program: Command): void {
         },
       });
 
-      console.log(cfg);
-
       const resolvedFiles = resolveFiles(
         files.length > 0 ? files : undefined,
         '.gd',
