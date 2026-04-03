@@ -32,7 +32,7 @@ export function findTsFiles(dir: string, rootDir: string, ignore: string[]): str
   const results: string[] = [];
   try {
     for (const entry of readdirSync(dir)) {
-      if (entry.startsWith('.') || entry === 'node_modules') continue;
+      if (entry.startsWith('.') || entry === 'node_modules' || entry === 'addons') continue;
       const fullPath = join(dir, entry);
       if (shouldIgnore(fullPath, rootDir, ignore)) continue;
       if (statSync(fullPath).isDirectory()) {
@@ -52,7 +52,7 @@ export function findGdFiles(dir: string, rootDir: string, ignore: string[]): str
   const results: string[] = [];
   try {
     for (const entry of readdirSync(dir)) {
-      if (entry.startsWith('.') || entry === 'node_modules') continue;
+      if (entry.startsWith('.') || entry === 'node_modules' || entry === 'addons') continue;
       const fullPath = join(dir, entry);
       if (shouldIgnore(fullPath, rootDir, ignore)) continue;
       if (statSync(fullPath).isDirectory()) {

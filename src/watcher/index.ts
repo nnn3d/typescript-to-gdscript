@@ -73,7 +73,7 @@ export class Watcher {
     ];
 
     this.fsWatcher = watch(patterns, {
-      ignored: [/(^|[\/\\])\../, /node_modules/, /\.d\.ts$/, /dist\//],
+      ignored: [/(^|[\/\\])\../, /node_modules/, /addons/, /\.d\.ts$/, /dist\//],
       persistent: true,
       ignoreInitial: false,
     });

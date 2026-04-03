@@ -1754,8 +1754,8 @@ function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
     }
   }
 
-  // If the first part is a known class member and no self was used, prefix with this/ClassName
-  if (!selfSeen && parts.length >= 1 && ctx.classMembers.has(parts[0]!)) {
+  // If the first part is a known class member, not shadowed by a local variable, and no self was used, prefix with this
+  if (!selfSeen && parts.length >= 1 && ctx.classMembers.has(parts[0]!) && !ctx.localVars.has(parts[0]!)) {
     parts.unshift('this');
   }
 
