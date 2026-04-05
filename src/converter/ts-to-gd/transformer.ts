@@ -1963,6 +1963,10 @@ export class TsToGdTransformer {
       line,
       column: col,
     });
+    // Emit inline error comment in output for --emit-on-error visibility
+    if (severity === 'error') {
+      this.emitter.writeLine(`# ERROR: ${message}`, line, col);
+    }
   }
 
   private toPascalCase(str: string): string {

@@ -31,6 +31,7 @@ export function registerConvertGdCommand(program: Command): void {
       '--no-operator-fix-helper',
       'Disable TS-based operator type error auto-fix (gd.ops wrapping)',
     )
+    .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
     .action((files: string[], opts) => {
       const cfg = resolveConfig({
         overrides: {
@@ -103,7 +104,7 @@ export function registerConvertGdCommand(program: Command): void {
 
         if (result.diagnostics.some((d) => d.severity === 'error')) {
           hasErrors = true;
-          continue;
+          if (!opts.emitOnError) continue;
         }
 
         const relPath = relative(cfg.gdDir, filePath);

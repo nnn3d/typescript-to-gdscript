@@ -18,6 +18,7 @@ export function registerConvertCommand(program: Command): void {
     .option('--source-map', 'Generate source maps', false)
     .option('--root-dir <dir>', 'Root directory', '.')
     .option('--tsconfig <path>', 'Path to tsconfig.json')
+    .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
     .action((files: string[], opts) => {
       const cfg = resolveConfig({
         overrides: {
@@ -67,7 +68,7 @@ export function registerConvertCommand(program: Command): void {
 
         if (result.diagnostics.some((d) => d.severity === 'error')) {
           hasErrors = true;
-          continue;
+          if (!opts.emitOnError) continue;
         }
 
         const relPath = relative(cfg.tsDir, filePath);

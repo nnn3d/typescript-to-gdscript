@@ -94,6 +94,7 @@ Options:
 - `--source-map` — Generate source maps
 - `--root-dir <dir>` — Root directory (default: `.`)
 - `--tsconfig <path>` — Path to tsconfig.json
+- `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `# ERROR:` comments)
 
 ### `ts2gd convert-gd <files...>`
 
@@ -117,6 +118,7 @@ Options:
 - `--no-helpers` — Disable all GD-to-TS conversion helpers
 - `--no-signal-handler-helper` — Disable signal handler type inference from `.tscn` connections
 - `--no-operator-fix-helper` — Disable TS-based operator type error auto-fix
+- `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `/* ERROR: ... */` comments)
 
 #### Conversion Helpers
 

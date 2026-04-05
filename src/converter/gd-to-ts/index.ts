@@ -579,6 +579,7 @@ function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
       line: child.startPosition.row + 1,
       column: child.startPosition.column,
     });
+    memberLines.push(`  /* ERROR: Unhandled top-level node: ${child.type} */ ${child.text.split('\n')[0]}`);
   }
 
   // Remove trailing empty lines from members
@@ -1187,6 +1188,7 @@ function emitBody(node: SyntaxNode, ctx: GdToTsContext, depth: number): string {
       line: child.startPosition.row + 1,
       column: child.startPosition.column,
     });
+    lines.push(`${indent}/* ERROR: Unhandled GDScript statement: ${child.type} */ ${child.text.split('\n')[0]}`);
   }
 
   return lines.join('\n');
@@ -1662,7 +1664,7 @@ function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
     line: node.startPosition.row + 1,
     column: node.startPosition.column,
   });
-  return node.text;
+  return `/* ERROR: Unhandled GDScript expression: ${node.type} */ ${node.text}`;
 }
 
 // ─── Call Expression ──────────────────────────────────────────
