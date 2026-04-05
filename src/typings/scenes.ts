@@ -684,13 +684,94 @@ export interface AutoloadEntry {
 }
 
 /**
+ * Resolve a Godot `uid://...` to a `res://...` path by scanning `.uid` files.
+ *
+ * Strategy:
+ * 1. Try `<autoloadName>.gd.uid` and `<autoloadName>.tscn.uid` by name (fast path).
+ * 2. Fall back to scanning all `.uid` files in the project directory.
+ *
+ * Returns `null` if the UID cannot be resolved.
+ */
+function resolveUidToResPath(uid: string, rootDir: string, autoloadName?: string): string | null {
+  // Fast path: try <name>.gd.uid and <name>.tscn.uid by name
+  if (autoloadName) {
+    for (const ext of ['.gd.uid', '.tscn.uid']) {
+      const candidate = findFileByName(autoloadName + ext, rootDir);
+      if (candidate) {
+        try {
+          const content = readFileSync(candidate, 'utf-8').trim();
+          if (content === uid) {
+            const resourcePath = candidate.slice(0, -4); // strip ".uid"
+            const relPath = relative(rootDir, resourcePath).replace(/\\/g, '/');
+            return 'res://' + relPath;
+          }
+        } catch { /* skip */ }
+      }
+    }
+  }
+  // Slow path: scan all .uid files recursively
+  return findUidFile(uid, rootDir, rootDir);
+}
+
+/** Find a file by name recursively in a directory. */
+function findFileByName(fileName: string, dir: string): string | null {
+  let entries: string[];
+  try { entries = readdirSync(dir); } catch { return null; }
+  for (const entry of entries) {
+    if (entry.startsWith('.') || entry === 'node_modules') continue;
+    const fullPath = join(dir, entry);
+    try {
+      if (entry === fileName) return fullPath;
+      if (statSync(fullPath).isDirectory()) {
+        const result = findFileByName(fileName, fullPath);
+        if (result) return result;
+      }
+    } catch { /* skip */ }
+  }
+  return null;
+}
+
+/** Recursively search for a .uid file whose content matches the target UID. */
+function findUidFile(targetUid: string, dir: string, rootDir: string): string | null {
+  let entries: string[];
+  try {
+    entries = readdirSync(dir);
+  } catch {
+    return null;
+  }
+  for (const entry of entries) {
+    if (entry.startsWith('.') || entry === 'node_modules') continue;
+    const fullPath = join(dir, entry);
+    try {
+      if (statSync(fullPath).isDirectory()) {
+        const result = findUidFile(targetUid, fullPath, rootDir);
+        if (result) return result;
+      } else if (entry.endsWith('.uid')) {
+        const content = readFileSync(fullPath, 'utf-8').trim();
+        if (content === targetUid) {
+          // .uid file sits next to the resource: "Foo.gd.uid" → "Foo.gd"
+          const resourcePath = fullPath.slice(0, -4); // strip ".uid"
+          const relPath = relative(rootDir, resourcePath).replace(/\\/g, '/');
+          return 'res://' + relPath;
+        }
+      }
+    } catch {
+      // skip inaccessible
+    }
+  }
+  return null;
+}
+
+/**
  * Parses the [autoload] section from a project.godot file.
- * Autoload entries look like: `Name="*res://path.gd"` or `Name="*res://path.tscn"`
+ * Autoload entries look like: `Name="*res://path.gd"`, `Name="*res://path.tscn"`,
+ * or `Name="*uid://..."` (Godot 4.4+).
  * The `*` prefix means the autoload is enabled.
  */
 export function parseAutoloads(projectFilePath: string): AutoloadEntry[] {
   if (!existsSync(projectFilePath)) return [];
 
+  const rootDir = dirname(projectFilePath);
   const content = readFileSync(projectFilePath, 'utf-8');
   const root = resourceParser.parse(content);
   const entries: AutoloadEntry[] = [];
@@ -700,7 +781,7 @@ export function parseAutoloads(projectFilePath: string): AutoloadEntry[] {
     const sectionIdent = section.namedChildren.find(c => c.type === SyntaxType.Identifier);
     if (!sectionIdent || sectionIdent.text !== 'autoload') continue;
 
-    // Parse properties: Name="*res://path"
+    // Parse properties: Name="*res://path" or Name="*uid://..."
     for (const child of section.namedChildren) {
       if (child.type !== SyntaxType.Property) continue;
       const parts = child.namedChildren;
@@ -712,9 +793,18 @@ export function parseAutoloads(projectFilePath: string): AutoloadEntry[] {
 
       const name = pathNode.text;
       const rawValue = valueNode.text.slice(1, -1); // strip quotes
-      if (rawValue.startsWith('*')) {
-        entries.push({ name, resPath: rawValue.slice(1) });
+      if (!rawValue.startsWith('*')) continue;
+
+      let resPath = rawValue.slice(1); // strip '*'
+
+      // Resolve uid:// to res:// by scanning .uid files
+      if (resPath.startsWith('uid://')) {
+        const resolved = resolveUidToResPath(resPath, rootDir, name);
+        if (!resolved) continue; // skip unresolvable UIDs
+        resPath = resolved;
       }
+
+      entries.push({ name, resPath });
     }
   }
 
