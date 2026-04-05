@@ -224,6 +224,17 @@ export class TsToGdTransformer {
 
       lastKind = entry.kind;
     }
+
+    // Emit trailing comments before the class closing brace
+    const closeBrace = node.getLastToken();
+    if (closeBrace) {
+      const sourceText = this.ctx.sourceFile.getFullText();
+      const ranges = ts.getLeadingCommentRanges(sourceText, closeBrace.getFullStart());
+      if (ranges && ranges.length > 0) {
+        this.emitter.writeEmptyLine();
+        this.emitLeadingComments(closeBrace);
+      }
+    }
   }
 
   // ─── Comments ───────────────────────────────────────────────
@@ -262,16 +273,21 @@ export class TsToGdTransformer {
             // Single-line block comment
             this.emitter.writeLine(`"""${content.trim()}"""`, origLine, origCol);
           } else {
-            // Multiline block comment — strip common indentation
+            // Multiline block comment — strip indent matching the comment's own column
             const rawLines = content.split('\n');
             const nonEmpty = rawLines.filter(l => l.trim() !== '');
-            const minIndent = nonEmpty.reduce((min, l) => {
-              const leading = l.match(/^(\s*)/)?.[1]?.length ?? 0;
-              return Math.min(min, leading);
-            }, Infinity);
+            // Strip indent equal to the comment's own column position
+            const stripAmount = character;
             this.emitter.writeLine(`"""`, origLine, origCol);
             for (const line of nonEmpty) {
-              this.emitter.writeLine(line.slice(minIndent).trimEnd(), origLine, origCol);
+              // Strip up to stripAmount leading spaces/tabs
+              let stripped = line;
+              let count = 0;
+              while (count < stripAmount && stripped.length > 0 && (stripped[0] === ' ' || stripped[0] === '\t')) {
+                stripped = stripped.slice(1);
+                count++;
+              }
+              this.emitter.writeLine(stripped.trimEnd(), origLine, origCol);
             }
             this.emitter.writeLine(`"""`, origLine, origCol);
           }

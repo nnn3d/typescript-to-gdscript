@@ -22,3 +22,9 @@ func test_block_comments():
 	Multiline block
 	comment inside function
 	"""
+
+"""
+Block comment
+in class body
+"""
+"""Block comment in class body"""

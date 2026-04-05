@@ -24,4 +24,10 @@ export class MyClass extends Node {
     comment inside function
     */
   }
+
+  /*
+  Block comment
+  in class body
+  */
+  /* Block comment in class body */
 }
