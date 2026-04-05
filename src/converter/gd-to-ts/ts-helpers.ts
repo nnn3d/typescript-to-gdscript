@@ -8,6 +8,7 @@
 
 import ts from 'typescript';
 import { readFileSync, writeFileSync } from 'fs';
+import { resolve } from 'path';
 import { createTsProgram } from '../../parser/typescript/index.ts';
 
 // ─── Types ───────────────────────────────────────────────────
@@ -178,10 +179,12 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
     tsConfigPath,
   });
 
-  const filePaths = new Set(files.map(f => f.replace(/\\/g, '/')));
-  // Also normalize with the program's source file names
+  // Build set of file paths to process, normalized for comparison
+  const filePaths = new Set<string>();
+  const normalizedInputFiles = new Set(files.map(f => resolve(f).replace(/\\/g, '/')));
   for (const sf of program.getSourceFiles()) {
-    if (files.some(f => sf.fileName.endsWith(f.replace(/\\/g, '/').split('/').pop()!))) {
+    const normalizedSf = resolve(sf.fileName).replace(/\\/g, '/');
+    if (normalizedInputFiles.has(normalizedSf)) {
       filePaths.add(sf.fileName);
     }
   }

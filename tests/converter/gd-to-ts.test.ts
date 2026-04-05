@@ -202,22 +202,24 @@ describe('GD to TS: Operator fix helper', () => {
           moduleResolution: 'Node16',
           strict: true,
           noEmit: true,
-          types: [typingsDir],
+          types: [],
         },
-        include: ['./*.ts'],
+        include: [typingsDir, './*.ts'],
       }));
 
       // Write a TS file with Vector2 + Vector2 (which TS can't handle natively)
       const tsContent = [
-        'export class TestOps extends Node {',
+        'export class TestOps extends Node2D {',
         '  v1: Vector2 = Vector2(1, 2);',
         '  v2: Vector2 = Vector2(3, 4);',
         '',
-        '  test() {',
+        '  test(node: Node2D) {',
         '    let v3 = this.v1 + this.v2;',
         '    let v4 = this.v1 - this.v2;',
         '    let v5 = this.v1 * this.v2;',
         '    let ok = 1 + 2;',
+        '    let mouse_pos = this.get_global_mouse_position();',
+        '    let target_angle = (mouse_pos - node.global_position).angle();',
         '  }',
         '}',
       ].join('\n');
@@ -242,6 +244,7 @@ describe('GD to TS: Operator fix helper', () => {
       expect(fixed).toContain('gd.ops.add(this.v1, this.v2)');
       expect(fixed).toContain('gd.ops.sub(this.v1, this.v2)');
       expect(fixed).toContain('gd.ops.mul(this.v1, this.v2)');
+      expect(fixed).toContain('gd.ops.sub(mouse_pos, node.global_position)');
 
       // Primitive operations should NOT be wrapped
       expect(fixed).toContain('let ok = 1 + 2;');

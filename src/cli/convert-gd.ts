@@ -127,7 +127,7 @@ export function registerConvertGdCommand(program: Command): void {
       if (operatorFixEnabled && tsOutputFiles.length > 0) {
         const helperResult = runTsHelpers({
           files: tsOutputFiles,
-          rootDir: cfg.tsDir,
+          rootDir: cfg.rootDir,
           tsConfigPath: cfg.tsconfig,
           helpers: { operatorFix: true },
         });

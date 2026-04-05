@@ -99,7 +99,8 @@ export function resolveConfig(options?: {
     scenesDir,
     ignore,
     projectFile,
-    tsconfig: overrides.tsconfig ?? config?.tsconfig,
+    tsconfig: overrides.tsconfig ?? config?.tsconfig
+      ?? (existsSync(join(rootDir, 'tsconfig.json')) ? join(rootDir, 'tsconfig.json') : undefined),
     sourceMap: overrides.sourceMap ?? config?.sourceMap,
     godotVersion: overrides.godotVersion ?? config?.godotVersion,
     registryPath: overrides.registryPath ?? config?.registryPath,
