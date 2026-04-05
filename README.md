@@ -253,6 +253,43 @@ export class Player extends CharacterBody2D {
 
 Spaces after `@gd.eval:` are ignored, but tab characters are preserved as additional indentation.
 
+### Match statement
+
+GDScript `match` is expressed via `gd.match()`. Cases use arrow functions (`do: () => {}`) to preserve `this` context:
+
+```typescript
+gd.match(this.state, [
+  { match: 1, do: () => { print("one"); } },
+  { match: 2, do: () => { print("two"); } },
+  { match: undefined, do: () => { print("other"); } },  // _ wildcard
+]);
+// becomes:
+// match self.state:
+//   1:
+//     print("one")
+//   2:
+//     print("two")
+//   _:
+//     print("other")
+```
+
+Advanced patterns:
+
+```typescript
+gd.match(this.x, [
+  // Multiple patterns
+  { matchMany: [1, 2, 3], do: () => { print("1-3"); } },
+  // Pattern binding with guard
+  (x, y) => ({ match: [x, y], when: y === x, do: () => { print("y = x"); } }),
+  // Array open-ending
+  { match: [42, ...[]], do: () => { print("starts with 42"); } },
+  // Dictionary pattern
+  (age) => ({ match: { name: "Dennis", age: age }, do: () => { print(age); } }),
+  // Dictionary open-ending
+  { match: { key: "val", ...{} }, do: () => { print("has key"); } },
+]);
+```
+
 ### Decorators
 
 ```typescript

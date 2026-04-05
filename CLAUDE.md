@@ -144,7 +144,7 @@ tests/
 | `===` / `!==` | `==` / `!=` | |
 | `&&` / `\|\|` / `!` | `and` / `or` / `not` | |
 | `for (x of arr)` | `for x in arr` | |
-| `switch/case` | `match` | |
+| `gd.match(val, [...])` | `match val:` | Arrow `do: () => {}` preserves `this`; also supports `do()` method syntax |
 | `//` / `/** */` | `#` / `##` | |
 | `async` | stripped | GDScript has no async |
 | `new Foo()` | `Foo.new()` | |
