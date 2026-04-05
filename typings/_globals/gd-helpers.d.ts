@@ -155,6 +155,21 @@ declare const gd: {
     type: new (...args: any[]) => U,
   ) => T extends U ? U : U | null;
 
+  /**
+   * Emit raw GDScript code. The string is inserted as-is into the output.
+   * Single-line strings are emitted at the current indentation level.
+   * Multiline strings (starting with \n) have their common indentation stripped
+   * and are re-indented to the current level.
+   * @example
+   * gd.eval('var a = 10')
+   * gd.eval(`
+   *   var b = 20
+   *   if b > 10:
+   *     b = 30
+   * `)
+   */
+  readonly eval: <T = void>(expression: string) => T;
+
   readonly ops: {
     /** Transforms to `[] + []` in GDScript */
     add<A, B>(a: Array<A>, b: Array<B>): Array<A | B>;

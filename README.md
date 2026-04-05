@@ -212,6 +212,25 @@ Available operators: `add`, `sub`, `mul`, `div`, `rem`, `eq`, `ne`, `gt`, `gte`,
 let sprite = gd.as(get_node('Sprite'), Sprite2D);
 ```
 
+### Raw GDScript (`eval`)
+
+Emit raw GDScript code that can't be expressed in TypeScript. The string content is inserted as-is, with indentation automatically adjusted to the current level.
+
+```typescript
+class Player extends CharacterBody2D {
+  _ready() {
+    gd.eval('var a = 10');
+    gd.eval(`
+var b = 20
+if b > 10:
+\tb = 30
+    `);
+  }
+}
+```
+
+Space-based indentation is automatically converted to tabs. Mixed tabs and spaces produce a conversion error.
+
 ### Decorators
 
 ```typescript

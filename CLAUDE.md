@@ -153,7 +153,10 @@ tests/
 | `gd.ops.add(a, b)` | `a + b` | Typed operator overloads (also: sub, mul, div, rem, eq, ne, gt, gte, lt, lte, plus, minus) |
 | `gd.ops.rem(a, b)` | `a % b` | Remainder/modulo for non-number types (Vector2i, etc.) |
 | `gd.as(val, Type)` | `val as Type` | |
+| `gd.eval('code')` | `code` | Raw GDScript passthrough, auto-indented |
 | `gd.dict([[k, v]])` | `{k: v}` | Non-string keys |
+| `/* comment */` | `"""comment"""` | Block comments (also `'''`) |
+| `int(x)` / `float(x)` | `int(x)` / `float(x)` | Cast functions (also types) |
 | `StringName('...')` | `&"..."` | |
 | `NodePath('...')` | `^"..."` | |
 | `@gd.export` | `@export` | `gd.decorators.export_` in TS types |
@@ -183,3 +186,9 @@ tests/
 - Scene tree `__node_extends` circularity avoided: unique name `%X` entries skip self-reference on the unique node itself
 - `_GDTreeHandlers` does NOT include `/root/` overloads (only in module augmentation) to avoid per-TreeNode evaluation overhead
 - `collectAllSignalHandlers()` pre-parses all scenes once for batch signal resolution (vs per-file `resolveSignalHandlers()`)
+- `gd.eval` space indentation: converts space-based indent to tabs by tracking space→depth mapping; mixed tabs/spaces is an error
+- GD-to-TS `'''`/`"""` triple-quoted strings as expression statements → `/* */` block comments (both class body and function body)
+- TS-to-GD `/* */` non-doc block comments → `"""..."""` (single-line and multiline); class-level trailing comments emitted via closing brace
+- GD-to-TS inline comments in expressions (e.g. `# comment` inside function call args) → `/* comment */`
+- GD-to-TS `emitAttribute` checks `!ctx.localVars.has()` to prevent incorrect `this.` prefix when local variable shadows class member
+- `addons/` directory excluded from all file discovery (findTsFiles, findGdFiles, findSceneFiles, watcher)

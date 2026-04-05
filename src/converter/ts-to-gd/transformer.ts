@@ -650,7 +650,9 @@ export class TsToGdTransformer {
     if (ts.isVariableStatement(node)) {
       this.visitVariableStatement(node);
     } else if (ts.isExpressionStatement(node)) {
-      if (this.isGdMatchCall(node.expression)) {
+      if (this.isGdEvalCall(node.expression)) {
+        this.emitGdEval(node.expression as ts.CallExpression, pos);
+      } else if (this.isGdMatchCall(node.expression)) {
         this.visitGdMatchStatement(node.expression as ts.CallExpression);
       } else {
         this.emitter.writeLine(
@@ -913,6 +915,114 @@ export class TsToGdTransformer {
   }
 
   // ─── gd.match() → match ─────────────────────────────────────
+
+  // ─── gd.eval() ──────────────────────────────────────────────
+
+  private isGdEvalCall(node: ts.Expression): boolean {
+    if (!ts.isCallExpression(node)) return false;
+    if (!ts.isPropertyAccessExpression(node.expression)) return false;
+    const obj = node.expression.expression;
+    return (
+      ts.isIdentifier(obj) &&
+      obj.text === 'gd' &&
+      node.expression.name.text === 'eval'
+    );
+  }
+
+  /**
+   * Emit gd.eval('gdscript code') as raw GDScript lines.
+   * Indentation is adjusted to the current emitter indent level.
+   * If the string starts with \n, the content's indentation is re-mapped
+   * to the current level by stripping common leading whitespace.
+   */
+  private emitGdEval(
+    node: ts.CallExpression,
+    pos: { line: number; col: number },
+  ): void {
+    if (node.arguments.length < 1) return;
+    const arg = node.arguments[0]!;
+
+    // Extract the string content
+    let content: string;
+    if (ts.isStringLiteral(arg)) {
+      content = arg.text;
+    } else if (ts.isNoSubstitutionTemplateLiteral(arg)) {
+      content = arg.text;
+    } else if (ts.isTemplateExpression(arg)) {
+      // Template with expressions — can't evaluate, emit raw
+      this.addDiagnostic(node, 'warning', 'gd.eval with template expressions is not supported');
+      return;
+    } else {
+      this.addDiagnostic(node, 'warning', 'gd.eval argument must be a string literal');
+      return;
+    }
+
+    // Strip leading newline if present
+    const body = content.startsWith('\n') ? content.slice(1) : content;
+    const rawLines = body.split('\n');
+
+    // Strip trailing empty lines
+    while (rawLines.length > 0 && rawLines[rawLines.length - 1]!.trim() === '') {
+      rawLines.pop();
+    }
+    const nonEmpty = rawLines.filter(l => l.trim() !== '');
+    if (nonEmpty.length === 0) return;
+
+    // Single non-empty line: emit directly
+    if (nonEmpty.length === 1) {
+      this.emitter.writeLine(nonEmpty[0]!.trim(), pos.line, pos.col);
+      return;
+    }
+
+    // Detect indentation style: tabs vs spaces
+    const hasTabs = nonEmpty.some(l => l.startsWith('\t'));
+    const hasSpaces = nonEmpty.some(l => /^ /.test(l));
+
+    if (hasTabs && hasSpaces) {
+      this.addDiagnostic(node, 'error', 'gd.eval: mixed tabs and spaces indentation is not supported');
+      return;
+    }
+
+    if (hasTabs) {
+      // Tab indentation: strip common tab prefix, emit as-is
+      const minTabs = nonEmpty.reduce((min, l) => {
+        const leading = l.match(/^(\t*)/)?.[1]?.length ?? 0;
+        return Math.min(min, leading);
+      }, Infinity);
+      for (const line of rawLines) {
+        if (line.trim() === '') continue;
+        this.emitter.writeLine(line.slice(minTabs), pos.line, pos.col);
+      }
+    } else {
+      // Space indentation: convert indent levels to tabs.
+      // Track a mapping of space count → tab depth for revisited indent levels.
+      const spaceToDepth = new Map<number, number>();
+      let prevSpaces = nonEmpty[0]!.match(/^( *)/)?.[1]?.length ?? 0;
+      let depth = 0;
+      spaceToDepth.set(prevSpaces, 0);
+
+      for (const line of rawLines) {
+        if (line.trim() === '') continue;
+        const spaces = line.match(/^( *)/)?.[1]?.length ?? 0;
+        const lineContent = line.trimStart();
+
+        if (spaces > prevSpaces) {
+          depth++;
+        } else if (spaces < prevSpaces) {
+          const mapped = spaceToDepth.get(spaces);
+          if (mapped !== undefined) {
+            depth = mapped;
+          } else {
+            depth = Math.max(0, depth - 1);
+          }
+        }
+
+        spaceToDepth.set(spaces, depth);
+        prevSpaces = spaces;
+        this.emitter.writeLine('\t'.repeat(depth) + lineContent, pos.line, pos.col);
+      }
+    }
+  }
 
   private isGdMatchCall(node: ts.Expression): boolean {
     if (!ts.isCallExpression(node)) return false;
