@@ -104,22 +104,23 @@ declare const gd: {
    * GDScript `match` statement. Transforms to `match value:` with pattern cases in GDScript.
    *
    * Cases can be:
-   * - **Simple match**: `{ match: value, do() { ... } }` → `value: ...`
-   * - **Wildcard**: `{ match: undefined, do() { ... } }` → `_: ...`
-   * - **Multiple patterns**: `{ matchMany: [1, 2, 3], do() { ... } }` → `1, 2, 3: ...`
-   * - **Binding with guard**: `(x, y) => ({ match: [x, y], when: y === x, do() { ... } })` → `[var x, var y] when y == x: ...`
-   * - **Array pattern**: `{ match: [1, ...[] ], do() { ... } }` → `[1, ..]: ...`
-   * - **Dict pattern**: `{ match: { key: "val", ...{} }, do() { ... } }` → `{"key": "val", ..}: ...`
+   * - **Simple match**: `{ match: value, do: () => { ... } }` → `value: ...`
+   * - **Wildcard**: `{ match: undefined, do: () => { ... } }` → `_: ...`
+   * - **Multiple patterns**: `{ matchMany: [1, 2, 3], do: () => { ... } }` → `1, 2, 3: ...`
+   * - **Binding with guard**: `(x, y) => ({ match: [x, y], when: y === x, do: () => { ... } })` → `[var x, var y] when y == x: ...`
+   * - **Array pattern**: `{ match: [1, ...[] ], do: () => { ... } }` → `[1, ..]: ...`
+   * - **Dict pattern**: `{ match: { key: "val", ...{} }, do: () => { ... } }` → `{"key": "val", ..}: ...`
    *
    * In array/dict patterns, `undefined` maps to `_` (wildcard).
    * Arrow function parameters become `var name` pattern bindings.
    * Spread `...[]` in arrays and `...{}` in dicts map to `..` (open-ended).
+   * Uses arrow functions (`do: () => {}`) to preserve `this` context.
    *
    * @example
    * gd.match(this.x, [
-   *   { match: 1, do() { print("one"); } },
-   *   { match: 2, do() { print("two"); } },
-   *   { match: undefined, do() { print("other"); } },
+   *   { match: 1, do: () => { print("one"); } },
+   *   { match: 2, do: () => { print("two"); } },
+   *   { match: undefined, do: () => { print("other"); } },
    * ]);
    * // becomes:
    * // match x:

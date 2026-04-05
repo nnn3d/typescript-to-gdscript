@@ -1352,9 +1352,9 @@ function emitMatchStatement(
       const savedLocals = new Set(ctx.localVars);
       for (const b of bindings) ctx.localVars.add(b);
 
-      // Emit do() body
+      // Emit do: () => {} body (arrow function preserves outer `this`)
       const bodyStr = body ? emitBody(body, ctx, depth + 3) : '';
-      const doBlock = `do() {\n${bodyStr}\n${i2}}`;
+      const doBlock = `do: () => {\n${bodyStr}\n${i2}}`;
 
       if (isMultiPattern) {
         // Multiple patterns: { matchMany: [...], do() { ... } }

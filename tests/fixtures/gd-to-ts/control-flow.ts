@@ -27,19 +27,19 @@ export class ControlFlow extends Node {
     gd.match(value, [
       {
         match: 1,
-        do() {
+        do: () => {
           print("one");
         },
       },
       {
         match: 2,
-        do() {
+        do: () => {
           print("two");
         },
       },
       {
         match: undefined,
-        do() {
+        do: () => {
           print("other");
         },
       },

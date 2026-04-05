@@ -1096,6 +1096,12 @@ export class TsToGdTransformer {
         matchManyExpr = prop.initializer;
       } else if (name === 'do' && ts.isMethodDeclaration(prop) && prop.body) {
         doBody = prop.body;
+      } else if (name === 'do' && ts.isPropertyAssignment(prop)) {
+        // do: () => { ... } (arrow function variant preserving `this`)
+        const init = prop.initializer;
+        if (ts.isArrowFunction(init) && ts.isBlock(init.body)) {
+          doBody = init.body;
+        }
       }
     }
 
@@ -1159,6 +1165,12 @@ export class TsToGdTransformer {
         whenExpr = prop.initializer;
       } else if (name === 'do' && ts.isMethodDeclaration(prop) && prop.body) {
         doBody = prop.body;
+      } else if (name === 'do' && ts.isPropertyAssignment(prop)) {
+        // do: () => { ... } (arrow function variant preserving `this`)
+        const init = prop.initializer;
+        if (ts.isArrowFunction(init) && ts.isBlock(init.body)) {
+          doBody = init.body;
+        }
       }
     }
 

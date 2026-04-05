@@ -8,25 +8,25 @@ export class Match extends Node {
     gd.match(this.x, [
       {
         match: this.TYPE_FLOAT,
-        do() {
+        do: () => {
           print("float");
         },
       },
       {
         match: this.TYPE_STRING,
-        do() {
+        do: () => {
           print("text");
         },
       },
       {
         match: this.TYPE_ARRAY,
-        do() {
+        do: () => {
           print("array");
         },
       },
       (new_var) => ({
         match: new_var,
-        do() {
+        do: () => {
           print("it's ", new_var);
         },
       }),
@@ -37,19 +37,19 @@ export class Match extends Node {
     gd.match(this.x, [
       {
         match: 1,
-        do() {
+        do: () => {
           print("It's one!");
         },
       },
       {
         match: 2,
-        do() {
+        do: () => {
           print("It's one times two!");
         },
       },
       {
         match: undefined,
-        do() {
+        do: () => {
           print("It's not 1 or 2. I don't care to be honest.");
         },
       },
@@ -60,69 +60,69 @@ export class Match extends Node {
     gd.match(this.x, [
       {
         match: [],
-        do() {
+        do: () => {
           print("Empty array");
         },
       },
       {
         match: [1, 3, "test", null],
-        do() {
+        do: () => {
           print("Very specific array");
         },
       },
       (start) => ({
         match: [start, undefined, "test"],
-        do() {
+        do: () => {
           print("First element is ", start, ", and the last is \"test\"");
         },
       }),
       {
         match: [42, ...[]],
-        do() {
+        do: () => {
           print("Open ended array");
         },
       },
       (x, y) => ({
         match: [x, y],
         when: y === x,
-        do() {
+        do: () => {
           print("Point on line y = x");
         },
       }),
       (x, y) => ({
         match: [x, y],
         when: y === -x,
-        do() {
+        do: () => {
           print("Point on line y = -x");
         },
       }),
       (age) => ({
         match: { name: "Dennis", age: age },
-        do() {
+        do: () => {
           print("Dennis is ", age, " years old.");
         },
       }),
       {
         match: { name: undefined, age: undefined },
-        do() {
+        do: () => {
           print("Has a name and an age, but it's not Dennis :(");
         },
       },
       {
         match: { key: "godotisawesome", ...{} },
-        do() {
+        do: () => {
           print("I only checked for one entry and ignored the rest");
         },
       },
       {
         matchMany: [1, 2, 3],
-        do() {
+        do: () => {
           print("It's 1 - 3");
         },
       },
       {
         matchMany: ["Sword", "Splash potion", "Fist"],
-        do() {
+        do: () => {
           print("Yep, you've taken damage");
         },
       },
