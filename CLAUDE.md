@@ -154,6 +154,7 @@ tests/
 | `gd.ops.rem(a, b)` | `a % b` | Remainder/modulo for non-number types (Vector2i, etc.) |
 | `gd.as(val, Type)` | `val as Type` | |
 | `gd.eval('code')` | `code` | Raw GDScript passthrough, auto-indented |
+| `// @gd.eval: code` | `code` | Magic comment: raw GDScript in any position |
 | `gd.dict([[k, v]])` | `{k: v}` | Non-string keys |
 | `/* comment */` | `"""comment"""` | Block comments (also `'''`) |
 | `int(x)` / `float(x)` | `int(x)` / `float(x)` | Cast functions (also types) |

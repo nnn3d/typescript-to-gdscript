@@ -26,6 +26,7 @@ if e2 > 10:
   e2 = 30
 `);
     gd.eval(`
+  var c = "\t123"
   var f = 10
   if f > 10:
      f = 30

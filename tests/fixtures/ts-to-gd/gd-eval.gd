@@ -18,6 +18,7 @@ func test_eval():
 	var e2 = 10
 	if e2 > 10:
 		e2 = 30
+	var c = "	123"
 	var f = 10
 	if f > 10:
 		f = 30

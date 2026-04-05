@@ -62,6 +62,7 @@ export class TsToGdTransformer {
 
     for (const statement of sf.statements) {
       if (ts.isClassDeclaration(statement)) {
+        this.emitLeadingComments(statement);
         this.visitClassDeclaration(statement);
       } else if (ts.isImportDeclaration(statement)) {
         // Imports are type-only in this model; skip
@@ -252,9 +253,16 @@ export class TsToGdTransformer {
       const origCol = character;
 
       if (range.kind === ts.SyntaxKind.SingleLineCommentTrivia) {
-        // // comment -> # comment
         const content = commentText.replace(/^\/\/\s?/, '');
-        this.emitter.writeLine(`# ${content}`, origLine, origCol);
+        // @gd.eval: magic comment → emit raw GDScript
+        // Spaces after @gd.eval: are ignored, but tabs are preserved as indentation
+        const gdEvalMatch = content.match(/^\s*@gd\.eval: *(.*)/);
+        if (gdEvalMatch) {
+          this.emitter.writeLine(gdEvalMatch[1]!, origLine, origCol);
+        } else {
+          // // comment -> # comment
+          this.emitter.writeLine(`# ${content}`, origLine, origCol);
+        }
       } else if (range.kind === ts.SyntaxKind.MultiLineCommentTrivia) {
         if (commentText.startsWith('/**')) {
           // /** comment */ -> ## comment (doc comment)

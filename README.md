@@ -231,6 +231,26 @@ if b > 10:
 
 Space-based indentation is automatically converted to tabs. Mixed tabs and spaces produce a conversion error.
 
+For contexts where `gd.eval()` can't be used directly (e.g., before the class declaration or between members), use `// @gd.eval:` magic comments:
+
+```typescript
+// @gd.eval: @tool
+export class Player extends CharacterBody2D {
+  // @gd.eval: @icon("res://icon.svg")
+  speed: float = 100.0;
+
+  // @gd.eval: signal custom_signal(value: int)
+  health: int = 100;
+
+  _ready() {
+    // @gd.eval: var special := preload("res://special.tscn")
+    let x: int = 1;
+  }
+}
+```
+
+Spaces after `@gd.eval:` are ignored, but tab characters are preserved as additional indentation.
+
 ### Decorators
 
 ```typescript
