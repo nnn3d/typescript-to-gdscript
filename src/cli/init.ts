@@ -20,10 +20,9 @@ const TSCONFIG_TEMPLATE = `{
     "noLib": true,
     "strict": true,
     "noEmit": true,
-    "skipLibCheck": false,
-    "types": ["typescript-to-gdscript/typings/latest"]
+    "types": []
   },
-  "include": ["{{tsDir}}/**/*.ts", "{{typingsDir}}/**/*.d.ts"]
+  "include": ["typescript-to-gdscript/typings/latest", "{{tsDir}}/**/*.ts", "{{typingsDir}}/**/*.d.ts"]
 }
 `;
 
