@@ -11,6 +11,7 @@ import { registerSetLatestCommand } from './set-latest.ts';
 import { registerGenerateTypingsCommand } from './generate-typings.ts';
 import { registerLintCommand } from './lint.ts';
 import { registerInitCommand } from './init.ts';
+import { registerGenerateAddonTypingsCommand } from './generate-addon-typings.ts';
 
 const program = new Command();
 
@@ -28,9 +29,10 @@ registerConvertCommand(program);
 registerConvertGdCommand(program);
 registerValidateGdCommand(program);
 registerWatchCommand(program);
-registerGenerateGdscriptGlobalTypingsCommand(program);
 registerSetLatestCommand(program);
 registerGenerateTypingsCommand(program);
+registerGenerateAddonTypingsCommand(program);
+registerGenerateGdscriptGlobalTypingsCommand(program);
 registerLintCommand(program);
 registerInitCommand(program);
 

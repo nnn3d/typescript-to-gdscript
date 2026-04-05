@@ -1,6 +1,5 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { __CLASS__ as _GameManager } from "../GameManager.js";
 
 declare global {
   interface GodotScripts {}
@@ -8,7 +7,7 @@ declare global {
   interface GodotResources {}
   interface GodotGroups {}
   // Autoload singletons from project.godot
-  const GameManager: _GameManager;
+  const GameManager: GodotScripts["res://GameManager.gd"];
   const UIManager: _GDTreeNode<GodotSceneTrees["res://UIManager.tscn"]>;
 }
 

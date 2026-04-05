@@ -2,15 +2,15 @@ import { describe, it, expect } from 'vitest';
 import { execSync } from 'child_process';
 import { join, resolve } from 'path';
 import { readFileSync, globSync } from 'fs';
-import { generateTypings } from '../../src/typings/scenes.js';
+import { generateTypings, generateAddonTypings } from '../../src/typings/scenes.js';
 
 const SCENE_DIR = join(__dirname, 'scene-typings');
 const TYPES_DIR = join(SCENE_DIR, 'types');
 const TSCONFIG_PATH = join(SCENE_DIR, 'tsconfig.json');
 const PROJECT_FILE = join(SCENE_DIR, 'project.godot');
-// Discover all .ts source files (not .d.ts)
+// Discover all .ts source files (not .d.ts, not addons)
 const sourceFiles = globSync(join(SCENE_DIR, '**/*.ts'))
-  .filter((f) => f.endsWith('.ts') && !f.endsWith('.d.ts'));
+  .filter((f) => f.endsWith('.ts') && !f.endsWith('.d.ts') && !f.replace(/\\/g, '/').includes('/addons/'));
 
 function generate() {
   return generateTypings({
@@ -21,6 +21,13 @@ function generate() {
     outputDir: TYPES_DIR,
     scenesDir: SCENE_DIR,
     projectFile: PROJECT_FILE,
+  });
+}
+
+function generateAddons() {
+  return generateAddonTypings({
+    rootDir: SCENE_DIR,
+    outputDir: TYPES_DIR,
   });
 }
 
@@ -37,7 +44,8 @@ function readAllOutputs(files: string[]): string {
 describe('Scene typings generation', () => {
   it('should generate per-file .gd.d.ts with named and anonymous class declarations', () => {
     const files = generate();
-    const all = readAllOutputs(files);
+    const gdDtsFiles = files.filter(f => f.endsWith('.gd.d.ts'));
+    const all = readAllOutputs(gdDtsFiles);
 
     // Named classes should be declared globally in their .gd.d.ts files
     expect(all).toContain('class Player extends ScriptClass');
@@ -45,7 +53,7 @@ describe('Scene typings generation', () => {
     expect(all).toContain('class Level extends ScriptClass');
     expect(all).toContain('class BaseCharacter extends ScriptClass');
 
-    // __CLASS__ scripts should use _Script pattern (not global class)
+    // __CLASS__ scripts should use _Script pattern (not global class) in .d.ts files
     expect(all).not.toMatch(/class __CLASS__/);
     expect(all).toContain('declare class _Script extends ScriptClass');
 
@@ -220,7 +228,7 @@ describe('Scene typings generation', () => {
     // Autoload singletons from project.godot
     const index = readOutput('_index.d.ts');
     expect(index).toContain('Autoload singletons from project.godot');
-    expect(index).toContain('const GameManager: _GameManager;');
+    expect(index).toContain('const GameManager: GodotScripts["res://GameManager.gd"];');
 
     // Empty global interfaces in _index.d.ts
     expect(index).toContain('interface GodotScripts {}');
@@ -228,8 +236,46 @@ describe('Scene typings generation', () => {
     expect(index).toContain('interface GodotResources {}');
   });
 
+  it('should generate addon .ts and .gd.d.ts from addons/ GDScript', () => {
+    const files = generateAddons();
+
+    // Should generate .ts (converted source) and .gd.d.ts (typings) for each addon file
+    expect(files.some(f => f.endsWith('test_addon.ts') && !f.endsWith('.d.ts'))).toBe(true);
+    expect(files.some(f => f.endsWith('test_addon.gd.d.ts'))).toBe(true);
+    expect(files.some(f => f.endsWith('addon_helper.ts') && !f.endsWith('.d.ts'))).toBe(true);
+    expect(files.some(f => f.endsWith('addon_helper.gd.d.ts'))).toBe(true);
+
+    // Named addon class should have global class declaration and namespace enum
+    const addonScript = readOutput('addons/TestAddon/test_addon.gd.d.ts');
+    expect(addonScript).toContain('class TestAddon extends ScriptClass');
+    expect(addonScript).toContain('namespace TestAddon');
+    expect(addonScript).toContain('const enum AddonState');
+    expect(addonScript).toContain('IDLE = 0');
+    expect(addonScript).toContain('RUNNING = 1');
+    expect(addonScript).toContain('STOPPED = 2');
+
+    // GodotScripts/GodotResources entries use res://addons/... paths
+    expect(addonScript).toContain('"res://addons/TestAddon/test_addon.gd": TestAddon;');
+    expect(addonScript).toContain('"res://addons/TestAddon/test_addon.gd": typeof TestAddon;');
+
+    // Anonymous addon class should use _Script pattern
+    const helperScript = readOutput('addons/TestAddon/addon_helper.gd.d.ts');
+    expect(helperScript).toContain('declare class _Script extends ScriptClass');
+    expect(helperScript).toContain('"res://addons/TestAddon/addon_helper.gd": _Script;');
+
+    // Converted .ts should contain valid class with gd.enum
+    const addonTs = readOutput('addons/TestAddon/test_addon.ts');
+    expect(addonTs).toContain('export class TestAddon extends Node');
+    expect(addonTs).toContain("gd.enum('IDLE', 'RUNNING', 'STOPPED')");
+
+    // Cross-file references: addon_helper.ts should reference TestAddon
+    const helperTs = readOutput('addons/TestAddon/addon_helper.ts');
+    expect(helperTs).toContain('TestAddon');
+  });
+
   it('should compile all .ts files with generated typings (typed get_node, get_parent, load, autoloads)', () => {
     generate();
+    generateAddons();
 
     // Run tsc — should compile without errors.
     try {

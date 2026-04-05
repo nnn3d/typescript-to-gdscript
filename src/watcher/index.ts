@@ -2,7 +2,7 @@ import { watch, type FSWatcher } from 'chokidar';
 import { extname, resolve, relative, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
-import { generateTypings } from '../typings/scenes.ts';
+import { generateTypings, generateAddonTypings } from '../typings/scenes.ts';
 import { shouldIgnore } from '../config/index.ts';
 import { FileCache } from '../cache/index.ts';
 import { writeFileSync, mkdirSync } from 'fs';
@@ -209,6 +209,12 @@ export class Watcher {
       tsConfigPath: this.options.tsConfigPath,
       ignore: this.options.ignore,
       projectFile: this.options.projectFile,
+    });
+
+    generateAddonTypings({
+      rootDir: this.options.rootDir,
+      outputDir: typingsDir,
+      ignore: this.options.ignore,
     });
   }
 

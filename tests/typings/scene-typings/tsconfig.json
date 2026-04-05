@@ -14,5 +14,9 @@
     "./*.ts",
     "./**/*.ts",
     "./**/*.d.ts"
+  ],
+  "exclude": [
+    "addons",
+    "types/addons"
   ]
 }

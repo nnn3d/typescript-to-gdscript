@@ -2,8 +2,10 @@ import ts from 'typescript';
 import { readFileSync, readdirSync, statSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join, relative, extname, dirname, resolve } from 'path';
 import { createTsProgram } from '../parser/typescript/index.ts';
-import { shouldIgnore } from '../config/index.ts';
+import { shouldIgnore, resolveRegistry } from '../config/index.ts';
 import { GodotClassRegistry, type GodotSignalParamInfo } from './godot-registry.ts';
+import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
+import { findAddonGdFiles } from '../cli/helpers.ts';
 import { godotTypeToTs } from './godot-docs.ts';
 import { GodotResourceParser } from '../parser/godot-resource/index.ts';
 import { SyntaxType, type SyntaxNode } from '../parser/godot-resource/types.ts';
@@ -811,6 +813,17 @@ export function parseAutoloads(projectFilePath: string): AutoloadEntry[] {
   return entries;
 }
 
+interface EnumMemberInfo { name: string; value: number }
+interface EnumInfo { name: string; members: EnumMemberInfo[] }
+interface InnerClassInfo { name: string; extendsName?: string }
+interface ScriptInfo {
+  className: string;
+  isAnonymous: boolean;
+  tsAbsPath: string;
+  enums: EnumInfo[];
+  innerClasses: InnerClassInfo[];
+}
+
 export interface ScriptClassInfo {
   className: string;
   tsModulePath: string;
@@ -1434,9 +1447,6 @@ function generateResourceTypingContent(
  */
 function generateIndexTypingContent(
   autoloads: AutoloadEntry[],
-  outputDir: string,
-  rootDir: string,
-  tsDir: string,
 ): string {
   const lines: string[] = [];
   lines.push('// AUTO-GENERATED — do not edit manually.\n');
@@ -1444,16 +1454,6 @@ function generateIndexTypingContent(
   // Import autoload scripts (.gd autoloads need imports; .tscn autoloads use GodotSceneTrees)
   const gdAutoloads = autoloads.filter(a => a.resPath.endsWith('.gd'));
   const sceneAutoloads = autoloads.filter(a => a.resPath.endsWith('.tscn'));
-
-  for (const autoload of gdAutoloads) {
-    // Resolve the .ts source file path from the .gd res path
-    const tsRelPath = autoload.resPath
-      .replace(/^res:\/\//, '')
-      .replace(/\.gd$/, '.ts');
-    const tsAbsPath = resolve(tsDir, tsRelPath);
-    const importPath = computeTsImport(outputDir, '_index.d.ts', tsAbsPath);
-    lines.push(`import type { __CLASS__ as _${autoload.name} } from "${importPath}";`);
-  }
 
   if (autoloads.length > 0) lines.push('');
 
@@ -1467,7 +1467,7 @@ function generateIndexTypingContent(
   if (autoloads.length > 0) {
     lines.push(`  // Autoload singletons from project.godot`);
     for (const autoload of gdAutoloads) {
-      lines.push(`  const ${autoload.name}: _${autoload.name};`);
+      lines.push(`  const ${autoload.name}: GodotScripts["${autoload.resPath}"];`);
     }
     for (const autoload of sceneAutoloads) {
       lines.push(`  const ${autoload.name}: _GDTreeNode<GodotSceneTrees["${autoload.resPath}"]>;`);
@@ -1480,68 +1480,17 @@ function generateIndexTypingContent(
   return lines.join('\n');
 }
 
-// ─── Combined Typings Generator ─────────────────────────────
-
-export interface GenerateTypingsOptions {
-  /** Root directory of the project (base for res:// paths) */
-  rootDir: string;
-  /** TypeScript source directory */
-  tsDir: string;
-  /** GDScript output directory */
-  gdDir: string;
-  /** TS source files to scan for class declarations */
-  files: string[];
-  /** Output directory for per-file .d.ts typings */
-  outputDir: string;
-  /** @deprecated Use outputDir instead */
-  outputPath?: string;
-  /** Directory containing .tscn scene files */
-  scenesDir: string;
-  /** Path to tsconfig.json */
-  tsConfigPath?: string;
-  /** Glob patterns for files/folders to ignore */
-  ignore?: string[];
-  /** Path to project.godot file (for autoload singleton detection) */
-  projectFile?: string;
-  /** Path to godot-class-registry.json (for typed signal handler generation) */
-  registryPath?: string;
-}
-
 /**
- * Generates per-file .d.ts typings in outputDir:
- * - Per-scene .tscn.d.ts files (scene tree interfaces, GodotResources, parent entries)
- * - Per-script .gd.d.ts files (module augmentation, global class, GodotScripts)
- * - Per-resource .d.ts files (GodotResources entries)
- * - _index.d.ts (empty global interfaces, autoload singletons)
- * Returns list of written file paths.
+ * Scan TypeScript source files for class declarations, extracting enums and inner classes.
+ * Populates the scriptClassMap with ScriptInfo entries keyed by res:// path.
  */
-export function generateTypings(options: GenerateTypingsOptions): string[] {
-  const { rootDir, tsDir, outputDir, scenesDir, ignore = [] } = options;
-  const writtenFiles: string[] = [];
-
-  mkdirSync(outputDir, { recursive: true });
-
-  // 1. Scan TS files for class declarations
-  const program = createTsProgram({
-    rootDir: tsDir,
-    files: options.files,
-    tsConfigPath: options.tsConfigPath,
-  });
-
-  // Map: script res:// path → class info including enums and inner classes
-  interface EnumMemberInfo { name: string; value: number }
-  interface EnumInfo { name: string; members: EnumMemberInfo[] }
-  interface InnerClassInfo { name: string; extendsName?: string }
-  interface ScriptInfo {
-    className: string;
-    isAnonymous: boolean;
-    tsAbsPath: string;
-    enums: EnumInfo[];
-    innerClasses: InnerClassInfo[];
-  }
-  const scriptClassMap = new Map<string, ScriptInfo>();
-
-  for (const filePath of options.files) {
+function scanTsFilesForClasses(
+  program: ts.Program,
+  files: string[],
+  baseDir: string,
+  scriptClassMap: Map<string, ScriptInfo>,
+): void {
+  for (const filePath of files) {
     const sourceFile = program.getSourceFile(filePath);
     if (!sourceFile) continue;
 
@@ -1599,7 +1548,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
         }
       }
 
-      const relPath = relative(tsDir, filePath).replace(/\\/g, '/');
+      const relPath = relative(baseDir, filePath).replace(/\\/g, '/');
       const scriptResPath = 'res://' + relPath.replace(/\.ts$/, '.gd');
 
       scriptClassMap.set(scriptResPath, {
@@ -1611,6 +1560,60 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       });
     }
   }
+}
+
+// ─── Combined Typings Generator ─────────────────────────────
+
+export interface GenerateTypingsOptions {
+  /** Root directory of the project (base for res:// paths) */
+  rootDir: string;
+  /** TypeScript source directory */
+  tsDir: string;
+  /** GDScript output directory */
+  gdDir: string;
+  /** TS source files to scan for class declarations */
+  files: string[];
+  /** Output directory for per-file .d.ts typings */
+  outputDir: string;
+  /** @deprecated Use outputDir instead */
+  outputPath?: string;
+  /** Directory containing .tscn scene files */
+  scenesDir: string;
+  /** Path to tsconfig.json */
+  tsConfigPath?: string;
+  /** Glob patterns for files/folders to ignore */
+  ignore?: string[];
+  /** Path to project.godot file (for autoload singleton detection) */
+  projectFile?: string;
+  /** Path to godot-class-registry.json (for typed signal handler generation) */
+  registryPath?: string;
+}
+
+/**
+ * Generates per-file .d.ts typings in outputDir:
+ * - Per-scene .tscn.d.ts files (scene tree interfaces, GodotResources, parent entries)
+ * - Per-script .gd.d.ts files (module augmentation, global class, GodotScripts)
+ * - Per-resource .d.ts files (GodotResources entries)
+ * - _index.d.ts (empty global interfaces, autoload singletons)
+ * Returns list of written file paths.
+ */
+export function generateTypings(options: GenerateTypingsOptions): string[] {
+  const { rootDir, tsDir, outputDir, scenesDir, ignore = [] } = options;
+  const writtenFiles: string[] = [];
+
+  mkdirSync(outputDir, { recursive: true });
+
+  // 1. Scan TS files for class declarations
+  const program = createTsProgram({
+    rootDir: tsDir,
+    files: options.files,
+    tsConfigPath: options.tsConfigPath,
+  });
+
+  // Map: script res:// path → class info including enums and inner classes
+  const scriptClassMap = new Map<string, ScriptInfo>();
+
+  scanTsFilesForClasses(program, options.files, tsDir, scriptClassMap);
 
   // 2. Find and process all .tscn files
   const sceneFiles = findSceneFiles(scenesDir, rootDir, ignore);
@@ -1706,7 +1709,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
   const projectFile = options.projectFile ?? join(rootDir, 'project.godot');
   const autoloads = existsSync(projectFile) ? parseAutoloads(projectFile) : [];
 
-  const indexContent = generateIndexTypingContent(autoloads, outputDir, rootDir, tsDir);
+  const indexContent = generateIndexTypingContent(autoloads);
   const indexPath = resolve(outputDir, '_index.d.ts');
   writeFileSync(indexPath, indexContent);
   writtenFiles.push(indexPath);
@@ -1799,6 +1802,76 @@ function findProjectFiles(
   }
 
   return results;
+}
+
+// ─── Addon Typings Generator ──────────────────────────────────
+
+export interface GenerateAddonTypingsOptions {
+  rootDir: string;
+  outputDir: string;
+  ignore?: string[];
+  registryPath?: string;
+}
+
+/**
+ * Generate typings for GDScript addon files.
+ * Converts addon .gd → .ts, writes to outputDir/addons/ preserving structure,
+ * then generates .gd.d.ts scene typings for each addon script.
+ */
+export function generateAddonTypings(options: GenerateAddonTypingsOptions): string[] {
+  const { rootDir, outputDir } = options;
+  const ignore = options.ignore ?? [];
+  const writtenFiles: string[] = [];
+
+  const addonGdFiles = findAddonGdFiles(rootDir, ignore);
+  if (addonGdFiles.length === 0) return writtenFiles;
+
+  const registry = resolveRegistry({ registryPath: options.registryPath });
+  const addonSources = addonGdFiles.map(f => ({
+    source: readFileSync(f, 'utf-8'),
+    filePath: f,
+  }));
+
+  // Pass 1: Convert all addon .gd → .ts, write to outputDir
+  const addonTsPaths: string[] = [];
+  for (const { source, filePath } of addonSources) {
+    const result = convertGdToTs({ source, filePath, registry, projectSources: addonSources });
+    const relPath = relative(rootDir, filePath).replace(/\\/g, '/');
+    const outputTsPath = resolve(outputDir, relPath.replace(/\.gd$/, '.ts'));
+    mkdirSync(dirname(outputTsPath), { recursive: true });
+    writeFileSync(outputTsPath, '// @ts-nocheck — auto-generated from GDScript addon\n' + result.code);
+    writtenFiles.push(outputTsPath);
+    addonTsPaths.push(outputTsPath);
+  }
+
+  // Pass 2: Create TS program from addon .ts files, scan for classes
+  const scriptClassMap = new Map<string, ScriptInfo>();
+  const addonProgram = createTsProgram({ rootDir: outputDir, files: addonTsPaths });
+  scanTsFilesForClasses(addonProgram, addonTsPaths, outputDir, scriptClassMap);
+
+  // Pass 3: Generate .gd.d.ts for each addon script
+  for (const [scriptResPath, classInfo] of scriptClassMap) {
+    const outputFile = scriptResPathToOutputFile(scriptResPath);
+    const tsImportPath = computeTsImport(outputDir, outputFile, classInfo.tsAbsPath);
+    const tsModulePath = tsImportPath.replace(/\.js$/, '.ts');
+
+    const content = generateScriptTypingContent(
+      scriptResPath,
+      classInfo.className,
+      classInfo.isAnonymous,
+      tsImportPath,
+      tsModulePath,
+      classInfo.enums,
+      classInfo.innerClasses,
+    );
+
+    const outputPath = resolve(outputDir, outputFile);
+    mkdirSync(dirname(outputPath), { recursive: true });
+    writeFileSync(outputPath, content);
+    writtenFiles.push(outputPath);
+  }
+
+  return writtenFiles;
 }
 
 export function findSceneFiles(

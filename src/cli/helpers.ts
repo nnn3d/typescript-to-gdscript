@@ -11,7 +11,7 @@ import {
 } from 'fs';
 import { join, resolve } from 'path';
 import { shouldIgnore } from '../config/index.ts';
-import { generateTypings } from '../typings/scenes.ts';
+import { generateTypings, generateAddonTypings } from '../typings/scenes.ts';
 
 /** Reference to the program instance for debug flag access */
 let _debugEnabled = false;
@@ -57,6 +57,32 @@ export function findGdFiles(dir: string, rootDir: string, ignore: string[]): str
       if (shouldIgnore(fullPath, rootDir, ignore)) continue;
       if (statSync(fullPath).isDirectory()) {
         results.push(...findGdFiles(fullPath, rootDir, ignore));
+      } else if (entry.endsWith('.gd')) {
+        results.push(fullPath);
+      }
+    }
+  } catch {
+    // skip inaccessible
+  }
+  return results;
+}
+
+/** Recursively find all .gd files inside the addons/ directory */
+export function findAddonGdFiles(rootDir: string, ignore: string[]): string[] {
+  const addonsDir = join(rootDir, 'addons');
+  if (!existsSync(addonsDir)) return [];
+  return findGdFilesRecursive(addonsDir, rootDir, ignore);
+}
+
+function findGdFilesRecursive(dir: string, rootDir: string, ignore: string[]): string[] {
+  const results: string[] = [];
+  try {
+    for (const entry of readdirSync(dir)) {
+      if (entry.startsWith('.') || entry === 'node_modules') continue;
+      const fullPath = join(dir, entry);
+      if (shouldIgnore(fullPath, rootDir, ignore)) continue;
+      if (statSync(fullPath).isDirectory()) {
+        results.push(...findGdFilesRecursive(fullPath, rootDir, ignore));
       } else if (entry.endsWith('.gd')) {
         results.push(fullPath);
       }
@@ -126,8 +152,15 @@ export function generateAllTypings(cfg: {
     ignore: cfg.ignore,
     projectFile: cfg.projectFile,
   });
+
+  const addonFiles = generateAddonTypings({
+    rootDir: cfg.rootDir,
+    outputDir: cfg.typingsDir,
+    ignore: cfg.ignore,
+  });
+
   debugLog(
-    `Generated ${writtenFiles.length} typings files in ${cfg.typingsDir}`,
+    `Generated ${writtenFiles.length + addonFiles.length} typings files in ${cfg.typingsDir}`,
   );
 }
 

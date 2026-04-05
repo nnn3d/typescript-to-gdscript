@@ -116,7 +116,7 @@ export function registerConvertGdCommand(program: Command): void {
         tsOutputFiles.push(outputPath);
       }
 
-      // Generate class typings + scene typings from the converted TS files
+      // Generate class typings + scene typings + addon typings from the converted TS files
       generateAllTypings({
         ...cfg,
         tsFiles: tsOutputFiles,
