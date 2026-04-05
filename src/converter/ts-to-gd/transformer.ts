@@ -374,6 +374,7 @@ export class TsToGdTransformer {
         typeNode,
         this.ctx.checker,
         this.ctx.sourceFile,
+      this.currentClassName,
       );
       // unknown, non-GDScript types → Variant
       params.push({ name: paramName, type: gdType ?? 'Variant' });
@@ -448,6 +449,7 @@ export class TsToGdTransformer {
       node.type,
       this.ctx.checker,
       this.ctx.sourceFile,
+    this.currentClassName,
     );
 
     // Build declaration: readonly -> const, static -> static var, else -> var
@@ -574,6 +576,7 @@ export class TsToGdTransformer {
       node.type,
       this.ctx.checker,
       this.ctx.sourceFile,
+    this.currentClassName,
     );
     const returnAnnotation = returnType ? ` -> ${returnType}` : '';
 
@@ -624,6 +627,7 @@ export class TsToGdTransformer {
           p.type,
           this.ctx.checker,
           this.ctx.sourceFile,
+        this.currentClassName,
         );
         const typeAnnotation = gdType ? `: ${gdType}` : '';
         const defaultValue = p.initializer
@@ -744,6 +748,7 @@ export class TsToGdTransformer {
         typeNode,
         this.ctx.checker,
         this.ctx.sourceFile,
+      this.currentClassName,
       );
       const typeAnnotation = gdType ? `: ${gdType}` : '';
 
@@ -1834,6 +1839,7 @@ export class TsToGdTransformer {
       node.type,
       this.ctx.checker,
       this.ctx.sourceFile,
+    this.currentClassName,
     );
     const returnAnnotation = returnType ? ` -> ${returnType}` : '';
 

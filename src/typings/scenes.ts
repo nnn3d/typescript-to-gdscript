@@ -1203,6 +1203,8 @@ function generateScriptTypingContent(
   isAnonymous: boolean,
   tsImportPath: string,
   tsModulePath: string,
+  enums: Array<{ name: string; members: Array<{ name: string; value: number }> }>,
+  innerClasses: Array<{ name: string; extendsName?: string }>,
 ): string {
   const lines: string[] = [];
   lines.push('// AUTO-GENERATED — do not edit manually.\n');
@@ -1245,6 +1247,29 @@ function generateScriptTypingContent(
     lines.push(`  get_child(idx: int, include_internal?: boolean): Node;`);
     lines.push(`  get_parent<N extends Node = Node>(): N;`);
     lines.push(`}\n`);
+    // Namespace for enum types and inner class types (merged with __CLASS__ via module augmentation)
+    // For anonymous classes, const enum can't merge with class — use branded number type instead
+    if (enums.length > 0 || innerClasses.length > 0) {
+      lines.push(`declare module "${tsModulePath}" {`);
+      lines.push(`  namespace __CLASS__ {`);
+      for (const e of enums) {
+        lines.push(`    type ${e.name} = number & { readonly __brand: '${e.name}' };`);
+      }
+      for (const ic of innerClasses) {
+        lines.push(`    type ${ic.name} = InstanceType<typeof ScriptClass.${ic.name}>;`);
+      }
+      lines.push(`  }`);
+      // Override static enum properties to return branded values instead of plain number
+      if (enums.length > 0) {
+        lines.push(`  interface __CLASS__ {`);
+        for (const e of enums) {
+          const memberTypes = e.members.map(m => `${m.name}: __CLASS__.${e.name}`).join('; ');
+          lines.push(`    ${e.name}: { ${memberTypes} };`);
+        }
+        lines.push(`  }`);
+      }
+      lines.push(`}\n`);
+    }
 
     lines.push(`declare global {`);
     lines.push(`  interface ${treesInterface} {}\n`);
@@ -1266,7 +1291,23 @@ function generateScriptTypingContent(
     lines.push(`    has_node(path: string): boolean;`);
     lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
     lines.push(`    get_parent<N extends Node = Node>(): N;`);
-    lines.push(`  }\n`);
+    lines.push(`  }`);
+    // Namespace for enum types and inner class types
+    if (enums.length > 0 || innerClasses.length > 0) {
+      lines.push(`  namespace ${className} {`);
+      for (const e of enums) {
+        lines.push(`    const enum ${e.name} {`);
+        for (const m of e.members) {
+          lines.push(`      ${m.name} = ${m.value},`);
+        }
+        lines.push(`    }`);
+      }
+      for (const ic of innerClasses) {
+        lines.push(`    type ${ic.name} = InstanceType<typeof ScriptClass.${ic.name}>;`);
+      }
+      lines.push(`  }`);
+    }
+    lines.push('');
     lines.push(`  interface GodotScripts {`);
     lines.push(`    "${scriptResPath}": ${className};`);
     lines.push(`  }\n`);
@@ -1397,12 +1438,18 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
     tsConfigPath: options.tsConfigPath,
   });
 
-  // Map: script res:// path → { className, isAnonymous, tsAbsPath }
-  const scriptClassMap = new Map<string, {
+  // Map: script res:// path → class info including enums and inner classes
+  interface EnumMemberInfo { name: string; value: number }
+  interface EnumInfo { name: string; members: EnumMemberInfo[] }
+  interface InnerClassInfo { name: string; extendsName?: string }
+  interface ScriptInfo {
     className: string;
     isAnonymous: boolean;
     tsAbsPath: string;
-  }>();
+    enums: EnumInfo[];
+    innerClasses: InnerClassInfo[];
+  }
+  const scriptClassMap = new Map<string, ScriptInfo>();
 
   for (const filePath of options.files) {
     const sourceFile = program.getSourceFile(filePath);
@@ -1412,7 +1459,56 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       if (!ts.isClassDeclaration(statement) || !statement.name) continue;
       const className = statement.name.text;
 
-      // Derive the .gd res:// path from the .ts file path
+      const enums: EnumInfo[] = [];
+      const innerClasses: InnerClassInfo[] = [];
+
+      // Scan class members for gd.enum() and inner classes
+      for (const member of statement.members) {
+        if (!ts.isPropertyDeclaration(member) || !member.name || !ts.isIdentifier(member.name)) continue;
+        const memberName = member.name.text;
+        const init = member.initializer;
+        if (!init) continue;
+
+        // Detect gd.enum('A', 'B', ['C', 10])
+        if (ts.isCallExpression(init) && ts.isPropertyAccessExpression(init.expression)) {
+          const obj = init.expression.expression;
+          const method = init.expression.name.text;
+          if (ts.isIdentifier(obj) && obj.text === 'gd' && method === 'enum') {
+            const members: EnumMemberInfo[] = [];
+            let autoValue = 0;
+            for (const arg of init.arguments) {
+              if (ts.isStringLiteral(arg)) {
+                members.push({ name: arg.text, value: autoValue++ });
+              } else if (ts.isArrayLiteralExpression(arg) && arg.elements.length >= 2) {
+                const nameElem = arg.elements[0]!;
+                const valueElem = arg.elements[1]!;
+                if (ts.isStringLiteral(nameElem) && ts.isNumericLiteral(valueElem)) {
+                  const val = parseInt(valueElem.text, 10);
+                  members.push({ name: nameElem.text, value: val });
+                  autoValue = val + 1;
+                }
+              }
+            }
+            if (members.length > 0) {
+              enums.push({ name: memberName, members });
+            }
+          }
+        }
+
+        // Detect static InnerClass = class extends BaseClass { ... }
+        if (ts.isClassExpression(init)) {
+          let extendsName: string | undefined;
+          if (init.heritageClauses) {
+            for (const clause of init.heritageClauses) {
+              if (clause.token === ts.SyntaxKind.ExtendsKeyword && clause.types.length > 0) {
+                extendsName = clause.types[0]!.expression.getText(sourceFile);
+              }
+            }
+          }
+          innerClasses.push({ name: memberName, extendsName });
+        }
+      }
+
       const relPath = relative(tsDir, filePath).replace(/\\/g, '/');
       const scriptResPath = 'res://' + relPath.replace(/\.ts$/, '.gd');
 
@@ -1420,6 +1516,8 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
         className,
         isAnonymous: className === '__CLASS__',
         tsAbsPath: filePath,
+        enums,
+        innerClasses,
       });
     }
   }
@@ -1468,6 +1566,8 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       classInfo.isAnonymous,
       tsImportPath,
       tsModulePath,
+      classInfo.enums,
+      classInfo.innerClasses,
     );
 
     const outputPath = resolve(outputDir, outputFile);

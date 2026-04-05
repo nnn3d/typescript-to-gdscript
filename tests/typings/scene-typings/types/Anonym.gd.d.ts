@@ -32,6 +32,16 @@ declare class _Script extends ScriptClass {
   get_parent<N extends Node = Node>(): N;
 }
 
+declare module "../Anonym.ts" {
+  namespace __CLASS__ {
+    type TEST_ENUM = number & { readonly __brand: 'TEST_ENUM' };
+    type Inventory = InstanceType<typeof ScriptClass.Inventory>;
+  }
+  interface __CLASS__ {
+    TEST_ENUM: { TEST: __CLASS__.TEST_ENUM; TEST2: __CLASS__.TEST_ENUM };
+  }
+}
+
 declare global {
   interface __AnonymGd__Trees {}
 

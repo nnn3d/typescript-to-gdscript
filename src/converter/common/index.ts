@@ -119,12 +119,17 @@ export function tsTypeNodeToGdType(
   typeNode: ts.TypeNode | undefined,
   checker: ts.TypeChecker,
   sourceFile: ts.SourceFile,
+  className?: string,
 ): string | null {
   if (!typeNode) return null;
 
   // Check for literal type names like `int` and `float`
   if (ts.isTypeReferenceNode(typeNode)) {
-    const name = typeNode.typeName.getText(sourceFile);
+    let name = typeNode.typeName.getText(sourceFile);
+    // Strip own class name prefix: MyClass.State → State, __CLASS__.State → State
+    if (className && name.startsWith(className + '.')) {
+      name = name.slice(className.length + 1);
+    }
     if (name === 'int' || name === 'float') return name;
     if (name === 'TSOnly') return null;
     if (name === 'Signal') return 'Signal';
@@ -158,6 +163,7 @@ export function tsTypeNodeToGdType(
       typeNode.elementType,
       checker,
       sourceFile,
+      className,
     );
     return elementType ? `Array[${elementType}]` : 'Array';
   }

@@ -35,6 +35,13 @@ declare global {
     get_child(idx: int, include_internal?: boolean): Node;
     get_parent<N extends Node = Node>(): N;
   }
+  namespace Player {
+    const enum TEST_ENUM {
+      TEST = 0,
+      TEST2 = 1,
+    }
+    type Inventory = InstanceType<typeof ScriptClass.Inventory>;
+  }
 
   interface GodotScripts {
     "res://Player.gd": Player;

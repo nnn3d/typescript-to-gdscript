@@ -1,7 +1,10 @@
-import type { Player } from './Player.ts';
-
 export class __CLASS__ extends Node {
-  PlayerScript: typeof Player = preload('res://Player.gd');
+  static PlayerScript: typeof Player = preload('res://Player.gd');
+
+  static TEST_ENUM = gd.enum('TEST', 'TEST2');
+  static Inventory = class extends RefCounted {
+    capacity: int = 10;
+  };
 
   do_from_anonym() {
     // get_node_or_null normally returns T | null, but scene overload returns Sprite2D directly
@@ -15,5 +18,19 @@ export class __CLASS__ extends Node {
     let parent = this.get_parent();
 
     let levels: Level = parent.get_parent();
+
+    // Namespace enum type from generated .gd.d.ts (branded number for anonymous classes)
+    let enumTyped: __CLASS__.TEST_ENUM = this.TEST_ENUM.TEST;
+    // @ts-expect-error — branded type prevents plain number assignment
+    let enumTypedError: __CLASS__.TEST_ENUM = 42;
+    let enumParam = (e: __CLASS__.TEST_ENUM) => e;
+
+    let enumPlayerTyped: Player.TEST_ENUM = Player.TEST_ENUM.TEST;
+    let classPlayerTyped = (e: Player.Inventory): number => e.capacity;
+    let classPlayerStatic: string = this.PlayerScript.NAME;
+
+    // Namespace inner class type from generated .gd.d.ts
+    let inventory: __CLASS__.Inventory = new this.Inventory();
+    let cap: int = inventory.capacity;
   }
 }

@@ -238,6 +238,7 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
     staticMembers: new Set(),
     signalHandlers: options.signalHandlers ?? new Map(),
     globalEnumMap: buildGlobalEnumMap(options.registry),
+    classTypeNames: new Set(),
   };
 
   const code = emitSourceFile(root, ctx);
@@ -274,6 +275,8 @@ interface GdToTsContext {
   signalHandlers: Map<string, { params: Array<{ name: string; gdType: string }> }>;
   /** Global enum constant → qualified name (e.g. "KEY_F21" → "Key.KEY_F21") */
   globalEnumMap: Map<string, string>;
+  /** Class-level enum and inner class names (for type qualification: State → ClassName.State) */
+  classTypeNames: Set<string>;
 }
 
 /** Build a map of bare global enum constant names → qualified TS names (e.g. "KEY_F21" → "Key.KEY_F21") */
@@ -359,9 +362,10 @@ function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
     } else if (child.type === SyntaxType.EnumDefinition) {
       const nameNode = child.childForFieldName('name');
       if (nameNode) {
-        // Named enum → static member
+        // Named enum → static member + class type name
         ctx.classMembers.add(nameNode.text);
         ctx.staticMembers.add(nameNode.text);
+        ctx.classTypeNames.add(nameNode.text);
       } else {
         // Anonymous enum → each enumerator is a static constant
         const bodyNode = child.childForFieldName('body');
@@ -382,6 +386,7 @@ function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
       if (name) {
         ctx.classMembers.add(name);
         ctx.staticMembers.add(name);
+        ctx.classTypeNames.add(name);
       }
     }
   }
@@ -649,6 +654,12 @@ function emitInnerClass(node: SyntaxNode, ctx: GdToTsContext, isAbstractFromPare
       } else if (child.type === SyntaxType.SignalStatement) {
         const name = child.childForFieldName('name')?.text;
         if (name) ctx.classMembers.add(name);
+      } else if (child.type === SyntaxType.EnumDefinition) {
+        const name = child.childForFieldName('name')?.text;
+        if (name) {
+          ctx.classMembers.add(name);
+          ctx.staticMembers.add(name);
+        }
       }
     }
   }
@@ -682,6 +693,10 @@ function emitInnerClass(node: SyntaxNode, ctx: GdToTsContext, isAbstractFromPare
         child.type === SyntaxType.ExportVariableStatement
       ) {
         memberLines.push(emitClassVariable(child, ctx));
+        continue;
+      }
+      if (child.type === SyntaxType.EnumDefinition) {
+        memberLines.push(emitEnum(child, ctx));
         continue;
       }
     }
@@ -832,7 +847,7 @@ function emitClassVariable(node: SyntaxNode, ctx: GdToTsContext): string {
   }
 
   const staticPrefix = isStatic ? 'static ' : '';
-  const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode) : '';
+  const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode, ctx) : '';
   const init = valueNode ? ` = ${emitExpr(valueNode, ctx)}` : '';
 
   return `${decorators}  ${staticPrefix}${name}${typeAnnotation}${init};`;
@@ -843,7 +858,7 @@ function emitConstStatement(node: SyntaxNode, ctx: GdToTsContext): string {
   const typeNode = node.childForFieldName('type');
   const valueNode = node.childForFieldName('value');
 
-  const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode) : '';
+  const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode, ctx) : '';
   const init = valueNode ? ` = ${emitExpr(valueNode, ctx)}` : '';
 
   // GDScript const -> TS static readonly
@@ -870,7 +885,7 @@ function emitLocalVariable(
       : null;
   if (inferredType) ctx.localVarTypes.set(name, inferredType);
 
-  const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode) : '';
+  const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode, ctx) : '';
   const init = valueNode ? ` = ${emitExpr(valueNode, ctx)}` : '';
 
   return `${indent}let ${name}${typeAnnotation}${init};`;
@@ -878,16 +893,24 @@ function emitLocalVariable(
 
 // ─── Type Annotations ─────────────────────────────────────────
 
-function emitTypeAnnotation(typeNode: SyntaxNode): string {
+function emitTypeAnnotation(typeNode: SyntaxNode, ctx: GdToTsContext): string {
   if (typeNode.type === SyntaxType.InferredType) {
     return ''; // := inferred — omit type in TS
   }
   if (typeNode.type === SyntaxType.Type) {
     const inner = typeNode.namedChildren[0]?.text ?? typeNode.text;
+    // Qualify class-level enum/inner class types: State → ClassName.State
+    if (ctx.classTypeNames.has(inner)) {
+      return `: ${ctx.className}.${inner}`;
+    }
     const tsType = gdTypeToTs(inner);
     return tsType ? `: ${tsType}` : '';
   }
-  const tsType = gdTypeToTs(typeNode.text);
+  const raw = typeNode.text;
+  if (ctx.classTypeNames.has(raw)) {
+    return `: ${ctx.className}.${raw}`;
+  }
+  const tsType = gdTypeToTs(raw);
   return tsType ? `: ${tsType}` : '';
 }
 
@@ -953,7 +976,7 @@ function emitFunction(node: SyntaxNode, ctx: GdToTsContext, isAbstract = false):
   collectParamNames(paramsNode, ctx);
 
   const params = paramsNode ? emitParams(paramsNode, ctx) : '';
-  const returnType = returnTypeNode ? emitReturnType(returnTypeNode) : '';
+  const returnType = returnTypeNode ? emitReturnType(returnTypeNode, ctx) : '';
 
   // Root-level abstract (passed from emitSourceFile): native TS abstract keyword, no body
   if (isAbstract) {
@@ -1065,7 +1088,8 @@ function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
         child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
         '';
       const typeNode = child.childForFieldName('type');
-      const tsType = typeNode ? gdTypeToTs(typeNode.text) : null;
+      const rawType = typeNode?.text ?? '';
+      const tsType = ctx.classTypeNames.has(rawType) ? `${ctx.className}.${rawType}` : (typeNode ? gdTypeToTs(rawType) : null);
       params.push(tsType ? `${name}: ${tsType}` : name);
       paramIndex++;
     } else if (child.type === SyntaxType.DefaultParameter) {
@@ -1082,7 +1106,8 @@ function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
         '';
       const typeNode = child.childForFieldName('type');
       const value = child.childForFieldName('value');
-      const tsType = typeNode ? gdTypeToTs(typeNode.text) : null;
+      const rawType = typeNode?.text ?? '';
+      const tsType = ctx.classTypeNames.has(rawType) ? `${ctx.className}.${rawType}` : (typeNode ? gdTypeToTs(rawType) : null);
       const valueStr = value ? emitExpr(value, ctx) : '';
       const typeStr = tsType ? `: ${tsType}` : '';
       params.push(`${name}${typeStr} = ${valueStr}`);
@@ -1092,13 +1117,20 @@ function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
   return params.join(', ');
 }
 
-function emitReturnType(typeNode: SyntaxNode): string {
+function emitReturnType(typeNode: SyntaxNode, ctx: GdToTsContext): string {
   if (typeNode.type === SyntaxType.Type) {
     const inner = typeNode.namedChildren[0]?.text ?? typeNode.text;
+    if (ctx.classTypeNames.has(inner)) {
+      return `: ${ctx.className}.${inner}`;
+    }
     const tsType = gdTypeToTs(inner);
     return tsType ? `: ${tsType}` : '';
   }
-  const tsType = gdTypeToTs(typeNode.text);
+  const raw = typeNode.text;
+  if (ctx.classTypeNames.has(raw)) {
+    return `: ${ctx.className}.${raw}`;
+  }
+  const tsType = gdTypeToTs(raw);
   return tsType ? `: ${tsType}` : '';
 }
 
@@ -1935,7 +1967,7 @@ function emitLambda(node: SyntaxNode, ctx: GdToTsContext): string {
   collectParamNames(paramsNode, ctx);
 
   const params = paramsNode ? emitParams(paramsNode, ctx) : '';
-  const returnType = returnTypeNode ? emitReturnType(returnTypeNode) : '';
+  const returnType = returnTypeNode ? emitReturnType(returnTypeNode, ctx) : '';
 
   let result: string;
 

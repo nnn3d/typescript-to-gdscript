@@ -6,6 +6,11 @@ import type { __CLASS__ as Enemy } from './Enemy.ts';
 
 export class Player extends BaseCharacter {
   static TEST_ENUM = gd.enum('TEST', 'TEST2');
+  static Inventory = class extends RefCounted {
+    capacity: int = 10;
+  };
+
+  static NAME = 'Player';
 
   AnonymScript: typeof Anonym = load('res://Anonym.gd');
 
@@ -73,6 +78,14 @@ export class Player extends BaseCharacter {
     let childUnknown: Node = this.get_child(99);
 
     const thisEnum: number = this.TEST_ENUM.TEST;
+
+    // Namespace enum type from generated .gd.d.ts
+    let enumTyped: Player.TEST_ENUM = Player.TEST_ENUM.TEST;
+    let enumParam = (e: Player.TEST_ENUM) => e;
+
+    // Namespace inner class type from generated .gd.d.ts
+    let inventory: Player.Inventory = new this.Inventory();
+    let cap: int = inventory.capacity;
 
     // Autoload scene singleton — UIManager is a scene autoload, typed as tree node
     let uiManager: Control = UIManager;

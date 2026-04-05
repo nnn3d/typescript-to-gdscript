@@ -187,6 +187,9 @@ tests/
 - Scene tree `__node_extends` circularity avoided: unique name `%X` entries skip self-reference on the unique node itself
 - `_GDTreeHandlers` does NOT include `/root/` overloads (only in module augmentation) to avoid per-TreeNode evaluation overhead
 - `collectAllSignalHandlers()` pre-parses all scenes once for batch signal resolution (vs per-file `resolveSignalHandlers()`)
+- Class-level enums → `namespace ClassName { const enum EnumName { ... } }` in .gd.d.ts for strong type checking
+- Class-level inner classes → `namespace ClassName { type InnerClass = InstanceType<typeof ScriptClass.InnerClass>; }` in .gd.d.ts
+- GD-to-TS: type annotations referencing class enums/inner classes qualified with class name (`State` → `ClassName.State`)
 - `gd.eval` space indentation: converts space-based indent to tabs by tracking space→depth mapping; mixed tabs/spaces is an error
 - GD-to-TS `'''`/`"""` triple-quoted strings as expression statements → `/* */` block comments (both class body and function body)
 - TS-to-GD `/* */` non-doc block comments → `"""..."""` (single-line and multiline); class-level trailing comments emitted via closing brace
