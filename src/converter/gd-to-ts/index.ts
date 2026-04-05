@@ -1180,9 +1180,13 @@ function emitBody(node: SyntaxNode, ctx: GdToTsContext, depth: number): string {
       continue;
     }
 
-    lines.push(
-      `${indent}/* TODO: ${child.type} */ ${child.text.split('\n')[0]}`,
-    );
+    ctx.diagnostics.push({
+      message: `Unhandled GDScript statement: ${child.type}`,
+      severity: 'error',
+      file: ctx.filePath,
+      line: child.startPosition.row + 1,
+      column: child.startPosition.column,
+    });
   }
 
   return lines.join('\n');
