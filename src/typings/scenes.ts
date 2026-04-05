@@ -1717,6 +1717,145 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
   return writtenFiles;
 }
 
+// ─── Per-file Typings Generation (incremental) ─────────────
+
+export interface GenerateFileTypingsOptions {
+  rootDir: string;
+  tsDir: string;
+  outputDir: string;
+  tsConfigPath?: string;
+  scenesDir?: string;
+  ignore?: string[];
+  projectFile?: string;
+}
+
+/**
+ * Regenerate typings for specific changed files (incremental).
+ * Handles .ts, .tscn, .tres/.res, and project.godot files.
+ * All TS files must be passed for the TS program to resolve cross-references.
+ */
+export function generateFileTypings(
+  changedFiles: string[],
+  allTsFiles: string[],
+  options: GenerateFileTypingsOptions,
+): string[] {
+  const { rootDir, tsDir, outputDir, ignore = [] } = options;
+  const writtenFiles: string[] = [];
+
+  mkdirSync(outputDir, { recursive: true });
+
+  const changedTs = changedFiles.filter(f => f.endsWith('.ts') && !f.endsWith('.d.ts'));
+  const changedScenes = changedFiles.filter(f => f.endsWith('.tscn'));
+  const changedResources = changedFiles.filter(f =>
+    f.endsWith('.tres') || f.endsWith('.res') ||
+    f.endsWith('.png') || f.endsWith('.jpg') || f.endsWith('.ogg') ||
+    f.endsWith('.wav') || f.endsWith('.mp3') || f.endsWith('.gdshader') ||
+    f.endsWith('.theme'),
+  );
+  const changedProject = changedFiles.filter(f => f.endsWith('project.godot'));
+
+  // Regenerate .gd.d.ts for changed .ts files
+  if (changedTs.length > 0) {
+    // Need full TS program for type resolution, but only generate typings for changed files
+    const program = createTsProgram({
+      rootDir: tsDir,
+      files: allTsFiles,
+      tsConfigPath: options.tsConfigPath,
+    });
+    const scriptClassMap = new Map<string, ScriptInfo>();
+    scanTsFilesForClasses(program, changedTs, tsDir, scriptClassMap);
+
+    for (const [scriptResPath, classInfo] of scriptClassMap) {
+      const outputFile = scriptResPathToOutputFile(scriptResPath);
+      const tsImportPath = computeTsImport(outputDir, outputFile, classInfo.tsAbsPath);
+      const tsModulePath = tsImportPath.replace(/\.js$/, '.ts');
+
+      const content = generateScriptTypingContent(
+        scriptResPath,
+        classInfo.className,
+        classInfo.isAnonymous,
+        tsImportPath,
+        tsModulePath,
+        classInfo.enums,
+        classInfo.innerClasses,
+      );
+
+      const outputPath = resolve(outputDir, outputFile);
+      mkdirSync(dirname(outputPath), { recursive: true });
+      writeFileSync(outputPath, content);
+      writtenFiles.push(outputPath);
+    }
+  }
+
+  // Regenerate .tscn.d.ts for changed .tscn files
+  for (const sceneFile of changedScenes) {
+    const sceneData = parseScene(sceneFile);
+    if (!sceneData) continue;
+
+    const actualResPath = absPathToResPath(sceneFile, rootDir);
+    const uniqueNames = new Set<string>();
+    for (const script of sceneData.scripts) {
+      for (const child of script.children) {
+        if (child.path.startsWith('%')) {
+          uniqueNames.add(child.path.slice(1));
+        }
+      }
+    }
+
+    const content = generateSceneTypingContent(actualResPath, sceneData, uniqueNames);
+    const outputFile = sceneResPathToOutputFile(actualResPath);
+    const outputPath = resolve(outputDir, outputFile);
+    mkdirSync(dirname(outputPath), { recursive: true });
+    writeFileSync(outputPath, content);
+    writtenFiles.push(outputPath);
+  }
+
+  // Regenerate _resources.d.ts if any resource/asset changed
+  if (changedResources.length > 0) {
+    const assetFiles = findAssetFiles(rootDir, rootDir, ignore);
+    const resourceEntries: Array<{ resPath: string; godotType: string }> = [];
+    for (const assetFile of assetFiles) {
+      const resPath = absPathToResPath(assetFile, rootDir);
+      const ext = extname(assetFile).toLowerCase();
+      if (ext === '.tscn' || ext === '.gd') continue;
+      let godotType: string;
+      if (ext === '.tres' || ext === '.res') {
+        godotType = parseGdResourceType(assetFile) ?? ASSET_EXTENSION_MAP[ext] ?? 'Resource';
+      } else {
+        godotType = ASSET_EXTENSION_MAP[ext] ?? 'Resource';
+      }
+      resourceEntries.push({ resPath, godotType });
+    }
+    if (resourceEntries.length > 0) {
+      const resLines: string[] = [];
+      resLines.push('// AUTO-GENERATED — do not edit manually.\n');
+      resLines.push('declare global {');
+      resLines.push('  interface GodotResources {');
+      for (const { resPath, godotType } of resourceEntries) {
+        resLines.push(`    "${resPath}": ${godotType};`);
+      }
+      resLines.push('  }');
+      resLines.push('}\n');
+      resLines.push('export {}');
+      const resourcesPath = resolve(outputDir, '_resources.d.ts');
+      writeFileSync(resourcesPath, resLines.join('\n'));
+      writtenFiles.push(resourcesPath);
+    }
+  }
+
+  // Regenerate _index.d.ts if project.godot changed
+  if (changedProject.length > 0) {
+    const projectFile = options.projectFile ?? join(rootDir, 'project.godot');
+    const autoloads = existsSync(projectFile) ? parseAutoloads(projectFile) : [];
+    const indexContent = generateIndexTypingContent(autoloads);
+    const indexPath = resolve(outputDir, '_index.d.ts');
+    writeFileSync(indexPath, indexContent);
+    writtenFiles.push(indexPath);
+  }
+
+  return writtenFiles;
+}
+
 /** Known Godot asset extensions → Godot resource type name */
 const ASSET_EXTENSION_MAP: Record<string, string> = {
   // Images / Textures

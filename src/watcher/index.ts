@@ -2,7 +2,7 @@ import { watch, type FSWatcher } from 'chokidar';
 import { extname, resolve, relative, join } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
-import { generateTypings, generateAddonTypings } from '../typings/scenes.ts';
+import { generateTypings, generateAddonTypings, generateFileTypings } from '../typings/scenes.ts';
 import { shouldIgnore } from '../config/index.ts';
 import { FileCache } from '../cache/index.ts';
 import { writeFileSync, mkdirSync } from 'fs';
@@ -46,6 +46,7 @@ export class Watcher {
   private tsFiles: Set<string> = new Set();
   private tsDir: string;
   private gdDir: string;
+  private initialTypingsGenerated = false;
 
   constructor(options: WatcherOptions) {
     this.options = options;
@@ -101,15 +102,13 @@ export class Watcher {
       this.convertFile(filePath).catch((err) => {
         this.log(filePath, `Unexpected error: ${err.message}`, 'error');
       });
-      this.regenerateClassTypings();
+      this.regenerateTypingsFor(filePath);
     } else if (ext === '.tscn') {
-      // Scene file changed — regenerate class typings (includes scene overloads)
       this.log(filePath, 'Scene changed, regenerating typings', 'info');
-      this.regenerateClassTypings();
+      this.regenerateTypingsFor(filePath);
     } else if (filePath.endsWith('project.godot') || ['.tres', '.res', '.png', '.jpg', '.ogg', '.wav', '.mp3', '.gdshader', '.theme'].includes(ext)) {
-      // Asset/resource/project file changed — regenerate typings (bundled _resources.d.ts + _index.d.ts)
       this.log(filePath, 'Resource changed, regenerating typings', 'info');
-      this.regenerateClassTypings();
+      this.regenerateTypingsFor(filePath);
     }
   }
 
@@ -193,28 +192,41 @@ export class Watcher {
     }
   }
 
-  private regenerateClassTypings(): void {
+  private regenerateTypingsFor(changedFile: string): void {
     if (!this.options.typingsDir) return;
-
-    const files = [...this.tsFiles];
     const typingsDir = this.options.typingsDir;
 
-    generateTypings({
+    // First run: full generation (all scripts, scenes, resources, index, addons)
+    if (!this.initialTypingsGenerated) {
+      this.initialTypingsGenerated = true;
+      generateTypings({
+        rootDir: this.options.rootDir,
+        tsDir: this.tsDir,
+        gdDir: this.gdDir,
+        files: [...this.tsFiles],
+        outputDir: typingsDir,
+        scenesDir: this.options.scenesDir ?? this.options.rootDir,
+        tsConfigPath: this.options.tsConfigPath,
+        ignore: this.options.ignore,
+        projectFile: this.options.projectFile,
+      });
+      generateAddonTypings({
+        rootDir: this.options.rootDir,
+        outputDir: typingsDir,
+        ignore: this.options.ignore,
+      });
+      return;
+    }
+
+    // Incremental: only regenerate typings for the changed file
+    generateFileTypings([changedFile], [...this.tsFiles], {
       rootDir: this.options.rootDir,
       tsDir: this.tsDir,
-      gdDir: this.gdDir,
-      files,
       outputDir: typingsDir,
-      scenesDir: this.options.scenesDir ?? this.options.rootDir,
       tsConfigPath: this.options.tsConfigPath,
+      scenesDir: this.options.scenesDir ?? this.options.rootDir,
       ignore: this.options.ignore,
       projectFile: this.options.projectFile,
-    });
-
-    generateAddonTypings({
-      rootDir: this.options.rootDir,
-      outputDir: typingsDir,
-      ignore: this.options.ignore,
     });
   }
 
