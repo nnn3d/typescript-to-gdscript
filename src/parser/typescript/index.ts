@@ -1,5 +1,6 @@
 import ts from 'typescript';
 import { readFileSync } from 'fs';
+import { dirname } from 'path';
 
 export interface TsProgramOptions {
   rootDir: string;
@@ -12,10 +13,12 @@ export function createTsProgram(options: TsProgramOptions): ts.Program {
     const configFile = ts.readConfigFile(options.tsConfigPath, (path) =>
       readFileSync(path, 'utf-8'),
     );
+    // Use tsconfig directory for resolving include/exclude patterns (not rootDir/tsDir)
+    const tsConfigDir = dirname(options.tsConfigPath);
     const parsedConfig = ts.parseJsonConfigFileContent(
       configFile.config,
       ts.sys,
-      options.rootDir,
+      tsConfigDir,
     );
     return ts.createProgram(parsedConfig.fileNames, parsedConfig.options);
   }
