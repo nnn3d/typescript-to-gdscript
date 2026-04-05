@@ -56,6 +56,16 @@ const TS_OP_TO_GD_OPS: Partial<Record<ts.SyntaxKind, string>> = {
   [ts.SyntaxKind.LessThanEqualsToken]: 'lte',
 };
 
+/** TS compound assignment operator → gd.ops function name.
+ *  `a += b` → `a = gd.ops.add(a, b)` */
+const TS_COMPOUND_OP_TO_GD_OPS: Partial<Record<ts.SyntaxKind, string>> = {
+  [ts.SyntaxKind.PlusEqualsToken]: 'add',
+  [ts.SyntaxKind.MinusEqualsToken]: 'sub',
+  [ts.SyntaxKind.AsteriskEqualsToken]: 'mul',
+  [ts.SyntaxKind.SlashEqualsToken]: 'div',
+  [ts.SyntaxKind.PercentEqualsToken]: 'rem',
+};
+
 /** TS error codes for operator type mismatches */
 const TS_OPERATOR_ERROR_CODES = new Set([
   2365,  // Operator 'X' cannot be applied to types 'Y' and 'Z'.
@@ -106,8 +116,18 @@ function collectOperatorFixes(
 
     const diagnostics = program.getSemanticDiagnostics(sourceFile);
 
-    // Track already-fixed positions to deduplicate (TS2362 + TS2363 for same expression)
-    const fixedPositions = new Set<number>();
+    // Track fixed ranges to deduplicate and prevent overlapping fixes.
+    // Overlapping fixes (nested operators like `a + b * c`) corrupt positions —
+    // only the innermost is fixed per pass; the outer loop catches the rest.
+    const fixedRanges: Array<{ start: number; end: number }> = [];
+
+    function overlapsExisting(start: number, end: number): boolean {
+      return fixedRanges.some(r =>
+        (start >= r.start && start < r.end) ||
+        (end > r.start && end <= r.end) ||
+        (start <= r.start && end >= r.end),
+      );
+    }
 
     for (const diag of diagnostics) {
       if (!TS_OPERATOR_ERROR_CODES.has(diag.code)) continue;
@@ -117,14 +137,25 @@ function collectOperatorFixes(
       if (!expr) continue;
 
       const exprStart = expr.getStart(sourceFile);
-      if (fixedPositions.has(exprStart)) continue;
+      const exprEnd = expr.getEnd();
+      if (overlapsExisting(exprStart, exprEnd)) continue;
 
+      // Check regular operators first, then compound assignments
       const opName = TS_OP_TO_GD_OPS[expr.operatorToken.kind];
-      if (!opName) continue;
+      const compoundOpName = TS_COMPOUND_OP_TO_GD_OPS[expr.operatorToken.kind];
+
+      if (!opName && !compoundOpName) continue;
 
       const leftText = expr.left.getText(sourceFile);
       const rightText = expr.right.getText(sourceFile);
-      const replacement = `gd.ops.${opName}(${leftText}, ${rightText})`;
+
+      let replacement: string;
+      if (compoundOpName) {
+        // a += b → a = gd.ops.add(a, b)
+        replacement = `${leftText} = gd.ops.${compoundOpName}(${leftText}, ${rightText})`;
+      } else {
+        replacement = `gd.ops.${opName}(${leftText}, ${rightText})`;
+      }
 
       let fixes = fixesByFile.get(fileName);
       if (!fixes) {
@@ -133,10 +164,10 @@ function collectOperatorFixes(
       }
       fixes.push({
         start: exprStart,
-        end: expr.getEnd(),
+        end: exprEnd,
         replacement,
       });
-      fixedPositions.add(exprStart);
+      fixedRanges.push({ start: exprStart, end: exprEnd });
     }
   }
 
@@ -172,36 +203,46 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
 
   if (!operatorFixEnabled) return result;
 
-  // Create TS program for type-checking
-  const program = createTsProgram({
-    rootDir,
-    files,
-    tsConfigPath,
-  });
+  // Run operator fix in a loop — each round of fixes may expose new operator
+  // errors in chained expressions (e.g. `a + b * c` → `gd.ops.add(a, b * c)` → `gd.ops.add(a, gd.ops.mul(b, c))`)
+  const MAX_FIX_PASSES = 10;
+  const allFixedFiles = new Set<string>();
 
-  // Build set of file paths to process, normalized for comparison
-  const filePaths = new Set<string>();
-  const normalizedInputFiles = new Set(files.map(f => resolve(f).replace(/\\/g, '/')));
-  for (const sf of program.getSourceFiles()) {
-    const normalizedSf = resolve(sf.fileName).replace(/\\/g, '/');
-    if (normalizedInputFiles.has(normalizedSf)) {
-      filePaths.add(sf.fileName);
+  for (let pass = 0; pass < MAX_FIX_PASSES; pass++) {
+    // (Re-)create TS program to pick up changes from previous pass
+    const program = createTsProgram({
+      rootDir,
+      files,
+      tsConfigPath,
+    });
+
+    // Build set of file paths to process, normalized for comparison
+    const filePaths = new Set<string>();
+    const normalizedInputFiles = new Set(files.map(f => resolve(f).replace(/\\/g, '/')));
+    for (const sf of program.getSourceFiles()) {
+      const normalizedSf = resolve(sf.fileName).replace(/\\/g, '/');
+      if (normalizedInputFiles.has(normalizedSf)) {
+        filePaths.add(sf.fileName);
+      }
     }
-  }
 
-  // Run operator fix helper
-  if (operatorFixEnabled) {
     const fixesByFile = collectOperatorFixes(program, filePaths);
 
+    let fixedInPass = 0;
     for (const [fileName, fixes] of fixesByFile) {
       if (fixes.length === 0) continue;
 
       const source = readFileSync(fileName, 'utf-8');
       const fixed = applyFixes(source, fixes);
       writeFileSync(fileName, fixed);
-      result.fixedFiles.push(fileName);
+      allFixedFiles.add(fileName);
+      fixedInPass += fixes.length;
     }
+
+    // No more fixes needed — done
+    if (fixedInPass === 0) break;
   }
 
+  result.fixedFiles = [...allFixedFiles];
   return result;
 }

@@ -220,6 +220,8 @@ describe('GD to TS: Operator fix helper', () => {
         '    let ok = 1 + 2;',
         '    let mouse_pos = this.get_global_mouse_position();',
         '    let target_angle = (mouse_pos - node.global_position).angle();',
+        '    this.position += Vector2(1, 1);',
+        '    this.v1 -= this.v2;',
         '  }',
         '}',
       ].join('\n');
@@ -245,6 +247,10 @@ describe('GD to TS: Operator fix helper', () => {
       expect(fixed).toContain('gd.ops.sub(this.v1, this.v2)');
       expect(fixed).toContain('gd.ops.mul(this.v1, this.v2)');
       expect(fixed).toContain('gd.ops.sub(mouse_pos, node.global_position)');
+
+      // Compound assignments should be expanded
+      expect(fixed).toContain('this.position = gd.ops.add(this.position, Vector2(1, 1))');
+      expect(fixed).toContain('this.v1 = gd.ops.sub(this.v1, this.v2)');
 
       // Primitive operations should NOT be wrapped
       expect(fixed).toContain('let ok = 1 + 2;');
