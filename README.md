@@ -168,6 +168,30 @@ Switch the active "latest" typings to an already-generated version.
 ts2gd set-latest 4.6
 ```
 
+### `ts2gd generate-addon-typings`
+
+Generate TypeScript typings for GDScript addon files in `addons/`. Converts each `.gd` file to `.ts` (via GD-to-TS), then generates `.gd.d.ts` scene typings with global class declarations, `GodotScripts`/`GodotResources` entries, and namespace enums.
+
+```bash
+ts2gd generate-addon-typings
+```
+
+Options:
+
+- `-o, --output <path>` — Output directory for generated typings
+- `--root-dir <dir>` — Root directory (default: `.`)
+
+Output structure preserves the addon directory layout:
+
+```
+ts/_typings/
+  addons/MyAddon/
+    my_script.ts          ← converted from GDScript
+    my_script.gd.d.ts     ← typings (global class, GodotScripts, enums)
+```
+
+This command is automatically called by `convert-gd` and `watch` (on first run). It can also be run standalone.
+
 ### `ts2gd generate-class-typings <files...>`
 
 Generate a global `.d.ts` file declaring all named classes from your TS source files, making them available globally (like in GDScript).

@@ -92,6 +92,7 @@ tests/
 - `ts2gd generate-typings` — Generate versioned typings from Godot docs (`--docs-dir`, `--typings-dir`, `--patch-dir`, `--version`, `--set-latest`)
 - `ts2gd set-latest <version>` — Set "latest" typings (`--typings-dir`)
 - `ts2gd generate-class-typings <files...>` — Generate global class .d.ts (`-o`, `--root-dir`, `--tsconfig`)
+- `ts2gd generate-addon-typings` — Generate typings for GDScript addons in `addons/` (`-o`, `--root-dir`)
 
 ### Typings usage by consumer projects
 
@@ -120,8 +121,10 @@ tests/
   - Asset resources bundled into single `_resources.d.ts` (not individual files) for faster TS parsing
   - `ScriptPaths` pre-computed type alias to avoid repeated `_GDGetTreePaths` evaluation
   - `StaticProps` (`Omit<typeof ScriptClass, 'prototype' | keyof Function>`) for static field access on instances
-  - Autoload singletons from `project.godot` → global `const` declarations (both `.gd` scripts and `.tscn` scenes)
+  - Autoload singletons from `project.godot` → global `const` declarations (both `.gd` scripts and `.tscn` scenes), `uid://` resolution via `.uid` files
   - Unique name nodes (`%Name`) accessible from every subtree in the scene
+  - **Addon typings** (`generate-addon-typings`): converts `addons/*.gd` → `.ts` via GD-to-TS, generates `.gd.d.ts` with global classes/enums/GodotScripts entries. Two-pass: convert all, then scan with TS program for cross-file resolution.
+  - **Incremental generation** (`generateFileTypings`): per-file `.gd.d.ts`/`.tscn.d.ts` regeneration for watch mode (full generation only on first run, addon typings only on first run)
 - [x] Godot class registry (916 classes, inheritance chain, global functions from `vendor/godot` XML docs)
 - [x] Converter diagnostics + ESLint plugin (`ts2gd/convert` rule, flat config ESLint >= 9)
 - [x] Watch mode + CLI + Cache (watches .ts, .tscn, .tres, assets, project.godot)
@@ -195,4 +198,5 @@ tests/
 - TS-to-GD `/* */` non-doc block comments → `"""..."""` (single-line and multiline); class-level trailing comments emitted via closing brace
 - GD-to-TS inline comments in expressions (e.g. `# comment` inside function call args) → `/* comment */`
 - GD-to-TS `emitAttribute` checks `!ctx.localVars.has()` to prevent incorrect `this.` prefix when local variable shadows class member
-- `addons/` directory excluded from all file discovery (findTsFiles, findGdFiles, findSceneFiles, watcher)
+- `addons/` directory excluded from user file discovery (findTsFiles, findGdFiles, findSceneFiles, watcher); addon `.gd` files discovered separately via `findAddonGdFiles()` for `generate-addon-typings`
+- Addon `.ts` output files use `// @ts-nocheck` to suppress strict errors (GD-to-TS doesn't generate initializers); user tsconfig should exclude `types/addons` to avoid double-scanning
