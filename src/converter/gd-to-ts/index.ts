@@ -1213,6 +1213,12 @@ function emitBody(node: SyntaxNode, ctx: GdToTsContext, depth: number): string {
       continue;
     }
 
+    // Annotations inside function bodies → // @gd.eval: magic comments
+    if (child.type === SyntaxType.Annotation) {
+      lines.push(`${indent}// @gd.eval: ${child.text}`);
+      continue;
+    }
+
     ctx.diagnostics.push({
       message: `Unhandled GDScript statement: ${child.type}`,
       severity: 'error',

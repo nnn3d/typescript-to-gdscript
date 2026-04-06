@@ -11,3 +11,7 @@ var sprite: Sprite2D = null
 
 func _ready():
 	print("Speed: " + str(self.speed))
+
+func test():
+	@warning_ignore("integer_division")
+	var a = 11 / 2

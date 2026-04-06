@@ -12,4 +12,9 @@ export class MyClass extends Node2D {
   _ready() {
     print("Speed: " + str(this.speed));
   }
+
+  test() {
+    // @gd.eval: @warning_ignore("integer_division")
+    let a = 11 / 2;
+  }
 }

@@ -8,4 +8,9 @@ export class Annotations extends Node {
   info: string;
   @onready
   label: Label = this.get_node("Label");
+
+  test() {
+    // @gd.eval: @warning_ignore("integer_division")
+    let a = 11 / 2;
+  }
 }
