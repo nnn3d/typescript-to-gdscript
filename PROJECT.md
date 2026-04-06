@@ -40,7 +40,7 @@ src/
   converter/
     ts-to-gd/            # transformer.ts (AST visitor), emitter.ts (line/col + sourcemap), index.ts
     gd-to-ts/index.ts    # convertGdToTs() with typed AST, scope tracking, GodotClassRegistry
-    gd-to-ts/ts-helpers.ts  # TS-based post-processing (operator fix, explicit convert)
+    gd-to-ts/ts-helpers.ts  # TS-based post-processing (operator fix, explicit convert, ready field types)
     common/index.ts      # TransformContext, TransformDiagnostic, TransformResult, tsTypeToGdType()
   parser/
     gdscript/            # GDScriptParser class + AUTO-GENERATED types.ts (SyntaxType, typed nodes)
@@ -73,7 +73,7 @@ tests/
 
 - `ts2gd init` — Interactive project initialization (tstogd.json, tsconfig.json, eslint.config.js, npm install, .gdignore)
 - `ts2gd convert <files...>` — Convert TS to GD (`-o`, `--source-map`, `--root-dir`, `--tsconfig`, `--emit-on-error`)
-- `ts2gd convert-gd <files...>` — Convert GD to TS (`-o`, `--registry`, `--no-helpers`, `--no-signal-handler-helper`, `--no-operator-fix-helper`, `--no-explicit-convert-helper`, `--emit-on-error`)
+- `ts2gd convert-gd <files...>` — Convert GD to TS (`-o`, `--registry`, `--no-helpers`, `--no-signal-handler-helper`, `--no-operator-fix-helper`, `--no-explicit-convert-helper`, `--no-ready-field-types-helper`, `--emit-on-error`)
 - `ts2gd lint <files...>` — Lint TS files (`--root-dir`, `--tsconfig`)
 - `ts2gd watch` — Watch and auto-convert (`--root-dir`, `--output-dir`, `--source-map`, `--tsconfig`, `--class-typings`)
 - `ts2gd generate-typings` — Generate versioned typings from Godot docs (`--docs-dir`, `--typings-dir`, `--patch-dir`, `--version`, `--set-latest`)
@@ -122,10 +122,11 @@ tests/
 - [x] Converter diagnostics + ESLint plugin (`ts2gd/convert` rule, flat config ESLint >= 9)
 - [x] Watch mode + CLI + Cache (watches .ts, .tscn, .tres, assets, project.godot)
 - [x] Godot validation (CLI --check-only, source map remapping to TS positions, autoload false-positive filtering for Godot bug #80319)
-- [x] GD-to-TS conversion helpers system (pluggable, individually toggleable via `--no-helpers` / `--no-signal-handler-helper` / `--no-operator-fix-helper` / `--no-explicit-convert-helper`)
+- [x] GD-to-TS conversion helpers system (pluggable, individually toggleable via `--no-helpers` / `--no-signal-handler-helper` / `--no-operator-fix-helper` / `--no-explicit-convert-helper` / `--no-ready-field-types-helper`)
   - Signal handler helper: infers parameter types from .tscn signal connections
   - Operator fix helper: TS-based post-processing that fixes operator type errors (TS2365/2362/2363) by wrapping in `gd.ops.X()`
   - Explicit convert helper: TS-based post-processing that fixes variant-type assignment errors (TS2345/2322) by inserting explicit `gd.as(value, Target)` conversions. Uses `variantConverts` metadata in `godot-class-registry.json` (populated from single-param "from" constructors in Godot XML). Runs in the same multi-pass loop as operator fix with overlap deduplication.
+  - Ready field types helper: TS-based post-processing that fixes TS7008 (implicit any) and TS2564 (no initializer) on class properties. Scans for `this.<prop> = <expr>` assignments in `_ready()`, adds `!` (definite-assignment assertion), and for untyped properties inserts an inferred type annotation. Uses `typeof <expr>` for identifier/property-access RHS, otherwise falls back to `checker.typeToString(getTypeAtLocation(rhs))`.
 - [ ] Source map integration with Godot LSP (map LSP errors back to TS in IDE)
 
 ## Conversion Rules (TS ↔ GDScript)

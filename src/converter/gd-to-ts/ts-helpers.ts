@@ -29,6 +29,8 @@ export interface TsHelperOptions {
     operatorFix?: boolean;
     /** Fix variant-type assignment errors by inserting explicit `gd.as(value, Target)` conversions */
     explicitConvert?: boolean;
+    /** Fix TS7008/TS2564 on class properties by adding `!` and inferring type from `_ready()` assignments */
+    readyFieldTypes?: boolean;
   };
 }
 
@@ -209,14 +211,24 @@ function extractAssignmentTypes(
 
 /**
  * Strip TypeScript type qualifiers to get the base class name.
- * Example: "Vector2 | null" → "Vector2", "readonly Vector2" → "Vector2".
+ * Examples:
+ *   "Vector2 | null"   → "Vector2"
+ *   "readonly Vector2" → "Vector2"
+ *   "Array<Color>"     → "Array"
+ *   "Color[]"          → "Array"
  */
 function simplifyTypeName(type: string): string {
-  return type
+  let t = type
     .replace(/\s*\|\s*null$/, '')
     .replace(/\s*\|\s*undefined$/, '')
     .replace(/^readonly\s+/, '')
     .trim();
+  // Normalize all array forms to bare "Array" for registry lookup
+  if (/\[\]$/.test(t) || /^Array</.test(t) || /^ReadonlyArray</.test(t)) {
+    return 'Array';
+  }
+  // Strip generic parameters from any other qualified type
+  return t.replace(/<.*>$/, '');
 }
 
 /**
@@ -303,6 +315,176 @@ function collectExplicitConvertFixes(
   return fixesByFile;
 }
 
+// ─── Ready Field Types Helper ────────────────────────────────
+
+/**
+ * TS error codes for class properties that need type/initializer fixes.
+ * - TS7008: Member 'X' implicitly has an 'any' type.
+ * - TS2564: Property 'X' has no initializer and is not definitely assigned in the constructor.
+ */
+const TS_CLASS_READY_ERROR_CODES = new Set([7008, 2564]);
+
+/**
+ * Walk up from a node to find the enclosing ClassDeclaration.
+ */
+function findEnclosingClass(node: ts.Node): ts.ClassDeclaration | undefined {
+  let current: ts.Node | undefined = node;
+  while (current) {
+    if (ts.isClassDeclaration(current)) return current;
+    current = current.parent;
+  }
+  return undefined;
+}
+
+/**
+ * Find `this.<propName> = <expr>` assignment inside a `_ready` method body.
+ * Returns the right-hand-side expression of the first matching assignment.
+ */
+function findReadyAssignment(
+  cls: ts.ClassDeclaration,
+  propName: string,
+): ts.Expression | undefined {
+  // Find _ready method
+  const readyMethod = cls.members.find(
+    (m): m is ts.MethodDeclaration =>
+      ts.isMethodDeclaration(m) &&
+      !!m.name &&
+      ts.isIdentifier(m.name) &&
+      m.name.text === '_ready',
+  );
+  if (!readyMethod?.body) return undefined;
+
+  let result: ts.Expression | undefined;
+  function visit(node: ts.Node): void {
+    if (result) return;
+    if (
+      ts.isBinaryExpression(node) &&
+      node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+      ts.isPropertyAccessExpression(node.left) &&
+      node.left.expression.kind === ts.SyntaxKind.ThisKeyword &&
+      node.left.name.text === propName
+    ) {
+      result = node.right;
+      return;
+    }
+    ts.forEachChild(node, visit);
+  }
+  visit(readyMethod.body);
+  return result;
+}
+
+/**
+ * Infer a type annotation text from an expression.
+ * Uses `typeof <text>` for identifiers and property accesses, otherwise
+ * falls back to the TS type checker's string representation.
+ */
+function inferTypeFromExpression(
+  expr: ts.Expression,
+  checker: ts.TypeChecker,
+  sourceFile: ts.SourceFile,
+): string {
+  if (ts.isIdentifier(expr) || ts.isPropertyAccessExpression(expr)) {
+    return `typeof ${expr.getText(sourceFile)}`;
+  }
+  // Fall back to the TS checker for literals / calls / new expressions.
+  // Widen literal types (42 → number, "foo" → string) so stored fields keep
+  // their general type rather than pinning to the specific literal value.
+  let type = checker.getTypeAtLocation(expr);
+  type = checker.getBaseTypeOfLiteralType(type);
+  return checker.typeToString(
+    type,
+    expr,
+    ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseFullyQualifiedType,
+  );
+}
+
+/**
+ * Collect TS7008/TS2564 errors on class properties and produce fixes that
+ * add `!` (definite assignment) and, for TS7008, a type annotation inferred
+ * from the property's assignment inside `_ready()`.
+ */
+function collectReadyFieldTypeFixes(
+  program: ts.Program,
+  filePaths: Set<string>,
+): Map<string, SourceFix[]> {
+  const fixesByFile = new Map<string, SourceFix[]>();
+  const checker = program.getTypeChecker();
+
+  for (const sourceFile of program.getSourceFiles()) {
+    const fileName = sourceFile.fileName;
+    if (!filePaths.has(fileName)) continue;
+
+    const diagnostics = program.getSemanticDiagnostics(sourceFile);
+    const fixedRanges: Array<{ start: number; end: number }> = [];
+
+    function overlapsExisting(start: number, end: number): boolean {
+      return fixedRanges.some(
+        (r) =>
+          (start >= r.start && start < r.end) ||
+          (end > r.start && end <= r.end) ||
+          (start <= r.start && end >= r.end),
+      );
+    }
+
+    for (const diag of diagnostics) {
+      if (!TS_CLASS_READY_ERROR_CODES.has(diag.code)) continue;
+      if (diag.start === undefined || diag.length === undefined) continue;
+
+      // Find the PropertyDeclaration at the diagnostic position
+      const node = findNodeAt(sourceFile, diag.start, diag.length);
+      if (!node) continue;
+
+      let propDecl: ts.PropertyDeclaration | undefined;
+      let current: ts.Node | undefined = node;
+      while (current) {
+        if (ts.isPropertyDeclaration(current)) {
+          propDecl = current;
+          break;
+        }
+        current = current.parent;
+      }
+      if (!propDecl || !ts.isIdentifier(propDecl.name)) continue;
+
+      const propName = propDecl.name.text;
+      const nameEnd = propDecl.name.getEnd();
+      if (overlapsExisting(nameEnd, nameEnd + 1)) continue;
+
+      // Already has a `!` (definite-assignment assertion) — skip
+      if (propDecl.exclamationToken) continue;
+
+      let insertText: string;
+      if (diag.code === 2564) {
+        // Has a type, just needs `!`
+        insertText = '!';
+      } else {
+        // TS7008: no type declared — infer from _ready assignment
+        if (propDecl.type) continue; // Already typed; nothing to do here
+        const cls = findEnclosingClass(propDecl);
+        if (!cls) continue;
+        const rhs = findReadyAssignment(cls, propName);
+        if (!rhs) continue; // No assignment in _ready — can't infer
+        const typeText = inferTypeFromExpression(rhs, checker, sourceFile);
+        if (!typeText || typeText === 'any' || typeText === 'error') continue;
+        insertText = `!: ${typeText}`;
+      }
+
+      let fixes = fixesByFile.get(fileName);
+      if (!fixes) {
+        fixes = [];
+        fixesByFile.set(fileName, fixes);
+      }
+      fixes.push({
+        start: nameEnd,
+        end: nameEnd,
+        replacement: insertText,
+      });
+      fixedRanges.push({ start: nameEnd, end: nameEnd + insertText.length });
+    }
+  }
+
+  return fixesByFile;
+}
+
 /**
  * Apply fixes to source text, processing from end to start to preserve positions.
  */
@@ -330,8 +512,11 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
 
   const operatorFixEnabled = helpers.operatorFix !== false;
   const explicitConvertEnabled = helpers.explicitConvert !== false && !!registry;
+  const readyFieldTypesEnabled = helpers.readyFieldTypes !== false;
 
-  if (!operatorFixEnabled && !explicitConvertEnabled) return result;
+  if (!operatorFixEnabled && !explicitConvertEnabled && !readyFieldTypesEnabled) {
+    return result;
+  }
 
   // Run fixes in a loop — each round may expose new errors in chained/nested
   // expressions (e.g. operator-wrapping creates new call sites).
@@ -368,6 +553,9 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
     }
     if (explicitConvertEnabled) {
       mergeFixes(collectExplicitConvertFixes(program, filePaths, registry!));
+    }
+    if (readyFieldTypesEnabled) {
+      mergeFixes(collectReadyFieldTypeFixes(program, filePaths));
     }
 
     let fixedInPass = 0;

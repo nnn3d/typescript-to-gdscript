@@ -26,6 +26,14 @@ This project converts TypeScript code to GDScript for the Godot game engine, wit
    - `PROJECT.md` — internal architecture, structure, edge cases
    - `CLAUDE.md` — this file, rules only
 
+5. **⚠️ ALL temporary directories MUST live under the OS temp dir** (`os.tmpdir()` from Node's `node:os` module). Never create tmp dirs inside the project tree (e.g. `.tmp-*` in tests, `.ts2gd-cache` at the repo root, etc.). Use `join(tmpdir(), 'ts2gd-<label>-<random>')` or similar. This applies to:
+   - Test fixtures that need scratch files
+   - Cache directories
+   - Any intermediate file written by the converter/helpers
+   - Addon conversion temp files
+
+   Always clean them up (`rmSync(..., { recursive: true, force: true })`) in `finally` blocks.
+
 ---
 
 ## Quick Reference

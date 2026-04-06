@@ -119,6 +119,7 @@ Options:
 - `--no-signal-handler-helper` — Disable signal handler type inference from `.tscn` connections
 - `--no-operator-fix-helper` — Disable TS-based operator type error auto-fix
 - `--no-explicit-convert-helper` — Disable TS-based variant-type auto-fix (explicit `gd.as` insertion)
+- `--no-ready-field-types-helper` — Disable TS-based class property auto-fix (adds `!` and infers types from `_ready()` assignments)
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `/* ERROR: ... */` comments)
 
 #### Conversion Helpers
@@ -130,6 +131,33 @@ GD-to-TS conversion includes optional helpers that enhance the output:
 - **Operator fix helper** (default: enabled) — After conversion and typings generation, runs the TypeScript type-checker on converted files to find operator type errors (e.g., `Vector2 + Vector2`). Automatically wraps them in `gd.ops.X()` calls (e.g., `gd.ops.add(v1, v2)`). Catches cases that GDScript-time type inference misses (inherited members, method return values, etc.).
 
 - **Explicit convert helper** (default: enabled) — Runs alongside operator fix. Detects TS2345/TS2322 assignment/argument errors where the source and target are both variant types (Vector2 ↔ Vector2i, PackedColorArray ↔ Array, etc.) and inserts an explicit `gd.as(value, Target)` conversion. Uses `variantConverts` metadata in `godot-class-registry.json` (derived from Godot XML "from" constructors). Example: `wants_v2i(Vector2.DOWN)` → `wants_v2i(gd.as(Vector2.DOWN, Vector2i))`.
+
+- **Ready field types helper** (default: enabled) — Detects TS7008 ("Member implicitly has an any type") and TS2564 ("Property has no initializer") on class properties. For each error, adds the definite-assignment `!` operator and, when no type is declared, infers it from the property's assignment inside `_ready()`. Example:
+
+  ```typescript
+  class Game extends Node {
+    time: float;                   // TS2564
+    progress_bar;                  // TS7008
+
+    _ready() {
+      this.time = 0.0;
+      this.progress_bar = this.game_ui.progress_bar;
+    }
+  }
+  ```
+  becomes:
+  ```typescript
+  class Game extends Node {
+    time!: float;
+    progress_bar!: typeof this.game_ui.progress_bar;
+
+    _ready() {
+      this.time = 0.0;
+      this.progress_bar = this.game_ui.progress_bar;
+    }
+  }
+  ```
+  For simple identifier/property-access right-hand sides, the helper emits `typeof <expr>`; for other expressions (literals, `new` calls, etc.) it uses the TS type checker's inferred type string.
 
 ### `ts2gd watch`
 

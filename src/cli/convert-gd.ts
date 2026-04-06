@@ -35,6 +35,10 @@ export function registerConvertGdCommand(program: Command): void {
       '--no-explicit-convert-helper',
       'Disable TS-based variant-type auto-fix (inserts explicit gd.as conversions)',
     )
+    .option(
+      '--no-ready-field-types-helper',
+      'Disable TS-based class property auto-fix (adds `!` and infers types from _ready assignments)',
+    )
     .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
     .action((files: string[], opts) => {
       const cfg = resolveConfig({
@@ -126,10 +130,12 @@ export function registerConvertGdCommand(program: Command): void {
         tsFiles: tsOutputFiles,
       });
 
-      // Run TS-based post-processing helpers (operator fix, explicit convert)
+      // Run TS-based post-processing helpers
       const operatorFixEnabled = !opts.noHelpers && !opts.noOperatorFixHelper;
       const explicitConvertEnabled = !opts.noHelpers && !opts.noExplicitConvertHelper;
-      if ((operatorFixEnabled || explicitConvertEnabled) && tsOutputFiles.length > 0) {
+      const readyFieldTypesEnabled = !opts.noHelpers && !opts.noReadyFieldTypesHelper;
+      const anyTsHelperEnabled = operatorFixEnabled || explicitConvertEnabled || readyFieldTypesEnabled;
+      if (anyTsHelperEnabled && tsOutputFiles.length > 0) {
         const helperResult = runTsHelpers({
           files: tsOutputFiles,
           rootDir: cfg.rootDir,
@@ -138,6 +144,7 @@ export function registerConvertGdCommand(program: Command): void {
           helpers: {
             operatorFix: operatorFixEnabled,
             explicitConvert: explicitConvertEnabled,
+            readyFieldTypes: readyFieldTypesEnabled,
           },
         });
         if (helperResult.fixedFiles.length > 0) {

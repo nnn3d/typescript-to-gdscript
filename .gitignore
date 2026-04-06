@@ -11,6 +11,3 @@ export_presets.cfg
 
 # Generated files
 *.generated.d.ts
-
-# Cache
-.ts2gd-cache/

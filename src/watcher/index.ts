@@ -1,5 +1,7 @@
 import { watch, type FSWatcher } from 'chokidar';
 import { extname, resolve, relative, join } from 'path';
+import { tmpdir } from 'os';
+import { createHash } from 'crypto';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
 import { generateTypings, generateAddonTypings, generateFileTypings } from '../typings/scenes.ts';
@@ -52,8 +54,14 @@ export class Watcher {
     this.options = options;
     this.tsDir = options.tsDir ?? options.rootDir;
     this.gdDir = options.gdDir ?? options.outputDir ?? this.tsDir;
+    // Derive a stable per-project cache dir under the OS temp directory
+    // (hash of the absolute root path ensures different projects don't collide).
+    const projectHash = createHash('sha256')
+      .update(resolve(options.rootDir))
+      .digest('hex')
+      .slice(0, 16);
     this.cache = new FileCache(
-      options.cacheDir ?? resolve(options.rootDir, '.ts2gd-cache'),
+      options.cacheDir ?? join(tmpdir(), `ts2gd-cache-${projectHash}`),
     );
   }
 
