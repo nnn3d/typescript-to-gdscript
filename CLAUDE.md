@@ -125,6 +125,12 @@ tests/
   - Unique name nodes (`%Name`) accessible from every subtree in the scene
   - **Addon typings** (`generate-addon-typings`): converts `addons/*.gd` → `.ts` via GD-to-TS, generates `.gd.d.ts` with global classes/enums/GodotScripts entries. Two-pass: convert all, then scan with TS program for cross-file resolution.
   - **Incremental generation** (`generateFileTypings`): per-file `.gd.d.ts`/`.tscn.d.ts` regeneration for watch mode (full generation only on first run, addon typings only on first run)
+  - **Value type interfaces** (Vector2, Color, Rect2, Packed*Array, etc.): generated with instance interface + `*Constructor` interface + `declare const`. No `new` — constructors are call signatures only (matches GDScript)
+  - `[__variant_converts]` on value-type instance interfaces: union of types accepted by single-parameter "from" constructors (e.g. `Vector2[__variant_converts]: Vector2 | Vector2i`). Enables `gd.as(val, Target)` type narrowing
+  - `readonly prototype: ClassName` on `*Constructor` interfaces enables `v instanceof Vector2` type narrowing
+  - Packed array types get `[Symbol.iterator](): IterableIterator<ItemType>` (item type inferred from `append(value: T)` method signature) for typed `for (const x of arr)` loops
+  - `Array` interface: `[__variant_converts]` includes all Packed array types (from XML constructors); `ArrayConstructor` has `<T>(from_: PackedXArray): Array<T>` call signatures (no `new`)
+  - `GodotArray` removed (use `Array()` call syntax instead of `new GodotArray()`)
 - [x] Godot class registry (916 classes, inheritance chain, global functions from `vendor/godot` XML docs)
 - [x] Converter diagnostics + ESLint plugin (`ts2gd/convert` rule, flat config ESLint >= 9)
 - [x] Watch mode + CLI + Cache (watches .ts, .tscn, .tres, assets, project.godot)
@@ -155,7 +161,7 @@ tests/
 | `gd.enum('A', 'B')` | `enum Name {A, B}` | |
 | `gd.ops.add(a, b)` | `a + b` | Typed operator overloads (also: sub, mul, div, rem, eq, ne, gt, gte, lt, lte, plus, minus) |
 | `gd.ops.rem(a, b)` | `a % b` | Remainder/modulo for non-number types (Vector2i, etc.) |
-| `gd.as(val, Type)` | `val as Type` | |
+| `gd.as(val, Type)` | `val as Type` | Class cast + variant conversion (Vector2↔Vector2i, Packed*Array↔Array) via `[__variant_converts]` symbol |
 | `gd.eval('code')` | `code` | Raw GDScript passthrough, auto-indented |
 | `// @gd.eval: code` | `code` | Magic comment: raw GDScript in any position |
 | `gd.dict([[k, v]])` | `{k: v}` | Non-string keys |
@@ -198,5 +204,7 @@ tests/
 - TS-to-GD `/* */` non-doc block comments → `"""..."""` (single-line and multiline); class-level trailing comments emitted via closing brace
 - GD-to-TS inline comments in expressions (e.g. `# comment` inside function call args) → `/* comment */`
 - GD-to-TS `emitAttribute` checks `!ctx.localVars.has()` to prevent incorrect `this.` prefix when local variable shadows class member
+- Value types (Vector2, Color, Array, etc.) are instantiated via call syntax `Vector2(1, 2)` — never `new Vector2()`, since GDScript has no `new` for these primitives. Their `*Constructor` interfaces only have call signatures
+- `gd.as` variant conversion to `Array` constrains source via `T extends { [__variant_converts]: any } & Array[typeof __variant_converts]` — source must be in Array's own variant_converts union. Element type extracted from `[Symbol.iterator]` of source. Plain `never` return gets silently swallowed by TS method bivariance in large interfaces, so this constraint-based approach is used instead
 - `addons/` directory excluded from user file discovery (findTsFiles, findGdFiles, findSceneFiles, watcher); addon `.gd` files discovered separately via `findAddonGdFiles()` for `generate-addon-typings`
 - Addon `.ts` output files use `// @ts-nocheck` to suppress strict errors (GD-to-TS doesn't generate initializers); user tsconfig should exclude `types/addons` to avoid double-scanning

@@ -235,8 +235,19 @@ Available operators: `add`, `sub`, `mul`, `div`, `rem`, `eq`, `ne`, `gt`, `gte`,
 ### Type casting (`as`)
 
 ```typescript
+// Class cast (returns Type | null)
 let sprite = gd.as(get_node('Sprite'), Sprite2D);
+
+// Variant conversion between primitive value types (Vector2 ↔ Vector2i, Rect2 ↔ Rect2i, etc.)
+let v2: Vector2 = Vector2(1, 2);
+let v2i: Vector2i = gd.as(v2, Vector2i);  // Vector2 → Vector2i
+
+// Array conversion (PackedColorArray ↔ Array, etc.)
+let packed: PackedColorArray = PackedColorArray();
+let arr: Array<Color> = gd.as(packed, Array);  // element type inferred from iterator
 ```
+
+Variant conversion is enabled via `[__variant_converts]` symbol on each value-type interface. The symbol's type is a union of types that the target's constructor accepts as single "from" parameters. For `Array`-like conversions, the element type is inferred via `[Symbol.iterator]: IterableIterator<T>` on the source interface.
 
 ### Raw GDScript (`eval`)
 
