@@ -36,5 +36,13 @@ if e2 > 10:
      f = 30
   print(f)
 `);
+    const v = gd.eval<string>('c');
+    const fun1 = gd.eval<(x: string) => void>(`func (x: string):
+      print(x)
+    `)
+    const fun2 = gd.eval<(x: string) => void>(`
+      func (x: string):
+        print(x)
+    `)
   }
 }

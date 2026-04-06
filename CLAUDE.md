@@ -162,7 +162,7 @@ tests/
 | `gd.ops.add(a, b)` | `a + b` | Typed operator overloads (also: sub, mul, div, rem, eq, ne, gt, gte, lt, lte, plus, minus) |
 | `gd.ops.rem(a, b)` | `a % b` | Remainder/modulo for non-number types (Vector2i, etc.) |
 | `gd.as(val, Type)` | `val as Type` | Class cast + variant conversion (Vector2↔Vector2i, Packed*Array↔Array) via `[__variant_converts]` symbol |
-| `gd.eval('code')` | `code` | Raw GDScript passthrough, auto-indented |
+| `gd.eval('code')` | `code` | Raw GDScript passthrough, auto-indented. Also usable as variable initializer (`const v = gd.eval<T>('...')`) — first line becomes RHS, rest is body |
 | `// @gd.eval: code` | `code` | Magic comment: raw GDScript in any position |
 | `gd.dict([[k, v]])` | `{k: v}` | Non-string keys |
 | `/* comment */` | `"""comment"""` | Block comments (also `'''`) |
@@ -200,6 +200,7 @@ tests/
 - Class-level inner classes → `namespace ClassName { type InnerClass = InstanceType<typeof ScriptClass.InnerClass>; }` in .gd.d.ts
 - GD-to-TS: type annotations referencing class enums/inner classes qualified with class name (`State` → `ClassName.State`)
 - `gd.eval` space indentation: converts space-based indent to tabs by tracking space→depth mapping; mixed tabs/spaces is an error
+- `gd.eval` as variable initializer: `processGdEval()` returns processed lines with relative tab depth; `visitVariableStatement` emits first line as `var X = <firstLine>`, remaining lines are emitted at current indent (their embedded `\t` prefixes act as additional relative depth beyond the var line)
 - GD-to-TS `'''`/`"""` triple-quoted strings as expression statements → `/* */` block comments (both class body and function body)
 - TS-to-GD `/* */` non-doc block comments → `"""..."""` (single-line and multiline); class-level trailing comments emitted via closing brace
 - GD-to-TS inline comments in expressions (e.g. `# comment` inside function call args) → `/* comment */`

@@ -27,3 +27,8 @@ func test_eval():
 		if f > 10:
 			f = 30
 	print(f)
+	var v = c
+	var fun1 = func (x: string):
+		print(x)
+	var fun2 = func (x: string):
+		print(x)

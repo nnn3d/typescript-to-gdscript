@@ -752,6 +752,26 @@ export class TsToGdTransformer {
       );
       const typeAnnotation = gdType ? `: ${gdType}` : '';
 
+      // Special case: gd.eval() as initializer
+      if (decl.initializer && this.isGdEvalCall(decl.initializer)) {
+        const evalLines = this.processGdEval(decl.initializer as ts.CallExpression);
+        if (evalLines && evalLines.length > 0) {
+          // First line becomes the RHS of the var declaration
+          const firstLine = evalLines[0]!;
+          this.emitter.writeLine(
+            `var ${name}${typeAnnotation} = ${firstLine}`,
+            pos.line,
+            pos.col,
+          );
+          // Remaining lines emit at current indent; their embedded \t prefixes
+          // represent relative depth beyond the var line.
+          for (let i = 1; i < evalLines.length; i++) {
+            this.emitter.writeLine(evalLines[i]!, pos.line, pos.col);
+          }
+          continue;
+        }
+      }
+
       // Initializer
       const init = decl.initializer
         ? ` = ${this.emitExpression(decl.initializer)}`
@@ -943,16 +963,12 @@ export class TsToGdTransformer {
   }
 
   /**
-   * Emit gd.eval('gdscript code') as raw GDScript lines.
-   * Indentation is adjusted to the current emitter indent level.
-   * If the string starts with \n, the content's indentation is re-mapped
-   * to the current level by stripping common leading whitespace.
+   * Process a gd.eval() call and return the GDScript lines (with relative indentation).
+   * Each line is prefixed with tabs for its depth relative to the first non-empty line.
+   * Returns null if the content cannot be extracted or is empty.
    */
-  private emitGdEval(
-    node: ts.CallExpression,
-    pos: { line: number; col: number },
-  ): void {
-    if (node.arguments.length < 1) return;
+  private processGdEval(node: ts.CallExpression): string[] | null {
+    if (node.arguments.length < 1) return null;
     const arg = node.arguments[0]!;
 
     // Extract the string content
@@ -962,12 +978,11 @@ export class TsToGdTransformer {
     } else if (ts.isNoSubstitutionTemplateLiteral(arg)) {
       content = arg.text;
     } else if (ts.isTemplateExpression(arg)) {
-      // Template with expressions — can't evaluate, emit raw
       this.addDiagnostic(node, 'warning', 'gd.eval with template expressions is not supported');
-      return;
+      return null;
     } else {
       this.addDiagnostic(node, 'warning', 'gd.eval argument must be a string literal');
-      return;
+      return null;
     }
 
     // Strip leading newline if present
@@ -978,24 +993,24 @@ export class TsToGdTransformer {
     while (rawLines.length > 0 && rawLines[rawLines.length - 1]!.trim() === '') {
       rawLines.pop();
     }
-    const nonEmpty = rawLines.filter(l => l.trim() !== '');
-    if (nonEmpty.length === 0) return;
+    const nonEmpty = rawLines.filter((l) => l.trim() !== '');
+    if (nonEmpty.length === 0) return null;
 
-    // Single non-empty line: emit directly
+    // Single non-empty line: return trimmed
     if (nonEmpty.length === 1) {
-      this.emitter.writeLine(nonEmpty[0]!.trim(), pos.line, pos.col);
-      return;
+      return [nonEmpty[0]!.trim()];
     }
 
     // Detect indentation style: tabs vs spaces
-    const hasTabs = nonEmpty.some(l => l.startsWith('\t'));
-    const hasSpaces = nonEmpty.some(l => /^ /.test(l));
+    const hasTabs = nonEmpty.some((l) => l.startsWith('\t'));
+    const hasSpaces = nonEmpty.some((l) => /^ /.test(l));
 
     if (hasTabs && hasSpaces) {
       this.addDiagnostic(node, 'error', 'gd.eval: mixed tabs and spaces indentation is not supported');
-      return;
+      return null;
     }
 
+    const out: string[] = [];
     if (hasTabs) {
       // Tab indentation: strip common tab prefix, emit as-is
       const minTabs = nonEmpty.reduce((min, l) => {
@@ -1004,11 +1019,10 @@ export class TsToGdTransformer {
       }, Infinity);
       for (const line of rawLines) {
         if (line.trim() === '') continue;
-        this.emitter.writeLine(line.slice(minTabs), pos.line, pos.col);
+        out.push(line.slice(minTabs));
       }
     } else {
-      // Space indentation: convert indent levels to tabs.
-      // Track a mapping of space count → tab depth for revisited indent levels.
+      // Space indentation: convert indent levels to tabs
       const spaceToDepth = new Map<number, number>();
       let prevSpaces = nonEmpty[0]!.match(/^( *)/)?.[1]?.length ?? 0;
       let depth = 0;
@@ -1032,8 +1046,23 @@ export class TsToGdTransformer {
 
         spaceToDepth.set(spaces, depth);
         prevSpaces = spaces;
-        this.emitter.writeLine('\t'.repeat(depth) + lineContent, pos.line, pos.col);
+        out.push('\t'.repeat(depth) + lineContent);
       }
+    }
+    return out;
+  }
+
+  /**
+   * Emit gd.eval('gdscript code') as a standalone statement (raw GDScript lines).
+   */
+  private emitGdEval(
+    node: ts.CallExpression,
+    pos: { line: number; col: number },
+  ): void {
+    const lines = this.processGdEval(node);
+    if (!lines) return;
+    for (const line of lines) {
+      this.emitter.writeLine(line, pos.line, pos.col);
     }
   }
 

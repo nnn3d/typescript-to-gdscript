@@ -268,6 +268,24 @@ if b > 10:
 
 Space-based indentation is automatically converted to tabs. Mixed tabs and spaces produce a conversion error.
 
+`gd.eval()` can also be used as a variable initializer for inline expressions or multiline constructs (e.g. GDScript lambdas). A generic type parameter `gd.eval<T>(...)` provides the TS type:
+
+```typescript
+// Simple inline expression
+const v = gd.eval<string>('c');
+// becomes: var v = c
+
+// Multiline lambda
+const fun1 = gd.eval<(x: string) => void>(`func (x: string):
+  print(x)
+`);
+// becomes:
+// var fun1 = func (x: string):
+//     print(x)
+```
+
+The first non-empty line becomes the RHS of the variable declaration; subsequent lines are emitted as the body with their relative indentation preserved.
+
 For contexts where `gd.eval()` can't be used directly (e.g., before the class declaration or between members), use `// @gd.eval:` magic comments:
 
 ```typescript
