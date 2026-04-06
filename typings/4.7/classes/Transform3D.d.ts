@@ -88,6 +88,8 @@ declare interface Transform3D {
   [__ops_div]: { right: float; ret: Transform3D } | { right: int; ret: Transform3D };
   [__ops_eq]: { right: Transform3D; ret: boolean };
 
+  [__variant_converts]: Transform3D | Projection;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -126,6 +128,7 @@ declare interface Transform3D {
 }
 
 declare interface Transform3DConstructor {
+  readonly prototype: Transform3D;
   /**
    * Constructs a {@link Transform3D} identical to {@link IDENTITY}.
    * **Note:** In C#, this constructs a {@link Transform3D} with its {@link origin} and the components of its {@link basis} set to {@link Vector3.ZERO}.

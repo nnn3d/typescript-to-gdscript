@@ -92,6 +92,10 @@ declare interface PackedVector3Array {
   [__ops_add]: { right: PackedVector3Array; ret: PackedVector3Array };
   [__ops_eq]: { right: PackedVector3Array; ret: boolean };
 
+  [__variant_converts]: PackedVector3Array | Array<unknown>;
+
+  [Symbol.iterator](): IterableIterator<Vector3>;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   duplicate_deep: never;
@@ -121,6 +125,7 @@ declare interface PackedVector3Array {
 }
 
 declare interface PackedVector3ArrayConstructor {
+  readonly prototype: PackedVector3Array;
   /** Constructs an empty {@link PackedVector3Array}. */
   (): PackedVector3Array;
   /** Constructs a {@link PackedVector3Array} as a copy of the given {@link PackedVector3Array}. */

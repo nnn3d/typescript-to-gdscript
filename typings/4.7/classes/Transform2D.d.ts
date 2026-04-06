@@ -126,6 +126,8 @@ declare interface Transform2D {
   [__ops_div]: { right: float; ret: Transform2D } | { right: int; ret: Transform2D };
   [__ops_eq]: { right: Transform2D; ret: boolean };
 
+  [__variant_converts]: Transform2D;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -164,6 +166,7 @@ declare interface Transform2D {
 }
 
 declare interface Transform2DConstructor {
+  readonly prototype: Transform2D;
   /**
    * Constructs a {@link Transform2D} identical to {@link IDENTITY}.
    * **Note:** In C#, this constructs a {@link Transform2D} with all of its components set to {@link Vector2.ZERO}.

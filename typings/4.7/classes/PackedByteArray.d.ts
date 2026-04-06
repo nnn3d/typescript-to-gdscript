@@ -281,6 +281,10 @@ declare interface PackedByteArray {
   [__ops_add]: { right: PackedByteArray; ret: PackedByteArray };
   [__ops_eq]: { right: PackedByteArray; ret: boolean };
 
+  [__variant_converts]: PackedByteArray | Array<unknown>;
+
+  [Symbol.iterator](): IterableIterator<int>;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   duplicate_deep: never;
@@ -310,6 +314,7 @@ declare interface PackedByteArray {
 }
 
 declare interface PackedByteArrayConstructor {
+  readonly prototype: PackedByteArray;
   /** Constructs an empty {@link PackedByteArray}. */
   (): PackedByteArray;
   /** Constructs a {@link PackedByteArray} as a copy of the given {@link PackedByteArray}. */

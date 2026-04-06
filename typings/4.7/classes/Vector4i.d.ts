@@ -86,6 +86,8 @@ declare interface Vector4i {
   [__ops_plus]: { ret: Vector4i };
   [__ops_minus]: { ret: Vector4i };
 
+  [__variant_converts]: Vector4i | Vector4;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -124,6 +126,7 @@ declare interface Vector4i {
 }
 
 declare interface Vector4iConstructor {
+  readonly prototype: Vector4i;
   /** Constructs a default-initialized {@link Vector4i} with all components set to `0`. */
   (): Vector4i;
   /** Constructs a {@link Vector4i} as a copy of the given {@link Vector4i}. */

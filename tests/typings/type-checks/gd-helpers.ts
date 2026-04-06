@@ -61,6 +61,69 @@ class AsTest extends Node {
     let result = gd.as(sprite2d, Sprite2D);
     let exact: Sprite2D = result;
   }
+
+  test_as_variant_converts() {
+    // Variant conversion: Vector2 ↔ Vector2i via single-param "from" constructors
+    let v2: Vector2 = Vector2(1, 2);
+    let v2i: Vector2i = Vector2i(1, 2);
+
+    // Vector2i → Vector2 (Vector2 accepts `from: Vector2i` constructor)
+    let asV2: Vector2 = gd.as(v2i, Vector2);
+
+    // Vector2 → Vector2i (Vector2i accepts `from: Vector2` constructor)
+    let asV2i: Vector2i = gd.as(v2, Vector2i);
+
+    // Vector2 → Vector2 (identity, since Vector2 accepts Vector2)
+    let asSameV2: Vector2 = gd.as(v2, Vector2);
+
+    // Vector3 ↔ Vector3i
+    let v3: Vector3 = Vector3(1, 2, 3);
+    let v3i: Vector3i = Vector3i(1, 2, 3);
+    let asV3: Vector3 = gd.as(v3i, Vector3);
+    let asV3i: Vector3i = gd.as(v3, Vector3i);
+
+    // Rect2 ↔ Rect2i
+    let r2: Rect2 = Rect2();
+    let r2i: Rect2i = Rect2i();
+    let asR2: Rect2 = gd.as(r2i, Rect2);
+
+    let ca: PackedColorArray = PackedColorArray();
+    let asA: Array<Color> = gd.as(ca, Array);
+    // @ts-expect-error — Vector2 can't be converted to Array
+    let asError: Array<unknown> = gd.as(v2, Array);
+
+    let ar: Array<unknown> = [];
+    let asCA: PackedColorArray = gd.as(ar, PackedColorArray);
+
+    // @ts-expect-error — Vector3 can't be converted to Vector2 (no `from: Vector3` constructor)
+    let bad: Vector2 = gd.as(v3, Vector2);
+
+    // @ts-expect-error — a plain Node can't be converted to Vector2
+    let bad2: Vector2 = gd.as(node, Vector2);
+  }
+
+  test_instanceof_value_types() {
+    // `instanceof` works on value-type constructor interfaces via `prototype` property
+    let v: Vector2 | Vector2i = Vector2(1, 2);
+
+    if (v instanceof Vector2) {
+      // Narrowed to Vector2
+      let x: Vector2 = v;
+    } else {
+      // Narrowed to Vector2i
+      let y: Vector2i = v;
+    }
+
+    let color: Color | Vector2 = Color();
+    if (color instanceof Color) {
+      let c: Color = color;
+    }
+
+    let arr: Array<unknown> | Vector2 = Array();
+    if (arr instanceof Array) {
+      let a: Array<unknown> = arr;
+    }
+  }
 }
 
 // ─── gd.ops ─────────────────────────────────────────────────

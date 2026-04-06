@@ -128,6 +128,8 @@ declare interface AABB {
   [__ops_mul]: { right: Transform3D; ret: AABB };
   [__ops_eq]: { right: AABB; ret: boolean };
 
+  [__variant_converts]: AABB;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -164,6 +166,7 @@ declare interface AABB {
 }
 
 declare interface AABBConstructor {
+  readonly prototype: AABB;
   /** Constructs an {@link AABB} with its {@link position} and {@link size} set to {@link Vector3.ZERO}. */
   (): AABB;
   /** Constructs an {@link AABB} as a copy of the given {@link AABB}. */

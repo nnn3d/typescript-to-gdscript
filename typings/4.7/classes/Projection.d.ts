@@ -65,6 +65,8 @@ declare interface Projection {
   [__ops_mul]: { right: Projection; ret: Projection } | { right: Vector4; ret: Vector4 };
   [__ops_eq]: { right: Projection; ret: boolean };
 
+  [__variant_converts]: Projection | Transform3D;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -103,6 +105,7 @@ declare interface Projection {
 }
 
 declare interface ProjectionConstructor {
+  readonly prototype: Projection;
   /**
    * Constructs a default-initialized {@link Projection} identical to {@link IDENTITY}.
    * **Note:** In C#, this constructs a {@link Projection} identical to {@link ZERO}.

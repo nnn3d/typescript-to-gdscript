@@ -91,6 +91,10 @@ declare interface PackedVector4Array {
   [__ops_add]: { right: PackedVector4Array; ret: PackedVector4Array };
   [__ops_eq]: { right: PackedVector4Array; ret: boolean };
 
+  [__variant_converts]: PackedVector4Array | Array<unknown>;
+
+  [Symbol.iterator](): IterableIterator<Vector4>;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   duplicate_deep: never;
@@ -120,6 +124,7 @@ declare interface PackedVector4Array {
 }
 
 declare interface PackedVector4ArrayConstructor {
+  readonly prototype: PackedVector4Array;
   /** Constructs an empty {@link PackedVector4Array}. */
   (): PackedVector4Array;
   /** Constructs a {@link PackedVector4Array} as a copy of the given {@link PackedVector4Array}. */

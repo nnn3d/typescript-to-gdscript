@@ -118,6 +118,8 @@ declare interface Color {
   [__ops_plus]: { ret: Color };
   [__ops_minus]: { ret: Color };
 
+  [__variant_converts]: Color;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -156,6 +158,7 @@ declare interface Color {
 }
 
 declare interface ColorConstructor {
+  readonly prototype: Color;
   /**
    * Constructs a default {@link Color} from opaque black. This is the same as {@link BLACK}.
    * **Note:** In C#, this constructs a {@link Color} with all of its components set to `0.0` (transparent black).

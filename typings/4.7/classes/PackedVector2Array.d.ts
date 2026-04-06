@@ -92,6 +92,10 @@ declare interface PackedVector2Array {
   [__ops_add]: { right: PackedVector2Array; ret: PackedVector2Array };
   [__ops_eq]: { right: PackedVector2Array; ret: boolean };
 
+  [__variant_converts]: PackedVector2Array | Array<unknown>;
+
+  [Symbol.iterator](): IterableIterator<Vector2>;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   duplicate_deep: never;
@@ -121,6 +125,7 @@ declare interface PackedVector2Array {
 }
 
 declare interface PackedVector2ArrayConstructor {
+  readonly prototype: PackedVector2Array;
   /** Constructs an empty {@link PackedVector2Array}. */
   (): PackedVector2Array;
   /** Constructs a {@link PackedVector2Array} as a copy of the given {@link PackedVector2Array}. */

@@ -78,6 +78,10 @@ declare interface PackedColorArray {
   [__ops_add]: { right: PackedColorArray; ret: PackedColorArray };
   [__ops_eq]: { right: PackedColorArray; ret: boolean };
 
+  [__variant_converts]: PackedColorArray | Array<unknown>;
+
+  [Symbol.iterator](): IterableIterator<Color>;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   duplicate_deep: never;
@@ -107,6 +111,7 @@ declare interface PackedColorArray {
 }
 
 declare interface PackedColorArrayConstructor {
+  readonly prototype: PackedColorArray;
   /** Constructs an empty {@link PackedColorArray}. */
   (): PackedColorArray;
   /** Constructs a {@link PackedColorArray} as a copy of the given {@link PackedColorArray}. */

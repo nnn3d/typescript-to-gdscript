@@ -80,6 +80,8 @@ declare interface Rect2 {
   [__ops_mul]: { right: Transform2D; ret: Rect2 };
   [__ops_eq]: { right: Rect2; ret: boolean };
 
+  [__variant_converts]: Rect2 | Rect2i;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -116,6 +118,7 @@ declare interface Rect2 {
 }
 
 declare interface Rect2Constructor {
+  readonly prototype: Rect2;
   /** Constructs a {@link Rect2} with its {@link position} and {@link size} set to {@link Vector2.ZERO}. */
   (): Rect2;
   /** Constructs a {@link Rect2} as a copy of the given {@link Rect2}. */

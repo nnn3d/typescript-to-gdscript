@@ -70,6 +70,8 @@ declare interface Rect2i {
   [__ops_ne]: { right: Rect2i; ret: boolean };
   [__ops_eq]: { right: Rect2i; ret: boolean };
 
+  [__variant_converts]: Rect2i | Rect2;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -106,6 +108,7 @@ declare interface Rect2i {
 }
 
 declare interface Rect2iConstructor {
+  readonly prototype: Rect2i;
   /**
    * Constructs a {@link Rect2i} with its {@link position} and {@link size} set to {@link Vector2i.ZERO}.
    */

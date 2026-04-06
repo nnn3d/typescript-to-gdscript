@@ -116,6 +116,8 @@ declare interface Basis {
   [__ops_div]: { right: float; ret: Basis } | { right: int; ret: Basis };
   [__ops_eq]: { right: Basis; ret: boolean };
 
+  [__variant_converts]: Basis | Quaternion;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -154,6 +156,7 @@ declare interface Basis {
 }
 
 declare interface BasisConstructor {
+  readonly prototype: Basis;
   /**
    * Constructs a {@link Basis} identical to {@link IDENTITY}.
    * **Note:** In C#, this constructs a {@link Basis} with all of its components set to {@link Vector3.ZERO}.

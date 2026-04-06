@@ -55,8 +55,8 @@ class RenamedClassTest extends Node {
     obj2.get_class();
     obj2.has_method('test');
 
-    // GodotArray is the untyped array class
-    let arr = new Array();
+    // Array constructor is callable (no `new` — GDScript arrays can't be instantiated that way)
+    let arr = Array();
     arr.append('value');
     arr.size();
 

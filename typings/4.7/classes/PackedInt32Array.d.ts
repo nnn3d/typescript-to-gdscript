@@ -81,6 +81,10 @@ declare interface PackedInt32Array {
   [__ops_add]: { right: PackedInt32Array; ret: PackedInt32Array };
   [__ops_eq]: { right: PackedInt32Array; ret: boolean };
 
+  [__variant_converts]: PackedInt32Array | Array<unknown>;
+
+  [Symbol.iterator](): IterableIterator<int>;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   duplicate_deep: never;
@@ -110,6 +114,7 @@ declare interface PackedInt32Array {
 }
 
 declare interface PackedInt32ArrayConstructor {
+  readonly prototype: PackedInt32Array;
   /** Constructs an empty {@link PackedInt32Array}. */
   (): PackedInt32Array;
   /** Constructs a {@link PackedInt32Array} as a copy of the given {@link PackedInt32Array}. */

@@ -385,6 +385,17 @@ function generateInterfaceDeclaration(
 ): string {
   const lines: string[] = [];
 
+  // Collect variant convert types from single-parameter "from" constructors
+  const variantConvertTypes: string[] = [];
+  for (const ctor of cls.constructors) {
+    if (ctor.parameters.length === 1) {
+      const param = ctor.parameters[0]!;
+      if (param.name === 'from' || param.name.startsWith('from')) {
+        variantConvertTypes.push(godotTypeToTs(param.type));
+      }
+    }
+  }
+
   // Class-level JSDoc
   lines.push(...emitJsDoc(cls.briefDescription, ''));
   lines.push(`declare interface ${tsName} {`);
@@ -444,6 +455,12 @@ function generateInterfaceDeclaration(
   // Operator overloads
   if (cls.operators.length > 0) {
     lines.push(...emitOperatorOverloads(cls.operators));
+  }
+
+  // Variant convert types (for Array, Dictionary, etc.)
+  if (variantConvertTypes.length > 0) {
+    lines.push('');
+    lines.push(`  [__variant_converts]: ${variantConvertTypes.join(' | ')};`);
   }
 
   lines.push('}');
@@ -589,6 +606,27 @@ function generateValueTypeDeclaration(
   for (const prop of cls.properties) ownMembers.add(prop.name);
   for (const method of cls.methods) ownMembers.add(method.name);
 
+  // Collect variant convert types from single-parameter "from" constructors.
+  // These represent types that can be converted to this type via `gd.as(value, ClassName)`.
+  // For Array types, infer the item type from `append(value: T)` method signature (used for [Symbol.iterator]).
+  let itemType: string | null = null;
+  for (const method of cls.methods) {
+    if (method.name === 'append' && method.parameters.length === 1) {
+      itemType = godotTypeToTs(method.parameters[0]!.type);
+      break;
+    }
+  }
+  const variantConvertTypes: string[] = [];
+  for (const ctor of cls.constructors) {
+    if (ctor.parameters.length === 1) {
+      const param = ctor.parameters[0]!;
+      if (param.name === 'from' || param.name.startsWith('from')) {
+        // Keep Array<unknown> as-is — element type is exposed via [Symbol.iterator]
+        variantConvertTypes.push(godotTypeToTs(param.type));
+      }
+    }
+  }
+
   // Interface for instance members
   lines.push(...emitJsDoc(cls.briefDescription, ''));
   lines.push(`declare interface ${className} {`);
@@ -616,6 +654,19 @@ function generateValueTypeDeclaration(
     lines.push(...emitOperatorOverloads(cls.operators));
   }
 
+  // Variant convert types: enables `gd.as(value, ClassName)` type narrowing
+  if (variantConvertTypes.length > 0) {
+    lines.push('');
+    lines.push(`  [__variant_converts]: ${variantConvertTypes.join(' | ')};`);
+  }
+
+  // Iterator support for array-like types (when item type is known)
+  const isArrayLike = variantConvertTypes.some((t) => t.startsWith('Array<'));
+  if (isArrayLike && itemType) {
+    lines.push('');
+    lines.push(`  [Symbol.iterator](): IterableIterator<${itemType}>;`);
+  }
+
   // Anti-dict: override Dictionary members with never to prevent leaking through Object interface
   if (dictMembers && dictMembers.size > 0) {
     const toOverride = [...dictMembers]
@@ -637,6 +688,7 @@ function generateValueTypeDeclaration(
 
   // Constructor interface with static members
   lines.push(`declare interface ${className}Constructor {`);
+  lines.push(`  readonly prototype: ${className};`);
 
   // Constructor overloads from XML
   for (const ctor of cls.constructors) {
@@ -1500,22 +1552,25 @@ export function generateGodotDocsTypings(
         }
         fileLines.push('declare interface NewableFunction extends Function {}');
       }
-      // Array → keep ArrayConstructor + GodotArray constructor
+      // Array → ArrayConstructor with call signatures only (GDScript arrays can't use `new`)
       if (name === 'Array') {
         const hasGenerics = override?.header.includes('<') ?? false;
         const typeParam = hasGenerics ? '<T>' : '';
-        const unknownParam = hasGenerics ? '<unknown>' : '';
         fileLines.push('declare interface ArrayConstructor {');
         fileLines.push(`  ${typeParam}(): Array${typeParam};`);
-        fileLines.push(`  new ${typeParam}(): Array${typeParam};`);
-        fileLines.push(
-          `  new ${typeParam}(...items: ${hasGenerics ? 'T' : 'unknown'}[]): Array${typeParam};`,
-        );
+        fileLines.push(`  ${typeParam}(...items: ${hasGenerics ? 'T' : 'unknown'}[]): Array${typeParam};`);
+        // "from" constructors from Godot XML (PackedByteArray → Array<int>, etc.)
+        for (const ctor of cls.constructors) {
+          if (ctor.parameters.length !== 1) continue;
+          const param = ctor.parameters[0]!;
+          if (param.name !== 'from' && !param.name.startsWith('from')) continue;
+          const paramType = godotTypeToTs(param.type);
+          // Skip the `from: Array` variant (redundant with `(): Array`)
+          if (paramType.startsWith('Array')) continue;
+          fileLines.push(`  ${typeParam}(from_: ${paramType}): Array${typeParam};`);
+        }
         fileLines.push('}');
         fileLines.push('declare var Array: ArrayConstructor;');
-        fileLines.push(
-          `declare var GodotArray: { new(): Array${unknownParam} };`,
-        );
       }
 
       const fileName = `${name}.d.ts`;

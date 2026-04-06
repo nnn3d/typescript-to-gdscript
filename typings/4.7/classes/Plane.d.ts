@@ -66,6 +66,8 @@ declare interface Plane {
   [__ops_plus]: { ret: Plane };
   [__ops_minus]: { ret: Plane };
 
+  [__variant_converts]: Plane;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -104,6 +106,7 @@ declare interface Plane {
 }
 
 declare interface PlaneConstructor {
+  readonly prototype: Plane;
   /** Constructs a default-initialized {@link Plane} with all components set to `0`. */
   (): Plane;
   /** Constructs a {@link Plane} as a copy of the given {@link Plane}. */

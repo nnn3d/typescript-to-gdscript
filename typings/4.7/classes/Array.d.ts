@@ -278,14 +278,24 @@ declare interface Array<T = unknown> {
   [__ops_eq]: { right: Array<unknown>; ret: boolean };
   [__ops_gt]: { right: Array<unknown>; ret: boolean };
   [__ops_gte]: { right: Array<unknown>; ret: boolean };
+
+  [__variant_converts]: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array;
   [Symbol.iterator](): IterableIterator<T>;
   [index: number]: T;
 }
 
 declare interface ArrayConstructor {
   <T>(): Array<T>;
-  new <T>(): Array<T>;
-  new <T>(...items: T[]): Array<T>;
+  <T>(...items: T[]): Array<T>;
+  <T>(from_: PackedByteArray): Array<T>;
+  <T>(from_: PackedColorArray): Array<T>;
+  <T>(from_: PackedFloat32Array): Array<T>;
+  <T>(from_: PackedFloat64Array): Array<T>;
+  <T>(from_: PackedInt32Array): Array<T>;
+  <T>(from_: PackedInt64Array): Array<T>;
+  <T>(from_: PackedStringArray): Array<T>;
+  <T>(from_: PackedVector2Array): Array<T>;
+  <T>(from_: PackedVector3Array): Array<T>;
+  <T>(from_: PackedVector4Array): Array<T>;
 }
 declare var Array: ArrayConstructor;
-declare var GodotArray: { new(): Array<unknown> };

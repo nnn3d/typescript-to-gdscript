@@ -102,6 +102,8 @@ declare interface Function {
   // Operator overloads
   [__ops_ne]: { right: Callable; ret: boolean };
   [__ops_eq]: { right: Callable; ret: boolean };
+
+  [__variant_converts]: Callable;
 }
 
 type Callable = Function;

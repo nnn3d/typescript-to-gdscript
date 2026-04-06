@@ -81,6 +81,10 @@ declare interface PackedInt64Array {
   [__ops_add]: { right: PackedInt64Array; ret: PackedInt64Array };
   [__ops_eq]: { right: PackedInt64Array; ret: boolean };
 
+  [__variant_converts]: PackedInt64Array | Array<unknown>;
+
+  [Symbol.iterator](): IterableIterator<int>;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   duplicate_deep: never;
@@ -110,6 +114,7 @@ declare interface PackedInt64Array {
 }
 
 declare interface PackedInt64ArrayConstructor {
+  readonly prototype: PackedInt64Array;
   /** Constructs an empty {@link PackedInt64Array}. */
   (): PackedInt64Array;
   /** Constructs a {@link PackedInt64Array} as a copy of the given {@link PackedInt64Array}. */

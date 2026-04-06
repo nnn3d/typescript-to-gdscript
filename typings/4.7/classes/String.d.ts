@@ -469,5 +469,7 @@ declare interface String {
   [__ops_eq]: { right: string; ret: boolean } | { right: string; ret: boolean };
   [__ops_gt]: { right: string; ret: boolean };
   [__ops_gte]: { right: string; ret: boolean };
+
+  [__variant_converts]: string | string | string;
 }
 

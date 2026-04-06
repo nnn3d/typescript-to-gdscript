@@ -136,6 +136,8 @@ declare interface Object {
   // Operator overloads
   [__ops_ne]: { right: Dictionary; ret: boolean };
   [__ops_eq]: { right: Dictionary; ret: boolean };
+
+  [__variant_converts]: Dictionary;
 }
 
 type Dictionary = Object;

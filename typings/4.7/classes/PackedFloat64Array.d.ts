@@ -94,6 +94,10 @@ declare interface PackedFloat64Array {
   [__ops_add]: { right: PackedFloat64Array; ret: PackedFloat64Array };
   [__ops_eq]: { right: PackedFloat64Array; ret: boolean };
 
+  [__variant_converts]: PackedFloat64Array | Array<unknown>;
+
+  [Symbol.iterator](): IterableIterator<float>;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   duplicate_deep: never;
@@ -123,6 +127,7 @@ declare interface PackedFloat64Array {
 }
 
 declare interface PackedFloat64ArrayConstructor {
+  readonly prototype: PackedFloat64Array;
   /** Constructs an empty {@link PackedFloat64Array}. */
   (): PackedFloat64Array;
   /** Constructs a {@link PackedFloat64Array} as a copy of the given {@link PackedFloat64Array}. */

@@ -91,11 +91,4 @@ class ArrayTest extends Node {
     let node: Node = nodes[0];
   }
 
-  test_godot_array_class() {
-    // GodotArray class also exists (untyped version)
-    let arr = new GodotArray();
-    arr.append('hello');
-    arr.size();
-    arr.has('test');
-  }
 }

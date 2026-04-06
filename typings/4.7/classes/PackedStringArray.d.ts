@@ -78,6 +78,10 @@ declare interface PackedStringArray {
   [__ops_add]: { right: PackedStringArray; ret: PackedStringArray };
   [__ops_eq]: { right: PackedStringArray; ret: boolean };
 
+  [__variant_converts]: PackedStringArray | Array<unknown>;
+
+  [Symbol.iterator](): IterableIterator<string>;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   duplicate_deep: never;
@@ -107,6 +111,7 @@ declare interface PackedStringArray {
 }
 
 declare interface PackedStringArrayConstructor {
+  readonly prototype: PackedStringArray;
   /** Constructs an empty {@link PackedStringArray}. */
   (): PackedStringArray;
   /** Constructs a {@link PackedStringArray} as a copy of the given {@link PackedStringArray}. */

@@ -53,6 +53,10 @@ declare const __ops_rem: unique symbol;
 declare const __ops_plus: unique symbol;
 declare const __ops_minus: unique symbol;
 
+// ─── Primitive Convert Symbols ───────────────────────────────────
+
+declare const __variant_converts: unique symbol;
+
 // ─── Operator Type Dispatch ───────────────────────────────────
 
 /**
@@ -151,10 +155,24 @@ declare const gd: {
   ) => void;
 
   /** GDScript `as` operator. Transforms to `value as Type` in GDScript. */
-  readonly as: <T, U>(
+  /** Variant conversion to plain Array: extracts the array variant from the source's __variant_converts. */
+  as<
+    T extends { [__variant_converts]: any } & Array[typeof __variant_converts],
+  >(
+    value: T,
+    type: ArrayConstructor,
+  ): T extends { [Symbol.iterator](): IterableIterator<infer A> }
+    ? A[]
+    : unknown[];
+  /** Variant conversion: convert between primitive value types (Vector2 ↔ Vector2i, etc.) */
+  as<U extends { prototype: { [__variant_converts]: any } }>(
+    value: U['prototype'][typeof __variant_converts],
+    type: U,
+  ): U['prototype'];
+  as<T, U>(
     value: T,
     type: new (...args: any[]) => U,
-  ) => T extends U ? U : U | null;
+  ): T extends U ? U : U | null;
 
   /**
    * Emit raw GDScript code. The string is inserted as-is into the output.

@@ -16,6 +16,8 @@ declare interface RID {
   [__ops_gt]: { right: RID; ret: boolean };
   [__ops_gte]: { right: RID; ret: boolean };
 
+  [__variant_converts]: RID;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -54,6 +56,7 @@ declare interface RID {
 }
 
 declare interface RIDConstructor {
+  readonly prototype: RID;
   /** Constructs an empty {@link RID} with the invalid ID `0`. */
   (): RID;
   /** Constructs an {@link RID} as a copy of the given {@link RID}. */

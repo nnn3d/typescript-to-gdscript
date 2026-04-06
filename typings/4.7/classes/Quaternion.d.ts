@@ -107,6 +107,8 @@ declare interface Quaternion {
   [__ops_plus]: { ret: Quaternion };
   [__ops_minus]: { ret: Quaternion };
 
+  [__variant_converts]: Quaternion | Basis;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -145,6 +147,7 @@ declare interface Quaternion {
 }
 
 declare interface QuaternionConstructor {
+  readonly prototype: Quaternion;
   /**
    * Constructs a {@link Quaternion} identical to {@link IDENTITY}.
    * **Note:** In C#, this constructs a {@link Quaternion} with all of its components set to `0.0`.

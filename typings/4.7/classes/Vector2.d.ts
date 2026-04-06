@@ -219,6 +219,8 @@ declare interface Vector2 {
   [__ops_plus]: { ret: Vector2 };
   [__ops_minus]: { ret: Vector2 };
 
+  [__variant_converts]: Vector2 | Vector2i;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -257,6 +259,7 @@ declare interface Vector2 {
 }
 
 declare interface Vector2Constructor {
+  readonly prototype: Vector2;
   /** Constructs a default-initialized {@link Vector2} with all components set to `0`. */
   (): Vector2;
   /** Constructs a {@link Vector2} as a copy of the given {@link Vector2}. */

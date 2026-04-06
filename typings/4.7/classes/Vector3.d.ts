@@ -211,6 +211,8 @@ declare interface Vector3 {
   [__ops_plus]: { ret: Vector3 };
   [__ops_minus]: { ret: Vector3 };
 
+  [__variant_converts]: Vector3 | Vector3i;
+
   // Dictionary method overrides (prevent Object interface leaking)
   assign: never;
   clear: never;
@@ -249,6 +251,7 @@ declare interface Vector3 {
 }
 
 declare interface Vector3Constructor {
+  readonly prototype: Vector3;
   /** Constructs a default-initialized {@link Vector3} with all components set to `0`. */
   (): Vector3;
   /** Constructs a {@link Vector3} as a copy of the given {@link Vector3}. */
