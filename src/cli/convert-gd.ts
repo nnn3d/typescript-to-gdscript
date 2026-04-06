@@ -31,6 +31,10 @@ export function registerConvertGdCommand(program: Command): void {
       '--no-operator-fix-helper',
       'Disable TS-based operator type error auto-fix (gd.ops wrapping)',
     )
+    .option(
+      '--no-explicit-convert-helper',
+      'Disable TS-based variant-type auto-fix (inserts explicit gd.as conversions)',
+    )
     .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
     .action((files: string[], opts) => {
       const cfg = resolveConfig({
@@ -122,17 +126,22 @@ export function registerConvertGdCommand(program: Command): void {
         tsFiles: tsOutputFiles,
       });
 
-      // Run TS-based post-processing helpers (operator fix, etc.)
+      // Run TS-based post-processing helpers (operator fix, explicit convert)
       const operatorFixEnabled = !opts.noHelpers && !opts.noOperatorFixHelper;
-      if (operatorFixEnabled && tsOutputFiles.length > 0) {
+      const explicitConvertEnabled = !opts.noHelpers && !opts.noExplicitConvertHelper;
+      if ((operatorFixEnabled || explicitConvertEnabled) && tsOutputFiles.length > 0) {
         const helperResult = runTsHelpers({
           files: tsOutputFiles,
           rootDir: cfg.rootDir,
           tsConfigPath: cfg.tsconfig,
-          helpers: { operatorFix: true },
+          registry,
+          helpers: {
+            operatorFix: operatorFixEnabled,
+            explicitConvert: explicitConvertEnabled,
+          },
         });
         if (helperResult.fixedFiles.length > 0) {
-          debugLog(`Operator fix: patched ${helperResult.fixedFiles.length} file(s)`);
+          debugLog(`TS helpers: patched ${helperResult.fixedFiles.length} file(s)`);
         }
       }
 

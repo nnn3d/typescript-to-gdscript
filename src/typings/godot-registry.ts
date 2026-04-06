@@ -23,6 +23,12 @@ export interface GodotClassInfo {
   signals: GodotSignalInfo[];
   constants: string[];
   enums: GodotEnumInfo[];
+  /**
+   * List of variant types that can be converted to this class via `gd.as(value, ClassName)`.
+   * Computed from single-parameter "from" constructors.
+   * Example: Vector2 has variantConverts = ["Vector2", "Vector2i"]
+   */
+  variantConverts?: string[];
 }
 
 export interface GodotEnumInfo {
@@ -526,6 +532,17 @@ export function generateRegistryData(
       }
     }
 
+    // Compute variantConverts: types accepted by single-parameter "from" constructors
+    const variantConverts: string[] = [];
+    for (const ctor of cls.constructors) {
+      if (ctor.parameters.length === 1) {
+        const param = ctor.parameters[0]!;
+        if (param.name === 'from' || param.name.startsWith('from')) {
+          variantConverts.push(param.type);
+        }
+      }
+    }
+
     registry.classes[name] = {
       name,
       inherits: cls.inherits ?? null,
@@ -538,6 +555,7 @@ export function generateRegistryData(
       })),
       constants: cls.constants.filter((c) => !c.enumName).map((c) => c.name),
       enums: cls.enums,
+      ...(variantConverts.length > 0 ? { variantConverts } : {}),
     };
   }
 
@@ -606,6 +624,21 @@ export class GodotClassRegistry {
   /** Check if a name is a constructor type (Vector2, Color, etc) */
   isConstructor(name: string): boolean {
     return this.constructorsSet.has(name);
+  }
+
+  /**
+   * Check if a source type can be converted to a target type via `gd.as(value, Target)`.
+   * Returns true when the target class has the source type in its `variantConverts` list.
+   */
+  canVariantConvert(source: string, target: string): boolean {
+    const targetCls = this.data.classes[target];
+    if (!targetCls?.variantConverts) return false;
+    return targetCls.variantConverts.includes(source);
+  }
+
+  /** Get the list of types that can be converted to a given target class. */
+  getVariantConverts(target: string): string[] {
+    return this.data.classes[target]?.variantConverts ?? [];
   }
 
   /** Check if a name is a global singleton instance (Engine, Input, ProjectSettings, etc.) */

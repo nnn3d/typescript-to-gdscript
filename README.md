@@ -118,6 +118,7 @@ Options:
 - `--no-helpers` — Disable all GD-to-TS conversion helpers
 - `--no-signal-handler-helper` — Disable signal handler type inference from `.tscn` connections
 - `--no-operator-fix-helper` — Disable TS-based operator type error auto-fix
+- `--no-explicit-convert-helper` — Disable TS-based variant-type auto-fix (explicit `gd.as` insertion)
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `/* ERROR: ... */` comments)
 
 #### Conversion Helpers
@@ -127,6 +128,8 @@ GD-to-TS conversion includes optional helpers that enhance the output:
 - **Signal handler helper** (default: enabled) — Scans `.tscn` scene files for signal connections and adds typed parameter annotations to signal handler methods (e.g., `_on_area_entered(area: Area2D)` instead of untyped `_on_area_entered(area)`).
 
 - **Operator fix helper** (default: enabled) — After conversion and typings generation, runs the TypeScript type-checker on converted files to find operator type errors (e.g., `Vector2 + Vector2`). Automatically wraps them in `gd.ops.X()` calls (e.g., `gd.ops.add(v1, v2)`). Catches cases that GDScript-time type inference misses (inherited members, method return values, etc.).
+
+- **Explicit convert helper** (default: enabled) — Runs alongside operator fix. Detects TS2345/TS2322 assignment/argument errors where the source and target are both variant types (Vector2 ↔ Vector2i, PackedColorArray ↔ Array, etc.) and inserts an explicit `gd.as(value, Target)` conversion. Uses `variantConverts` metadata in `godot-class-registry.json` (derived from Godot XML "from" constructors). Example: `wants_v2i(Vector2.DOWN)` → `wants_v2i(gd.as(Vector2.DOWN, Vector2i))`.
 
 ### `ts2gd watch`
 

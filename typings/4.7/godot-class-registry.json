@@ -39,7 +39,10 @@
       ],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "AABB"
+      ]
     },
     "AcceptDialog": {
       "name": "AcceptDialog",
@@ -2728,7 +2731,20 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Array",
+        "PackedByteArray",
+        "PackedColorArray",
+        "PackedFloat32Array",
+        "PackedFloat64Array",
+        "PackedInt32Array",
+        "PackedInt64Array",
+        "PackedStringArray",
+        "PackedVector2Array",
+        "PackedVector3Array",
+        "PackedVector4Array"
+      ]
     },
     "ArrayMesh": {
       "name": "ArrayMesh",
@@ -5717,7 +5733,11 @@
         "FLIP_Y",
         "FLIP_Z"
       ],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Basis",
+        "Quaternion"
+      ]
     },
     "BitMap": {
       "name": "BitMap",
@@ -5980,7 +6000,12 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "bool",
+        "float",
+        "int"
+      ]
     },
     "BoxContainer": {
       "name": "BoxContainer",
@@ -6184,7 +6209,10 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Callable"
+      ]
     },
     "CallbackTweener": {
       "name": "CallbackTweener",
@@ -8514,7 +8542,10 @@
         "YELLOW",
         "YELLOW_GREEN"
       ],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Color"
+      ]
     },
     "ColorPalette": {
       "name": "ColorPalette",
@@ -10973,7 +11004,10 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Dictionary"
+      ]
     },
     "DirAccess": {
       "name": "DirAccess",
@@ -16321,7 +16355,13 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "float",
+        "String",
+        "bool",
+        "int"
+      ]
     },
     "FlowContainer": {
       "name": "FlowContainer",
@@ -20733,7 +20773,13 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "int",
+        "String",
+        "bool",
+        "float"
+      ]
     },
     "IntervalTweener": {
       "name": "IntervalTweener",
@@ -26686,7 +26732,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "NodePath",
+        "String"
+      ]
     },
     "Object": {
       "name": "Object",
@@ -27274,7 +27324,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "PackedByteArray",
+        "Array"
+      ]
     },
     "PackedColorArray": {
       "name": "PackedColorArray",
@@ -27308,7 +27362,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "PackedColorArray",
+        "Array"
+      ]
     },
     "PackedDataContainer": {
       "name": "PackedDataContainer",
@@ -27367,7 +27425,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "PackedFloat32Array",
+        "Array"
+      ]
     },
     "PackedFloat64Array": {
       "name": "PackedFloat64Array",
@@ -27401,7 +27463,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "PackedFloat64Array",
+        "Array"
+      ]
     },
     "PackedInt32Array": {
       "name": "PackedInt32Array",
@@ -27435,7 +27501,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "PackedInt32Array",
+        "Array"
+      ]
     },
     "PackedInt64Array": {
       "name": "PackedInt64Array",
@@ -27469,7 +27539,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "PackedInt64Array",
+        "Array"
+      ]
     },
     "PackedScene": {
       "name": "PackedScene",
@@ -27540,7 +27614,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "PackedStringArray",
+        "Array"
+      ]
     },
     "PackedVector2Array": {
       "name": "PackedVector2Array",
@@ -27574,7 +27652,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "PackedVector2Array",
+        "Array"
+      ]
     },
     "PackedVector3Array": {
       "name": "PackedVector3Array",
@@ -27608,7 +27690,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "PackedVector3Array",
+        "Array"
+      ]
     },
     "PackedVector4Array": {
       "name": "PackedVector4Array",
@@ -27642,7 +27728,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "PackedVector4Array",
+        "Array"
+      ]
     },
     "PacketPeer": {
       "name": "PacketPeer",
@@ -31690,7 +31780,10 @@
         "PLANE_XZ",
         "PLANE_XY"
       ],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Plane"
+      ]
     },
     "PlaneMesh": {
       "name": "PlaneMesh",
@@ -32382,6 +32475,10 @@
             }
           ]
         }
+      ],
+      "variantConverts": [
+        "Projection",
+        "Transform3D"
       ]
     },
     "ProjectSettings": {
@@ -33444,7 +33541,11 @@
       "constants": [
         "IDENTITY"
       ],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Quaternion",
+        "Basis"
+      ]
     },
     "RandomNumberGenerator": {
       "name": "RandomNumberGenerator",
@@ -34215,7 +34316,11 @@
       ],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Rect2",
+        "Rect2i"
+      ]
     },
     "Rect2i": {
       "name": "Rect2i",
@@ -34243,7 +34348,11 @@
       ],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Rect2i",
+        "Rect2"
+      ]
     },
     "RectangleShape2D": {
       "name": "RectangleShape2D",
@@ -41179,7 +41288,10 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "RID"
+      ]
     },
     "RigidBody2D": {
       "name": "RigidBody2D",
@@ -42867,7 +42979,10 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Signal"
+      ]
     },
     "Skeleton2D": {
       "name": "Skeleton2D",
@@ -45098,7 +45213,12 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "String",
+        "NodePath",
+        "StringName"
+      ]
     },
     "StringName": {
       "name": "StringName",
@@ -45219,7 +45339,11 @@
       "properties": [],
       "signals": [],
       "constants": [],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "StringName",
+        "String"
+      ]
     },
     "StyleBox": {
       "name": "StyleBox",
@@ -49645,7 +49769,10 @@
         "FLIP_X",
         "FLIP_Y"
       ],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Transform2D"
+      ]
     },
     "Transform3D": {
       "name": "Transform3D",
@@ -49677,7 +49804,11 @@
         "FLIP_Y",
         "FLIP_Z"
       ],
-      "enums": []
+      "enums": [],
+      "variantConverts": [
+        "Transform3D",
+        "Projection"
+      ]
     },
     "Translation": {
       "name": "Translation",
@@ -50755,6 +50886,10 @@
             }
           ]
         }
+      ],
+      "variantConverts": [
+        "Vector2",
+        "Vector2i"
       ]
     },
     "Vector2i": {
@@ -50809,6 +50944,10 @@
             }
           ]
         }
+      ],
+      "variantConverts": [
+        "Vector2i",
+        "Vector2"
       ]
     },
     "Vector3": {
@@ -50906,6 +51045,10 @@
             }
           ]
         }
+      ],
+      "variantConverts": [
+        "Vector3",
+        "Vector3i"
       ]
     },
     "Vector3i": {
@@ -50966,6 +51109,10 @@
             }
           ]
         }
+      ],
+      "variantConverts": [
+        "Vector3i",
+        "Vector3"
       ]
     },
     "Vector4": {
@@ -51040,6 +51187,10 @@
             }
           ]
         }
+      ],
+      "variantConverts": [
+        "Vector4",
+        "Vector4i"
       ]
     },
     "Vector4i": {
@@ -51099,6 +51250,10 @@
             }
           ]
         }
+      ],
+      "variantConverts": [
+        "Vector4i",
+        "Vector4"
       ]
     },
     "VehicleBody3D": {
