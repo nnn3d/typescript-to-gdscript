@@ -120,6 +120,7 @@ Options:
 - `--no-operator-fix-helper` — Disable TS-based operator type error auto-fix
 - `--no-explicit-convert-helper` — Disable TS-based variant-type auto-fix (explicit `gd.as` insertion)
 - `--no-ready-field-types-helper` — Disable TS-based class property auto-fix (adds `!` and infers types from `_ready()` assignments)
+- `--no-extends-type-helper` — Disable TS-based override-method parameter auto-fix (copies parameter types from parent class)
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `/* ERROR: ... */` comments)
 
 #### Conversion Helpers
@@ -132,12 +133,39 @@ GD-to-TS conversion includes optional helpers that enhance the output:
 
 - **Explicit convert helper** (default: enabled) — Runs alongside operator fix. Detects TS2345/TS2322 assignment/argument errors where the source and target are both variant types (Vector2 ↔ Vector2i, PackedColorArray ↔ Array, etc.) and inserts an explicit `gd.as(value, Target)` conversion. Uses `variantConverts` metadata in `godot-class-registry.json` (derived from Godot XML "from" constructors). Example: `wants_v2i(Vector2.DOWN)` → `wants_v2i(gd.as(Vector2.DOWN, Vector2i))`.
 
-- **Ready field types helper** (default: enabled) — Detects TS7008 ("Member implicitly has an any type") and TS2564 ("Property has no initializer") on class properties. For each error, adds the definite-assignment `!` operator and, when no type is declared, infers it from the property's assignment inside `_ready()`. Example:
+- **Extends type helper** (default: enabled) — Detects TS7006 ("Parameter X implicitly has an any type") on method parameters where the method overrides one inherited from a parent class. Copies the parameter types from the parent class signature, preserving type aliases (`float`, `int`) by using the syntactic type text from the parent's `.d.ts`. Example:
+
+  ```typescript
+  class Player extends Node2D {
+    _process(delta) {        // TS7006
+      this.position.x += delta;
+    }
+    _input(event) {}         // TS7006
+  }
+  ```
+  becomes:
+  ```typescript
+  class Player extends Node2D {
+    _process(delta: float) {
+      this.position.x += delta;
+    }
+    _input(event: InputEvent) {}
+  }
+  ```
+  Methods that don't override anything (`custom_method(arg)`) are left untouched.
+
+- **Ready field types helper** (default: enabled) — Detects TS7008 ("Member implicitly has an any type") and TS2564 ("Property has no initializer") on class properties:
+  - **TS2564** (`field: Type;`) — if assigned in `_ready()`, adds `!` (definite-assignment). If not assigned in `_ready()` but the type is a GDScript primitive (`int`, `float`, `bool`, `String`, `Vector2`, `Color`, any value type with a guaranteed default), still adds `!`. Otherwise marks the field optional with `?`.
+  - **TS7008** (`field;`) — if assigned in `_ready()`, adds `!: <inferred type>` (type taken from the `_ready()` expression). Otherwise left untouched (no type to infer from).
+
+  Example:
 
   ```typescript
   class Game extends Node {
-    time: float;                   // TS2564
-    progress_bar;                  // TS7008
+    time: float;                   // TS2564, assigned in _ready
+    progress_bar;                  // TS7008, assigned in _ready
+    score: int;                    // TS2564, NOT assigned, but primitive
+    target: Node2D;                // TS2564, NOT assigned, not primitive
 
     _ready() {
       this.time = 0.0;
@@ -148,8 +176,10 @@ GD-to-TS conversion includes optional helpers that enhance the output:
   becomes:
   ```typescript
   class Game extends Node {
-    time!: float;
-    progress_bar!: typeof this.game_ui.progress_bar;
+    time!: float;                                    // assigned → `!`
+    progress_bar!: typeof this.game_ui.progress_bar; // assigned → `!: <inferred>`
+    score!: int;                                     // primitive → `!`
+    target?: Node2D;                                 // non-primitive → `?`
 
     _ready() {
       this.time = 0.0;

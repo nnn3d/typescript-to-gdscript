@@ -209,6 +209,7 @@ async function makeTsHelperTmp(
         moduleResolution: 'Node16',
         strict: true,
         noEmit: true,
+        noLib: true,
         types: [],
       },
       include: [typingsDir, './*.ts'],
@@ -331,32 +332,88 @@ describe('GD to TS: Explicit convert helper', () => {
   });
 });
 
-describe('GD to TS: Ready field types helper', () => {
-  it('should add `!` and infer types from _ready() assignments', async () => {
+describe('GD to TS: Extends type helper', () => {
+  it('should copy parameter types from parent class for overridden methods', async () => {
     const { runTsHelpers } = await import('../../src/converter/gd-to-ts/ts-helpers.js');
+    const { readFileSync: readFile } = await import('fs');
+
+    const { tmpDir, cleanup, writeFile } = await makeTsHelperTmp('extends-type');
+    try {
+      // `_process(delta: float)` and `_input(event: InputEvent)` are both
+      // inherited from Node on Node2D — overriding without types should be
+      // fixed up by the extends-type helper.
+      const tsContent = [
+        'export class TestExtends extends Node2D {',
+        '  _process(delta) {',
+        '    let x = delta;',
+        '  }',
+        '  _input(event) {',
+        '    let y = event;',
+        '  }',
+        '  custom_method(arg) {',
+        '    return arg;',
+        '  }',
+        '}',
+      ].join('\n');
+      const filePath = writeFile('test-extends.ts', tsContent);
+
+      const result = runTsHelpers({
+        files: [filePath],
+        rootDir: tmpDir,
+        tsConfigPath: join(tmpDir, 'tsconfig.json'),
+        helpers: {
+          operatorFix: false,
+          explicitConvert: false,
+          readyFieldTypes: false,
+        },
+      });
+
+      expect(result.fixedFiles.length).toBe(1);
+      const fixed = readFile(filePath, 'utf-8');
+
+      // Inherited method parameters gain types from the parent class
+      expect(fixed).toContain('_process(delta: float)');
+      expect(fixed).toContain('_input(event: InputEvent)');
+
+      // Methods that don't override anything are left untouched
+      expect(fixed).toContain('custom_method(arg)');
+    } finally {
+      cleanup();
+    }
+  });
+});
+
+describe('GD to TS: Ready field types helper', () => {
+  it('should add `!` for _ready/primitives, `?` otherwise, and skip when nothing to infer', async () => {
+    const { runTsHelpers } = await import('../../src/converter/gd-to-ts/ts-helpers.js');
+    const { resolveRegistry } = await import('../../src/config/index.js');
     const { readFileSync: readFile } = await import('fs');
 
     const { tmpDir, cleanup, writeFile } = await makeTsHelperTmp('ready-field-types');
     try {
-      // Use an inherited Node2D property (`position` → Vector2) to exercise the
-      // PropertyAccessExpression → `typeof this.X` inference path, and a numeric
-      // literal to exercise the literal-widening path via the TS type checker.
       const tsContent = [
         'export class TestReady extends Node2D {',
-        '  // TS2564: has type but no initializer',
+        '  // TS2564 + assigned in _ready → `!`',
         '  time: float;',
-        '  // TS7008: no type — RHS is PropertyAccessExpression',
+        '  // TS7008 + assigned in _ready → `!: typeof ...`',
         '  pos_ref;',
-        '  // TS7008: no type — RHS is a numeric literal (should widen to `number`)',
+        '  // TS7008 + literal RHS in _ready → widened via checker',
         '  count;',
-        '  // Already has `!` — must not be touched',
+        '  // TS2564 + NOT in _ready, but PRIMITIVE type → `!`',
+        '  prim_int: int;',
+        '  // TS2564 + NOT in _ready, primitive Vector2 → `!`',
+        '  prim_vec: Vector2;',
+        '  // TS2564 + NOT in _ready, NOT primitive (Node2D) → `?`',
+        '  not_prim: Node2D;',
+        '  // TS7008 + NOT in _ready → left alone',
+        '  unrelated_untyped;',
+        '  // Already has `!` — untouched',
         '  already!: int;',
         '',
         '  _ready() {',
         '    this.time = 0.0;',
         '    this.pos_ref = this.position;',
         '    this.count = 42;',
-        '    this.already = 1;',
         '  }',
         '}',
       ].join('\n');
@@ -366,18 +423,31 @@ describe('GD to TS: Ready field types helper', () => {
         files: [filePath],
         rootDir: tmpDir,
         tsConfigPath: join(tmpDir, 'tsconfig.json'),
-        helpers: { operatorFix: false, explicitConvert: false },
+        registry: resolveRegistry(),
+        helpers: { operatorFix: false, explicitConvert: false, extendsType: false },
       });
 
       expect(result.fixedFiles.length).toBe(1);
       const fixed = readFile(filePath, 'utf-8');
 
-      // TS2564: has type → just adds `!`
+      // _ready-assigned fields ARE fixed with `!`
       expect(fixed).toContain('time!: float;');
-      // TS7008 + PropertyAccess RHS → `typeof this.position`
       expect(fixed).toContain('pos_ref!: typeof this.position;');
-      // TS7008 + literal RHS → widened via checker (`number`, not `42`)
       expect(fixed).toContain('count!: number;');
+
+      // Primitive types not in _ready → still get `!` (GDScript default value)
+      expect(fixed).toContain('prim_int!: int;');
+      expect(fixed).toContain('prim_vec!: Vector2;');
+
+      // Non-primitive type not in _ready → `?`
+      expect(fixed).toContain('not_prim?: Node2D;');
+      expect(fixed).not.toContain('not_prim!');
+
+      // TS7008 + NOT in _ready → still untouched (no type to infer)
+      expect(fixed).toContain('unrelated_untyped;');
+      expect(fixed).not.toContain('unrelated_untyped!');
+      expect(fixed).not.toContain('unrelated_untyped?');
+
       // Existing `!` untouched (no double-bang)
       expect(fixed).toContain('already!: int;');
       expect(fixed).not.toContain('already!!:');

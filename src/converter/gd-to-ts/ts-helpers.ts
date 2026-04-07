@@ -31,6 +31,8 @@ export interface TsHelperOptions {
     explicitConvert?: boolean;
     /** Fix TS7008/TS2564 on class properties by adding `!` and inferring type from `_ready()` assignments */
     readyFieldTypes?: boolean;
+    /** Fix TS7006 implicit-any parameters on overridden methods by copying types from the parent class */
+    extendsType?: boolean;
   };
 }
 
@@ -399,13 +401,49 @@ function inferTypeFromExpression(
 }
 
 /**
- * Collect TS7008/TS2564 errors on class properties and produce fixes that
- * add `!` (definite assignment) and, for TS7008, a type annotation inferred
- * from the property's assignment inside `_ready()`.
+ * Names of GDScript primitive/value types that always have a non-null default
+ * value at runtime (so they're effectively initialized even without an
+ * explicit assignment). For TS2564 fields of these types, we add `!` even if
+ * there's no `_ready()` assignment.
+ */
+const GD_BUILTIN_PRIMITIVE_TYPES = new Set([
+  'int',
+  'float',
+  'bool',
+  'boolean',
+  'string',
+  'String',
+  'number',
+]);
+
+function isGdPrimitiveType(
+  typeText: string,
+  registry: GodotClassRegistry | undefined,
+): boolean {
+  const t = typeText.trim();
+  if (GD_BUILTIN_PRIMITIVE_TYPES.has(t)) return true;
+  // Strip generic params for checks like `Array<int>` → `Array`
+  const bare = t.replace(/<.*>$/, '').trim();
+  if (GD_BUILTIN_PRIMITIVE_TYPES.has(bare)) return true;
+  // All Godot value types (Vector2, Color, Packed*Array, Array, Dictionary,
+  // StringName, NodePath, Callable, Signal, etc.) are listed in the
+  // registry's `constructors` field — they all have GDScript default values.
+  return !!registry?.isConstructor(bare);
+}
+
+/**
+ * Collect TS7008/TS2564 errors on class properties that are assigned in
+ * `_ready()` and produce fixes:
+ * - For both error codes, only fields assigned in `_ready()` are considered.
+ * - Adds `!` (definite-assignment assertion) so TypeScript stops complaining
+ *   about missing initializers.
+ * - For TS7008 (no type declared), additionally inserts a type annotation
+ *   inferred from the `_ready()` assignment expression.
  */
 function collectReadyFieldTypeFixes(
   program: ts.Program,
   filePaths: Set<string>,
+  registry: GodotClassRegistry | undefined,
 ): Map<string, SourceFix[]> {
   const fixesByFile = new Map<string, SourceFix[]>();
   const checker = program.getTypeChecker();
@@ -449,20 +487,33 @@ function collectReadyFieldTypeFixes(
       const nameEnd = propDecl.name.getEnd();
       if (overlapsExisting(nameEnd, nameEnd + 1)) continue;
 
-      // Already has a `!` (definite-assignment assertion) — skip
-      if (propDecl.exclamationToken) continue;
+      // Already has a `!` (definite-assignment assertion) or a `?` (optional)
+      // — skip in either case.
+      if (propDecl.exclamationToken || propDecl.questionToken) continue;
+
+      const cls = findEnclosingClass(propDecl);
+      if (!cls) continue;
+      const rhs = findReadyAssignment(cls, propName);
 
       let insertText: string;
       if (diag.code === 2564) {
-        // Has a type, just needs `!`
-        insertText = '!';
+        // Property has a type but no initializer.
+        //  - Assigned in _ready  → `!` (definite-assignment assertion)
+        //  - GDScript primitive type (int, float, Vector2, Color, etc.) → `!`
+        //    (these always have a non-null default value at runtime)
+        //  - Otherwise → `?` (mark as optional)
+        if (rhs) {
+          insertText = '!';
+        } else {
+          const declaredType = propDecl.type
+            ? propDecl.type.getText(sourceFile)
+            : '';
+          insertText = isGdPrimitiveType(declaredType, registry) ? '!' : '?';
+        }
       } else {
-        // TS7008: no type declared — infer from _ready assignment
-        if (propDecl.type) continue; // Already typed; nothing to do here
-        const cls = findEnclosingClass(propDecl);
-        if (!cls) continue;
-        const rhs = findReadyAssignment(cls, propName);
-        if (!rhs) continue; // No assignment in _ready — can't infer
+        // TS7008: no type declared — only fixable if we can infer from _ready
+        if (propDecl.type) continue;
+        if (!rhs) continue;
         const typeText = inferTypeFromExpression(rhs, checker, sourceFile);
         if (!typeText || typeText === 'any' || typeText === 'error') continue;
         insertText = `!: ${typeText}`;
@@ -479,6 +530,150 @@ function collectReadyFieldTypeFixes(
         replacement: insertText,
       });
       fixedRanges.push({ start: nameEnd, end: nameEnd + insertText.length });
+    }
+  }
+
+  return fixesByFile;
+}
+
+// ─── Extends Type Helper ─────────────────────────────────────
+
+/**
+ * TS error code for implicit-any parameters.
+ * - TS7006: Parameter 'X' implicitly has an 'any' type.
+ */
+const TS_IMPLICIT_ANY_PARAM_CODE = 7006;
+
+/**
+ * Walk up from a node to find the enclosing MethodDeclaration.
+ */
+function findEnclosingMethod(node: ts.Node): ts.MethodDeclaration | undefined {
+  let current: ts.Node | undefined = node;
+  while (current) {
+    if (ts.isMethodDeclaration(current)) return current;
+    current = current.parent;
+  }
+  return undefined;
+}
+
+/**
+ * Look up the parent-class signature for a method by name, walking the
+ * inheritance chain via the TS checker. Returns the first call signature found.
+ */
+function findParentMethodSignature(
+  cls: ts.ClassDeclaration,
+  methodName: string,
+  checker: ts.TypeChecker,
+): ts.Signature | undefined {
+  // Use the class's own declared type and walk its base types via the checker.
+  // This correctly resolves `Node2D → CanvasItem → Node` for overridden methods.
+  const classType = checker.getTypeAtLocation(cls);
+  const baseTypes = classType.getBaseTypes() ?? [];
+  for (const baseType of baseTypes) {
+    const symbol = baseType.getProperty(methodName);
+    if (!symbol) continue;
+    const decl = symbol.valueDeclaration ?? symbol.getDeclarations()?.[0];
+    if (!decl) continue;
+    const methodType = checker.getTypeOfSymbolAtLocation(symbol, decl);
+    const signatures = methodType.getCallSignatures();
+    if (signatures.length > 0) return signatures[0];
+  }
+  return undefined;
+}
+
+/**
+ * Collect TS7006 errors on parameters of methods that override inherited
+ * methods, and produce type-annotation insertion fixes using the parent's
+ * parameter types.
+ */
+function collectExtendsTypeFixes(
+  program: ts.Program,
+  filePaths: Set<string>,
+): Map<string, SourceFix[]> {
+  const fixesByFile = new Map<string, SourceFix[]>();
+  const checker = program.getTypeChecker();
+
+  for (const sourceFile of program.getSourceFiles()) {
+    const fileName = sourceFile.fileName;
+    if (!filePaths.has(fileName)) continue;
+
+    const diagnostics = program.getSemanticDiagnostics(sourceFile);
+
+    // Cache parent signatures per (class,method) to avoid repeated lookups
+    const sigCache = new Map<string, ts.Signature | undefined>();
+
+    for (const diag of diagnostics) {
+      if (diag.code !== TS_IMPLICIT_ANY_PARAM_CODE) continue;
+      if (diag.start === undefined || diag.length === undefined) continue;
+
+      const node = findNodeAt(sourceFile, diag.start, diag.length);
+      if (!node) continue;
+
+      // Walk up to the Parameter
+      let paramDecl: ts.ParameterDeclaration | undefined;
+      let current: ts.Node | undefined = node;
+      while (current) {
+        if (ts.isParameter(current)) {
+          paramDecl = current;
+          break;
+        }
+        current = current.parent;
+      }
+      if (!paramDecl || paramDecl.type) continue; // already typed
+
+      const method = findEnclosingMethod(paramDecl);
+      if (!method || !ts.isIdentifier(method.name)) continue;
+      const cls = findEnclosingClass(method);
+      if (!cls) continue;
+
+      const methodName = method.name.text;
+      const cacheKey = `${cls.pos}:${methodName}`;
+      let parentSig = sigCache.get(cacheKey);
+      if (!sigCache.has(cacheKey)) {
+        parentSig = findParentMethodSignature(cls, methodName, checker);
+        sigCache.set(cacheKey, parentSig);
+      }
+      if (!parentSig) continue;
+
+      // Find matching parameter by index (name-based matching is unreliable
+      // because overrides often rename parameters).
+      const paramIndex = method.parameters.indexOf(paramDecl);
+      const parentParams = parentSig.getParameters();
+      const parentParam = parentParams[paramIndex];
+      if (!parentParam) continue;
+
+      const parentParamDecl = parentParam.valueDeclaration;
+      if (!parentParamDecl || !ts.isParameter(parentParamDecl)) continue;
+
+      // Prefer the SYNTACTIC type text from the parent's .d.ts declaration so
+      // that type aliases like `float`/`int` are preserved (the checker would
+      // resolve them to `number`).
+      let typeText: string;
+      if (parentParamDecl.type) {
+        typeText = parentParamDecl.type.getText(parentParamDecl.getSourceFile());
+      } else {
+        const parentType = checker.getTypeOfSymbolAtLocation(
+          parentParam,
+          parentParamDecl,
+        );
+        typeText = checker.typeToString(
+          parentType,
+          method,
+          ts.TypeFormatFlags.NoTruncation |
+            ts.TypeFormatFlags.UseFullyQualifiedType,
+        );
+      }
+      if (!typeText || typeText === 'any' || typeText === 'error') continue;
+
+      const insertAt = paramDecl.name.getEnd();
+      const replacement = `: ${typeText}`;
+
+      let fixes = fixesByFile.get(fileName);
+      if (!fixes) {
+        fixes = [];
+        fixesByFile.set(fileName, fixes);
+      }
+      fixes.push({ start: insertAt, end: insertAt, replacement });
     }
   }
 
@@ -513,8 +708,14 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
   const operatorFixEnabled = helpers.operatorFix !== false;
   const explicitConvertEnabled = helpers.explicitConvert !== false && !!registry;
   const readyFieldTypesEnabled = helpers.readyFieldTypes !== false;
+  const extendsTypeEnabled = helpers.extendsType !== false;
 
-  if (!operatorFixEnabled && !explicitConvertEnabled && !readyFieldTypesEnabled) {
+  if (
+    !operatorFixEnabled &&
+    !explicitConvertEnabled &&
+    !readyFieldTypesEnabled &&
+    !extendsTypeEnabled
+  ) {
     return result;
   }
 
@@ -555,7 +756,10 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
       mergeFixes(collectExplicitConvertFixes(program, filePaths, registry!));
     }
     if (readyFieldTypesEnabled) {
-      mergeFixes(collectReadyFieldTypeFixes(program, filePaths));
+      mergeFixes(collectReadyFieldTypeFixes(program, filePaths, registry));
+    }
+    if (extendsTypeEnabled) {
+      mergeFixes(collectExtendsTypeFixes(program, filePaths));
     }
 
     let fixedInPass = 0;

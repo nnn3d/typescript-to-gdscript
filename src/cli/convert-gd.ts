@@ -39,6 +39,10 @@ export function registerConvertGdCommand(program: Command): void {
       '--no-ready-field-types-helper',
       'Disable TS-based class property auto-fix (adds `!` and infers types from _ready assignments)',
     )
+    .option(
+      '--no-extends-type-helper',
+      'Disable TS-based override-method parameter auto-fix (copies parameter types from parent class)',
+    )
     .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
     .action((files: string[], opts) => {
       const cfg = resolveConfig({
@@ -73,7 +77,8 @@ export function registerConvertGdCommand(program: Command): void {
       const sceneFiles = findSceneFiles(cfg.scenesDir, cfg.rootDir, cfg.ignore);
 
       // Pre-collect all signal handlers once (instead of re-parsing scenes per file)
-      const signalHelperEnabled = !opts.noHelpers && !opts.noSignalHandlerHelper;
+      const signalHelperEnabled =
+        opts.helpers !== false && opts.signalHandlerHelper !== false;
       const allSignalHandlers = signalHelperEnabled && sceneFiles.length > 0
         ? collectAllSignalHandlers(sceneFiles, registry)
         : undefined;
@@ -130,11 +135,16 @@ export function registerConvertGdCommand(program: Command): void {
         tsFiles: tsOutputFiles,
       });
 
-      // Run TS-based post-processing helpers
-      const operatorFixEnabled = !opts.noHelpers && !opts.noOperatorFixHelper;
-      const explicitConvertEnabled = !opts.noHelpers && !opts.noExplicitConvertHelper;
-      const readyFieldTypesEnabled = !opts.noHelpers && !opts.noReadyFieldTypesHelper;
-      const anyTsHelperEnabled = operatorFixEnabled || explicitConvertEnabled || readyFieldTypesEnabled;
+      // Run TS-based post-processing helpers.
+      // Commander converts `--no-foo-bar` flags into `opts.fooBar` (inverted),
+      // defaulting to `true` and set to `false` only when the flag is passed.
+      const helpersEnabled = opts.helpers !== false;
+      const operatorFixEnabled = helpersEnabled && opts.operatorFixHelper !== false;
+      const explicitConvertEnabled = helpersEnabled && opts.explicitConvertHelper !== false;
+      const readyFieldTypesEnabled = helpersEnabled && opts.readyFieldTypesHelper !== false;
+      const extendsTypeEnabled = helpersEnabled && opts.extendsTypeHelper !== false;
+      const anyTsHelperEnabled =
+        operatorFixEnabled || explicitConvertEnabled || readyFieldTypesEnabled || extendsTypeEnabled;
       if (anyTsHelperEnabled && tsOutputFiles.length > 0) {
         const helperResult = runTsHelpers({
           files: tsOutputFiles,
@@ -145,6 +155,7 @@ export function registerConvertGdCommand(program: Command): void {
             operatorFix: operatorFixEnabled,
             explicitConvert: explicitConvertEnabled,
             readyFieldTypes: readyFieldTypesEnabled,
+            extendsType: extendsTypeEnabled,
           },
         });
         if (helperResult.fixedFiles.length > 0) {
