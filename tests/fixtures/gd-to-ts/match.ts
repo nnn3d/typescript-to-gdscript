@@ -34,26 +34,17 @@ export class Match extends Node {
   }
 
   test_wildcard() {
-    gd.match(this.x, [
-      {
-        match: 1,
-        do: () => {
-          print("It's one!");
-        },
-      },
-      {
-        match: 2,
-        do: () => {
-          print("It's one times two!");
-        },
-      },
-      {
-        match: undefined,
-        do: () => {
-          print("It's not 1 or 2. I don't care to be honest.");
-        },
-      },
-    ]);
+    switch (this.x) {
+      case 1:
+        print("It's one!");
+        break;
+      case 2:
+        print("It's one times two!");
+        break;
+      default:
+        print("It's not 1 or 2. I don't care to be honest.");
+        break;
+    }
   }
 
   test_match_pattern() {

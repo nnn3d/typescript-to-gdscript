@@ -24,26 +24,17 @@ export class ControlFlow extends Node {
 
   test_match() {
     let value: int = 42;
-    gd.match(value, [
-      {
-        match: 1,
-        do: () => {
-          print("one");
-        },
-      },
-      {
-        match: 2,
-        do: () => {
-          print("two");
-        },
-      },
-      {
-        match: undefined,
-        do: () => {
-          print("other");
-        },
-      },
-    ]);
+    switch (value) {
+      case 1:
+        print("one");
+        break;
+      case 2:
+        print("two");
+        break;
+      default:
+        print("other");
+        break;
+    }
   }
 
   test_break_continue() {

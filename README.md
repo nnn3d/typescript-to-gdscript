@@ -369,25 +369,32 @@ Spaces after `@gd.eval:` are ignored, but tab characters are preserved as additi
 
 ### Match statement
 
-GDScript `match` is expressed via `gd.match()`. Cases use arrow functions (`do: () => {}`) to preserve `this` context:
+**Simple matches** (literal/expression patterns + wildcard) use the native TS `switch` statement. GD→TS emits `switch` for these and TS→GD converts `switch` back to `match`:
 
 ```typescript
-gd.match(this.state, [
-  { match: 1, do: () => { print("one"); } },
-  { match: 2, do: () => { print("two"); } },
-  { match: undefined, do: () => { print("other"); } },  // _ wildcard
-]);
-// becomes:
-// match self.state:
-//   1:
-//     print("one")
-//   2:
-//     print("two")
-//   _:
-//     print("other")
+switch (this.state) {
+  case 1:
+    print("one");
+    break;
+  case 2:
+    print("two");
+    break;
+  default:
+    print("other");
+    break;
+}
+// ↔ match self.state:
+//       1:
+//         print("one")
+//       2:
+//         print("two")
+//       _:
+//         print("other")
 ```
 
-Advanced patterns:
+Fall-through `case` labels map to multi-pattern `1, 2, 3:` on the GDScript side.
+
+**Advanced patterns** (arrays, dicts, pattern bindings, guards) use `gd.match()` with arrow-function `do: () => {}` cases to preserve `this` context:
 
 ```typescript
 gd.match(this.x, [

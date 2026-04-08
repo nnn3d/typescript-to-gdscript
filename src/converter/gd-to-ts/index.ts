@@ -1315,6 +1315,82 @@ function emitWhileStatement(
   return `${indent}while (${condStr}) {\n${bodyStr}\n${indent}}`;
 }
 
+/**
+ * Check whether a match statement can be expressed as a plain TS `switch`:
+ *  - Every PatternSection uses only "simple" patterns (literals/expressions/
+ *    wildcard), never Arrays, Dictionaries, pattern bindings, or guards.
+ *  - Multi-pattern sections (`1, 2, 3:`) are allowed — they become
+ *    fall-through `case` labels.
+ */
+function isSimpleMatchStatement(bodyNode: SyntaxNode): boolean {
+  for (const section of bodyNode.namedChildren) {
+    if (section.type !== SyntaxType.PatternSection) continue;
+    const patterns = section.namedChildren.filter(
+      (c) => c.type !== SyntaxType.Body && c.type !== SyntaxType.PatternGuard,
+    );
+    const hasGuard = section.namedChildren.some(
+      (c) => c.type === SyntaxType.PatternGuard,
+    );
+    if (hasGuard) return false;
+    for (const p of patterns) {
+      if (
+        p.type === SyntaxType.Array ||
+        p.type === SyntaxType.Dictionary ||
+        p.type === SyntaxType.PatternBinding
+      ) {
+        return false;
+      }
+      // Any nested pattern bindings also disqualify
+      const bindings: string[] = [];
+      collectBindings(p, bindings);
+      if (bindings.length > 0) return false;
+    }
+  }
+  return true;
+}
+
+function emitSimpleMatchAsSwitch(
+  node: SyntaxNode,
+  ctx: GdToTsContext,
+  depth: number,
+): string {
+  const indent = '  '.repeat(depth);
+  const iCase = indent + '  ';
+  const iBody = indent + '    ';
+  const value = node.childForFieldName('value');
+  const bodyNode = node.childForFieldName('body');
+  const valueStr = value ? emitExpr(value, ctx) : '';
+  let result = `${indent}switch (${valueStr}) {\n`;
+
+  if (bodyNode) {
+    for (const section of bodyNode.namedChildren) {
+      if (section.type !== SyntaxType.PatternSection) continue;
+
+      const body = section.childForFieldName('body');
+      const patterns = section.namedChildren.filter(
+        (c) => c.type !== SyntaxType.Body && c.type !== SyntaxType.PatternGuard,
+      );
+
+      // Emit case/default labels (one per pattern for fall-through)
+      for (const p of patterns) {
+        if (p.type === SyntaxType.Identifier && p.text === '_') {
+          result += `${iCase}default:\n`;
+        } else {
+          result += `${iCase}case ${emitExpr(p, ctx)}:\n`;
+        }
+      }
+
+      // Emit body statements, then `break;`
+      const bodyStr = body ? emitBody(body, ctx, depth + 2) : '';
+      if (bodyStr) result += `${bodyStr}\n`;
+      result += `${iBody}break;\n`;
+    }
+  }
+
+  result += `${indent}}`;
+  return result;
+}
+
 function emitMatchStatement(
   node: SyntaxNode,
   ctx: GdToTsContext,
@@ -1326,6 +1402,12 @@ function emitMatchStatement(
   const i3 = indent + '      '; // do() body indent
   const value = node.childForFieldName('value');
   const bodyNode = node.childForFieldName('body');
+
+  // If all sections use only simple patterns, emit a plain TS `switch`.
+  // The TS→GD converter already handles `switch` → `match` in reverse.
+  if (bodyNode && isSimpleMatchStatement(bodyNode)) {
+    return emitSimpleMatchAsSwitch(node, ctx, depth);
+  }
 
   const valueStr = value ? emitExpr(value, ctx) : '';
   let result = `${indent}gd.match(${valueStr}, [\n`;

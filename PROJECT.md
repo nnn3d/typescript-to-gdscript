@@ -149,7 +149,8 @@ tests/
 | `===` / `!==` | `==` / `!=` | |
 | `&&` / `\|\|` / `!` | `and` / `or` / `not` | |
 | `for (x of arr)` | `for x in arr` | |
-| `gd.match(val, [...])` | `match val:` | Arrow `do: () => {}` preserves `this`; also supports `do()` method syntax |
+| `switch (val) { case X: ... }` | `match val:` | Simple matches (literal/expression/wildcard patterns, no bindings/guards/array/dict) use native TS `switch`. GD→TS auto-detects via `isSimpleMatchStatement()` |
+| `gd.match(val, [...])` | `match val:` | Advanced patterns (bindings, guards, arrays, dicts). Arrow `do: () => {}` preserves `this`; also supports `do()` method syntax |
 | `//` / `/** */` | `#` / `##` | |
 | `async` | stripped | GDScript has no async |
 | `new Foo()` | `Foo.new()` | |
@@ -195,6 +196,7 @@ tests/
 - Class-level enums → `namespace ClassName { const enum EnumName { ... } }` in .gd.d.ts for strong type checking
 - Class-level inner classes → `namespace ClassName { type InnerClass = InstanceType<typeof ScriptClass.InnerClass>; }` in .gd.d.ts
 - GD-to-TS: type annotations referencing class enums/inner classes qualified with class name (`State` → `ClassName.State`)
+- GD-to-TS match statements: `isSimpleMatchStatement()` checks whether all PatternSections use only literal/expression/wildcard patterns (no Array/Dictionary/PatternBinding/PatternGuard). If so, `emitSimpleMatchAsSwitch()` produces a native TS `switch`/`case`/`default` block with explicit `break` after each section; multi-pattern sections (`1, 2, 3:`) become fall-through `case` labels. Otherwise falls back to `gd.match([...])` with object/arrow-function cases.
 - `gd.eval` space indentation: converts space-based indent to tabs by tracking space→depth mapping; mixed tabs/spaces is an error
 - `gd.eval` as variable initializer: `processGdEval()` returns processed lines with relative tab depth; `visitVariableStatement` emits first line as `var X = <firstLine>`, remaining lines are emitted at current indent (their embedded `\t` prefixes act as additional relative depth beyond the var line)
 - GD-to-TS `'''`/`"""` triple-quoted strings as expression statements → `/* */` block comments (both class body and function body)
