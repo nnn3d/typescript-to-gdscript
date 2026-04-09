@@ -191,6 +191,13 @@ function collectOperatorFixes(
 
 // ─── Explicit Convert Helper ─────────────────────────────────
 
+/** Map TS primitive type names back to Godot type names for registry lookups. */
+const TS_TO_GD_TYPE_NAMES = new Map<string, string>([
+  ['string', 'String'],
+  ['boolean', 'bool'],
+  ['number', 'float'],
+]);
+
 /** TS error codes for argument/assignment type mismatches */
 const TS_ASSIGNMENT_ERROR_CODES = new Set([
   2345, // Argument of type 'X' is not assignable to parameter of type 'Y'.
@@ -329,8 +336,11 @@ function collectExplicitConvertFixes(
       const target = simplifyTypeName(types.target);
       if (source === target) continue;
 
-      // Both must be variant types and target must accept source as a variant convert
-      if (!registry.canVariantConvert(source, target)) continue;
+      // Both must be variant types and target must accept source as a variant convert.
+      // Map TS primitive names back to Godot names for registry lookup.
+      const gdSource = TS_TO_GD_TYPE_NAMES.get(source) ?? source;
+      const gdTarget = TS_TO_GD_TYPE_NAMES.get(target) ?? target;
+      if (!registry.canVariantConvert(gdSource, gdTarget)) continue;
 
       let node = findNodeAt(sourceFile, diag.start, diag.length);
       if (!node) continue;
