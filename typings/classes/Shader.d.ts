@@ -5,7 +5,7 @@
 declare class Shader extends Resource {
   /** Returns the shader's code as the user has written it, not the full generated code used internally. */
   code: string;
-  set_code(value: string): void;
+  set_code(value: string | NodePath): void;
   get_code(): string;
 
   /**

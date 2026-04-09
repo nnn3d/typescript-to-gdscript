@@ -27,7 +27,7 @@ declare class FoldableContainer extends Container {
   title_text_overrun_behavior: int;
   set_folded(value: boolean): void;
   is_folded(): boolean;
-  set_language(value: string): void;
+  set_language(value: string | NodePath): void;
   get_language(): string;
   set_title_alignment(value: int): void;
   get_title_alignment(): int;

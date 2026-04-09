@@ -12,7 +12,7 @@ declare class PhysicalBone2D extends RigidBody2D {
   /** The index of the {@link Bone2D} that this {@link PhysicalBone2D} should simulate. */
   bone2d_index: int;
   /** The {@link NodePath} to the {@link Bone2D} that this {@link PhysicalBone2D} should simulate. */
-  bone2d_nodepath: string;
+  bone2d_nodepath: NodePath;
   /**
    * If `true`, the {@link PhysicalBone2D} will keep the transform of the bone it is bound to when simulating physics.
    */
@@ -26,8 +26,8 @@ declare class PhysicalBone2D extends RigidBody2D {
   get_auto_configure_joint(): boolean;
   set_bone2d_index(value: int): void;
   get_bone2d_index(): int;
-  set_bone2d_nodepath(value: string): void;
-  get_bone2d_nodepath(): string;
+  set_bone2d_nodepath(value: NodePath | string): void;
+  get_bone2d_nodepath(): NodePath;
   set_follow_bone_when_simulating(value: boolean): void;
   get_follow_bone_when_simulating(): boolean;
   set_simulate_physics(value: boolean): void;

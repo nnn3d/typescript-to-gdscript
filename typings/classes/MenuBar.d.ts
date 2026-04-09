@@ -58,7 +58,7 @@ declare class MenuBar extends Control {
   /** If `true`, menu item is hidden. */
   set_menu_hidden(menu: int, hidden: boolean): void;
   /** Sets menu item title. */
-  set_menu_title(menu: int, title: string): void;
+  set_menu_title(menu: int, title: string | NodePath): void;
   /** Sets menu item tooltip. */
-  set_menu_tooltip(menu: int, tooltip: string): void;
+  set_menu_tooltip(menu: int, tooltip: string | NodePath): void;
 }

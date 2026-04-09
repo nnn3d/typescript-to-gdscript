@@ -73,7 +73,7 @@ declare class TabBar extends Control {
   get_tabs_rearrange_group(): int;
 
   /** Adds a new tab. */
-  add_tab(title?: string, icon?: Texture2D): void;
+  add_tab(title?: string | NodePath, icon?: Texture2D): void;
   /** Clears all tabs. */
   clear_tabs(): void;
   /** Moves the scroll view to make the tab visible. */
@@ -145,7 +145,7 @@ declare class TabBar extends Control {
   /**
    * Sets the language code of the title for the tab at index `tab_idx` to `language`. This is used for line-breaking and text shaping algorithms. If `language` is empty, the current locale is used.
    */
-  set_tab_language(tab_idx: int, language: string): void;
+  set_tab_language(tab_idx: int, language: string | NodePath): void;
   /**
    * Sets the metadata value for the tab at index `tab_idx`, which can be retrieved later using {@link get_tab_metadata}.
    */
@@ -153,12 +153,12 @@ declare class TabBar extends Control {
   /** Sets tab title base writing direction. */
   set_tab_text_direction(tab_idx: int, direction: int): void;
   /** Sets a `title` for the tab at index `tab_idx`. */
-  set_tab_title(tab_idx: int, title: string): void;
+  set_tab_title(tab_idx: int, title: string | NodePath): void;
   /**
    * Sets a `tooltip` for tab at index `tab_idx`.
    * **Note:** By default, if the `tooltip` is empty and the tab text is truncated (not all characters fit into the tab), the title will be displayed as a tooltip. To hide the tooltip, assign `" "` as the `tooltip` text.
    */
-  set_tab_tooltip(tab_idx: int, tooltip: string): void;
+  set_tab_tooltip(tab_idx: int, tooltip: string | NodePath): void;
 
   /** Emitted when the active tab is rearranged via mouse drag. See {@link drag_to_rearrange_enabled}. */
   active_tab_rearranged: Signal<[int]>;

@@ -24,7 +24,7 @@ declare class HTTPClient extends RefCounted {
    * Connects to a host. This needs to be done before any requests are sent.
    * If no `port` is specified (or `-1` is used), it is automatically set to 80 for HTTP and 443 for HTTPS. You can pass the optional `tls_options` parameter to customize the trusted certification authorities, or the common name verification when using HTTPS. See {@link TLSOptions.client} and {@link TLSOptions.client_unsafe}.
    */
-  connect_to_host(host: string, port?: int, tls_options?: TLSOptions): int;
+  connect_to_host(host: string | NodePath, port?: int, tls_options?: TLSOptions): int;
   /**
    * Returns the response's body length.
    * **Note:** Some Web servers may not send a body length. In this case, the value returned will be `-1`. If using chunked transfer encoding, the body length will also be `-1`.
@@ -63,24 +63,24 @@ declare class HTTPClient extends RefCounted {
    * To create a POST request with query strings to push to the server, do:
    * **Note:** The `body` parameter is ignored if `method` is {@link HTTPClient.METHOD_GET}. This is because GET methods can't contain request data. As a workaround, you can pass request data as a query string in the URL. See {@link String.uri_encode} for an example.
    */
-  request(method: int, url: string, headers: PackedStringArray | Array<unknown>, body?: string): int;
+  request(method: int, url: string | NodePath, headers: PackedStringArray | Array<unknown>, body?: string | NodePath): int;
   /**
    * Sends a raw HTTP request to the connected host with the given `method`.
    * The URL parameter is usually just the part after the host, so for `https://example.com/index.php`, it is `/index.php`. When sending requests to an HTTP proxy server, it should be an absolute URL. For {@link HTTPClient.METHOD_OPTIONS} requests, `*` is also allowed. For {@link HTTPClient.METHOD_CONNECT} requests, it should be the authority component (`host:port`).
    * `headers` are HTTP request headers.
    * Sends the body data raw, as a byte array and does not encode it in any way.
    */
-  request_raw(method: int, url: string, headers: PackedStringArray | Array<unknown>, body: PackedByteArray | Array<unknown>): int;
+  request_raw(method: int, url: string | NodePath, headers: PackedStringArray | Array<unknown>, body: PackedByteArray | Array<unknown>): int;
   /**
    * Sets the proxy server for HTTP requests.
    * The proxy server is unset if `host` is empty or `port` is -1.
    */
-  set_http_proxy(host: string, port: int): void;
+  set_http_proxy(host: string | NodePath, port: int): void;
   /**
    * Sets the proxy server for HTTPS requests.
    * The proxy server is unset if `host` is empty or `port` is -1.
    */
-  set_https_proxy(host: string, port: int): void;
+  set_https_proxy(host: string | NodePath, port: int): void;
 
   // enum Method
   /**

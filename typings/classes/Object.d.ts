@@ -75,7 +75,7 @@ declare class GodotObject {
   /**
    * Adds a user-defined signal named `signal`. Optional arguments for the signal can be added as an {@link Array} of dictionaries, each defining a `name` {@link String} and a `type` [int] (see {@link Variant.Type}). See also {@link has_user_signal} and {@link remove_user_signal}.
    */
-  add_user_signal(signal: string, arguments?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
+  add_user_signal(signal: string | NodePath, arguments?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /**
    * Calls the `method` on the object and returns the result. This method supports a variable number of arguments, so parameters can be passed as a comma separated list.
    * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
@@ -173,7 +173,7 @@ declare class GodotObject {
    * **Note:** In C#, `property_path` must be in snake_case when referring to built-in Godot properties. Prefer using the names exposed in the `PropertyName` class to avoid allocating a new {@link StringName} on each call.
    * **Note:** This method does not support actual paths to nodes in the {@link SceneTree}, only sub-property paths. In the context of nodes, use {@link Node.get_node_and_resource} instead.
    */
-  get_indexed(property_path: string): unknown;
+  get_indexed(property_path: NodePath | string): unknown;
   /**
    * Returns the object's unique instance ID. This ID can be saved in {@link EncodedObjectAsID}, and can be used to retrieve this object instance with {@link @GlobalScope.instance_from_id}.
    * **Note:** This ID is only useful during the current session. It won't correspond to a similar object if the ID is sent over a network, or loaded from a file at a later time.
@@ -265,7 +265,7 @@ declare class GodotObject {
    * Returns `true` if the object inherits from the given `class`. See also {@link get_class}.
    * **Note:** This method ignores `class_name` declarations in the object's script.
    */
-  is_class(class_: string): boolean;
+  is_class(class_: string | NodePath): boolean;
   /**
    * Returns `true` if a connection exists between the given `signal` name and `callable`.
    * **Note:** In C#, `signal` must be in snake_case when referring to built-in Godot signals. Prefer using the names exposed in the `SignalName` class to avoid allocating a new {@link StringName} on each call.
@@ -320,7 +320,7 @@ declare class GodotObject {
    * Assigns a new `value` to the property identified by the `property_path`. The path should be a {@link NodePath} relative to this object, and can use the colon character (`:`) to access nested properties.
    * **Note:** In C#, `property_path` must be in snake_case when referring to built-in Godot properties. Prefer using the names exposed in the `PropertyName` class to avoid allocating a new {@link StringName} on each call.
    */
-  set_indexed(property_path: string, value: unknown): void;
+  set_indexed(property_path: NodePath | string, value: unknown): void;
   /**
    * If set to `true`, allows the object to translate messages with {@link tr} and {@link tr_n}. Enabled by default. See also {@link can_translate_messages}.
    */

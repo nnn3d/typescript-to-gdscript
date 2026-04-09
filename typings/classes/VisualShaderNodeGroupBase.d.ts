@@ -6,9 +6,9 @@
  */
 declare class VisualShaderNodeGroupBase extends VisualShaderNodeResizableBase {
   /** Adds an input port with the specified `type` (see {@link VisualShaderNode.PortType}) and `name`. */
-  add_input_port(id: int, type_: int, name: string): void;
+  add_input_port(id: int, type_: int, name: string | NodePath): void;
   /** Adds an output port with the specified `type` (see {@link VisualShaderNode.PortType}) and `name`. */
-  add_output_port(id: int, type_: int, name: string): void;
+  add_output_port(id: int, type_: int, name: string | NodePath): void;
   /** Removes all previously specified input ports. */
   clear_input_ports(): void;
   /** Removes all previously specified output ports. */
@@ -36,25 +36,25 @@ declare class VisualShaderNodeGroupBase extends VisualShaderNodeResizableBase {
   /**
    * Returns `true` if the specified port name does not override an existed port name and is valid within the shader.
    */
-  is_valid_port_name(name: string): boolean;
+  is_valid_port_name(name: string | NodePath): boolean;
   /** Removes the specified input port. */
   remove_input_port(id: int): void;
   /** Removes the specified output port. */
   remove_output_port(id: int): void;
   /** Renames the specified input port. */
-  set_input_port_name(id: int, name: string): void;
+  set_input_port_name(id: int, name: string | NodePath): void;
   /** Sets the specified input port's type (see {@link VisualShaderNode.PortType}). */
   set_input_port_type(id: int, type_: int): void;
   /**
    * Defines all input ports using a {@link String} formatted as a colon-separated list: `id,type,name;` (see {@link add_input_port}).
    */
-  set_inputs(inputs: string): void;
+  set_inputs(inputs: string | NodePath): void;
   /** Renames the specified output port. */
-  set_output_port_name(id: int, name: string): void;
+  set_output_port_name(id: int, name: string | NodePath): void;
   /** Sets the specified output port's type (see {@link VisualShaderNode.PortType}). */
   set_output_port_type(id: int, type_: int): void;
   /**
    * Defines all output ports using a {@link String} formatted as a colon-separated list: `id,type,name;` (see {@link add_output_port}).
    */
-  set_outputs(outputs: string): void;
+  set_outputs(outputs: string | NodePath): void;
 }

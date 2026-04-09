@@ -80,7 +80,7 @@ declare class StreamPeer extends RefCounted {
    * Puts a zero-terminated ASCII string into the stream prepended by a 32-bit unsigned integer representing its size.
    * **Note:** To put an ASCII string without prepending its size, you can use {@link put_data}:
    */
-  put_string(value: string): void;
+  put_string(value: string | NodePath): void;
   /** Puts an unsigned byte into the stream. */
   put_u8(value: int): void;
   /** Puts an unsigned 16-bit value into the stream. */
@@ -93,7 +93,7 @@ declare class StreamPeer extends RefCounted {
    * Puts a zero-terminated UTF-8 string into the stream prepended by a 32 bits unsigned integer representing its size.
    * **Note:** To put a UTF-8 string without prepending its size, you can use {@link put_data}:
    */
-  put_utf8_string(value: string): void;
+  put_utf8_string(value: string | NodePath): void;
   /**
    * Puts a Variant into the stream. If `full_objects` is `true` encoding objects is allowed (and can potentially include code).
    * Internally, this uses the same encoding mechanism as the {@link @GlobalScope.var_to_bytes} method.

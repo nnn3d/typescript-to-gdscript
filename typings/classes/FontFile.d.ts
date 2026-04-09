@@ -81,7 +81,7 @@ declare class FontFile extends Font {
   get_fixed_size(): int;
   set_fixed_size_scale_mode(value: int): void;
   get_fixed_size_scale_mode(): int;
-  set_font_name(value: string): void;
+  set_font_name(value: string | NodePath): void;
   set_font_stretch(value: int): void;
   set_font_style(value: int): void;
   set_font_weight(value: int): void;
@@ -105,7 +105,7 @@ declare class FontFile extends Font {
   get_opentype_feature_overrides(): Dictionary;
   set_oversampling(value: float): void;
   get_oversampling(): float;
-  set_font_style_name(value: string): void;
+  set_font_style_name(value: string | NodePath): void;
   set_subpixel_positioning(value: int): void;
   get_subpixel_positioning(): int;
 
@@ -173,11 +173,11 @@ declare class FontFile extends Font {
   /** Returns list of the kerning overrides. */
   get_kerning_list(cache_index: int, size: int): Array<Vector2i>;
   /** Returns `true` if support override is enabled for the `language`. */
-  get_language_support_override(language: string): boolean;
+  get_language_support_override(language: string | NodePath): boolean;
   /** Returns list of language support overrides. */
   get_language_support_overrides(): PackedStringArray;
   /** Returns `true` if support override is enabled for the `script`. */
-  get_script_support_override(script: string): boolean;
+  get_script_support_override(script: string | NodePath): boolean;
   /** Returns list of script support overrides. */
   get_script_support_overrides(): PackedStringArray;
   /**
@@ -202,12 +202,12 @@ declare class FontFile extends Font {
    * Loads an AngelCode BMFont (.fnt, .font) bitmap font from file `path`.
    * **Warning:** This method should only be used in the editor or in cases when you need to load external fonts at run-time, such as fonts located at the `user://` directory.
    */
-  load_bitmap_font(path: string): int;
+  load_bitmap_font(path: string | NodePath): int;
   /**
    * Loads a TrueType (.ttf), OpenType (.otf), WOFF (.woff), WOFF2 (.woff2) or Type 1 (.pfb, .pfm) dynamic font from file `path`.
    * **Warning:** This method should only be used in the editor or in cases when you need to load external fonts at run-time, such as fonts located at the `user://` directory.
    */
-  load_dynamic_font(path: string): int;
+  load_dynamic_font(path: string | NodePath): int;
   /** Removes specified font cache entry. */
   remove_cache(cache_index: int): void;
   /**
@@ -218,9 +218,9 @@ declare class FontFile extends Font {
   /** Removes kerning override for the pair of glyphs. */
   remove_kerning(cache_index: int, size: int, glyph_pair: Vector2i | Vector2): void;
   /** Remove language support override. */
-  remove_language_support_override(language: string): void;
+  remove_language_support_override(language: string | NodePath): void;
   /** Removes script support override. */
-  remove_script_support_override(script: string): void;
+  remove_script_support_override(script: string | NodePath): void;
   /** Removes specified font size from the cache entry. */
   remove_size_cache(cache_index: int, size: Vector2i | Vector2): void;
   /**
@@ -268,9 +268,9 @@ declare class FontFile extends Font {
   /** Sets kerning for the pair of glyphs. */
   set_kerning(cache_index: int, size: int, glyph_pair: Vector2i | Vector2, kerning: Vector2 | Vector2i): void;
   /** Adds override for {@link Font.is_language_supported}. */
-  set_language_support_override(language: string, supported: boolean): void;
+  set_language_support_override(language: string | NodePath, supported: boolean): void;
   /** Adds override for {@link Font.is_script_supported}. */
-  set_script_support_override(script: string, supported: boolean): void;
+  set_script_support_override(script: string | NodePath, supported: boolean): void;
   /** Sets font cache texture image. */
   set_texture_image(cache_index: int, size: Vector2i | Vector2, texture_index: int, image: Image): void;
   /** Sets array containing glyph packing data. */

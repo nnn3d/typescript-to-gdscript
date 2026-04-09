@@ -11,5 +11,5 @@ declare class EditorFileDialog extends FileDialog {
   /**
    * This method is kept for compatibility and does nothing. As an alternative, you can display another dialog after showing the file dialog.
    */
-  add_side_menu(menu: Control, title?: string): void;
+  add_side_menu(menu: Control, title?: string | NodePath): void;
 }

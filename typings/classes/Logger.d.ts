@@ -11,13 +11,13 @@ declare class Logger extends RefCounted {
    * **Note:** `script_backtraces` will not contain any captured variables, due to its prohibitively high cost. To get those you will need to capture the backtraces yourself, from within the {@link Logger} virtual methods, using {@link Engine.capture_script_backtraces}.
    * **Note:** Logging errors from this method using functions like {@link @GlobalScope.push_error} or {@link @GlobalScope.push_warning} is not supported, as it could cause infinite recursion. These errors will only show up in the console output.
    */
-  _log_error(function_: string, file: string, line: int, code: string, rationale: string, editor_notify: boolean, error_type: int, script_backtraces: Array<ScriptBacktrace>): void;
+  _log_error(function_: string | NodePath, file: string | NodePath, line: int, code: string | NodePath, rationale: string | NodePath, editor_notify: boolean, error_type: int, script_backtraces: Array<ScriptBacktrace>): void;
   /**
    * Called when a message is logged. If `error` is `true`, then this message was meant to be sent to `stderr`.
    * **Warning:** This method will be called from threads other than the main thread, possibly at the same time, so you will need to have some kind of thread-safety in your implementation of it, like a {@link Mutex}.
    * **Note:** Logging another message from this method using functions like {@link @GlobalScope.print} is not supported, as it could cause infinite recursion. These messages will only show up in the console output.
    */
-  _log_message(message: string, error: boolean): void;
+  _log_message(message: string | NodePath, error: boolean): void;
 
   // enum ErrorType
   /** The message received is an error. */

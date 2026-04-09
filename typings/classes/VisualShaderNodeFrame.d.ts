@@ -21,7 +21,7 @@ declare class VisualShaderNodeFrame extends VisualShaderNodeResizableBase {
   get_tint_color(): Color;
   set_tint_color_enabled(value: boolean): void;
   is_tint_color_enabled(): boolean;
-  set_title(value: string): void;
+  set_title(value: string | NodePath): void;
   get_title(): string;
 
   /**

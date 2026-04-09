@@ -66,11 +66,11 @@ declare class TranslationDomain extends RefCounted {
   is_pseudolocalization_fake_bidi_enabled(): boolean;
   set_pseudolocalization_override_enabled(value: boolean): void;
   is_pseudolocalization_override_enabled(): boolean;
-  set_pseudolocalization_prefix(value: string): void;
+  set_pseudolocalization_prefix(value: string | NodePath): void;
   get_pseudolocalization_prefix(): string;
   set_pseudolocalization_skip_placeholders_enabled(value: boolean): void;
   is_pseudolocalization_skip_placeholders_enabled(): boolean;
-  set_pseudolocalization_suffix(value: string): void;
+  set_pseudolocalization_suffix(value: string | NodePath): void;
   get_pseudolocalization_suffix(): string;
 
   /** Adds a translation. */
@@ -80,13 +80,13 @@ declare class TranslationDomain extends RefCounted {
   /**
    * Returns the {@link Translation} instances that match `locale` (see {@link TranslationServer.compare_locales}). If `exact` is `true`, only instances whose locale exactly equals `locale` will be returned.
    */
-  find_translations(locale: string, exact: boolean): Array<Translation>;
+  find_translations(locale: string | NodePath, exact: boolean): Array<Translation>;
   /** Returns the locale override of the domain. Returns an empty string if locale override is disabled. */
   get_locale_override(): string;
   /**
    * Returns the {@link Translation} instance that best matches `locale`. Returns `null` if there are no matches.
    */
-  get_translation_object(locale: string): Translation | null;
+  get_translation_object(locale: string | NodePath): Translation | null;
   /** Returns all available {@link Translation} instances as added by {@link add_translation}. */
   get_translations(): Array<Translation>;
   /** Returns `true` if this translation domain contains the given `translation`. */
@@ -94,7 +94,7 @@ declare class TranslationDomain extends RefCounted {
   /**
    * Returns `true` if there are any {@link Translation} instances that match `locale` (see {@link TranslationServer.compare_locales}). If `exact` is `true`, only instances whose locale exactly equals `locale` are considered.
    */
-  has_translation_for_locale(locale: string, exact: boolean): boolean;
+  has_translation_for_locale(locale: string | NodePath, exact: boolean): boolean;
   /** Returns the pseudolocalized string based on the `message` passed in. */
   pseudolocalize(message: string): string;
   /** Removes the given translation. */
@@ -104,7 +104,7 @@ declare class TranslationDomain extends RefCounted {
    * If `locale` is an empty string, locale override is disabled. Otherwise, `locale` will be standardized to match known locales (e.g. `en-US` would be matched to `en_US`).
    * **Note:** Calling this method does not automatically update texts in the scene tree. Please propagate the {@link MainLoop.NOTIFICATION_TRANSLATION_CHANGED} signal manually.
    */
-  set_locale_override(locale: string): void;
+  set_locale_override(locale: string | NodePath): void;
   /** Returns the current locale's translation for the given message and context. */
   translate(message: string, context?: string): string;
   /**

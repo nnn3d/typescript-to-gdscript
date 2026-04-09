@@ -3,8 +3,8 @@
 
 /** Loads a specific resource type from a file. */
 declare class ResourceFormatLoader extends RefCounted {
-  _exists(path: string): boolean;
-  _get_classes_used(path: string): PackedStringArray;
+  _exists(path: string | NodePath): boolean;
+  _get_classes_used(path: string | NodePath): PackedStringArray;
   /**
    * Should return the dependencies for the resource at the given `path`. Each dependency is a string composed of one to three sections separated by `::`, with trailing empty sections omitted:
    * - The first section should contain the UID if the resource has one. Otherwise, it should contain the file path.
@@ -12,22 +12,22 @@ declare class ResourceFormatLoader extends RefCounted {
    * - The third section should contain the fallback path if the resource has a UID. Otherwise, it should be empty.
    * **Note:** Custom resource types defined by scripts aren't known by the {@link ClassDB}, so `"Resource"` can be used for the class name.
    */
-  _get_dependencies(path: string, add_types: boolean): PackedStringArray;
+  _get_dependencies(path: string | NodePath, add_types: boolean): PackedStringArray;
   /** Gets the list of extensions for files this loader is able to read. */
   _get_recognized_extensions(): PackedStringArray;
   /**
    * Returns the script class name associated with the {@link Resource} under the given `path`. If the resource has no script or the script isn't a named class, it should return `""`.
    */
-  _get_resource_script_class(path: string): string;
+  _get_resource_script_class(path: string | NodePath): string;
   /**
    * Gets the class name of the resource associated with the given path. If the loader cannot handle it, it should return `""`.
    * **Note:** Custom resource types defined by scripts aren't known by the {@link ClassDB}, so you might just return `"Resource"` for them.
    */
-  _get_resource_type(path: string): string;
+  _get_resource_type(path: string | NodePath): string;
   /**
    * Should return the unique ID for the resource associated with the given path. If this method is not overridden, a `.uid` file is generated along with the resource file, containing the unique ID.
    */
-  _get_resource_uid(path: string): int;
+  _get_resource_uid(path: string | NodePath): int;
   /**
    * Tells which resource class this loader can load.
    * **Note:** Custom resource types defined by scripts aren't known by the {@link ClassDB}, so you might just handle `"Resource"` for them.
@@ -37,17 +37,17 @@ declare class ResourceFormatLoader extends RefCounted {
    * Loads a resource when the engine finds this loader to be compatible. If the loaded resource is the result of an import, `original_path` will target the source file. Returns a {@link Resource} object on success, or an {@link Error} constant in case of failure.
    * The `cache_mode` property defines whether and how the cache should be used or updated when loading the resource. See {@link CacheMode} for details.
    */
-  _load(path: string, original_path: string, use_sub_threads: boolean, cache_mode: int): unknown;
+  _load(path: string | NodePath, original_path: string | NodePath, use_sub_threads: boolean, cache_mode: int): unknown;
   /**
    * Tells whether or not this loader should load a resource from its resource path for a given type.
    * If it is not implemented, the default behavior returns whether the path's extension is within the ones provided by {@link _get_recognized_extensions}, and if the type is within the ones provided by {@link _get_resource_type}.
    */
-  _recognize_path(path: string, type_: string): boolean;
+  _recognize_path(path: string | NodePath, type_: string): boolean;
   /**
    * If implemented, renames dependencies within the given resource and saves it. `renames` is a dictionary `{ String => String }` mapping old dependency paths to new paths.
    * Returns {@link OK} on success, or an {@link Error} constant in case of failure.
    */
-  _rename_dependencies(path: string, renames: Dictionary): int;
+  _rename_dependencies(path: string | NodePath, renames: Dictionary): int;
 
   // enum CacheMode
   /**

@@ -37,7 +37,7 @@ declare class XRNode3D extends Node3D {
    * `duration_sec` is the duration of the pulse in seconds.
    * `delay_sec` is a delay in seconds before the pulse is given.
    */
-  trigger_haptic_pulse(action_name: string, frequency: float, amplitude: float, duration_sec: float, delay_sec: float): void;
+  trigger_haptic_pulse(action_name: string | NodePath, frequency: float, amplitude: float, duration_sec: float, delay_sec: float): void;
 
   /**
    * Emitted when the {@link tracker} starts or stops receiving updated tracking data for the {@link pose} being tracked. The `tracking` argument indicates whether the tracker is getting updated tracking data.

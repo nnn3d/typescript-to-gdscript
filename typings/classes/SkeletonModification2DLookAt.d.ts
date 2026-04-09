@@ -4,19 +4,19 @@
 /** A modification that rotates a {@link Bone2D} node to look at a target. */
 declare class SkeletonModification2DLookAt extends SkeletonModification2D {
   /** The {@link Bone2D} node that the modification will operate on. */
-  bone2d_node: string;
+  bone2d_node: NodePath;
   /** The index of the {@link Bone2D} node that the modification will operate on. */
   bone_index: int;
   /**
    * The NodePath to the node that is the target for the LookAt modification. This node is what the modification will rotate the {@link Bone2D} to.
    */
-  target_nodepath: string;
-  set_bone2d_node(value: string): void;
-  get_bone2d_node(): string;
+  target_nodepath: NodePath;
+  set_bone2d_node(value: NodePath | string): void;
+  get_bone2d_node(): NodePath;
   set_bone_index(value: int): void;
   get_bone_index(): int;
-  set_target_node(value: string): void;
-  get_target_node(): string;
+  set_target_node(value: NodePath | string): void;
+  get_target_node(): NodePath;
 
   /** Returns the amount of additional rotation that is applied after the LookAt modification executes. */
   get_additional_rotation(): float;

@@ -81,5 +81,5 @@ declare class RDShaderSPIRV extends Resource {
   /**
    * Sets the compilation error message for the given shader `stage` to `compile_error`. Equivalent to setting one of {@link compile_error_compute}, {@link compile_error_fragment}, {@link compile_error_tesselation_control}, {@link compile_error_tesselation_evaluation}, {@link compile_error_vertex}.
    */
-  set_stage_compile_error(stage: int, compile_error: string): void;
+  set_stage_compile_error(stage: int, compile_error: string | NodePath): void;
 }

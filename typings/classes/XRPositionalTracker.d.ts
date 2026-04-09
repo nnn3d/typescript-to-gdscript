@@ -11,7 +11,7 @@ declare class XRPositionalTracker extends XRTracker {
   profile: string;
   set_tracker_hand(value: int): void;
   get_tracker_hand(): int;
-  set_tracker_profile(value: string): void;
+  set_tracker_profile(value: string | NodePath): void;
   get_tracker_profile(): string;
 
   /**

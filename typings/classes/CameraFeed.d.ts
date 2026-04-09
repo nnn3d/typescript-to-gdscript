@@ -45,7 +45,7 @@ declare class CameraFeed extends RefCounted {
    */
   set_format(index: int, parameters: Dictionary): boolean;
   /** Sets the camera's name. */
-  set_name(name: string): void;
+  set_name(name: string | NodePath): void;
   /** Sets the position of this camera. */
   set_position(position: int): void;
   /** Sets RGB image for this feed. */

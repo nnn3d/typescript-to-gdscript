@@ -6,19 +6,19 @@ declare class AnimationTree extends AnimationMixer {
   /**
    * The path to the {@link Node} used to evaluate the {@link AnimationNode} {@link Expression} if one is not explicitly specified internally.
    */
-  advance_expression_base_node: string;
+  advance_expression_base_node: NodePath;
   /** The path to the {@link AnimationPlayer} used for animating. */
-  anim_player: string;
+  anim_player: NodePath;
   /**
    * <member name="deterministic" type="bool" setter="set_deterministic" getter="is_deterministic" overrides="AnimationMixer" default="true" />
    * <member name="tree_root" type="AnimationRootNode" setter="set_tree_root" getter="get_tree_root">
    * The root animation node of this {@link AnimationTree}. See {@link AnimationRootNode}.
    */
   callback_mode_discrete: int;
-  set_advance_expression_base_node(value: string): void;
-  get_advance_expression_base_node(): string;
-  set_animation_player(value: string): void;
-  get_animation_player(): string;
+  set_advance_expression_base_node(value: NodePath | string): void;
+  get_advance_expression_base_node(): NodePath;
+  set_animation_player(value: NodePath | string): void;
+  get_animation_player(): NodePath;
 
   /** Returns the process notification in which to update animations. */
   get_process_callback(): int;

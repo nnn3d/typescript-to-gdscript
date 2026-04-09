@@ -3,7 +3,7 @@
 
 declare class Skin extends Resource {
   add_bind(bone: int, pose: Transform3D | Projection): void;
-  add_named_bind(name: string, pose: Transform3D | Projection): void;
+  add_named_bind(name: string | NodePath, pose: Transform3D | Projection): void;
   clear_binds(): void;
   get_bind_bone(bind_index: int): int;
   get_bind_count(): int;

@@ -31,7 +31,7 @@ declare class SoftBody3D extends MeshInstance3D {
    */
   linear_stiffness: float;
   /** {@link NodePath} to a {@link CollisionObject3D} this SoftBody3D should avoid clipping. */
-  parent_collision_ignore: string;
+  parent_collision_ignore: NodePath;
   /**
    * The pressure coefficient of this soft body. Simulate pressure build-up from inside this body. Higher values increase the strength of this effect.
    */
@@ -61,8 +61,8 @@ declare class SoftBody3D extends MeshInstance3D {
   get_drag_coefficient(): float;
   set_linear_stiffness(value: float): void;
   get_linear_stiffness(): float;
-  set_parent_collision_ignore(value: string): void;
-  get_parent_collision_ignore(): string;
+  set_parent_collision_ignore(value: NodePath | string): void;
+  get_parent_collision_ignore(): NodePath;
   set_pressure_coefficient(value: float): void;
   get_pressure_coefficient(): float;
   set_ray_pickable(value: boolean): void;
@@ -121,7 +121,7 @@ declare class SoftBody3D extends MeshInstance3D {
   /**
    * Sets the pinned state of a surface vertex. When set to `true`, the optional `attachment_path` can define a {@link Node3D} the pinned vertex will be attached to.
    */
-  set_point_pinned(point_index: int, pinned: boolean, attachment_path?: string, insert_at?: int): void;
+  set_point_pinned(point_index: int, pinned: boolean, attachment_path?: NodePath | string, insert_at?: int): void;
 
   // enum DisableMode
   /**

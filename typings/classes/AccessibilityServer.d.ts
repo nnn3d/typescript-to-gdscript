@@ -55,7 +55,7 @@ declare interface AccessibilityServer extends GodotObject {
   /**
    * Adds support for a custom accessibility action. `action_id` is passed as an argument to the callback of {@link ACTION_CUSTOM} action.
    */
-  update_add_custom_action(id: RID, action_id: int, action_description: string): void;
+  update_add_custom_action(id: RID, action_id: int, action_description: string | NodePath): void;
   /** Adds an element that is controlled by this element. */
   update_add_related_controls(id: RID, related_id: RID): void;
   /** Adds an element that describes this element. */
@@ -78,21 +78,21 @@ declare interface AccessibilityServer extends GodotObject {
   /** Sets element bounding box, relative to the node position. */
   update_set_bounds(id: RID, p_rect: Rect2 | Rect2i): void;
   /** Sets element accessibility label for Braille display. */
-  update_set_braille_label(id: RID, name: string): void;
+  update_set_braille_label(id: RID, name: string | NodePath): void;
   /** Sets element accessibility role description for Braille display. */
-  update_set_braille_role_description(id: RID, description: string): void;
+  update_set_braille_role_description(id: RID, description: string | NodePath): void;
   /** Sets element checked state. */
   update_set_checked(id: RID, checekd: boolean): void;
   /** Sets element class name. */
-  update_set_classname(id: RID, classname: string): void;
+  update_set_classname(id: RID, classname: string | NodePath): void;
   /** Sets element color value. */
   update_set_color_value(id: RID, color: Color): void;
   /** Sets element accessibility description. */
-  update_set_description(id: RID, description: string): void;
+  update_set_description(id: RID, description: string | NodePath): void;
   /** Sets an element which contains an error message for this element. */
   update_set_error_message(id: RID, other_id: RID): void;
   /** Sets element accessibility extra information added to the element name. */
-  update_set_extra_info(id: RID, name: string): void;
+  update_set_extra_info(id: RID, name: string | NodePath): void;
   /** Sets element flag. */
   update_set_flag(id: RID, flag: int, value: boolean): void;
   /** Sets currently focused element. */
@@ -102,7 +102,7 @@ declare interface AccessibilityServer extends GodotObject {
   /** Sets target element for the link. */
   update_set_in_page_link_target(id: RID, other_id: RID): void;
   /** Sets element text language. */
-  update_set_language(id: RID, language: string): void;
+  update_set_language(id: RID, language: string | NodePath): void;
   /** Sets number of items in the list. */
   update_set_list_item_count(id: RID, size: int): void;
   /** Sets list/tree item expanded status. */
@@ -120,7 +120,7 @@ declare interface AccessibilityServer extends GodotObject {
   /** Sets the element to be a member of the group. */
   update_set_member_of(id: RID, group_id: RID): void;
   /** Sets element accessibility name. */
-  update_set_name(id: RID, name: string): void;
+  update_set_name(id: RID, name: string | NodePath): void;
   /** Sets next element on the line. */
   update_set_next_on_line(id: RID, other_id: RID): void;
   /** Sets numeric value jump. */
@@ -132,7 +132,7 @@ declare interface AccessibilityServer extends GodotObject {
   /** Sets numeric value. */
   update_set_num_value(id: RID, position: float): void;
   /** Sets placeholder text. */
-  update_set_placeholder(id: RID, placeholder: string): void;
+  update_set_placeholder(id: RID, placeholder: string | NodePath): void;
   /** Sets popup type for popup buttons. */
   update_set_popup_type(id: RID, popup: int): void;
   /** Sets previous element on the line. */
@@ -140,7 +140,7 @@ declare interface AccessibilityServer extends GodotObject {
   /** Sets element accessibility role. */
   update_set_role(id: RID, role: int): void;
   /** Sets element accessibility role description text. */
-  update_set_role_description(id: RID, description: string): void;
+  update_set_role_description(id: RID, description: string | NodePath): void;
   /** Sets scroll bar x position. */
   update_set_scroll_x(id: RID, position: float): void;
   /** Sets scroll bar x range. */
@@ -150,9 +150,9 @@ declare interface AccessibilityServer extends GodotObject {
   /** Sets scroll bar y range. */
   update_set_scroll_y_range(id: RID, min: float, max: float): void;
   /** Sets the list of keyboard shortcuts used by element. */
-  update_set_shortcut(id: RID, shortcut: string): void;
+  update_set_shortcut(id: RID, shortcut: string | NodePath): void;
   /** Sets human-readable description of the current checked state. */
-  update_set_state_description(id: RID, description: string): void;
+  update_set_state_description(id: RID, description: string | NodePath): void;
   /** Sets cell position in the table. */
   update_set_table_cell_position(id: RID, row_index: int, column_index: int): void;
   /** Sets cell row/column span. */
@@ -176,13 +176,13 @@ declare interface AccessibilityServer extends GodotObject {
    */
   update_set_text_selection(id: RID, text_start_id: RID, start_char: int, text_end_id: RID, end_char: int): void;
   /** Sets tooltip text. */
-  update_set_tooltip(id: RID, tooltip: string): void;
+  update_set_tooltip(id: RID, tooltip: string | NodePath): void;
   /** Sets element 2D transform. */
   update_set_transform(id: RID, transform: Transform2D): void;
   /** Sets link URL. */
-  update_set_url(id: RID, url: string): void;
+  update_set_url(id: RID, url: string | NodePath): void;
   /** Sets element text value. */
-  update_set_value(id: RID, value: string): void;
+  update_set_value(id: RID, value: string | NodePath): void;
 
   // enum AccessibilityRole
   /** Unknown or custom role. */

@@ -37,7 +37,7 @@ class NodeMethodsTest extends Node {
     let maybe: Node | null = this.get_node_or_null('Maybe');
     let count: int = this.get_child_count();
     let parent: Node = this.get_parent();
-    let path: string = this.get_path();
+    let path: NodePath = this.get_path();
 
     // Node inherits GodotObject methods
     let cls: string = this.get_class();

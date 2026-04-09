@@ -4,7 +4,7 @@
 /** Manages toast notifications within the editor. */
 declare class EditorToaster extends HBoxContainer {
   /** Pushes a toast notification to the editor for display. */
-  push_toast(message: string, severity: int, tooltip?: string): void;
+  push_toast(message: string | NodePath, severity: int, tooltip?: string | NodePath): void;
 
   // enum Severity
   /** Toast will display with an INFO severity. */

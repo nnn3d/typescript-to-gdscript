@@ -8,5 +8,5 @@ declare class EditorTranslationParserPlugin extends RefCounted {
   /** Gets the list of file extensions to associate with this parser, e.g. `["csv"]`. */
   _get_recognized_extensions(): PackedStringArray;
   /** Override this method to define a custom parsing logic to extract the translatable strings. */
-  _parse_file(path: string): Array<PackedStringArray>;
+  _parse_file(path: string | NodePath): Array<PackedStringArray>;
 }

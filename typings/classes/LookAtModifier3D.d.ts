@@ -29,7 +29,7 @@ declare class LookAtModifier3D extends SkeletonModifier3D {
   /**
    * If {@link origin_from} is {@link ORIGIN_FROM_EXTERNAL_NODE}, the global position of the {@link Node3D} specified for this is used as origin.
    */
-  origin_external_node: string;
+  origin_external_node: NodePath;
   /**
    * This value determines from what origin is retrieved for use in the calculation of the forward vector.
    */
@@ -95,7 +95,7 @@ declare class LookAtModifier3D extends SkeletonModifier3D {
   /**
    * The {@link NodePath} to the node that is the target for the look at modification. This node is what the modification will rotate the bone to.
    */
-  target_node: string;
+  target_node: NodePath;
   /** The transition type of the time-based interpolation. See also {@link Tween.TransitionType}. */
   transition_type: int;
   /**
@@ -108,7 +108,7 @@ declare class LookAtModifier3D extends SkeletonModifier3D {
   use_secondary_rotation: boolean;
   set_bone(value: int): void;
   get_bone(): int;
-  set_bone_name(value: string): void;
+  set_bone_name(value: string | NodePath): void;
   get_bone_name(): string;
   set_duration(value: float): void;
   get_duration(): float;
@@ -118,10 +118,10 @@ declare class LookAtModifier3D extends SkeletonModifier3D {
   get_forward_axis(): int;
   set_origin_bone(value: int): void;
   get_origin_bone(): int;
-  set_origin_bone_name(value: string): void;
+  set_origin_bone_name(value: string | NodePath): void;
   get_origin_bone_name(): string;
-  set_origin_external_node(value: string): void;
-  get_origin_external_node(): string;
+  set_origin_external_node(value: NodePath | string): void;
+  get_origin_external_node(): NodePath;
   set_origin_from(value: int): void;
   get_origin_from(): int;
   set_origin_offset(value: Vector3 | Vector3i): void;
@@ -158,8 +158,8 @@ declare class LookAtModifier3D extends SkeletonModifier3D {
   get_secondary_positive_limit_angle(): float;
   set_symmetry_limitation(value: boolean): void;
   is_limitation_symmetry(): boolean;
-  set_target_node(value: string): void;
-  get_target_node(): string;
+  set_target_node(value: NodePath | string): void;
+  get_target_node(): NodePath;
   set_transition_type(value: int): void;
   get_transition_type(): int;
   set_use_angle_limitation(value: boolean): void;

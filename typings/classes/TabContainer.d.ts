@@ -148,12 +148,12 @@ declare class TabContainer extends Container {
   /**
    * Sets a custom title for the tab at index `tab_idx` (tab titles default to the name of the indexed child node). Set it back to the child's name to make the tab default to it again.
    */
-  set_tab_title(tab_idx: int, title: string): void;
+  set_tab_title(tab_idx: int, title: string | NodePath): void;
   /**
    * Sets a custom tooltip text for tab at index `tab_idx`.
    * **Note:** By default, if the `tooltip` is empty and the tab text is truncated (not all characters fit into the tab), the title will be displayed as a tooltip. To hide the tooltip, assign `" "` as the `tooltip` text.
    */
-  set_tab_tooltip(tab_idx: int, tooltip: string): void;
+  set_tab_tooltip(tab_idx: int, tooltip: string | NodePath): void;
 
   /** Emitted when the active tab is rearranged via mouse drag. See {@link drag_to_rearrange_enabled}. */
   active_tab_rearranged: Signal<[int]>;

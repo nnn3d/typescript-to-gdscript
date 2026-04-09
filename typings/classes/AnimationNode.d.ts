@@ -45,7 +45,7 @@ declare class AnimationNode extends Resource {
   /**
    * Adds an input to the animation node. This is only useful for animation nodes created for use in an {@link AnimationNodeBlendTree}. If the addition fails, returns `false`.
    */
-  add_input(name: string): boolean;
+  add_input(name: string | NodePath): boolean;
   /**
    * Blends an animation by `blend` amount (name must be valid in the linked {@link AnimationPlayer}). A `time` and `delta` may be passed, as well as whether `seeked` happened.
    * A `looped_flag` is used by internal processing immediately after the loop.
@@ -60,7 +60,7 @@ declare class AnimationNode extends Resource {
    */
   blend_node(name: string, node: AnimationNode, time: float, seek: boolean, is_external_seeking: boolean, blend: float, filter: int, sync?: boolean, test_only?: boolean): float;
   /** Returns the input index which corresponds to `name`. If not found, returns `-1`. */
-  find_input(name: string): int;
+  find_input(name: string | NodePath): int;
   /**
    * Amount of inputs in this animation node, only useful for animation nodes that go into {@link AnimationNodeBlendTree}.
    */
@@ -77,15 +77,15 @@ declare class AnimationNode extends Resource {
    */
   get_processing_animation_tree_instance_id(): int;
   /** Returns `true` if the given path is filtered. */
-  is_path_filtered(path: string): boolean;
+  is_path_filtered(path: NodePath | string): boolean;
   /** Returns `true` if this animation node is being processed in test-only mode. */
   is_process_testing(): boolean;
   /** Removes an input, call this only when inactive. */
   remove_input(index: int): void;
   /** Adds or removes a path for the filter. */
-  set_filter_path(path: string, enable: boolean): void;
+  set_filter_path(path: NodePath | string, enable: boolean): void;
   /** Sets the name of the input at the given `input` index. If the setting fails, returns `false`. */
-  set_input_name(input: int, name: string): boolean;
+  set_input_name(input: int, name: string | NodePath): boolean;
   /**
    * Sets a custom parameter. These are used as local memory, because resources can be reused across the tree or scenes.
    */

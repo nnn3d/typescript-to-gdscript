@@ -6,7 +6,7 @@ declare interface TextServerManager extends GodotObject {
   /** Registers a {@link TextServer} interface. */
   add_interface(interface_: TextServer): void;
   /** Finds an interface by its `name`. */
-  find_interface(name: string): TextServer | null;
+  find_interface(name: string | NodePath): TextServer | null;
   /** Returns the interface registered at a given index. */
   get_interface(idx: int): TextServer | null;
   /** Returns the number of interfaces currently registered. */

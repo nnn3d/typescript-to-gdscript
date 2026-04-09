@@ -139,23 +139,23 @@ declare class CodeEdit extends TextEdit {
    * Adds a brace pair.
    * Both the start and end keys must be symbols. Only the start key has to be unique.
    */
-  add_auto_brace_completion_pair(start_key: string, end_key: string): void;
+  add_auto_brace_completion_pair(start_key: string | NodePath, end_key: string | NodePath): void;
   /**
    * Submits an item to the queue of potential candidates for the autocomplete menu. Call {@link update_code_completion_options} to update the list.
    * `location` indicates location of the option relative to the location of the code completion query. See {@link CodeEdit.CodeCompletionLocation} for how to set this value.
    * **Note:** This list will replace all current candidates.
    */
-  add_code_completion_option(type_: int, display_text: string, insert_text: string, text_color?: Color, icon?: Resource, value?: unknown, location?: int): void;
+  add_code_completion_option(type_: int, display_text: string | NodePath, insert_text: string | NodePath, text_color?: Color, icon?: Resource, value?: unknown, location?: int): void;
   /**
    * Adds a comment delimiter from `start_key` to `end_key`. Both keys should be symbols, and `start_key` must not be shared with other delimiters.
    * If `line_only` is `true` or `end_key` is an empty {@link String}, the region does not carry over to the next line.
    */
-  add_comment_delimiter(start_key: string, end_key: string, line_only?: boolean): void;
+  add_comment_delimiter(start_key: string | NodePath, end_key: string | NodePath, line_only?: boolean): void;
   /**
    * Defines a string delimiter from `start_key` to `end_key`. Both keys should be symbols, and `start_key` must not be shared with other delimiters.
    * If `line_only` is `true` or `end_key` is an empty {@link String}, the region does not carry over to the next line.
    */
-  add_string_delimiter(start_key: string, end_key: string, line_only?: boolean): void;
+  add_string_delimiter(start_key: string | NodePath, end_key: string | NodePath, line_only?: boolean): void;
   /**
    * Returns `true` if the given line is foldable. A line is foldable if it is the start of a valid code region (see {@link get_code_region_start_tag}), if it is the start of a comment or string block, or if the next non-empty line is more indented (see {@link TextEdit.get_indent_level}).
    */
@@ -205,7 +205,7 @@ declare class CodeEdit extends TextEdit {
   /** Folds the given line, if possible (see {@link can_fold_line}). */
   fold_line(line: int): void;
   /** Gets the matching auto brace close key for `open_key`. */
-  get_auto_brace_completion_close_key(open_key: string): string;
+  get_auto_brace_completion_close_key(open_key: string | NodePath): string;
   /** Gets all bookmarked lines. */
   get_bookmarked_lines(): PackedInt32Array;
   /** Gets all breakpointed lines. */
@@ -251,13 +251,13 @@ declare class CodeEdit extends TextEdit {
   /** Returns the full text with char `0xFFFF` at the specified location. */
   get_text_with_cursor_char(line: int, column: int): string;
   /** Returns `true` if close key `close_key` exists. */
-  has_auto_brace_completion_close_key(close_key: string): boolean;
+  has_auto_brace_completion_close_key(close_key: string | NodePath): boolean;
   /** Returns `true` if open key `open_key` exists. */
-  has_auto_brace_completion_open_key(open_key: string): boolean;
+  has_auto_brace_completion_open_key(open_key: string | NodePath): boolean;
   /** Returns `true` if comment `start_key` exists. */
-  has_comment_delimiter(start_key: string): boolean;
+  has_comment_delimiter(start_key: string | NodePath): boolean;
   /** Returns `true` if string `start_key` exists. */
-  has_string_delimiter(start_key: string): boolean;
+  has_string_delimiter(start_key: string | NodePath): boolean;
   /**
    * Indents all lines that are selected or have a caret on them. Uses spaces or a tab depending on {@link indent_use_spaces}. See {@link unindent_lines}.
    */
@@ -285,15 +285,15 @@ declare class CodeEdit extends TextEdit {
   /**
    * Joins all selected lines or lines containing a caret with their next line. Whitespace in between will be removed. If the next line has content, the `line_ending` will be inserted in between.
    */
-  join_lines(line_ending?: string): void;
+  join_lines(line_ending?: string | NodePath): void;
   /** Moves all lines down that are selected or have a caret on them. */
   move_lines_down(): void;
   /** Moves all lines up that are selected or have a caret on them. */
   move_lines_up(): void;
   /** Removes the comment delimiter with `start_key`. */
-  remove_comment_delimiter(start_key: string): void;
+  remove_comment_delimiter(start_key: string | NodePath): void;
   /** Removes the string delimiter with `start_key`. */
-  remove_string_delimiter(start_key: string): void;
+  remove_string_delimiter(start_key: string | NodePath): void;
   /**
    * Emits {@link code_completion_requested}, if `force` is `true` will bypass all checks. Otherwise will check that the caret is in a word or in front of a prefix. Will ignore the request if all current options are of type file path, node path, or signal.
    */
@@ -301,13 +301,13 @@ declare class CodeEdit extends TextEdit {
   /** Sets the current selected completion option. */
   set_code_completion_selected_index(index: int): void;
   /** Sets the code hint text. Pass an empty string to clear. */
-  set_code_hint(code_hint: string): void;
+  set_code_hint(code_hint: string | NodePath): void;
   /**
    * If `true`, the code hint will draw below the main caret. If `false`, the code hint will draw above the main caret. See {@link set_code_hint}.
    */
   set_code_hint_draw_below(draw_below: boolean): void;
   /** Sets the code region start and end tags (without comment delimiter). */
-  set_code_region_tags(start?: string, end?: string): void;
+  set_code_region_tags(start?: string | NodePath, end?: string | NodePath): void;
   /**
    * Sets the given line as bookmarked. If `true` and {@link gutters_draw_bookmarks} is `true`, draws the  icon in the gutter for this line. See {@link get_bookmarked_lines} and {@link is_line_bookmarked}.
    */

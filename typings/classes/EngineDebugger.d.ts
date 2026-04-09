@@ -52,7 +52,7 @@ declare interface EngineDebugger extends GodotObject {
    */
   script_debug(language: ScriptLanguage, can_continue?: boolean, is_error_breakpoint?: boolean): void;
   /** Sends a message with given `message` and `data` array. */
-  send_message(message: string, data: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
+  send_message(message: string | NodePath, data: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /** Sets the current debugging depth. */
   set_depth(depth: int): void;
   /** Sets the current debugging lines that remain. */

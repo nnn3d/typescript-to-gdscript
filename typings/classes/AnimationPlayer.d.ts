@@ -87,7 +87,7 @@ declare class AnimationPlayer extends AnimationMixer {
   /** Returns a list of the animation keys that are currently queued to play. */
   get_queue(): Array<string>;
   /** Returns the node which node path references will travel from. */
-  get_root(): string;
+  get_root(): NodePath;
   /** Returns the end time of the section currently being played. */
   get_section_end_time(): float;
   /** Returns the start time of the section currently being played. */
@@ -168,7 +168,7 @@ declare class AnimationPlayer extends AnimationMixer {
   /** Sets the process notification in which to update animations. */
   set_process_callback(mode: int): void;
   /** Sets the node which node path references will travel from. */
-  set_root(path: string): void;
+  set_root(path: NodePath | string): void;
   /**
    * Changes the start and end times of the section being played. The current playback position will be clamped within the new section. See also {@link play_section}.
    */

@@ -71,7 +71,7 @@ export function godotTypeToTs(type: string): string {
     case 'Dictionary':
       return 'Dictionary';
     case 'NodePath':
-      return 'string';
+      return 'NodePath';
     case 'StringName':
       return 'string';
     case 'Object':
@@ -401,16 +401,22 @@ function deriveVariantParamConverts(
  * that can be variant-converted to it.
  * Returns the TS type string, potentially as a union (e.g. `Vector2 | Vector2i`).
  */
-/** TS types that should not be added as widened alternatives (primitives are too noisy). */
-const WIDEN_EXCLUDE_TS = new Set(['int', 'float', 'boolean', 'string', 'void', 'unknown', 'NodePath']);
+/** TS primitive types — widening between two primitives is excluded (too noisy). */
+const TS_PRIMITIVE_TYPES = new Set(['int', 'float', 'boolean', 'string', 'void', 'unknown']);
 
 function widenParamType(gdType: string): string {
   const tsType = godotTypeToTs(gdType);
   const converts = variantParamConverts.get(gdType);
   if (!converts || converts.length === 0) return tsType;
+  const targetIsPrimitive = TS_PRIMITIVE_TYPES.has(tsType);
   const tsConverts = converts
     .map((t) => godotTypeToTs(t))
-    .filter((t) => t !== tsType && !WIDEN_EXCLUDE_TS.has(t));
+    .filter((t) => {
+      if (t === tsType) return false; // no duplicate
+      // Skip primitive→primitive widening (e.g. int accepting bool/string)
+      if (targetIsPrimitive && TS_PRIMITIVE_TYPES.has(t)) return false;
+      return true;
+    });
   if (tsConverts.length === 0) return tsType;
   return `${tsType} | ${tsConverts.join(' | ')}`;
 }

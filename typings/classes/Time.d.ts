@@ -22,7 +22,7 @@ declare interface Time extends GodotObject {
    * If `weekday` is `false`, then the [code skip-lint]weekday[/code] entry is excluded (the calculation is relatively expensive).
    * **Note:** Any decimal fraction in the time string will be ignored silently.
    */
-  get_datetime_dict_from_datetime_string(datetime: string, weekday: boolean): Dictionary;
+  get_datetime_dict_from_datetime_string(datetime: string | NodePath, weekday: boolean): Dictionary;
   /**
    * Returns the current date as a dictionary of keys: `year`, `month`, `day`, `weekday`, `hour`, `minute`, `second`, and `dst` (Daylight Savings Time).
    */
@@ -97,7 +97,7 @@ declare interface Time extends GodotObject {
    * **Note:** Unix timestamps are often in UTC. This method does not do any timezone conversion, so the timestamp will be in the same timezone as the given datetime string.
    * **Note:** Any decimal fraction in the time string will be ignored silently.
    */
-  get_unix_time_from_datetime_string(datetime: string): int;
+  get_unix_time_from_datetime_string(datetime: string | NodePath): int;
   /**
    * Returns the current Unix timestamp in seconds based on the system time in UTC. This method is implemented by the operating system and always returns the time in UTC. The Unix timestamp is the number of seconds passed since 1970-01-01 at 00:00:00, the Unix epoch (https://en.wikipedia.org/wiki/Unix_time).
    * **Note:** Unlike other methods that use integer timestamps, this method returns the timestamp as a [float] for sub-second precision.

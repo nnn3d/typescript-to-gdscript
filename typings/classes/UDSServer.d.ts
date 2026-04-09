@@ -7,7 +7,7 @@ declare class UDSServer extends SocketServer {
    * Listens on the socket at `path`. The socket file will be created at the specified path.
    * **Note:** The socket file must not already exist at the specified path. You may need to remove any existing socket file before calling this method.
    */
-  listen(path: string): int;
+  listen(path: string | NodePath): int;
   /** If a connection is available, returns a StreamPeerUDS with the connection. */
   take_connection(): StreamPeerUDS | null;
 }

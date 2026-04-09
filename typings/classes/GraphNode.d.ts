@@ -18,7 +18,7 @@ declare class GraphNode extends GraphElement {
   mouse_filter: int;
   /** The text displayed in the GraphNode's title bar. */
   title: string;
-  set_title(value: string): void;
+  set_title(value: string | NodePath): void;
   get_title(): string;
 
   _draw_port(slot_index: int, position: Vector2i | Vector2, left: boolean, color: Color): void;

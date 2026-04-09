@@ -43,6 +43,6 @@ declare class ScriptExtension extends Script {
   _placeholder_erased(placeholder: void): void;
   _placeholder_instance_create(for_object: GodotObject): void;
   _reload(keep_state: boolean): int;
-  _set_source_code(code: string): void;
+  _set_source_code(code: string | NodePath): void;
   _update_exports(): void;
 }

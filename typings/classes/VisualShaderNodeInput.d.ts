@@ -7,7 +7,7 @@ declare class VisualShaderNodeInput extends VisualShaderNode {
    * One of the several input constants in lower-case style like: "vertex" (`VERTEX`) or "point_size" (`POINT_SIZE`).
    */
   input_name: string;
-  set_input_name(value: string): void;
+  set_input_name(value: string | NodePath): void;
   get_input_name(): string;
 
   /**

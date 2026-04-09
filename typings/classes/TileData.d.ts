@@ -71,7 +71,7 @@ declare class TileData extends GodotObject {
   /**
    * Returns the custom data value for custom data layer named `layer_name`. To check if a custom data layer exists, use {@link has_custom_data}.
    */
-  get_custom_data(layer_name: string): unknown;
+  get_custom_data(layer_name: string | NodePath): unknown;
   /** Returns the custom data value for custom data layer with index `layer_id`. */
   get_custom_data_by_layer_id(layer_id: int): unknown;
   /**
@@ -98,7 +98,7 @@ declare class TileData extends GodotObject {
    */
   get_terrain_peering_bit(peering_bit: int): int;
   /** Returns whether there exists a custom data layer named `layer_name`. */
-  has_custom_data(layer_name: string): boolean;
+  has_custom_data(layer_name: string | NodePath): boolean;
   /**
    * Returns whether one-way collisions are enabled for the polygon at index `polygon_index` for TileSet physics layer with index `layer_id`.
    */
@@ -132,7 +132,7 @@ declare class TileData extends GodotObject {
    */
   set_constant_linear_velocity(layer_id: int, velocity: Vector2 | Vector2i): void;
   /** Sets the tile's custom data value for the TileSet custom data layer with name `layer_name`. */
-  set_custom_data(layer_name: string, value: unknown): void;
+  set_custom_data(layer_name: string | NodePath, value: unknown): void;
   /** Sets the tile's custom data value for the TileSet custom data layer with index `layer_id`. */
   set_custom_data_by_layer_id(layer_id: int, value: unknown): void;
   /** Sets the navigation polygon for the TileSet navigation layer with index `layer_id`. */

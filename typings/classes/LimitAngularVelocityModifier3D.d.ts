@@ -42,9 +42,9 @@ declare class LimitAngularVelocityModifier3D extends SkeletonModifier3D {
    * Sets the end bone name of the bone chain.
    * **Note:** End bone must be the root bone or a child of the root bone.
    */
-  set_end_bone_name(index: int, bone_name: string): void;
+  set_end_bone_name(index: int, bone_name: string | NodePath): void;
   /** Sets the root bone index of the bone chain. */
   set_root_bone(index: int, bone: int): void;
   /** Sets the root bone name of the bone chain. */
-  set_root_bone_name(index: int, bone_name: string): void;
+  set_root_bone_name(index: int, bone_name: string | NodePath): void;
 }

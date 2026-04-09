@@ -4,47 +4,47 @@
 /** A packed array of {@link String}s. */
 declare interface PackedStringArray {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
-  append(value: string): boolean;
+  append(value: string | NodePath): boolean;
   /** Appends a {@link PackedStringArray} at the end of this array. */
   append_array(array: PackedStringArray | Array<unknown>): void;
   /**
    * Finds the index of an existing value (or the insertion index that maintains sorting order, if the value is not yet present in the array) using binary search. Optionally, a `before` specifier can be passed. If `false`, the returned index comes after all existing entries of the value in the array.
    * **Note:** Calling {@link bsearch} on an unsorted array results in unexpected behavior.
    */
-  bsearch(value: string, before?: boolean): int;
+  bsearch(value: string | NodePath, before?: boolean): int;
   /** Clears the array. This is equivalent to using {@link resize} with a size of `0`. */
   clear(): void;
   /** Returns the number of times an element is in the array. */
-  count(value: string): int;
+  count(value: string | NodePath): int;
   /** Creates a copy of the array, and returns it. */
   duplicate(): PackedStringArray;
   /**
    * Removes the first occurrence of a value from the array and returns `true`. If the value does not exist in the array, nothing happens and `false` is returned. To remove an element by index, use {@link remove_at} instead.
    */
-  erase(value: string): boolean;
+  erase(value: string | NodePath): boolean;
   /**
    * Assigns the given value to all elements in the array. This can typically be used together with {@link resize} to create an array with a given size and initialized elements.
    */
-  fill(value: string): void;
+  fill(value: string | NodePath): void;
   /**
    * Searches the array for a value and returns its index or `-1` if not found. Optionally, the initial search index can be passed.
    */
-  find(value: string, from_?: int): int;
+  find(value: string | NodePath, from_?: int): int;
   /**
    * Returns the {@link String} at the given `index` in the array. If `index` is out-of-bounds or negative, this method fails and returns an empty string.
    * This method is similar (but not identical) to the `[]` operator. Most notably, when this method fails, it doesn't pause project execution if run from the editor.
    */
   get(index: int): string;
   /** Returns `true` if the array contains `value`. */
-  has(value: string): boolean;
+  has(value: string | NodePath): boolean;
   /**
    * Inserts a new element at a given position in the array. The position must be valid, or at the end of the array (`idx == size()`).
    */
-  insert(at_index: int, value: string): int;
+  insert(at_index: int, value: string | NodePath): int;
   /** Returns `true` if the array is empty. */
   is_empty(): boolean;
   /** Appends a string element at end of the array. */
-  push_back(value: string): boolean;
+  push_back(value: string | NodePath): boolean;
   /** Removes an element from the array by index. */
   remove_at(index: int): void;
   /**
@@ -57,9 +57,9 @@ declare interface PackedStringArray {
   /**
    * Searches the array in reverse order. Optionally, a start search index can be passed. If negative, the start index is considered relative to the end of the array.
    */
-  rfind(value: string, from_?: int): int;
+  rfind(value: string | NodePath, from_?: int): int;
   /** Changes the {@link String} at the given index. */
-  set(index: int, value: string): void;
+  set(index: int, value: string | NodePath): void;
   /** Returns the number of elements in the array. */
   size(): int;
   /**

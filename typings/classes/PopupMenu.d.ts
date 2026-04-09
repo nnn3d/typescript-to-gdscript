@@ -74,7 +74,7 @@ declare class PopupMenu extends Popup {
    * An `id` can optionally be provided, as well as an accelerator (`accel`). If no `id` is provided, one will be created from the index. If no `accel` is provided, then the default value of 0 (corresponding to {@link @GlobalScope.KEY_NONE}) will be assigned to the item (which means it won't have any accelerator). See {@link get_item_accelerator} for more info on accelerators.
    * **Note:** Checkable items just display a checkmark, but don't have any built-in checking behavior and must be checked/unchecked manually. See {@link set_item_checked} for more info on how to control it.
    */
-  add_check_item(label: string, id?: int, accel?: int): void;
+  add_check_item(label: string | NodePath, id?: int, accel?: int): void;
   /**
    * Adds a new checkable item and assigns the specified {@link Shortcut} to it. Sets the label of the checkbox to the {@link Shortcut}'s name.
    * An `id` can optionally be provided. If no `id` is provided, one will be created from the index.
@@ -86,7 +86,7 @@ declare class PopupMenu extends Popup {
    * An `id` can optionally be provided, as well as an accelerator (`accel`). If no `id` is provided, one will be created from the index. If no `accel` is provided, then the default value of 0 (corresponding to {@link @GlobalScope.KEY_NONE}) will be assigned to the item (which means it won't have any accelerator). See {@link get_item_accelerator} for more info on accelerators.
    * **Note:** Checkable items just display a checkmark, but don't have any built-in checking behavior and must be checked/unchecked manually. See {@link set_item_checked} for more info on how to control it.
    */
-  add_icon_check_item(texture: Texture2D, label: string, id?: int, accel?: int): void;
+  add_icon_check_item(texture: Texture2D, label: string | NodePath, id?: int, accel?: int): void;
   /**
    * Adds a new checkable item and assigns the specified {@link Shortcut} and icon `texture` to it. Sets the label of the checkbox to the {@link Shortcut}'s name.
    * An `id` can optionally be provided. If no `id` is provided, one will be created from the index.
@@ -97,9 +97,9 @@ declare class PopupMenu extends Popup {
    * Adds a new item with text `label` and icon `texture`.
    * An `id` can optionally be provided, as well as an accelerator (`accel`). If no `id` is provided, one will be created from the index. If no `accel` is provided, then the default value of 0 (corresponding to {@link @GlobalScope.KEY_NONE}) will be assigned to the item (which means it won't have any accelerator). See {@link get_item_accelerator} for more info on accelerators.
    */
-  add_icon_item(texture: Texture2D, label: string, id?: int, accel?: int): void;
+  add_icon_item(texture: Texture2D, label: string | NodePath, id?: int, accel?: int): void;
   /** Same as {@link add_icon_check_item}, but uses a radio check button. */
-  add_icon_radio_check_item(texture: Texture2D, label: string, id?: int, accel?: int): void;
+  add_icon_radio_check_item(texture: Texture2D, label: string | NodePath, id?: int, accel?: int): void;
   /** Same as {@link add_icon_check_shortcut}, but uses a radio check button. */
   add_icon_radio_check_shortcut(texture: Texture2D, shortcut: Shortcut, id?: int, global?: boolean): void;
   /**
@@ -113,20 +113,20 @@ declare class PopupMenu extends Popup {
    * An `id` can optionally be provided, as well as an accelerator (`accel`). If no `id` is provided, one will be created from the index. If no `accel` is provided, then the default value of 0 (corresponding to {@link @GlobalScope.KEY_NONE}) will be assigned to the item (which means it won't have any accelerator). See {@link get_item_accelerator} for more info on accelerators.
    * **Note:** The provided `id` is used only in {@link id_pressed} and {@link id_focused} signals. It's not related to the `index` arguments in e.g. {@link set_item_checked}.
    */
-  add_item(label: string, id?: int, accel?: int): void;
+  add_item(label: string | NodePath, id?: int, accel?: int): void;
   /**
    * Adds a new multistate item with text `label`.
    * Contrarily to normal binary items, multistate items can have more than two states, as defined by `max_states`. The default value is defined by `default_state`.
    * An `id` can optionally be provided, as well as an accelerator (`accel`). If no `id` is provided, one will be created from the index. If no `accel` is provided, then the default value of 0 (corresponding to {@link @GlobalScope.KEY_NONE}) will be assigned to the item (which means it won't have any accelerator). See {@link get_item_accelerator} for more info on accelerators.
    * **Note:** Multistate items don't update their state automatically and must be done manually. See {@link toggle_item_multistate}, {@link set_item_multistate} and {@link get_item_multistate} for more info on how to control it.
    */
-  add_multistate_item(label: string, max_states: int, default_state?: int, id?: int, accel?: int): void;
+  add_multistate_item(label: string | NodePath, max_states: int, default_state?: int, id?: int, accel?: int): void;
   /**
    * Adds a new radio check button with text `label`.
    * An `id` can optionally be provided, as well as an accelerator (`accel`). If no `id` is provided, one will be created from the index. If no `accel` is provided, then the default value of 0 (corresponding to {@link @GlobalScope.KEY_NONE}) will be assigned to the item (which means it won't have any accelerator). See {@link get_item_accelerator} for more info on accelerators.
    * **Note:** Checkable items just display a checkmark, but don't have any built-in checking behavior and must be checked/unchecked manually. See {@link set_item_checked} for more info on how to control it.
    */
-  add_radio_check_item(label: string, id?: int, accel?: int): void;
+  add_radio_check_item(label: string | NodePath, id?: int, accel?: int): void;
   /**
    * Adds a new radio check button and assigns a {@link Shortcut} to it. Sets the label of the checkbox to the {@link Shortcut}'s name.
    * An `id` can optionally be provided. If no `id` is provided, one will be created from the index.
@@ -137,7 +137,7 @@ declare class PopupMenu extends Popup {
    * Adds a separator between items. Separators also occupy an index, which you can set by using the `id` parameter.
    * A `label` can optionally be provided, which will appear at the center of the separator.
    */
-  add_separator(label?: string, id?: int): void;
+  add_separator(label?: string | NodePath, id?: int): void;
   /**
    * Adds a {@link Shortcut}.
    * An `id` can optionally be provided. If no `id` is provided, one will be created from the index.
@@ -148,13 +148,13 @@ declare class PopupMenu extends Popup {
    * Adds an item that will act as a submenu of the parent {@link PopupMenu} node when clicked. The `submenu` argument must be the name of an existing {@link PopupMenu} that has been added as a child to this node. This submenu will be shown when the item is clicked, hovered for long enough, or activated using the `ui_select` or `ui_right` input actions.
    * An `id` can optionally be provided. If no `id` is provided, one will be created from the index.
    */
-  add_submenu_item(label: string, submenu: string, id?: int): void;
+  add_submenu_item(label: string | NodePath, submenu: string | NodePath, id?: int): void;
   /**
    * Adds an item that will act as a submenu of the parent {@link PopupMenu} node when clicked. This submenu will be shown when the item is clicked, hovered for long enough, or activated using the `ui_select` or `ui_right` input actions.
    * `submenu` must be either child of this {@link PopupMenu} or has no parent node (in which case it will be automatically added as a child). If the `submenu` popup has another parent, this method will fail.
    * An `id` can optionally be provided. If no `id` is provided, one will be created from the index.
    */
-  add_submenu_node_item(label: string, submenu: PopupMenu, id?: int): void;
+  add_submenu_node_item(label: string | NodePath, submenu: PopupMenu, id?: int): void;
   /**
    * Removes all items from the {@link PopupMenu}. If `free_submenus` is `true`, the submenu nodes are automatically freed.
    */
@@ -299,7 +299,7 @@ declare class PopupMenu extends Popup {
   /**
    * Sets the language code of the text for the item at the given index to `language`. This is used for line-breaking and text shaping algorithms. If `language` is empty, the current locale is used.
    */
-  set_item_language(index: int, language: string): void;
+  set_item_language(index: int, language: string | NodePath): void;
   /**
    * Sets the metadata of an item, which may be of any type. You can later get it with {@link get_item_metadata}, which provides a simple way of assigning context data to items.
    */
@@ -315,17 +315,17 @@ declare class PopupMenu extends Popup {
   /**
    * Sets the submenu of the item at the given `index`. The submenu is the name of a child {@link PopupMenu} node that would be shown when the item is clicked.
    */
-  set_item_submenu(index: int, submenu: string): void;
+  set_item_submenu(index: int, submenu: string | NodePath): void;
   /**
    * Sets the submenu of the item at the given `index`. The submenu is a {@link PopupMenu} node that would be shown when the item is clicked. It must either be a child of this {@link PopupMenu} or has no parent (in which case it will be automatically added as a child). If the `submenu` popup has another parent, this method will fail.
    */
   set_item_submenu_node(index: int, submenu: PopupMenu): void;
   /** Sets the text of the item at the given `index`. */
-  set_item_text(index: int, text: string): void;
+  set_item_text(index: int, text: string | NodePath): void;
   /** Sets item's text base writing direction. */
   set_item_text_direction(index: int, direction: int): void;
   /** Sets the {@link String} tooltip of the item at the given `index`. */
-  set_item_tooltip(index: int, tooltip: string): void;
+  set_item_tooltip(index: int, tooltip: string | NodePath): void;
   /** Toggles the check state of the item at the given `index`. */
   toggle_item_checked(index: int): void;
   /** Cycle to the next state of a multistate item. See {@link add_multistate_item} for details. */

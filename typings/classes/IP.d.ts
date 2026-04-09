@@ -6,7 +6,7 @@ declare interface IP extends GodotObject {
   /**
    * Removes all of a `hostname`'s cached references. If no `hostname` is given, all cached IP addresses are removed.
    */
-  clear_cache(hostname?: string): void;
+  clear_cache(hostname?: string | NodePath): void;
   /**
    * Removes a given item `id` from the queue. This should be used to free a queue after it has completed to enable more queries to happen.
    */
@@ -31,15 +31,15 @@ declare interface IP extends GodotObject {
   /**
    * Returns a given hostname's IPv4 or IPv6 address when resolved (blocking-type method). The address type returned depends on the {@link Type} constant given as `ip_type`.
    */
-  resolve_hostname(host: string, ip_type: int): string;
+  resolve_hostname(host: string | NodePath, ip_type: int): string;
   /**
    * Resolves a given hostname in a blocking way. Addresses are returned as an {@link Array} of IPv4 or IPv6 addresses depending on `ip_type`.
    */
-  resolve_hostname_addresses(host: string, ip_type: int): PackedStringArray;
+  resolve_hostname_addresses(host: string | NodePath, ip_type: int): PackedStringArray;
   /**
    * Creates a queue item to resolve a hostname to an IPv4 or IPv6 address depending on the {@link Type} constant given as `ip_type`. Returns the queue ID if successful, or {@link RESOLVER_INVALID_ID} on error.
    */
-  resolve_hostname_queue_item(host: string, ip_type: int): int;
+  resolve_hostname_queue_item(host: string | NodePath, ip_type: int): int;
 
   // enum ResolverStatus
   /** DNS hostname resolver status: No status. */

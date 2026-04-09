@@ -78,7 +78,7 @@ declare class TextMesh extends PrimitiveMesh {
   get_horizontal_alignment(): int;
   set_justification_flags(value: int): void;
   get_justification_flags(): int;
-  set_language(value: string): void;
+  set_language(value: string | NodePath): void;
   get_language(): string;
   set_line_spacing(value: float): void;
   get_line_spacing(): float;
@@ -90,7 +90,7 @@ declare class TextMesh extends PrimitiveMesh {
   get_structured_text_bidi_override(): int;
   set_structured_text_bidi_override_options(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_structured_text_bidi_override_options(): Array<unknown>;
-  set_text(value: string): void;
+  set_text(value: string | NodePath): void;
   get_text(): string;
   set_text_direction(value: int): void;
   get_text_direction(): int;

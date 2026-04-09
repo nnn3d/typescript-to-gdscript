@@ -54,7 +54,7 @@ declare class IterateIK3D extends ChainIK3D {
    */
   get_joint_rotation_axis_vector(index: int, joint: int): Vector3;
   /** Returns the target node that the end bone is trying to reach. */
-  get_target_node(index: int): string;
+  get_target_node(index: int): NodePath;
   /** Sets the joint limitation at `joint` in the bone chain's joint list. */
   set_joint_limitation(index: int, joint: int, limitation: JointLimitation3D): void;
   /** Sets the joint limitation right axis at `joint` in the bone chain's joint list. */
@@ -81,5 +81,5 @@ declare class IterateIK3D extends ChainIK3D {
    */
   set_joint_rotation_axis_vector(index: int, joint: int, axis_vector: Vector3 | Vector3i): void;
   /** Sets the target node that the end bone is trying to reach. */
-  set_target_node(index: int, target_node: string): void;
+  set_target_node(index: int, target_node: NodePath | string): void;
 }

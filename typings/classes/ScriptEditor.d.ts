@@ -22,13 +22,13 @@ declare class ScriptEditor extends PanelContainer {
    * Opens help for the given topic. The `topic` is an encoded string that controls which class, method, constant, signal, annotation, property, or theme item should be focused.
    * The supported `topic` formats include `class_name:class`, `class_method:class:method`, `class_constant:class:constant`, `class_signal:class:signal`, `class_annotation:class:@annotation`, `class_property:class:property`, and `class_theme_item:class:item`, where `class` is the class name, `method` is the method name, `constant` is the constant name, `signal` is the signal name, `annotation` is the annotation name, `property` is the property name, and `item` is the theme item.
    */
-  goto_help(topic: string): void;
+  goto_help(topic: string | NodePath): void;
   /** Goes to the specified line in the current script. */
   goto_line(line_number: int): void;
   /**
    * Opens the script create dialog. The script will extend `base_name`. The file extension can be omitted from `base_path`. It will be added based on the selected scripting language.
    */
-  open_script_create_dialog(base_name: string, base_path: string): void;
+  open_script_create_dialog(base_name: string | NodePath, base_path: string | NodePath): void;
   /**
    * Registers the {@link EditorSyntaxHighlighter} to the editor, the {@link EditorSyntaxHighlighter} will be available on all open scripts.
    * **Note:** Does not apply to scripts that are already opened.

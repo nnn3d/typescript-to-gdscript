@@ -11,7 +11,7 @@ declare class VisualShaderNodeParameter extends VisualShaderNode {
   qualifier: int;
   set_instance_index(value: int): void;
   get_instance_index(): int;
-  set_parameter_name(value: string): void;
+  set_parameter_name(value: string | NodePath): void;
   get_parameter_name(): string;
   set_qualifier(value: int): void;
   get_qualifier(): int;

@@ -6,11 +6,11 @@ declare class EditorFileSystem extends Node {
   /**
    * Returns the resource type of the file, given the full path. This returns a string such as `"Resource"` or `"GDScript"`, *not* a file extension such as `".gd"`.
    */
-  get_file_type(path: string): string;
+  get_file_type(path: string | NodePath): string;
   /** Gets the root directory object. */
   get_filesystem(): EditorFileSystemDirectory;
   /** Returns a view into the filesystem at `path`. */
-  get_filesystem_path(path: string): EditorFileSystemDirectory | null;
+  get_filesystem_path(path: string | NodePath): EditorFileSystemDirectory | null;
   /** Returns the scan progress for 0 to 1 if the FS is being scanned. */
   get_scanning_progress(): float;
   /** Returns `true` if resources are currently being imported. */
@@ -31,7 +31,7 @@ declare class EditorFileSystem extends Node {
    * Add a file in an existing directory, or schedule file information to be updated on editor restart. Can be used to update text files saved by an external program.
    * This will not import the file. To reimport, call {@link reimport_files} or {@link scan} methods.
    */
-  update_file(path: string): void;
+  update_file(path: string | NodePath): void;
 
   /** Emitted if the filesystem changed. */
   filesystem_changed: Signal<[]>;

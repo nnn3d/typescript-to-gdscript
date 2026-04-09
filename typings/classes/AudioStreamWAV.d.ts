@@ -59,12 +59,12 @@ declare class AudioStreamWAV extends AudioStream {
    * The keys and values of `options` match the properties of {@link ResourceImporterWAV}.
    * **Example:** Load the first file dropped as a WAV and play it:
    */
-  static load_from_file(path: string, options?: Dictionary): AudioStreamWAV | null;
+  static load_from_file(path: string | NodePath, options?: Dictionary): AudioStreamWAV | null;
   /**
    * Saves the AudioStreamWAV as a WAV file to `path`. Samples with IMA ADPCM or Quite OK Audio formats can't be saved.
    * **Note:** A `.wav` extension is automatically appended to `path` if it is missing.
    */
-  save_to_wav(path: string): int;
+  save_to_wav(path: string | NodePath): int;
 
   // enum Format
   /** 8-bit PCM audio codec. */

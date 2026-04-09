@@ -10,7 +10,7 @@ declare class StreamPeerTLS extends StreamPeer {
   /**
    * Connects to a peer using an underlying {@link StreamPeer} `stream` and verifying the remote certificate is correctly signed for the given `common_name`. You can pass the optional `client_options` parameter to customize the trusted certification authorities, or disable the common name verification. See {@link TLSOptions.client} and {@link TLSOptions.client_unsafe}.
    */
-  connect_to_stream(stream: StreamPeer, common_name: string, client_options?: TLSOptions): int;
+  connect_to_stream(stream: StreamPeer, common_name: string | NodePath, client_options?: TLSOptions): int;
   /** Disconnects from host. */
   disconnect_from_stream(): void;
   /** Returns the status of the connection. */

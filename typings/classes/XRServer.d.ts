@@ -46,7 +46,7 @@ declare interface XRServer extends GodotObject {
   /**
    * Finds an interface by its `name`. For example, if your project uses capabilities of an AR/VR platform, you can find the interface for that platform by name and initialize it.
    */
-  find_interface(name: string): XRInterface | null;
+  find_interface(name: string | NodePath): XRInterface | null;
   /** Returns the primary interface's transformation. */
   get_hmd_transform(): Transform3D;
   /** Returns the interface registered at the given `idx` index in the list of interfaces. */

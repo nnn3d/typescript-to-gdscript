@@ -14,30 +14,30 @@ declare class EditorExportPlatformExtension extends EditorExportPlatform {
    * Creates a PCK archive at `path` for the specified `preset`.
    * This method is called when "Export PCK/ZIP" button is pressed in the export dialog, with "Export as Patch" disabled, and PCK is selected as a file type.
    */
-  _export_pack(preset: EditorExportPreset, debug: boolean, path: string, flags: int): int;
+  _export_pack(preset: EditorExportPreset, debug: boolean, path: string | NodePath, flags: int): int;
   /**
    * Creates a patch PCK archive at `path` for the specified `preset`, containing only the files that have changed since the last patch.
    * This method is called when "Export PCK/ZIP" button is pressed in the export dialog, with "Export as Patch" enabled, and PCK is selected as a file type.
    * **Note:** The patches provided in `patches` have already been loaded when this method is called and are merely provided as context. When empty the patches defined in the export preset have been loaded instead.
    */
-  _export_pack_patch(preset: EditorExportPreset, debug: boolean, path: string, patches: PackedStringArray | Array<unknown>, flags: int): int;
+  _export_pack_patch(preset: EditorExportPreset, debug: boolean, path: string | NodePath, patches: PackedStringArray | Array<unknown>, flags: int): int;
   /**
    * Creates a full project at `path` for the specified `preset`.
    * This method is called when "Export" button is pressed in the export dialog.
    * This method implementation can call {@link EditorExportPlatform.save_pack} or {@link EditorExportPlatform.save_zip} to use default PCK/ZIP export process, or calls {@link EditorExportPlatform.export_project_files} and implement custom callback for processing each exported file.
    */
-  _export_project(preset: EditorExportPreset, debug: boolean, path: string, flags: int): int;
+  _export_project(preset: EditorExportPreset, debug: boolean, path: string | NodePath, flags: int): int;
   /**
    * Create a ZIP archive at `path` for the specified `preset`.
    * This method is called when "Export PCK/ZIP" button is pressed in the export dialog, with "Export as Patch" disabled, and ZIP is selected as a file type.
    */
-  _export_zip(preset: EditorExportPreset, debug: boolean, path: string, flags: int): int;
+  _export_zip(preset: EditorExportPreset, debug: boolean, path: string | NodePath, flags: int): int;
   /**
    * Create a ZIP archive at `path` for the specified `preset`, containing only the files that have changed since the last patch.
    * This method is called when "Export PCK/ZIP" button is pressed in the export dialog, with "Export as Patch" enabled, and ZIP is selected as a file type.
    * **Note:** The patches provided in `patches` have already been loaded when this method is called and are merely provided as context. When empty the patches defined in the export preset have been loaded instead.
    */
-  _export_zip_patch(preset: EditorExportPreset, debug: boolean, path: string, patches: PackedStringArray | Array<unknown>, flags: int): int;
+  _export_zip_patch(preset: EditorExportPreset, debug: boolean, path: string | NodePath, patches: PackedStringArray | Array<unknown>, flags: int): int;
   /** Returns array of supported binary extensions for the full project export. */
   _get_binary_extensions(preset: EditorExportPreset): PackedStringArray;
   /** Returns protocol used for remote debugging. Default implementation return `tcp://`. */
@@ -47,7 +47,7 @@ declare class EditorExportPlatformExtension extends EditorExportPlatform {
   /**
    * Validates `option` and returns visibility for the specified `preset`. Default implementation return `true` for all options.
    */
-  _get_export_option_visibility(preset: EditorExportPreset, option: string): boolean;
+  _get_export_option_visibility(preset: EditorExportPreset, option: string | NodePath): boolean;
   /**
    * Validates `option` and returns warning message for the specified `preset`. Default implementation return empty string for all options.
    */
@@ -102,7 +102,7 @@ declare class EditorExportPlatformExtension extends EditorExportPlatform {
   /**
    * Returns `true` if specified file is a valid executable (native executable or script) for the target platform.
    */
-  _is_executable(path: string): boolean;
+  _is_executable(path: string | NodePath): boolean;
   /** Returns `true` if one-click deploy options are changed and editor interface should be updated. */
   _poll_export(): boolean;
   /**
@@ -123,7 +123,7 @@ declare class EditorExportPlatformExtension extends EditorExportPlatform {
   /**
    * Sets current configuration error message text. This method should be called only from the {@link _can_export}, {@link _has_valid_export_configuration}, or {@link _has_valid_project_configuration} implementations.
    */
-  set_config_error(error_text: string): void;
+  set_config_error(error_text: string | NodePath): void;
   /**
    * Set to `true` is export templates are missing from the current configuration. This method should be called only from the {@link _can_export}, {@link _has_valid_export_configuration}, or {@link _has_valid_project_configuration} implementations.
    */

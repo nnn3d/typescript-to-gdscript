@@ -16,5 +16,5 @@ declare class Expression extends RefCounted {
    * Parses the expression and returns an {@link Error} code.
    * You can optionally specify names of variables that may appear in the expression with `input_names`, so that you can bind them when it gets executed.
    */
-  parse(expression: string, input_names?: PackedStringArray | Array<unknown>): int;
+  parse(expression: string | NodePath, input_names?: PackedStringArray | Array<unknown>): int;
 }

@@ -13,12 +13,12 @@ declare class SkeletonModification2DPhysicalBones extends SkeletonModification2D
    */
   fetch_physical_bones(): void;
   /** Returns the {@link PhysicalBone2D} node at `joint_idx`. */
-  get_physical_bone_node(joint_idx: int): string;
+  get_physical_bone_node(joint_idx: int): NodePath;
   /**
    * Sets the {@link PhysicalBone2D} node at `joint_idx`.
    * **Note:** This is just the index used for this modification, not the bone index used in the {@link Skeleton2D}.
    */
-  set_physical_bone_node(joint_idx: int, physicalbone2d_node: string): void;
+  set_physical_bone_node(joint_idx: int, physicalbone2d_node: NodePath | string): void;
   /**
    * Tell the {@link PhysicalBone2D} nodes to start simulating and interacting with the physics world.
    * Optionally, an array of bone names can be passed to this function, and that will cause only {@link PhysicalBone2D} nodes with those names to start simulating.

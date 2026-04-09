@@ -25,7 +25,7 @@ declare class BoneConstraint3D extends SkeletonModifier3D {
    * Returns the reference node path of the setting at `index`.
    * This node will be only referenced and not modified by this modifier.
    */
-  get_reference_node(index: int): string;
+  get_reference_node(index: int): NodePath;
   /** Returns the reference target type of the setting at `index`. See also {@link ReferenceType}. */
   get_reference_type(index: int): int;
   /** Returns the number of settings in the modifier. */
@@ -35,7 +35,7 @@ declare class BoneConstraint3D extends SkeletonModifier3D {
   /** Sets the apply bone of the setting at `index` to `bone`. This bone will be modified. */
   set_apply_bone(index: int, bone: int): void;
   /** Sets the apply bone of the setting at `index` to `bone_name`. This bone will be modified. */
-  set_apply_bone_name(index: int, bone_name: string): void;
+  set_apply_bone_name(index: int, bone_name: string | NodePath): void;
   /**
    * Sets the reference bone of the setting at `index` to `bone`.
    * This bone will be only referenced and not modified by this modifier.
@@ -45,12 +45,12 @@ declare class BoneConstraint3D extends SkeletonModifier3D {
    * Sets the reference bone of the setting at `index` to `bone_name`.
    * This bone will be only referenced and not modified by this modifier.
    */
-  set_reference_bone_name(index: int, bone_name: string): void;
+  set_reference_bone_name(index: int, bone_name: string | NodePath): void;
   /**
    * Sets the reference node path of the setting at `index` to `node`.
    * This node will be only referenced and not modified by this modifier.
    */
-  set_reference_node(index: int, node: string): void;
+  set_reference_node(index: int, node: NodePath | string): void;
   /** Sets the reference target type of the setting at `index` to `type`. See also {@link ReferenceType}. */
   set_reference_type(index: int, type_: int): void;
   /** Sets the number of settings in the modifier. */

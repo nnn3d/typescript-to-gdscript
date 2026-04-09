@@ -11,7 +11,7 @@ declare class MeshLibrary extends Resource {
    */
   create_item(id: int): void;
   /** Returns the first item with the given name, or `-1` if no item is found. */
-  find_item_by_name(name: string): int;
+  find_item_by_name(name: string | NodePath): int;
   /** Returns the list of item IDs in use. */
   get_item_list(): PackedInt32Array;
   /** Returns the item's mesh. */
@@ -51,7 +51,7 @@ declare class MeshLibrary extends Resource {
    * Sets the item's name.
    * This name is shown in the editor. It can also be used to look up the item later using {@link find_item_by_name}.
    */
-  set_item_name(id: int, name: string): void;
+  set_item_name(id: int, name: string | NodePath): void;
   /** Sets the item's navigation layers bitmask. */
   set_item_navigation_layers(id: int, navigation_layers: int): void;
   /** Sets the item's navigation mesh. */

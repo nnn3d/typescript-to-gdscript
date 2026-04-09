@@ -6,7 +6,7 @@ declare class ResourceImporter extends RefCounted {
   /**
    * Called when the engine compilation profile editor wants to check what build options an imported resource needs. For example, {@link ResourceImporterDynamicFont} has a property called {@link ResourceImporterDynamicFont.multichannel_signed_distance_field}, that depends on the engine to be build with the "msdfgen" module. If that resource happened to be a custom one, it would be handled like this:
    */
-  _get_build_dependencies(path: string): PackedStringArray;
+  _get_build_dependencies(path: string | NodePath): PackedStringArray;
 
   // enum ImportOrder
   /** The default import order. */

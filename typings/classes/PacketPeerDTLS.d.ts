@@ -6,7 +6,7 @@ declare class PacketPeerDTLS extends PacketPeer {
   /**
    * Connects a `packet_peer` beginning the DTLS handshake using the underlying {@link PacketPeerUDP} which must be connected (see {@link PacketPeerUDP.connect_to_host}). You can optionally specify the `client_options` to be used while verifying the TLS connections. See {@link TLSOptions.client} and {@link TLSOptions.client_unsafe}.
    */
-  connect_to_peer(packet_peer: PacketPeerUDP, hostname: string, client_options?: TLSOptions): int;
+  connect_to_peer(packet_peer: PacketPeerUDP, hostname: string | NodePath, client_options?: TLSOptions): int;
   /** Disconnects this peer, terminating the DTLS session. */
   disconnect_from_peer(): void;
   /** Returns the status of the connection. */

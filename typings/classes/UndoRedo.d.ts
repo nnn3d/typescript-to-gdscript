@@ -42,7 +42,7 @@ declare class UndoRedo extends GodotObject {
    * The way actions are merged is dictated by `merge_mode`.
    * The way undo operation are ordered in actions is dictated by `backward_undo_ops`. When `backward_undo_ops` is `false` undo option are ordered in the same order they were added. Which means the first operation to be added will be the first to be undone.
    */
-  create_action(name: string, merge_mode: int, backward_undo_ops?: boolean): void;
+  create_action(name: string | NodePath, merge_mode: int, backward_undo_ops?: boolean): void;
   /**
    * Stops marking operations as to be processed even if the action gets merged with another in the {@link MERGE_ENDS} mode. See {@link start_force_keep_in_merge_ends}.
    */

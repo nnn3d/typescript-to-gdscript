@@ -10,21 +10,21 @@ declare class EditorSceneFormatImporter extends RefCounted {
    * **Note:** All {@link EditorSceneFormatImporter} and {@link EditorScenePostImportPlugin} instances will add options for all files. It is good practice to check the file extension when `path` is non-empty.
    * When the user is editing project settings, `path` will be empty. It is recommended to add all options when `path` is empty to allow the user to customize Import Defaults.
    */
-  _get_import_options(path: string): void;
+  _get_import_options(path: string | NodePath): void;
   /**
    * Should return `true` to show the given option, `false` to hide the given option, or `null` to ignore.
    */
-  _get_option_visibility(path: string, for_animation: boolean, option: string): unknown;
+  _get_option_visibility(path: string | NodePath, for_animation: boolean, option: string | NodePath): unknown;
   /**
    * Perform the bulk of the scene import logic here, for example using {@link GLTFDocument} or {@link FBXDocument}.
    */
-  _import_scene(path: string, flags: int, options: Dictionary): GodotObject | null;
+  _import_scene(path: string | NodePath, flags: int, options: Dictionary): GodotObject | null;
   /**
    * Add a specific import option (name and default value only). This function can only be called from {@link _get_import_options}.
    */
-  add_import_option(name: string, value: unknown): void;
+  add_import_option(name: string | NodePath, value: unknown): void;
   /** Add a specific import option. This function can only be called from {@link _get_import_options}. */
-  add_import_option_advanced(type_: int, name: string, default_value: unknown, hint: int, hint_string?: string, usage_flags?: int): void;
+  add_import_option_advanced(type_: int, name: string | NodePath, default_value: unknown, hint: int, hint_string?: string | NodePath, usage_flags?: int): void;
 
   static readonly IMPORT_SCENE: int;
   static readonly IMPORT_ANIMATION: int;

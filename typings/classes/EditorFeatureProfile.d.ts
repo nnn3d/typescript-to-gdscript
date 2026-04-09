@@ -25,12 +25,12 @@ declare class EditorFeatureProfile extends RefCounted {
    * Loads an editor feature profile from a file. The file must follow the JSON format obtained by using the feature profile manager's **Export** button or the {@link save_to_file} method.
    * **Note:** Feature profiles created via the user interface are loaded from the `feature_profiles` directory, as a file with the `.profile` extension. The editor configuration folder can be found by using {@link EditorPaths.get_config_dir}.
    */
-  load_from_file(path: string): int;
+  load_from_file(path: string | NodePath): int;
   /**
    * Saves the editor feature profile to a file in JSON format. It can then be imported using the feature profile manager's **Import** button or the {@link load_from_file} method.
    * **Note:** Feature profiles created via the user interface are saved in the `feature_profiles` directory, as a file with the `.profile` extension. The editor configuration folder can be found by using {@link EditorPaths.get_config_dir}.
    */
-  save_to_file(path: string): int;
+  save_to_file(path: string | NodePath): int;
   /**
    * If `disable` is `true`, disables the class specified by `class_name`. When disabled, the class won't appear in the Create New Node dialog.
    */

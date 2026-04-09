@@ -30,7 +30,7 @@ declare interface OS extends GodotObject {
   /**
    * Displays a modal dialog box using the host platform's implementation. The engine execution is blocked until the dialog is closed.
    */
-  alert(text: string, title?: string): void;
+  alert(text: string | NodePath, title?: string | NodePath): void;
   /**
    * Shuts down the system MIDI driver. Godot will no longer receive {@link InputEventMIDI}. See also {@link open_midi_inputs} and {@link get_connected_midi_inputs}.
    * **Note:** This method is implemented on Linux, macOS, Windows, and Web.
@@ -40,7 +40,7 @@ declare interface OS extends GodotObject {
    * Crashes the engine (or the editor if called within a `@tool` script). See also {@link kill}.
    * **Note:** This method should *only* be used for testing the system's crash handler, not for any other purpose. For general error reporting, use (in order of preference) {@link @GDScript.assert}, {@link @GlobalScope.push_error}, or {@link alert}.
    */
-  crash(message: string): void;
+  crash(message: string | NodePath): void;
   /**
    * Creates a new instance of Godot that runs independently. The `arguments` are used in the given order and separated by a space.
    * If the process is successfully created, this method returns the new process' ID, which you can use to monitor the process (and potentially terminate it with {@link kill}). If the process cannot be created, this method returns `-1`.
@@ -57,7 +57,7 @@ declare interface OS extends GodotObject {
    * **Note:** This method is implemented on Android, Linux, macOS, and Windows.
    * **Note:** On macOS, sandboxed applications are limited to run only embedded helper executables, specified during export or system .app bundle, system .app bundles will ignore arguments.
    */
-  create_process(path: string, arguments: PackedStringArray | Array<unknown>, open_console?: boolean): int;
+  create_process(path: string | NodePath, arguments: PackedStringArray | Array<unknown>, open_console?: boolean): int;
   /**
    * Delays execution of the current thread by `msec` milliseconds. `msec` must be greater than or equal to `0`. Otherwise, {@link delay_msec} does nothing and prints an error message.
    * **Note:** {@link delay_msec} is a *blocking* way to delay code execution. To delay code execution in a non-blocking way, you may use {@link SceneTree.create_timer}. Awaiting with {@link SceneTreeTimer} delays the execution of code placed below the `await` without affecting the rest of the project (or editor, for {@link EditorPlugin}s and {@link EditorScript}s).
@@ -85,7 +85,7 @@ declare interface OS extends GodotObject {
    * **Note:** On macOS, sandboxed applications are limited to run only embedded helper executables, specified during export.
    * **Note:** On Android, system commands such as `dumpsys` can only be run on a rooted device.
    */
-  execute(path: string, arguments: PackedStringArray | Array<unknown>, output?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, read_stderr?: boolean, open_console?: boolean): int;
+  execute(path: string | NodePath, arguments: PackedStringArray | Array<unknown>, output?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, read_stderr?: boolean, open_console?: boolean): int;
   /**
    * Creates a new process that runs independently of Godot with redirected IO. It will not terminate when Godot terminates. The path specified in `path` must exist and be an executable file or macOS `.app` bundle. The path is resolved based on the current platform. The `arguments` are used in the given order and separated by a space.
    * If `blocking` is `false`, created pipes work in non-blocking mode, i.e. read and write operations will return immediately. Use {@link FileAccess.get_error} to check if the last read/write operation was successful.
@@ -99,12 +99,12 @@ declare interface OS extends GodotObject {
    * **Note:** To execute a Unix shell built-in command, specify shell executable name in `path`, `-c` as the first argument, and the desired command as the second argument.
    * **Note:** On macOS, sandboxed applications are limited to run only embedded helper executables, specified during export or system .app bundle, system .app bundles will ignore arguments.
    */
-  execute_with_pipe(path: string, arguments: PackedStringArray | Array<unknown>, blocking?: boolean): Dictionary;
+  execute_with_pipe(path: string | NodePath, arguments: PackedStringArray | Array<unknown>, blocking?: boolean): Dictionary;
   /**
    * Finds the keycode for the given string. The returned values are equivalent to the {@link Key} constants.
    * See also {@link get_keycode_string}.
    */
-  find_keycode_from_string(string: string): int;
+  find_keycode_from_string(string: string | NodePath): int;
   /**
    * Returns the *global* cache data directory according to the operating system's standards.
    * On the Linux/BSD platform, this path can be overridden by setting the `XDG_CACHE_HOME` environment variable before starting the project. See File paths in Godot projects ($DOCS_URL/tutorials/io/data_paths.html) in the documentation for more information. See also {@link get_config_dir} and {@link get_data_dir}.
@@ -161,7 +161,7 @@ declare interface OS extends GodotObject {
    * **Note:** Double-check the casing of `variable`. Environment variable names are case-sensitive on all platforms except Windows.
    * **Note:** On macOS, applications do not have access to shell environment variables.
    */
-  get_environment(variable: string): string;
+  get_environment(variable: string | NodePath): string;
   /**
    * Returns the file path to the current engine executable.
    * **Note:** On macOS, if you want to launch another instance of Godot, always use {@link create_instance} instead of relying on the executable path.
@@ -286,7 +286,7 @@ declare interface OS extends GodotObject {
    * **Note:** Returned font might have different style if the requested style is not available.
    * **Note:** This method is implemented on Android, iOS, Linux, macOS and Windows.
    */
-  get_system_font_path(font_name: string, weight?: int, stretch?: int, italic?: boolean): string;
+  get_system_font_path(font_name: string | NodePath, weight?: int, stretch?: int, italic?: boolean): string;
   /**
    * Returns an array of the system substitute font file paths, which are similar to the font with `font_name` and style for the specified text, locale, and script. Returns an empty array if no matching fonts found.
    * The following aliases can be used to request default fonts: "sans-serif", "serif", "monospace", "cursive", and "fantasy".
@@ -294,7 +294,7 @@ declare interface OS extends GodotObject {
    * **Note:** Returned fonts might have different style if the requested style is not available or belong to a different font family.
    * **Note:** This method is implemented on Android, iOS, Linux, macOS and Windows.
    */
-  get_system_font_path_for_text(font_name: string, text: string, locale?: string, script?: string, weight?: int, stretch?: int, italic?: boolean): PackedStringArray;
+  get_system_font_path_for_text(font_name: string | NodePath, text: string | NodePath, locale?: string | NodePath, script?: string | NodePath, weight?: int, stretch?: int, italic?: boolean): PackedStringArray;
   /**
    * Returns the list of font family names available.
    * **Note:** This method is implemented on Android, iOS, Linux, macOS and Windows.
@@ -351,13 +351,13 @@ declare interface OS extends GodotObject {
    * Returns `true` if the environment variable with the name `variable` exists.
    * **Note:** Double-check the casing of `variable`. Environment variable names are case-sensitive on all platforms except Windows.
    */
-  has_environment(variable: string): boolean;
+  has_environment(variable: string | NodePath): boolean;
   /**
    * Returns `true` if the feature for the given feature tag is supported in the currently running instance, depending on the platform, build, etc. Can be used to check whether you're currently running a debug build, on a certain platform or arch, etc. Refer to the Feature Tags ($DOCS_URL/tutorials/export/feature_tags.html) documentation for more details.
    * **Note:** Tag names are case-sensitive.
    * **Note:** On the Web platform, one of the following additional tags is defined to indicate the host platform: `web_android`, `web_ios`, `web_linuxbsd`, `web_macos`, or `web_windows`.
    */
-  has_feature(tag_name: string): boolean;
+  has_feature(tag_name: string | NodePath): boolean;
   /**
    * Returns `true` if the Godot binary used to run the project is a *debug* export template, or when running in the editor.
    * Returns `false` if the Godot binary used to run the project is a *release* export template.
@@ -403,7 +403,7 @@ declare interface OS extends GodotObject {
    * **Note:** This method is implemented on Android, Linux, macOS and Windows.
    * **Note:** If the user has disabled the recycle bin on their system, the file will be permanently deleted instead.
    */
-  move_to_trash(path: string): int;
+  move_to_trash(path: string | NodePath): int;
   /**
    * Initializes the singleton for the system MIDI driver, allowing Godot to receive {@link InputEventMIDI}. See also {@link get_connected_midi_inputs} and {@link close_midi_inputs}.
    * **Note:** This method is implemented on Linux, macOS, Windows, and Web.
@@ -416,7 +416,7 @@ declare interface OS extends GodotObject {
    * **Note:** This method is mostly only relevant for macOS, where opening files using {@link create_process} might fail. On other platforms, this falls back to using {@link create_process}.
    * **Note:** On macOS, `program_path` should ideally be the path to a `.app` bundle.
    */
-  open_with_program(program_path: string, paths: PackedStringArray | Array<unknown>): int;
+  open_with_program(program_path: string | NodePath, paths: PackedStringArray | Array<unknown>): int;
   /**
    * Reads a user input as raw data from the standard input. This operation can be *blocking*, which causes the window to freeze if {@link read_buffer_from_stdin} is called on the main thread.
    * - If standard input is console, this method will block until the program receives a line break in standard input (usually by the user pressing `Enter`).
@@ -448,7 +448,7 @@ declare interface OS extends GodotObject {
    * **Note:** On Android, permission must be checked during export.
    * **Note:** This method is implemented on Android, macOS, and visionOS platforms.
    */
-  request_permission(name: string): boolean;
+  request_permission(name: string | NodePath): boolean;
   /**
    * Requests *dangerous* permissions from the OS. Returns `true` if permissions have already been granted. See also {@link MainLoop.on_request_permissions_result}.
    * **Note:** Permissions must be checked during export.
@@ -463,7 +463,7 @@ declare interface OS extends GodotObject {
    * Sets the value of the environment variable `variable` to `value`. The environment variable will be set for the Godot process and any process executed with {@link execute} after running {@link set_environment}. The environment variable will *not* persist to processes run after the Godot process was terminated.
    * **Note:** Environment variable names are case-sensitive on all platforms except Windows. The `variable` name cannot be empty or include the `=` character. On Windows, there is a 32767 characters limit for the combined length of `variable`, `value`, and the `=` and null terminator characters that will be registered in the environment block.
    */
-  set_environment(variable: string, value: string): void;
+  set_environment(variable: string | NodePath, value: string | NodePath): void;
   /**
    * If `restart` is `true`, restarts the project automatically when it is exited with {@link SceneTree.quit} or {@link Node.NOTIFICATION_WM_CLOSE_REQUEST}. Command-line `arguments` can be supplied. To restart the project with the same command line arguments as originally used to run the project, pass {@link get_cmdline_args} as the value for `arguments`.
    * This method can be used to apply setting changes that require a restart. See also {@link is_restart_on_exit_set} and {@link get_restart_on_exit_arguments}.
@@ -474,7 +474,7 @@ declare interface OS extends GodotObject {
   /**
    * Assigns the given name to the current thread. Returns {@link ERR_UNAVAILABLE} if unavailable on the current platform.
    */
-  set_thread_name(name: string): int;
+  set_thread_name(name: string | NodePath): int;
   /**
    * If `enabled` is `true`, when opening a file for writing, a temporary file is used in its place. When closed, it is automatically applied to the target file.
    * This can useful when files may be opened by other applications, such as antiviruses, text editors, or even the Godot editor itself.
@@ -490,19 +490,19 @@ declare interface OS extends GodotObject {
    * **Note:** Use {@link String.uri_encode} to encode characters within URLs in a URL-safe, portable way. This is especially required for line breaks. Otherwise, {@link shell_open} may not work correctly in a project exported to the Web platform.
    * **Note:** This method is implemented on Android, iOS, Web, Linux, macOS and Windows.
    */
-  shell_open(uri: string): int;
+  shell_open(uri: string | NodePath): int;
   /**
    * Requests the OS to open the file manager, navigate to the given `file_or_dir_path` and select the target file or folder.
    * If `open_folder` is `true` and `file_or_dir_path` is a valid directory path, the OS will open the file manager and navigate to the target folder without selecting anything.
    * Use {@link ProjectSettings.globalize_path} to convert a `res://` or `user://` project path into a system path to use with this method.
    * **Note:** This method is currently only implemented on Windows and macOS. On other platforms, it will fallback to {@link shell_open} with a directory path of `file_or_dir_path` prefixed with `file://`.
    */
-  shell_show_in_file_manager(file_or_dir_path: string, open_folder?: boolean): int;
+  shell_show_in_file_manager(file_or_dir_path: string | NodePath, open_folder?: boolean): int;
   /**
    * Removes the given environment variable from the current environment, if it exists. The `variable` name cannot be empty or include the `=` character. The environment variable will be removed for the Godot process and any process executed with {@link execute} after running {@link unset_environment}. The removal of the environment variable will *not* persist to processes run after the Godot process was terminated.
    * **Note:** Environment variable names are case-sensitive on all platforms except Windows.
    */
-  unset_environment(variable: string): void;
+  unset_environment(variable: string | NodePath): void;
 
   // enum RenderingDriver
   /**

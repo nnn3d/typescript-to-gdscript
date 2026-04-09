@@ -6,11 +6,11 @@ declare interface PhysicsServer2DManager extends GodotObject {
   /**
    * Register a {@link PhysicsServer2D} implementation by passing a `name` and a {@link Callable} that returns a {@link PhysicsServer2D} object.
    */
-  register_server(name: string, create_callback: Callable): void;
+  register_server(name: string | NodePath, create_callback: Callable): void;
   /**
    * Set the default {@link PhysicsServer2D} implementation to the one identified by `name`, if `priority` is greater than the priority of the current default implementation.
    */
-  set_default_server(name: string, priority: int): void;
+  set_default_server(name: string | NodePath, priority: int): void;
 }
 declare const PhysicsServer2DManager: PhysicsServer2DManager;
 

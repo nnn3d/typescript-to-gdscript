@@ -196,7 +196,7 @@ declare class Tree extends Control {
   /** Sets the relative expand ratio for a column. See {@link set_column_expand}. */
   set_column_expand_ratio(column: int, ratio: int): void;
   /** Sets the title of a column. */
-  set_column_title(column: int, title: string): void;
+  set_column_title(column: int, title: string | NodePath): void;
   /**
    * Sets the column title alignment. Note that {@link @GlobalScope.HORIZONTAL_ALIGNMENT_FILL} is not supported for column titles.
    */
@@ -206,9 +206,9 @@ declare class Tree extends Control {
   /**
    * Sets the language code of the given `column`'s title to `language`. This is used for line-breaking and text shaping algorithms. If `language` is empty, the current locale is used.
    */
-  set_column_title_language(column: int, language: string): void;
+  set_column_title_language(column: int, language: string | NodePath): void;
   /** Sets the column title's tooltip text. */
-  set_column_title_tooltip_text(column: int, tooltip_text: string): void;
+  set_column_title_tooltip_text(column: int, tooltip_text: string | NodePath): void;
   /** Selects the specified {@link TreeItem} and column. */
   set_selected(item: TreeItem, column: int): void;
 

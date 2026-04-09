@@ -146,7 +146,7 @@ declare class LineEdit extends Control {
   is_flat(): boolean;
   set_keep_editing_on_text_submit(value: boolean): void;
   is_editing_kept_on_text_submit(): boolean;
-  set_language(value: string): void;
+  set_language(value: string | NodePath): void;
   get_language(): string;
   set_max_length(value: int): void;
   get_max_length(): int;
@@ -158,7 +158,7 @@ declare class LineEdit extends Control {
   get_right_icon_scale(): float;
   set_secret(value: boolean): void;
   is_secret(): boolean;
-  set_secret_character(value: string): void;
+  set_secret_character(value: string | NodePath): void;
   get_secret_character(): string;
   set_select_all_on_focus(value: boolean): void;
   is_select_all_on_focus(): boolean;
@@ -170,7 +170,7 @@ declare class LineEdit extends Control {
   get_structured_text_bidi_override(): int;
   set_structured_text_bidi_override_options(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_structured_text_bidi_override_options(): Array<unknown>;
-  set_text(value: string): void;
+  set_text(value: string | NodePath): void;
   get_text(): string;
   set_text_direction(value: int): void;
   get_text_direction(): int;
@@ -241,7 +241,7 @@ declare class LineEdit extends Control {
   /**
    * Inserts `text` at the caret. If the resulting value is longer than {@link max_length}, nothing happens.
    */
-  insert_text_at_caret(text: string): void;
+  insert_text_at_caret(text: string | NodePath): void;
   /** Returns whether the {@link LineEdit} is being edited. */
   is_editing(): boolean;
   /**

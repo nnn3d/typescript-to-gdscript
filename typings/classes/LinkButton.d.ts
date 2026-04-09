@@ -29,11 +29,11 @@ declare class LinkButton extends BaseButton {
    * The URI (https://en.wikipedia.org/wiki/Uniform_Resource_Identifier) for this {@link LinkButton}. If set to a valid URI, pressing the button opens the URI using the operating system's default program for the protocol (via {@link OS.shell_open}). HTTP and HTTPS URLs open the default web browser.
    */
   uri: string;
-  set_ellipsis_char(value: string): void;
+  set_ellipsis_char(value: string | NodePath): void;
   get_ellipsis_char(): string;
   set_structured_text_bidi_override_options(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_structured_text_bidi_override_options(): Array<unknown>;
-  set_text(value: string): void;
+  set_text(value: string | NodePath): void;
   get_text(): string;
   set_text_direction(value: int): void;
   get_text_direction(): int;
@@ -41,7 +41,7 @@ declare class LinkButton extends BaseButton {
   get_text_overrun_behavior(): int;
   set_underline_mode(value: int): void;
   get_underline_mode(): int;
-  set_uri(value: string): void;
+  set_uri(value: string | NodePath): void;
   get_uri(): string;
 
   // enum UnderlineMode

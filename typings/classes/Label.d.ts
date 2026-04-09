@@ -78,7 +78,7 @@ declare class Label extends Control {
   get_autowrap_trim_flags(): int;
   set_clip_text(value: boolean): void;
   is_clipping_text(): boolean;
-  set_ellipsis_char(value: string): void;
+  set_ellipsis_char(value: string | NodePath): void;
   get_ellipsis_char(): string;
   set_horizontal_alignment(value: int): void;
   get_horizontal_alignment(): int;
@@ -86,7 +86,7 @@ declare class Label extends Control {
   get_justification_flags(): int;
   set_label_settings(value: LabelSettings | null): void;
   get_label_settings(): LabelSettings | null;
-  set_language(value: string): void;
+  set_language(value: string | NodePath): void;
   get_language(): string;
   set_lines_skipped(value: int): void;
   get_lines_skipped(): int;
@@ -96,7 +96,7 @@ declare class Label extends Control {
   get_structured_text_bidi_override_options(): Array<unknown>;
   set_tab_stops(value: PackedFloat32Array | Array<unknown>): void;
   get_tab_stops(): PackedFloat32Array;
-  set_text(value: string): void;
+  set_text(value: string | NodePath): void;
   get_text(): string;
   set_text_direction(value: int): void;
   get_text_direction(): int;

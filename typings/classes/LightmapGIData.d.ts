@@ -17,13 +17,13 @@ declare class LightmapGIData extends Resource {
   get_shadowmask_textures(): Array<TextureLayered>;
 
   /** Adds an object that is considered baked within this {@link LightmapGIData}. */
-  add_user(path: string, uv_scale: Rect2 | Rect2i, slice_index: int, sub_instance: int): void;
+  add_user(path: NodePath | string, uv_scale: Rect2 | Rect2i, slice_index: int, sub_instance: int): void;
   /** Clear all objects that are considered baked within this {@link LightmapGIData}. */
   clear_users(): void;
   /** Returns the number of objects that are considered baked within this {@link LightmapGIData}. */
   get_user_count(): int;
   /** Returns the {@link NodePath} of the baked object at index `user_idx`. */
-  get_user_path(user_idx: int): string;
+  get_user_path(user_idx: int): NodePath;
   /**
    * If `true`, lightmaps were baked with directional information. See also {@link LightmapGI.directional}.
    */

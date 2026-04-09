@@ -6,7 +6,7 @@ declare class FileSystemDock extends EditorDock {
   /** Registers a new {@link EditorResourceTooltipPlugin}. */
   add_resource_tooltip_plugin(plugin: EditorResourceTooltipPlugin): void;
   /** Sets the given `path` as currently selected, ensuring that the selected file/directory is visible. */
-  navigate_to_path(path: string): void;
+  navigate_to_path(path: string | NodePath): void;
   /** Removes an {@link EditorResourceTooltipPlugin}. Fails if the plugin wasn't previously added. */
   remove_resource_tooltip_plugin(plugin: EditorResourceTooltipPlugin): void;
 

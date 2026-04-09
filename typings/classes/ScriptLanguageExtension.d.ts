@@ -4,10 +4,10 @@
 declare class ScriptLanguageExtension extends ScriptLanguage {
   _add_global_constant(name: string, value: unknown): void;
   _add_named_global_constant(name: string, value: unknown): void;
-  _auto_indent_code(code: string, from_line: int, to_line: int): string;
+  _auto_indent_code(code: string | NodePath, from_line: int, to_line: int): string;
   _can_inherit_from_file(): boolean;
   _can_make_function(): boolean;
-  _complete_code(code: string, path: string, owner: GodotObject): Dictionary;
+  _complete_code(code: string | NodePath, path: string | NodePath, owner: GodotObject): Dictionary;
   _create_script(): GodotObject;
   _debug_get_current_stack_info(): Array<Dictionary>;
   _debug_get_error(): string;
@@ -20,16 +20,16 @@ declare class ScriptLanguageExtension extends ScriptLanguage {
   _debug_get_stack_level_members(level: int, max_subitems: int, max_depth: int): Dictionary;
   /** Returns the source associated with a given debug stack position. */
   _debug_get_stack_level_source(level: int): string;
-  _debug_parse_stack_level_expression(level: int, expression: string, max_subitems: int, max_depth: int): string;
+  _debug_parse_stack_level_expression(level: int, expression: string | NodePath, max_subitems: int, max_depth: int): string;
   /** Returns the line where the function is defined in the code, or `-1` if the function is not present. */
-  _find_function(function_: string, code: string): int;
+  _find_function(function_: string | NodePath, code: string | NodePath): int;
   _finish(): void;
   _frame(): void;
   _get_built_in_templates(object: string): Array<Dictionary>;
   _get_comment_delimiters(): PackedStringArray;
   _get_doc_comment_delimiters(): PackedStringArray;
   _get_extension(): string;
-  _get_global_class_name(path: string): Dictionary;
+  _get_global_class_name(path: string | NodePath): Dictionary;
   _get_name(): string;
   _get_public_annotations(): Array<Dictionary>;
   _get_public_constants(): Dictionary;
@@ -38,14 +38,14 @@ declare class ScriptLanguageExtension extends ScriptLanguage {
   _get_reserved_words(): PackedStringArray;
   _get_string_delimiters(): PackedStringArray;
   _get_type(): string;
-  _handles_global_class_type(type_: string): boolean;
+  _handles_global_class_type(type_: string | NodePath): boolean;
   _has_named_classes(): boolean;
   _init(): void;
-  _is_control_flow_keyword(keyword: string): boolean;
+  _is_control_flow_keyword(keyword: string | NodePath): boolean;
   _is_using_templates(): boolean;
-  _lookup_code(code: string, symbol: string, path: string, owner: GodotObject): Dictionary;
-  _make_function(class_name: string, function_name: string, function_args: PackedStringArray | Array<unknown>): string;
-  _make_template(template: string, class_name: string, base_class_name: string): Script;
+  _lookup_code(code: string | NodePath, symbol: string | NodePath, path: string | NodePath, owner: GodotObject): Dictionary;
+  _make_function(class_name: string | NodePath, function_name: string | NodePath, function_args: PackedStringArray | Array<unknown>): string;
+  _make_template(template: string | NodePath, class_name: string | NodePath, base_class_name: string | NodePath): Script;
   _open_in_external_editor(script: Script, line: int, column: int): int;
   _overrides_external_editor(): boolean;
   _preferred_file_name_casing(): int;
@@ -62,8 +62,8 @@ declare class ScriptLanguageExtension extends ScriptLanguage {
   _supports_documentation(): boolean;
   _thread_enter(): void;
   _thread_exit(): void;
-  _validate(script: string, path: string, validate_functions: boolean, validate_errors: boolean, validate_warnings: boolean, validate_safe_lines: boolean): Dictionary;
-  _validate_path(path: string): string;
+  _validate(script: string | NodePath, path: string | NodePath, validate_functions: boolean, validate_errors: boolean, validate_warnings: boolean, validate_safe_lines: boolean): Dictionary;
+  _validate_path(path: string | NodePath): string;
 
   // enum LookupResultType
   static readonly LOOKUP_RESULT_SCRIPT_LOCATION: int;

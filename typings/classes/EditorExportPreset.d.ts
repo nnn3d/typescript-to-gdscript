@@ -32,13 +32,13 @@ declare class EditorExportPreset extends RefCounted {
   /** Returns export target path. */
   get_export_path(): string;
   /** Returns file export mode for the specified file. */
-  get_file_export_mode(path: string, default_: int): int;
+  get_file_export_mode(path: string | NodePath, default_: int): int;
   /** Returns array of files to export. */
   get_files_to_export(): PackedStringArray;
   /** Returns file filters to include during export. */
   get_include_filter(): string;
   /** Returns export option value or value of environment variable if it is set. */
-  get_or_env(name: string, env_var: string): unknown;
+  get_or_env(name: string, env_var: string | NodePath): unknown;
   /** Returns the list of packs on which to base a patch export on. */
   get_patches(): PackedStringArray;
   /** Returns this export preset's name. */
@@ -59,7 +59,7 @@ declare class EditorExportPreset extends RefCounted {
   /** Returns `true` if the preset has the property named `property`. */
   has(property: string): boolean;
   /** Returns `true` if the file at the specified `path` will be exported. */
-  has_export_file(path: string): boolean;
+  has_export_file(path: string | NodePath): boolean;
   /** Returns `true` if the dedicated server export mode is selected in the export dialog. */
   is_dedicated_server(): boolean;
   /** Returns `true` if the "Runnable" toggle is enabled in the export dialog. */

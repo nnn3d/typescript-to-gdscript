@@ -7,6 +7,6 @@ declare class ShaderInclude extends Resource {
    * Returns the code of the shader include file. The returned text is what the user has written, not the full generated code used internally.
    */
   code: string;
-  set_code(value: string): void;
+  set_code(value: string | NodePath): void;
   get_code(): string;
 }

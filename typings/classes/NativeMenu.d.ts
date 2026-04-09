@@ -11,7 +11,7 @@ declare interface NativeMenu extends GodotObject {
    * **Note:** This method is implemented on macOS and Windows.
    * **Note:** On Windows, `accelerator` and `key_callback` are ignored.
    */
-  add_check_item(rid: RID, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_check_item(rid: RID, label: string | NodePath, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
   /**
    * Adds a new checkable item with text `label` and icon `icon` to the global menu `rid`.
    * Returns index of the inserted item, it's not guaranteed to be the same as `index` value.
@@ -20,7 +20,7 @@ declare interface NativeMenu extends GodotObject {
    * **Note:** This method is implemented on macOS and Windows.
    * **Note:** On Windows, `accelerator` and `key_callback` are ignored.
    */
-  add_icon_check_item(rid: RID, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_icon_check_item(rid: RID, icon: Texture2D, label: string | NodePath, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
   /**
    * Adds a new item with text `label` and icon `icon` to the global menu `rid`.
    * Returns index of the inserted item, it's not guaranteed to be the same as `index` value.
@@ -29,7 +29,7 @@ declare interface NativeMenu extends GodotObject {
    * **Note:** This method is implemented on macOS and Windows.
    * **Note:** On Windows, `accelerator` and `key_callback` are ignored.
    */
-  add_icon_item(rid: RID, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_icon_item(rid: RID, icon: Texture2D, label: string | NodePath, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
   /**
    * Adds a new radio-checkable item with text `label` and icon `icon` to the global menu `rid`.
    * Returns index of the inserted item, it's not guaranteed to be the same as `index` value.
@@ -39,7 +39,7 @@ declare interface NativeMenu extends GodotObject {
    * **Note:** This method is implemented on macOS and Windows.
    * **Note:** On Windows, `accelerator` and `key_callback` are ignored.
    */
-  add_icon_radio_check_item(rid: RID, icon: Texture2D, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_icon_radio_check_item(rid: RID, icon: Texture2D, label: string | NodePath, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
   /**
    * Adds a new item with text `label` to the global menu `rid`.
    * Returns index of the inserted item, it's not guaranteed to be the same as `index` value.
@@ -48,7 +48,7 @@ declare interface NativeMenu extends GodotObject {
    * **Note:** This method is implemented on macOS and Windows.
    * **Note:** On Windows, `accelerator` and `key_callback` are ignored.
    */
-  add_item(rid: RID, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_item(rid: RID, label: string | NodePath, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
   /**
    * Adds a new item with text `label` to the global menu `rid`.
    * Contrarily to normal binary items, multistate items can have more than two states, as defined by `max_states`. Each press or activate of the item will increase the state by one. The default value is defined by `default_state`.
@@ -59,7 +59,7 @@ declare interface NativeMenu extends GodotObject {
    * **Note:** This method is implemented on macOS and Windows.
    * **Note:** On Windows, `accelerator` and `key_callback` are ignored.
    */
-  add_multistate_item(rid: RID, label: string, max_states: int, default_state: int, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_multistate_item(rid: RID, label: string | NodePath, max_states: int, default_state: int, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
   /**
    * Adds a new radio-checkable item with text `label` to the global menu `rid`.
    * Returns index of the inserted item, it's not guaranteed to be the same as `index` value.
@@ -69,7 +69,7 @@ declare interface NativeMenu extends GodotObject {
    * **Note:** This method is implemented on macOS and Windows.
    * **Note:** On Windows, `accelerator` and `key_callback` are ignored.
    */
-  add_radio_check_item(rid: RID, label: string, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
+  add_radio_check_item(rid: RID, label: string | NodePath, callback?: Callable, key_callback?: Callable, tag?: unknown, accelerator?: int, index?: int): int;
   /**
    * Adds a separator between items to the global menu `rid`. Separators also occupy an index.
    * Returns index of the inserted item, it's not guaranteed to be the same as `index` value.
@@ -81,7 +81,7 @@ declare interface NativeMenu extends GodotObject {
    * Returns index of the inserted item, it's not guaranteed to be the same as `index` value.
    * **Note:** This method is implemented on macOS and Windows.
    */
-  add_submenu_item(rid: RID, label: string, submenu_rid: RID, tag?: unknown, index?: int): int;
+  add_submenu_item(rid: RID, label: string | NodePath, submenu_rid: RID, tag?: unknown, index?: int): int;
   /**
    * Removes all items from the global menu `rid`.
    * **Note:** This method is implemented on macOS and Windows.
@@ -106,7 +106,7 @@ declare interface NativeMenu extends GodotObject {
    * Returns the index of the item with the specified `text`. Indices are automatically assigned to each item by the engine.
    * **Note:** This method is implemented on macOS and Windows.
    */
-  find_item_index_with_text(rid: RID, text: string): int;
+  find_item_index_with_text(rid: RID, text: string | NodePath): int;
   /**
    * Frees a global menu object created by this {@link NativeMenu}.
    * **Note:** This method is implemented on macOS and Windows.
@@ -367,12 +367,12 @@ declare interface NativeMenu extends GodotObject {
    * Sets the text of the item at index `idx`.
    * **Note:** This method is implemented on macOS and Windows.
    */
-  set_item_text(rid: RID, idx: int, text: string): void;
+  set_item_text(rid: RID, idx: int, text: string | NodePath): void;
   /**
    * Sets the {@link String} tooltip of the item at the specified index `idx`.
    * **Note:** This method is implemented only on macOS.
    */
-  set_item_tooltip(rid: RID, idx: int, tooltip: string): void;
+  set_item_tooltip(rid: RID, idx: int, tooltip: string | NodePath): void;
   /**
    * Sets the minimum width of the global menu.
    * **Note:** This method is implemented only on macOS.
@@ -393,7 +393,7 @@ declare interface NativeMenu extends GodotObject {
    * Sets the text of the system menu item.
    * **Note:** This method is implemented on macOS.
    */
-  set_system_menu_text(menu_id: int, name: string): void;
+  set_system_menu_text(menu_id: int, name: string | NodePath): void;
 
   // enum Feature
   /** {@link NativeMenu} supports native global main menu. */

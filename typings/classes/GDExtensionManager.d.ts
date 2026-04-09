@@ -6,30 +6,30 @@ declare interface GDExtensionManager extends GodotObject {
   /**
    * Returns the {@link GDExtension} at the given file `path`, or `null` if it has not been loaded or does not exist.
    */
-  get_extension(path: string): GDExtension | null;
+  get_extension(path: string | NodePath): GDExtension | null;
   /** Returns the file paths of all currently loaded extensions. */
   get_loaded_extensions(): PackedStringArray;
   /**
    * Returns `true` if the extension at the given file `path` has already been loaded successfully. See also {@link get_loaded_extensions}.
    */
-  is_extension_loaded(path: string): boolean;
+  is_extension_loaded(path: string | NodePath): boolean;
   /**
    * Loads an extension by absolute file path. The `path` needs to point to a valid {@link GDExtension}. Returns {@link LOAD_STATUS_OK} if successful.
    */
-  load_extension(path: string): int;
+  load_extension(path: string | NodePath): int;
   /**
    * Loads the extension already in address space via the given path and initialization function. The `path` needs to be unique and start with `"libgodot://"`. Returns {@link LOAD_STATUS_OK} if successful.
    */
-  load_extension_from_function(path: string, init_func: unknown): int;
+  load_extension_from_function(path: string | NodePath, init_func: unknown): int;
   /**
    * Reloads the extension at the given file path. The `path` needs to point to a valid {@link GDExtension}, otherwise this method may return either {@link LOAD_STATUS_NOT_LOADED} or {@link LOAD_STATUS_FAILED}.
    * **Note:** You can only reload extensions in the editor. In release builds, this method always fails and returns {@link LOAD_STATUS_FAILED}.
    */
-  reload_extension(path: string): int;
+  reload_extension(path: string | NodePath): int;
   /**
    * Unloads an extension by file path. The `path` needs to point to an already loaded {@link GDExtension}, otherwise this method returns {@link LOAD_STATUS_NOT_LOADED}.
    */
-  unload_extension(path: string): int;
+  unload_extension(path: string | NodePath): int;
 
   /**
    * Emitted after the editor has finished loading a new extension.

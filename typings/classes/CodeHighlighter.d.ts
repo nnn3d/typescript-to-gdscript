@@ -44,18 +44,18 @@ declare class CodeHighlighter extends SyntaxHighlighter {
    * Adds a color region (such as for comments or strings) from `start_key` to `end_key`. Both keys should be symbols, and `start_key` must not be shared with other delimiters.
    * If `line_only` is `true` or `end_key` is an empty {@link String}, the region does not carry over to the next line.
    */
-  add_color_region(start_key: string, end_key: string, color: Color, line_only?: boolean): void;
+  add_color_region(start_key: string | NodePath, end_key: string | NodePath, color: Color, line_only?: boolean): void;
   /**
    * Sets the color for a keyword.
    * The keyword cannot contain any symbols except '_'.
    */
-  add_keyword_color(keyword: string, color: Color): void;
+  add_keyword_color(keyword: string | NodePath, color: Color): void;
   /**
    * Sets the color for a member keyword.
    * The member keyword cannot contain any symbols except '_'.
    * It will not be highlighted if preceded by a '.'.
    */
-  add_member_keyword_color(member_keyword: string, color: Color): void;
+  add_member_keyword_color(member_keyword: string | NodePath, color: Color): void;
   /** Removes all color regions. */
   clear_color_regions(): void;
   /** Removes all keywords. */
@@ -63,19 +63,19 @@ declare class CodeHighlighter extends SyntaxHighlighter {
   /** Removes all member keywords. */
   clear_member_keyword_colors(): void;
   /** Returns the color for a keyword. */
-  get_keyword_color(keyword: string): Color;
+  get_keyword_color(keyword: string | NodePath): Color;
   /** Returns the color for a member keyword. */
-  get_member_keyword_color(member_keyword: string): Color;
+  get_member_keyword_color(member_keyword: string | NodePath): Color;
   /** Returns `true` if the start key exists, else `false`. */
-  has_color_region(start_key: string): boolean;
+  has_color_region(start_key: string | NodePath): boolean;
   /** Returns `true` if the keyword exists, else `false`. */
-  has_keyword_color(keyword: string): boolean;
+  has_keyword_color(keyword: string | NodePath): boolean;
   /** Returns `true` if the member keyword exists, else `false`. */
-  has_member_keyword_color(member_keyword: string): boolean;
+  has_member_keyword_color(member_keyword: string | NodePath): boolean;
   /** Removes the color region that uses that start key. */
-  remove_color_region(start_key: string): void;
+  remove_color_region(start_key: string | NodePath): void;
   /** Removes the keyword. */
-  remove_keyword_color(keyword: string): void;
+  remove_keyword_color(keyword: string | NodePath): void;
   /** Removes the member keyword. */
-  remove_member_keyword_color(member_keyword: string): void;
+  remove_member_keyword_color(member_keyword: string | NodePath): void;
 }

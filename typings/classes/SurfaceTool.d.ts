@@ -44,7 +44,7 @@ declare class SurfaceTool extends RefCounted {
   /**
    * Creates a vertex array from the specified blend shape of an existing {@link Mesh}. This can be used to extract a specific pose from a blend shape.
    */
-  create_from_blend_shape(existing: Mesh, surface: int, blend_shape: string): void;
+  create_from_blend_shape(existing: Mesh, surface: int, blend_shape: string | NodePath): void;
   /** Removes the index array by expanding the vertex array. */
   deindex(): void;
   /**

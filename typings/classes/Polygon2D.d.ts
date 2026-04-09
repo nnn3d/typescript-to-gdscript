@@ -30,7 +30,7 @@ declare class Polygon2D extends Node2D {
   /**
    * Path to a {@link Skeleton2D} node used for skeleton-based deformations of this polygon. If empty or invalid, skeletal deformations will not be used.
    */
-  skeleton: string;
+  skeleton: NodePath;
   /** The polygon's fill texture. Use {@link uv} to set texture coordinates. */
   texture: Texture2D | null;
   /**
@@ -67,8 +67,8 @@ declare class Polygon2D extends Node2D {
   get_polygon(): PackedVector2Array;
   set_polygons(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_polygons(): Array<unknown>;
-  set_skeleton(value: string): void;
-  get_skeleton(): string;
+  set_skeleton(value: NodePath | string): void;
+  get_skeleton(): NodePath;
   set_texture(value: Texture2D | null): void;
   get_texture(): Texture2D | null;
   set_texture_offset(value: Vector2 | Vector2i): void;
@@ -83,7 +83,7 @@ declare class Polygon2D extends Node2D {
   get_vertex_colors(): PackedColorArray;
 
   /** Adds a bone with the specified `path` and `weights`. */
-  add_bone(path: string, weights: PackedFloat32Array | Array<unknown>): void;
+  add_bone(path: NodePath | string, weights: PackedFloat32Array | Array<unknown>): void;
   /** Removes all bones from this {@link Polygon2D}. */
   clear_bones(): void;
   /** Removes the specified bone from this {@link Polygon2D}. */
@@ -91,11 +91,11 @@ declare class Polygon2D extends Node2D {
   /** Returns the number of bones in this {@link Polygon2D}. */
   get_bone_count(): int;
   /** Returns the path to the node associated with the specified bone. */
-  get_bone_path(index: int): string;
+  get_bone_path(index: int): NodePath;
   /** Returns the weight values of the specified bone. */
   get_bone_weights(index: int): PackedFloat32Array;
   /** Sets the path to the node associated with the specified bone. */
-  set_bone_path(index: int, path: string): void;
+  set_bone_path(index: int, path: NodePath | string): void;
   /** Sets the weight values for the specified bone. */
   set_bone_weights(index: int, weights: PackedFloat32Array | Array<unknown>): void;
 }

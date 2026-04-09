@@ -38,7 +38,7 @@ declare class EditorSpinSlider extends Range {
   is_editing_integer(): boolean;
   set_flat(value: boolean): void;
   is_flat(): boolean;
-  set_label(value: string): void;
+  set_label(value: string | NodePath): void;
   get_label(): string;
   set_read_only(value: boolean): void;
 

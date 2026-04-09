@@ -156,7 +156,7 @@ declare class Image extends Resource {
    * **Warning:** This method should only be used in the editor or in cases when you need to load external images at run-time, such as images located at the `user://` directory, and may not work in exported projects.
    * See also {@link ImageTexture} description for usage examples.
    */
-  load(path: string): int;
+  load(path: string | NodePath): int;
   /**
    * Loads an image from the binary contents of a BMP file.
    * **Note:** Godot's BMP module doesn't support 16-bit per pixel images. Only 1-bit, 4-bit, 8-bit, 24-bit, and 32-bit per pixel images are supported.
@@ -171,7 +171,7 @@ declare class Image extends Resource {
   /** Loads an image from the binary contents of an OpenEXR file. */
   load_exr_from_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /** Creates a new {@link Image} and loads data from the specified file. */
-  static load_from_file(path: string): Image | null;
+  static load_from_file(path: string | NodePath): Image | null;
   /** Loads an image from the binary contents of a JPEG file. */
   load_jpg_from_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /**
@@ -192,7 +192,7 @@ declare class Image extends Resource {
    * Loads an image from the string contents of an SVG file (**.svg**).
    * **Note:** This method is only available in engine builds with the SVG module enabled. By default, the SVG module is enabled, but it can be disabled at build-time using the `module_svg_enabled=no` SCons option.
    */
-  load_svg_from_string(svg_str: string, scale?: float): int;
+  load_svg_from_string(svg_str: string | NodePath, scale?: float): int;
   /**
    * Loads an image from the binary contents of a TGA file.
    * **Note:** This method is only available in engine builds with the TGA module enabled. By default, the TGA module is enabled, but it can be disabled at build-time using the `module_tga_enabled=no` SCons option.
@@ -231,7 +231,7 @@ declare class Image extends Resource {
    * Saves the image as a DDS (DirectDraw Surface) file to `path`. DDS is a container format that can store textures in various compression formats, such as DXT1, DXT5, or BC7. This function will return {@link ERR_UNAVAILABLE} if Godot was compiled without the DDS module.
    * **Note:** The DDS module may be disabled in certain builds, which means {@link save_dds} will return {@link ERR_UNAVAILABLE} when it is called from an exported project.
    */
-  save_dds(path: string): int;
+  save_dds(path: string | NodePath): int;
   /**
    * Saves the image as a DDS (DirectDraw Surface) file to a byte array. DDS is a container format that can store textures in various compression formats, such as DXT1, DXT5, or BC7. This function will return an empty byte array if Godot was compiled without the DDS module.
    * **Note:** The DDS module may be disabled in certain builds, which means {@link save_dds_to_buffer} will return an empty byte array when it is called from an exported project.
@@ -240,7 +240,7 @@ declare class Image extends Resource {
   /**
    * Saves the image as an EXR file to `path`. If `grayscale` is `true` and the image has only one channel, it will be saved explicitly as monochrome rather than one red channel. This function will return {@link ERR_UNAVAILABLE} if Godot was compiled without the TinyEXR module.
    */
-  save_exr(path: string, grayscale?: boolean): int;
+  save_exr(path: string | NodePath, grayscale?: boolean): int;
   /**
    * Saves the image as an EXR file to a byte array. If `grayscale` is `true` and the image has only one channel, it will be saved explicitly as monochrome rather than one red channel. This function will return an empty byte array if Godot was compiled without the TinyEXR module.
    */
@@ -249,21 +249,21 @@ declare class Image extends Resource {
    * Saves the image as a JPEG file to `path` with the specified `quality` between `0.01` and `1.0` (inclusive). Higher `quality` values result in better-looking output at the cost of larger file sizes. Recommended `quality` values are between `0.75` and `0.90`. Even at quality `1.00`, JPEG compression remains lossy.
    * **Note:** JPEG does not save an alpha channel. If the {@link Image} contains an alpha channel, the image will still be saved, but the resulting JPEG file won't contain the alpha channel.
    */
-  save_jpg(path: string, quality?: float): int;
+  save_jpg(path: string | NodePath, quality?: float): int;
   /**
    * Saves the image as a JPEG file to a byte array with the specified `quality` between `0.01` and `1.0` (inclusive). Higher `quality` values result in better-looking output at the cost of larger byte array sizes (and therefore memory usage). Recommended `quality` values are between `0.75` and `0.90`. Even at quality `1.00`, JPEG compression remains lossy.
    * **Note:** JPEG does not save an alpha channel. If the {@link Image} contains an alpha channel, the image will still be saved, but the resulting byte array won't contain the alpha channel.
    */
   save_jpg_to_buffer(quality?: float): PackedByteArray;
   /** Saves the image as a PNG file to the file at `path`. */
-  save_png(path: string): int;
+  save_png(path: string | NodePath): int;
   /** Saves the image as a PNG file to a byte array. */
   save_png_to_buffer(): PackedByteArray;
   /**
    * Saves the image as a WebP (Web Picture) file to the file at `path`. By default it will save lossless. If `lossy` is `true`, the image will be saved lossy, using the `quality` setting between `0.0` and `1.0` (inclusive). Lossless WebP offers more efficient compression than PNG.
    * **Note:** The WebP format is limited to a size of 16383×16383 pixels, while PNG can save larger images.
    */
-  save_webp(path: string, lossy?: boolean, quality?: float): int;
+  save_webp(path: string | NodePath, lossy?: boolean, quality?: float): int;
   /**
    * Saves the image as a WebP (Web Picture) file to a byte array. By default it will save lossless. If `lossy` is `true`, the image will be saved lossy, using the `quality` setting between `0.0` and `1.0` (inclusive). Lossless WebP offers more efficient compression than PNG.
    * **Note:** The WebP format is limited to a size of 16383×16383 pixels, while PNG can save larger images.

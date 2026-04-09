@@ -5,6 +5,6 @@
 declare class VisualShaderNodeParameterRef extends VisualShaderNode {
   /** The name of the parameter which this reference points to. */
   parameter_name: string;
-  set_parameter_name(value: string): void;
+  set_parameter_name(value: string | NodePath): void;
   get_parameter_name(): string;
 }

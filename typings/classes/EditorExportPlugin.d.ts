@@ -26,12 +26,12 @@ declare class EditorExportPlugin extends RefCounted {
    * - {@link CompressedTexture2DArray}
    * - {@link CompressedTexture3D}
    */
-  _customize_resource(resource: Resource, path: string): Resource | null;
+  _customize_resource(resource: Resource, path: string | NodePath): Resource | null;
   /**
    * Customize a scene. If changes are made to it, return the same or a new scene. Otherwise, return `null`. If a new scene is returned, it is up to you to dispose of the old one.
    * Implementing this method is required if {@link _begin_customize_scenes} returns `true`.
    */
-  _customize_scene(scene: Node, path: string): Node | null;
+  _customize_scene(scene: Node, path: string | NodePath): Node | null;
   /** This is called when the customization process for resources ends. */
   _end_customize_resources(): void;
   /** This is called when the customization process for scenes ends. */
@@ -40,18 +40,18 @@ declare class EditorExportPlugin extends RefCounted {
    * This is called after Xcode project generation, but before it is built.
    * **Note:** Only supported on iOS and visionOS.
    */
-  _end_generate_apple_embedded_project(path: string, will_build_archive: boolean): void;
+  _end_generate_apple_embedded_project(path: string | NodePath, will_build_archive: boolean): void;
   /**
    * Virtual method to be overridden by the user. It is called when the export starts and provides all information about the export. `features` is the list of features for the export, `is_debug` is `true` for debug builds, `path` is the target path for the exported project. `flags` is only used when running a runnable profile, e.g. when using native run on Android.
    */
-  _export_begin(features: PackedStringArray | Array<unknown>, is_debug: boolean, path: string, flags: int): void;
+  _export_begin(features: PackedStringArray | Array<unknown>, is_debug: boolean, path: string | NodePath, flags: int): void;
   /** Virtual method to be overridden by the user. Called when the export is finished. */
   _export_end(): void;
   /**
    * Virtual method to be overridden by the user. Called for each exported file before {@link _customize_resource} and {@link _customize_scene}. The arguments can be used to identify the file. `path` is the path of the file, `type` is the {@link Resource} represented by the file (e.g. {@link PackedScene}), and `features` is the list of features for the export.
    * Calling {@link skip} inside this callback will make the file not included in the export.
    */
-  _export_file(path: string, type_: string, features: PackedStringArray | Array<unknown>): void;
+  _export_file(path: string | NodePath, type_: string | NodePath, features: PackedStringArray | Array<unknown>): void;
   /**
    * Virtual method to be overridden by the user. This is called to retrieve the set of Android dependencies provided by this plugin. Each returned Android dependency should have the format of an Android remote binary dependency: `org.godot.example:my-plugin:0.0.0`
    * For more information see Android documentation on dependencies (https://developer.android.com/build/dependencies?agpversion=4.1#dependency-types).
@@ -98,12 +98,12 @@ declare class EditorExportPlugin extends RefCounted {
   /**
    * Validates `option` and returns the visibility for the specified `platform`. The default implementation returns `true` for all options.
    */
-  _get_export_option_visibility(platform: EditorExportPlatform, option: string): boolean;
+  _get_export_option_visibility(platform: EditorExportPlatform, option: string | NodePath): boolean;
   /**
    * Check the requirements for the given `option` and return a non-empty warning string if they are not met.
    * **Note:** Use {@link get_option} to check the value of the export options.
    */
-  _get_export_option_warning(platform: EditorExportPlatform, option: string): string;
+  _get_export_option_warning(platform: EditorExportPlatform, option: string | NodePath): string;
   /**
    * Return a list of export options that can be configured for this export plugin.
    * Each element in the return value is a {@link Dictionary} with the following keys:
@@ -134,66 +134,66 @@ declare class EditorExportPlugin extends RefCounted {
    */
   _update_android_prebuilt_manifest(platform: EditorExportPlatform, manifest_data: PackedByteArray | Array<unknown>): PackedByteArray;
   /** Adds an Apple embedded platform bundle file from the given `path` to the exported project. */
-  add_apple_embedded_platform_bundle_file(path: string): void;
+  add_apple_embedded_platform_bundle_file(path: string | NodePath): void;
   /**
    * Adds C++ code to the Apple embedded platform export. The final code is created from the code appended by each active export plugin.
    */
-  add_apple_embedded_platform_cpp_code(code: string): void;
+  add_apple_embedded_platform_cpp_code(code: string | NodePath): void;
   /**
    * Adds a dynamic library (*.dylib, *.framework) to the Linking Phase in the Apple embedded platform's Xcode project and embeds it into the resulting binary.
    * **Note:** For static libraries (*.a), this works in the same way as {@link add_apple_embedded_platform_framework}.
    * **Note:** This method should not be used for System libraries as they are already present on the device.
    */
-  add_apple_embedded_platform_embedded_framework(path: string): void;
+  add_apple_embedded_platform_embedded_framework(path: string | NodePath): void;
   /**
    * Adds a static library (*.a) or a dynamic library (*.dylib, *.framework) to the Linking Phase to the Apple embedded platform's Xcode project.
    */
-  add_apple_embedded_platform_framework(path: string): void;
+  add_apple_embedded_platform_framework(path: string | NodePath): void;
   /** Adds linker flags for the Apple embedded platform export. */
-  add_apple_embedded_platform_linker_flags(flags: string): void;
+  add_apple_embedded_platform_linker_flags(flags: string | NodePath): void;
   /** Adds additional fields to the Apple embedded platform's project Info.plist file. */
-  add_apple_embedded_platform_plist_content(plist_content: string): void;
+  add_apple_embedded_platform_plist_content(plist_content: string | NodePath): void;
   /** Adds a static library from the given `path` to the Apple embedded platform project. */
-  add_apple_embedded_platform_project_static_lib(path: string): void;
+  add_apple_embedded_platform_project_static_lib(path: string | NodePath): void;
   /**
    * Adds a custom file to be exported. `path` is the virtual path that can be used to load the file, `file` is the binary data of the file.
    * When called inside {@link _export_file} and `remap` is `true`, the current file will not be exported, but instead remapped to this custom file. `remap` is ignored when called in other places.
    * `file` will not be imported, so consider using {@link _customize_resource} to remap imported resources.
    */
-  add_file(path: string, file: PackedByteArray | Array<unknown>, remap: boolean): void;
+  add_file(path: string | NodePath, file: PackedByteArray | Array<unknown>, remap: boolean): void;
   /** Adds an iOS bundle file from the given `path` to the exported project. */
-  add_ios_bundle_file(path: string): void;
+  add_ios_bundle_file(path: string | NodePath): void;
   /**
    * Adds C++ code to the iOS export. The final code is created from the code appended by each active export plugin.
    */
-  add_ios_cpp_code(code: string): void;
+  add_ios_cpp_code(code: string | NodePath): void;
   /**
    * Adds a dynamic library (*.dylib, *.framework) to Linking Phase in iOS's Xcode project and embeds it into resulting binary.
    * **Note:** For static libraries (*.a), this works the in same way as {@link add_apple_embedded_platform_framework}.
    * **Note:** This method should not be used for System libraries as they are already present on the device.
    */
-  add_ios_embedded_framework(path: string): void;
+  add_ios_embedded_framework(path: string | NodePath): void;
   /**
    * Adds a static library (*.a) or a dynamic library (*.dylib, *.framework) to the Linking Phase to the iOS Xcode project.
    */
-  add_ios_framework(path: string): void;
+  add_ios_framework(path: string | NodePath): void;
   /** Adds linker flags for the iOS export. */
-  add_ios_linker_flags(flags: string): void;
+  add_ios_linker_flags(flags: string | NodePath): void;
   /** Adds additional fields to the iOS project Info.plist file. */
-  add_ios_plist_content(plist_content: string): void;
+  add_ios_plist_content(plist_content: string | NodePath): void;
   /** Adds a static library from the given `path` to the iOS project. */
-  add_ios_project_static_lib(path: string): void;
+  add_ios_project_static_lib(path: string | NodePath): void;
   /**
    * Adds file or directory matching `path` to `PlugIns` directory of macOS app bundle.
    * **Note:** This is useful only for macOS exports.
    */
-  add_macos_plugin_file(path: string): void;
+  add_macos_plugin_file(path: string | NodePath): void;
   /**
    * Adds a shared object or a directory containing only shared objects with the given `tags` and destination `path`.
    * **Note:** In case of macOS exports, those shared objects will be added to `Frameworks` directory of app bundle.
    * In case of a directory code-sign will error if you place non code object in directory.
    */
-  add_shared_object(path: string, tags: PackedStringArray | Array<unknown>, target: string): void;
+  add_shared_object(path: string | NodePath, tags: PackedStringArray | Array<unknown>, target: string | NodePath): void;
   /** Returns currently used export platform. */
   get_export_platform(): EditorExportPlatform | null;
   /** Returns currently used export preset. */

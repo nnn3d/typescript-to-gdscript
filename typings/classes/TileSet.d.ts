@@ -83,7 +83,7 @@ declare class TileSet extends Resource {
    */
   get_coords_level_tile_proxy(source_from: int, coords_from: Vector2i | Vector2): Array<unknown>;
   /** Returns the index of the custom data layer identified by the given name. */
-  get_custom_data_layer_by_name(layer_name: string): int;
+  get_custom_data_layer_by_name(layer_name: string | NodePath): int;
   /** Returns the name of the custom data layer identified by the given index. */
   get_custom_data_layer_name(layer_index: int): string;
   /** Returns the type of the custom data layer identified by the given index. */
@@ -150,7 +150,7 @@ declare class TileSet extends Resource {
   /** Returns if there is a coodinates-level proxy for the given identifiers. */
   has_coords_level_tile_proxy(source_from: int, coords_from: Vector2i | Vector2): boolean;
   /** Returns if there is a custom data layer named `layer_name`. */
-  has_custom_data_layer_by_name(layer_name: string): boolean;
+  has_custom_data_layer_by_name(layer_name: string | NodePath): boolean;
   /** Returns if this TileSet has a source for the given source ID. */
   has_source(source_id: int): boolean;
   /** Returns if there is a source-level proxy for the given source ID. */
@@ -222,7 +222,7 @@ declare class TileSet extends Resource {
   /**
    * Sets the name of the custom data layer identified by the given index. Names are identifiers of the layer therefore if the name is already taken it will fail and raise an error.
    */
-  set_custom_data_layer_name(layer_index: int, layer_name: string): void;
+  set_custom_data_layer_name(layer_index: int, layer_name: string | NodePath): void;
   /** Sets the type of the custom data layer identified by the given index. */
   set_custom_data_layer_type(layer_index: int, layer_type: int): void;
   /**
@@ -259,7 +259,7 @@ declare class TileSet extends Resource {
    */
   set_terrain_color(terrain_set: int, terrain_index: int, color: Color): void;
   /** Sets a terrain's name. */
-  set_terrain_name(terrain_set: int, terrain_index: int, name: string): void;
+  set_terrain_name(terrain_set: int, terrain_index: int, name: string | NodePath): void;
   /**
    * Sets a terrain mode. Each mode determines which bits of a tile shape is used to match the neighboring tiles' terrains.
    */

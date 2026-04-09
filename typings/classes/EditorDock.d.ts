@@ -62,9 +62,9 @@ declare class EditorDock extends MarginContainer {
   is_global(): boolean;
   set_icon_name(value: string): void;
   get_icon_name(): string;
-  set_layout_key(value: string): void;
+  set_layout_key(value: string | NodePath): void;
   get_layout_key(): string;
-  set_title(value: string): void;
+  set_title(value: string | NodePath): void;
   get_title(): string;
   set_title_color(value: Color): void;
   get_title_color(): Color;
@@ -74,11 +74,11 @@ declare class EditorDock extends MarginContainer {
   /**
    * Implement this method to handle loading this dock's layout. It's equivalent to {@link EditorPlugin._set_window_layout}. `section` is a unique section based on {@link layout_key}.
    */
-  _load_layout_from_config(config: ConfigFile, section: string): void;
+  _load_layout_from_config(config: ConfigFile, section: string | NodePath): void;
   /**
    * Implement this method to handle saving this dock's layout. It's equivalent to {@link EditorPlugin._get_window_layout}. `section` is a unique section based on {@link layout_key}.
    */
-  _save_layout_to_config(config: ConfigFile, section: string): void;
+  _save_layout_to_config(config: ConfigFile, section: string | NodePath): void;
   /**
    * Implement this method to handle the layout switching for this dock. `layout` is one of the {@link DockLayout} constants.
    */

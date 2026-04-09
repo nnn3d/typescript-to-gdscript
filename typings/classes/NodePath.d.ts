@@ -2,11 +2,11 @@
 // Manual overrides applied from src/typings/overrides/*.d.ts
 
 /** A pre-parsed scene tree path. */
-declare class NodePath {
+declare interface NodePath {
   /**
    * Returns a copy of this node path with a colon character (`:`) prefixed, transforming it to a pure property path with no node names (relative to the current node).
    */
-  get_as_property_path(): string;
+  get_as_property_path(): NodePath;
   /** Returns all node names concatenated with a slash character (`/`) as a single {@link StringName}. */
   get_concatenated_names(): string;
   /**
@@ -47,9 +47,61 @@ declare class NodePath {
    * The absolute value of `begin` and `end` will be clamped to the sum of {@link get_name_count} and {@link get_subname_count}, so the default value for `end` makes it slice to the end of the {@link NodePath} by default (i.e. `path.slice(1)` is a shorthand for `path.slice(1, path.get_name_count() + path.get_subname_count())`).
    * If either `begin` or `end` are negative, they will be relative to the end of the {@link NodePath} (i.e. `path.slice(0, -2)` is a shorthand for `path.slice(0, path.get_name_count() + path.get_subname_count() - 2)`).
    */
-  slice(begin: int, end?: int): string;
+  slice(begin: int, end?: int): NodePath;
 
   // Operator overloads
-  [__ops_ne]: { right: string; ret: boolean };
-  [__ops_eq]: { right: string; ret: boolean };
+  [__ops_ne]: { right: NodePath; ret: boolean };
+  [__ops_eq]: { right: NodePath; ret: boolean };
+
+  [__variant_converts]: NodePath | string;
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
 }
+
+declare interface NodePathConstructor {
+  readonly prototype: NodePath;
+  /** Constructs an empty {@link NodePath}. */
+  (): NodePath;
+  /** Constructs a {@link NodePath} as a copy of the given {@link NodePath}. */
+  (from_: NodePath): NodePath;
+  /**
+   * Constructs a {@link NodePath} from a {@link String}. The created path is absolute if prefixed with a slash (see {@link is_absolute}).
+   * The "subnames" optionally included after the path to the target node can point to properties, and can also be nested.
+   * The following strings can be valid node paths:
+   * **Note:** In GDScript, it's also possible to convert a constant string into a node path by prefixing it with `^`. `^"path/to/node"` is equivalent to `NodePath("path/to/node")`.
+   */
+  (from_: string): NodePath;
+}
+declare const NodePath: NodePathConstructor;

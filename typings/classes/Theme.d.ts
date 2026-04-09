@@ -78,7 +78,7 @@ declare class Theme extends Resource {
   /**
    * Returns a list of names for {@link Color} properties defined with `theme_type`. Use {@link get_color_type_list} to get a list of possible theme type names.
    */
-  get_color_list(theme_type: string): PackedStringArray;
+  get_color_list(theme_type: string | NodePath): PackedStringArray;
   /**
    * Returns a list of all unique theme type names for {@link Color} properties. Use {@link get_type_list} to get a list of all unique theme types.
    */
@@ -91,7 +91,7 @@ declare class Theme extends Resource {
   /**
    * Returns a list of names for constant properties defined with `theme_type`. Use {@link get_constant_type_list} to get a list of possible theme type names.
    */
-  get_constant_list(theme_type: string): PackedStringArray;
+  get_constant_list(theme_type: string | NodePath): PackedStringArray;
   /**
    * Returns a list of all unique theme type names for constant properties. Use {@link get_type_list} to get a list of all unique theme types.
    */
@@ -105,7 +105,7 @@ declare class Theme extends Resource {
   /**
    * Returns a list of names for {@link Font} properties defined with `theme_type`. Use {@link get_font_type_list} to get a list of possible theme type names.
    */
-  get_font_list(theme_type: string): PackedStringArray;
+  get_font_list(theme_type: string | NodePath): PackedStringArray;
   /**
    * Returns the font size property defined by `name` and `theme_type`, if it exists.
    * Returns the default theme font size if the property doesn't exist and the default theme font size is set up (see {@link default_font_size}). Use {@link has_font_size} to check for existence of the property and {@link has_default_font_size} to check for existence of the default theme font.
@@ -115,7 +115,7 @@ declare class Theme extends Resource {
   /**
    * Returns a list of names for font size properties defined with `theme_type`. Use {@link get_font_size_type_list} to get a list of possible theme type names.
    */
-  get_font_size_list(theme_type: string): PackedStringArray;
+  get_font_size_list(theme_type: string | NodePath): PackedStringArray;
   /**
    * Returns a list of all unique theme type names for font size properties. Use {@link get_type_list} to get a list of all unique theme types.
    */
@@ -132,7 +132,7 @@ declare class Theme extends Resource {
   /**
    * Returns a list of names for icon properties defined with `theme_type`. Use {@link get_icon_type_list} to get a list of possible theme type names.
    */
-  get_icon_list(theme_type: string): PackedStringArray;
+  get_icon_list(theme_type: string | NodePath): PackedStringArray;
   /**
    * Returns a list of all unique theme type names for icon properties. Use {@link get_type_list} to get a list of all unique theme types.
    */
@@ -145,7 +145,7 @@ declare class Theme extends Resource {
   /**
    * Returns a list of names for {@link StyleBox} properties defined with `theme_type`. Use {@link get_stylebox_type_list} to get a list of possible theme type names.
    */
-  get_stylebox_list(theme_type: string): PackedStringArray;
+  get_stylebox_list(theme_type: string | NodePath): PackedStringArray;
   /**
    * Returns a list of all unique theme type names for {@link StyleBox} properties. Use {@link get_type_list} to get a list of all unique theme types.
    */
@@ -160,7 +160,7 @@ declare class Theme extends Resource {
    * Returns a list of names for properties of `data_type` defined with `theme_type`. Use {@link get_theme_item_type_list} to get a list of possible theme type names.
    * **Note:** This method is analogous to calling the corresponding data type specific method, but can be used for more generalized logic.
    */
-  get_theme_item_list(data_type: int, theme_type: string): PackedStringArray;
+  get_theme_item_list(data_type: int, theme_type: string | NodePath): PackedStringArray;
   /**
    * Returns a list of all unique theme type names for `data_type` properties. Use {@link get_type_list} to get a list of all unique theme types.
    * **Note:** This method is analogous to calling the corresponding data type specific method, but can be used for more generalized logic.

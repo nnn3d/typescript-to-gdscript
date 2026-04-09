@@ -83,7 +83,7 @@ declare class Node3D extends Node {
    * Path to the visibility range parent for this node and its descendants. The visibility parent must be a {@link GeometryInstance3D}.
    * Any visual instance will only be visible if the visibility parent (and all of its visibility ancestors) is hidden by being closer to the camera than its own {@link GeometryInstance3D.visibility_range_begin}. Nodes hidden via the {@link Node3D.visible} property are essentially removed from the visibility dependency tree, so dependent instances will not take the hidden node or its descendants into account.
    */
-  visibility_parent: string;
+  visibility_parent: NodePath;
   /**
    * If `true`, this node can be visible. The node is only rendered when all of its ancestors are visible, as well. That means {@link is_visible_in_tree} must return `true`.
    */
@@ -118,8 +118,8 @@ declare class Node3D extends Node {
   is_set_as_top_level(): boolean;
   set_transform(value: Transform3D | Projection): void;
   get_transform(): Transform3D;
-  set_visibility_parent(value: string): void;
-  get_visibility_parent(): string;
+  set_visibility_parent(value: NodePath | string): void;
+  get_visibility_parent(): NodePath;
   set_visible(value: boolean): void;
   is_visible(): boolean;
 

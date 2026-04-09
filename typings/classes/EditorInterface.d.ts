@@ -136,7 +136,7 @@ declare interface EditorInterface extends GodotObject {
   /**
    * Shows the given property on the given `object` in the editor's Inspector dock. If `inspector_only` is `true`, plugins will not attempt to edit `object`.
    */
-  inspect_object(object: GodotObject, for_property?: string, inspector_only?: boolean): void;
+  inspect_object(object: GodotObject, for_property?: string | NodePath, inspector_only?: boolean): void;
   /**
    * Returns `true` if multiple window support is enabled in the editor. Multiple window support is enabled if *all* of these statements are true:
    * - {@link EditorSettings.interface/multi_window/enable} is `true`.
@@ -155,17 +155,17 @@ declare interface EditorInterface extends GodotObject {
   /**
    * Returns `true` if the specified `plugin` is enabled. The plugin name is the same as its directory name.
    */
-  is_plugin_enabled(plugin: string): boolean;
+  is_plugin_enabled(plugin: string | NodePath): boolean;
   /** Returns mesh previews rendered at the given size as an {@link Array} of {@link Texture2D}s. */
   make_mesh_previews(meshes: Array<Mesh>, preview_size: int): Array<Texture2D>;
   /** Marks the current scene tab as unsaved. */
   mark_scene_as_unsaved(): void;
   /** Opens the scene at the given path. If `set_inherited` is `true`, creates a new inherited scene. */
-  open_scene_from_path(scene_filepath: string, set_inherited?: boolean): void;
+  open_scene_from_path(scene_filepath: string | NodePath, set_inherited?: boolean): void;
   /** Plays the currently active scene. */
   play_current_scene(): void;
   /** Plays the scene specified by its filepath. */
-  play_custom_scene(scene_filepath: string): void;
+  play_custom_scene(scene_filepath: string | NodePath): void;
   /** Plays the main scene. */
   play_main_scene(): void;
   /**
@@ -177,7 +177,7 @@ declare interface EditorInterface extends GodotObject {
    * The `type_blocklist` contains a list of type names, and the types in the blocklist will be hidden from the create dialog.
    * **Note:** Trying to list the base type in the `type_blocklist` will hide all types derived from the base type from the create dialog.
    */
-  popup_create_dialog(callback: Callable, base_type?: string, current_type?: string, dialog_title?: string, type_blocklist?: Array<string>): void;
+  popup_create_dialog(callback: Callable, base_type?: string, current_type?: string | NodePath, dialog_title?: string | NodePath, type_blocklist?: Array<string>): void;
   /**
    * Pops up the `dialog` in the editor UI with {@link Window.popup_exclusive}. The dialog must have no current parent, otherwise the method fails.
    * See also {@link Window.set_unparent_when_invisible}.
@@ -201,7 +201,7 @@ declare interface EditorInterface extends GodotObject {
   /**
    * Pops up an editor dialog for selecting a method from `object`. The `callback` must take a single argument of type {@link String} which will contain the name of the selected method or be empty if the dialog is canceled. If `current_value` is provided, the method will be selected automatically in the method list, if it exists.
    */
-  popup_method_selector(object: GodotObject, callback: Callable, current_value?: string): void;
+  popup_method_selector(object: GodotObject, callback: Callable, current_value?: string | NodePath): void;
   /**
    * Pops up an editor dialog for selecting a {@link Node} from the edited scene. The `callback` must take a single argument of type {@link NodePath}. It is called on the selected {@link NodePath} or the empty path `^""` if the dialog is canceled. If `valid_types` is provided, the dialog will only show Nodes that match one of the listed Node types. If `current_value` is provided, the Node will be automatically selected in the tree, if it exists.
    * **Example:** Display the node selection dialog as soon as this node is added to the tree for the first time:
@@ -210,13 +210,13 @@ declare interface EditorInterface extends GodotObject {
   /**
    * Pops up an editor dialog for selecting properties from `object`. The `callback` must take a single argument of type {@link NodePath}. It is called on the selected property path (see {@link NodePath.get_as_property_path}) or the empty path `^""` if the dialog is canceled. If `type_filter` is provided, the dialog will only show properties that match one of the listed {@link Variant.Type} values. If `current_value` is provided, the property will be selected automatically in the property list, if it exists.
    */
-  popup_property_selector(object: GodotObject, callback: Callable, type_filter?: PackedInt32Array | Array<unknown>, current_value?: string): void;
+  popup_property_selector(object: GodotObject, callback: Callable, type_filter?: PackedInt32Array | Array<unknown>, current_value?: string | NodePath): void;
   /**
    * Pops up an editor dialog for quick selecting a resource file. The `callback` must take a single argument of type {@link String} which will contain the path of the selected resource or be empty if the dialog is canceled. If `base_types` is provided, the dialog will only show resources that match these types. Only types deriving from {@link Resource} are supported.
    */
   popup_quick_open(callback: Callable, base_types?: Array<string>): void;
   /** Reloads the scene at the given path. */
-  reload_scene_from_path(scene_filepath: string): void;
+  reload_scene_from_path(scene_filepath: string | NodePath): void;
   /**
    * Restarts the editor. This closes the editor and then opens the same project. If `save` is `true`, the project will be saved before restarting.
    */
@@ -226,19 +226,19 @@ declare interface EditorInterface extends GodotObject {
   /** Saves the currently active scene. Returns either {@link OK} or {@link ERR_CANT_CREATE}. */
   save_scene(): int;
   /** Saves the currently active scene as a file at `path`. */
-  save_scene_as(path: string, with_preview?: boolean): void;
+  save_scene_as(path: string | NodePath, with_preview?: boolean): void;
   /** Selects the file, with the path provided by `file`, in the FileSystem dock. */
-  select_file(file: string): void;
+  select_file(file: string | NodePath): void;
   /**
    * Selects and activates the specified feature profile with the given `profile_name`. Set `profile_name` to an empty string to reset to the default feature profile.
    * A feature profile can be created programmatically using the {@link EditorFeatureProfile} class.
    * **Note:** The feature profile that gets activated must be located in the `feature_profiles` directory, as a file with the `.profile` extension. If a profile could not be found, an error occurs. The editor configuration folder can be found by using {@link EditorPaths.get_config_dir}.
    */
-  set_current_feature_profile(profile_name: string): void;
+  set_current_feature_profile(profile_name: string | NodePath): void;
   /**
    * Sets the editor's current main screen to the one specified in `name`. `name` must match the title of the tab in question exactly (e.g. `2D`, `3D`, [code skip-lint]Script[/code], `Game`, or `AssetLib` for default tabs).
    */
-  set_main_screen_editor(name: string): void;
+  set_main_screen_editor(name: string | NodePath): void;
   /**
    * If `edited` is `true`, the object is marked as edited.
    * **Note:** This is primarily used by the editor for {@link Resource} based objects to track their modified state. For example, any changes to an open scene, a resource in the inspector, or an edited script will cause this method to be called with `true`. Saving the scene, script, or resource resets the edited state by calling this method with `false`.
@@ -246,7 +246,7 @@ declare interface EditorInterface extends GodotObject {
    */
   set_object_edited(object: GodotObject, edited: boolean): void;
   /** Sets the enabled status of a plugin. The plugin name is the same as its directory name. */
-  set_plugin_enabled(plugin: string, enabled: boolean): void;
+  set_plugin_enabled(plugin: string | NodePath, enabled: boolean): void;
   /** Stops the scene that is currently playing. */
   stop_playing_scene(): void;
 }

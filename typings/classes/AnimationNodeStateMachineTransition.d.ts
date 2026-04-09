@@ -38,7 +38,7 @@ declare class AnimationNodeStateMachineTransition extends Resource {
   xfade_time: float;
   set_advance_condition(value: string): void;
   get_advance_condition(): string;
-  set_advance_expression(value: string): void;
+  set_advance_expression(value: string | NodePath): void;
   get_advance_expression(): string;
   set_advance_mode(value: int): void;
   get_advance_mode(): int;

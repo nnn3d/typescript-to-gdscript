@@ -45,7 +45,7 @@ declare interface Input extends GodotObject {
   /**
    * Adds a new mapping entry (in SDL2 format) to the mapping database. Optionally update already connected devices.
    */
-  add_joy_mapping(mapping: string, update_existing?: boolean): void;
+  add_joy_mapping(mapping: string | NodePath, update_existing?: boolean): void;
   /**
    * Clears the calibration information for the specified joypad's motion sensors, if it has any and if they were calibrated.
    * See {@link start_joy_motion_sensors_calibration} for an example on how to use joypad motion sensors and calibration in your games.
@@ -317,7 +317,7 @@ declare interface Input extends GodotObject {
    * Removes all mappings from the internal database that match the given GUID. All currently connected joypads that use this GUID will become unmapped.
    * On Android, Godot will map to an internal fallback mapping.
    */
-  remove_joy_mapping(guid: string): void;
+  remove_joy_mapping(guid: string | NodePath): void;
   /**
    * Sets the acceleration value of the accelerometer sensor. Can be used for debugging on devices without a hardware sensor, for example in an editor on a PC.
    * **Note:** This value can be immediately overwritten by the hardware sensor value on Android and iOS.

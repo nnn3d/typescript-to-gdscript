@@ -106,7 +106,7 @@ declare class XRInterface extends RefCounted {
    * `duration_sec` is the duration of the pulse in seconds.
    * `delay_sec` is a delay in seconds before the pulse is given.
    */
-  trigger_haptic_pulse(action_name: string, tracker_name: string, frequency: float, amplitude: float, duration_sec: float, delay_sec: float): void;
+  trigger_haptic_pulse(action_name: string | NodePath, tracker_name: string, frequency: float, amplitude: float, duration_sec: float, delay_sec: float): void;
   /** Turns the interface off. */
   uninitialize(): void;
 

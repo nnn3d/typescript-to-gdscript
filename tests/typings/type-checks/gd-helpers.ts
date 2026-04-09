@@ -183,7 +183,7 @@ class DecoratorTest extends Node {
 class StringNameTest extends Node {
   test_string_helpers() {
     let sn: string = StringName('my_name');
-    let np: string = NodePath('Path/To/Node');
+    let np: NodePath = NodePath('Path/To/Node');
 
     // @ts-expect-error — StringName requires a string argument
     let bad1 = StringName(123);

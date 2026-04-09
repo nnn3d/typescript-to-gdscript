@@ -8,20 +8,20 @@ declare class SkeletonModification2DCCDIK extends SkeletonModification2D {
   /**
    * The NodePath to the node that is the target for the CCDIK modification. This node is what the CCDIK chain will attempt to rotate the bone chain to.
    */
-  target_nodepath: string;
+  target_nodepath: NodePath;
   /**
    * The end position of the CCDIK chain. Typically, this should be a child of a {@link Bone2D} node attached to the final {@link Bone2D} in the CCDIK chain.
    */
-  tip_nodepath: string;
+  tip_nodepath: NodePath;
   set_ccdik_data_chain_length(value: int): void;
   get_ccdik_data_chain_length(): int;
-  set_target_node(value: string): void;
-  get_target_node(): string;
-  set_tip_node(value: string): void;
-  get_tip_node(): string;
+  set_target_node(value: NodePath | string): void;
+  get_target_node(): NodePath;
+  set_tip_node(value: NodePath | string): void;
+  get_tip_node(): NodePath;
 
   /** Returns the {@link Bone2D} node assigned to the CCDIK joint at `joint_idx`. */
-  get_ccdik_joint_bone2d_node(joint_idx: int): string;
+  get_ccdik_joint_bone2d_node(joint_idx: int): NodePath;
   /** Returns the index of the {@link Bone2D} node assigned to the CCDIK joint at `joint_idx`. */
   get_ccdik_joint_bone_index(joint_idx: int): int;
   /**
@@ -39,7 +39,7 @@ declare class SkeletonModification2DCCDIK extends SkeletonModification2D {
    */
   get_ccdik_joint_rotate_from_joint(joint_idx: int): boolean;
   /** Sets the {@link Bone2D} node assigned to the CCDIK joint at `joint_idx`. */
-  set_ccdik_joint_bone2d_node(joint_idx: int, bone2d_nodepath: string): void;
+  set_ccdik_joint_bone2d_node(joint_idx: int, bone2d_nodepath: NodePath | string): void;
   /**
    * Sets the bone index, `bone_idx`, of the CCDIK joint at `joint_idx`. When possible, this will also update the `bone2d_node` of the CCDIK joint based on data provided by the linked skeleton.
    */

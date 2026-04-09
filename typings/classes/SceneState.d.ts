@@ -21,11 +21,11 @@ declare class SceneState extends RefCounted {
   /** Returns the name of the signal at `idx`. */
   get_connection_signal(idx: int): string;
   /** Returns the path to the node that owns the signal at `idx`, relative to the root node. */
-  get_connection_source(idx: int): string;
+  get_connection_source(idx: int): NodePath;
   /**
    * Returns the path to the node that owns the method connected to the signal at `idx`, relative to the root node.
    */
-  get_connection_target(idx: int): string;
+  get_connection_target(idx: int): NodePath;
   /** Returns the number of unbound parameters for the signal at `idx`. */
   get_connection_unbinds(idx: int): int;
   /**
@@ -50,12 +50,12 @@ declare class SceneState extends RefCounted {
   /** Returns the name of the node at `idx`. */
   get_node_name(idx: int): string;
   /** Returns the path to the owner of the node at `idx`, relative to the root node. */
-  get_node_owner_path(idx: int): string;
+  get_node_owner_path(idx: int): NodePath;
   /**
    * Returns the path to the node at `idx`.
    * If `for_parent` is `true`, returns the path of the `idx` node's parent instead.
    */
-  get_node_path(idx: int, for_parent?: boolean): string;
+  get_node_path(idx: int, for_parent?: boolean): NodePath;
   /**
    * Returns the number of exported or overridden properties for the node at `idx`.
    * The `prop_idx` argument used to query node property data in other `get_node_property_*` methods in the interval `[0, get_node_property_count() - 1]`.

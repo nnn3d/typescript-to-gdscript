@@ -32,7 +32,7 @@ declare class Skeleton3D extends Node3D {
    * Adds a new bone with the given name. Returns the new bone's index, or `-1` if this method fails.
    * **Note:** Bone names should be unique, non empty, and cannot include the `:` and `/` characters.
    */
-  add_bone(name: string): int;
+  add_bone(name: string | NodePath): int;
   /**
    * Manually advance the child {@link SkeletonModifier3D}s by the specified time (in seconds).
    * **Note:** The `delta` is temporarily accumulated in the {@link Skeleton3D}, and the deferred process uses the accumulated value to process the modification.
@@ -46,7 +46,7 @@ declare class Skeleton3D extends Node3D {
   /**
    * Returns the bone index that matches `name` as its name. Returns `-1` if no bone with this name exists.
    */
-  find_bone(name: string): int;
+  find_bone(name: string | NodePath): int;
   /** Force updates the bone transforms/poses for all bones in the skeleton. */
   force_update_all_bone_transforms(): void;
   /** Force updates the bone transform for the bone at `bone_idx` and all of its children. */
@@ -158,7 +158,7 @@ declare class Skeleton3D extends Node3D {
   /** Sets the metadata with the given `key` to `value` for the bone at index `bone_idx`. */
   set_bone_meta(bone_idx: int, key: string, value: unknown): void;
   /** Sets the bone name, `name`, for the bone at `bone_idx`. */
-  set_bone_name(bone_idx: int, name: string): void;
+  set_bone_name(bone_idx: int, name: string | NodePath): void;
   /**
    * Sets the bone index `parent_idx` as the parent of the bone at `bone_idx`. If -1, then bone has no parent.
    * **Note:** `parent_idx` must be less than `bone_idx`.

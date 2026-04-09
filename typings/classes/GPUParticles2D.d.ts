@@ -78,7 +78,7 @@ declare class GPUParticles2D extends Node2D {
    * Path to another {@link GPUParticles2D} node that will be used as a subemitter (see {@link ParticleProcessMaterial.sub_emitter_mode}). Subemitters can be used to achieve effects such as fireworks, sparks on collision, bubbles popping into water drops, and more.
    * **Note:** When {@link sub_emitter} is set, the target {@link GPUParticles2D} node will no longer emit particles on its own.
    */
-  sub_emitter: string;
+  sub_emitter: NodePath;
   /**
    * Particle texture. If `null`, particles will be squares with a size of 1×1 pixels.
    * **Note:** To use a flipbook texture, assign a new {@link CanvasItemMaterial} to the {@link GPUParticles2D}'s {@link CanvasItem.material} property, then enable {@link CanvasItemMaterial.particles_animation} and set {@link CanvasItemMaterial.particles_anim_h_frames}, {@link CanvasItemMaterial.particles_anim_v_frames}, and {@link CanvasItemMaterial.particles_anim_loop} to match the flipbook texture.
@@ -146,8 +146,8 @@ declare class GPUParticles2D extends Node2D {
   get_seed(): int;
   set_speed_scale(value: float): void;
   get_speed_scale(): float;
-  set_sub_emitter(value: string): void;
-  get_sub_emitter(): string;
+  set_sub_emitter(value: NodePath | string): void;
+  get_sub_emitter(): NodePath;
   set_texture(value: Texture2D | null): void;
   get_texture(): Texture2D | null;
   set_trail_enabled(value: boolean): void;

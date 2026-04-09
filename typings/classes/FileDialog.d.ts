@@ -85,15 +85,15 @@ declare class FileDialog extends ConfirmationDialog {
   size: Vector2i;
   set_access(value: int): void;
   get_access(): int;
-  set_current_dir(value: string): void;
+  set_current_dir(value: string | NodePath): void;
   get_current_dir(): string;
-  set_current_file(value: string): void;
+  set_current_file(value: string | NodePath): void;
   get_current_file(): string;
-  set_current_path(value: string): void;
+  set_current_path(value: string | NodePath): void;
   get_current_path(): string;
   set_file_mode(value: int): void;
   get_file_mode(): int;
-  set_filename_filter(value: string): void;
+  set_filename_filter(value: string | NodePath): void;
   get_filename_filter(): string;
   set_filters(value: PackedStringArray | Array<unknown>): void;
   get_filters(): PackedStringArray;
@@ -101,7 +101,7 @@ declare class FileDialog extends ConfirmationDialog {
   is_mode_overriding_title(): boolean;
   set_option_count(value: int): void;
   get_option_count(): int;
-  set_root_subfolder(value: string): void;
+  set_root_subfolder(value: string | NodePath): void;
   get_root_subfolder(): string;
   set_show_hidden_files(value: boolean): void;
   is_showing_hidden_files(): boolean;
@@ -112,12 +112,12 @@ declare class FileDialog extends ConfirmationDialog {
    * For example, a `filter` of `"*.png, *.jpg"`, a `mime_type` of `image/png, image/jpeg`, and a `description` of `"Images"` results in filter text "Images (*.png, *.jpg)".
    * **Note:** Embedded file dialogs and Windows file dialogs support only file extensions, while Android, Linux, and macOS file dialogs also support MIME types.
    */
-  add_filter(filter: string, description?: string, mime_type?: string): void;
+  add_filter(filter: string | NodePath, description?: string | NodePath, mime_type?: string | NodePath): void;
   /**
    * Adds an additional {@link OptionButton} to the file dialog. If `values` is empty, a {@link CheckBox} is added instead.
    * `default_value_index` should be an index of the value in the `values`. If `values` is empty it should be either `1` (checked), or `0` (unchecked).
    */
-  add_option(name: string, values: PackedStringArray | Array<unknown>, default_value_index: int): void;
+  add_option(name: string | NodePath, values: PackedStringArray | Array<unknown>, default_value_index: int): void;
   /** Clear the filter for file names. */
   clear_filename_filter(): void;
   /** Clear all the added filters in the dialog. */
@@ -187,7 +187,7 @@ declare class FileDialog extends ConfirmationDialog {
   /** Sets the default value index of the {@link OptionButton} or {@link CheckBox} with index `option`. */
   set_option_default(option: int, default_value_index: int): void;
   /** Sets the name of the {@link OptionButton} or {@link CheckBox} with index `option`. */
-  set_option_name(option: int, name: string): void;
+  set_option_name(option: int, name: string | NodePath): void;
   /** Sets the option values of the {@link OptionButton} with index `option`. */
   set_option_values(option: int, values: PackedStringArray | Array<unknown>): void;
   /**

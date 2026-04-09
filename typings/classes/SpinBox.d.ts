@@ -41,7 +41,7 @@ declare class SpinBox extends Range {
   get_custom_arrow_step(): float;
   set_editable(value: boolean): void;
   is_editable(): boolean;
-  set_prefix(value: string): void;
+  set_prefix(value: string | NodePath): void;
   get_prefix(): string;
   set_select_all_on_focus(value: boolean): void;
   is_select_all_on_focus(): boolean;

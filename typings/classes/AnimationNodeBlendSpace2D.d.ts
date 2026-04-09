@@ -38,9 +38,9 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   get_snap(): Vector2;
   set_use_sync(value: boolean): void;
   is_using_sync(): boolean;
-  set_x_label(value: string): void;
+  set_x_label(value: string | NodePath): void;
   get_x_label(): string;
-  set_y_label(value: string): void;
+  set_y_label(value: string | NodePath): void;
   get_y_label(): string;
 
   /**

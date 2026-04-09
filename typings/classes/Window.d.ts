@@ -175,9 +175,9 @@ declare class Window extends Viewport {
    * If `false`, you need to call {@link child_controls_changed} manually.
    */
   wrap_controls: boolean;
-  set_accessibility_description(value: string): void;
+  set_accessibility_description(value: string | NodePath): void;
   get_accessibility_description(): string;
-  set_accessibility_name(value: string): void;
+  set_accessibility_name(value: string | NodePath): void;
   get_accessibility_name(): string;
   set_auto_translate(value: boolean): void;
   is_auto_translating(): boolean;
@@ -221,7 +221,7 @@ declare class Window extends Viewport {
   get_theme(): Theme | null;
   set_theme_type_variation(value: string): void;
   get_theme_type_variation(): string;
-  set_title(value: string): void;
+  set_title(value: string | NodePath): void;
   get_title(): string;
   set_transient(value: boolean): void;
   is_transient(): boolean;

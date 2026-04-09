@@ -28,7 +28,7 @@ declare class Crypto extends RefCounted {
    * Generates a self-signed {@link X509Certificate} from the given {@link CryptoKey} and `issuer_name`. The certificate validity will be defined by `not_before` and `not_after` (first valid date and last valid date). The `issuer_name` must contain at least "CN=" (common name, i.e. the domain name), "O=" (organization, i.e. your company name), "C=" (country, i.e. 2 lettered ISO-3166 code of the country the organization is based in).
    * A small example to generate an RSA key and an X509 self-signed certificate.
    */
-  generate_self_signed_certificate(key: CryptoKey, issuer_name?: string, not_before?: string, not_after?: string): X509Certificate;
+  generate_self_signed_certificate(key: CryptoKey, issuer_name?: string | NodePath, not_before?: string | NodePath, not_after?: string | NodePath): X509Certificate;
   /**
    * Generates an HMAC (https://en.wikipedia.org/wiki/HMAC) digest of `msg` using `key`. The `hash_type` parameter is the hashing algorithm that is used for the inner and outer hashes.
    * Currently, only {@link HashingContext.HASH_SHA256} and {@link HashingContext.HASH_SHA1} are supported.

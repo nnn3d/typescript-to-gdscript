@@ -6,20 +6,20 @@
  */
 declare class EditorExportPlatform extends RefCounted {
   /** Adds a message to the export log that will be displayed when exporting ends. */
-  add_message(type_: int, category: string, message: string): void;
+  add_message(type_: int, category: string | NodePath, message: string | NodePath): void;
   /** Clears the export log. */
   clear_messages(): void;
   /** Create a new preset for this platform. */
   create_preset(): EditorExportPreset;
   /** Creates a PCK archive at `path` for the specified `preset`. */
-  export_pack(preset: EditorExportPreset, debug: boolean, path: string, flags: int): int;
+  export_pack(preset: EditorExportPreset, debug: boolean, path: string | NodePath, flags: int): int;
   /**
    * Creates a patch PCK archive at `path` for the specified `preset`, containing only the files that have changed since the last patch.
    * **Note:** `patches` is an optional override of the set of patches defined in the export preset. When empty the patches defined in the export preset will be used instead.
    */
-  export_pack_patch(preset: EditorExportPreset, debug: boolean, path: string, patches?: PackedStringArray | Array<unknown>, flags?: int): int;
+  export_pack_patch(preset: EditorExportPreset, debug: boolean, path: string | NodePath, patches?: PackedStringArray | Array<unknown>, flags?: int): int;
   /** Creates a full project at `path` for the specified `preset`. */
-  export_project(preset: EditorExportPreset, debug: boolean, path: string, flags: int): int;
+  export_project(preset: EditorExportPreset, debug: boolean, path: string | NodePath, flags: int): int;
   /**
    * Exports project files for the specified preset. This method can be used to implement custom export format, other than PCK and ZIP. One of the callbacks is called for each exported file.
    * `save_cb` is called for all exported files and have the following arguments: `file_path: String`, `file_data: PackedByteArray`, `file_index: int`, `file_count: int`, `encryption_include_filters: PackedStringArray`, `encryption_exclude_filters: PackedStringArray`, `encryption_key: PackedByteArray`.
@@ -28,16 +28,16 @@ declare class EditorExportPlatform extends RefCounted {
    */
   export_project_files(preset: EditorExportPreset, debug: boolean, save_cb: Callable, shared_cb?: Callable): int;
   /** Create a ZIP archive at `path` for the specified `preset`. */
-  export_zip(preset: EditorExportPreset, debug: boolean, path: string, flags: int): int;
+  export_zip(preset: EditorExportPreset, debug: boolean, path: string | NodePath, flags: int): int;
   /**
    * Create a patch ZIP archive at `path` for the specified `preset`, containing only the files that have changed since the last patch.
    * **Note:** `patches` is an optional override of the set of patches defined in the export preset. When empty the patches defined in the export preset will be used instead.
    */
-  export_zip_patch(preset: EditorExportPreset, debug: boolean, path: string, patches?: PackedStringArray | Array<unknown>, flags?: int): int;
+  export_zip_patch(preset: EditorExportPreset, debug: boolean, path: string | NodePath, patches?: PackedStringArray | Array<unknown>, flags?: int): int;
   /**
    * Locates export template for the platform, and returns {@link Dictionary} with the following keys: `path: String` and `error: String`. This method is provided for convenience and custom export platforms aren't required to use it or keep export templates stored in the same way official templates are.
    */
-  find_export_template(template_file_name: string): Dictionary;
+  find_export_template(template_file_name: string | NodePath): Dictionary;
   /**
    * Generates array of command line arguments for the default export templates for the debug flags and editor settings.
    */
@@ -68,29 +68,29 @@ declare class EditorExportPlatform extends RefCounted {
    * Saves PCK archive and returns {@link Dictionary} with the following keys: `result: Error`, `so_files: Array` (array of the shared/static objects which contains dictionaries with the following keys: `path: String`, `tags: PackedStringArray`, and `target_folder: String`).
    * If `embed` is `true`, PCK content is appended to the end of `path` file and return {@link Dictionary} additionally include following keys: `embedded_start: int` (embedded PCK offset) and `embedded_size: int` (embedded PCK size).
    */
-  save_pack(preset: EditorExportPreset, debug: boolean, path: string, embed?: boolean): Dictionary;
+  save_pack(preset: EditorExportPreset, debug: boolean, path: string | NodePath, embed?: boolean): Dictionary;
   /**
    * Saves patch PCK archive and returns {@link Dictionary} with the following keys: `result: Error`, `so_files: Array` (array of the shared/static objects which contains dictionaries with the following keys: `path: String`, `tags: PackedStringArray`, and `target_folder: String`).
    */
-  save_pack_patch(preset: EditorExportPreset, debug: boolean, path: string): Dictionary;
+  save_pack_patch(preset: EditorExportPreset, debug: boolean, path: string | NodePath): Dictionary;
   /**
    * Saves ZIP archive and returns {@link Dictionary} with the following keys: `result: Error`, `so_files: Array` (array of the shared/static objects which contains dictionaries with the following keys: `path: String`, `tags: PackedStringArray`, and `target_folder: String`).
    */
-  save_zip(preset: EditorExportPreset, debug: boolean, path: string): Dictionary;
+  save_zip(preset: EditorExportPreset, debug: boolean, path: string | NodePath): Dictionary;
   /**
    * Saves patch ZIP archive and returns {@link Dictionary} with the following keys: `result: Error`, `so_files: Array` (array of the shared/static objects which contains dictionaries with the following keys: `path: String`, `tags: PackedStringArray`, and `target_folder: String`).
    */
-  save_zip_patch(preset: EditorExportPreset, debug: boolean, path: string): Dictionary;
+  save_zip_patch(preset: EditorExportPreset, debug: boolean, path: string | NodePath): Dictionary;
   /** Uploads specified file over SCP protocol to the remote host. */
-  ssh_push_to_remote(host: string, port: string, scp_args: PackedStringArray | Array<unknown>, src_file: string, dst_file: string): int;
+  ssh_push_to_remote(host: string | NodePath, port: string | NodePath, scp_args: PackedStringArray | Array<unknown>, src_file: string | NodePath, dst_file: string | NodePath): int;
   /**
    * Executes specified command on the remote host via SSH protocol and returns command output in the `output`.
    */
-  ssh_run_on_remote(host: string, port: string, ssh_arg: PackedStringArray | Array<unknown>, cmd_args: string, output?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, port_fwd?: int): int;
+  ssh_run_on_remote(host: string | NodePath, port: string | NodePath, ssh_arg: PackedStringArray | Array<unknown>, cmd_args: string | NodePath, output?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, port_fwd?: int): int;
   /**
    * Executes specified command on the remote host via SSH protocol and returns process ID (on the remote host) without waiting for command to finish.
    */
-  ssh_run_on_remote_no_wait(host: string, port: string, ssh_args: PackedStringArray | Array<unknown>, cmd_args: string, port_fwd?: int): int;
+  ssh_run_on_remote_no_wait(host: string | NodePath, port: string | NodePath, ssh_args: PackedStringArray | Array<unknown>, cmd_args: string | NodePath, port_fwd?: int): int;
 
   // enum ExportMessageType
   /** Invalid message type used as the default value when no type is specified. */

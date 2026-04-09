@@ -7,7 +7,7 @@ declare class VisualShaderNodeVarying extends VisualShaderNode {
   varying_name: string;
   /** Type of the variable. Determines where the variable can be accessed. */
   varying_type: int;
-  set_varying_name(value: string): void;
+  set_varying_name(value: string | NodePath): void;
   get_varying_name(): string;
   set_varying_type(value: int): void;
   get_varying_type(): int;

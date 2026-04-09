@@ -245,7 +245,7 @@ declare class TileMap extends Node2D {
    * Sets a layer's name. This is mostly useful in the editor.
    * If `layer` is negative, the layers are accessed from the last one.
    */
-  set_layer_name(layer: int, name: string): void;
+  set_layer_name(layer: int, name: string | NodePath): void;
   /**
    * Enables or disables a layer's built-in navigation regions generation. Disable this if you need to bake navigation regions from a TileMap using a {@link NavigationRegion2D} node.
    */

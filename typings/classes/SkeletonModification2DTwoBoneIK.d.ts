@@ -18,18 +18,18 @@ declare class SkeletonModification2DTwoBoneIK extends SkeletonModification2D {
   /**
    * The NodePath to the node that is the target for the TwoBoneIK modification. This node is what the modification will use when bending the {@link Bone2D} nodes.
    */
-  target_nodepath: string;
+  target_nodepath: NodePath;
   set_flip_bend_direction(value: boolean): void;
   get_flip_bend_direction(): boolean;
   set_target_maximum_distance(value: float): void;
   get_target_maximum_distance(): float;
   set_target_minimum_distance(value: float): void;
   get_target_minimum_distance(): float;
-  set_target_node(value: string): void;
-  get_target_node(): string;
+  set_target_node(value: NodePath | string): void;
+  get_target_node(): NodePath;
 
   /** Returns the {@link Bone2D} node that is being used as the first bone in the TwoBoneIK modification. */
-  get_joint_one_bone2d_node(): string;
+  get_joint_one_bone2d_node(): NodePath;
   /**
    * Returns the index of the {@link Bone2D} node that is being used as the first bone in the TwoBoneIK modification.
    */
@@ -37,19 +37,19 @@ declare class SkeletonModification2DTwoBoneIK extends SkeletonModification2D {
   /**
    * Returns the {@link Bone2D} node that is being used as the second bone in the TwoBoneIK modification.
    */
-  get_joint_two_bone2d_node(): string;
+  get_joint_two_bone2d_node(): NodePath;
   /**
    * Returns the index of the {@link Bone2D} node that is being used as the second bone in the TwoBoneIK modification.
    */
   get_joint_two_bone_idx(): int;
   /** Sets the {@link Bone2D} node that is being used as the first bone in the TwoBoneIK modification. */
-  set_joint_one_bone2d_node(bone2d_node: string): void;
+  set_joint_one_bone2d_node(bone2d_node: NodePath | string): void;
   /**
    * Sets the index of the {@link Bone2D} node that is being used as the first bone in the TwoBoneIK modification.
    */
   set_joint_one_bone_idx(bone_idx: int): void;
   /** Sets the {@link Bone2D} node that is being used as the second bone in the TwoBoneIK modification. */
-  set_joint_two_bone2d_node(bone2d_node: string): void;
+  set_joint_two_bone2d_node(bone2d_node: NodePath | string): void;
   /**
    * Sets the index of the {@link Bone2D} node that is being used as the second bone in the TwoBoneIK modification.
    */

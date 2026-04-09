@@ -19,7 +19,7 @@ declare class UDPServer extends RefCounted {
   /**
    * Starts the server by opening a UDP socket listening on the given `port`. You can optionally specify a `bind_address` to only listen for packets sent to that address. See also {@link PacketPeerUDP.bind}.
    */
-  listen(port: int, bind_address?: string): int;
+  listen(port: int, bind_address?: string | NodePath): int;
   /**
    * Call this method at regular intervals (e.g. inside {@link Node._process}) to process new packets. Any packet from a known address/port pair will be delivered to the appropriate {@link PacketPeerUDP}, while any packet received from an unknown address/port pair will be added as a pending connection (see {@link is_connection_available} and {@link take_connection}). The maximum number of pending connections is defined via {@link max_pending_connections}.
    */

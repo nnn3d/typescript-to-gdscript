@@ -13,7 +13,7 @@ declare interface ResourceSaver extends GodotObject {
   /**
    * Returns the resource ID for the given path. If `generate` is `true`, a new resource ID will be generated if one for the path is not found. If `generate` is `false` and the path is not found, {@link ResourceUID.INVALID_ID} is returned.
    */
-  get_resource_id_for_path(path: string, generate?: boolean): int;
+  get_resource_id_for_path(path: string | NodePath, generate?: boolean): int;
   /** Unregisters the given {@link ResourceFormatSaver}. */
   remove_resource_format_saver(format_saver: ResourceFormatSaver): void;
   /**
@@ -22,12 +22,12 @@ declare interface ResourceSaver extends GodotObject {
    * Returns {@link OK} on success.
    * **Note:** When the project is running, any generated UID associated with the resource will not be saved as the required code is only executed in editor mode.
    */
-  save(resource: Resource, path?: string, flags?: int): int;
+  save(resource: Resource, path?: string | NodePath, flags?: int): int;
   /**
    * Sets the UID of the given `resource` path to `uid`. You can generate a new UID using {@link ResourceUID.create_id}.
    * Since resources will normally get a UID automatically, this method is only useful in very specific cases.
    */
-  set_uid(resource: string, uid: int): int;
+  set_uid(resource: string | NodePath, uid: int): int;
 
   // enum SaverFlags
   /** No resource saving option. */

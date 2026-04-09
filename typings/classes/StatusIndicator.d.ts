@@ -12,16 +12,16 @@ declare class StatusIndicator extends Node {
    * Status indicator native popup menu. If this is set, the {@link pressed} signal is not emitted.
    * **Note:** Native popup is only supported if {@link NativeMenu} supports {@link NativeMenu.FEATURE_POPUP_MENU} feature.
    */
-  menu: string;
+  menu: NodePath;
   /** Status indicator tooltip. */
   tooltip: string;
   /** If `true`, the status indicator is visible. */
   visible: boolean;
   set_icon(value: Texture2D | null): void;
   get_icon(): Texture2D | null;
-  set_menu(value: string): void;
-  get_menu(): string;
-  set_tooltip(value: string): void;
+  set_menu(value: NodePath | string): void;
+  get_menu(): NodePath;
+  set_tooltip(value: string | NodePath): void;
   get_tooltip(): string;
   set_visible(value: boolean): void;
   is_visible(): boolean;

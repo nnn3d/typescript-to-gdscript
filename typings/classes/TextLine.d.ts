@@ -25,7 +25,7 @@ declare class TextLine extends RefCounted {
   get_horizontal_alignment(): int;
   set_direction(value: int): void;
   get_direction(): int;
-  set_ellipsis_char(value: string): void;
+  set_ellipsis_char(value: string | NodePath): void;
   get_ellipsis_char(): string;
   set_flags(value: int): void;
   get_flags(): int;
@@ -45,7 +45,7 @@ declare class TextLine extends RefCounted {
    */
   add_object(key: unknown, size: Vector2 | Vector2i, inline_align: int, length?: int, baseline?: float): boolean;
   /** Adds text span and font to draw it. */
-  add_string(text: string, font: Font, font_size: int, language?: string, meta?: unknown): boolean;
+  add_string(text: string | NodePath, font: Font, font_size: int, language?: string | NodePath, meta?: unknown): boolean;
   /** Clears text line (removes text and inline objects). */
   clear(): void;
   /**

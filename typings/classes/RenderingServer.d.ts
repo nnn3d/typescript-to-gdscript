@@ -756,7 +756,7 @@ declare interface RenderingServer extends GodotObject {
   /** This method does nothing and always returns `false`. */
   has_feature(feature: int): boolean;
   /** Returns `true` if the OS supports a certain `feature`. Features might be `s3tc`, `etc`, and `etc2`. */
-  has_os_feature(feature: string): boolean;
+  has_os_feature(feature: string | NodePath): boolean;
   /**
    * Attaches a unique Object ID to instance. Object ID must be attached to instance for proper culling with {@link instances_cull_aabb}, {@link instances_cull_convex}, and {@link instances_cull_ray}.
    */
@@ -1565,7 +1565,7 @@ declare interface RenderingServer extends GodotObject {
    */
   shader_get_parameter_default(shader: RID, name: string): unknown;
   /** Sets the shader's source code (which triggers recompilation after being changed). */
-  shader_set_code(shader: RID, code: string): void;
+  shader_set_code(shader: RID, code: string | NodePath): void;
   /**
    * Sets a shader's default texture. Overwrites the texture given by name.
    * **Note:** If the sampler array is used use `index` to access the specified texture.
@@ -1574,7 +1574,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the path hint for the specified shader. This should generally match the {@link Shader} resource's {@link Resource.resource_path}.
    */
-  shader_set_path_hint(shader: RID, path: string): void;
+  shader_set_path_hint(shader: RID, path: string | NodePath): void;
   /**
    * Allocates data for this skeleton using the number of bones specified in `bones`. If `is_2d_skeleton` is `true`, the skeleton will be treated as a 2D skeleton instead of a 3D skeleton. See also {@link skeleton_get_bone_count}.
    */
@@ -1741,7 +1741,7 @@ declare interface RenderingServer extends GodotObject {
    * Sets the resource path for this texture RID. See also {@link texture_get_path}.
    * **Note:** This is purely a hint and does not cause the texture to be automatically saved when set to a `res://` path.
    */
-  texture_set_path(texture: RID, path: string): void;
+  texture_set_path(texture: RID, path: string | NodePath): void;
   /**
    * Sets the size at which the texture should be *displayed* in 2D, ignoring its original size. This does not rescale the texture data itself, only how it is drawn in 2D. Set `width` and `height` to 0 to disable the size override.
    */

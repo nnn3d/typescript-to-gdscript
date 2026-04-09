@@ -27,11 +27,11 @@ declare class Resource extends RefCounted {
   resource_scene_unique_id: string;
   set_local_to_scene(value: boolean): void;
   is_local_to_scene(): boolean;
-  set_name(value: string): void;
+  set_name(value: string | NodePath): void;
   get_name(): string;
-  set_path(value: string): void;
+  set_path(value: string | NodePath): void;
   get_path(): string;
-  set_scene_unique_id(value: string): void;
+  set_scene_unique_id(value: string | NodePath): void;
   get_scene_unique_id(): string;
 
   /** Override this method to return a custom {@link RID} when {@link get_rid} is called. */
@@ -43,7 +43,7 @@ declare class Resource extends RefCounted {
   /**
    * Override this method to execute additional logic after {@link set_path_cache} is called on this object.
    */
-  _set_path_cache(path: string): void;
+  _set_path_cache(path: string | NodePath): void;
   /**
    * Override this method to customize the newly duplicated resource created from {@link PackedScene.instantiate}, if the original's {@link resource_local_to_scene} is set to `true`.
    * **Example:** Set a random `damage` value to every local resource from an instantiated scene:
@@ -77,7 +77,7 @@ declare class Resource extends RefCounted {
    * From the internal cache for scene-unique IDs, returns the ID of this resource for the scene at `path`. If there is no entry, an empty string is returned. Useful to keep scene-unique IDs the same when implementing a VCS-friendly custom resource format by extending {@link ResourceFormatLoader} and {@link ResourceFormatSaver}.
    * **Note:** This method is only implemented when running in an editor context. At runtime, it returns an empty string.
    */
-  get_id_for_path(path: string): string;
+  get_id_for_path(path: string | NodePath): string;
   /**
    * If {@link resource_local_to_scene} is set to `true` and the resource has been loaded from a {@link PackedScene} instantiation, returns the root {@link Node} of the scene where this resource is used. Otherwise, returns `null`.
    */
@@ -96,11 +96,11 @@ declare class Resource extends RefCounted {
    * In the internal cache for scene-unique IDs, sets the ID of this resource to `id` for the scene at `path`. If `id` is empty, the cache entry for `path` is cleared. Useful to keep scene-unique IDs the same when implementing a VCS-friendly custom resource format by extending {@link ResourceFormatLoader} and {@link ResourceFormatSaver}.
    * **Note:** This method is only implemented when running in an editor context.
    */
-  set_id_for_path(path: string, id: string): void;
+  set_id_for_path(path: string | NodePath, id: string | NodePath): void;
   /**
    * Sets the resource's path to `path` without involving the resource cache. Useful for handling {@link ResourceFormatLoader.CacheMode} values when implementing a custom resource format by extending {@link ResourceFormatLoader} and {@link ResourceFormatSaver}.
    */
-  set_path_cache(path: string): void;
+  set_path_cache(path: string | NodePath): void;
   /**
    * Calls {@link _setup_local_to_scene}. If {@link resource_local_to_scene} is set to `true`, this method is automatically called from {@link PackedScene.instantiate} by the newly duplicated resource within the scene instance.
    */
@@ -108,7 +108,7 @@ declare class Resource extends RefCounted {
   /**
    * Sets the {@link resource_path} to `path`, potentially overriding an existing cache entry for this path. Further attempts to load an overridden resource by path will instead return this resource.
    */
-  take_over_path(path: string): void;
+  take_over_path(path: string | NodePath): void;
 
   /**
    * Emitted when the resource changes, usually when one of its properties is modified. See also {@link emit_changed}.

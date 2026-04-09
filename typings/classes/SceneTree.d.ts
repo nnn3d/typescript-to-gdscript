@@ -144,7 +144,7 @@ declare class SceneTree extends MainLoop {
   /**
    * Searches for the {@link MultiplayerAPI} configured for the given path, if one does not exist it searches the parent paths until one is found. If the path is empty, or none is found, the default one is returned. See {@link set_multiplayer}.
    */
-  get_multiplayer(for_path?: string): MultiplayerAPI;
+  get_multiplayer(for_path?: NodePath | string): MultiplayerAPI;
   /** Returns the number of nodes inside this tree. */
   get_node_count(): int;
   /** Returns the number of nodes assigned to the given group. */
@@ -209,7 +209,7 @@ declare class SceneTree extends MainLoop {
    * **Note:** No {@link MultiplayerAPI} must be configured for the subpath containing `root_path`, nested custom multiplayers are not allowed. I.e. if one is configured for `"/root/Foo"` setting one for `"/root/Foo/Bar"` will cause an error.
    * **Note:** {@link set_multiplayer} should be called *before* the child nodes are ready at the given `root_path`. If multiplayer nodes like {@link MultiplayerSpawner} or {@link MultiplayerSynchronizer} are added to the tree before the custom multiplayer API is set, they will not work.
    */
-  set_multiplayer(multiplayer: MultiplayerAPI, root_path?: string): void;
+  set_multiplayer(multiplayer: MultiplayerAPI, root_path?: NodePath | string): void;
   /** If a current scene is loaded, calling this method will unload it. */
   unload_current_scene(): void;
 

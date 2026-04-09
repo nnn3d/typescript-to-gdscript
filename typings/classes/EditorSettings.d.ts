@@ -1749,13 +1749,13 @@ declare class EditorSettings extends Resource {
    * - `"category/name/extra"` (multiple slashes): Extra path components are ignored, so this behaves the same as `"category/name"`.
    * **Note:** Shortcuts are only saved to the editor settings if they differ from their original/default state. This means empty shortcuts that were originally empty will not persist between editor sessions and must be re-added. If a shortcut with the same `path` already exists, this method will update it with the new `shortcut` instead of creating a duplicate.
    */
-  add_shortcut(path: string, shortcut: Shortcut): void;
+  add_shortcut(path: string | NodePath, shortcut: Shortcut): void;
   /**
    * Checks if any settings with the prefix `setting_prefix` exist in the set of changed settings. See also {@link get_changed_settings}.
    */
-  check_changed_settings_in_group(setting_prefix: string): boolean;
+  check_changed_settings_in_group(setting_prefix: string | NodePath): boolean;
   /** Erases the setting whose name is specified by `property`. */
-  erase(property: string): void;
+  erase(property: string | NodePath): void;
   /**
    * Gets an array of the settings which have been changed since the last save. Note that internally `changed_settings` is cleared after a successful save, so generally the most appropriate place to use this method is when processing {@link NOTIFICATION_EDITOR_SETTINGS_CHANGED}.
    */
@@ -1765,35 +1765,35 @@ declare class EditorSettings extends Resource {
   /**
    * Returns project-specific metadata for the `section` and `key` specified. If the metadata doesn't exist, `default` will be returned instead. See also {@link set_project_metadata}.
    */
-  get_project_metadata(section: string, key: string, default_?: unknown): unknown;
+  get_project_metadata(section: string | NodePath, key: string | NodePath, default_?: unknown): unknown;
   /** Returns the list of recently visited folders in the file dialog for this project. */
   get_recent_dirs(): PackedStringArray;
   /**
    * Returns the value of the setting specified by `name`. This is equivalent to using {@link Object.get} on the EditorSettings instance.
    */
-  get_setting(name: string): unknown;
+  get_setting(name: string | NodePath): unknown;
   /**
    * Returns the shortcut specified by `path`. Tries to find a built-in action if no shortcut with the provided path is found in the shortcut list. If found, adds it to the list and returns it, otherwise returns `null`.
    */
-  get_shortcut(path: string): Shortcut | null;
+  get_shortcut(path: string | NodePath): Shortcut | null;
   /** Returns the list of stored shortcut paths. */
   get_shortcut_list(): PackedStringArray;
   /** Returns `true` if the setting specified by `name` exists, `false` otherwise. */
-  has_setting(name: string): boolean;
+  has_setting(name: string | NodePath): boolean;
   /** Returns `true` if the shortcut specified by `path` exists, `false` otherwise. */
-  has_shortcut(path: string): boolean;
+  has_shortcut(path: string | NodePath): boolean;
   /**
    * Returns `true` if the shortcut specified by `path` matches the event specified by `event`, `false` otherwise.
    */
-  is_shortcut(path: string, event: InputEvent): boolean;
+  is_shortcut(path: string | NodePath, event: InputEvent): boolean;
   /**
    * Marks the passed editor setting as being changed, see {@link get_changed_settings}. Only settings which exist (see {@link has_setting}) will be accepted.
    */
-  mark_setting_changed(setting: string): void;
+  mark_setting_changed(setting: string | NodePath): void;
   /** Removes the shortcut specified by `path`. */
-  remove_shortcut(path: string): void;
+  remove_shortcut(path: string | NodePath): void;
   /** Overrides the built-in editor action `name` with the input actions defined in `actions_list`. */
-  set_builtin_action_override(name: string, actions_list: Array<InputEvent>): void;
+  set_builtin_action_override(name: string | NodePath, actions_list: Array<InputEvent>): void;
   /** Sets the list of favorite files and directories for this project. */
   set_favorites(dirs: PackedStringArray | Array<unknown>): void;
   /**
@@ -1803,13 +1803,13 @@ declare class EditorSettings extends Resource {
   /**
    * Sets project-specific metadata with the `section`, `key` and `data` specified. This metadata is stored outside the project folder and therefore won't be checked into version control. See also {@link get_project_metadata}.
    */
-  set_project_metadata(section: string, key: string, data: unknown): void;
+  set_project_metadata(section: string | NodePath, key: string | NodePath, data: unknown): void;
   /** Sets the list of recently visited folders in the file dialog for this project. */
   set_recent_dirs(dirs: PackedStringArray | Array<unknown>): void;
   /**
    * Sets the `value` of the setting specified by `name`. This is equivalent to using {@link Object.set} on the EditorSettings instance.
    */
-  set_setting(name: string, value: unknown): void;
+  set_setting(name: string | NodePath, value: unknown): void;
 
   /** Emitted after any editor setting has changed. */
   settings_changed: Signal<[]>;

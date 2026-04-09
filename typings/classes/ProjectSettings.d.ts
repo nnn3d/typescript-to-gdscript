@@ -3752,7 +3752,7 @@ declare interface ProjectSettings {
    * Returns the absolute, native OS path corresponding to the localized `path` (starting with `res://` or `user://`). The returned path will vary depending on the operating system and user preferences. See File paths in Godot projects ($DOCS_URL/tutorials/io/data_paths.html) to see what those paths convert to. See also {@link localize_path}.
    * **Note:** {@link globalize_path} with `res://` will not work in an exported project. Instead, prepend the executable's base directory to the path when running from an exported project:
    */
-  globalize_path(path: string): string;
+  globalize_path(path: string | NodePath): string;
   /**
    * Returns `true` if a configuration value is present.
    * **Note:** In order to be be detected, custom settings have to be either defined with {@link set_setting}, or exist in the `project.godot` file. This is especially relevant when using {@link set_initial_value}.
@@ -3765,11 +3765,11 @@ declare interface ProjectSettings {
    * **Note:** The optional `offset` parameter can be used to specify the offset in bytes to the start of the resource pack. This is only supported for .pck files.
    * **Note:** {@link DirAccess} will not show changes made to the contents of `res://` after calling this function.
    */
-  load_resource_pack(pack: string, replace_files?: boolean, offset?: int): boolean;
+  load_resource_pack(pack: string | NodePath, replace_files?: boolean, offset?: int): boolean;
   /**
    * Returns the localized path (starting with `res://`) corresponding to the absolute, native OS `path`. See also {@link globalize_path}.
    */
-  localize_path(path: string): string;
+  localize_path(path: string | NodePath): string;
   /**
    * Saves the configuration to the `project.godot` file.
    * **Note:** This method is intended to be used by editor plugins, as modified {@link ProjectSettings} can't be loaded back in the running app. If you want to change project settings in exported projects, use {@link save_custom} to save `override.cfg` file.
@@ -3778,7 +3778,7 @@ declare interface ProjectSettings {
   /**
    * Saves the configuration to a custom file. The file extension must be `.godot` (to save in text-based {@link ConfigFile} format) or `.binary` (to save in binary format). You can also save `override.cfg` file, which is also text, but can be used in exported projects unlike other formats.
    */
-  save_custom(file: string): int;
+  save_custom(file: string | NodePath): int;
   /**
    * Defines if the specified setting is considered basic or advanced. Basic settings will always be shown in the project settings. Advanced settings will only be shown if the user enables the "Advanced Settings" option.
    */

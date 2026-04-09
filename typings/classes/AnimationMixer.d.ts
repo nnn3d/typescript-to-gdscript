@@ -42,9 +42,9 @@ declare class AnimationMixer extends Node {
    * The path to the Animation track used for root motion. Paths must be valid scene-tree paths to a node, and must be specified starting from the parent node of the node that will reproduce the animation. The {@link root_motion_track} uses the same format as {@link Animation.track_set_path}, but note that a bone must be specified.
    * If the track has type {@link Animation.TYPE_POSITION_3D}, {@link Animation.TYPE_ROTATION_3D}, or {@link Animation.TYPE_SCALE_3D} the transformation will be canceled visually, and the animation will appear to stay in place. See also {@link get_root_motion_position}, {@link get_root_motion_rotation}, {@link get_root_motion_scale}, and {@link RootMotionView}.
    */
-  root_motion_track: string;
+  root_motion_track: NodePath;
   /** The node which node path references will travel from. */
-  root_node: string;
+  root_node: NodePath;
   set_active(value: boolean): void;
   is_active(): boolean;
   set_audio_max_polyphony(value: int): void;
@@ -61,10 +61,10 @@ declare class AnimationMixer extends Node {
   is_reset_on_save_enabled(): boolean;
   set_root_motion_local(value: boolean): void;
   is_root_motion_local(): boolean;
-  set_root_motion_track(value: string): void;
-  get_root_motion_track(): string;
-  set_root_node(value: string): void;
-  get_root_node(): string;
+  set_root_motion_track(value: NodePath | string): void;
+  get_root_motion_track(): NodePath;
+  set_root_node(value: NodePath | string): void;
+  get_root_node(): NodePath;
 
   /** A virtual function for processing after getting a key during playback. */
   _post_process_key_value(animation: Animation, track: int, value: unknown, object_id: int, object_sub_idx: int): unknown;

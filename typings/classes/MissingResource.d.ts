@@ -9,7 +9,7 @@ declare class MissingResource extends Resource {
    * If set to `true`, allows new properties to be added on top of the existing ones with {@link Object.set}.
    */
   recording_properties: boolean;
-  set_original_class(value: string): void;
+  set_original_class(value: string | NodePath): void;
   get_original_class(): string;
   set_recording_properties(value: boolean): void;
   is_recording_properties(): boolean;

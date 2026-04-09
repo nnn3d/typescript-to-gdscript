@@ -73,7 +73,7 @@ declare class Node extends GodotObject {
   unique_name_in_owner: boolean;
   set_auto_translate_mode(value: int): void;
   get_auto_translate_mode(): int;
-  set_editor_description(value: string): void;
+  set_editor_description(value: string | NodePath): void;
   get_editor_description(): string;
   get_multiplayer(): MultiplayerAPI | null;
   set_name(value: string): void;
@@ -94,7 +94,7 @@ declare class Node extends GodotObject {
   get_process_thread_group_order(): int;
   set_process_thread_messages(value: int): void;
   get_process_thread_messages(): int;
-  set_scene_file_path(value: string): void;
+  set_scene_file_path(value: string | NodePath): void;
   get_scene_file_path(): string;
   set_unique_name_in_owner(value: boolean): void;
   is_unique_name_in_owner(): boolean;
@@ -214,7 +214,7 @@ declare class Node extends GodotObject {
    * If {@link Object.can_translate_messages} is `false`, or no translation is available, this method returns the `message` without changes. See {@link Object.set_message_translation}.
    * For detailed examples, see Internationalizing games ($DOCS_URL/tutorials/i18n/internationalizing_games.html).
    */
-  atr(message: string, context?: string): string;
+  atr(message: string | NodePath, context?: string): string;
   /**
    * Translates a `message` or `plural_message`, using the translation catalogs configured in the Project Settings. Further `context` can be specified to help with the translation.
    * This method works the same as {@link Object.tr_n}, with the addition of respecting the {@link auto_translate_mode} state.
@@ -223,7 +223,7 @@ declare class Node extends GodotObject {
    * For detailed examples, see Localization using gettext ($DOCS_URL/tutorials/i18n/localization_using_gettext.html).
    * **Note:** Negative and [float] numbers may not properly apply to some countable subjects. It's recommended to handle these cases with {@link atr}.
    */
-  atr_n(message: string, plural_message: string, n: int, context?: string): string;
+  atr_n(message: string | NodePath, plural_message: string, n: int, context?: string): string;
   /**
    * This function is similar to {@link Object.call_deferred} except that the call will take place when the node thread group is processed. If the node thread group processes in sub-threads, then the call will be done on that thread, right before {@link NOTIFICATION_PROCESS} or {@link NOTIFICATION_PHYSICS_PROCESS}, the {@link _process} or {@link _physics_process} or their internal versions are called.
    */
@@ -266,7 +266,7 @@ declare class Node extends GodotObject {
    * **Note:** This method can be very slow. Consider storing a reference to the found node in a variable. Alternatively, use {@link get_node} with unique names (see {@link unique_name_in_owner}).
    * **Note:** To find all descendant nodes matching a pattern or a class type, see {@link find_children}.
    */
-  find_child(pattern: string, recursive?: boolean, owned?: boolean): Node | null;
+  find_child(pattern: string | NodePath, recursive?: boolean, owned?: boolean): Node | null;
   /**
    * Finds all descendants of this node whose names match `pattern`, returning an empty {@link Array} if no match is found. The matching is done against node names, *not* their paths, through {@link String.match}. As such, it is case-sensitive, `"*"` matches zero or more characters, and `"?"` matches any single character.
    * If `type` is not empty, only descendants inheriting from `type` are included (see {@link Object.is_class}).
@@ -275,12 +275,12 @@ declare class Node extends GodotObject {
    * **Note:** This method can be very slow. Consider storing references to the found nodes in a variable.
    * **Note:** To find a single descendant node matching a pattern, see {@link find_child}.
    */
-  find_children(pattern: string, type_?: string, recursive?: boolean, owned?: boolean): Array<Node>;
+  find_children(pattern: string | NodePath, type_?: string | NodePath, recursive?: boolean, owned?: boolean): Array<Node>;
   /**
    * Finds the first ancestor of this node whose {@link name} matches `pattern`, returning `null` if no match is found. The matching is done through {@link String.match}. As such, it is case-sensitive, `"*"` matches zero or more characters, and `"?"` matches any single character. See also {@link find_child} and {@link find_children}.
    * **Note:** As this method walks upwards in the scene tree, it can be slow in large, deeply nested nodes. Consider storing a reference to the found node in a variable. Alternatively, use {@link get_node} with unique names (see {@link unique_name_in_owner}).
    */
-  find_parent(pattern: string): Node | null;
+  find_parent(pattern: string | NodePath): Node | null;
   /**
    * Returns main accessibility element RID.
    * **Note:** This method should be called only during accessibility information updates ({@link NOTIFICATION_ACCESSIBILITY_UPDATE}).
@@ -339,7 +339,7 @@ declare class Node extends GodotObject {
    * [/codeblock]
    * The following calls will return a valid node:
    */
-  get_node(path: string): Node | null;
+  get_node(path: NodePath | string): Node | null;
   /**
    * Fetches a node and its most nested resource as specified by the {@link NodePath}'s subname. Returns an {@link Array} of size `3` where:
    * - Element `0` is the {@link Node}, or `null` if not found;
@@ -347,11 +347,11 @@ declare class Node extends GodotObject {
    * - Element `2` is the remaining {@link NodePath}, referring to an existing, non-{@link Resource} property (see {@link Object.get_indexed}).
    * **Example:** Assume that the child's {@link Sprite2D.texture} has been assigned an {@link AtlasTexture}:
    */
-  get_node_and_resource(path: string): Array<unknown>;
+  get_node_and_resource(path: NodePath | string): Array<unknown>;
   /**
    * Fetches a node by {@link NodePath}. Similar to {@link get_node}, but does not generate an error if `path` does not point to a valid node.
    */
-  get_node_or_null(path: string): Node | null;
+  get_node_or_null(path: NodePath | string): Node | null;
   /**
    * Returns a {@link Dictionary} mapping method names to their RPC configuration defined for this node using {@link rpc_config}.
    * **Note:** This method only returns the RPC configuration assigned via {@link rpc_config}. See {@link Script.get_rpc_config} to retrieve the RPCs defined by the {@link Script}.
@@ -367,13 +367,13 @@ declare class Node extends GodotObject {
   /**
    * Returns the node's absolute path, relative to the {@link SceneTree.root}. If the node is not inside the scene tree, this method fails and returns an empty {@link NodePath}.
    */
-  get_path(): string;
+  get_path(): NodePath;
   /**
    * Returns the relative {@link NodePath} from this node to the specified `node`. Both nodes must be in the same {@link SceneTree} or scene hierarchy, otherwise this method fails and returns an empty {@link NodePath}.
    * If `use_unique_path` is `true`, returns the shortest path accounting for this node's unique name (see {@link unique_name_in_owner}).
    * **Note:** If you get a relative path which starts from a unique node, the path may be longer than a normal relative path, due to the addition of the unique node's name.
    */
-  get_path_to(node: Node, use_unique_path?: boolean): string;
+  get_path_to(node: Node, use_unique_path?: boolean): NodePath;
   /**
    * Returns the time elapsed (in seconds) since the last physics callback. This value is identical to {@link _physics_process}'s `delta` parameter, and is often consistent at run-time, unless {@link Engine.physics_ticks_per_second} is changed. See also {@link NOTIFICATION_PHYSICS_PROCESS}.
    * **Note:** The returned value will be larger than expected if running at a framerate lower than {@link Engine.physics_ticks_per_second} / {@link Engine.max_physics_steps_per_frame} FPS. This is done to avoid "spiral of death" scenarios where performance would plummet due to an ever-increasing number of physics steps per frame. This behavior affects both {@link _process} and {@link _physics_process}. As a result, avoid using `delta` for time measurements in real-world seconds. Use the {@link Time} singleton's methods for this purpose instead, such as {@link Time.get_ticks_usec}.
@@ -427,11 +427,11 @@ declare class Node extends GodotObject {
    */
   get_window(): Window;
   /** Returns `true` if the `path` points to a valid node. See also {@link get_node}. */
-  has_node(path: string): boolean;
+  has_node(path: NodePath | string): boolean;
   /**
    * Returns `true` if `path` points to a valid node and its subnames point to a valid {@link Resource}, e.g. `Area2D/CollisionShape2D:shape`. Properties that are not {@link Resource} types (such as nodes or other {@link Variant} types) are not considered. See also {@link get_node_and_resource}.
    */
-  has_node_and_resource(path: string): boolean;
+  has_node_and_resource(path: NodePath | string): boolean;
   /** Returns `true` if the given `node` is a direct or indirect child of this node. */
   is_ancestor_of(node: Node): boolean;
   /**

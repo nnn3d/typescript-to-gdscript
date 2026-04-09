@@ -77,7 +77,7 @@ declare class XRInterfaceExtension extends XRInterface {
   /** Returns `true` if this interface supports this play area mode. */
   _supports_play_area_mode(mode: int): boolean;
   /** Triggers a haptic pulse to be emitted on the specified tracker. */
-  _trigger_haptic_pulse(action_name: string, tracker_name: string, frequency: float, amplitude: float, duration_sec: float, delay_sec: float): void;
+  _trigger_haptic_pulse(action_name: string | NodePath, tracker_name: string, frequency: float, amplitude: float, duration_sec: float, delay_sec: float): void;
   /** Uninitialize the interface. */
   _uninitialize(): void;
   /**

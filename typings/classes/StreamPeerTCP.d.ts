@@ -7,11 +7,11 @@ declare class StreamPeerTCP extends StreamPeerSocket {
    * Opens the TCP socket, and binds it to the specified local address.
    * This method is generally not needed, and only used to force the subsequent call to {@link connect_to_host} to use the specified `host` and `port` as source address. This can be desired in some NAT punchthrough techniques, or when forcing the source network interface.
    */
-  bind(port: int, host?: string): int;
+  bind(port: int, host?: string | NodePath): int;
   /**
    * Connects to the specified `host:port` pair. A hostname will be resolved if valid. Returns {@link OK} on success.
    */
-  connect_to_host(host: string, port: int): int;
+  connect_to_host(host: string | NodePath, port: int): int;
   /** Returns the IP of this peer. */
   get_connected_host(): string;
   /** Returns the port of this peer. */

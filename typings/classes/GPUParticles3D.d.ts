@@ -90,7 +90,7 @@ declare class GPUParticles3D extends GeometryInstance3D {
    * Path to another {@link GPUParticles3D} node that will be used as a subemitter (see {@link ParticleProcessMaterial.sub_emitter_mode}). Subemitters can be used to achieve effects such as fireworks, sparks on collision, bubbles popping into water drops, and more.
    * **Note:** When {@link sub_emitter} is set, the target {@link GPUParticles3D} node will no longer emit particles on its own.
    */
-  sub_emitter: string;
+  sub_emitter: NodePath;
   /**
    * If `true`, enables particle trails using a mesh skinning system. Designed to work with {@link RibbonTrailMesh} and {@link TubeTrailMesh}.
    * **Note:** {@link BaseMaterial3D.use_particle_trails} must also be enabled on the particle mesh's material. Otherwise, setting {@link trail_enabled} to `true` will have no effect.
@@ -152,8 +152,8 @@ declare class GPUParticles3D extends GeometryInstance3D {
   get_seed(): int;
   set_speed_scale(value: float): void;
   get_speed_scale(): float;
-  set_sub_emitter(value: string): void;
-  get_sub_emitter(): string;
+  set_sub_emitter(value: NodePath | string): void;
+  get_sub_emitter(): NodePath;
   set_trail_enabled(value: boolean): void;
   is_trail_enabled(): boolean;
   set_trail_lifetime(value: float): void;

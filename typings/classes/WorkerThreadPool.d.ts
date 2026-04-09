@@ -9,13 +9,13 @@ declare interface WorkerThreadPool extends GodotObject {
    * Returns a group task ID that can be used by other methods.
    * **Warning:** Every task must be waited for completion using {@link wait_for_task_completion} or {@link wait_for_group_task_completion} at some point so that any allocated resources inside the task can be cleaned up.
    */
-  add_group_task(action: Callable, elements: int, tasks_needed?: int, high_priority?: boolean, description?: string): int;
+  add_group_task(action: Callable, elements: int, tasks_needed?: int, high_priority?: boolean, description?: string | NodePath): int;
   /**
    * Adds `action` as a task to be executed by a worker thread. `high_priority` determines if the task has a high priority or a low priority (default). You can optionally provide a `description` to help with debugging.
    * Returns a task ID that can be used by other methods.
    * **Warning:** Every task must be waited for completion using {@link wait_for_task_completion} or {@link wait_for_group_task_completion} at some point so that any allocated resources inside the task can be cleaned up.
    */
-  add_task(action: Callable, high_priority?: boolean, description?: string): int;
+  add_task(action: Callable, high_priority?: boolean, description?: string | NodePath): int;
   /**
    * Returns the task group ID of the current thread calling this method, or `-1` if invalid or the current thread is not part of a task group.
    */

@@ -28,7 +28,7 @@ declare class AnimatedSprite3D extends SpriteBase3D {
   sprite_frames: SpriteFrames | null;
   set_animation(value: string): void;
   get_animation(): string;
-  set_autoplay(value: string): void;
+  set_autoplay(value: string | NodePath): void;
   get_autoplay(): string;
   set_frame(value: int): void;
   get_frame(): int;

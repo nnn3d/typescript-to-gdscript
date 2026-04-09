@@ -111,11 +111,11 @@ declare class CanvasItem extends Node {
   /**
    * Draws a string first character using a custom font. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used. `pos` is defined in local space.
    */
-  draw_char(font: Font, pos: Vector2 | Vector2i, char: string, font_size?: int, modulate?: Color, oversampling?: float): void;
+  draw_char(font: Font, pos: Vector2 | Vector2i, char: string | NodePath, font_size?: int, modulate?: Color, oversampling?: float): void;
   /**
    * Draws a string first character outline using a custom font. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used. `pos` is defined in local space.
    */
-  draw_char_outline(font: Font, pos: Vector2 | Vector2i, char: string, font_size?: int, size?: int, modulate?: Color, oversampling?: float): void;
+  draw_char_outline(font: Font, pos: Vector2 | Vector2i, char: string | NodePath, font_size?: int, size?: int, modulate?: Color, oversampling?: float): void;
   /**
    * Draws a circle, with `position` defined in local space. See also {@link draw_ellipse}, {@link draw_arc}, {@link draw_polyline}, and {@link draw_polygon}.
    * If `filled` is `true`, the circle will be filled with the `color` specified. If `filled` is `false`, the circle will be drawn as a stroke with the `color` and `width` specified.
@@ -194,11 +194,11 @@ declare class CanvasItem extends Node {
   /**
    * Breaks `text` into lines and draws it using the specified `font` at the `pos` in local space (top-left corner). The text will have its color multiplied by `modulate`. If `width` is greater than or equal to 0, the text will be clipped if it exceeds the specified width. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  draw_multiline_string(font: Font, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_multiline_string(font: Font, pos: Vector2 | Vector2i, text: string | NodePath, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Breaks `text` to the lines and draws text outline using the specified `font` at the `pos` in local space (top-left corner). The text will have its color multiplied by `modulate`. If `width` is greater than or equal to 0, the text will be clipped if it exceeds the specified width. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  draw_multiline_string_outline(font: Font, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_multiline_string_outline(font: Font, pos: Vector2 | Vector2i, text: string | NodePath, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Draws a {@link MultiMesh} in 2D with the provided texture. See {@link MultiMeshInstance2D} for related documentation.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
@@ -247,11 +247,11 @@ declare class CanvasItem extends Node {
    * **Example:** Draw "Hello world", using the project's default font:
    * See also {@link Font.draw_string}.
    */
-  draw_string(font: Font, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_string(font: Font, pos: Vector2 | Vector2i, text: string | NodePath, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Draws `text` outline using the specified `font` at the `pos` in local space (bottom-left corner using the baseline of the font). The text will have its color multiplied by `modulate`. If `width` is greater than or equal to 0, the text will be clipped if it exceeds the specified width. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  draw_string_outline(font: Font, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_string_outline(font: Font, pos: Vector2 | Vector2i, text: string | NodePath, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Draws a styled rectangle. The `rect` is defined in local space.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.

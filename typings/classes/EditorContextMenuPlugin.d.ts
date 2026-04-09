@@ -11,15 +11,15 @@ declare class EditorContextMenuPlugin extends RefCounted {
    * Add custom option to the context menu of the plugin's specified slot. When the option is activated, `callback` will be called. Callback should take single {@link Array} argument; array contents depend on context menu slot.
    * If you want to assign shortcut to the menu item, use {@link add_context_menu_item_from_shortcut} instead.
    */
-  add_context_menu_item(name: string, callback: Callable, icon?: Texture2D): void;
+  add_context_menu_item(name: string | NodePath, callback: Callable, icon?: Texture2D): void;
   /**
    * Add custom option to the context menu of the plugin's specified slot. The option will have the `shortcut` assigned and reuse its callback. The shortcut has to be registered beforehand with {@link add_menu_shortcut}.
    */
-  add_context_menu_item_from_shortcut(name: string, shortcut: Shortcut, icon?: Texture2D): void;
+  add_context_menu_item_from_shortcut(name: string | NodePath, shortcut: Shortcut, icon?: Texture2D): void;
   /**
    * Add a submenu to the context menu of the plugin's specified slot. The submenu is not automatically handled, you need to connect to its signals yourself. Also the submenu is freed on every popup, so provide a new {@link PopupMenu} every time.
    */
-  add_context_submenu_item(name: string, menu: PopupMenu, icon?: Texture2D): void;
+  add_context_submenu_item(name: string | NodePath, menu: PopupMenu, icon?: Texture2D): void;
   /**
    * Registers a shortcut associated with the plugin's context menu. This method should be called once (e.g. in plugin's {@link Object._init}). `callback` will be called when user presses the specified `shortcut` while the menu's context is in effect (e.g. FileSystem dock is focused). Callback should take single {@link Array} argument; array contents depend on context menu slot.
    */

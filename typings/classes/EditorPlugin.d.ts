@@ -86,7 +86,7 @@ declare class EditorPlugin extends Node {
    * If the user confirms saving, {@link _save_external_data} will be called, before closing the editor.
    * If the plugin has no scene-specific changes, you can ignore the calls when closing scenes:
    */
-  _get_unsaved_status(for_scene: string): string;
+  _get_unsaved_status(for_scene: string | NodePath): string;
   /**
    * Override this method to provide the GUI layout of the plugin or any other data you want to be stored. This is used to save the project's editor layout when {@link queue_save_layout} is called or the editor layout was changed (for example changing the position of a dock). The data is stored in the `editor_layout.cfg` file in the editor metadata directory.
    * Use {@link _set_window_layout} to restore your saved layout.
@@ -112,7 +112,7 @@ declare class EditorPlugin extends Node {
    * This function is called when an individual scene is about to be played in the editor. `args` is a list of command line arguments that will be passed to the new Godot instance, which will be replaced by the list returned by this function.
    * **Note:** Text that is printed in this method will not be visible in the editor's Output panel unless {@link EditorSettings.run/output/always_clear_output_on_play} is `false`.
    */
-  _run_scene(scene: string, args: PackedStringArray | Array<unknown>): PackedStringArray;
+  _run_scene(scene: string | NodePath, args: PackedStringArray | Array<unknown>): PackedStringArray;
   /**
    * This method is called after the editor saves the project or when it's closed. It asks the plugin to save edited external scenes/resources.
    */
@@ -127,7 +127,7 @@ declare class EditorPlugin extends Node {
    */
   _set_window_layout(configuration: ConfigFile): void;
   /** Adds a script at `path` to the Autoload list as `name`. */
-  add_autoload_singleton(name: string, path: string): void;
+  add_autoload_singleton(name: string | NodePath, path: string | NodePath): void;
   /**
    * Adds a plugin to the context menu. `slot` is the context menu where the plugin will be added.
    * **Note:** A plugin instance can belong only to a single context menu slot.
@@ -138,7 +138,7 @@ declare class EditorPlugin extends Node {
    * `shortcut` is a shortcut that, when activated, will toggle the bottom panel's visibility. The shortcut object is only set when this control is added to the bottom panel.
    * **Note** See the default editor bottom panel shortcuts in the Editor Settings for inspiration. By convention, they all use `Alt` modifier.
    */
-  add_control_to_bottom_panel(control: Control, title: string, shortcut?: Shortcut): Button;
+  add_control_to_bottom_panel(control: Control, title: string | NodePath, shortcut?: Shortcut): Button;
   /**
    * Adds a custom control to a container in the editor UI.
    * Please remember that you have to manage the visibility of your custom controls yourself (and likely hide it after adding it).
@@ -160,7 +160,7 @@ declare class EditorPlugin extends Node {
    * During run-time, this will be a simple object with a script so this function does not need to be called then.
    * **Note:** Custom types added this way are not true classes. They are just a helper to create a node with specific script.
    */
-  add_custom_type(type_: string, base: string, script: Script, icon: Texture2D): void;
+  add_custom_type(type_: string | NodePath, base: string | NodePath, script: Script, icon: Texture2D): void;
   /**
    * Adds a {@link Script} as debugger plugin to the Debugger. The script must extend {@link EditorDebuggerPlugin}.
    */
@@ -214,11 +214,11 @@ declare class EditorPlugin extends Node {
   /**
    * Adds a custom menu item to **Project > Tools** named `name`. When clicked, the provided `callable` will be called.
    */
-  add_tool_menu_item(name: string, callable: Callable): void;
+  add_tool_menu_item(name: string | NodePath, callable: Callable): void;
   /**
    * Adds a custom {@link PopupMenu} submenu under **Project > Tools >** `name`. Use {@link remove_tool_menu_item} on plugin clean up to remove the menu.
    */
-  add_tool_submenu_item(name: string, submenu: PopupMenu): void;
+  add_tool_submenu_item(name: string | NodePath, submenu: PopupMenu): void;
   /** Registers a custom translation parser plugin for extracting translatable strings from custom files. */
   add_translation_parser_plugin(parser: EditorTranslationParserPlugin): void;
   /**
@@ -249,7 +249,7 @@ declare class EditorPlugin extends Node {
   /** Queue save the project's editor layout. */
   queue_save_layout(): void;
   /** Removes an Autoload `name` from the list. */
-  remove_autoload_singleton(name: string): void;
+  remove_autoload_singleton(name: string | NodePath): void;
   /** Removes the specified context menu plugin. */
   remove_context_menu_plugin(plugin: EditorContextMenuPlugin): void;
   /**
@@ -263,7 +263,7 @@ declare class EditorPlugin extends Node {
   /** Removes the control from the dock. You have to manually {@link Node.queue_free} the control. */
   remove_control_from_docks(control: Control): void;
   /** Removes a custom type added by {@link add_custom_type}. */
-  remove_custom_type(type_: string): void;
+  remove_custom_type(type_: string | NodePath): void;
   /** Removes the debugger plugin with given script from the Debugger. */
   remove_debugger_plugin(script: EditorDebuggerPlugin): void;
   /**
@@ -287,7 +287,7 @@ declare class EditorPlugin extends Node {
   /** Remove the {@link EditorScenePostImportPlugin}, added with {@link add_scene_post_import_plugin}. */
   remove_scene_post_import_plugin(scene_import_plugin: EditorScenePostImportPlugin): void;
   /** Removes a menu `name` from **Project > Tools**. */
-  remove_tool_menu_item(name: string): void;
+  remove_tool_menu_item(name: string | NodePath): void;
   /** Removes a custom translation parser plugin registered by {@link add_translation_parser_plugin}. */
   remove_translation_parser_plugin(parser: EditorTranslationParserPlugin): void;
   /** Removes a callback previously added by {@link add_undo_redo_inspector_hook_callback}. */

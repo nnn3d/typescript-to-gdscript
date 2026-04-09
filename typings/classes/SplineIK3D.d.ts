@@ -7,7 +7,7 @@ declare class SplineIK3D extends ChainIK3D {
   setting_count: int;
 
   /** Returns the node path of the {@link Path3D} which is describing the path. */
-  get_path_3d(index: int): string;
+  get_path_3d(index: int): NodePath;
   /**
    * Returns the tilt interpolation method used between the root bone and the start point of the {@link Curve3D} when they are apart. See also {@link set_tilt_fade_in}.
    */
@@ -19,7 +19,7 @@ declare class SplineIK3D extends ChainIK3D {
   /** Returns if the tilt property of the {@link Curve3D} affects the bone twist. */
   is_tilt_enabled(index: int): boolean;
   /** Sets the node path of the {@link Path3D} which is describing the path. */
-  set_path_3d(index: int, path_3d: string): void;
+  set_path_3d(index: int, path_3d: NodePath | string): void;
   /** Sets if the tilt property of the {@link Curve3D} should affect the bone twist. */
   set_tilt_enabled(index: int, enabled: boolean): void;
   /**

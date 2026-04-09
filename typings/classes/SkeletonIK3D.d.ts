@@ -34,7 +34,7 @@ declare class SkeletonIK3D extends SkeletonModifier3D {
   /**
    * Target node {@link NodePath} for the IK chain. If available, the node's current {@link Transform3D} is used instead of the {@link target} property.
    */
-  target_node: string;
+  target_node: NodePath;
   /**
    * The name of the current tip bone, the last bone in the IK chain placed at the {@link target} transform (or {@link target_node} if defined).
    */
@@ -57,8 +57,8 @@ declare class SkeletonIK3D extends SkeletonModifier3D {
   get_root_bone(): string;
   set_target_transform(value: Transform3D | Projection): void;
   get_target_transform(): Transform3D;
-  set_target_node(value: string): void;
-  get_target_node(): string;
+  set_target_node(value: NodePath | string): void;
+  get_target_node(): NodePath;
   set_tip_bone(value: string): void;
   get_tip_bone(): string;
   set_use_magnet(value: boolean): void;

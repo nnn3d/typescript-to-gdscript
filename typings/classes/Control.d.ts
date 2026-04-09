@@ -4,15 +4,15 @@
 /** Base class for all GUI controls. Adapts its position and size based on its parent control. */
 declare class Control extends CanvasItem {
   /** The paths to the nodes which are controlled by this node. */
-  accessibility_controls_nodes: Array<string>;
+  accessibility_controls_nodes: Array<NodePath>;
   /** The paths to the nodes which are describing this node. */
-  accessibility_described_by_nodes: Array<string>;
+  accessibility_described_by_nodes: Array<NodePath>;
   /** The human-readable node description that is reported to assistive apps. */
   accessibility_description: string;
   /** The paths to the nodes which this node flows into. */
-  accessibility_flow_to_nodes: Array<string>;
+  accessibility_flow_to_nodes: Array<NodePath>;
   /** The paths to the nodes which label this node. */
-  accessibility_labeled_by_nodes: Array<string>;
+  accessibility_labeled_by_nodes: Array<NodePath>;
   /**
    * The mode with which a live region updates. A live region is a {@link Node} that is updated as a result of an external event when the user's focus may be elsewhere.
    */
@@ -58,29 +58,29 @@ declare class Control extends CanvasItem {
   /**
    * Tells Godot which node it should give focus to if the user presses the down arrow on the keyboard or down on a gamepad by default. You can change the key by editing the {@link ProjectSettings.input/ui_down} input action. The node must be a {@link Control}. If this property is not set, Godot will give focus to the closest {@link Control} to the bottom of this one.
    */
-  focus_neighbor_bottom: string;
+  focus_neighbor_bottom: NodePath;
   /**
    * Tells Godot which node it should give focus to if the user presses the left arrow on the keyboard or left on a gamepad by default. You can change the key by editing the {@link ProjectSettings.input/ui_left} input action. The node must be a {@link Control}. If this property is not set, Godot will give focus to the closest {@link Control} to the left of this one.
    */
-  focus_neighbor_left: string;
+  focus_neighbor_left: NodePath;
   /**
    * Tells Godot which node it should give focus to if the user presses the right arrow on the keyboard or right on a gamepad by default. You can change the key by editing the {@link ProjectSettings.input/ui_right} input action. The node must be a {@link Control}. If this property is not set, Godot will give focus to the closest {@link Control} to the right of this one.
    */
-  focus_neighbor_right: string;
+  focus_neighbor_right: NodePath;
   /**
    * Tells Godot which node it should give focus to if the user presses the top arrow on the keyboard or top on a gamepad by default. You can change the key by editing the {@link ProjectSettings.input/ui_up} input action. The node must be a {@link Control}. If this property is not set, Godot will give focus to the closest {@link Control} to the top of this one.
    */
-  focus_neighbor_top: string;
+  focus_neighbor_top: NodePath;
   /**
    * Tells Godot which node it should give focus to if the user presses `Tab` on a keyboard by default. You can change the key by editing the {@link ProjectSettings.input/ui_focus_next} input action.
    * If this property is not set, Godot will select a "best guess" based on surrounding nodes in the scene tree.
    */
-  focus_next: string;
+  focus_next: NodePath;
   /**
    * Tells Godot which node it should give focus to if the user presses `Shift + Tab` on a keyboard by default. You can change the key by editing the {@link ProjectSettings.input/ui_focus_prev} input action.
    * If this property is not set, Godot will select a "best guess" based on surrounding nodes in the scene tree.
    */
-  focus_previous: string;
+  focus_previous: NodePath;
   /** The node's global position, relative to the world (usually to the {@link CanvasLayer}). */
   global_position: Vector2;
   /**
@@ -254,19 +254,19 @@ declare class Control extends CanvasItem {
    * The tooltip popup will use either a default implementation, or a custom one that you can provide by overriding {@link _make_custom_tooltip}. The default tooltip includes a {@link PopupPanel} and {@link Label} whose theme properties can be customized using {@link Theme} methods with the `"TooltipPanel"` and `"TooltipLabel"` respectively. For example:
    */
   tooltip_text: string;
-  set_accessibility_controls_nodes(value: Array<string>): void;
-  get_accessibility_controls_nodes(): Array<string>;
-  set_accessibility_described_by_nodes(value: Array<string>): void;
-  get_accessibility_described_by_nodes(): Array<string>;
-  set_accessibility_description(value: string): void;
+  set_accessibility_controls_nodes(value: Array<NodePath>): void;
+  get_accessibility_controls_nodes(): Array<NodePath>;
+  set_accessibility_described_by_nodes(value: Array<NodePath>): void;
+  get_accessibility_described_by_nodes(): Array<NodePath>;
+  set_accessibility_description(value: string | NodePath): void;
   get_accessibility_description(): string;
-  set_accessibility_flow_to_nodes(value: Array<string>): void;
-  get_accessibility_flow_to_nodes(): Array<string>;
-  set_accessibility_labeled_by_nodes(value: Array<string>): void;
-  get_accessibility_labeled_by_nodes(): Array<string>;
+  set_accessibility_flow_to_nodes(value: Array<NodePath>): void;
+  get_accessibility_flow_to_nodes(): Array<NodePath>;
+  set_accessibility_labeled_by_nodes(value: Array<NodePath>): void;
+  get_accessibility_labeled_by_nodes(): Array<NodePath>;
   set_accessibility_live(value: int): void;
   get_accessibility_live(): int;
-  set_accessibility_name(value: string): void;
+  set_accessibility_name(value: string | NodePath): void;
   get_accessibility_name(): string;
   _set_anchor(value: float): void;
   _set_anchor(value: float): void;
@@ -282,10 +282,10 @@ declare class Control extends CanvasItem {
   get_focus_behavior_recursive(): int;
   set_focus_mode(value: int): void;
   get_focus_mode(): int;
-  set_focus_next(value: string): void;
-  get_focus_next(): string;
-  set_focus_previous(value: string): void;
-  get_focus_previous(): string;
+  set_focus_next(value: NodePath | string): void;
+  get_focus_next(): NodePath;
+  set_focus_previous(value: NodePath | string): void;
+  get_focus_previous(): NodePath;
   _set_global_position(value: Vector2 | Vector2i): void;
   get_global_position(): Vector2;
   set_h_grow_direction(value: int): void;
@@ -346,7 +346,7 @@ declare class Control extends CanvasItem {
   get_theme_type_variation(): string;
   set_tooltip_auto_translate_mode(value: int): void;
   get_tooltip_auto_translate_mode(): int;
-  set_tooltip_text(value: string): void;
+  set_tooltip_text(value: string | NodePath): void;
   get_tooltip_text(): string;
 
   /** Return the description of the keyboard shortcuts and other contextual help for this control. */
@@ -411,12 +411,12 @@ declare class Control extends CanvasItem {
    * **Example:** Use a constructed node as a tooltip:
    * **Example:** Use a scene instance as a tooltip:
    */
-  _make_custom_tooltip(for_text: string): GodotObject | null;
+  _make_custom_tooltip(for_text: string | NodePath): GodotObject | null;
   /**
    * User defined BiDi algorithm override function.
    * Returns an {@link Array} of {@link Vector3i} text ranges and text base directions, in the left-to-right order. Ranges should cover full source `text` without overlaps. BiDi algorithm will be used on each range separately.
    */
-  _structured_text_parser(args: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, text: string): Array<Vector3i>;
+  _structured_text_parser(args: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, text: string | NodePath): Array<Vector3i>;
   /**
    * Marks an input event as handled. Once you accept an input event, it stops propagating, even to nodes listening to {@link Node._unhandled_input} or {@link Node._unhandled_key_input}.
    * **Note:** This does not affect the methods in {@link Input}, only the way events are propagated.
@@ -504,7 +504,7 @@ declare class Control extends CanvasItem {
    * Returns the focus neighbor for the specified {@link Side}. A getter method for {@link focus_neighbor_bottom}, {@link focus_neighbor_left}, {@link focus_neighbor_right} and {@link focus_neighbor_top}.
    * **Note:** To find the next {@link Control} on the specific {@link Side}, even if a neighbor is not assigned, use {@link find_valid_focus_neighbor}.
    */
-  get_focus_neighbor(side: int): string;
+  get_focus_neighbor(side: int): NodePath;
   /**
    * Returns the position and size of the control relative to the containing canvas. See {@link global_position} and {@link size}.
    * **Note:** If the node itself or any parent {@link CanvasItem} between the node and the canvas have a non default rotation or skew, the resulting size is likely not meaningful.
@@ -740,7 +740,7 @@ declare class Control extends CanvasItem {
   /**
    * Sets the focus neighbor for the specified {@link Side} to the {@link Control} at `neighbor` node path. A setter method for {@link focus_neighbor_bottom}, {@link focus_neighbor_left}, {@link focus_neighbor_right} and {@link focus_neighbor_top}.
    */
-  set_focus_neighbor(side: int, neighbor: string): void;
+  set_focus_neighbor(side: int, neighbor: NodePath | string): void;
   /**
    * Sets the {@link global_position} to given `position`.
    * If `keep_offsets` is `true`, control's anchors will be updated instead of offsets.

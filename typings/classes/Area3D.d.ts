@@ -74,7 +74,7 @@ declare class Area3D extends CollisionObject3D {
    * The {@link Node3D} which is used to specify the direction and origin of an area-specific wind force. The direction is opposite to the z-axis of the {@link Node3D}'s local transform, and its origin is the origin of the {@link Node3D}'s local transform.
    * **Note:** This wind force only applies to {@link SoftBody3D} nodes. Other physics bodies are currently not affected by wind.
    */
-  wind_source_path: string;
+  wind_source_path: NodePath;
   set_angular_damp(value: float): void;
   get_angular_damp(): float;
   set_angular_damp_space_override_mode(value: int): void;
@@ -117,8 +117,8 @@ declare class Area3D extends CollisionObject3D {
   get_wind_attenuation_factor(): float;
   set_wind_force_magnitude(value: float): void;
   get_wind_force_magnitude(): float;
-  set_wind_source_path(value: string): void;
-  get_wind_source_path(): string;
+  set_wind_source_path(value: NodePath | string): void;
+  get_wind_source_path(): NodePath;
 
   /**
    * Returns a list of intersecting {@link Area3D}s. The overlapping area's {@link CollisionObject3D.collision_layer} must be part of this area's {@link CollisionObject3D.collision_mask} in order to be detected.

@@ -37,11 +37,11 @@ declare class TextParagraph extends RefCounted {
   get_alignment(): int;
   set_break_flags(value: int): void;
   get_break_flags(): int;
-  set_custom_punctuation(value: string): void;
+  set_custom_punctuation(value: string | NodePath): void;
   get_custom_punctuation(): string;
   set_direction(value: int): void;
   get_direction(): int;
-  set_ellipsis_char(value: string): void;
+  set_ellipsis_char(value: string | NodePath): void;
   get_ellipsis_char(): string;
   set_justification_flags(value: int): void;
   get_justification_flags(): int;
@@ -65,7 +65,7 @@ declare class TextParagraph extends RefCounted {
    */
   add_object(key: unknown, size: Vector2 | Vector2i, inline_align: int, length?: int, baseline?: float): boolean;
   /** Adds text span and font to draw it. */
-  add_string(text: string, font: Font, font_size: int, language?: string, meta?: unknown): boolean;
+  add_string(text: string | NodePath, font: Font, font_size: int, language?: string | NodePath, meta?: unknown): boolean;
   /** Clears text paragraph (removes text and inline objects). */
   clear(): void;
   /** Removes dropcap. */
@@ -154,7 +154,7 @@ declare class TextParagraph extends RefCounted {
   /**
    * Sets drop cap, overrides previously set drop cap. Drop cap (dropped capital) is a decorative element at the beginning of a paragraph that is larger than the rest of the text.
    */
-  set_dropcap(text: string, font: Font, font_size: int, dropcap_margins?: Rect2 | Rect2i, language?: string): boolean;
+  set_dropcap(text: string | NodePath, font: Font, font_size: int, dropcap_margins?: Rect2 | Rect2i, language?: string | NodePath): boolean;
   /** Aligns paragraph to the given tab-stops. */
   tab_align(tab_stops: PackedFloat32Array | Array<unknown>): void;
 }

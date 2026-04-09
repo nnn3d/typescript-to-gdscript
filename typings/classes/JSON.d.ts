@@ -30,11 +30,11 @@ declare class JSON extends Resource {
    * Non-static variant of {@link parse_string}, if you want custom error handling.
    * The optional `keep_text` argument instructs the parser to keep a copy of the original text. This text can be obtained later by using the {@link get_parsed_text} function and is used when saving the resource (instead of generating new text from {@link data}).
    */
-  parse(json_text: string, keep_text?: boolean): int;
+  parse(json_text: string | NodePath, keep_text?: boolean): int;
   /**
    * Attempts to parse the `json_string` provided and returns the parsed data. Returns `null` if parse failed.
    */
-  static parse_string(json_string: string): unknown;
+  static parse_string(json_string: string | NodePath): unknown;
   /**
    * Converts a {@link Variant} var to JSON text and returns the result. Useful for serializing data to store or send over the network.
    * **Note:** The JSON specification does not define integer or float types, but only a *number* type. Therefore, converting a Variant to JSON text will convert all numerical values to [float] types.
@@ -43,7 +43,7 @@ declare class JSON extends Resource {
    * **Warning:** Non-finite numbers are not supported in JSON. Any occurrences of {@link @GDScript.INF} will be replaced with `1e99999`, and negative {@link @GDScript.INF} will be replaced with `-1e99999`, but they will be interpreted correctly as infinity by most JSON parsers. {@link @GDScript.NAN} will be replaced with `null`, and it will not be interpreted as NaN in JSON parsers. If you expect non-finite numbers, consider passing your data through {@link from_native} first.
    * **Example output:**
    */
-  static stringify(data: unknown, indent?: string, sort_keys?: boolean, full_precision?: boolean): string;
+  static stringify(data: unknown, indent?: string | NodePath, sort_keys?: boolean, full_precision?: boolean): string;
   /**
    * Converts a JSON-compliant value that was created with {@link from_native} back to native engine types.
    * By default, objects are ignored for security reasons, unless `allow_objects` is `true`.

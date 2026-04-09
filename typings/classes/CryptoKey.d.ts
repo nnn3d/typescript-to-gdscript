@@ -9,16 +9,16 @@ declare class CryptoKey extends Resource {
    * Loads a key from `path`. If `public_only` is `true`, only the public key will be loaded.
    * **Note:** `path` should be a "*.pub" file if `public_only` is `true`, a "*.key" file otherwise.
    */
-  load(path: string, public_only?: boolean): int;
+  load(path: string | NodePath, public_only?: boolean): int;
   /**
    * Loads a key from the given `string_key`. If `public_only` is `true`, only the public key will be loaded.
    */
-  load_from_string(string_key: string, public_only?: boolean): int;
+  load_from_string(string_key: string | NodePath, public_only?: boolean): int;
   /**
    * Saves a key to the given `path`. If `public_only` is `true`, only the public key will be saved.
    * **Note:** `path` should be a "*.pub" file if `public_only` is `true`, a "*.key" file otherwise.
    */
-  save(path: string, public_only?: boolean): int;
+  save(path: string | NodePath, public_only?: boolean): int;
   /**
    * Returns a string containing the key in PEM format. If `public_only` is `true`, only the public key will be included.
    */

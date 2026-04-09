@@ -6,7 +6,7 @@ declare class EditorScenePostImportPlugin extends RefCounted {
   /**
    * Override to add general import options. These will appear in the main import dock on the editor. Add options via {@link add_import_option} and {@link add_import_option_advanced}.
    */
-  _get_import_options(path: string): void;
+  _get_import_options(path: string | NodePath): void;
   /**
    * Override to add internal import options. These will appear in the 3D scene import dialog. Add options via {@link add_import_option} and {@link add_import_option_advanced}.
    */
@@ -14,15 +14,15 @@ declare class EditorScenePostImportPlugin extends RefCounted {
   /**
    * Should return `true` if the 3D view of the import dialog needs to update when changing the given option.
    */
-  _get_internal_option_update_view_required(category: int, option: string): unknown;
+  _get_internal_option_update_view_required(category: int, option: string | NodePath): unknown;
   /**
    * Should return `true` to show the given option, `false` to hide the given option, or `null` to ignore.
    */
-  _get_internal_option_visibility(category: int, for_animation: boolean, option: string): unknown;
+  _get_internal_option_visibility(category: int, for_animation: boolean, option: string | NodePath): unknown;
   /**
    * Should return `true` to show the given option, `false` to hide the given option, or `null` to ignore.
    */
-  _get_option_visibility(path: string, for_animation: boolean, option: string): unknown;
+  _get_option_visibility(path: string | NodePath, for_animation: boolean, option: string | NodePath): unknown;
   /** Process a specific node or resource for a given category. */
   _internal_process(category: int, base_node: Node, node: Node, resource: Resource): void;
   /** Post-process the scene. This function is called after the final scene has been configured. */
@@ -35,11 +35,11 @@ declare class EditorScenePostImportPlugin extends RefCounted {
   /**
    * Add a specific import option (name and default value only). This function can only be called from {@link _get_import_options} and {@link _get_internal_import_options}.
    */
-  add_import_option(name: string, value: unknown): void;
+  add_import_option(name: string | NodePath, value: unknown): void;
   /**
    * Add a specific import option. This function can only be called from {@link _get_import_options} and {@link _get_internal_import_options}.
    */
-  add_import_option_advanced(type_: int, name: string, default_value: unknown, hint: int, hint_string?: string, usage_flags?: int): void;
+  add_import_option_advanced(type_: int, name: string | NodePath, default_value: unknown, hint: int, hint_string?: string | NodePath, usage_flags?: int): void;
   /**
    * Query the value of an option. This function can only be called from those querying visibility, or processing.
    */

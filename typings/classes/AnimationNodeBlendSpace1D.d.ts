@@ -30,7 +30,7 @@ declare class AnimationNodeBlendSpace1D extends AnimationRootNode {
   get_snap(): float;
   set_use_sync(value: boolean): void;
   is_using_sync(): boolean;
-  set_value_label(value: string): void;
+  set_value_label(value: string | NodePath): void;
   get_value_label(): string;
 
   /**

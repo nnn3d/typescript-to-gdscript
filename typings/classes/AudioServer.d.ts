@@ -20,9 +20,9 @@ declare interface AudioServer extends GodotObject {
   playback_speed_scale: float;
   set_bus_count(value: int): void;
   get_bus_count(): int;
-  set_input_device(value: string): void;
+  set_input_device(value: string | NodePath): void;
   get_input_device(): string;
-  set_output_device(value: string): void;
+  set_output_device(value: string | NodePath): void;
   get_output_device(): string;
   set_playback_speed_scale(value: float): void;
   get_playback_speed_scale(): float;
@@ -138,7 +138,7 @@ declare interface AudioServer extends GodotObject {
   /** If `true`, the bus at index `bus_idx` is muted. */
   set_bus_mute(bus_idx: int, enable: boolean): void;
   /** Sets the name of the bus at index `bus_idx` to `name`. */
-  set_bus_name(bus_idx: int, name: string): void;
+  set_bus_name(bus_idx: int, name: string | NodePath): void;
   /** Connects the output of the bus at `bus_idx` to the bus named `send`. */
   set_bus_send(bus_idx: int, send: string): void;
   /** If `true`, the bus at index `bus_idx` is in solo mode. */

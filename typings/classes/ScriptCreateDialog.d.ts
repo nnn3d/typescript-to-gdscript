@@ -6,11 +6,11 @@ declare class ScriptCreateDialog extends ConfirmationDialog {
   dialog_hide_on_ok: boolean;
   ok_button_text: string;
   title: string;
-  set_ok_button_text(value: string): void;
+  set_ok_button_text(value: string | NodePath): void;
   get_ok_button_text(): string;
 
   /** Prefills required fields to configure the ScriptCreateDialog for use. */
-  config(inherits: string, path: string, built_in_enabled?: boolean, load_enabled?: boolean): void;
+  config(inherits: string | NodePath, path: string | NodePath, built_in_enabled?: boolean, load_enabled?: boolean): void;
 
   /** Emitted when the user clicks the OK button. */
   script_created: Signal<[Script]>;

@@ -6,7 +6,7 @@ declare class ImporterMesh extends Resource {
   /**
    * Adds name for a blend shape that will be added with {@link add_surface}. Must be called before surface is added.
    */
-  add_blend_shape(name: string): void;
+  add_blend_shape(name: string | NodePath): void;
   /**
    * Creates a new surface. {@link Mesh.get_surface_count} will become the `surf_idx` for this new surface.
    * Surfaces are created to be rendered using a `primitive`, which may be any of the values defined in {@link Mesh.PrimitiveType}.
@@ -16,7 +16,7 @@ declare class ImporterMesh extends Resource {
    * The `flags` argument is the bitwise OR of, as required: One value of {@link Mesh.ArrayCustomFormat} left shifted by `ARRAY_FORMAT_CUSTOMn_SHIFT` for each custom channel in use, {@link Mesh.ARRAY_FLAG_USE_DYNAMIC_UPDATE}, {@link Mesh.ARRAY_FLAG_USE_8_BONE_WEIGHTS}, or {@link Mesh.ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY}.
    * **Note:** When using indices, it is recommended to only use points, lines, or triangles.
    */
-  add_surface(primitive: int, arrays: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, blend_shapes?: Array<Array<unknown>>, lods?: Dictionary, material?: Material, name?: string, flags?: int): void;
+  add_surface(primitive: int, arrays: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, blend_shapes?: Array<Array<unknown>>, lods?: Dictionary, material?: Material, name?: string | NodePath, flags?: int): void;
   /** Removes all surfaces and blend shapes from this {@link ImporterMesh}. */
   clear(): void;
   /**
@@ -80,5 +80,5 @@ declare class ImporterMesh extends Resource {
   /** Sets a {@link Material} for a given surface. Surface will be rendered using this material. */
   set_surface_material(surface_idx: int, material: Material): void;
   /** Sets a name for a given surface. */
-  set_surface_name(surface_idx: int, name: string): void;
+  set_surface_name(surface_idx: int, name: string | NodePath): void;
 }

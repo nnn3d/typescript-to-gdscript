@@ -44,7 +44,7 @@ declare class EditorProperty extends Container {
   is_draw_label(): boolean;
   set_draw_warning(value: boolean): void;
   is_draw_warning(): boolean;
-  set_label(value: string): void;
+  set_label(value: string | NodePath): void;
   get_label(): string;
   set_name_split_ratio(value: float): void;
   get_name_split_ratio(): float;

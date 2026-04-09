@@ -4,9 +4,9 @@
 /** A directory for the resource filesystem. */
 declare class EditorFileSystemDirectory extends GodotObject {
   /** Returns the index of the directory with name `name` or `-1` if not found. */
-  find_dir_index(name: string): int;
+  find_dir_index(name: string | NodePath): int;
   /** Returns the index of the file with name `name` or `-1` if not found. */
-  find_file_index(name: string): int;
+  find_file_index(name: string | NodePath): int;
   /** Returns the name of the file at index `idx`. */
   get_file(idx: int): string;
   /** Returns the number of files in this directory. */

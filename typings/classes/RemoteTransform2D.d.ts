@@ -6,7 +6,7 @@
  */
 declare class RemoteTransform2D extends Node2D {
   /** The {@link NodePath} to the remote node, relative to the RemoteTransform2D's position in the scene. */
-  remote_path: string;
+  remote_path: NodePath;
   /** If `true`, the remote node's position is updated. */
   update_position: boolean;
   /** If `true`, the remote node's rotation is updated. */
@@ -15,8 +15,8 @@ declare class RemoteTransform2D extends Node2D {
   update_scale: boolean;
   /** If `true`, global coordinates are used. If `false`, local coordinates are used. */
   use_global_coordinates: boolean;
-  set_remote_node(value: string): void;
-  get_remote_node(): string;
+  set_remote_node(value: NodePath | string): void;
+  get_remote_node(): NodePath;
   set_update_position(value: boolean): void;
   get_update_position(): boolean;
   set_update_rotation(value: boolean): void;

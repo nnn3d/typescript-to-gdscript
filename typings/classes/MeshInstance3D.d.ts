@@ -9,13 +9,13 @@ declare class MeshInstance3D extends GeometryInstance3D {
    * {@link NodePath} to the {@link Skeleton3D} associated with the instance.
    * **Note:** The default value of this property has changed in Godot 4.6. Enable {@link ProjectSettings.animation/compatibility/default_parent_skeleton_in_mesh_instance_3d} if the old behavior is needed for compatibility.
    */
-  skeleton: string;
+  skeleton: NodePath;
   /** The {@link Skin} to be used by this instance. */
   skin: Skin | null;
   set_mesh(value: Mesh | null): void;
   get_mesh(): Mesh | null;
-  set_skeleton_path(value: string): void;
-  get_skeleton_path(): string;
+  set_skeleton_path(value: NodePath | string): void;
+  get_skeleton_path(): NodePath;
   set_skin(value: Skin | null): void;
   get_skin(): Skin | null;
 

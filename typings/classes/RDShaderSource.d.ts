@@ -36,5 +36,5 @@ declare class RDShaderSource extends RefCounted {
    * Sets `source` code for the specified shader `stage`. Equivalent to setting one of {@link source_compute}, {@link source_fragment}, {@link source_tesselation_control}, {@link source_tesselation_evaluation} or {@link source_vertex}.
    * **Note:** If you set the compute shader source code using this method directly, remember to remove the Godot-specific hint `#[compute]`.
    */
-  set_stage_source(stage: int, source: string): void;
+  set_stage_source(stage: int, source: string | NodePath): void;
 }

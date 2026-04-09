@@ -25,22 +25,22 @@ declare class Font extends Resource {
    * Breaks `text` into lines using rules specified by `brk_flags` and draws it into a canvas item using the font, at a given position, with `modulate` color, optionally clipping the width and aligning horizontally. `pos` specifies the baseline of the first line, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    * See also {@link CanvasItem.draw_multiline_string}.
    */
-  draw_multiline_string(canvas_item: RID, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_multiline_string(canvas_item: RID, pos: Vector2 | Vector2i, text: string | NodePath, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Breaks `text` to the lines using rules specified by `brk_flags` and draws text outline into a canvas item using the font, at a given position, with `modulate` color and `size` outline size, optionally clipping the width and aligning horizontally. `pos` specifies the baseline of the first line, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    * See also {@link CanvasItem.draw_multiline_string_outline}.
    */
-  draw_multiline_string_outline(canvas_item: RID, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_multiline_string_outline(canvas_item: RID, pos: Vector2 | Vector2i, text: string | NodePath, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Draw `text` into a canvas item using the font, at a given position, with `modulate` color, optionally clipping the width and aligning horizontally. `pos` specifies the baseline, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    * See also {@link CanvasItem.draw_string}.
    */
-  draw_string(canvas_item: RID, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_string(canvas_item: RID, pos: Vector2 | Vector2i, text: string | NodePath, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Draw `text` outline into a canvas item using the font, at a given position, with `modulate` color and `size` outline size, optionally clipping the width and aligning horizontally. `pos` specifies the baseline, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    * See also {@link CanvasItem.draw_string_outline}.
    */
-  draw_string_outline(canvas_item: RID, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_string_outline(canvas_item: RID, pos: Vector2 | Vector2i, text: string | NodePath, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /** Returns {@link TextServer} RID of the font cache for specific variation. */
   find_variation(variation_coordinates: Dictionary, face_index?: int, strength?: float, transform?: Transform2D, spacing_top?: int, spacing_bottom?: int, spacing_space?: int, spacing_glyph?: int, baseline_offset?: float): RID;
   /**
@@ -83,7 +83,7 @@ declare class Font extends Resource {
    * Returns the size of a bounding box of a string broken into the lines, taking kerning and advance into account.
    * See also {@link draw_multiline_string}.
    */
-  get_multiline_string_size(text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int): Vector2;
+  get_multiline_string_size(text: string | NodePath, alignment: int, width?: float, font_size?: int, max_lines?: int, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int): Vector2;
   /**
    * Returns a set of OpenType feature tags. More info: OpenType feature tags (https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags).
    */
@@ -104,7 +104,7 @@ declare class Font extends Resource {
    * **Note:** Since kerning, advance and subpixel positioning are taken into account by {@link get_string_size}, using separate {@link get_string_size} calls on substrings of a string then adding the results together will return a different result compared to using a single {@link get_string_size} call on the full string.
    * **Note:** Real height of the string is context-dependent and can be significantly different from the value returned by {@link get_height}.
    */
-  get_string_size(text: string, alignment: int, width?: float, font_size?: int, justification_flags?: int, direction?: int, orientation?: int): Vector2;
+  get_string_size(text: string | NodePath, alignment: int, width?: float, font_size?: int, justification_flags?: int, direction?: int, orientation?: int): Vector2;
   /**
    * Returns a string containing all the characters available in the font.
    * If a given character is included in more than one font data source, it appears only once in the returned string.
@@ -134,11 +134,11 @@ declare class Font extends Resource {
   /**
    * Returns `true` if the font supports the given language (as a ISO 639 (https://en.wikipedia.org/wiki/ISO_639-1) code).
    */
-  is_language_supported(language: string): boolean;
+  is_language_supported(language: string | NodePath): boolean;
   /**
    * Returns `true` if the font supports the given script (as a ISO 15924 (https://en.wikipedia.org/wiki/ISO_15924) code).
    */
-  is_script_supported(script: string): boolean;
+  is_script_supported(script: string | NodePath): boolean;
   /** Sets LRU cache capacity for `draw_*` methods. */
   set_cache_capacity(single_line: int, multi_line: int): void;
 }

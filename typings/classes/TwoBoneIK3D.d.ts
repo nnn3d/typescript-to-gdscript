@@ -28,13 +28,13 @@ declare class TwoBoneIK3D extends IKModifier3D {
   /**
    * Returns the pole target node that constructs a plane which the joints are all on and the pole is trying to direct.
    */
-  get_pole_node(index: int): string;
+  get_pole_node(index: int): NodePath;
   /** Returns the root bone index. */
   get_root_bone(index: int): int;
   /** Returns the root bone name. */
   get_root_bone_name(index: int): string;
   /** Returns the target node that the end bone is trying to reach. */
-  get_target_node(index: int): string;
+  get_target_node(index: int): NodePath;
   /** Returns `true` if the end bone is extended to have a tail. */
   is_end_bone_extended(index: int): boolean;
   /** Returns `true` if the end bone is extended from the middle bone as a virtual bone. */
@@ -49,7 +49,7 @@ declare class TwoBoneIK3D extends IKModifier3D {
    * Sets the end bone name.
    * **Note:** The end bone must be a child of the middle bone.
    */
-  set_end_bone_name(index: int, bone_name: string): void;
+  set_end_bone_name(index: int, bone_name: string | NodePath): void;
   /** If `enabled` is `true`, the end bone is extended to have a tail. */
   set_extend_end_bone(index: int, enabled: boolean): void;
   /** Sets the middle bone index. */
@@ -58,7 +58,7 @@ declare class TwoBoneIK3D extends IKModifier3D {
    * Sets the middle bone name.
    * **Note:** The middle bone must be a child of the root bone.
    */
-  set_middle_bone_name(index: int, bone_name: string): void;
+  set_middle_bone_name(index: int, bone_name: string | NodePath): void;
   /**
    * Sets the pole direction.
    * The pole is on the middle bone and will direct to the pole target.
@@ -75,13 +75,13 @@ declare class TwoBoneIK3D extends IKModifier3D {
   /**
    * Sets the pole target node that constructs a plane which the joints are all on and the pole is trying to direct.
    */
-  set_pole_node(index: int, pole_node: string): void;
+  set_pole_node(index: int, pole_node: NodePath | string): void;
   /** Sets the root bone index. */
   set_root_bone(index: int, bone: int): void;
   /** Sets the root bone name. */
-  set_root_bone_name(index: int, bone_name: string): void;
+  set_root_bone_name(index: int, bone_name: string | NodePath): void;
   /** Sets the target node that the end bone is trying to reach. */
-  set_target_node(index: int, target_node: string): void;
+  set_target_node(index: int, target_node: NodePath | string): void;
   /** If `enabled` is `true`, the end bone is extended from the middle bone as a virtual bone. */
   set_use_virtual_end(index: int, enabled: boolean): void;
 }

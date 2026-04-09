@@ -18,7 +18,7 @@ declare class XRTracker extends RefCounted {
   name: string;
   /** The type of tracker. */
   type: int;
-  set_tracker_desc(value: string): void;
+  set_tracker_desc(value: string | NodePath): void;
   get_tracker_desc(): string;
   set_tracker_name(value: string): void;
   get_tracker_name(): string;

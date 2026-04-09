@@ -14,7 +14,7 @@ declare interface JavaClassWrapper extends GodotObject {
    * **Note:** To invoke a constructor, call a method with the same name as the class. For example:
    * **Note:** This method only works on Android. On every other platform, this method does nothing and returns an empty {@link JavaClass}.
    */
-  wrap(name: string): JavaClass | null;
+  wrap(name: string | NodePath): JavaClass | null;
 }
 declare const JavaClassWrapper: JavaClassWrapper;
 

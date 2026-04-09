@@ -6,11 +6,11 @@ declare interface NavigationServer3DManager extends GodotObject {
   /**
    * Registers a {@link NavigationServer3D} implementation by passing a `name` and a {@link Callable} that returns a {@link NavigationServer3D} object.
    */
-  register_server(name: string, create_callback: Callable): void;
+  register_server(name: string | NodePath, create_callback: Callable): void;
   /**
    * Sets the default {@link NavigationServer3D} implementation to the one identified by `name`, if `priority` is greater than the priority of the current default implementation.
    */
-  set_default_server(name: string, priority: int): void;
+  set_default_server(name: string | NodePath, priority: int): void;
 }
 declare const NavigationServer3DManager: NavigationServer3DManager;
 

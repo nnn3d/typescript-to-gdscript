@@ -62,9 +62,9 @@ declare class Button extends BaseButton {
   get_button_icon(): Texture2D | null;
   set_icon_alignment(value: int): void;
   get_icon_alignment(): int;
-  set_language(value: string): void;
+  set_language(value: string | NodePath): void;
   get_language(): string;
-  set_text(value: string): void;
+  set_text(value: string | NodePath): void;
   get_text(): string;
   set_text_direction(value: int): void;
   get_text_direction(): int;

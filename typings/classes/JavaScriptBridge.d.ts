@@ -11,19 +11,19 @@ declare interface JavaScriptBridge extends GodotObject {
   /**
    * Creates a new JavaScript object using the `new` constructor. The `object` must a valid property of the JavaScript `window`. See {@link JavaScriptObject} for usage.
    */
-  create_object(object: string, ...args: any[]): unknown;
+  create_object(object: string | NodePath, ...args: any[]): unknown;
   /**
    * Prompts the user to download a file containing the specified `buffer`. The file will have the given `name` and `mime` type.
    * **Note:** The browser may override the MIME type (https://en.wikipedia.org/wiki/Media_type) provided based on the file `name`'s extension.
    * **Note:** Browsers might block the download if {@link download_buffer} is not being called from a user interaction (e.g. button click).
    * **Note:** Browsers might ask the user for permission or block the download if multiple download requests are made in a quick succession.
    */
-  download_buffer(buffer: PackedByteArray | Array<unknown>, name: string, mime?: string): void;
+  download_buffer(buffer: PackedByteArray | Array<unknown>, name: string | NodePath, mime?: string | NodePath): void;
   /**
    * Execute the string `code` as JavaScript code within the browser window. This is a call to the actual global JavaScript function [code skip-lint]eval()[/code].
    * If `use_global_execution_context` is `true`, the code will be evaluated in the global execution context. Otherwise, it is evaluated in the execution context of a function within the engine's runtime environment.
    */
-  eval(code: string, use_global_execution_context?: boolean): unknown;
+  eval(code: string | NodePath, use_global_execution_context?: boolean): unknown;
   /**
    * Force synchronization of the persistent file system (when enabled).
    * **Note:** This is only useful for modules or extensions that can't use {@link FileAccess} to write files.
@@ -32,7 +32,7 @@ declare interface JavaScriptBridge extends GodotObject {
   /**
    * Returns an interface to a JavaScript object that can be used by scripts. The `interface` must be a valid property of the JavaScript `window`. The callback must accept a single {@link Array} argument, which will contain the JavaScript `arguments`. See {@link JavaScriptObject} for usage.
    */
-  get_interface(interface_: string): JavaScriptObject | null;
+  get_interface(interface_: string | NodePath): JavaScriptObject | null;
   /**
    * Returns `true` if the given `javascript_object` is of type `ArrayBuffer` (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer), `DataView` (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView), or one of the many typed array objects (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray).
    */

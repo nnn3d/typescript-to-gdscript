@@ -37,7 +37,7 @@ declare class ChainIK3D extends IKModifier3D {
    * Sets the end bone name of the bone chain.
    * **Note:** The end bone must be the root bone or a child of the root bone. If they are the same, the tail must be extended by {@link set_extend_end_bone} to modify the bone.
    */
-  set_end_bone_name(index: int, bone_name: string): void;
+  set_end_bone_name(index: int, bone_name: string | NodePath): void;
   /**
    * If `enabled` is `true`, the end bone is extended to have a tail.
    * The extended tail config is allocated to the last element in the joint list. In other words, if you set `enabled` to `false`, the config of the last element in the joint list has no effect in the simulated result.
@@ -46,5 +46,5 @@ declare class ChainIK3D extends IKModifier3D {
   /** Sets the root bone index of the bone chain. */
   set_root_bone(index: int, bone: int): void;
   /** Sets the root bone name of the bone chain. */
-  set_root_bone_name(index: int, bone_name: string): void;
+  set_root_bone_name(index: int, bone_name: string | NodePath): void;
 }

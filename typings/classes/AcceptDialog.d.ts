@@ -34,7 +34,7 @@ declare class AcceptDialog extends Window {
   get_close_on_escape(): boolean;
   set_hide_on_ok(value: boolean): void;
   get_hide_on_ok(): boolean;
-  set_text(value: string): void;
+  set_text(value: string | NodePath): void;
   get_text(): string;
 
   /**
@@ -43,12 +43,12 @@ declare class AcceptDialog extends Window {
    * If `true`, `right` will place the button to the right of any sibling buttons.
    * You can use {@link remove_button} method to remove a button created with this method from the dialog.
    */
-  add_button(text: string, right?: boolean, action?: string): Button;
+  add_button(text: string | NodePath, right?: boolean, action?: string | NodePath): Button;
   /**
    * Adds a button with label `name` and a cancel action to the dialog and returns the created button.
    * You can use {@link remove_button} method to remove a button created with this method from the dialog.
    */
-  add_cancel_button(name: string): Button;
+  add_cancel_button(name: string | NodePath): Button;
   /**
    * Returns the label used for built-in text.
    * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their {@link CanvasItem.visible} property.

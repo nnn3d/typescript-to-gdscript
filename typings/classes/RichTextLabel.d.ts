@@ -124,7 +124,7 @@ declare class RichTextLabel extends Control {
   get_horizontal_alignment(): int;
   set_justification_flags(value: int): void;
   get_justification_flags(): int;
-  set_language(value: string): void;
+  set_language(value: string | NodePath): void;
   get_language(): string;
   set_meta_underline(value: boolean): void;
   is_meta_underlined(): boolean;
@@ -148,7 +148,7 @@ declare class RichTextLabel extends Control {
   get_tab_size(): int;
   set_tab_stops(value: PackedFloat32Array | Array<unknown>): void;
   get_tab_stops(): PackedFloat32Array;
-  set_text(value: string): void;
+  set_text(value: string | NodePath): void;
   get_text(): string;
   set_text_direction(value: int): void;
   get_text_direction(): int;
@@ -179,14 +179,14 @@ declare class RichTextLabel extends Control {
    * If `height_in_percent` is set, `height` values are percentages of the control width instead of pixels.
    * `alt_text` is used as the image description for assistive apps.
    */
-  add_image(image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2 | Rect2i, key?: unknown, pad?: boolean, tooltip?: string, width_in_percent?: boolean, height_in_percent?: boolean, alt_text?: string): void;
+  add_image(image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2 | Rect2i, key?: unknown, pad?: boolean, tooltip?: string | NodePath, width_in_percent?: boolean, height_in_percent?: boolean, alt_text?: string | NodePath): void;
   /** Adds raw non-BBCode-parsed text to the tag stack. */
-  add_text(text: string): void;
+  add_text(text: string | NodePath): void;
   /**
    * Parses `bbcode` and adds tags to the tag stack as needed.
    * **Note:** Using this method, you can't close a tag that was opened in a previous {@link append_text} call. This is done to improve performance, especially when updating large RichTextLabels since rebuilding the whole BBCode every time would be slower. If you absolutely need to close a tag in a future method call, append the {@link text} instead of using {@link append_text}.
    */
-  append_text(bbcode: string): void;
+  append_text(bbcode: string | NodePath): void;
   /**
    * Clears the tag stack, causing the label to display nothing.
    * **Note:** This method does not affect {@link text}, and its contents will show again if the label is redrawn. However, setting {@link text} to an empty {@link String} also clears the stack.
@@ -320,7 +320,7 @@ declare class RichTextLabel extends Control {
   /** Adds a newline tag to the tag stack. */
   newline(): void;
   /** The assignment version of {@link append_text}. Clears the tag stack and inserts the new content. */
-  parse_bbcode(bbcode: string): void;
+  parse_bbcode(bbcode: string | NodePath): void;
   /** Parses BBCode parameter `expressions` into a dictionary. */
   parse_expressions_for_values(expressions: PackedStringArray | Array<unknown>): Dictionary;
   /**
@@ -359,7 +359,7 @@ declare class RichTextLabel extends Control {
   /**
    * Adds a [code skip-lint][dropcap][/code] tag to the tag stack. Drop cap (dropped capital) is a decorative element at the beginning of a paragraph that is larger than the rest of the text.
    */
-  push_dropcap(string: string, font: Font, size: int, dropcap_margins?: Rect2 | Rect2i, color?: Color, outline_size?: int, outline_color?: Color): void;
+  push_dropcap(string: string | NodePath, font: Font, size: int, dropcap_margins?: Rect2 | Rect2i, color?: Color, outline_size?: int, outline_color?: Color): void;
   /**
    * Adds a [code skip-lint][fgcolor][/code] tag to the tag stack.
    * **Note:** The foreground color has padding applied by default, which is controlled using  and . This can lead to overlapping highlights if foreground colors are placed on neighboring lines/columns, so consider setting those theme items to `0` if you want to avoid this.
@@ -377,7 +377,7 @@ declare class RichTextLabel extends Control {
   /**
    * Adds a [code skip-lint][hint][/code] tag to the tag stack. Same as BBCode [code skip-lint][hint=something]{text}[/hint][/code].
    */
-  push_hint(description: string): void;
+  push_hint(description: string | NodePath): void;
   /**
    * Adds an [code skip-lint][indent][/code] tag to the tag stack. Multiplies `level` by current {@link tab_size} to determine new margin length.
    */
@@ -387,17 +387,17 @@ declare class RichTextLabel extends Control {
    */
   push_italics(): void;
   /** Adds language code used for text shaping algorithm and Open-Type font features. */
-  push_language(language: string): void;
+  push_language(language: string | NodePath): void;
   /**
    * Adds [code skip-lint][ol][/code] or [code skip-lint][ul][/code] tag to the tag stack. Multiplies `level` by current {@link tab_size} to determine new margin length.
    */
-  push_list(level: int, type_: int, capitalize: boolean, bullet?: string): void;
+  push_list(level: int, type_: int, capitalize: boolean, bullet?: string | NodePath): void;
   /**
    * Adds a meta tag to the tag stack. Similar to the BBCode [code skip-lint]{text} (something)[/code], but supports non-{@link String} metadata types.
    * If {@link meta_underlined} is `true`, meta tags display an underline. This behavior can be customized with `underline_mode`.
    * **Note:** Meta tags do nothing by default when clicked. To assign behavior when clicked, connect {@link meta_clicked} to a function that is called when the meta tag is clicked.
    */
-  push_meta(data: unknown, underline_mode: int, tooltip?: string): void;
+  push_meta(data: unknown, underline_mode: int, tooltip?: string | NodePath): void;
   /** Adds a [code skip-lint][font][/code] tag with a monospace font to the tag stack. */
   push_mono(): void;
   /** Adds a [code skip-lint][font][/code] tag with a normal font to the tag stack. */
@@ -411,7 +411,7 @@ declare class RichTextLabel extends Control {
    */
   push_outline_size(outline_size: int): void;
   /** Adds a [code skip-lint][p][/code] tag to the tag stack. */
-  push_paragraph(alignment: int, base_direction: int, language?: string, st_parser?: int, justification_flags?: int, tab_stops?: PackedFloat32Array | Array<unknown>): void;
+  push_paragraph(alignment: int, base_direction: int, language?: string | NodePath, st_parser?: int, justification_flags?: int, tab_stops?: PackedFloat32Array | Array<unknown>): void;
   /**
    * Adds a [code skip-lint][s][/code] tag to the tag stack. If `color`'s alpha value is `0.0`, the current font's color with its alpha multiplied by  is used.
    */
@@ -419,7 +419,7 @@ declare class RichTextLabel extends Control {
   /**
    * Adds a [code skip-lint][table=columns,inline_align][/code] tag to the tag stack. Use {@link set_table_column_expand} to set column expansion ratio. Use {@link push_cell} to add cells. `name` is used as the table name for assistive apps.
    */
-  push_table(columns: int, inline_align: int, align_to_row?: int, name?: string): void;
+  push_table(columns: int, inline_align: int, align_to_row?: int, name?: string | NodePath): void;
   /**
    * Adds a [code skip-lint][u][/code] tag to the tag stack. If `color`'s alpha value is `0.0`, the current font's color with its alpha multiplied by  is used.
    */
@@ -458,11 +458,11 @@ declare class RichTextLabel extends Control {
    */
   set_table_column_expand(column: int, expand: boolean, ratio?: int, shrink?: boolean): void;
   /** Sets table column name for assistive apps. */
-  set_table_column_name(column: int, name: string): void;
+  set_table_column_name(column: int, name: string | NodePath): void;
   /**
    * Updates the existing images with the key `key`. Only properties specified by `mask` bits are updated. See {@link add_image}.
    */
-  update_image(key: unknown, mask: int, image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2 | Rect2i, pad?: boolean, tooltip?: string, width_in_percent?: boolean, height_in_percent?: boolean): void;
+  update_image(key: unknown, mask: int, image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2 | Rect2i, pad?: boolean, tooltip?: string | NodePath, width_in_percent?: boolean, height_in_percent?: boolean): void;
 
   /**
    * Triggered when the document is fully loaded.

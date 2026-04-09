@@ -8,5 +8,5 @@ declare class CompressedTexture3D extends Texture3D {
   get_load_path(): string;
 
   /** Loads the texture from the specified `path`. */
-  load(path: string): int;
+  load(path: string | NodePath): int;
 }

@@ -52,7 +52,7 @@ declare class ArrayMesh extends Mesh {
   /**
    * Returns the index of the first surface with this name held within this {@link ArrayMesh}. If none are found, -1 is returned.
    */
-  surface_find_by_name(name: string): int;
+  surface_find_by_name(name: string | NodePath): int;
   /**
    * Returns the length in indices of the index array in the requested surface (see {@link add_surface_from_arrays}).
    */
@@ -72,7 +72,7 @@ declare class ArrayMesh extends Mesh {
    */
   surface_remove(surf_idx: int): void;
   /** Sets a name for a given surface. */
-  surface_set_name(surf_idx: int, name: string): void;
+  surface_set_name(surf_idx: int, name: string | NodePath): void;
   /**
    * Updates the attribute buffer of this mesh's surface with the given `data`. The expected data per attribute is 12 or 8 bytes (4 bytes per float, 2 floats per {@link Vector2}, and 3 floats per {@link Vector3}) depending on if the mesh is using {@link Vector3} or {@link Vector2} vertices. This value can be determined with {@link RenderingServer.mesh_surface_get_format_attribute_stride}.
    * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each attribute.

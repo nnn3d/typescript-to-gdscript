@@ -162,7 +162,7 @@ declare class TextEdit extends Control {
   get_caret_type(): int;
   set_context_menu_enabled(value: boolean): void;
   is_context_menu_enabled(): boolean;
-  set_custom_word_separators(value: string): void;
+  set_custom_word_separators(value: string | NodePath): void;
   get_custom_word_separators(): string;
   set_deselect_on_focus_loss_enabled(value: boolean): void;
   is_deselect_on_focus_loss_enabled(): boolean;
@@ -184,7 +184,7 @@ declare class TextEdit extends Control {
   is_highlight_current_line_enabled(): boolean;
   set_indent_wrapped_lines(value: boolean): void;
   is_indent_wrapped_lines(): boolean;
-  set_language(value: string): void;
+  set_language(value: string | NodePath): void;
   get_language(): string;
   set_middle_mouse_paste_enabled(value: boolean): void;
   is_middle_mouse_paste_enabled(): boolean;
@@ -218,7 +218,7 @@ declare class TextEdit extends Control {
   get_syntax_highlighter(): SyntaxHighlighter | null;
   set_tab_input_mode(value: boolean): void;
   get_tab_input_mode(): boolean;
-  set_text(value: string): void;
+  set_text(value: string | NodePath): void;
   get_text(): string;
   set_text_direction(value: int): void;
   get_text_direction(): int;
@@ -522,15 +522,15 @@ declare class TextEdit extends Control {
   /** Returns `true` if an "undo" action is available. */
   has_undo(): boolean;
   /** Inserts a new line with `text` at `line`. */
-  insert_line_at(line: int, text: string): void;
+  insert_line_at(line: int, text: string | NodePath): void;
   /**
    * Inserts the `text` at `line` and `column`.
    * If `before_selection_begin` is `true`, carets and selections that begin at `line` and `column` will moved to the end of the inserted text, along with all carets after it.
    * If `before_selection_end` is `true`, selections that end at `line` and `column` will be extended to the end of the inserted text. These parameters can be used to insert text inside of or outside of selections.
    */
-  insert_text(text: string, line: int, column: int, before_selection_begin?: boolean, before_selection_end?: boolean): void;
+  insert_text(text: string | NodePath, line: int, column: int, before_selection_begin?: boolean, before_selection_end?: boolean): void;
   /** Insert the specified text at the caret position. */
-  insert_text_at_caret(text: string, caret_index?: int): void;
+  insert_text_at_caret(text: string | NodePath, caret_index?: int): void;
   /**
    * Returns `true` if the caret of the selection is after the selection origin. This can be used to determine the direction of the selection.
    */
@@ -616,7 +616,7 @@ declare class TextEdit extends Control {
    * Perform a search inside the text. Search flags can be specified in the {@link SearchFlags} enum.
    * In the returned vector, `x` is the column, `y` is the line. If no results are found, both are equal to `-1`.
    */
-  search(text: string, flags: int, from_line: int, from_column: int): Vector2i;
+  search(text: string | NodePath, flags: int, from_line: int, from_column: int): Vector2i;
   /**
    * Selects text from `origin_line` and `origin_column` to `caret_line` and `caret_column` for the given `caret_index`. This moves the selection origin and the caret. If the positions are the same, the selection will be deselected.
    * If {@link selecting_enabled} is `false`, no selection will occur.
@@ -657,7 +657,7 @@ declare class TextEdit extends Control {
    */
   set_gutter_draw(gutter: int, draw: boolean): void;
   /** Sets the name of the gutter at the given index. */
-  set_gutter_name(gutter: int, name: string): void;
+  set_gutter_name(gutter: int, name: string | NodePath): void;
   /**
    * If `true`, the line data of the gutter at the given index can be overridden when using {@link merge_gutters}. See {@link is_gutter_overwritable}.
    */
@@ -670,7 +670,7 @@ declare class TextEdit extends Control {
    * Sets the text for a specific `line`.
    * Carets on the line will attempt to keep their visual x position.
    */
-  set_line(line: int, new_text: string): void;
+  set_line(line: int, new_text: string | NodePath): void;
   /** Positions the `wrap_index` of `line` at the center of the viewport. */
   set_line_as_center_visible(line: int, wrap_index?: int): void;
   /** Positions the `wrap_index` of `line` at the top of the viewport. */
@@ -696,7 +696,7 @@ declare class TextEdit extends Control {
   /**
    * Sets the text for `gutter` on `line` to `text`. This only works when the gutter type is {@link GUTTER_TYPE_STRING} (see {@link set_gutter_type}).
    */
-  set_line_gutter_text(line: int, gutter: int, text: string): void;
+  set_line_gutter_text(line: int, gutter: int, text: string | NodePath): void;
   /**
    * If `true`, enables overtype mode. In this mode, typing overrides existing text instead of inserting text. The {@link ProjectSettings.input/ui_text_toggle_insert_mode} action toggles overtype mode. See {@link is_overtype_mode_enabled}.
    */
@@ -706,7 +706,7 @@ declare class TextEdit extends Control {
    */
   set_search_flags(flags: int): void;
   /** Sets the search text. See {@link set_search_flags}. */
-  set_search_text(search_text: string): void;
+  set_search_text(search_text: string | NodePath): void;
   /** Sets the current selection mode. */
   set_selection_mode(mode: int): void;
   /**

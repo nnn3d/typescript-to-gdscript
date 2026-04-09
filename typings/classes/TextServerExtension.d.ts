@@ -91,7 +91,7 @@ declare class TextServerExtension extends TextServer {
   /** Returns list of the kerning overrides. */
   _font_get_kerning_list(font_rid: RID, size: int): Array<Vector2i>;
   /** Returns `true` if support override is enabled for the `language`. */
-  _font_get_language_support_override(font_rid: RID, language: string): boolean;
+  _font_get_language_support_override(font_rid: RID, language: string | NodePath): boolean;
   /** Returns list of language support overrides. */
   _font_get_language_support_overrides(font_rid: RID): PackedStringArray;
   /**
@@ -115,7 +115,7 @@ declare class TextServerExtension extends TextServer {
   /** Returns scaling factor of the color bitmap font. */
   _font_get_scale(font_rid: RID, size: int): float;
   /** Returns `true` if support override is enabled for the `script`. */
-  _font_get_script_support_override(font_rid: RID, script: string): boolean;
+  _font_get_script_support_override(font_rid: RID, script: string | NodePath): boolean;
   /** Returns list of script support overrides. */
   _font_get_script_support_overrides(font_rid: RID): PackedStringArray;
   /**
@@ -169,7 +169,7 @@ declare class TextServerExtension extends TextServer {
   /**
    * Returns `true` if the font supports the given language (as a ISO 639 (https://en.wikipedia.org/wiki/ISO_639-1) code).
    */
-  _font_is_language_supported(font_rid: RID, language: string): boolean;
+  _font_is_language_supported(font_rid: RID, language: string | NodePath): boolean;
   /** Returns `true` if color modulation is applied when drawing the font's colored glyphs. */
   _font_is_modulate_color_glyphs(font_rid: RID): boolean;
   /**
@@ -179,15 +179,15 @@ declare class TextServerExtension extends TextServer {
   /**
    * Returns `true` if the font supports the given script (as a ISO 15924 (https://en.wikipedia.org/wiki/ISO_15924) code).
    */
-  _font_is_script_supported(font_rid: RID, script: string): boolean;
+  _font_is_script_supported(font_rid: RID, script: string | NodePath): boolean;
   /** Removes specified rendered glyph information from the cache entry. */
   _font_remove_glyph(font_rid: RID, size: Vector2i | Vector2, glyph: int): void;
   /** Removes kerning override for the pair of glyphs. */
   _font_remove_kerning(font_rid: RID, size: int, glyph_pair: Vector2i | Vector2): void;
   /** Remove language support override. */
-  _font_remove_language_support_override(font_rid: RID, language: string): void;
+  _font_remove_language_support_override(font_rid: RID, language: string | NodePath): void;
   /** Removes script support override. */
-  _font_remove_script_support_override(font_rid: RID, script: string): void;
+  _font_remove_script_support_override(font_rid: RID, script: string | NodePath): void;
   /** Removes specified font size from the cache entry. */
   _font_remove_size_cache(font_rid: RID, size: Vector2i | Vector2): void;
   /** Removes specified texture from the cache entry. */
@@ -249,7 +249,7 @@ declare class TextServerExtension extends TextServer {
   /** Sets kerning for the pair of glyphs. */
   _font_set_kerning(font_rid: RID, size: int, glyph_pair: Vector2i | Vector2, kerning: Vector2 | Vector2i): void;
   /** Adds override for {@link _font_is_language_supported}. */
-  _font_set_language_support_override(font_rid: RID, language: string, supported: boolean): void;
+  _font_set_language_support_override(font_rid: RID, language: string | NodePath, supported: boolean): void;
   /**
    * If set to `true`, color modulation is applied when drawing colored glyphs, otherwise it's applied to the monochrome glyphs only.
    */
@@ -265,7 +265,7 @@ declare class TextServerExtension extends TextServer {
    */
   _font_set_multichannel_signed_distance_field(font_rid: RID, msdf: boolean): void;
   /** Sets the font family name. */
-  _font_set_name(font_rid: RID, name: string): void;
+  _font_set_name(font_rid: RID, name: string | NodePath): void;
   /** Sets font OpenType feature set override. */
   _font_set_opentype_feature_overrides(font_rid: RID, overrides: Dictionary): void;
   /**
@@ -275,7 +275,7 @@ declare class TextServerExtension extends TextServer {
   /** Sets scaling factor of the color bitmap font. */
   _font_set_scale(font_rid: RID, size: int, scale: float): void;
   /** Adds override for {@link _font_is_script_supported}. */
-  _font_set_script_support_override(font_rid: RID, script: string, supported: boolean): void;
+  _font_set_script_support_override(font_rid: RID, script: string | NodePath, supported: boolean): void;
   /** Sets the spacing for `spacing` to `value` in pixels (not relative to the font size). */
   _font_set_spacing(font_rid: RID, spacing: int, value: int): void;
   /** Sets font stretch amount, compared to a normal width. A percentage value between `50%` and `200%`. */
@@ -283,7 +283,7 @@ declare class TextServerExtension extends TextServer {
   /** Sets the font style flags. */
   _font_set_style(font_rid: RID, style: int): void;
   /** Sets the font style name. */
-  _font_set_style_name(font_rid: RID, name_style: string): void;
+  _font_set_style_name(font_rid: RID, name_style: string | NodePath): void;
   /** Sets font subpixel glyph positioning mode. */
   _font_set_subpixel_positioning(font_rid: RID, subpixel_positioning: int): void;
   /** Sets font cache texture image data. */
@@ -312,7 +312,7 @@ declare class TextServerExtension extends TextServer {
    * Converts a number from Western Arabic (0..9) to the numeral system used in the given `language`.
    * If `language` is an empty string, the active locale will be used.
    */
-  _format_number(number: string, language: string): string;
+  _format_number(number: string | NodePath, language: string | NodePath): string;
   /** Frees an object created by this {@link TextServer}. */
   _free_rid(rid: RID): void;
   /** Returns text server features, see {@link TextServer.Feature}. */
@@ -336,33 +336,33 @@ declare class TextServerExtension extends TextServer {
   /**
    * Returns index of the first string in `dict` which is visually confusable with the `string`, or `-1` if none is found.
    */
-  _is_confusable(string: string, dict: PackedStringArray | Array<unknown>): int;
+  _is_confusable(string: string | NodePath, dict: PackedStringArray | Array<unknown>): int;
   /** Returns `true` if locale is right-to-left. */
-  _is_locale_right_to_left(locale: string): boolean;
+  _is_locale_right_to_left(locale: string | NodePath): boolean;
   /** Returns `true` if the locale requires text server support data for line/word breaking. */
-  _is_locale_using_support_data(locale: string): boolean;
+  _is_locale_using_support_data(locale: string | NodePath): boolean;
   /** Returns `true` if `string` is a valid identifier. */
-  _is_valid_identifier(string: string): boolean;
+  _is_valid_identifier(string: string | NodePath): boolean;
   _is_valid_letter(unicode: int): boolean;
   /** Loads optional TextServer database (e.g. ICU break iterators and dictionaries). */
-  _load_support_data(filename: string): boolean;
+  _load_support_data(filename: string | NodePath): boolean;
   /** Converts the given readable name of a feature, variation, script, or language to an OpenType tag. */
-  _name_to_tag(name: string): int;
+  _name_to_tag(name: string | NodePath): int;
   /**
    * Converts `number` from the numeral system used in the given `language` to Western Arabic (0..9).
    * If `language` is an empty string, the active locale will be used.
    */
-  _parse_number(number: string, language: string): string;
+  _parse_number(number: string | NodePath, language: string | NodePath): string;
   /** Default implementation of the BiDi algorithm override function. */
-  _parse_structured_text(parser_type: int, args: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, text: string): Array<Vector3i>;
+  _parse_structured_text(parser_type: int, args: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, text: string | NodePath): Array<Vector3i>;
   /** Returns percent sign used in the given `language`. */
-  _percent_sign(language: string): string;
+  _percent_sign(language: string | NodePath): string;
   /**
    * Increases the reference count of the specified oversampling level. This method is called by {@link Viewport}, and should not be used directly.
    */
   _reference_oversampling_level(oversampling: float): void;
   /** Saves optional TextServer database (e.g. ICU break iterators and dictionaries) to the file. */
-  _save_support_data(filename: string): boolean;
+  _save_support_data(filename: string | NodePath): boolean;
   /** Returns the number of uniform text runs in the buffer. */
   _shaped_get_run_count(shaped: RID): int;
   /** Returns the direction of the `index` text run (in visual order). */
@@ -402,7 +402,7 @@ declare class TextServerExtension extends TextServer {
    */
   _shaped_text_add_object(shaped: RID, key: unknown, size: Vector2 | Vector2i, inline_align: int, length: int, baseline: float): boolean;
   /** Adds text span and font to draw it to the text buffer. */
-  _shaped_text_add_string(shaped: RID, text: string, fonts: Array<RID>, size: int, opentype_features: Dictionary, language: string, meta: unknown): boolean;
+  _shaped_text_add_string(shaped: RID, text: string | NodePath, fonts: Array<RID>, size: int, opentype_features: Dictionary, language: string | NodePath, meta: unknown): boolean;
   /** Clears text buffer (removes text and inline objects). */
   _shaped_text_clear(shaped: RID): void;
   /** Returns composite character position closest to the `pos`. */
@@ -528,7 +528,7 @@ declare class TextServerExtension extends TextServer {
   /**
    * Sets custom punctuation character list, used for word breaking. If set to empty string, server defaults are used.
    */
-  _shaped_text_set_custom_punctuation(shaped: RID, punct: string): void;
+  _shaped_text_set_custom_punctuation(shaped: RID, punct: string | NodePath): void;
   /**
    * Sets desired text direction. If set to {@link TextServer.DIRECTION_AUTO}, direction will be detected based on the buffer contents and current locale.
    */
@@ -562,21 +562,21 @@ declare class TextServerExtension extends TextServer {
    */
   _shaped_text_update_justification_ops(shaped: RID): boolean;
   /** Returns `true` if `string` is likely to be an attempt at confusing the reader. */
-  _spoof_check(string: string): boolean;
+  _spoof_check(string: string | NodePath): boolean;
   /** Returns array of the composite character boundaries. */
-  _string_get_character_breaks(string: string, language: string): PackedInt32Array;
+  _string_get_character_breaks(string: string | NodePath, language: string | NodePath): PackedInt32Array;
   /**
    * Returns an array of the word break boundaries. Elements in the returned array are the offsets of the start and end of words. Therefore the length of the array is always even.
    */
-  _string_get_word_breaks(string: string, language: string, chars_per_line: int): PackedInt32Array;
+  _string_get_word_breaks(string: string | NodePath, language: string | NodePath, chars_per_line: int): PackedInt32Array;
   /** Returns the string converted to `lowercase`. */
-  _string_to_lower(string: string, language: string): string;
+  _string_to_lower(string: string | NodePath, language: string | NodePath): string;
   /** Returns the string converted to `Title Case`. */
-  _string_to_title(string: string, language: string): string;
+  _string_to_title(string: string | NodePath, language: string | NodePath): string;
   /** Returns the string converted to `UPPERCASE`. */
-  _string_to_upper(string: string, language: string): string;
+  _string_to_upper(string: string | NodePath, language: string | NodePath): string;
   /** Strips diacritics from the string. */
-  _strip_diacritics(string: string): string;
+  _strip_diacritics(string: string | NodePath): string;
   /** Converts the given OpenType tag to the readable name of a feature, variation, script, or language. */
   _tag_to_name(tag: int): string;
   /**

@@ -82,22 +82,22 @@ declare class EditorNode3DGizmoPlugin extends Resource {
   /**
    * Adds a new material to the internal material list for the plugin. It can then be accessed with {@link get_material}. Should not be overridden.
    */
-  add_material(name: string, material: StandardMaterial3D): void;
+  add_material(name: string | NodePath, material: StandardMaterial3D): void;
   /**
    * Creates a handle material with its variants (selected and/or editable) and adds them to the internal material list. They can then be accessed with {@link get_material} and used in {@link EditorNode3DGizmo.add_handles}. Should not be overridden.
    * You can optionally provide a texture to use instead of the default icon.
    */
-  create_handle_material(name: string, billboard?: boolean, texture?: Texture2D): void;
+  create_handle_material(name: string | NodePath, billboard?: boolean, texture?: Texture2D): void;
   /**
    * Creates an icon material with its variants (selected and/or editable) and adds them to the internal material list. They can then be accessed with {@link get_material} and used in {@link EditorNode3DGizmo.add_unscaled_billboard}. Should not be overridden.
    */
-  create_icon_material(name: string, texture: Texture2D, on_top?: boolean, color?: Color): void;
+  create_icon_material(name: string | NodePath, texture: Texture2D, on_top?: boolean, color?: Color): void;
   /**
    * Creates an unshaded material with its variants (selected and/or editable) and adds them to the internal material list. They can then be accessed with {@link get_material} and used in {@link EditorNode3DGizmo.add_mesh} and {@link EditorNode3DGizmo.add_lines}. Should not be overridden.
    */
-  create_material(name: string, color: Color, billboard?: boolean, on_top?: boolean, use_vertex_color?: boolean): void;
+  create_material(name: string | NodePath, color: Color, billboard?: boolean, on_top?: boolean, use_vertex_color?: boolean): void;
   /**
    * Gets material from the internal list of materials. If an {@link EditorNode3DGizmo} is provided, it will try to get the corresponding variant (selected and/or editable).
    */
-  get_material(name: string, gizmo?: EditorNode3DGizmo): StandardMaterial3D | null;
+  get_material(name: string | NodePath, gizmo?: EditorNode3DGizmo): StandardMaterial3D | null;
 }

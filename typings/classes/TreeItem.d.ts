@@ -26,7 +26,7 @@ declare class TreeItem extends GodotObject {
   /**
    * Adds a button with {@link Texture2D} `button` to the end of the cell at column `column`. The `id` is used to identify the button in the according {@link Tree.button_clicked} signal and can be different from the buttons index. If not specified, the next available index is used, which may be retrieved by calling {@link get_button_count} immediately before this method. Optionally, the button can be `disabled` and have a `tooltip_text`. `description` is used as the button description for assistive apps.
    */
-  add_button(column: int, button: Texture2D, id?: int, disabled?: boolean, tooltip_text?: string, description?: string): void;
+  add_button(column: int, button: Texture2D, id?: int, disabled?: boolean, tooltip_text?: string | NodePath, description?: string | NodePath): void;
   /**
    * Adds a previously unparented {@link TreeItem} as a direct child of this one. The `child` item must not be a part of any {@link Tree} or parented to any {@link TreeItem}. See also {@link remove_child}.
    */
@@ -237,11 +237,11 @@ declare class TreeItem extends GodotObject {
   /** Sets the given column's button color at index `button_index` to `color`. */
   set_button_color(column: int, button_index: int, color: Color): void;
   /** Sets the given column's button description at index `button_index` for assistive apps. */
-  set_button_description(column: int, button_index: int, description: string): void;
+  set_button_description(column: int, button_index: int, description: string | NodePath): void;
   /** If `true`, disables the button at index `button_index` in the given `column`. */
   set_button_disabled(column: int, button_index: int, disabled: boolean): void;
   /** Sets the tooltip text for the button at index `button_index` in the given `column`. */
-  set_button_tooltip_text(column: int, button_index: int, tooltip: string): void;
+  set_button_tooltip_text(column: int, button_index: int, tooltip: string | NodePath): void;
   /** Sets the given column's cell mode to `mode`. This determines how the cell is displayed and edited. */
   set_cell_mode(column: int, mode: int): void;
   /** If `checked` is `true`, the given `column` is checked. Clears column's indeterminate status. */
@@ -277,7 +277,7 @@ declare class TreeItem extends GodotObject {
    */
   set_custom_stylebox(column: int, stylebox: StyleBox): void;
   /** Sets the given column's description for assistive apps. */
-  set_description(column: int, description: string): void;
+  set_description(column: int, description: string | NodePath): void;
   /**
    * If `multiline` is `true`, the given `column` is multiline editable.
    * **Note:** This option only affects the type of control ({@link LineEdit} or {@link TextEdit}) that appears when editing the column. You can set multiline values with {@link set_text} even if the column is not multiline editable.
@@ -311,7 +311,7 @@ declare class TreeItem extends GodotObject {
   /**
    * Sets the language code of the given `column`'s text to `language`. This is used for line-breaking and text shaping algorithms. If `language` is empty, the current locale is used.
    */
-  set_language(column: int, language: string): void;
+  set_language(column: int, language: string | NodePath): void;
   /**
    * Sets the metadata value for the given column, which can be retrieved later using {@link get_metadata}. This can be used, for example, to store a reference to the original data.
    */
@@ -330,9 +330,9 @@ declare class TreeItem extends GodotObject {
   /** Set additional options for BiDi override. Has effect for cells that display text. */
   set_structured_text_bidi_override_options(column: int, args: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /** Sets a string to be shown after a column's value (for example, a unit abbreviation). */
-  set_suffix(column: int, text: string): void;
+  set_suffix(column: int, text: string | NodePath): void;
   /** Sets the given column's text value. */
-  set_text(column: int, text: string): void;
+  set_text(column: int, text: string | NodePath): void;
   /** Sets the given column's text alignment to `text_alignment`. */
   set_text_alignment(column: int, text_alignment: int): void;
   /** Sets item's text base writing direction. */
@@ -342,7 +342,7 @@ declare class TreeItem extends GodotObject {
    */
   set_text_overrun_behavior(column: int, overrun_behavior: int): void;
   /** Sets the given column's tooltip text. */
-  set_tooltip_text(column: int, tooltip: string): void;
+  set_tooltip_text(column: int, tooltip: string | NodePath): void;
   /**
    * Uncollapses all {@link TreeItem}s necessary to reveal this {@link TreeItem}, i.e. all ancestor {@link TreeItem}s.
    */

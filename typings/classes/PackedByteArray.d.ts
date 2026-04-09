@@ -173,7 +173,7 @@ declare interface PackedByteArray {
    * - For Windows, see Code Page Identifiers (https://learn.microsoft.com/en-us/windows/win32/Intl/code-page-identifiers) .NET names.
    * - For macOS and Linux/BSD, see `libiconv` library documentation and `iconv --list` for a list of supported encodings.
    */
-  get_string_from_multibyte_char(encoding?: string): string;
+  get_string_from_multibyte_char(encoding?: string | NodePath): string;
   /**
    * Converts UTF-8 encoded array to {@link String}. Slower than {@link get_string_from_ascii} but supports UTF-8 encoded data. Use this function if you are unsure about the source of the data. For user input this function should always be preferred. Returns empty string if source array is not valid UTF-8 string. This is the inverse of {@link String.to_utf8_buffer}.
    */

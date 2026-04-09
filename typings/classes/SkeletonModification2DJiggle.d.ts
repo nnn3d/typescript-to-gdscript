@@ -22,7 +22,7 @@ declare class SkeletonModification2DJiggle extends SkeletonModification2D {
   /**
    * The NodePath to the node that is the target for the Jiggle modification. This node is what the Jiggle chain will attempt to rotate the bone chain to.
    */
-  target_nodepath: string;
+  target_nodepath: NodePath;
   /**
    * Whether the gravity vector, {@link gravity}, should be applied to the Jiggle joints, assuming they are not overriding the default settings.
    */
@@ -37,15 +37,15 @@ declare class SkeletonModification2DJiggle extends SkeletonModification2D {
   get_mass(): float;
   set_stiffness(value: float): void;
   get_stiffness(): float;
-  set_target_node(value: string): void;
-  get_target_node(): string;
+  set_target_node(value: NodePath | string): void;
+  get_target_node(): NodePath;
   set_use_gravity(value: boolean): void;
   get_use_gravity(): boolean;
 
   /** Returns the collision mask used by the Jiggle modifier when collisions are enabled. */
   get_collision_mask(): int;
   /** Returns the {@link Bone2D} node assigned to the Jiggle joint at `joint_idx`. */
-  get_jiggle_joint_bone2d_node(joint_idx: int): string;
+  get_jiggle_joint_bone2d_node(joint_idx: int): NodePath;
   /** Returns the index of the {@link Bone2D} node assigned to the Jiggle joint at `joint_idx`. */
   get_jiggle_joint_bone_index(joint_idx: int): int;
   /** Returns the amount of damping of the Jiggle joint at `joint_idx`. */
@@ -71,7 +71,7 @@ declare class SkeletonModification2DJiggle extends SkeletonModification2D {
    */
   set_collision_mask(collision_mask: int): void;
   /** Sets the {@link Bone2D} node assigned to the Jiggle joint at `joint_idx`. */
-  set_jiggle_joint_bone2d_node(joint_idx: int, bone2d_node: string): void;
+  set_jiggle_joint_bone2d_node(joint_idx: int, bone2d_node: NodePath | string): void;
   /**
    * Sets the bone index, `bone_idx`, of the Jiggle joint at `joint_idx`. When possible, this will also update the `bone2d_node` of the Jiggle joint based on data provided by the linked skeleton.
    */

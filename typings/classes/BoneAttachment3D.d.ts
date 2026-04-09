@@ -10,7 +10,7 @@ declare class BoneAttachment3D extends Node3D {
   /** The name of the attached bone. */
   bone_name: string;
   /** The {@link NodePath} to the external {@link Skeleton3D} node. */
-  external_skeleton: string;
+  external_skeleton: NodePath;
   /**
    * Whether the {@link BoneAttachment3D} node will override the bone pose of the bone it is attached to. When set to `true`, the {@link BoneAttachment3D} node can change the pose of the bone. When set to `false`, the {@link BoneAttachment3D} will always be set to the bone's transform.
    * **Note:** This override performs interruptively in the skeleton update process using signals due to the old design. It may cause unintended behavior when used at the same time with {@link SkeletonModifier3D}.
@@ -23,10 +23,10 @@ declare class BoneAttachment3D extends Node3D {
   physics_interpolation_mode: int;
   set_bone_idx(value: int): void;
   get_bone_idx(): int;
-  set_bone_name(value: string): void;
+  set_bone_name(value: string | NodePath): void;
   get_bone_name(): string;
-  set_external_skeleton(value: string): void;
-  get_external_skeleton(): string;
+  set_external_skeleton(value: NodePath | string): void;
+  get_external_skeleton(): NodePath;
   set_override_pose(value: boolean): void;
   get_override_pose(): boolean;
 

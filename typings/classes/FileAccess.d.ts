@@ -23,7 +23,7 @@ declare class FileAccess extends RefCounted {
    * If `keep` is `true`, the file is not deleted when the returned {@link FileAccess} is freed.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static create_temp(mode_flags: int, prefix?: string, extension?: string, keep?: boolean): FileAccess | null;
+  static create_temp(mode_flags: int, prefix?: string | NodePath, extension?: string | NodePath, keep?: boolean): FileAccess | null;
   /**
    * Returns `true` if the file cursor has already read past the end of the file.
    * **Note:** `eof_reached() == false` cannot be used to check whether there is more data available. To loop while there is more data available, use:
@@ -34,7 +34,7 @@ declare class FileAccess extends RefCounted {
    * **Note:** Many resources types are imported (e.g. textures or sound files), and their source asset will not be included in the exported game, as only the imported version is used. See {@link ResourceLoader.exists} for an alternative approach that takes resource remapping into account.
    * For a non-static, relative equivalent, use {@link DirAccess.file_exists}.
    */
-  static file_exists(path: string): boolean;
+  static file_exists(path: string | NodePath): boolean;
   /**
    * Writes the file's buffer to disk. Flushing is automatically performed when the file is closed. This means you don't need to call {@link flush} manually before closing a file. Still, calling {@link flush} can be used to ensure the data is safe even if the project crashes instead of being closed gracefully.
    * **Note:** Only call {@link flush} when you actually need it. Otherwise, it will decrease performance due to constant disk writes.
@@ -59,7 +59,7 @@ declare class FileAccess extends RefCounted {
   /**
    * Returns the last time the `file` was accessed in Unix timestamp format, or `0` on error. This Unix timestamp can be converted to another format using the {@link Time} singleton.
    */
-  static get_access_time(file: string): int;
+  static get_access_time(file: string | NodePath): int;
   /**
    * Returns the whole file as a {@link String}. Text is interpreted as being UTF-8 encoded. This ignores the file cursor and does not affect it.
    */
@@ -79,7 +79,7 @@ declare class FileAccess extends RefCounted {
    * [/codeblock]
    * Note how the second line can omit the enclosing quotes as it does not include the delimiter. However it *could* very well use quotes, it was only written without for demonstration purposes. The third line must use `""` for each quotation mark that needs to be interpreted as such instead of the end of a text value.
    */
-  get_csv_line(delim?: string): PackedStringArray;
+  get_csv_line(delim?: string | NodePath): PackedStringArray;
   /**
    * Returns the next 64 bits from the file as a floating-point number. This advances the file cursor by 8 bytes.
    */
@@ -95,7 +95,7 @@ declare class FileAccess extends RefCounted {
    * **Note:** On Linux, only "user" namespace attributes are accessible, namespace prefix should not be included.
    * **Note:** On Windows, alternate data streams are used to store extended attributes.
    */
-  static get_extended_attribute(file: string, attribute_name: string): PackedByteArray;
+  static get_extended_attribute(file: string | NodePath, attribute_name: string | NodePath): PackedByteArray;
   /**
    * Reads the file extended attribute with name `attribute_name` as a UTF-8 encoded string.
    * **Note:** This method is implemented on Linux, macOS, and Windows.
@@ -103,7 +103,7 @@ declare class FileAccess extends RefCounted {
    * **Note:** On Linux, only "user" namespace attributes are accessible, namespace prefix should not be included.
    * **Note:** On Windows, alternate data streams are used to store extended attributes.
    */
-  static get_extended_attribute_string(file: string, attribute_name: string): string;
+  static get_extended_attribute_string(file: string | NodePath, attribute_name: string | NodePath): string;
   /**
    * Returns a list of file extended attributes.
    * **Note:** This method is implemented on Linux, macOS, and Windows.
@@ -111,17 +111,17 @@ declare class FileAccess extends RefCounted {
    * **Note:** On Linux, only "user" namespace attributes are accessible, namespace prefix should not be included.
    * **Note:** On Windows, alternate data streams are used to store extended attributes.
    */
-  static get_extended_attributes_list(file: string): PackedStringArray;
+  static get_extended_attributes_list(file: string | NodePath): PackedStringArray;
   /**
    * Returns the whole `path` file contents as a {@link PackedByteArray} without any decoding.
    * Returns an empty {@link PackedByteArray} if an error occurred while opening the file. You can use {@link get_open_error} to check the error that occurred.
    */
-  static get_file_as_bytes(path: string): PackedByteArray;
+  static get_file_as_bytes(path: string | NodePath): PackedByteArray;
   /**
    * Returns the whole `path` file contents as a {@link String}. Text is interpreted as being UTF-8 encoded.
    * Returns an empty {@link String} if an error occurred while opening the file. You can use {@link get_open_error} to check the error that occurred.
    */
-  static get_file_as_string(path: string): string;
+  static get_file_as_string(path: string | NodePath): string;
   /**
    * Returns the next 32 bits from the file as a floating-point number. This advances the file cursor by 4 bytes.
    */
@@ -134,7 +134,7 @@ declare class FileAccess extends RefCounted {
    * Returns `true` if the **hidden** attribute is set on the file at the given path.
    * **Note:** This method is implemented on iOS, BSD, macOS, and Windows.
    */
-  static get_hidden_attribute(file: string): boolean;
+  static get_hidden_attribute(file: string | NodePath): boolean;
   /**
    * Returns the size of the file in bytes. For a pipe, returns the number of bytes available for reading from the pipe.
    */
@@ -147,11 +147,11 @@ declare class FileAccess extends RefCounted {
   /**
    * Returns an MD5 String representing the file at the given path or an empty {@link String} on failure.
    */
-  static get_md5(path: string): string;
+  static get_md5(path: string | NodePath): string;
   /**
    * Returns the last time the `file` was modified in Unix timestamp format, or `0` on error. This Unix timestamp can be converted to another format using the {@link Time} singleton.
    */
-  static get_modified_time(file: string): int;
+  static get_modified_time(file: string | NodePath): int;
   /** Returns the result of the last {@link open} call in the current thread. */
   static get_open_error(): int;
   /**
@@ -171,7 +171,7 @@ declare class FileAccess extends RefCounted {
    * Returns `true` if the **read only** attribute is set on the file at the given path.
    * **Note:** This method is implemented on iOS, BSD, macOS, and Windows.
    */
-  static get_read_only_attribute(file: string): boolean;
+  static get_read_only_attribute(file: string | NodePath): boolean;
   /**
    * Returns the next bits from the file as a floating-point number. This advances the file cursor by either 4 or 8 bytes, depending on the precision used by the Godot build that saved the file.
    * If the file was saved by a Godot build compiled with the `precision=single` option (the default), the number of read bits for that file is 32. Otherwise, if compiled with the `precision=double` option, the number of read bits is 64.
@@ -180,14 +180,14 @@ declare class FileAccess extends RefCounted {
   /**
    * Returns an SHA-256 {@link String} representing the file at the given path or an empty {@link String} on failure.
    */
-  static get_sha256(path: string): string;
+  static get_sha256(path: string | NodePath): string;
   /** Returns the size of the file at the given path, in bytes, or `-1` on error. */
-  static get_size(file: string): int;
+  static get_size(file: string | NodePath): int;
   /**
    * Returns the UNIX permissions of the file at the given path.
    * **Note:** This method is implemented on iOS, Linux/BSD, and macOS.
    */
-  static get_unix_permissions(file: string): int;
+  static get_unix_permissions(file: string | NodePath): int;
   /**
    * Returns the next {@link Variant} value from the file. If `allow_objects` is `true`, decoding objects is allowed. This advances the file cursor by the number of bytes read.
    * Internally, this uses the same decoding mechanism as the {@link @GlobalScope.bytes_to_var} method, as described in the Binary serialization API ($DOCS_URL/tutorials/io/binary_serialization_api.html) documentation.
@@ -200,24 +200,24 @@ declare class FileAccess extends RefCounted {
    * Creates a new {@link FileAccess} object and opens the file for writing or reading, depending on the flags.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static open(path: string, flags: int): FileAccess | null;
+  static open(path: string | NodePath, flags: int): FileAccess | null;
   /**
    * Creates a new {@link FileAccess} object and opens a compressed file for reading or writing.
    * **Note:** {@link open_compressed} can only read files that were saved by Godot, not third-party compression formats. See GitHub issue #28999 (https://github.com/godotengine/godot/issues/28999) for a workaround.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static open_compressed(path: string, mode_flags: int, compression_mode: int): FileAccess | null;
+  static open_compressed(path: string | NodePath, mode_flags: int, compression_mode: int): FileAccess | null;
   /**
    * Creates a new {@link FileAccess} object and opens an encrypted file in write or read mode. You need to pass a binary key to encrypt/decrypt it.
    * **Note:** The provided key must be 32 bytes long.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static open_encrypted(path: string, mode_flags: int, key: PackedByteArray | Array<unknown>, iv?: PackedByteArray | Array<unknown>): FileAccess | null;
+  static open_encrypted(path: string | NodePath, mode_flags: int, key: PackedByteArray | Array<unknown>, iv?: PackedByteArray | Array<unknown>): FileAccess | null;
   /**
    * Creates a new {@link FileAccess} object and opens an encrypted file in write or read mode. You need to pass a password to encrypt/decrypt it.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static open_encrypted_with_pass(path: string, mode_flags: int, pass: string): FileAccess | null;
+  static open_encrypted_with_pass(path: string | NodePath, mode_flags: int, pass: string | NodePath): FileAccess | null;
   /**
    * Removes file extended attribute with name `attribute_name`.
    * **Note:** This method is implemented on Linux, macOS, and Windows.
@@ -225,7 +225,7 @@ declare class FileAccess extends RefCounted {
    * **Note:** On Linux, only "user" namespace attributes are accessible, namespace prefix should not be included.
    * **Note:** On Windows, alternate data streams are used to store extended attributes.
    */
-  static remove_extended_attribute(file: string, attribute_name: string): int;
+  static remove_extended_attribute(file: string | NodePath, attribute_name: string | NodePath): int;
   /**
    * Resizes the file to a specified length. The file must be open in a mode that permits writing. If the file is extended, NUL characters are appended. If the file is truncated, all data from the end file to the original length of the file is lost.
    */
@@ -246,7 +246,7 @@ declare class FileAccess extends RefCounted {
    * **Note:** On Linux, only "user" namespace attributes are accessible, namespace prefix should not be included.
    * **Note:** On Windows, alternate data streams are used to store extended attributes.
    */
-  static set_extended_attribute(file: string, attribute_name: string, data: PackedByteArray | Array<unknown>): int;
+  static set_extended_attribute(file: string | NodePath, attribute_name: string | NodePath, data: PackedByteArray | Array<unknown>): int;
   /**
    * Writes file extended attribute with name `attribute_name` as a UTF-8 encoded string.
    * **Note:** This method is implemented on Linux, macOS, and Windows.
@@ -254,22 +254,22 @@ declare class FileAccess extends RefCounted {
    * **Note:** On Linux, only "user" namespace attributes are accessible, namespace prefix should not be included.
    * **Note:** On Windows, alternate data streams are used to store extended attributes.
    */
-  static set_extended_attribute_string(file: string, attribute_name: string, data: string): int;
+  static set_extended_attribute_string(file: string | NodePath, attribute_name: string | NodePath, data: string | NodePath): int;
   /**
    * Sets file **hidden** attribute.
    * **Note:** This method is implemented on iOS, BSD, macOS, and Windows.
    */
-  static set_hidden_attribute(file: string, hidden: boolean): int;
+  static set_hidden_attribute(file: string | NodePath, hidden: boolean): int;
   /**
    * Sets file **read only** attribute.
    * **Note:** This method is implemented on iOS, BSD, macOS, and Windows.
    */
-  static set_read_only_attribute(file: string, ro: boolean): int;
+  static set_read_only_attribute(file: string | NodePath, ro: boolean): int;
   /**
    * Sets file UNIX permissions.
    * **Note:** This method is implemented on iOS, Linux/BSD, and macOS.
    */
-  static set_unix_permissions(file: string, permissions: int): int;
+  static set_unix_permissions(file: string | NodePath, permissions: int): int;
   /**
    * Stores an integer as 8 bits in the file. This advances the file cursor by 1 byte. Returns `true` if the operation is successful.
    * **Note:** The `value` should lie in the interval `[0, 255]`. Any other value will overflow and wrap around.
@@ -307,7 +307,7 @@ declare class FileAccess extends RefCounted {
    * Text will be encoded as UTF-8. Returns `true` if the operation is successful.
    * **Note:** If an error occurs, the resulting value of the file position indicator is indeterminate.
    */
-  store_csv_line(values: PackedStringArray | Array<unknown>, delim?: string): boolean;
+  store_csv_line(values: PackedStringArray | Array<unknown>, delim?: string | NodePath): boolean;
   /**
    * Stores a floating-point number as 64 bits in the file. This advances the file cursor by 8 bytes. Returns `true` if the operation is successful.
    * **Note:** If an error occurs, the resulting value of the file position indicator is indeterminate.
@@ -327,12 +327,12 @@ declare class FileAccess extends RefCounted {
    * Stores `line` in the file followed by a newline character (`\n`), encoding the text as UTF-8. This advances the file cursor by the length of the line, after the newline character. The amount of bytes written depends on the UTF-8 encoded bytes, which may be different from {@link String.length} which counts the number of UTF-32 codepoints. Returns `true` if the operation is successful.
    * **Note:** If an error occurs, the resulting value of the file position indicator is indeterminate.
    */
-  store_line(line: string): boolean;
+  store_line(line: string | NodePath): boolean;
   /**
    * Stores the given {@link String} as a line in the file in Pascal format (i.e. also store the length of the string). Text will be encoded as UTF-8. This advances the file cursor by the number of bytes written depending on the UTF-8 encoded bytes, which may be different from {@link String.length} which counts the number of UTF-32 codepoints. Returns `true` if the operation is successful.
    * **Note:** If an error occurs, the resulting value of the file position indicator is indeterminate.
    */
-  store_pascal_string(string: string): boolean;
+  store_pascal_string(string: string | NodePath): boolean;
   /**
    * Stores a floating-point number in the file. This advances the file cursor by either 4 or 8 bytes, depending on the precision used by the current Godot build.
    * If using a Godot build compiled with the `precision=single` option (the default), this method will save a 32-bit float. Otherwise, if compiled with the `precision=double` option, this will save a 64-bit float. Returns `true` if the operation is successful.
@@ -344,7 +344,7 @@ declare class FileAccess extends RefCounted {
    * **Note:** This method is intended to be used to write text files. The string is stored as a UTF-8 encoded buffer without string length or terminating zero, which means that it can't be loaded back easily. If you want to store a retrievable string in a binary file, consider using {@link store_pascal_string} instead. For retrieving strings from a text file, you can use `get_buffer(length).get_string_from_utf8()` (if you know the length) or {@link get_as_text}.
    * **Note:** If an error occurs, the resulting value of the file position indicator is indeterminate.
    */
-  store_string(string: string): boolean;
+  store_string(string: string | NodePath): boolean;
   /**
    * Stores any Variant value in the file. If `full_objects` is `true`, encoding objects is allowed (and can potentially include code). This advances the file cursor by the number of bytes written. Returns `true` if the operation is successful.
    * Internally, this uses the same encoding mechanism as the {@link @GlobalScope.var_to_bytes} method, as described in the Binary serialization API ($DOCS_URL/tutorials/io/binary_serialization_api.html) documentation.

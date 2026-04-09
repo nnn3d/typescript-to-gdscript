@@ -17,11 +17,11 @@ declare class XMLParser extends RefCounted {
   /**
    * Returns the value of an attribute of the currently parsed element, specified by its `name`. This method will raise an error if the element has no such attribute.
    */
-  get_named_attribute_value(name: string): string;
+  get_named_attribute_value(name: string | NodePath): string;
   /**
    * Returns the value of an attribute of the currently parsed element, specified by its `name`. This method will return an empty string if the element has no such attribute.
    */
-  get_named_attribute_value_safe(name: string): string;
+  get_named_attribute_value_safe(name: string | NodePath): string;
   /**
    * Returns the contents of a text node. This method will raise an error if the current parsed node is of any other type.
    */
@@ -38,11 +38,11 @@ declare class XMLParser extends RefCounted {
   /** Returns the type of the current node. Compare with {@link NodeType} constants. */
   get_node_type(): int;
   /** Returns `true` if the currently parsed element has an attribute with the `name`. */
-  has_attribute(name: string): boolean;
+  has_attribute(name: string | NodePath): boolean;
   /** Returns `true` if the currently parsed element is empty, e.g. `<element />`. */
   is_empty(): boolean;
   /** Opens an XML `file` for parsing. This method returns an error code. */
-  open(file: string): int;
+  open(file: string | NodePath): int;
   /** Opens an XML raw `buffer` for parsing. This method returns an error code. */
   open_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /** Parses the next node in the file. This method returns an error code. */

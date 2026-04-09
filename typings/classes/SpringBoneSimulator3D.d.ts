@@ -43,7 +43,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /** Returns what the center originates from in the bone chain. */
   get_center_from(index: int): int;
   /** Returns the center node path of the bone chain. */
-  get_center_node(index: int): string;
+  get_center_node(index: int): NodePath;
   /**
    * Returns the collision count of the bone chain's collision list when {@link are_all_child_collisions_enabled} is `false`.
    */
@@ -51,7 +51,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /**
    * Returns the node path of the {@link SpringBoneCollision3D} at `collision` in the bone chain's collision list when {@link are_all_child_collisions_enabled} is `false`.
    */
-  get_collision_path(index: int, collision: int): string;
+  get_collision_path(index: int, collision: int): NodePath;
   /** Returns the drag force damping curve of the bone chain. */
   get_drag(index: int): float;
   /** Returns the drag force damping curve of the bone chain. */
@@ -73,7 +73,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /**
    * Returns the node path of the {@link SpringBoneCollision3D} at `collision` in the bone chain's exclude collision list when {@link are_all_child_collisions_enabled} is `true`.
    */
-  get_exclude_collision_path(index: int, collision: int): string;
+  get_exclude_collision_path(index: int, collision: int): NodePath;
   /** Returns the gravity amount of the bone chain. */
   get_gravity(index: int): float;
   /** Returns the gravity amount damping curve of the bone chain. */
@@ -134,7 +134,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /** Sets the center bone index of the bone chain. */
   set_center_bone(index: int, bone: int): void;
   /** Sets the center bone name of the bone chain. */
-  set_center_bone_name(index: int, bone_name: string): void;
+  set_center_bone_name(index: int, bone_name: string | NodePath): void;
   /**
    * Sets what the center originates from in the bone chain.
    * Bone movement is calculated based on the difference in relative distance between center and bone in the previous and next frames.
@@ -143,7 +143,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
    */
   set_center_from(index: int, center_from: int): void;
   /** Sets the center node path of the bone chain. */
-  set_center_node(index: int, node_path: string): void;
+  set_center_node(index: int, node_path: NodePath | string): void;
   /**
    * Sets the number of collisions in the collision list at `index` in the settings when {@link are_all_child_collisions_enabled} is `false`.
    */
@@ -151,7 +151,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /**
    * Sets the node path of the {@link SpringBoneCollision3D} at `collision` in the bone chain's collision list when {@link are_all_child_collisions_enabled} is `false`.
    */
-  set_collision_path(index: int, collision: int, node_path: string): void;
+  set_collision_path(index: int, collision: int, node_path: NodePath | string): void;
   /**
    * Sets the drag force of the bone chain. The greater the value, the more suppressed the wiggling.
    * The value is scaled by {@link set_drag_damping_curve} and cached in each joint setting in the joint list.
@@ -174,7 +174,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
    * Sets the end bone name of the bone chain.
    * **Note:** End bone must be the root bone or a child of the root bone. If they are the same, the tail must be extended by {@link set_extend_end_bone} to jiggle the bone.
    */
-  set_end_bone_name(index: int, bone_name: string): void;
+  set_end_bone_name(index: int, bone_name: string | NodePath): void;
   /**
    * Sets the number of exclude collisions in the exclude collision list at `index` in the settings when {@link are_all_child_collisions_enabled} is `true`.
    */
@@ -182,7 +182,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /**
    * Sets the node path of the {@link SpringBoneCollision3D} at `collision` in the bone chain's exclude collision list when {@link are_all_child_collisions_enabled} is `true`.
    */
-  set_exclude_collision_path(index: int, collision: int, node_path: string): void;
+  set_exclude_collision_path(index: int, collision: int, node_path: NodePath | string): void;
   /**
    * If `enabled` is `true`, the end bone is extended to have a tail.
    * The extended tail config is allocated to the last element in the joint list. In other words, if you set `enabled` to `false`, the config of the last element in the joint list has no effect in the simulated result.
@@ -245,7 +245,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /** Sets the root bone index of the bone chain. */
   set_root_bone(index: int, bone: int): void;
   /** Sets the root bone name of the bone chain. */
-  set_root_bone_name(index: int, bone_name: string): void;
+  set_root_bone_name(index: int, bone_name: string | NodePath): void;
   /**
    * Sets the rotation axis of the bone chain. If set to a specific axis, it acts like a hinge joint. The value is cached in each joint setting in the joint list.
    * The axes are based on the {@link Skeleton3D.get_bone_rest}'s space, if `axis` is {@link SkeletonModifier3D.ROTATION_AXIS_CUSTOM}, you can specify any axis.

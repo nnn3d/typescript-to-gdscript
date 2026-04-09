@@ -15,9 +15,9 @@ declare class MissingNode extends Node {
    * If `true`, allows new signals to be connected to along with existing ones. If `false`, only existing signals can be connected to, and new signals cannot be added.
    */
   recording_signals: boolean;
-  set_original_class(value: string): void;
+  set_original_class(value: string | NodePath): void;
   get_original_class(): string;
-  set_original_scene(value: string): void;
+  set_original_scene(value: string | NodePath): void;
   get_original_scene(): string;
   set_recording_properties(value: boolean): void;
   is_recording_properties(): boolean;

@@ -5,7 +5,7 @@ declare class ImporterMeshInstance3D extends Node3D {
   cast_shadow: int;
   layer_mask: int;
   mesh: ImporterMesh | null;
-  skeleton_path: string;
+  skeleton_path: NodePath;
   skin: Skin | null;
   visibility_range_begin: float;
   visibility_range_begin_margin: float;
@@ -18,8 +18,8 @@ declare class ImporterMeshInstance3D extends Node3D {
   get_layer_mask(): int;
   set_mesh(value: ImporterMesh | null): void;
   get_mesh(): ImporterMesh | null;
-  set_skeleton_path(value: string): void;
-  get_skeleton_path(): string;
+  set_skeleton_path(value: NodePath | string): void;
+  get_skeleton_path(): NodePath;
   set_skin(value: Skin | null): void;
   get_skin(): Skin | null;
   set_visibility_range_begin(value: float): void;

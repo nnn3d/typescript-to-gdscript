@@ -401,7 +401,7 @@ declare class Viewport extends Node {
    */
   gui_release_focus(): void;
   /** Sets the human-readable description of the drag data to `description`, used for assistive apps. */
-  gui_set_drag_description(description: string): void;
+  gui_set_drag_description(description: string | NodePath): void;
   /**
    * Returns whether the current {@link InputEvent} has been handled. Input events are not handled until {@link set_input_as_handled} has been called during the lifetime of an {@link InputEvent}.
    * This is usually done as part of input handling methods like {@link Node._input}, {@link Control._gui_input} or others, as well as in corresponding signal handlers.
@@ -435,7 +435,7 @@ declare class Viewport extends Node {
   /**
    * Helper method which calls the `set_text()` method on the currently focused {@link Control}, provided that it is defined (e.g. if the focused Control is {@link Button} or {@link LineEdit}).
    */
-  push_text_input(text: string): void;
+  push_text_input(text: string | NodePath): void;
   /**
    * Triggers the given `event` in this {@link Viewport}. This can be used to pass an {@link InputEvent} between viewports, or to locally apply inputs that were sent over the network or saved to a file.
    * If `in_local_coords` is `false`, the event's position is in the embedder's coordinates and will be converted to viewport coordinates. If `in_local_coords` is `true`, the event's position is in viewport coordinates.

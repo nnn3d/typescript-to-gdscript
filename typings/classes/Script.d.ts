@@ -7,7 +7,7 @@ declare class Script extends Resource {
    * The script source code or an empty string if source code is not available. When set, does not reload the class implementation automatically.
    */
   source_code: string;
-  set_source_code(value: string): void;
+  set_source_code(value: string | NodePath): void;
   get_source_code(): string;
 
   /** Returns `true` if the script can be instantiated. */

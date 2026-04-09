@@ -106,7 +106,7 @@ declare class ItemList extends Control {
    * Specify an `icon`, or use `null` as the `icon` for a list item with no icon.
    * If `selectable` is `true`, the list item will be selectable.
    */
-  add_item(text: string, icon?: Texture2D, selectable?: boolean): int;
+  add_item(text: string | NodePath, icon?: Texture2D, selectable?: boolean): int;
   /**
    * Ensures the currently selected item (the first selected item if multiple selection is enabled) is visible, adjusting the scroll position as necessary to place the item at the center of the list if possible. See also {@link ensure_current_is_visible}.
    * Fails and prints an error if both arguments are `false`.
@@ -217,17 +217,17 @@ declare class ItemList extends Control {
   /**
    * Sets the language code of the text for the item at the given index to `language`. This is used for line-breaking and text shaping algorithms. If `language` is empty, the current locale is used.
    */
-  set_item_language(idx: int, language: string): void;
+  set_item_language(idx: int, language: string | NodePath): void;
   /** Sets a value (of any type) to be stored with the item associated with the specified index. */
   set_item_metadata(idx: int, metadata: unknown): void;
   /** Allows or disallows selection of the item associated with the specified index. */
   set_item_selectable(idx: int, selectable: boolean): void;
   /** Sets text of the item associated with the specified index. */
-  set_item_text(idx: int, text: string): void;
+  set_item_text(idx: int, text: string | NodePath): void;
   /** Sets item's text base writing direction. */
   set_item_text_direction(idx: int, direction: int): void;
   /** Sets the tooltip hint for the item associated with the specified index. */
-  set_item_tooltip(idx: int, tooltip: string): void;
+  set_item_tooltip(idx: int, tooltip: string | NodePath): void;
   /** Sets whether the tooltip hint is enabled for specified item index. */
   set_item_tooltip_enabled(idx: int, enable: boolean): void;
   /** Sorts items in the list by their text. */

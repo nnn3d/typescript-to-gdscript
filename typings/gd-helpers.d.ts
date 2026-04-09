@@ -28,9 +28,6 @@ declare function String(from?: unknown): string;
 /** Global helper for StringName */
 declare function StringName(value: string): string;
 
-/** Global helper for NodePath */
-declare function NodePath(value: string): string;
-
 // ─── Node Tree Symbols ───────────────────────────────────────
 // Used by scene typings to encode parent-child relationships in Node<Tree> generics.
 

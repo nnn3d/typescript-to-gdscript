@@ -126,7 +126,7 @@ declare class Animation extends Resource {
   /** Adds a new track to `to_animation` that is a copy of the given track from this animation. */
   copy_track(track_idx: int, to_animation: Animation): void;
   /** Returns the index of the specified track. If the track is not found, return -1. */
-  find_track(path: string, type_: int): int;
+  find_track(path: NodePath | string, type_: int): int;
   /** Returns the name of the marker located at the given time. */
   get_marker_at_time(time: float): string;
   /** Returns the given marker's color. */
@@ -203,7 +203,7 @@ declare class Animation extends Resource {
   /** Returns the value of a given key in a given track. */
   track_get_key_value(track_idx: int, key_idx: int): unknown;
   /** Gets the path of a track. For more information on the path format, see {@link track_set_path}. */
-  track_get_path(track_idx: int): string;
+  track_get_path(track_idx: int): NodePath;
   /** Gets the type of a track. */
   track_get_type(track_idx: int): int;
   /** Inserts a generic key in a given track. Returns the key index. */
@@ -244,7 +244,7 @@ declare class Animation extends Resource {
    * Sets the path of a track. Paths must be valid scene-tree paths to a node and must be specified starting from the {@link AnimationMixer.root_node} that will reproduce the animation. Tracks that control properties or bones must append their name after the path, separated by `":"`.
    * For example, `"character/skeleton:ankle"` or `"character/mesh:transform/local"`.
    */
-  track_set_path(track_idx: int, path: string): void;
+  track_set_path(track_idx: int, path: NodePath | string): void;
   /** Swaps the track `track_idx`'s index position with the track `with_idx`. */
   track_swap(track_idx: int, with_idx: int): void;
   /** Returns the update mode of a value track. */

@@ -11,7 +11,7 @@ declare class VisualShader extends Shader {
   /** Adds the specified `node` to the shader. */
   add_node(type_: int, node: VisualShaderNode, position: Vector2 | Vector2i, id: int): void;
   /** Adds a new varying value node to the shader. */
-  add_varying(name: string, mode: int, type_: int): void;
+  add_varying(name: string | NodePath, mode: int, type_: int): void;
   /** Attaches the given node to the given frame. */
   attach_node_to_frame(type_: int, id: int, frame: int): void;
   /** Returns `true` if the specified nodes and ports can be connected together. */
@@ -37,7 +37,7 @@ declare class VisualShader extends Shader {
   /** Returns next valid node ID that can be added to the shader graph. */
   get_valid_node_id(type_: int): int;
   /** Returns `true` if the shader has a varying with the given `name`. */
-  has_varying(name: string): boolean;
+  has_varying(name: string | NodePath): boolean;
   /** Returns `true` if the specified node and port connection exist. */
   is_node_connection(type_: int, from_node: int, from_port: int, to_node: int, to_port: int): boolean;
   /** Removes the specified node from the shader. */
@@ -45,7 +45,7 @@ declare class VisualShader extends Shader {
   /**
    * Removes a varying value node with the given `name`. Prints an error if a node with this name is not found.
    */
-  remove_varying(name: string): void;
+  remove_varying(name: string | NodePath): void;
   /** Replaces the specified node with a node of new class type. */
   replace_node(type_: int, id: int, new_class: string): void;
   /** Sets the mode of this shader. */

@@ -199,7 +199,7 @@ declare interface ColorConstructor {
    * Creates a {@link Color} from the given string, which can be either an HTML color code or a named color (case-insensitive). Returns `default` if the color cannot be inferred from the string.
    * If you want to create a color from String in a constant expression, use the equivalent constructor instead (i.e. `Color("color string")`).
    */
-  from_string(str: string, default_: Color): Color;
+  from_string(str: string | NodePath, default_: Color): Color;
   /**
    * Returns the {@link Color} associated with the provided `hex` integer in 32-bit RGBA format (8 bits per channel). This method is the inverse of {@link to_rgba32}.
    * In GDScript and C#, the [int] is best visualized with hexadecimal notation (`"0x"` prefix, making it `"0xRRGGBBAA"`).
@@ -215,11 +215,11 @@ declare interface ColorConstructor {
    * Returns a new color from `rgba`, an HTML hexadecimal color string. `rgba` is not case-sensitive, and may be prefixed by a hash sign (`#`).
    * `rgba` must be a valid three-digit or six-digit hexadecimal color string, and may contain an alpha channel value. If `rgba` does not contain an alpha channel value, an alpha channel value of 1.0 is applied. If `rgba` is invalid, returns an empty color.
    */
-  html(rgba: string): Color;
+  html(rgba: string | NodePath): Color;
   /**
    * Returns `true` if `color` is a valid HTML hexadecimal color string. The string must be a hexadecimal value (case-insensitive) of either 3, 4, 6 or 8 digits, and may be prefixed by a hash sign (`#`). This method is identical to {@link String.is_valid_html_color}.
    */
-  html_is_valid(color: string): boolean;
+  html_is_valid(color: string | NodePath): boolean;
 
   /** Alice blue color. */
   readonly ALICE_BLUE: Color;

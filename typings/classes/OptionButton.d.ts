@@ -34,16 +34,16 @@ declare class OptionButton extends Button {
    * Adds an item, with a `texture` icon, text `label` and (optionally) `id`. If no `id` is passed, the item index will be used as the item's ID. New items are appended at the end.
    * **Note:** The item will be selected if there are no other items.
    */
-  add_icon_item(texture: Texture2D, label: string, id?: int): void;
+  add_icon_item(texture: Texture2D, label: string | NodePath, id?: int): void;
   /**
    * Adds an item, with text `label` and (optionally) `id`. If no `id` is passed, the item index will be used as the item's ID. New items are appended at the end.
    * **Note:** The item will be selected if there are no other items.
    */
-  add_item(label: string, id?: int): void;
+  add_item(label: string | NodePath, id?: int): void;
   /**
    * Adds a separator to the list of items. Separators help to group items, and can optionally be given a `text` header. A separator also gets an index assigned, and is appended at the end of the item list.
    */
-  add_separator(text?: string): void;
+  add_separator(text?: string | NodePath): void;
   /** Clears all the items in the {@link OptionButton}. */
   clear(): void;
   /** Returns the auto translate mode of the item at index `idx`. */
@@ -116,9 +116,9 @@ declare class OptionButton extends Button {
    */
   set_item_metadata(idx: int, metadata: unknown): void;
   /** Sets the text of the item at index `idx`. */
-  set_item_text(idx: int, text: string): void;
+  set_item_text(idx: int, text: string | NodePath): void;
   /** Sets the tooltip of the item at index `idx`. */
-  set_item_tooltip(idx: int, tooltip: string): void;
+  set_item_tooltip(idx: int, tooltip: string | NodePath): void;
   /**
    * Adjusts popup position and sizing for the {@link OptionButton}, then shows the {@link PopupMenu}. Prefer this over using `get_popup().popup()`.
    */

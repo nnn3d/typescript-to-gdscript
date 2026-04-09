@@ -48,7 +48,7 @@ declare class EditorUndoRedoManager extends GodotObject {
    * The way undo operation are ordered in actions is dictated by `backward_undo_ops`. When `backward_undo_ops` is `false` undo option are ordered in the same order they were added. Which means the first operation to be added will be the first to be undone.
    * If `mark_unsaved` is `false`, the action will not mark the history as unsaved. This is useful for example for actions that change a selection, or a setting that will be saved automatically. Otherwise, this should be left to `true` if the action requires saving by the user or if it can cause data loss when left unsaved.
    */
-  create_action(name: string, merge_mode: int, custom_context?: GodotObject, backward_undo_ops?: boolean, mark_unsaved?: boolean): void;
+  create_action(name: string | NodePath, merge_mode: int, custom_context?: GodotObject, backward_undo_ops?: boolean, mark_unsaved?: boolean): void;
   /**
    * Forces the next operation (e.g. {@link add_do_method}) to use the action's history rather than guessing it from the object. This is sometimes needed when a history can't be correctly determined, like for a nested resource that doesn't have a path yet.
    * This method should only be used when absolutely necessary, otherwise it might cause invalid history state. For most of complex cases, the `custom_context` parameter of {@link create_action} is sufficient.

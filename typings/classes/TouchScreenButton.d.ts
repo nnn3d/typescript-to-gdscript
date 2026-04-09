@@ -26,7 +26,7 @@ declare class TouchScreenButton extends Node2D {
   texture_pressed: Texture2D | null;
   /** The button's visibility mode. */
   visibility_mode: int;
-  set_action(value: string): void;
+  set_action(value: string | NodePath): void;
   get_action(): string;
   set_bitmask(value: BitMap | null): void;
   get_bitmask(): BitMap | null;
