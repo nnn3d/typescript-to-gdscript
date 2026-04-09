@@ -607,6 +607,7 @@ Converts each TS file to GDScript and reports errors at two levels:
    - `yield`, `for...in`
    - Multiple classes per file
    - Top-level statements outside classes
+   - `x in y` where `y` is a value-type primitive (Vector2, Color, Transform2D, etc.), an array (`Array<T>`, `T[]`, `Packed*Array`), a number, or a boolean — GDScript only supports `in` on `Dictionary` and `String`
 
 2. **Godot validation errors** (when `godotPath` is configured) — errors detected by the Godot compiler:
    - Type mismatches
@@ -623,6 +624,7 @@ Converts each TS file to GDScript and reports errors at two levels:
 | `godotPath`   | `string`  | Path to Godot executable (enables Godot validation) |
 | `projectRoot` | `string`  | Godot project root (must contain `project.godot`)   |
 | `sourceMap`   | `boolean` | Generate source maps for error remapping            |
+
 
 ## Development
 

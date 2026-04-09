@@ -12,6 +12,84 @@ export interface TransformerOptions {
 }
 
 /**
+ * GDScript value types (variant primitives) that don't support the `in`
+ * operator. Arrays, Packed*Array, and these value types are all rejected
+ * (only `Dictionary` and `String` are valid RHS targets in GDScript).
+ */
+const GD_IN_BANNED_VALUE_TYPES = new Set([
+  'Vector2',
+  'Vector2i',
+  'Vector3',
+  'Vector3i',
+  'Vector4',
+  'Vector4i',
+  'Color',
+  'Rect2',
+  'Rect2i',
+  'Transform2D',
+  'Transform3D',
+  'Basis',
+  'Quaternion',
+  'AABB',
+  'Plane',
+  'Projection',
+  'RID',
+  'Callable',
+  'Signal',
+  'StringName',
+  'NodePath',
+]);
+
+const GD_PACKED_ARRAY_TYPES = new Set([
+  'PackedByteArray',
+  'PackedInt32Array',
+  'PackedInt64Array',
+  'PackedFloat32Array',
+  'PackedFloat64Array',
+  'PackedStringArray',
+  'PackedVector2Array',
+  'PackedVector3Array',
+  'PackedColorArray',
+  'PackedVector4Array',
+]);
+
+/**
+ * If the type is banned as a right-hand side of `in`, return a human-readable
+ * label for the error message; otherwise return null.
+ */
+function classifyInRhsType(
+  type: ts.Type,
+  checker: ts.TypeChecker,
+): string | null {
+  // Arrays (Array<T>, T[], ReadonlyArray<T>, tuples)
+  // `checker.isArrayType`/`isTupleType` are available in modern TS versions.
+  const anyChecker = checker as unknown as {
+    isArrayType?: (t: ts.Type) => boolean;
+    isTupleType?: (t: ts.Type) => boolean;
+  };
+  if (anyChecker.isArrayType?.(type)) return 'an array';
+  if (anyChecker.isTupleType?.(type)) return 'a tuple';
+
+  const symbol = type.getSymbol() ?? type.aliasSymbol;
+  const name = symbol?.getName();
+  if (name) {
+    if (GD_IN_BANNED_VALUE_TYPES.has(name)) {
+      return `the value type \`${name}\``;
+    }
+    if (GD_PACKED_ARRAY_TYPES.has(name)) {
+      return `the array type \`${name}\``;
+    }
+    if (name === 'Array' || name === 'ReadonlyArray') return 'an array';
+  }
+
+  // Number/boolean primitives: `x in 42` / `x in true` is always wrong too.
+  if (type.flags & ts.TypeFlags.NumberLike) return 'a number';
+  if (type.flags & ts.TypeFlags.BooleanLike) return 'a boolean';
+
+  return null;
+}
+
+/**
  * Transforms a TypeScript AST into GDScript code.
  */
 export class TsToGdTransformer {
@@ -1770,10 +1848,49 @@ export class TsToGdTransformer {
         'Nullish coalescing assignment (`??=`) is not supported in GDScript',
       );
     }
+    // `x in y` — GDScript only supports `in` on Dictionary and String.
+    // Arrays, Packed*Array, and all value types (Vector2, Color, ...) are invalid.
+    if (node.operatorToken.kind === ts.SyntaxKind.InKeyword) {
+      this.checkInOperatorRhs(node);
+    }
     const left = this.emitExpression(node.left);
     const right = this.emitExpression(node.right);
     const op = this.binaryOperator(node.operatorToken.kind);
     return `${left} ${op} ${right}`;
+  }
+
+  /**
+   * Report an error if the right-hand side of a `x in y` expression resolves
+   * to a type that GDScript doesn't support with `in`. Only `Dictionary`
+   * (object-like types) and `String` are valid; arrays, Packed*Array, and
+   * value types like `Vector2`/`Color` are rejected.
+   */
+  private checkInOperatorRhs(node: ts.BinaryExpression): void {
+    const rhs = node.right;
+    const checker = this.ctx.checker;
+    const type = checker.getTypeAtLocation(rhs);
+
+    // Collapse union types to their non-null constituents
+    const baseTypes = type.isUnion()
+      ? type.types.filter(
+          (t) =>
+            !(t.flags & ts.TypeFlags.Null) &&
+            !(t.flags & ts.TypeFlags.Undefined),
+        )
+      : [type];
+
+    for (const t of baseTypes) {
+      const banned = classifyInRhsType(t, checker);
+      if (banned) {
+        this.addDiagnostic(
+          node,
+          'error',
+          `The \`in\` operator cannot be used with ${banned} in GDScript. ` +
+            `Only Dictionary and String support \`in\`.`,
+        );
+        return;
+      }
+    }
   }
 
   private binaryOperator(kind: ts.SyntaxKind): string {

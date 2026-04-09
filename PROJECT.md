@@ -120,6 +120,8 @@ tests/
   - `GodotArray` removed (use `Array()` call syntax instead of `new GodotArray()`)
 - [x] Godot class registry (916 classes, inheritance chain, global functions, per-class `variantConverts` from single-param "from" constructors, from `vendor/godot` XML docs)
 - [x] Converter diagnostics + ESLint plugin (`ts2gd/convert` rule, flat config ESLint >= 9)
+  - Runs full TS→GD conversion + optional Godot validation per file, reports converter diagnostics and Godot errors inline
+  - `x in y` validation: `emitBinaryExpression` checks the RHS type via `checker.getTypeAtLocation()`. Reports an error if the type is an array (`checker.isArrayType`/`isTupleType`), a `Packed*Array`, a GDScript value type (Vector2, Color, Transform2D, Basis, Quaternion, AABB, Plane, Projection, RID, Callable, Signal, StringName, NodePath — hardcoded `GD_IN_BANNED_VALUE_TYPES`), or a number/boolean. Only `Dictionary`/object-literal types and `String` are valid RHS targets
 - [x] Watch mode + CLI + Cache (watches .ts, .tscn, .tres, assets, project.godot)
 - [x] Godot validation (CLI --check-only, source map remapping to TS positions, autoload false-positive filtering for Godot bug #80319)
 - [x] GD-to-TS conversion helpers system (pluggable, individually toggleable via `--no-helpers` / `--no-signal-handler-helper` / `--no-operator-fix-helper` / `--no-explicit-convert-helper` / `--no-ready-field-types-helper` / `--no-extends-type-helper`)
