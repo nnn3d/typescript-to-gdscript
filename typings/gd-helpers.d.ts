@@ -78,7 +78,9 @@ type _ExtractRight<U> = U extends { right: infer R } ? R : never;
 type OpRight<S extends symbol, L> = _ExtractRight<OpEntries<S, L>>;
 
 /** Extract return type matching a specific right-hand type */
-type _ExtractRet<U, R> = U extends { right: R; ret: infer Ret } ? Ret : never;
+type _ExtractRet<U, R> = U extends { right: infer RightT; ret: infer Ret }
+  ? R extends RightT ? Ret : never
+  : never;
 type OpResult<S extends symbol, L, R> = _ExtractRet<OpEntries<S, L>, R>;
 
 /** Extract unary operator return type */
