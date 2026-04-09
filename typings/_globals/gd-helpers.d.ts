@@ -85,6 +85,23 @@ declare const gd: {
   readonly signal: <T extends unknown[] = unknown[]>() => Signal<T>;
 
   /**
+   * Godot getter/setter helper. `get` and `set` are required keys — pass
+   * `null` to use GDScript's default (backing-field read/write) instead of
+   * a custom accessor. At least one of them must be non-null.
+   *
+   * Both `get` and `set` are strictly typed against `T`, so bodies get full
+   * type checking. Because the inline bodies reference `this.<name>` (the
+   * property being defined), TypeScript's binding analysis fires TS7022
+   * unless the property has an explicit type annotation (`b: int = ...`).
+   * The GD→TS converter always emits that annotation for this reason.
+   */
+  readonly getset: <T>(config: {
+    value?: T,
+    get: (() => T) | null,
+    set: ((v: T) => void) | null,
+  }) => T;
+
+  /**
    * Create an enum. Transforms to `enum Name {...}` in GDScript.
    * @example
    * MY_ENUM = gd.enum('VALUE_1', 'VALUE_2', ['VALUE_3', -1])

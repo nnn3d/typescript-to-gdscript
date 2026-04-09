@@ -1,0 +1,3 @@
+[
+  { "message": "cannot mix inline `get`/`set` bodies with function-reference form", "severity": 2 }
+]

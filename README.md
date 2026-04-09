@@ -121,6 +121,7 @@ Options:
 - `--no-explicit-convert-helper` — Disable TS-based variant-type auto-fix (explicit `gd.as` insertion)
 - `--no-ready-field-types-helper` — Disable TS-based class property auto-fix (adds `!` and infers types from `_ready()` assignments)
 - `--no-extends-type-helper` — Disable TS-based override-method parameter auto-fix (copies parameter types from parent class)
+- `--unsafe-use-any` — Use `any` instead of `unknown` as the fallback for unresolvable types (e.g. `gd.getset` without a GDScript type annotation and without a typeof-able value expression). Less strict but more error-prone.
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `/* ERROR: ... */` comments)
 
 #### Conversion Helpers
@@ -425,6 +426,68 @@ class Player extends CharacterBody2D {
   sprite: Sprite2D;
 }
 ```
+
+### Getters and setters
+
+Simple GDScript setget clauses map to native TypeScript `get`/`set` accessors. If only one of `get` or `set` is defined in GDScript, the converter synthesizes a default for the other.
+
+```typescript
+class GetsetExample extends Node {
+  // ↔ var a: int:
+  //       get: return a
+  //       set(value): a = value
+  get a(): int { return this.a; }
+  set a(value: int) { this.a = value; }
+}
+```
+
+Inside accessor bodies, `this.<propName>` is rewritten to a bare identifier in GDScript to reference the backing field (avoiding the infinite recursion that `self.x` would cause inside `get x`/`set x`).
+
+For cases that TS accessors can't express — a default value, or the `get = fn_name, set = fn_name` function-reference syntax — use the `gd.getset()` helper. An explicit **property type annotation** (`b: int = gd.getset({...})`) is **required**: the inline arrow functions reference `this.b` inside the initializer, which fires `TS7022: 'b' implicitly has type 'any' because it does not have a type annotation and is referenced directly or indirectly in its own initializer`. The annotation breaks the binding-resolution cycle and also supplies the contextual type for `gd.getset`, so the generic `<T>` is inferred and can be omitted. The GD→TS converter emits the annotation automatically.
+
+```typescript
+class GetsetExample extends Node {
+  //   var b: int = 10:
+  //       get: return b
+  //       set(value): b = value
+  b: int = gd.getset({
+    value: 10,
+    get: () => { return this.b; },
+    set: (value) => { this.b = value; },
+  });
+
+  //   var c: int:
+  //       get = get_c, set = set_c
+  c: int = gd.getset({
+    get: this.get_c,
+    set: this.set_c,
+  });
+
+  get_c(): int { return 10; }
+  set_c(v: int) {}
+}
+```
+
+Rules:
+- `gd.getset()` requires **both** `get` and `set` keys (a converter error is raised otherwise). Either may be set to `null` to fall back to GDScript's default backing-field read/write — at least one must be non-null.
+- You **cannot mix** inline arrow-function bodies with function-reference form in a single `gd.getset()` call. Same restriction applies to GDScript — mixing inline `get:` bodies with `get = fn_name` is rejected.
+- A `value` default can only be combined with inline bodies, not with function-reference form.
+
+```typescript
+// `set: null` — only a custom getter; GDScript uses its default setter.
+// No explicit GDScript type → converter emits `typeof this.e` as the
+// property annotation (derived from the value expression).
+f: typeof this.e = gd.getset({
+  value: this.e,
+  get: () => { return this.f; },
+  set: null,
+});
+// ↔ var f = self.e:
+//       get:
+//           return f
+```
+
+When the value expression is not typeof-able (a literal like `10`, a call, an operator expression, etc.) and there's no GDScript type annotation, the fallback is `unknown` by default, or `any` when `--unsafe-use-any` is passed to `convert-gd`.
 
 ### StringName / NodePath
 

@@ -73,7 +73,7 @@ tests/
 
 - `ts2gd init` — Interactive project initialization (tstogd.json, tsconfig.json, eslint.config.js, npm install, .gdignore)
 - `ts2gd convert <files...>` — Convert TS to GD (`-o`, `--source-map`, `--root-dir`, `--tsconfig`, `--emit-on-error`)
-- `ts2gd convert-gd <files...>` — Convert GD to TS (`-o`, `--registry`, `--no-helpers`, `--no-signal-handler-helper`, `--no-operator-fix-helper`, `--no-explicit-convert-helper`, `--no-ready-field-types-helper`, `--no-extends-type-helper`, `--emit-on-error`)
+- `ts2gd convert-gd <files...>` — Convert GD to TS (`-o`, `--registry`, `--no-helpers`, `--no-signal-handler-helper`, `--no-operator-fix-helper`, `--no-explicit-convert-helper`, `--no-ready-field-types-helper`, `--no-extends-type-helper`, `--unsafe-use-any`, `--emit-on-error`)
 - `ts2gd lint <files...>` — Lint TS files (`--root-dir`, `--tsconfig`)
 - `ts2gd watch` — Watch and auto-convert (`--root-dir`, `--output-dir`, `--source-map`, `--tsconfig`, `--class-typings`)
 - `ts2gd generate-typings` — Generate versioned typings from Godot docs (`--docs-dir`, `--typings-dir`, `--patch-dir`, `--version`, `--set-latest`)
@@ -153,6 +153,8 @@ tests/
 | `for (x of arr)` | `for x in arr` | |
 | `switch (val) { case X: ... }` | `match val:` | Simple matches (literal/expression/wildcard patterns, no bindings/guards/array/dict) use native TS `switch`. GD→TS auto-detects via `isSimpleMatchStatement()` |
 | `gd.match(val, [...])` | `match val:` | Advanced patterns (bindings, guards, arrays, dicts). Arrow `do: () => {}` preserves `this`; also supports `do()` method syntax |
+| `get X() {} / set X(v) {}` | `var X: get: ... set(v): ...` | Simple setget: native TS accessors ↔ inline GD get/set bodies. Missing get or set in GD is filled with a passthrough default in TS |
+| `X = gd.getset<T>({ value?, get, set })` | `var X[: T][ = v]: get: ... set(v): ...` OR `var X: get = fn, set = fn` | Complex setget (has default value or uses `get = fn, set = fn` ref form). Mixing inline + ref forms is an error; both `get` and `set` required |
 | `//` / `/** */` | `#` / `##` | |
 | `async` | stripped | GDScript has no async |
 | `new Foo()` | `Foo.new()` | |
@@ -199,6 +201,19 @@ tests/
 - Class-level inner classes → `namespace ClassName { type InnerClass = InstanceType<typeof ScriptClass.InnerClass>; }` in .gd.d.ts
 - GD-to-TS: type annotations referencing class enums/inner classes qualified with class name (`State` → `ClassName.State`)
 - GD-to-TS match statements: `isSimpleMatchStatement()` checks whether all PatternSections use only literal/expression/wildcard patterns (no Array/Dictionary/PatternBinding/PatternGuard). If so, `emitSimpleMatchAsSwitch()` produces a native TS `switch`/`case`/`default` block with explicit `break` after each section; multi-pattern sections (`1, 2, 3:`) become fall-through `case` labels. Otherwise falls back to `gd.match([...])` with object/arrow-function cases.
+- GD-to-TS setget variables: `emitClassVariable()` inspects the `setget` child node. Simple case (no default value, no function-ref syntax) → `emitTsAccessors()` produces a pair of `get`/`set` accessors and synthesizes defaults for whichever side is missing. Complex case (has default value OR uses `get = fn, set = fn`) → `emitGdGetsetCall()` produces `name: T = gd.getset({...})` — always emits the property type annotation to sidestep `TS7022`. The annotation `T` is resolved in this order:
+  1. Explicit GDScript type annotation (`var b: int = ...` → `int`)
+  2. `typeof <value>` when the value expression is an identifier or attribute access (via `tryEmitTypeofValue` — the GDScript AST node must be `Identifier` or `Attribute`)
+  3. Fallback: `unknown` (default) or `any` (when `--unsafe-use-any` is passed)
+  Mixing inline bodies with function-reference syntax in one variable is an error.
+- `gd.getset` TS7022 avoidance: the helper's `get`/`set` are strictly typed (`(() => T) | null` / `((v: T) => void) | null`) so bodies get full type checking. The inline bodies reference `this.<name>` (the property being defined), which triggers `TS7022` unless the property has an explicit type annotation. Non-function `get` types like `any` or `unknown` would avoid TS7022 but lose body type checking, so the converter always emits the annotation instead. Attempts at `NoInfer<T>`/`() => any`/`() => NoInfer<T>` all still trigger TS7022 because TS enters the closure for binding-analysis regardless of generic-inference flags.
+- TS-to-GD `gd.getset` type resolution order (in `visitGdGetsetProperty`):
+  1. Explicit `gd.getset<T>({...})` type argument
+  2. Property declaration's own annotation (`name: T = ...`) — primary source in practice
+  3. `set` callback parameter type (via `checker.getCallSignatures()` on `setExpr`) — fallback for inline `(v: int) => ...` or function-refs `this.set_x`
+  4. `value` expression's type — numeric literals inspect raw source text to distinguish `int` (no decimal) from `float` (with decimal); other expressions go through `checker.getTypeAtLocation` + literal-widening + primitive mapping (`number`→`float`, `string`→`String`, `boolean`→`bool`)
+- TS-to-GD setget: accessor pairs are grouped by name in `visitClassDeclaration` (new `'accessor'` OrderedMember kind), then emitted via `visitAccessorPair()` as a single `var X: get: ... set(v): ...` block (missing half is synthesized with a passthrough default). `PropertyDeclaration`s whose initializer is `gd.getset<T>({...})` route through `visitGdGetsetProperty()` which detects inline vs function-ref form and emits the appropriate GDScript, raising errors for mixed or incomplete configs. Inside accessor bodies, `this.<accessorName>` is rewritten to a bare identifier via `currentAccessorName` tracking (avoids infinite recursion in generated GDScript).
+- `gd.getset` nullability: the type requires both `get` and `set` keys but each may be `null`. `null` means "use GDScript's default (backing-field read/write)" — the TS→GD converter simply omits that accessor from the GD setget clause. Both-null is an error ("at least one of `get` or `set` must be non-null"). GD→TS always emits both keys explicitly, using `get: null` / `set: null` when only one side is present in the source GDScript.
 - `gd.eval` space indentation: converts space-based indent to tabs by tracking space→depth mapping; mixed tabs/spaces is an error
 - `gd.eval` as variable initializer: `processGdEval()` returns processed lines with relative tab depth; `visitVariableStatement` emits first line as `var X = <firstLine>`, remaining lines are emitted at current indent (their embedded `\t` prefixes act as additional relative depth beyond the var line)
 - GD-to-TS `'''`/`"""` triple-quoted strings as expression statements → `/* */` block comments (both class body and function body)

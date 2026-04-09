@@ -1,0 +1,3 @@
+[
+  { "message": "at least one of `get` or `set` must be non-null", "severity": 2 }
+]

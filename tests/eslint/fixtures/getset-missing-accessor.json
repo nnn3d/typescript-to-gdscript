@@ -1,0 +1,3 @@
+[
+  { "message": "requires both `get` and `set`", "severity": 2 }
+]

@@ -43,6 +43,11 @@ export function registerConvertGdCommand(program: Command): void {
       '--no-extends-type-helper',
       'Disable TS-based override-method parameter auto-fix (copies parameter types from parent class)',
     )
+    .option(
+      '--unsafe-use-any',
+      'Use `any` instead of `unknown` as the fallback for unresolvable types (e.g. gd.getset without a GDScript type or typeof-able value). Less strict but more error-prone.',
+      false,
+    )
     .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
     .action((files: string[], opts) => {
       const cfg = resolveConfig({
@@ -100,6 +105,7 @@ export function registerConvertGdCommand(program: Command): void {
           registry,
           projectSources,
           signalHandlers,
+          unsafeUseAny: !!opts.unsafeUseAny,
         });
 
         // Collect diagnostics for summary at end

@@ -81,6 +81,12 @@ export interface GdToTsOptions {
    * the signal's parameter types are used instead.
    */
   signalHandlers?: Map<string, { params: Array<{ name: string; gdType: string }> }>;
+  /**
+   * Use `any` instead of `unknown` as the fallback for unresolvable types
+   * (e.g. `gd.getset` without a GDScript type annotation and without a
+   * typeof-able value expression). Less strict but more error-prone.
+   */
+  unsafeUseAny?: boolean;
 }
 
 /** Lightweight class info extracted from a GD source file */
@@ -239,6 +245,7 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
     signalHandlers: options.signalHandlers ?? new Map(),
     globalEnumMap: buildGlobalEnumMap(options.registry),
     classTypeNames: new Set(),
+    unsafeUseAny: options.unsafeUseAny ?? false,
   };
 
   const code = emitSourceFile(root, ctx);
@@ -277,6 +284,8 @@ interface GdToTsContext {
   globalEnumMap: Map<string, string>;
   /** Class-level enum and inner class names (for type qualification: State → ClassName.State) */
   classTypeNames: Set<string>;
+  /** Use `any` instead of `unknown` as the fallback for unresolvable types */
+  unsafeUseAny: boolean;
 }
 
 /** Build a map of bare global enum constant names → qualified TS names (e.g. "KEY_F21" → "Key.KEY_F21") */
@@ -532,10 +541,23 @@ function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
       child.type === SyntaxType.ExportVariableStatement ||
       child.type === SyntaxType.OnreadyVariableStatement
     ) {
+      const hasSetget = child.namedChildren.some(
+        (c) => c.type === SyntaxType.Setget,
+      );
+      // Variables with setget clauses emit function-like bodies (accessors or
+      // gd.getset blocks) and should be surrounded by blank lines.
+      if (hasSetget && hasNonFunctionMembers && !lastWasFunction) {
+        memberLines.push('');
+      }
       flushPendingAnnotations();
       memberLines.push(emitClassVariable(child, ctx));
+      if (hasSetget) {
+        memberLines.push('');
+        lastWasFunction = true;
+      } else {
+        lastWasFunction = false;
+      }
       hasNonFunctionMembers = true;
-      lastWasFunction = false;
       continue;
     }
 
@@ -841,6 +863,11 @@ function emitClassVariable(node: SyntaxNode, ctx: GdToTsContext): string {
   const typeNode = node.childForFieldName('type');
   const valueNode = node.childForFieldName('value');
 
+  // Detect setget clause (inline `get: ... set(v): ...` OR `get = fn, set = fn`)
+  const setgetNode = node.namedChildren.find(
+    (c) => c.type === SyntaxType.Setget,
+  );
+
   let decorators = '';
   for (const ann of annotations) {
     decorators += `  ${emitAnnotationAsDecorator(ann, ctx)}\n`;
@@ -848,10 +875,279 @@ function emitClassVariable(node: SyntaxNode, ctx: GdToTsContext): string {
 
   const staticPrefix = isStatic ? 'static ' : '';
   const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode, ctx) : '';
-  const init = valueNode ? ` = ${emitExpr(valueNode, ctx)}` : '';
 
+  // If there's a setget clause, delegate to specialized emitter
+  if (setgetNode) {
+    return emitSetgetVariable(
+      name,
+      typeNode,
+      typeAnnotation,
+      valueNode,
+      setgetNode,
+      decorators,
+      staticPrefix,
+      ctx,
+    );
+  }
+
+  const init = valueNode ? ` = ${emitExpr(valueNode, ctx)}` : '';
   return `${decorators}  ${staticPrefix}${name}${typeAnnotation}${init};`;
 }
+
+/**
+ * Try to emit a `typeof <expr>` type annotation for a value expression.
+ * Returns null if the expression isn't typeof-able (literal, call, operator,
+ * etc.) — `typeof` in type position only accepts identifiers and property
+ * access chains that refer to values.
+ */
+function tryEmitTypeofValue(
+  valueNode: SyntaxNode,
+  ctx: GdToTsContext,
+): string | null {
+  // Walk past any simple parenthesized wrapping
+  let node: SyntaxNode | undefined = valueNode;
+  while (node && node.type === SyntaxType.ParenthesizedExpression) {
+    node = node.namedChildren[0];
+  }
+  if (!node) return null;
+
+  // Plain identifiers and attribute/member chains
+  if (node.type === SyntaxType.Identifier) {
+    return `typeof ${emitExpr(node, ctx)}`;
+  }
+  if (node.type === SyntaxType.Attribute) {
+    return `typeof ${emitExpr(node, ctx)}`;
+  }
+  return null;
+}
+
+/**
+ * Emit a variable with a `setget` clause as either:
+ *  - TS `get`/`set` accessors (simple case: no value, inline get/set bodies)
+ *  - `name = gd.getset<T>({...})` assignment (complex case: has value, or alt
+ *    `get = fn, set = fn` syntax)
+ *
+ * Mixing alt function-ref syntax with inline bodies, or using a value with
+ * alt syntax, is an error (the user's rule).
+ */
+function emitSetgetVariable(
+  name: string,
+  typeNode: SyntaxNode | null,
+  typeAnnotation: string,
+  valueNode: SyntaxNode | null,
+  setgetNode: SyntaxNode,
+  decorators: string,
+  staticPrefix: string,
+  ctx: GdToTsContext,
+): string {
+  const getNode = setgetNode.namedChildren.find(
+    (c) => c.type === SyntaxType.GetBody || c.type === SyntaxType.Getter,
+  );
+  const setNode = setgetNode.namedChildren.find(
+    (c) => c.type === SyntaxType.SetBody || c.type === SyntaxType.Setter,
+  );
+
+  const getIsInline = getNode?.type === SyntaxType.GetBody;
+  const getIsRef = getNode?.type === SyntaxType.Getter;
+  const setIsInline = setNode?.type === SyntaxType.SetBody;
+  const setIsRef = setNode?.type === SyntaxType.Setter;
+
+  const hasAnyInline = getIsInline || setIsInline;
+  const hasAnyRef = getIsRef || setIsRef;
+  const hasValue = !!valueNode;
+
+  // Error: mixing inline and function-ref syntax
+  if (hasAnyInline && hasAnyRef) {
+    ctx.diagnostics.push({
+      message:
+        `Variable '${name}': cannot mix inline get/set bodies with ` +
+        `function-reference syntax (\`get = fn_name, set = fn_name\`).`,
+      severity: 'error',
+      line: setgetNode.startPosition.row + 1,
+      column: setgetNode.startPosition.column,
+      file: ctx.filePath,
+    });
+  }
+
+  // Decide which output form to use
+  const useGdGetset = hasValue || hasAnyRef;
+
+  // Resolve the TS type for the property annotation.
+  //  1. Explicit GDScript type annotation (e.g. `var b: int = ...`)
+  //  2. `typeof <value>` when the value expression is typeof-able
+  //     (identifier / property-access — not a literal or complex expr)
+  //  3. Fall back to `unknown` (default) or `any` (with `--unsafe-use-any`)
+  let tsType: string;
+  if (typeNode) {
+    const typeText = extractGdTypeName(typeNode) ?? 'Variant';
+    tsType = gdTypeToTs(typeText) ?? (ctx.unsafeUseAny ? 'any' : 'unknown');
+  } else if (valueNode) {
+    const typeofExpr = tryEmitTypeofValue(valueNode, ctx);
+    tsType = typeofExpr ?? (ctx.unsafeUseAny ? 'any' : 'unknown');
+  } else {
+    tsType = ctx.unsafeUseAny ? 'any' : 'unknown';
+  }
+
+  if (!useGdGetset) {
+    // Simple case: emit TS get/set accessors
+    return emitTsAccessors(
+      name,
+      tsType,
+      getNode,
+      setNode,
+      decorators,
+      staticPrefix,
+      ctx,
+    );
+  }
+
+  // Complex case: emit `name = gd.getset<T>({...})` assignment
+  return emitGdGetsetCall(
+    name,
+    tsType,
+    typeAnnotation,
+    valueNode,
+    getNode,
+    setNode,
+    decorators,
+    staticPrefix,
+    ctx,
+  );
+}
+
+/**
+ * Emit a pair of TS `get`/`set` accessors for a simple inline setget.
+ * If only one of get/set exists, synthesize a default for the other that
+ * reads/writes `this.<name>`.
+ */
+function emitTsAccessors(
+  name: string,
+  tsType: string,
+  getNode: SyntaxNode | undefined,
+  setNode: SyntaxNode | undefined,
+  decorators: string,
+  staticPrefix: string,
+  ctx: GdToTsContext,
+): string {
+  const indent = '  ';
+  const bodyIndent = '    ';
+  const lines: string[] = [];
+
+  // Emit getter
+  lines.push(`${decorators}${indent}${staticPrefix}get ${name}(): ${tsType} {`);
+  if (getNode?.type === SyntaxType.GetBody) {
+    const body = getNode.childForFieldName('body');
+    const bodyStr = body ? emitBody(body, ctx, 2) : '';
+    if (bodyStr) lines.push(bodyStr);
+  } else {
+    lines.push(`${bodyIndent}return this.${name};`);
+  }
+  lines.push(`${indent}}`);
+  lines.push('');
+
+  // Emit setter
+  lines.push(`${indent}${staticPrefix}set ${name}(value: ${tsType}) {`);
+  if (setNode?.type === SyntaxType.SetBody) {
+    const body = setNode.childForFieldName('body');
+    // The setter's parameter name may differ from `value` — copy it verbatim
+    // from the GD source by using the original parameter identifier.
+    const params = setNode.namedChildren.find(
+      (c) => c.type === SyntaxType.Parameters,
+    );
+    const paramName =
+      params?.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+        ?.text ?? 'value';
+    const savedLocals = new Set(ctx.localVars);
+    ctx.localVars.add(paramName);
+    const bodyStr = body ? emitBody(body, ctx, 2) : '';
+    ctx.localVars = savedLocals;
+    if (paramName !== 'value') {
+      // Rewrite the parameter name at the signature level to match
+      lines[lines.length - 1] =
+        `${indent}${staticPrefix}set ${name}(${paramName}: ${tsType}) {`;
+    }
+    if (bodyStr) lines.push(bodyStr);
+  } else {
+    lines.push(`${bodyIndent}this.${name} = value;`);
+  }
+  lines.push(`${indent}}`);
+
+  return lines.join('\n');
+}
+
+/**
+ * Emit `name = gd.getset<T>({ value?: ..., get: ..., set: ... })` for complex
+ * cases (has default value or uses `get = fn, set = fn` function-ref syntax).
+ */
+function emitGdGetsetCall(
+  name: string,
+  tsType: string,
+  typeAnnotation: string,
+  valueNode: SyntaxNode | null,
+  getNode: SyntaxNode | undefined,
+  setNode: SyntaxNode | undefined,
+  decorators: string,
+  staticPrefix: string,
+  ctx: GdToTsContext,
+): string {
+  const indent = '  ';
+  const iProp = '    ';
+  const iBody = '      ';
+  const lines: string[] = [];
+  const entries: string[] = [];
+
+  if (valueNode) {
+    entries.push(`${iProp}value: ${emitExpr(valueNode, ctx)},`);
+  }
+
+  // Both `get` and `set` keys are required in gd.getset. `null` means
+  // "use GDScript's default (backing-field read/write)".
+  if (getNode?.type === SyntaxType.GetBody) {
+    const body = getNode.childForFieldName('body');
+    const bodyStr = body ? emitBody(body, ctx, 3) : '';
+    entries.push(`${iProp}get: () => {`);
+    if (bodyStr) entries.push(bodyStr);
+    entries.push(`${iProp}},`);
+  } else if (getNode?.type === SyntaxType.Getter) {
+    entries.push(`${iProp}get: this.${getNode.text},`);
+  } else {
+    entries.push(`${iProp}get: null,`);
+  }
+
+  if (setNode?.type === SyntaxType.SetBody) {
+    const body = setNode.childForFieldName('body');
+    const params = setNode.namedChildren.find(
+      (c) => c.type === SyntaxType.Parameters,
+    );
+    const paramName =
+      params?.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+        ?.text ?? 'value';
+    const savedLocals = new Set(ctx.localVars);
+    ctx.localVars.add(paramName);
+    const bodyStr = body ? emitBody(body, ctx, 3) : '';
+    ctx.localVars = savedLocals;
+    entries.push(`${iProp}set: (${paramName}) => {`);
+    if (bodyStr) entries.push(bodyStr);
+    entries.push(`${iProp}},`);
+  } else if (setNode?.type === SyntaxType.Setter) {
+    entries.push(`${iProp}set: this.${setNode.text},`);
+  } else {
+    entries.push(`${iProp}set: null,`);
+  }
+
+  // Emit an explicit property type annotation. Without it, TS7022 fires
+  // because the inline get/set arrow functions reference `this.<name>`
+  // inside the initializer, creating a binding-resolution cycle. The
+  // annotation breaks the cycle (TS knows the field's type independent of
+  // the initializer) and also provides the contextual type for `gd.getset`,
+  // so the explicit `<T>` generic is not emitted.
+  lines.push(`${decorators}${indent}${staticPrefix}${name}: ${tsType} = gd.getset({`);
+  lines.push(...entries);
+  lines.push(`${indent}});`);
+
+  return lines.join('\n');
+}
+
 
 function emitConstStatement(node: SyntaxNode, ctx: GdToTsContext): string {
   const name = node.childForFieldName('name')?.text ?? '';

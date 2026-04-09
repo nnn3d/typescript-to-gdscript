@@ -224,3 +224,18 @@ class TypeDictTest extends Node {
     ]);
   }
 }
+
+// ─── getters / setters ───────────────────────────────
+
+class GetSetTest extends Node {
+  // Explicit property annotation is required: the inline getter body
+  // references `this.f`, so TS needs a type for `f` independent of the
+  // initializer to avoid TS7022.
+  f: int = gd.getset({
+    value: 10,
+    get: () => {
+      return this.f;
+    },
+    set: null,
+  });
+}

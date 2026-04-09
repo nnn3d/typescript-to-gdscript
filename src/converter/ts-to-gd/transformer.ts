@@ -97,6 +97,13 @@ export class TsToGdTransformer {
   private emitter: GDScriptEmitter;
   private opts: TransformerOptions;
   private currentClassName: string = '';
+  /**
+   * Name of the property whose get/set accessor body is currently being
+   * emitted. Inside the body, `this.<accessorName>` is stripped to a bare
+   * identifier to reference the GDScript backing field (emitting `self.X`
+   * inside `get X`/`set X` would cause infinite recursion in GDScript).
+   */
+  private currentAccessorName: string | null = null;
 
   constructor(ctx: TransformContext, opts: TransformerOptions) {
     this.ctx = ctx;
@@ -212,7 +219,14 @@ export class TsToGdTransformer {
       | { kind: 'property'; node: ts.PropertyDeclaration }
       | { kind: 'method'; node: ts.MethodDeclaration }
       | { kind: 'constructor'; node: ts.ConstructorDeclaration }
-      | { kind: 'innerClass'; node: ts.PropertyDeclaration };
+      | { kind: 'innerClass'; node: ts.PropertyDeclaration }
+      | {
+          kind: 'accessor';
+          name: string;
+          get?: ts.GetAccessorDeclaration;
+          set?: ts.SetAccessorDeclaration;
+          node: ts.Node;
+        };
     const orderedMembers: OrderedMember[] = [];
 
     for (const member of node.members) {
@@ -237,26 +251,63 @@ export class TsToGdTransformer {
         ts.isGetAccessorDeclaration(member) ||
         ts.isSetAccessorDeclaration(member)
       ) {
-        this.addDiagnostic(
-          member,
-          'warning',
-          'Get/set accessors not yet supported',
-        );
+        // Pair `get X` and `set X` with the same name into one entry so they
+        // emit as a single GDScript `var X: get: ... set(v): ...` block.
+        const name =
+          member.name && ts.isIdentifier(member.name)
+            ? member.name.text
+            : undefined;
+        if (!name) continue;
+        const existing = orderedMembers.find(
+          (e) => e.kind === 'accessor' && e.name === name,
+        ) as
+          | {
+              kind: 'accessor';
+              name: string;
+              get?: ts.GetAccessorDeclaration;
+              set?: ts.SetAccessorDeclaration;
+              node: ts.Node;
+            }
+          | undefined;
+        if (existing) {
+          if (ts.isGetAccessorDeclaration(member)) existing.get = member;
+          else existing.set = member;
+        } else {
+          orderedMembers.push({
+            kind: 'accessor',
+            name,
+            get: ts.isGetAccessorDeclaration(member) ? member : undefined,
+            set: ts.isSetAccessorDeclaration(member) ? member : undefined,
+            node: member,
+          } as OrderedMember);
+        }
       }
     }
 
     // Emit members in original declaration order
     let lastEmittedTrailingBlank = false;
-    let lastKind: string = '';
+    let lastWasFunc = false;
     for (let i = 0; i < orderedMembers.length; i++) {
       const entry = orderedMembers[i]!;
       const isLast = i === orderedMembers.length - 1;
 
-      // Add blank line on kind transition (property↔method, before innerClass)
-      // but only if the previous member didn't already emit a trailing blank
-      const isFunc = entry.kind === 'method' || entry.kind === 'constructor';
-      const lastWasFunc = lastKind === 'method' || lastKind === 'constructor';
-      if (i > 0 && !lastEmittedTrailingBlank && (isFunc !== lastWasFunc || entry.kind === 'innerClass')) {
+      // A "function-like" entry — methods, constructors, accessors, and
+      // properties initialized via `gd.getset` — should be surrounded by
+      // blank lines for readability.
+      const isGdGetsetProp =
+        entry.kind === 'property' &&
+        entry.node.initializer !== undefined &&
+        this.isGdHelperCall(entry.node.initializer, 'getset');
+      const isFunc =
+        entry.kind === 'method' ||
+        entry.kind === 'constructor' ||
+        entry.kind === 'accessor' ||
+        isGdGetsetProp;
+      if (
+        i > 0 &&
+        !lastEmittedTrailingBlank &&
+        (isFunc || lastWasFunc || entry.kind === 'innerClass')
+      ) {
         this.emitter.writeEmptyLine();
       }
 
@@ -274,6 +325,10 @@ export class TsToGdTransformer {
         case 'property':
           this.emitLeadingComments(entry.node);
           this.visitPropertyDeclaration(entry.node);
+          if (isGdGetsetProp && !isLast) {
+            this.emitter.writeEmptyLine();
+            lastEmittedTrailingBlank = true;
+          }
           break;
         case 'method':
           this.emitLeadingComments(entry.node);
@@ -299,9 +354,16 @@ export class TsToGdTransformer {
             lastEmittedTrailingBlank = true;
           }
           break;
+        case 'accessor':
+          this.visitAccessorPair(entry.name, entry.get, entry.set);
+          if (!isLast) {
+            this.emitter.writeEmptyLine();
+            lastEmittedTrailingBlank = true;
+          }
+          break;
       }
 
-      lastKind = entry.kind;
+      lastWasFunc = isFunc;
     }
 
     // Emit trailing comments before the class closing brace
@@ -508,6 +570,15 @@ export class TsToGdTransformer {
       return;
     }
 
+    // gd.getset<T>({...}) — emit as `var X[: T][ = value]:\n\tget:...\n\tset(v):...`
+    if (
+      node.initializer &&
+      this.isGdHelperCall(node.initializer, 'getset')
+    ) {
+      this.visitGdGetsetProperty(name, node, node.initializer as ts.CallExpression);
+      return;
+    }
+
     // Check for decorators (@gd.export, @gd.onready, etc.)
     const decorators = this.getDecorators(node);
     for (const dec of decorators) {
@@ -557,6 +628,390 @@ export class TsToGdTransformer {
     if (node.initializer && this.isBlockLambda(node.initializer)) {
       this.emitLambdaBody(node.initializer);
     }
+  }
+
+  // ─── Accessor Pair (get/set) ────────────────────────────────
+
+  /**
+   * Emit a pair of TS get/set accessors as a GDScript variable with an
+   * inline setget clause:
+   *     var <name>: <type>:
+   *         get:
+   *             <get body>
+   *         set(<param>):
+   *             <set body>
+   */
+  private visitAccessorPair(
+    name: string,
+    getNode: ts.GetAccessorDeclaration | undefined,
+    setNode: ts.SetAccessorDeclaration | undefined,
+  ): void {
+    const pos = this.getLineAndCol(getNode ?? setNode!);
+
+    // Type: prefer getter return type, then setter parameter type
+    let gdType: string | null = null;
+    if (getNode?.type) {
+      gdType = tsTypeNodeToGdType(
+        getNode.type,
+        this.ctx.checker,
+        this.ctx.sourceFile,
+        this.currentClassName,
+      );
+    } else if (setNode && setNode.parameters.length > 0 && setNode.parameters[0]!.type) {
+      gdType = tsTypeNodeToGdType(
+        setNode.parameters[0]!.type,
+        this.ctx.checker,
+        this.ctx.sourceFile,
+        this.currentClassName,
+      );
+    }
+
+    const typeSuffix = gdType ? `: ${gdType}` : '';
+    this.emitter.writeLine(`var ${name}${typeSuffix}:`, pos.line, pos.col);
+    this.emitter.indent();
+
+    // Activate `this.<name>` → bare `<name>` rewriting for accessor bodies.
+    const savedAccessorName = this.currentAccessorName;
+    this.currentAccessorName = name;
+
+    // Emit getter body (synthesize default if missing)
+    if (getNode?.body) {
+      this.emitter.writeLine('get:');
+      this.emitter.indent();
+      for (const stmt of getNode.body.statements) {
+        this.visitStatement(stmt);
+      }
+      this.emitter.dedent();
+    } else {
+      this.emitter.writeLine('get:');
+      this.emitter.indent();
+      this.emitter.writeLine(`return ${name}`);
+      this.emitter.dedent();
+    }
+
+    // Emit setter body (synthesize default if missing)
+    if (setNode?.body) {
+      const paramName =
+        setNode.parameters[0] && ts.isIdentifier(setNode.parameters[0].name)
+          ? setNode.parameters[0].name.text
+          : 'value';
+      this.emitter.writeLine(`set(${paramName}):`);
+      this.emitter.indent();
+      for (const stmt of setNode.body.statements) {
+        this.visitStatement(stmt);
+      }
+      this.emitter.dedent();
+    } else {
+      this.emitter.writeLine('set(value):');
+      this.emitter.indent();
+      this.emitter.writeLine(`${name} = value`);
+      this.emitter.dedent();
+    }
+
+    this.currentAccessorName = savedAccessorName;
+    this.emitter.dedent();
+  }
+
+  // ─── gd.getset() helper ─────────────────────────────────────
+
+  /**
+   * Emit `name = gd.getset<T>({ value?, get, set })` as a GDScript variable
+   * with a setget clause. Both `get` and `set` are required. Mixing inline
+   * bodies with function-reference (`get: this.fn_name`) forms — or omitting
+   * either — is an error.
+   */
+  private visitGdGetsetProperty(
+    name: string,
+    node: ts.PropertyDeclaration,
+    call: ts.CallExpression,
+  ): void {
+    const pos = this.getLineAndCol(node);
+
+    if (call.arguments.length !== 1 || !ts.isObjectLiteralExpression(call.arguments[0]!)) {
+      this.addDiagnostic(
+        call,
+        'error',
+        '`gd.getset()` requires a single object literal argument with `get` and `set` properties.',
+      );
+      return;
+    }
+    const objArg = call.arguments[0] as ts.ObjectLiteralExpression;
+
+    let valueExpr: ts.Expression | undefined;
+    let getExpr: ts.Expression | undefined;
+    let setExpr: ts.Expression | undefined;
+    let hasGetKey = false;
+    let hasSetKey = false;
+
+    for (const prop of objArg.properties) {
+      if (!ts.isPropertyAssignment(prop)) continue;
+      if (!ts.isIdentifier(prop.name)) continue;
+      const key = prop.name.text;
+      if (key === 'value') valueExpr = prop.initializer;
+      else if (key === 'get') {
+        hasGetKey = true;
+        getExpr = prop.initializer;
+      } else if (key === 'set') {
+        hasSetKey = true;
+        setExpr = prop.initializer;
+      }
+    }
+
+    if (!hasGetKey || !hasSetKey) {
+      this.addDiagnostic(
+        call,
+        'error',
+        '`gd.getset()` requires both `get` and `set` properties (use `null` for the default).',
+      );
+      return;
+    }
+
+    // `null` means "use GDScript's default (backing-field read/write)".
+    const getIsNull =
+      getExpr !== undefined && getExpr.kind === ts.SyntaxKind.NullKeyword;
+    const setIsNull =
+      setExpr !== undefined && setExpr.kind === ts.SyntaxKind.NullKeyword;
+
+    if (getIsNull && setIsNull) {
+      this.addDiagnostic(
+        call,
+        'error',
+        '`gd.getset()`: at least one of `get` or `set` must be non-null.',
+      );
+      return;
+    }
+
+    // Classify non-null accessors as inline vs function-ref
+    const getIsInline =
+      !getIsNull &&
+      getExpr !== undefined &&
+      (ts.isArrowFunction(getExpr) || ts.isFunctionExpression(getExpr));
+    const setIsInline =
+      !setIsNull &&
+      setExpr !== undefined &&
+      (ts.isArrowFunction(setExpr) || ts.isFunctionExpression(setExpr));
+    const getIsRef = !getIsNull && !getIsInline;
+    const setIsRef = !setIsNull && !setIsInline;
+
+    // Error: mixing inline bodies with function-reference form
+    if ((getIsInline && setIsRef) || (getIsRef && setIsInline)) {
+      this.addDiagnostic(
+        call,
+        'error',
+        '`gd.getset()`: cannot mix inline `get`/`set` bodies with function-reference form.',
+      );
+      return;
+    }
+
+    const usingRefForm = getIsRef || setIsRef;
+
+    // Error: function-ref form cannot have a `value` default
+    if (usingRefForm && valueExpr) {
+      this.addDiagnostic(
+        call,
+        'error',
+        '`gd.getset()`: `value` default cannot be used with function-reference `get`/`set`.',
+      );
+      return;
+    }
+
+    // Type annotation for the GDScript `var <name>: <Type>`.
+    // Prefer the explicit `gd.getset<T>()` generic, then the property's own
+    // annotation, then fall back to the TS type checker's inferred type
+    // (which resolves T from `value` via contextual typing).
+    let gdType: string | null = null;
+    if (call.typeArguments && call.typeArguments.length > 0) {
+      gdType = tsTypeNodeToGdType(
+        call.typeArguments[0]!,
+        this.ctx.checker,
+        this.ctx.sourceFile,
+        this.currentClassName,
+      );
+    }
+    if (!gdType && node.type) {
+      gdType = tsTypeNodeToGdType(
+        node.type,
+        this.ctx.checker,
+        this.ctx.sourceFile,
+        this.currentClassName,
+      );
+    }
+    // Fall back to inferring the type from the `set` callback's parameter
+    // type. Used for both inline `set: (v: int) => ...` and function-ref
+    // `set: this.set_x` forms — TS can resolve the method signature even
+    // when Godot typings aren't loaded for the outer `gd.getset<T>` call.
+    if (!gdType && setExpr && !setIsNull) {
+      const setType = this.ctx.checker.getTypeAtLocation(setExpr);
+      const sigs = setType.getCallSignatures();
+      if (sigs.length > 0 && sigs[0]!.parameters.length > 0) {
+        const param = sigs[0]!.parameters[0]!;
+        const paramDecl = param.valueDeclaration;
+        if (paramDecl) {
+          const paramType = this.ctx.checker.getTypeOfSymbolAtLocation(
+            param,
+            paramDecl,
+          );
+          const typeStr = this.ctx.checker.typeToString(
+            paramType,
+            node,
+            ts.TypeFormatFlags.NoTruncation,
+          );
+          let cleaned = typeStr
+            .replace(/\s*\|\s*null$/, '')
+            .replace(/\s*\|\s*undefined$/, '')
+            .trim();
+          if (cleaned === 'number') cleaned = 'float';
+          else if (cleaned === 'string') cleaned = 'String';
+          else if (cleaned === 'boolean') cleaned = 'bool';
+          if (
+            cleaned &&
+            cleaned !== 'any' &&
+            cleaned !== 'unknown' &&
+            cleaned !== 'error' &&
+            cleaned !== '{}'
+          ) {
+            gdType = cleaned;
+          }
+        }
+      }
+    }
+
+    // Fall back to inferring the type from the `value` expression directly.
+    // This works even when Godot typings aren't loaded into the test program,
+    // because literal/plain expressions have locally-determinable types.
+    if (!gdType && valueExpr) {
+      // Special case for numeric literals: check the source text to
+      // distinguish `int` (no decimal) from `float` (with decimal). The TS
+      // type checker widens both to `number`, losing this distinction.
+      if (ts.isNumericLiteral(valueExpr)) {
+        const raw = valueExpr.getText(this.ctx.sourceFile);
+        gdType = raw.includes('.') ? 'float' : 'int';
+      } else {
+        const inferred = this.ctx.checker.getTypeAtLocation(valueExpr);
+        const widened = this.ctx.checker.getBaseTypeOfLiteralType(inferred);
+        const typeStr = this.ctx.checker.typeToString(
+          widened,
+          node,
+          ts.TypeFormatFlags.NoTruncation,
+        );
+        let cleaned = typeStr
+          .replace(/\s*\|\s*null$/, '')
+          .replace(/\s*\|\s*undefined$/, '')
+          .trim();
+        // Map TS primitives to GDScript equivalents
+        if (cleaned === 'number') cleaned = 'float';
+        else if (cleaned === 'string') cleaned = 'String';
+        else if (cleaned === 'boolean') cleaned = 'bool';
+        if (
+          cleaned &&
+          cleaned !== 'any' &&
+          cleaned !== 'unknown' &&
+          cleaned !== 'error' &&
+          cleaned !== '{}'
+        ) {
+          gdType = cleaned;
+        }
+      }
+    }
+    const typePart = gdType ? `: ${gdType}` : '';
+    const valuePart = valueExpr ? ` = ${this.emitExpression(valueExpr)}` : '';
+
+    if (usingRefForm) {
+      // `var name: Type: get = fn_name, set = fn_name`
+      // If one side is null, only emit the present one (`get = fn` or `set = fn`)
+      const parts: string[] = [];
+      if (getIsRef) {
+        const fn = this.extractFunctionRefName(getExpr!);
+        if (!fn) {
+          this.addDiagnostic(
+            call,
+            'error',
+            '`gd.getset()`: function-reference form requires `this.fn_name` expressions.',
+          );
+          return;
+        }
+        parts.push(`get = ${fn}`);
+      }
+      if (setIsRef) {
+        const fn = this.extractFunctionRefName(setExpr!);
+        if (!fn) {
+          this.addDiagnostic(
+            call,
+            'error',
+            '`gd.getset()`: function-reference form requires `this.fn_name` expressions.',
+          );
+          return;
+        }
+        parts.push(`set = ${fn}`);
+      }
+      this.emitter.writeLine(`var ${name}${typePart}${valuePart}:`, pos.line, pos.col);
+      this.emitter.indent();
+      this.emitter.writeLine(parts.join(', '));
+      this.emitter.dedent();
+      return;
+    }
+
+    // Inline form — may have only one of get/set (the other is null)
+    this.emitter.writeLine(`var ${name}${typePart}${valuePart}:`, pos.line, pos.col);
+    this.emitter.indent();
+
+    // Activate `this.<name>` → bare `<name>` rewriting for accessor bodies.
+    const savedAccessorName = this.currentAccessorName;
+    this.currentAccessorName = name;
+
+    if (getIsInline) {
+      const getFn = getExpr as ts.ArrowFunction | ts.FunctionExpression;
+      this.emitter.writeLine('get:');
+      this.emitter.indent();
+      if (ts.isBlock(getFn.body)) {
+        for (const stmt of getFn.body.statements) {
+          this.visitStatement(stmt);
+        }
+      } else {
+        this.emitter.writeLine(`return ${this.emitExpression(getFn.body)}`);
+      }
+      this.emitter.dedent();
+    }
+
+    if (setIsInline) {
+      const setFn = setExpr as ts.ArrowFunction | ts.FunctionExpression;
+      const paramName =
+        setFn.parameters[0] && ts.isIdentifier(setFn.parameters[0].name)
+          ? setFn.parameters[0].name.text
+          : 'value';
+      this.emitter.writeLine(`set(${paramName}):`);
+      this.emitter.indent();
+      if (ts.isBlock(setFn.body)) {
+        for (const stmt of setFn.body.statements) {
+          this.visitStatement(stmt);
+        }
+      } else {
+        this.emitter.writeLine(this.emitExpression(setFn.body));
+      }
+      this.emitter.dedent();
+    }
+
+    this.currentAccessorName = savedAccessorName;
+    this.emitter.dedent();
+  }
+
+  /**
+   * Extract the function name from a reference like `this.get_x` or `get_x`.
+   * Returns null if the expression is neither a `this`-property-access nor
+   * a bare identifier.
+   */
+  private extractFunctionRefName(expr: ts.Expression): string | null {
+    if (
+      ts.isPropertyAccessExpression(expr) &&
+      expr.expression.kind === ts.SyntaxKind.ThisKeyword &&
+      ts.isIdentifier(expr.name)
+    ) {
+      return expr.name.text;
+    }
+    if (ts.isIdentifier(expr)) {
+      return expr.text;
+    }
+    return null;
   }
 
   // ─── Inner Class ──────────────────────────────────────────────
@@ -1614,6 +2069,16 @@ export class TsToGdTransformer {
         'error',
         'Optional chaining (`?.`) is not supported in GDScript',
       );
+    }
+    // Inside a get/set accessor body, `this.<accessorName>` refers to the
+    // GDScript backing field, which must be emitted as a bare identifier
+    // (emitting `self.<name>` would recursively call the accessor).
+    if (
+      this.currentAccessorName &&
+      node.expression.kind === ts.SyntaxKind.ThisKeyword &&
+      node.name.text === this.currentAccessorName
+    ) {
+      return this.currentAccessorName;
     }
     // ClassName.staticProp -> self.staticProp (when accessing own class)
     if (
