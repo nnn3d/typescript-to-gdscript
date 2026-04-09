@@ -1163,6 +1163,25 @@ export class TsToGdTransformer {
     return params
       .map((p) => {
         const name = p.name.getText(this.ctx.sourceFile);
+        const isRest = !!p.dotDotDotToken;
+
+        if (isRest) {
+          // Rest parameter: `...args: Type[]` → `...args: Array` or `...args`
+          // GDScript varargs use `...name` or `...name: Array`
+          let gdType: string | null = null;
+          if (p.type) {
+            // Strip array wrapper: `any[]` → null, `Type[]` → Array, `Array<Type>` → Array
+            const typeText = p.type.getText(this.ctx.sourceFile);
+            if (typeText === 'any[]' || typeText === 'unknown[]') {
+              gdType = null;
+            } else {
+              gdType = 'Array';
+            }
+          }
+          const typeAnnotation = gdType ? `: ${gdType}` : '';
+          return `...${name}${typeAnnotation}`;
+        }
+
         const gdType = tsTypeNodeToGdType(
           p.type,
           this.ctx.checker,

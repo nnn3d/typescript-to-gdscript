@@ -17,4 +17,10 @@ export class Functions extends RefCounted {
   calculate(a: float, b: float): float {
     return a + b;
   }
+
+  varargs_untyped(...args: any[]) {
+  }
+
+  varargs_typed(a: int, ...rest: Array<any>) {
+  }
 }

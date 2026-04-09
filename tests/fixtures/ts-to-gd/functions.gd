@@ -32,6 +32,13 @@ var var_func = func(value: String) -> MyClass:
 		pass
 	return self
 
+# Variadic functions
+func varargs(...args):
+	pass
+
+func varargs_typed(a: int, ...rest: Array):
+	pass
+
 func call(fn: Callable):
 	fn.call()
 	fn.call_deferred()

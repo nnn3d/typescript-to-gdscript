@@ -38,6 +38,13 @@ export class MyClass extends Node {
     return this;
   }
 
+  // Variadic functions
+  varargs(...args: any[]) {
+  }
+
+  varargs_typed(a: int, ...rest: Array<unknown>) {
+  }
+
   call(fn: () => void) {
     fn();
     fn.call_deferred();

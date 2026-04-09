@@ -15,3 +15,9 @@ func with_default(name: String, hp: int = 100):
 
 func calculate(a: float, b: float) -> float:
 	return a + b
+
+func varargs_untyped(...args):
+	pass
+
+func varargs_typed(a: int, ...rest: Array):
+	pass

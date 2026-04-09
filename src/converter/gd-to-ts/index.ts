@@ -1356,6 +1356,19 @@ function collectParamNames(
           if (typeName) ctx.localVarTypes.set(name, typeName);
         }
       }
+    } else if (child.type === SyntaxType.VariadicParameter) {
+      // Variadic param: `...args` or `...args: Array` — inner child holds the name
+      const inner = child.namedChildren.find(
+        (c) =>
+          c.type === SyntaxType.Identifier ||
+          c.type === SyntaxType.TypedParameter,
+      );
+      const name =
+        inner?.type === SyntaxType.Identifier
+          ? inner.text
+          : inner?.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+              ?.text;
+      if (name) ctx.localVars.add(name);
     }
   }
 }
@@ -1407,6 +1420,28 @@ function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       const valueStr = value ? emitExpr(value, ctx) : '';
       const typeStr = tsType ? `: ${tsType}` : '';
       params.push(`${name}${typeStr} = ${valueStr}`);
+      paramIndex++;
+    } else if (child.type === SyntaxType.VariadicParameter) {
+      // Variadic: `...args` → `...args: any[]`, `...args: Array` → `...args: Array<unknown>`
+      const inner = child.namedChildren.find(
+        (c) =>
+          c.type === SyntaxType.Identifier ||
+          c.type === SyntaxType.TypedParameter,
+      );
+      if (inner?.type === SyntaxType.Identifier) {
+        params.push(`...${inner.text}: any[]`);
+      } else if (inner?.type === SyntaxType.TypedParameter) {
+        const name =
+          inner.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+            ?.text ?? '';
+        const typeNode = inner.childForFieldName('type');
+        const rawType = typeNode?.text ?? '';
+        const tsType = gdTypeToTs(rawType);
+        // GDScript varargs always collect into an Array. The mapped TS type
+        // for `Array` is already `Array<unknown>`, so use it directly.
+        // For any other type, it's already an array-like form.
+        params.push(`...${name}: ${tsType ?? 'any[]'}`);
+      }
       paramIndex++;
     }
   }
