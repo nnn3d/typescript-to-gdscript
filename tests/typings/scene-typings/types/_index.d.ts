@@ -4,6 +4,7 @@
 declare global {
   interface GodotScripts {}
   interface GodotSceneTrees {}
+  interface GodotScenes {}
   interface GodotResources {}
   interface GodotGroups {}
   // Autoload singletons from project.godot

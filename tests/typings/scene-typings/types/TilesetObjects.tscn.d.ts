@@ -18,6 +18,9 @@ declare global {
   interface GodotSceneTrees {
     "res://TilesetObjects.tscn": _TilesetObjectsTscn_Tree;
   }
+  interface GodotScenes {
+    "res://TilesetObjects.tscn": _GDTreeNode<_TilesetObjectsTscn_Tree>;
+  }
   interface GodotResources {
     "res://TilesetObjects.tscn": PackedScene<_GDTreeNode<_TilesetObjectsTscn_Tree>>;
   }

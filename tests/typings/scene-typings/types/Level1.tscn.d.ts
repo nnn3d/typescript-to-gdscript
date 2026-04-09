@@ -23,6 +23,9 @@ declare global {
   interface GodotSceneTrees {
     "res://Level1.tscn": _Level1Tscn_Tree;
   }
+  interface GodotScenes {
+    "res://Level1.tscn": _GDTreeNode<_Level1Tscn_Tree>;
+  }
   interface GodotResources {
     "res://Level1.tscn": PackedScene<_GDTreeNode<_Level1Tscn_Tree>>;
   }

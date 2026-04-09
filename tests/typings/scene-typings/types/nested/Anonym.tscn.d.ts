@@ -43,6 +43,9 @@ declare global {
   interface GodotSceneTrees {
     "res://nested/Anonym.tscn": _nested_AnonymTscn_Tree;
   }
+  interface GodotScenes {
+    "res://nested/Anonym.tscn": _GDTreeNode<_nested_AnonymTscn_Tree>;
+  }
   interface GodotResources {
     "res://nested/Anonym.tscn": PackedScene<_GDTreeNode<_nested_AnonymTscn_Tree>>;
   }

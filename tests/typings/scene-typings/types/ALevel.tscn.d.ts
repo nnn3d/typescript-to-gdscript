@@ -27,6 +27,9 @@ declare global {
   interface GodotSceneTrees {
     "res://ALevel.tscn": _ALevelTscn_Tree;
   }
+  interface GodotScenes {
+    "res://ALevel.tscn": _GDTreeNode<_ALevelTscn_Tree>;
+  }
   interface GodotResources {
     "res://ALevel.tscn": PackedScene<_GDTreeNode<_ALevelTscn_Tree>>;
   }

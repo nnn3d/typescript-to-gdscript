@@ -1278,6 +1278,11 @@ function generateSceneTypingContent(
   lines.push(`    "${sceneResPath}": ${treeName};`);
   lines.push(`  }`);
 
+  // GodotScenes entry (node type, not tree type)
+  lines.push(`  interface GodotScenes {`);
+  lines.push(`    "${sceneResPath}": _GDTreeNode<${treeName}>;`);
+  lines.push(`  }`);
+
   // GodotResources entry
   lines.push(`  interface GodotResources {`);
   lines.push(`    "${sceneResPath}": PackedScene<_GDTreeNode<${treeName}>>;`);
@@ -1484,6 +1489,7 @@ function generateIndexTypingContent(
   lines.push(`declare global {`);
   lines.push(`  interface GodotScripts {}`);
   lines.push(`  interface GodotSceneTrees {}`);
+  lines.push(`  interface GodotScenes {}`);
   lines.push(`  interface GodotResources {}`);
   lines.push(`  interface GodotGroups {}`);
 

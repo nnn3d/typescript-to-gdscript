@@ -791,16 +791,18 @@ function collectUnsafeAnyFieldFixes(
     for (const diag of diagnostics) {
       // TS7006: Parameter 'X' implicitly has an 'any' type.
       // TS7008: Member 'X' implicitly has an 'any' type.
-      if (diag.code !== 7006 && diag.code !== 7008) continue;
+      // TS7034: Variable 'X' implicitly has type 'any[]' in some locations.
+      if (diag.code !== 7006 && diag.code !== 7008 && diag.code !== 7034) continue;
       if (diag.start === undefined || diag.length === undefined) continue;
 
       const node = findNodeAt(sourceFile, diag.start, diag.length);
       if (!node) continue;
 
-      // Walk up to either a PropertyDeclaration or a ParameterDeclaration
+      // Walk up to PropertyDeclaration, ParameterDeclaration, or VariableDeclaration
       let current: ts.Node | undefined = node;
       let propDecl: ts.PropertyDeclaration | undefined;
       let paramDecl: ts.ParameterDeclaration | undefined;
+      let varDecl: ts.VariableDeclaration | undefined;
       while (current) {
         if (ts.isPropertyDeclaration(current)) {
           propDecl = current;
@@ -808,6 +810,10 @@ function collectUnsafeAnyFieldFixes(
         }
         if (ts.isParameter(current)) {
           paramDecl = current;
+          break;
+        }
+        if (ts.isVariableDeclaration(current)) {
+          varDecl = current;
           break;
         }
         current = current.parent;
@@ -837,6 +843,120 @@ function collectUnsafeAnyFieldFixes(
         } else {
           pushFix(paramDecl.name.getEnd(), typeText);
         }
+        continue;
+      }
+
+      if (varDecl) {
+        if (varDecl.type) continue; // already typed
+        // TS7034: variable implicitly has `any[]` — add `: any[]` after the name
+        pushFix(varDecl.name.getEnd(), ': any[]');
+        continue;
+      }
+    }
+
+    if (fixes.length > 0) {
+      fixesByFile.set(fileName, fixes);
+    }
+  }
+
+  return fixesByFile;
+}
+
+// ─── Unsafe Non-Null Assertion Helper ───────────────────────
+
+/**
+ * TS error codes for "possibly null/undefined" that can be suppressed with `!`.
+ * - TS2531: Object is possibly 'null'.
+ * - TS18047: 'X' is possibly 'null'.
+ * - TS18048: 'X' is possibly 'null' or 'undefined'.
+ * - TS18046: 'X' is of type 'unknown'.
+ */
+const TS_POSSIBLY_NULL_CODES = new Set([2531, 18047, 18048, 18046]);
+
+/**
+ * Check if a TS2322 diagnostic is caused by null in a union type.
+ * Looks for "Type 'null' is not assignable to type" in the message chain.
+ */
+function isNullAssignmentError(messageText: string | ts.DiagnosticMessageChain): boolean {
+  if (typeof messageText === 'string') {
+    return /type 'null' is not assignable to type/i.test(messageText);
+  }
+  if (/type 'null' is not assignable to type/i.test(messageText.messageText)) return true;
+  if (messageText.next) {
+    for (const sub of messageText.next) {
+      if (isNullAssignmentError(sub)) return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * Collect "possibly null" errors and produce `!` (non-null assertion) fixes.
+ * Also handles TS2322 where the error is caused by `T | null` assigned to `T`
+ * (adds `!` after the RHS expression).
+ * Only runs when `--unsafe-use-any` is set (Phase 2).
+ */
+function collectUnsafeNonNullFixes(
+  program: ts.Program,
+  filePaths: Set<string>,
+): Map<string, SourceFix[]> {
+  const fixesByFile = new Map<string, SourceFix[]>();
+
+  for (const sourceFile of program.getSourceFiles()) {
+    const fileName = sourceFile.fileName;
+    if (!filePaths.has(fileName)) continue;
+
+    const diagnostics = program.getSemanticDiagnostics(sourceFile);
+    const fixedPositions = new Set<number>();
+    const fixes: SourceFix[] = [];
+    const sourceText = sourceFile.getFullText();
+
+    const pushNonNull = (pos: number) => {
+      if (fixedPositions.has(pos)) return;
+      if (sourceText[pos] === '!') return; // already has `!`
+      fixedPositions.add(pos);
+      fixes.push({ start: pos, end: pos, replacement: '!' });
+    };
+
+    for (const diag of diagnostics) {
+      if (diag.start === undefined || diag.length === undefined) continue;
+
+      // Direct "possibly null" errors — insert `!` right after the expression
+      if (TS_POSSIBLY_NULL_CODES.has(diag.code)) {
+        pushNonNull(diag.start + diag.length);
+        continue;
+      }
+
+      // TS2322: "Type 'X | null' is not assignable to type 'X'"
+      // TS2345: "Argument of type 'X | null' is not assignable to parameter of type 'X'"
+      // where the root cause is null — insert `!` after the expression
+      if ((diag.code === 2322 || diag.code === 2345) && isNullAssignmentError(diag.messageText)) {
+        let node = findNodeAt(sourceFile, diag.start, diag.length);
+        if (!node) continue;
+
+        // Redirect from LHS/keyword to the actual value expression
+        const parent = node.parent;
+        if (
+          ts.isIdentifier(node) &&
+          (ts.isVariableDeclaration(parent) || ts.isPropertyDeclaration(parent)) &&
+          parent.name === node &&
+          parent.initializer
+        ) {
+          node = parent.initializer;
+        } else if (
+          ts.isBinaryExpression(parent) &&
+          parent.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+          parent.left === node
+        ) {
+          node = parent.right;
+        } else if (
+          ts.isReturnStatement(parent) &&
+          parent.expression
+        ) {
+          node = parent.expression;
+        }
+
+        pushNonNull(node.getEnd());
         continue;
       }
     }
@@ -903,6 +1023,7 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
   /** Run a set of fix collectors in a multi-pass loop until convergence. */
   const runFixLoop = (
     collectors: Array<(program: ts.Program, filePaths: Set<string>) => Map<string, SourceFix[]>>,
+    label?: string,
   ) => {
     for (let pass = 0; pass < MAX_FIX_PASSES; pass++) {
       const program = createTsProgram({ rootDir, files, tsConfigPath });
@@ -953,6 +1074,9 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
       }
 
       if (fixedInPass === 0) break;
+      if (label) {
+        console.log(`  [ts-helpers] ${label}: pass ${pass + 1} — ${fixedInPass} fix(es) applied`);
+      }
     }
   };
 
@@ -980,16 +1104,26 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
     );
   }
   if (primaryCollectors.length > 0) {
-    runFixLoop(primaryCollectors);
+    console.log('[ts-helpers] Running primary helpers...');
+    runFixLoop(primaryCollectors, 'primary');
   }
 
-  // Phase 2 (unsafe mode only): type any remaining untyped fields/params as `any`.
+  // Phase 2 (unsafe mode only): type any remaining untyped fields/params as `any`,
+  // then suppress "possibly null" errors with `!` assertions.
   if (unsafeAnyFallbackEnabled) {
+    console.log('[ts-helpers] Running unsafe-any fallback...');
     runFixLoop([
       (program, filePaths) => collectUnsafeAnyFieldFixes(program, filePaths),
-    ]);
+    ], 'unsafe-any');
+    console.log('[ts-helpers] Running unsafe non-null assertions...');
+    runFixLoop([
+      (program, filePaths) => collectUnsafeNonNullFixes(program, filePaths),
+    ], 'non-null');
   }
 
   result.fixedFiles = [...allFixedFiles];
+  if (allFixedFiles.size > 0) {
+    console.log(`[ts-helpers] Done — ${allFixedFiles.size} file(s) modified`);
+  }
   return result;
 }

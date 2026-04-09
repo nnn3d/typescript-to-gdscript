@@ -64,6 +64,9 @@ declare global {
   interface GodotSceneTrees {
     "res://Player.tscn": _PlayerTscn_Tree;
   }
+  interface GodotScenes {
+    "res://Player.tscn": _GDTreeNode<_PlayerTscn_Tree>;
+  }
   interface GodotResources {
     "res://Player.tscn": PackedScene<_GDTreeNode<_PlayerTscn_Tree>>;
   }
