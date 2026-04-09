@@ -5,6 +5,7 @@ import type {
   TransformDiagnostic,
 } from '../common/index.ts';
 import { tsTypeNodeToGdType } from '../common/index.ts';
+import { resolveRegistry } from '../../config/index.ts';
 import { GDScriptEmitter } from './emitter.ts';
 
 export interface TransformerOptions {
@@ -12,46 +13,51 @@ export interface TransformerOptions {
 }
 
 /**
- * GDScript value types (variant primitives) that don't support the `in`
- * operator. Arrays, Packed*Array, and these value types are all rejected
- * (only `Dictionary` and `String` are valid RHS targets in GDScript).
+ * Container types that DO support the `in` operator in GDScript. Everything
+ * else in the registry's `constructors` list (all Godot variant/value types)
+ * is considered banned for use with `in`.
+ *
+ * Note: `Dictionary` supports `in` (checks key presence). `Array` and all
+ * `Packed*Array` types do NOT support `in` in GDScript and are therefore
+ * NOT listed here.
  */
-const GD_IN_BANNED_VALUE_TYPES = new Set([
-  'Vector2',
-  'Vector2i',
-  'Vector3',
-  'Vector3i',
-  'Vector4',
-  'Vector4i',
-  'Color',
-  'Rect2',
-  'Rect2i',
-  'Transform2D',
-  'Transform3D',
-  'Basis',
-  'Quaternion',
-  'AABB',
-  'Plane',
-  'Projection',
-  'RID',
-  'Callable',
-  'Signal',
-  'StringName',
-  'NodePath',
-]);
+const GD_IN_ALLOWED_CONTAINER_TYPES = new Set(['Dictionary']);
 
-const GD_PACKED_ARRAY_TYPES = new Set([
-  'PackedByteArray',
-  'PackedInt32Array',
-  'PackedInt64Array',
-  'PackedFloat32Array',
-  'PackedFloat64Array',
-  'PackedStringArray',
-  'PackedVector2Array',
-  'PackedVector3Array',
-  'PackedColorArray',
-  'PackedVector4Array',
-]);
+/**
+ * Packed array type names are recognized as "array" in error messages.
+ * Derived from the registry's `constructors` list, filtered to entries that
+ * start with `Packed` (Godot's naming convention for packed arrays).
+ */
+let cachedPackedArrayTypes: Set<string> | null = null;
+/**
+ * Non-container variant types banned from `in` RHS — the set of registry
+ * constructors minus `GD_IN_ALLOWED_CONTAINER_TYPES`, excluding `Packed*Array`
+ * entries (those get a dedicated "the array type `X`" label).
+ */
+let cachedBannedValueTypes: Set<string> | null = null;
+
+function ensureBannedTypeSets(): void {
+  if (cachedBannedValueTypes && cachedPackedArrayTypes) return;
+  const banned = new Set<string>();
+  const packed = new Set<string>();
+  try {
+    const registry = resolveRegistry();
+    const constructors = registry.getData().constructors ?? [];
+    for (const name of constructors) {
+      if (GD_IN_ALLOWED_CONTAINER_TYPES.has(name)) continue;
+      if (name.startsWith('Packed') && name.endsWith('Array')) {
+        packed.add(name);
+      } else {
+        banned.add(name);
+      }
+    }
+  } catch {
+    // Registry unavailable — sets stay empty; only `isArrayType`/primitive
+    // checks will fire.
+  }
+  cachedBannedValueTypes = banned;
+  cachedPackedArrayTypes = packed;
+}
 
 /**
  * If the type is banned as a right-hand side of `in`, return a human-readable
@@ -70,13 +76,14 @@ function classifyInRhsType(
   if (anyChecker.isArrayType?.(type)) return 'an array';
   if (anyChecker.isTupleType?.(type)) return 'a tuple';
 
+  ensureBannedTypeSets();
   const symbol = type.getSymbol() ?? type.aliasSymbol;
   const name = symbol?.getName();
   if (name) {
-    if (GD_IN_BANNED_VALUE_TYPES.has(name)) {
+    if (cachedBannedValueTypes!.has(name)) {
       return `the value type \`${name}\``;
     }
-    if (GD_PACKED_ARRAY_TYPES.has(name)) {
+    if (cachedPackedArrayTypes!.has(name)) {
       return `the array type \`${name}\``;
     }
     if (name === 'Array' || name === 'ReadonlyArray') return 'an array';

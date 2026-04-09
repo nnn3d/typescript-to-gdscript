@@ -34,6 +34,19 @@ This project converts TypeScript code to GDScript for the Godot game engine, wit
 
    Always clean them up (`rmSync(..., { recursive: true, force: true })`) in `finally` blocks.
 
+6. **⚠️ DO NOT hardcode data that can be derived from existing sources** — especially Godot class/type/method lists that live in the registry (`typings/<version>/godot-class-registry.json`, accessed via `resolveRegistry()` → `.getData()`). Never hardcode lists of Godot value types, variant constructors, packed arrays, signal names, class inheritance, etc. Always derive them from the registry at runtime (lazy + cached if needed for perf).
+
+   Examples of things that MUST come from the registry:
+   - Godot value/variant types (Vector2, Color, Rect2, Transform2D, ...)
+   - Packed array types (PackedInt32Array, PackedColorArray, ...)
+   - Global functions, global constants, global enums
+   - Singletons (Engine, Input, ProjectSettings, ...)
+   - Bare annotations (`@export`, `@onready`, ...)
+   - Class inheritance chains and method/property/signal lists
+   - `variantConverts` (types convertible via `gd.as`)
+
+   If you think something genuinely needs to be hardcoded (e.g., a small set of TS-specific concepts that don't exist in Godot's XML), **ask the user for explicit permission first**. Default answer is "derive it from the registry".
+
 ---
 
 ## Quick Reference
