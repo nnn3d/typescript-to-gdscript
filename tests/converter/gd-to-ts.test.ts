@@ -293,7 +293,7 @@ describe('GD to TS: Explicit convert helper', () => {
         'function wants_packed(p: PackedColorArray): void {}',
         '',
         'export class TestExplicit extends Node2D {',
-        '  test() {',
+        '  test(): Vector2i {',
         '    // Vector2 → Vector2i (variant convert)',
         '    wants_v2i(Vector2.DOWN);',
         '    // Vector2i → Vector2 (variant convert)',
@@ -306,6 +306,8 @@ describe('GD to TS: Explicit convert helper', () => {
         '    // Property assignment with LHS PropertyAccessExpression',
         '    const body: { points: PackedVector2Array } = { points: [] as any };',
         '    body.points = [];',
+        '    // Return statement: wrap returned expression, not the keyword',
+        '    return this.get_viewport_rect().size;',
         '    // Valid (no fix needed)',
         '    wants_v2(Vector2.UP);',
         '  }',
@@ -332,6 +334,9 @@ describe('GD to TS: Explicit convert helper', () => {
       expect(fixed).toContain('const points: PackedVector2Array = gd.as([], PackedVector2Array)');
       expect(fixed).toContain('body.points = gd.as([], PackedVector2Array)');
       expect(fixed).not.toContain('gd.as(body.points, PackedVector2Array) =');
+      // Return statement: wraps the expression, not the `return` keyword
+      expect(fixed).toContain('return gd.as(this.get_viewport_rect().size, Vector2i)');
+      expect(fixed).not.toContain('gd.as(return');
       // Valid call unchanged
       expect(fixed).toContain('wants_v2(Vector2.UP);');
     } finally {

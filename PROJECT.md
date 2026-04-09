@@ -55,7 +55,7 @@ src/
   cache/index.ts         # FileCache with SHA-256
   watcher/index.ts       # Watcher class using chokidar
   cli/index.ts           # Commander CLI
-  types/gd-helpers.d.ts  # gd namespace type defs (original, copied to typings/_globals/)
+  types/gd-helpers.d.ts  # gd namespace type defs (original, copied to typings/gd-helpers.d.ts)
 
 tests/
   fixtures/ts-to-gd/    # 21 paired .ts/.gd fixture files

@@ -335,9 +335,8 @@ function collectExplicitConvertFixes(
       let node = findNodeAt(sourceFile, diag.start, diag.length);
       if (!node) continue;
 
-      // For TS2739/TS2740/TS2741 the diagnostic points at the LHS (variable
-      // name, property name, or property access chain); we actually want to
-      // wrap the initializer / RHS.
+      // Some diagnostics point at the LHS / keyword rather than the value
+      // expression. Redirect to the actual value we want to wrap.
       {
         const parent = node.parent;
         if (
@@ -346,13 +345,21 @@ function collectExplicitConvertFixes(
           parent.name === node &&
           parent.initializer
         ) {
+          // Variable/property name → use initializer
           node = parent.initializer;
         } else if (
           ts.isBinaryExpression(parent) &&
           parent.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
           parent.left === node
         ) {
+          // Assignment LHS → use RHS
           node = parent.right;
+        } else if (
+          ts.isReturnStatement(parent) &&
+          parent.expression
+        ) {
+          // `return` keyword → use returned expression
+          node = parent.expression;
         }
       }
 
