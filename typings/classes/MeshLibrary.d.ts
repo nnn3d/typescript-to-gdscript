@@ -46,7 +46,7 @@ declare class MeshLibrary extends Resource {
   /** Sets the item's shadow casting mode to `shadow_casting_setting`. */
   set_item_mesh_cast_shadow(id: int, shadow_casting_setting: int): void;
   /** Sets the transform to apply to the item's mesh. */
-  set_item_mesh_transform(id: int, mesh_transform: Transform3D): void;
+  set_item_mesh_transform(id: int, mesh_transform: Transform3D | Projection): void;
   /**
    * Sets the item's name.
    * This name is shown in the editor. It can also be used to look up the item later using {@link find_item_by_name}.
@@ -57,12 +57,12 @@ declare class MeshLibrary extends Resource {
   /** Sets the item's navigation mesh. */
   set_item_navigation_mesh(id: int, navigation_mesh: NavigationMesh): void;
   /** Sets the transform to apply to the item's navigation mesh. */
-  set_item_navigation_mesh_transform(id: int, navigation_mesh: Transform3D): void;
+  set_item_navigation_mesh_transform(id: int, navigation_mesh: Transform3D | Projection): void;
   /** Sets a texture to use as the item's preview icon in the editor. */
   set_item_preview(id: int, texture: Texture2D): void;
   /**
    * Sets an item's collision shapes.
    * The array should consist of {@link Shape3D} objects, each followed by a {@link Transform3D} that will be applied to it. For shapes that should not have a transform, use {@link Transform3D.IDENTITY}.
    */
-  set_item_shapes(id: int, shapes: Array<unknown>): void;
+  set_item_shapes(id: int, shapes: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
 }

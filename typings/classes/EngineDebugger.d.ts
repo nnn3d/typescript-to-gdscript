@@ -32,11 +32,11 @@ declare interface EngineDebugger extends GodotObject {
    */
   line_poll(): void;
   /** Calls the `add` callable of the profiler with given `name` and `data`. */
-  profiler_add_frame_data(name: string, data: Array<unknown>): void;
+  profiler_add_frame_data(name: string, data: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /**
    * Calls the `toggle` callable of the profiler with given `name` and `arguments`. Enables/Disables the same profiler depending on `enable` argument.
    */
-  profiler_enable(name: string, enable: boolean, arguments?: Array<unknown>): void;
+  profiler_enable(name: string, enable: boolean, arguments?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /**
    * Registers a message capture with given `name`. If `name` is "my_message" then messages starting with "my_message:" will be called with the given callable.
    * The callable must accept a message string and a data array as argument. The callable should return `true` if the message is recognized.
@@ -52,7 +52,7 @@ declare interface EngineDebugger extends GodotObject {
    */
   script_debug(language: ScriptLanguage, can_continue?: boolean, is_error_breakpoint?: boolean): void;
   /** Sends a message with given `message` and `data` array. */
-  send_message(message: string, data: Array<unknown>): void;
+  send_message(message: string, data: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /** Sets the current debugging depth. */
   set_depth(depth: int): void;
   /** Sets the current debugging lines that remain. */

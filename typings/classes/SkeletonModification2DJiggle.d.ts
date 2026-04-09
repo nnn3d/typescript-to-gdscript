@@ -29,7 +29,7 @@ declare class SkeletonModification2DJiggle extends SkeletonModification2D {
   use_gravity: boolean;
   set_damping(value: float): void;
   get_damping(): float;
-  set_gravity(value: Vector2): void;
+  set_gravity(value: Vector2 | Vector2i): void;
   get_gravity(): Vector2;
   set_jiggle_data_chain_length(value: int): void;
   get_jiggle_data_chain_length(): int;
@@ -79,7 +79,7 @@ declare class SkeletonModification2DJiggle extends SkeletonModification2D {
   /** Sets the amount of damping of the Jiggle joint at `joint_idx`. */
   set_jiggle_joint_damping(joint_idx: int, damping: float): void;
   /** Sets the gravity vector of the Jiggle joint at `joint_idx`. */
-  set_jiggle_joint_gravity(joint_idx: int, gravity: Vector2): void;
+  set_jiggle_joint_gravity(joint_idx: int, gravity: Vector2 | Vector2i): void;
   /** Sets the of mass of the Jiggle joint at `joint_idx`. */
   set_jiggle_joint_mass(joint_idx: int, mass: float): void;
   /**

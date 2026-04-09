@@ -67,21 +67,21 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /** Overridable version of {@link PhysicsServer2D.body_add_collision_exception}. */
   _body_add_collision_exception(body: RID, excepted_body: RID): void;
   /** Overridable version of {@link PhysicsServer2D.body_add_constant_central_force}. */
-  _body_add_constant_central_force(body: RID, force: Vector2): void;
+  _body_add_constant_central_force(body: RID, force: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsServer2D.body_add_constant_force}. */
-  _body_add_constant_force(body: RID, force: Vector2, position: Vector2): void;
+  _body_add_constant_force(body: RID, force: Vector2 | Vector2i, position: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsServer2D.body_add_constant_torque}. */
   _body_add_constant_torque(body: RID, torque: float): void;
   /** Overridable version of {@link PhysicsServer2D.body_add_shape}. */
   _body_add_shape(body: RID, shape: RID, transform: Transform2D, disabled: boolean): void;
   /** Overridable version of {@link PhysicsServer2D.body_apply_central_force}. */
-  _body_apply_central_force(body: RID, force: Vector2): void;
+  _body_apply_central_force(body: RID, force: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsServer2D.body_apply_central_impulse}. */
-  _body_apply_central_impulse(body: RID, impulse: Vector2): void;
+  _body_apply_central_impulse(body: RID, impulse: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsServer2D.body_apply_force}. */
-  _body_apply_force(body: RID, force: Vector2, position: Vector2): void;
+  _body_apply_force(body: RID, force: Vector2 | Vector2i, position: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsServer2D.body_apply_impulse}. */
-  _body_apply_impulse(body: RID, impulse: Vector2, position: Vector2): void;
+  _body_apply_impulse(body: RID, impulse: Vector2 | Vector2i, position: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsServer2D.body_apply_torque}. */
   _body_apply_torque(body: RID, torque: float): void;
   /** Overridable version of {@link PhysicsServer2D.body_apply_torque_impulse}. */
@@ -96,7 +96,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
    * Given a `body`, a `shape`, and their respective parameters, this method should return `true` if a collision between the two would occur, with additional details passed in `results`.
    * Overridable version of {@link PhysicsServer2D}'s internal `shape_collide` method. Corresponds to {@link PhysicsDirectSpaceState2D.collide_shape}.
    */
-  _body_collide_shape(body: RID, body_shape: int, shape: RID, shape_xform: Transform2D, motion: Vector2, results: void, result_max: int, result_count: int): boolean;
+  _body_collide_shape(body: RID, body_shape: int, shape: RID, shape_xform: Transform2D, motion: Vector2 | Vector2i, results: void, result_max: int, result_count: int): boolean;
   /** Overridable version of {@link PhysicsServer2D.body_create}. */
   _body_create(): RID;
   /** Overridable version of {@link PhysicsServer2D.body_get_canvas_instance_id}. */
@@ -152,7 +152,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /** Overridable version of {@link PhysicsServer2D.body_reset_mass_properties}. */
   _body_reset_mass_properties(body: RID): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_axis_velocity}. */
-  _body_set_axis_velocity(body: RID, axis_velocity: Vector2): void;
+  _body_set_axis_velocity(body: RID, axis_velocity: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_collision_layer}. */
   _body_set_collision_layer(body: RID, layer: int): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_collision_mask}. */
@@ -160,7 +160,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /** Overridable version of {@link PhysicsServer2D.body_set_collision_priority}. */
   _body_set_collision_priority(body: RID, priority: float): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_constant_force}. */
-  _body_set_constant_force(body: RID, force: Vector2): void;
+  _body_set_constant_force(body: RID, force: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_constant_torque}. */
   _body_set_constant_torque(body: RID, torque: float): void;
   /**
@@ -188,7 +188,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /** Overridable version of {@link PhysicsServer2D.body_set_shape}. */
   _body_set_shape(body: RID, shape_idx: int, shape: RID): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_shape_as_one_way_collision}. */
-  _body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float, direction: Vector2): void;
+  _body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float, direction: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_shape_disabled}. */
   _body_set_shape_disabled(body: RID, shape_idx: int, disabled: boolean): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_shape_transform}. */
@@ -205,7 +205,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /**
    * Overridable version of {@link PhysicsServer2D.body_test_motion}. Unlike the exposed implementation, this method does not receive all of the arguments inside a {@link PhysicsTestMotionParameters2D}.
    */
-  _body_test_motion(body: RID, from_: Transform2D, motion: Vector2, margin: float, collide_separation_ray: boolean, recovery_as_collision: boolean, result: unknown): boolean;
+  _body_test_motion(body: RID, from_: Transform2D, motion: Vector2 | Vector2i, margin: float, collide_separation_ray: boolean, recovery_as_collision: boolean, result: unknown): boolean;
   /** Overridable version of {@link PhysicsServer2D.capsule_shape_create}. */
   _capsule_shape_create(): RID;
   /** Overridable version of {@link PhysicsServer2D.circle_shape_create}. */
@@ -260,11 +260,11 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /** Overridable version of {@link PhysicsServer2D.joint_is_disabled_collisions_between_bodies}. */
   _joint_is_disabled_collisions_between_bodies(joint: RID): boolean;
   /** Overridable version of {@link PhysicsServer2D.joint_make_damped_spring}. */
-  _joint_make_damped_spring(joint: RID, anchor_a: Vector2, anchor_b: Vector2, body_a: RID, body_b: RID): void;
+  _joint_make_damped_spring(joint: RID, anchor_a: Vector2 | Vector2i, anchor_b: Vector2 | Vector2i, body_a: RID, body_b: RID): void;
   /** Overridable version of {@link PhysicsServer2D.joint_make_groove}. */
-  _joint_make_groove(joint: RID, a_groove1: Vector2, a_groove2: Vector2, b_anchor: Vector2, body_a: RID, body_b: RID): void;
+  _joint_make_groove(joint: RID, a_groove1: Vector2 | Vector2i, a_groove2: Vector2 | Vector2i, b_anchor: Vector2 | Vector2i, body_a: RID, body_b: RID): void;
   /** Overridable version of {@link PhysicsServer2D.joint_make_pin}. */
-  _joint_make_pin(joint: RID, anchor: Vector2, body_a: RID, body_b: RID): void;
+  _joint_make_pin(joint: RID, anchor: Vector2 | Vector2i, body_a: RID, body_b: RID): void;
   /** Overridable version of {@link PhysicsServer2D.joint_set_param}. */
   _joint_set_param(joint: RID, param: int, value: float): void;
   /** Overridable version of {@link PhysicsServer2D.pin_joint_get_flag}. */
@@ -287,7 +287,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
    * Given two shapes and their parameters, should return `true` if a collision between the two would occur, with additional details passed in `results`.
    * Overridable version of {@link PhysicsServer2D}'s internal `shape_collide` method. Corresponds to {@link PhysicsDirectSpaceState2D.collide_shape}.
    */
-  _shape_collide(shape_A: RID, xform_A: Transform2D, motion_A: Vector2, shape_B: RID, xform_B: Transform2D, motion_B: Vector2, results: void, result_max: int, result_count: int): boolean;
+  _shape_collide(shape_A: RID, xform_A: Transform2D, motion_A: Vector2 | Vector2i, shape_B: RID, xform_B: Transform2D, motion_B: Vector2 | Vector2i, results: void, result_max: int, result_count: int): boolean;
   /**
    * Should return the custom solver bias of the given `shape`, which defines how much bodies are forced to separate on contact when this shape is involved.
    * Overridable version of {@link PhysicsServer2D}'s internal `shape_get_custom_solver_bias` method. Corresponds to {@link Shape2D.custom_solver_bias}.

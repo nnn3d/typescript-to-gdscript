@@ -100,17 +100,17 @@ declare class RigidBody3D extends PhysicsBody3D {
   get_angular_damp(): float;
   set_angular_damp_mode(value: int): void;
   get_angular_damp_mode(): int;
-  set_angular_velocity(value: Vector3): void;
+  set_angular_velocity(value: Vector3 | Vector3i): void;
   get_angular_velocity(): Vector3;
   set_can_sleep(value: boolean): void;
   is_able_to_sleep(): boolean;
-  set_center_of_mass(value: Vector3): void;
+  set_center_of_mass(value: Vector3 | Vector3i): void;
   get_center_of_mass(): Vector3;
   set_center_of_mass_mode(value: int): void;
   get_center_of_mass_mode(): int;
-  set_constant_force(value: Vector3): void;
+  set_constant_force(value: Vector3 | Vector3i): void;
   get_constant_force(): Vector3;
-  set_constant_torque(value: Vector3): void;
+  set_constant_torque(value: Vector3 | Vector3i): void;
   get_constant_torque(): Vector3;
   set_contact_monitor(value: boolean): void;
   is_contact_monitor_enabled(): boolean;
@@ -124,13 +124,13 @@ declare class RigidBody3D extends PhysicsBody3D {
   get_freeze_mode(): int;
   set_gravity_scale(value: float): void;
   get_gravity_scale(): float;
-  set_inertia(value: Vector3): void;
+  set_inertia(value: Vector3 | Vector3i): void;
   get_inertia(): Vector3;
   set_linear_damp(value: float): void;
   get_linear_damp(): float;
   set_linear_damp_mode(value: int): void;
   get_linear_damp_mode(): int;
-  set_linear_velocity(value: Vector3): void;
+  set_linear_velocity(value: Vector3 | Vector3i): void;
   get_linear_velocity(): Vector3;
   set_lock_rotation_enabled(value: boolean): void;
   is_lock_rotation_enabled(): boolean;
@@ -151,49 +151,49 @@ declare class RigidBody3D extends PhysicsBody3D {
    * Adds a constant directional force without affecting rotation that keeps being applied over time until cleared with `constant_force = Vector3(0, 0, 0)`.
    * This is equivalent to using {@link add_constant_force} at the body's center of mass.
    */
-  add_constant_central_force(force: Vector3): void;
+  add_constant_central_force(force: Vector3 | Vector3i): void;
   /**
    * Adds a constant positioned force to the body that keeps being applied over time until cleared with `constant_force = Vector3(0, 0, 0)`.
    * `position` is the offset from the body origin in global coordinates.
    */
-  add_constant_force(force: Vector3, position?: Vector3): void;
+  add_constant_force(force: Vector3 | Vector3i, position?: Vector3 | Vector3i): void;
   /**
    * Adds a constant rotational force without affecting position that keeps being applied over time until cleared with `constant_torque = Vector3(0, 0, 0)`.
    */
-  add_constant_torque(torque: Vector3): void;
+  add_constant_torque(torque: Vector3 | Vector3i): void;
   /**
    * Applies a directional force without affecting rotation. A force is time dependent and meant to be applied every physics update.
    * This is equivalent to using {@link apply_force} at the body's center of mass.
    */
-  apply_central_force(force: Vector3): void;
+  apply_central_force(force: Vector3 | Vector3i): void;
   /**
    * Applies a directional impulse without affecting rotation.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * This is equivalent to using {@link apply_impulse} at the body's center of mass.
    */
-  apply_central_impulse(impulse: Vector3): void;
+  apply_central_impulse(impulse: Vector3 | Vector3i): void;
   /**
    * Applies a positioned force to the body. A force is time dependent and meant to be applied every physics update.
    * `position` is the offset from the body origin in global coordinates.
    */
-  apply_force(force: Vector3, position?: Vector3): void;
+  apply_force(force: Vector3 | Vector3i, position?: Vector3 | Vector3i): void;
   /**
    * Applies a positioned impulse to the body.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * `position` is the offset from the body origin in global coordinates.
    */
-  apply_impulse(impulse: Vector3, position?: Vector3): void;
+  apply_impulse(impulse: Vector3 | Vector3i, position?: Vector3 | Vector3i): void;
   /**
    * Applies a rotational force without affecting position. A force is time dependent and meant to be applied every physics update.
    * **Note:** {@link inertia} is required for this to work. To have {@link inertia}, an active {@link CollisionShape3D} must be a child of the node, or you can manually set {@link inertia}.
    */
-  apply_torque(torque: Vector3): void;
+  apply_torque(torque: Vector3 | Vector3i): void;
   /**
    * Applies a rotational impulse to the body without affecting the position.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * **Note:** {@link inertia} is required for this to work. To have {@link inertia}, an active {@link CollisionShape3D} must be a child of the node, or you can manually set {@link inertia}.
    */
-  apply_torque_impulse(impulse: Vector3): void;
+  apply_torque_impulse(impulse: Vector3 | Vector3i): void;
   /**
    * Returns a list of the bodies colliding with this one. Requires {@link contact_monitor} to be set to `true` and {@link max_contacts_reported} to be set high enough to detect all the collisions.
    * **Note:** The result of this test is not immediate after moving objects. For performance, list of collisions is updated once per frame and before the physics step. Consider using signals instead.
@@ -211,7 +211,7 @@ declare class RigidBody3D extends PhysicsBody3D {
   /**
    * Sets an axis velocity. The velocity in the given vector axis will be set as the given vector length. This is useful for jumping behavior.
    */
-  set_axis_velocity(axis_velocity: Vector3): void;
+  set_axis_velocity(axis_velocity: Vector3 | Vector3i): void;
 
   /**
    * Emitted when a collision with another {@link PhysicsBody3D} or {@link GridMap} occurs. Requires {@link contact_monitor} to be set to `true` and {@link max_contacts_reported} to be set high enough to detect all the collisions. {@link GridMap}s are detected if the {@link MeshLibrary} has Collision {@link Shape3D}s.

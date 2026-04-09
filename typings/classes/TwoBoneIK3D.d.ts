@@ -71,7 +71,7 @@ declare class TwoBoneIK3D extends IKModifier3D {
    * This vector is normalized by an internal process.
    * If the vector length is `0`, it is considered synonymous with {@link SkeletonModifier3D.SECONDARY_DIRECTION_NONE}.
    */
-  set_pole_direction_vector(index: int, vector: Vector3): void;
+  set_pole_direction_vector(index: int, vector: Vector3 | Vector3i): void;
   /**
    * Sets the pole target node that constructs a plane which the joints are all on and the pole is trying to direct.
    */

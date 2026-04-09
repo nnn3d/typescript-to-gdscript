@@ -15,7 +15,7 @@ declare class XRVRS extends GodotObject {
   vrs_strength: float;
   set_vrs_min_radius(value: float): void;
   get_vrs_min_radius(): float;
-  set_vrs_render_region(value: Rect2i): void;
+  set_vrs_render_region(value: Rect2i | Rect2): void;
   get_vrs_render_region(): Rect2i;
   set_vrs_strength(value: float): void;
   get_vrs_strength(): float;
@@ -24,5 +24,5 @@ declare class XRVRS extends GodotObject {
    * Generates the VRS texture based on a render `target_size` adjusted by our VRS tile size. For each eyes focal point passed in `eye_foci` a layer is created. Focal point should be in NDC.
    * The result will be cached, requesting a VRS texture with unchanged parameters and settings will return the cached RID.
    */
-  make_vrs_texture(target_size: Vector2, eye_foci: PackedVector2Array): RID;
+  make_vrs_texture(target_size: Vector2 | Vector2i, eye_foci: PackedVector2Array | Array<unknown>): RID;
 }

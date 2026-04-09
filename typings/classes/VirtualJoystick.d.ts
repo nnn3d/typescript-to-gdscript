@@ -49,7 +49,7 @@ declare class VirtualJoystick extends Control {
   get_clampzone_ratio(): float;
   set_deadzone_ratio(value: float): void;
   get_deadzone_ratio(): float;
-  set_initial_offset_ratio(value: Vector2): void;
+  set_initial_offset_ratio(value: Vector2 | Vector2i): void;
   get_initial_offset_ratio(): Vector2;
   set_joystick_mode(value: int): void;
   get_joystick_mode(): int;

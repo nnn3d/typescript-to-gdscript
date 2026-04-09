@@ -13,11 +13,11 @@ declare class PlaneMesh extends PrimitiveMesh {
   subdivide_depth: int;
   /** Number of subdivision along the X axis. */
   subdivide_width: int;
-  set_center_offset(value: Vector3): void;
+  set_center_offset(value: Vector3 | Vector3i): void;
   get_center_offset(): Vector3;
   set_orientation(value: int): void;
   get_orientation(): int;
-  set_size(value: Vector2): void;
+  set_size(value: Vector2 | Vector2i): void;
   get_size(): Vector2;
   set_subdivide_depth(value: int): void;
   get_subdivide_depth(): int;

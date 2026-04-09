@@ -104,11 +104,11 @@ declare class RigidBody2D extends PhysicsBody2D {
   get_angular_velocity(): float;
   set_can_sleep(value: boolean): void;
   is_able_to_sleep(): boolean;
-  set_center_of_mass(value: Vector2): void;
+  set_center_of_mass(value: Vector2 | Vector2i): void;
   get_center_of_mass(): Vector2;
   set_center_of_mass_mode(value: int): void;
   get_center_of_mass_mode(): int;
-  set_constant_force(value: Vector2): void;
+  set_constant_force(value: Vector2 | Vector2i): void;
   get_constant_force(): Vector2;
   set_constant_torque(value: float): void;
   get_constant_torque(): float;
@@ -130,7 +130,7 @@ declare class RigidBody2D extends PhysicsBody2D {
   get_linear_damp(): float;
   set_linear_damp_mode(value: int): void;
   get_linear_damp_mode(): int;
-  set_linear_velocity(value: Vector2): void;
+  set_linear_velocity(value: Vector2 | Vector2i): void;
   get_linear_velocity(): Vector2;
   set_lock_rotation_enabled(value: boolean): void;
   is_lock_rotation_enabled(): boolean;
@@ -151,12 +151,12 @@ declare class RigidBody2D extends PhysicsBody2D {
    * Adds a constant directional force without affecting rotation that keeps being applied over time until cleared with `constant_force = Vector2(0, 0)`.
    * This is equivalent to using {@link add_constant_force} at the body's center of mass.
    */
-  add_constant_central_force(force: Vector2): void;
+  add_constant_central_force(force: Vector2 | Vector2i): void;
   /**
    * Adds a constant positioned force to the body that keeps being applied over time until cleared with `constant_force = Vector2(0, 0)`.
    * `position` is the offset from the body origin in global coordinates.
    */
-  add_constant_force(force: Vector2, position?: Vector2): void;
+  add_constant_force(force: Vector2 | Vector2i, position?: Vector2 | Vector2i): void;
   /**
    * Adds a constant rotational force without affecting position that keeps being applied over time until cleared with `constant_torque = 0`.
    */
@@ -165,24 +165,24 @@ declare class RigidBody2D extends PhysicsBody2D {
    * Applies a directional force without affecting rotation. A force is time dependent and meant to be applied every physics update.
    * This is equivalent to using {@link apply_force} at the body's center of mass.
    */
-  apply_central_force(force: Vector2): void;
+  apply_central_force(force: Vector2 | Vector2i): void;
   /**
    * Applies a directional impulse without affecting rotation.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * This is equivalent to using {@link apply_impulse} at the body's center of mass.
    */
-  apply_central_impulse(impulse?: Vector2): void;
+  apply_central_impulse(impulse?: Vector2 | Vector2i): void;
   /**
    * Applies a positioned force to the body. A force is time dependent and meant to be applied every physics update.
    * `position` is the offset from the body origin in global coordinates.
    */
-  apply_force(force: Vector2, position?: Vector2): void;
+  apply_force(force: Vector2 | Vector2i, position?: Vector2 | Vector2i): void;
   /**
    * Applies a positioned impulse to the body.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * `position` is the offset from the body origin in global coordinates.
    */
-  apply_impulse(impulse: Vector2, position?: Vector2): void;
+  apply_impulse(impulse: Vector2 | Vector2i, position?: Vector2 | Vector2i): void;
   /**
    * Applies a rotational force without affecting position. A force is time dependent and meant to be applied every physics update.
    * **Note:** {@link inertia} is required for this to work. To have {@link inertia}, an active {@link CollisionShape2D} must be a child of the node, or you can manually set {@link inertia}.
@@ -207,7 +207,7 @@ declare class RigidBody2D extends PhysicsBody2D {
   /**
    * Sets the body's velocity on the given axis. The velocity in the given vector axis will be set as the given vector length. This is useful for jumping behavior.
    */
-  set_axis_velocity(axis_velocity: Vector2): void;
+  set_axis_velocity(axis_velocity: Vector2 | Vector2i): void;
 
   /**
    * Emitted when a collision with another {@link PhysicsBody2D} or {@link TileMap} occurs. Requires {@link contact_monitor} to be set to `true` and {@link max_contacts_reported} to be set high enough to detect all the collisions. {@link TileMap}s are detected if the {@link TileSet} has Collision {@link Shape2D}s.

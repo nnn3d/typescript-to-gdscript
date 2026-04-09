@@ -6,19 +6,19 @@
  */
 declare class PhysicsDirectBodyState2DExtension extends PhysicsDirectBodyState2D {
   /** Overridable version of {@link PhysicsDirectBodyState2D.add_constant_central_force}. */
-  _add_constant_central_force(force: Vector2): void;
+  _add_constant_central_force(force: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsDirectBodyState2D.add_constant_force}. */
-  _add_constant_force(force: Vector2, position: Vector2): void;
+  _add_constant_force(force: Vector2 | Vector2i, position: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsDirectBodyState2D.add_constant_torque}. */
   _add_constant_torque(torque: float): void;
   /** Overridable version of {@link PhysicsDirectBodyState2D.apply_central_force}. */
-  _apply_central_force(force: Vector2): void;
+  _apply_central_force(force: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsDirectBodyState2D.apply_central_impulse}. */
-  _apply_central_impulse(impulse: Vector2): void;
+  _apply_central_impulse(impulse: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsDirectBodyState2D.apply_force}. */
-  _apply_force(force: Vector2, position: Vector2): void;
+  _apply_force(force: Vector2 | Vector2i, position: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsDirectBodyState2D.apply_impulse}. */
-  _apply_impulse(impulse: Vector2, position: Vector2): void;
+  _apply_impulse(impulse: Vector2 | Vector2i, position: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsDirectBodyState2D.apply_torque}. */
   _apply_torque(torque: float): void;
   /** Overridable version of {@link PhysicsDirectBodyState2D.apply_torque_impulse}. */
@@ -100,7 +100,7 @@ declare class PhysicsDirectBodyState2DExtension extends PhysicsDirectBodyState2D
    */
   _get_transform(): Transform2D;
   /** Overridable version of {@link PhysicsDirectBodyState2D.get_velocity_at_local_position}. */
-  _get_velocity_at_local_position(local_position: Vector2): Vector2;
+  _get_velocity_at_local_position(local_position: Vector2 | Vector2i): Vector2;
   /** Overridable version of {@link PhysicsDirectBodyState2D.integrate_forces}. */
   _integrate_forces(): void;
   /**
@@ -114,13 +114,13 @@ declare class PhysicsDirectBodyState2DExtension extends PhysicsDirectBodyState2D
   _set_collision_layer(layer: int): void;
   _set_collision_mask(mask: int): void;
   /** Overridable version of {@link PhysicsDirectBodyState2D.set_constant_force}. */
-  _set_constant_force(force: Vector2): void;
+  _set_constant_force(force: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsDirectBodyState2D.set_constant_torque}. */
   _set_constant_torque(torque: float): void;
   /**
    * Implement to override the behavior of {@link PhysicsDirectBodyState2D.linear_velocity} and its respective setter.
    */
-  _set_linear_velocity(velocity: Vector2): void;
+  _set_linear_velocity(velocity: Vector2 | Vector2i): void;
   /**
    * Implement to override the behavior of {@link PhysicsDirectBodyState2D.sleeping} and its respective setter.
    */

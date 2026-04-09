@@ -38,7 +38,7 @@ declare class NinePatchRect extends Control {
   get_v_axis_stretch_mode(): int;
   set_draw_center(value: boolean): void;
   is_draw_center_enabled(): boolean;
-  set_region_rect(value: Rect2): void;
+  set_region_rect(value: Rect2 | Rect2i): void;
   get_region_rect(): Rect2;
   set_texture(value: Texture2D | null): void;
   get_texture(): Texture2D | null;

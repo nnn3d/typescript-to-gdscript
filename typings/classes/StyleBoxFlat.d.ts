@@ -90,11 +90,11 @@ declare class StyleBoxFlat extends StyleBox {
   is_draw_center_enabled(): boolean;
   set_shadow_color(value: Color): void;
   get_shadow_color(): Color;
-  set_shadow_offset(value: Vector2): void;
+  set_shadow_offset(value: Vector2 | Vector2i): void;
   get_shadow_offset(): Vector2;
   set_shadow_size(value: int): void;
   get_shadow_size(): int;
-  set_skew(value: Vector2): void;
+  set_skew(value: Vector2 | Vector2i): void;
   get_skew(): Vector2;
 
   /** Returns the specified {@link Side}'s border width. */

@@ -41,14 +41,14 @@ declare class InputEventMouseMotion extends InputEventMouse {
   get_pen_inverted(): boolean;
   set_pressure(value: float): void;
   get_pressure(): float;
-  set_relative(value: Vector2): void;
+  set_relative(value: Vector2 | Vector2i): void;
   get_relative(): Vector2;
-  set_screen_relative(value: Vector2): void;
+  set_screen_relative(value: Vector2 | Vector2i): void;
   get_screen_relative(): Vector2;
-  set_screen_velocity(value: Vector2): void;
+  set_screen_velocity(value: Vector2 | Vector2i): void;
   get_screen_velocity(): Vector2;
-  set_tilt(value: Vector2): void;
+  set_tilt(value: Vector2 | Vector2i): void;
   get_tilt(): Vector2;
-  set_velocity(value: Vector2): void;
+  set_velocity(value: Vector2 | Vector2i): void;
   get_velocity(): Vector2;
 }

@@ -44,7 +44,7 @@ declare class XMLParser extends RefCounted {
   /** Opens an XML `file` for parsing. This method returns an error code. */
   open(file: string): int;
   /** Opens an XML raw `buffer` for parsing. This method returns an error code. */
-  open_buffer(buffer: PackedByteArray): int;
+  open_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /** Parses the next node in the file. This method returns an error code. */
   read(): int;
   /**

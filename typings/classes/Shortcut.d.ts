@@ -8,7 +8,7 @@ declare class Shortcut extends Resource {
    * Generally the {@link InputEvent} used is an {@link InputEventKey}, though it can be any {@link InputEvent}, including an {@link InputEventAction}.
    */
   events: Array<unknown>;
-  set_events(value: Array<unknown>): void;
+  set_events(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_events(): Array<unknown>;
 
   /** Returns the shortcut's first valid {@link InputEvent} as a {@link String}. */

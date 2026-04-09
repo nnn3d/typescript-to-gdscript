@@ -27,7 +27,7 @@ declare interface AABB {
   /**
    * Returns a copy of this bounding box expanded to align the edges with the given `to_point`, if necessary.
    */
-  expand(to_point: Vector3): AABB;
+  expand(to_point: Vector3 | Vector3i): AABB;
   /** Returns the center point of the bounding box. This is the same as `position + (size / 2.0)`. */
   get_center(): Vector3;
   /**
@@ -67,7 +67,7 @@ declare interface AABB {
   /**
    * Returns the vertex's position of this bounding box that's the farthest in the given direction. This point is commonly known as the support point in collision detection algorithms.
    */
-  get_support(direction: Vector3): Vector3;
+  get_support(direction: Vector3 | Vector3i): Vector3;
   /**
    * Returns the bounding box's volume. This is equivalent to `size.x * size.y * size.z`. See also {@link has_volume}.
    */
@@ -80,7 +80,7 @@ declare interface AABB {
    * Returns `true` if the bounding box contains the given `point`. By convention, points exactly on the right, top, and front sides are **not** included.
    * **Note:** This method is not reliable for {@link AABB} with a *negative* {@link size}. Use {@link abs} first to get a valid bounding box.
    */
-  has_point(point: Vector3): boolean;
+  has_point(point: Vector3 | Vector3i): boolean;
   /**
    * Returns `true` if this bounding box has a surface or a length, that is, at least one component of {@link size} is greater than `0`. Otherwise, returns `false`.
    */
@@ -104,12 +104,12 @@ declare interface AABB {
    * Returns the first point where this bounding box and the given ray intersect, as a {@link Vector3}. If no intersection occurs, returns `null`.
    * The ray begin at `from`, faces `dir` and extends towards infinity.
    */
-  intersects_ray(from_: Vector3, dir: Vector3): unknown;
+  intersects_ray(from_: Vector3 | Vector3i, dir: Vector3 | Vector3i): unknown;
   /**
    * Returns the first point where this bounding box and the given segment intersect, as a {@link Vector3}. If no intersection occurs, returns `null`.
    * The segment begins at `from` and ends at `to`.
    */
-  intersects_segment(from_: Vector3, to: Vector3): unknown;
+  intersects_segment(from_: Vector3 | Vector3i, to: Vector3 | Vector3i): unknown;
   /**
    * Returns `true` if this bounding box and `aabb` are approximately equal, by calling {@link Vector3.is_equal_approx} on the {@link position} and the {@link size}.
    */

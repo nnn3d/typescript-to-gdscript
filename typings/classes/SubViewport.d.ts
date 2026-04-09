@@ -27,9 +27,9 @@ declare class SubViewport extends Viewport {
   get_clear_mode(): int;
   set_update_mode(value: int): void;
   get_update_mode(): int;
-  set_size(value: Vector2i): void;
+  set_size(value: Vector2i | Vector2): void;
   get_size(): Vector2i;
-  set_size_2d_override(value: Vector2i): void;
+  set_size_2d_override(value: Vector2i | Vector2): void;
   get_size_2d_override(): Vector2i;
   set_size_2d_override_stretch(value: boolean): void;
   is_size_2d_override_stretch_enabled(): boolean;

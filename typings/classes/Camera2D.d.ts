@@ -138,7 +138,7 @@ declare class Camera2D extends Node2D {
   is_limit_enabled(): boolean;
   set_limit_smoothing_enabled(value: boolean): void;
   is_limit_smoothing_enabled(): boolean;
-  set_offset(value: Vector2): void;
+  set_offset(value: Vector2 | Vector2i): void;
   get_offset(): Vector2;
   set_position_smoothing_enabled(value: boolean): void;
   is_position_smoothing_enabled(): boolean;
@@ -150,7 +150,7 @@ declare class Camera2D extends Node2D {
   is_rotation_smoothing_enabled(): boolean;
   set_rotation_smoothing_speed(value: float): void;
   get_rotation_smoothing_speed(): float;
-  set_zoom(value: Vector2): void;
+  set_zoom(value: Vector2 | Vector2i): void;
   get_zoom(): Vector2;
 
   /**

@@ -73,7 +73,7 @@ declare class FontFile extends Font {
   is_allow_system_fallback(): boolean;
   set_antialiasing(value: int): void;
   get_antialiasing(): int;
-  set_data(value: PackedByteArray): void;
+  set_data(value: PackedByteArray | Array<unknown>): void;
   get_data(): PackedByteArray;
   set_disable_embedded_bitmaps(value: boolean): void;
   get_disable_embedded_bitmaps(): boolean;
@@ -115,7 +115,7 @@ declare class FontFile extends Font {
    * Removes all rendered glyph information from the cache entry.
    * **Note:** This function will not remove textures associated with the glyphs, use {@link remove_texture} to remove them manually.
    */
-  clear_glyphs(cache_index: int, size: Vector2i): void;
+  clear_glyphs(cache_index: int, size: Vector2i | Vector2): void;
   /** Removes all kerning overrides. */
   clear_kerning_map(cache_index: int, size: int): void;
   /** Removes all font sizes from the cache entry. */
@@ -124,7 +124,7 @@ declare class FontFile extends Font {
    * Removes all textures from font cache entry.
    * **Note:** This function will not remove glyphs associated with the texture, use {@link remove_glyph} to remove them manually.
    */
-  clear_textures(cache_index: int, size: Vector2i): void;
+  clear_textures(cache_index: int, size: Vector2i | Vector2): void;
   /** Returns the font ascent (number of pixels above the baseline). */
   get_cache_ascent(cache_index: int, size: int): float;
   /** Returns number of the font cache entries. */
@@ -159,17 +159,17 @@ declare class FontFile extends Font {
   /** Returns the glyph index of a `char`, optionally modified by the `variation_selector`. */
   get_glyph_index(size: int, char: int, variation_selector: int): int;
   /** Returns list of rendered glyphs in the cache entry. */
-  get_glyph_list(cache_index: int, size: Vector2i): PackedInt32Array;
+  get_glyph_list(cache_index: int, size: Vector2i | Vector2): PackedInt32Array;
   /** Returns glyph offset from the baseline. */
-  get_glyph_offset(cache_index: int, size: Vector2i, glyph: int): Vector2;
+  get_glyph_offset(cache_index: int, size: Vector2i | Vector2, glyph: int): Vector2;
   /** Returns glyph size. */
-  get_glyph_size(cache_index: int, size: Vector2i, glyph: int): Vector2;
+  get_glyph_size(cache_index: int, size: Vector2i | Vector2, glyph: int): Vector2;
   /** Returns index of the cache texture containing the glyph. */
-  get_glyph_texture_idx(cache_index: int, size: Vector2i, glyph: int): int;
+  get_glyph_texture_idx(cache_index: int, size: Vector2i | Vector2, glyph: int): int;
   /** Returns rectangle in the cache texture containing the glyph. */
-  get_glyph_uv_rect(cache_index: int, size: Vector2i, glyph: int): Rect2;
+  get_glyph_uv_rect(cache_index: int, size: Vector2i | Vector2, glyph: int): Rect2;
   /** Returns kerning for the pair of glyphs. */
-  get_kerning(cache_index: int, size: int, glyph_pair: Vector2i): Vector2;
+  get_kerning(cache_index: int, size: int, glyph_pair: Vector2i | Vector2): Vector2;
   /** Returns list of the kerning overrides. */
   get_kerning_list(cache_index: int, size: int): Array<Vector2i>;
   /** Returns `true` if support override is enabled for the `language`. */
@@ -185,11 +185,11 @@ declare class FontFile extends Font {
    */
   get_size_cache_list(cache_index: int): Array<Vector2i>;
   /** Returns number of textures used by font cache entry. */
-  get_texture_count(cache_index: int, size: Vector2i): int;
+  get_texture_count(cache_index: int, size: Vector2i | Vector2): int;
   /** Returns a copy of the font cache texture image. */
-  get_texture_image(cache_index: int, size: Vector2i, texture_index: int): Image | null;
+  get_texture_image(cache_index: int, size: Vector2i | Vector2, texture_index: int): Image | null;
   /** Returns a copy of the array containing glyph packing data. */
-  get_texture_offsets(cache_index: int, size: Vector2i, texture_index: int): PackedInt32Array;
+  get_texture_offsets(cache_index: int, size: Vector2i | Vector2, texture_index: int): PackedInt32Array;
   /**
    * Returns 2D transform, applied to the font outlines, can be used for slanting, flipping and rotating glyphs.
    */
@@ -214,24 +214,24 @@ declare class FontFile extends Font {
    * Removes specified rendered glyph information from the cache entry.
    * **Note:** This function will not remove textures associated with the glyphs, use {@link remove_texture} to remove them manually.
    */
-  remove_glyph(cache_index: int, size: Vector2i, glyph: int): void;
+  remove_glyph(cache_index: int, size: Vector2i | Vector2, glyph: int): void;
   /** Removes kerning override for the pair of glyphs. */
-  remove_kerning(cache_index: int, size: int, glyph_pair: Vector2i): void;
+  remove_kerning(cache_index: int, size: int, glyph_pair: Vector2i | Vector2): void;
   /** Remove language support override. */
   remove_language_support_override(language: string): void;
   /** Removes script support override. */
   remove_script_support_override(script: string): void;
   /** Removes specified font size from the cache entry. */
-  remove_size_cache(cache_index: int, size: Vector2i): void;
+  remove_size_cache(cache_index: int, size: Vector2i | Vector2): void;
   /**
    * Removes specified texture from the cache entry.
    * **Note:** This function will not remove glyphs associated with the texture. Remove them manually using {@link remove_glyph}.
    */
-  remove_texture(cache_index: int, size: Vector2i, texture_index: int): void;
+  remove_texture(cache_index: int, size: Vector2i | Vector2, texture_index: int): void;
   /** Renders specified glyph to the font cache texture. */
-  render_glyph(cache_index: int, size: Vector2i, index: int): void;
+  render_glyph(cache_index: int, size: Vector2i | Vector2, index: int): void;
   /** Renders the range of characters to the font cache texture. */
-  render_range(cache_index: int, size: Vector2i, start: int, end: int): void;
+  render_range(cache_index: int, size: Vector2i | Vector2, start: int, end: int): void;
   /** Sets the font ascent (number of pixels above the baseline). */
   set_cache_ascent(cache_index: int, size: int, ascent: float): void;
   /** Sets the font descent (number of pixels below the baseline). */
@@ -256,25 +256,25 @@ declare class FontFile extends Font {
    * Sets glyph advance (offset of the next glyph).
    * **Note:** Advance for glyphs outlines is the same as the base glyph advance and is not saved.
    */
-  set_glyph_advance(cache_index: int, size: int, glyph: int, advance: Vector2): void;
+  set_glyph_advance(cache_index: int, size: int, glyph: int, advance: Vector2 | Vector2i): void;
   /** Sets glyph offset from the baseline. */
-  set_glyph_offset(cache_index: int, size: Vector2i, glyph: int, offset: Vector2): void;
+  set_glyph_offset(cache_index: int, size: Vector2i | Vector2, glyph: int, offset: Vector2 | Vector2i): void;
   /** Sets glyph size. */
-  set_glyph_size(cache_index: int, size: Vector2i, glyph: int, gl_size: Vector2): void;
+  set_glyph_size(cache_index: int, size: Vector2i | Vector2, glyph: int, gl_size: Vector2 | Vector2i): void;
   /** Sets index of the cache texture containing the glyph. */
-  set_glyph_texture_idx(cache_index: int, size: Vector2i, glyph: int, texture_idx: int): void;
+  set_glyph_texture_idx(cache_index: int, size: Vector2i | Vector2, glyph: int, texture_idx: int): void;
   /** Sets rectangle in the cache texture containing the glyph. */
-  set_glyph_uv_rect(cache_index: int, size: Vector2i, glyph: int, uv_rect: Rect2): void;
+  set_glyph_uv_rect(cache_index: int, size: Vector2i | Vector2, glyph: int, uv_rect: Rect2 | Rect2i): void;
   /** Sets kerning for the pair of glyphs. */
-  set_kerning(cache_index: int, size: int, glyph_pair: Vector2i, kerning: Vector2): void;
+  set_kerning(cache_index: int, size: int, glyph_pair: Vector2i | Vector2, kerning: Vector2 | Vector2i): void;
   /** Adds override for {@link Font.is_language_supported}. */
   set_language_support_override(language: string, supported: boolean): void;
   /** Adds override for {@link Font.is_script_supported}. */
   set_script_support_override(script: string, supported: boolean): void;
   /** Sets font cache texture image. */
-  set_texture_image(cache_index: int, size: Vector2i, texture_index: int, image: Image): void;
+  set_texture_image(cache_index: int, size: Vector2i | Vector2, texture_index: int, image: Image): void;
   /** Sets array containing glyph packing data. */
-  set_texture_offsets(cache_index: int, size: Vector2i, texture_index: int, offset: PackedInt32Array): void;
+  set_texture_offsets(cache_index: int, size: Vector2i | Vector2, texture_index: int, offset: PackedInt32Array | Array<unknown>): void;
   /**
    * Sets 2D transform, applied to the font outlines, can be used for slanting, flipping, and rotating glyphs.
    */

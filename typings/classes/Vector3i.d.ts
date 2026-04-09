@@ -15,7 +15,7 @@ declare interface Vector3i {
   /**
    * Returns a new vector with all components clamped between the components of `min` and `max`, by running {@link @GlobalScope.clamp} on each component.
    */
-  clamp(min: Vector3i, max: Vector3i): Vector3i;
+  clamp(min: Vector3i | Vector3, max: Vector3i | Vector3): Vector3i;
   /**
    * Returns a new vector with all components clamped between `min` and `max`, by running {@link @GlobalScope.clamp} on each component.
    */
@@ -24,9 +24,9 @@ declare interface Vector3i {
    * Returns the squared distance between this vector and `to`.
    * This method runs faster than {@link distance_to}, so prefer it if you need to compare vectors or need the squared distance for some formula.
    */
-  distance_squared_to(to: Vector3i): int;
+  distance_squared_to(to: Vector3i | Vector3): int;
   /** Returns the distance between this vector and `to`. */
-  distance_to(to: Vector3i): float;
+  distance_to(to: Vector3i | Vector3): float;
   /** Returns the length (magnitude) of this vector. */
   length(): float;
   /**
@@ -37,7 +37,7 @@ declare interface Vector3i {
   /**
    * Returns the component-wise maximum of this and `with`, equivalent to `Vector3i(maxi(x, with.x), maxi(y, with.y), maxi(z, with.z))`.
    */
-  max(with_: Vector3i): Vector3i;
+  max(with_: Vector3i | Vector3): Vector3i;
   /**
    * Returns the axis of the vector's highest value. See `AXIS_*` constants. If all components are equal, this method returns {@link AXIS_X}.
    */
@@ -49,7 +49,7 @@ declare interface Vector3i {
   /**
    * Returns the component-wise minimum of this and `with`, equivalent to `Vector3i(mini(x, with.x), mini(y, with.y), mini(z, with.z))`.
    */
-  min(with_: Vector3i): Vector3i;
+  min(with_: Vector3i | Vector3): Vector3i;
   /**
    * Returns the axis of the vector's lowest value. See `AXIS_*` constants. If all components are equal, this method returns {@link AXIS_Z}.
    */
@@ -65,7 +65,7 @@ declare interface Vector3i {
   /**
    * Returns a new vector with each component snapped to the closest multiple of the corresponding component in `step`.
    */
-  snapped(step: Vector3i): Vector3i;
+  snapped(step: Vector3i | Vector3): Vector3i;
   /** Returns a new vector with each component snapped to the closest multiple of `step`. */
   snappedi(step: int): Vector3i;
 

@@ -28,12 +28,12 @@ declare interface Quaternion {
    * Returns the angle between this quaternion and `to`. This is the magnitude of the angle you would need to rotate by to get from one to the other.
    * **Note:** The magnitude of the floating-point error for this method is abnormally high, so methods such as `is_zero_approx` will not work reliably.
    */
-  angle_to(to: Quaternion): float;
+  angle_to(to: Quaternion | Basis): float;
   /**
    * Returns the dot product between this quaternion and `with`.
    * This is equivalent to `(quat.x * with.x) + (quat.y * with.y) + (quat.z * with.z) + (quat.w * with.w)`.
    */
-  dot(with_: Quaternion): float;
+  dot(with_: Quaternion | Basis): float;
   /**
    * Returns the exponential of this quaternion. The rotation axis of the result is the normalized rotation axis of this quaternion, the angle of the result is the length of the vector part of this quaternion.
    */
@@ -57,7 +57,7 @@ declare interface Quaternion {
   /**
    * Returns `true` if this quaternion and `to` are approximately equal, by calling {@link @GlobalScope.is_equal_approx} on each component.
    */
-  is_equal_approx(to: Quaternion): boolean;
+  is_equal_approx(to: Quaternion | Basis): boolean;
   /**
    * Returns `true` if this quaternion is finite, by calling {@link @GlobalScope.is_finite} on each component.
    */
@@ -82,20 +82,20 @@ declare interface Quaternion {
   /**
    * Performs a spherical-linear interpolation with the `to` quaternion, given a `weight` and returns the result. Both this quaternion and `to` must be normalized.
    */
-  slerp(to: Quaternion, weight: float): Quaternion;
+  slerp(to: Quaternion | Basis, weight: float): Quaternion;
   /**
    * Performs a spherical-linear interpolation with the `to` quaternion, given a `weight` and returns the result. Unlike {@link slerp}, this method does not check if the rotation path is smaller than 90 degrees. Both this quaternion and `to` must be normalized.
    */
-  slerpni(to: Quaternion, weight: float): Quaternion;
+  slerpni(to: Quaternion | Basis, weight: float): Quaternion;
   /**
    * Performs a spherical cubic interpolation between quaternions `pre_a`, this vector, `b`, and `post_b`, by the given amount `weight`.
    */
-  spherical_cubic_interpolate(b: Quaternion, pre_a: Quaternion, post_b: Quaternion, weight: float): Quaternion;
+  spherical_cubic_interpolate(b: Quaternion | Basis, pre_a: Quaternion | Basis, post_b: Quaternion | Basis, weight: float): Quaternion;
   /**
    * Performs a spherical cubic interpolation between quaternions `pre_a`, this vector, `b`, and `post_b`, by the given amount `weight`.
    * It can perform smoother interpolation than {@link spherical_cubic_interpolate} by the time values.
    */
-  spherical_cubic_interpolate_in_time(b: Quaternion, pre_a: Quaternion, post_b: Quaternion, weight: float, b_t: float, pre_a_t: float, post_b_t: float): Quaternion;
+  spherical_cubic_interpolate_in_time(b: Quaternion | Basis, pre_a: Quaternion | Basis, post_b: Quaternion | Basis, weight: float, b_t: float, pre_a_t: float, post_b_t: float): Quaternion;
 
   // Operator overloads
   [__ops_ne]: { right: Quaternion; ret: boolean };
@@ -176,7 +176,7 @@ declare interface QuaternionConstructor {
   /**
    * Constructs a new {@link Quaternion} from the given {@link Vector3} of Euler angles (https://en.wikipedia.org/wiki/Euler_angles), in radians. This method always uses the YXZ convention ({@link EULER_ORDER_YXZ}).
    */
-  from_euler(euler: Vector3): Quaternion;
+  from_euler(euler: Vector3 | Vector3i): Quaternion;
 
   /**
    * The identity quaternion, representing no rotation. This has the same rotation as {@link Basis.IDENTITY}.

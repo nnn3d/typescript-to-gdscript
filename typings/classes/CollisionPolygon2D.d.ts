@@ -32,11 +32,11 @@ declare class CollisionPolygon2D extends Node2D {
   is_disabled(): boolean;
   set_one_way_collision(value: boolean): void;
   is_one_way_collision_enabled(): boolean;
-  set_one_way_collision_direction(value: Vector2): void;
+  set_one_way_collision_direction(value: Vector2 | Vector2i): void;
   get_one_way_collision_direction(): Vector2;
   set_one_way_collision_margin(value: float): void;
   get_one_way_collision_margin(): float;
-  set_polygon(value: PackedVector2Array): void;
+  set_polygon(value: PackedVector2Array | Array<unknown>): void;
   get_polygon(): PackedVector2Array;
 
   // enum BuildMode

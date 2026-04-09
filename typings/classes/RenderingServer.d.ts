@@ -13,7 +13,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Bakes the material data of the Mesh passed in the `base` parameter with optional `material_overrides` to a set of {@link Image}s of size `image_size`. Returns an array of {@link Image}s containing material properties as specified in {@link BakeChannels}.
    */
-  bake_render_uv2(base: RID, material_overrides: Array<RID>, image_size: Vector2i): Array<Image>;
+  bake_render_uv2(base: RID, material_overrides: Array<RID>, image_size: Vector2i | Vector2): Array<Image>;
   /**
    * As the RenderingServer actual logic may run on a separate thread, accessing its internals from the main (or any other) thread will result in errors. To make it easier to run code that can safely access the rendering internals (such as {@link RenderingDevice} and similar RD classes), push a callable via this function so it will be executed on the render thread.
    */
@@ -65,7 +65,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets camera to use frustum projection. This mode allows adjusting the `offset` argument to create "tilted frustum" effects.
    */
-  camera_set_frustum(camera: RID, size: float, offset: Vector2, z_near: float, z_far: float): void;
+  camera_set_frustum(camera: RID, size: float, offset: Vector2 | Vector2i, z_near: float, z_far: float): void;
   /**
    * Sets camera to use orthogonal projection, also known as orthographic projection. Objects remain the same size on the screen no matter how far away they are.
    */
@@ -75,7 +75,7 @@ declare interface RenderingServer extends GodotObject {
    */
   camera_set_perspective(camera: RID, fovy_degrees: float, z_near: float, z_far: float): void;
   /** Sets {@link Transform3D} of camera. */
-  camera_set_transform(camera: RID, transform: Transform3D): void;
+  camera_set_transform(camera: RID, transform: Transform3D | Projection): void;
   /**
    * If `true`, preserves the horizontal aspect ratio which is equivalent to {@link Camera3D.KEEP_WIDTH}. If `false`, preserves the vertical aspect ratio which is equivalent to {@link Camera3D.KEEP_HEIGHT}.
    */
@@ -93,7 +93,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Draws a circle on the {@link CanvasItem} pointed to by the `item` {@link RID}. See also {@link CanvasItem.draw_circle}.
    */
-  canvas_item_add_circle(item: RID, pos: Vector2, radius: float, color: Color, antialiased?: boolean): void;
+  canvas_item_add_circle(item: RID, pos: Vector2 | Vector2i, radius: float, color: Color, antialiased?: boolean): void;
   /**
    * If `ignore` is `true`, ignore clipping on items drawn with this canvas item until this is called again with `ignore` set to `false`.
    */
@@ -101,63 +101,63 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Draws an ellipse with semi-major axis `major` and semi-minor axis `minor` on the {@link CanvasItem} pointed to by the `item` {@link RID}. See also {@link CanvasItem.draw_ellipse}.
    */
-  canvas_item_add_ellipse(item: RID, pos: Vector2, major: float, minor: float, color: Color, antialiased?: boolean): void;
+  canvas_item_add_ellipse(item: RID, pos: Vector2 | Vector2i, major: float, minor: float, color: Color, antialiased?: boolean): void;
   /** See also {@link CanvasItem.draw_lcd_texture_rect_region}. */
-  canvas_item_add_lcd_texture_rect_region(item: RID, rect: Rect2, texture: RID, src_rect: Rect2, modulate: Color): void;
+  canvas_item_add_lcd_texture_rect_region(item: RID, rect: Rect2 | Rect2i, texture: RID, src_rect: Rect2 | Rect2i, modulate: Color): void;
   /**
    * Draws a line on the {@link CanvasItem} pointed to by the `item` {@link RID}. See also {@link CanvasItem.draw_line}.
    */
-  canvas_item_add_line(item: RID, from_: Vector2, to: Vector2, color: Color, width?: float, antialiased?: boolean): void;
+  canvas_item_add_line(item: RID, from_: Vector2 | Vector2i, to: Vector2 | Vector2i, color: Color, width?: float, antialiased?: boolean): void;
   /**
    * Draws a mesh created with {@link mesh_create} with given `transform`, `modulate` color, and `texture`. This is used internally by {@link MeshInstance2D}.
    */
   canvas_item_add_mesh(item: RID, mesh: RID, transform?: Transform2D, modulate?: Color, texture?: RID): void;
   /** See also {@link CanvasItem.draw_msdf_texture_rect_region}. */
-  canvas_item_add_msdf_texture_rect_region(item: RID, rect: Rect2, texture: RID, src_rect: Rect2, modulate?: Color, outline_size?: int, px_range?: float, scale?: float): void;
+  canvas_item_add_msdf_texture_rect_region(item: RID, rect: Rect2 | Rect2i, texture: RID, src_rect: Rect2 | Rect2i, modulate?: Color, outline_size?: int, px_range?: float, scale?: float): void;
   /**
    * Draws a 2D multiline on the {@link CanvasItem} pointed to by the `item` {@link RID}. See also {@link CanvasItem.draw_multiline} and {@link CanvasItem.draw_multiline_colors}.
    */
-  canvas_item_add_multiline(item: RID, points: PackedVector2Array, colors: PackedColorArray, width?: float, antialiased?: boolean): void;
+  canvas_item_add_multiline(item: RID, points: PackedVector2Array | Array<unknown>, colors: PackedColorArray | Array<unknown>, width?: float, antialiased?: boolean): void;
   /**
    * Draws a 2D {@link MultiMesh} on the {@link CanvasItem} pointed to by the `item` {@link RID}. See also {@link CanvasItem.draw_multimesh}.
    */
   canvas_item_add_multimesh(item: RID, mesh: RID, texture?: RID): void;
   /** Draws a nine-patch rectangle on the {@link CanvasItem} pointed to by the `item` {@link RID}. */
-  canvas_item_add_nine_patch(item: RID, rect: Rect2, source: Rect2, texture: RID, topleft: Vector2, bottomright: Vector2, x_axis_mode: int, y_axis_mode: int, draw_center?: boolean, modulate?: Color): void;
+  canvas_item_add_nine_patch(item: RID, rect: Rect2 | Rect2i, source: Rect2 | Rect2i, texture: RID, topleft: Vector2 | Vector2i, bottomright: Vector2 | Vector2i, x_axis_mode: int, y_axis_mode: int, draw_center?: boolean, modulate?: Color): void;
   /** Draws particles on the {@link CanvasItem} pointed to by the `item` {@link RID}. */
   canvas_item_add_particles(item: RID, particles: RID, texture: RID): void;
   /**
    * Draws a 2D polygon on the {@link CanvasItem} pointed to by the `item` {@link RID}. If you need more flexibility (such as being able to use bones), use {@link canvas_item_add_triangle_array} instead. See also {@link CanvasItem.draw_polygon}.
    * **Note:** If you frequently redraw the same polygon with a large number of vertices, consider pre-calculating the triangulation with {@link Geometry2D.triangulate_polygon} and using {@link CanvasItem.draw_mesh}, {@link CanvasItem.draw_multimesh}, or {@link canvas_item_add_triangle_array}.
    */
-  canvas_item_add_polygon(item: RID, points: PackedVector2Array, colors: PackedColorArray, uvs?: PackedVector2Array, texture?: RID): void;
+  canvas_item_add_polygon(item: RID, points: PackedVector2Array | Array<unknown>, colors: PackedColorArray | Array<unknown>, uvs?: PackedVector2Array | Array<unknown>, texture?: RID): void;
   /**
    * Draws a 2D polyline on the {@link CanvasItem} pointed to by the `item` {@link RID}. See also {@link CanvasItem.draw_polyline} and {@link CanvasItem.draw_polyline_colors}.
    */
-  canvas_item_add_polyline(item: RID, points: PackedVector2Array, colors: PackedColorArray, width?: float, antialiased?: boolean): void;
+  canvas_item_add_polyline(item: RID, points: PackedVector2Array | Array<unknown>, colors: PackedColorArray | Array<unknown>, width?: float, antialiased?: boolean): void;
   /**
    * Draws a 2D primitive on the {@link CanvasItem} pointed to by the `item` {@link RID}. See also {@link CanvasItem.draw_primitive}.
    */
-  canvas_item_add_primitive(item: RID, points: PackedVector2Array, colors: PackedColorArray, uvs: PackedVector2Array, texture: RID): void;
+  canvas_item_add_primitive(item: RID, points: PackedVector2Array | Array<unknown>, colors: PackedColorArray | Array<unknown>, uvs: PackedVector2Array | Array<unknown>, texture: RID): void;
   /**
    * Draws a rectangle on the {@link CanvasItem} pointed to by the `item` {@link RID}. See also {@link CanvasItem.draw_rect}.
    */
-  canvas_item_add_rect(item: RID, rect: Rect2, color: Color, antialiased?: boolean): void;
+  canvas_item_add_rect(item: RID, rect: Rect2 | Rect2i, color: Color, antialiased?: boolean): void;
   /** Sets a {@link Transform2D} that will be used to transform subsequent canvas item commands. */
   canvas_item_add_set_transform(item: RID, transform: Transform2D): void;
   /**
    * Draws a 2D textured rectangle on the {@link CanvasItem} pointed to by the `item` {@link RID}. See also {@link CanvasItem.draw_texture_rect} and {@link Texture2D.draw_rect}.
    */
-  canvas_item_add_texture_rect(item: RID, rect: Rect2, texture: RID, tile?: boolean, modulate?: Color, transpose?: boolean): void;
+  canvas_item_add_texture_rect(item: RID, rect: Rect2 | Rect2i, texture: RID, tile?: boolean, modulate?: Color, transpose?: boolean): void;
   /**
    * Draws the specified region of a 2D textured rectangle on the {@link CanvasItem} pointed to by the `item` {@link RID}. See also {@link CanvasItem.draw_texture_rect_region} and {@link Texture2D.draw_rect_region}.
    */
-  canvas_item_add_texture_rect_region(item: RID, rect: Rect2, texture: RID, src_rect: Rect2, modulate?: Color, transpose?: boolean, clip_uv?: boolean): void;
+  canvas_item_add_texture_rect_region(item: RID, rect: Rect2 | Rect2i, texture: RID, src_rect: Rect2 | Rect2i, modulate?: Color, transpose?: boolean, clip_uv?: boolean): void;
   /**
    * Draws a triangle array on the {@link CanvasItem} pointed to by the `item` {@link RID}. This is internally used by {@link Line2D} and {@link StyleBoxFlat} for rendering. {@link canvas_item_add_triangle_array} is highly flexible, but more complex to use than {@link canvas_item_add_polygon}.
    * **Note:** If `count` is set to a non-negative value, only the first `count * 3` indices (corresponding to [code skip-lint]count[/code] triangles) will be drawn. Otherwise, all indices are drawn.
    */
-  canvas_item_add_triangle_array(item: RID, indices: PackedInt32Array, points: PackedVector2Array, colors: PackedColorArray, uvs?: PackedVector2Array, bones?: PackedInt32Array, weights?: PackedFloat32Array, texture?: RID, count?: int): void;
+  canvas_item_add_triangle_array(item: RID, indices: PackedInt32Array | Array<unknown>, points: PackedVector2Array | Array<unknown>, colors: PackedColorArray | Array<unknown>, uvs?: PackedVector2Array | Array<unknown>, bones?: PackedInt32Array | Array<unknown>, weights?: PackedFloat32Array | Array<unknown>, texture?: RID, count?: int): void;
   /** Attaches a skeleton to the {@link CanvasItem}. Removes the previous skeleton. */
   canvas_item_attach_skeleton(item: RID, skeleton: RID): void;
   /** Clears the {@link CanvasItem} and removes all commands in it. */
@@ -197,11 +197,11 @@ declare interface RenderingServer extends GodotObject {
    */
   canvas_item_set_clip(item: RID, clip: boolean): void;
   /** Sets the {@link CanvasItem} to copy a rect to the backbuffer. */
-  canvas_item_set_copy_to_backbuffer(item: RID, enabled: boolean, rect: Rect2): void;
+  canvas_item_set_copy_to_backbuffer(item: RID, enabled: boolean, rect: Rect2 | Rect2i): void;
   /**
    * If `use_custom_rect` is `true`, sets the custom visibility rectangle (used for culling) to `rect` for the canvas item specified by `item`. Setting a custom visibility rect can reduce CPU load when drawing lots of 2D instances. If `use_custom_rect` is `false`, automatically computes a visibility rectangle based on the canvas item's draw commands.
    */
-  canvas_item_set_custom_rect(item: RID, use_custom_rect: boolean, rect?: Rect2): void;
+  canvas_item_set_custom_rect(item: RID, use_custom_rect: boolean, rect?: Rect2 | Rect2i): void;
   /**
    * Sets the default texture filter mode for the canvas item specified by the `item` RID. Equivalent to {@link CanvasItem.texture_filter}.
    */
@@ -264,7 +264,7 @@ declare interface RenderingServer extends GodotObject {
    * Sets the given {@link CanvasItem} as visibility notifier. `area` defines the area of detecting visibility. `enter_callable` is called when the {@link CanvasItem} enters the screen, `exit_callable` is called when the {@link CanvasItem} exits the screen. If `enable` is `false`, the item will no longer function as notifier.
    * This method can be used to manually mimic {@link VisibleOnScreenNotifier2D}.
    */
-  canvas_item_set_visibility_notifier(item: RID, enable: boolean, area: Rect2, enter_callable: Callable, exit_callable: Callable): void;
+  canvas_item_set_visibility_notifier(item: RID, enable: boolean, area: Rect2 | Rect2i, enter_callable: Callable, exit_callable: Callable): void;
   /** Sets the visibility of the {@link CanvasItem}. */
   canvas_item_set_visible(item: RID, visible: boolean): void;
   /** If this is enabled, the Z index of the parent will be added to the children's Z index. */
@@ -352,7 +352,7 @@ declare interface RenderingServer extends GodotObject {
   /** Sets the texture to be used by a {@link PointLight2D}. Equivalent to {@link PointLight2D.texture}. */
   canvas_light_set_texture(light: RID, texture: RID): void;
   /** Sets the offset of a {@link PointLight2D}'s texture. Equivalent to {@link PointLight2D.offset}. */
-  canvas_light_set_texture_offset(light: RID, offset: Vector2): void;
+  canvas_light_set_texture_offset(light: RID, offset: Vector2 | Vector2i): void;
   /**
    * Sets the scale factor of a {@link PointLight2D}'s texture. Equivalent to {@link PointLight2D.texture_scale}.
    */
@@ -377,7 +377,7 @@ declare interface RenderingServer extends GodotObject {
   /** Sets an occluder polygon's cull mode. */
   canvas_occluder_polygon_set_cull_mode(occluder_polygon: RID, mode: int): void;
   /** Sets the shape of the occluder polygon. */
-  canvas_occluder_polygon_set_shape(occluder_polygon: RID, shape: PackedVector2Array, closed: boolean): void;
+  canvas_occluder_polygon_set_shape(occluder_polygon: RID, shape: PackedVector2Array | Array<unknown>, closed: boolean): void;
   /**
    * If `disable` is `true`, makes 2D rendering ignore the canvas scale defined for each canvas layer. This affects {@link CanvasLayer}s with the {@link CanvasLayer.follow_viewport_enabled} property set to `true`.
    * In the editor, this is set to `true` by default, and set to `false` when **View > Preview Canvas Scale** is enabled at the top of the 2D editor viewport.
@@ -388,11 +388,11 @@ declare interface RenderingServer extends GodotObject {
    * A copy of the canvas item will be drawn with a local offset of the `mirroring`.
    * **Note:** This is equivalent to calling {@link canvas_set_item_repeat} like `canvas_set_item_repeat(item, mirroring, 1)`, with an additional check ensuring `canvas` is a parent of `item`.
    */
-  canvas_set_item_mirroring(canvas: RID, item: RID, mirroring: Vector2): void;
+  canvas_set_item_mirroring(canvas: RID, item: RID, mirroring: Vector2 | Vector2i): void;
   /**
    * A copy of the canvas item will be drawn with a local offset of the `repeat_size` by the number of times of the `repeat_times`. As the `repeat_times` increases, the copies will spread away from the origin texture.
    */
-  canvas_set_item_repeat(item: RID, repeat_size: Vector2, repeat_times: int): void;
+  canvas_set_item_repeat(item: RID, repeat_size: Vector2 | Vector2i, repeat_times: int): void;
   /** Modulates all colors in the given canvas. */
   canvas_set_modulate(canvas: RID, color: Color): void;
   /**
@@ -483,7 +483,7 @@ declare interface RenderingServer extends GodotObject {
    */
   decal_set_normal_fade(decal: RID, fade: float): void;
   /** Sets the `size` of the decal specified by the `decal` RID. Equivalent to {@link Decal.size}. */
-  decal_set_size(decal: RID, size: Vector3): void;
+  decal_set_size(decal: RID, size: Vector3 | Vector3i): void;
   /**
    * Sets the `texture` in the given texture `type` slot for the specified decal. Equivalent to {@link Decal.set_texture}.
    */
@@ -512,7 +512,7 @@ declare interface RenderingServer extends GodotObject {
    * **Note:** The image is saved using linear encoding without any tonemapping performed, which means it will look too dark if viewed directly in an image editor.
    * **Note:** `size` should be a 2:1 aspect ratio for the generated panorama to have square pixels. For radiance maps, there is no point in using a height greater than {@link Sky.radiance_size}, as it won't increase detail. Irradiance maps only contain low-frequency data, so there is usually no point in going past a size of 128×64 pixels when saving an irradiance map.
    */
-  environment_bake_panorama(environment: RID, bake_irradiance: boolean, size: Vector2i): Image | null;
+  environment_bake_panorama(environment: RID, bake_irradiance: boolean, size: Vector2i | Vector2): Image | null;
   /**
    * Creates an environment and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `environment_*` RenderingServer functions.
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
@@ -553,7 +553,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Configures glow for the specified environment RID. See `glow_*` properties in {@link Environment} for more information.
    */
-  environment_set_glow(env: RID, enable: boolean, levels: PackedFloat32Array, intensity: float, strength: float, mix: float, bloom_threshold: float, blend_mode: int, hdr_bleed_threshold: float, hdr_bleed_scale: float, hdr_luminance_cap: float, glow_map_strength: float, glow_map: RID): void;
+  environment_set_glow(env: RID, enable: boolean, levels: PackedFloat32Array | Array<unknown>, intensity: float, strength: float, mix: float, bloom_threshold: float, blend_mode: int, hdr_bleed_threshold: float, hdr_bleed_scale: float, hdr_luminance_cap: float, glow_map_strength: float, glow_map: RID): void;
   /**
    * Configures signed distance field global illumination for the specified environment RID. See `sdfgi_*` properties in {@link Environment} for more information.
    */
@@ -581,7 +581,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the rotation of the background {@link Sky} expressed as a {@link Basis}. Equivalent to {@link Environment.sky_rotation}, where the rotation vector is used to construct the {@link Basis}.
    */
-  environment_set_sky_orientation(env: RID, orientation: Basis): void;
+  environment_set_sky_orientation(env: RID, orientation: Basis | Quaternion): void;
   /**
    * Sets the variables to be used with the screen-space ambient occlusion (SSAO) post-process effect. See {@link Environment} for more details.
    */
@@ -638,7 +638,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the size of the fog volume when shape is {@link RenderingServer.FOG_VOLUME_SHAPE_ELLIPSOID}, {@link RenderingServer.FOG_VOLUME_SHAPE_CONE}, {@link RenderingServer.FOG_VOLUME_SHAPE_CYLINDER} or {@link RenderingServer.FOG_VOLUME_SHAPE_BOX}.
    */
-  fog_volume_set_size(fog_volume: RID, size: Vector3): void;
+  fog_volume_set_size(fog_volume: RID, size: Vector3 | Vector3i): void;
   /** Forces redrawing of all viewports at once. Must be called from the main thread. */
   force_draw(swap_buffers?: boolean, frame_step?: float): void;
   /**
@@ -795,7 +795,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the lightmap GI instance to use for the specified 3D geometry instance. The lightmap UV scale for the specified instance (equivalent to {@link GeometryInstance3D.gi_lightmap_scale}) and lightmap atlas slice must also be specified.
    */
-  instance_geometry_set_lightmap(instance: RID, lightmap: RID, lightmap_uv_scale: Rect2, lightmap_slice: int): void;
+  instance_geometry_set_lightmap(instance: RID, lightmap: RID, lightmap_uv_scale: Rect2 | Rect2i, lightmap_slice: int): void;
   /**
    * Sets the level of detail bias to use when rendering the specified 3D geometry instance. Higher values result in higher detail from further away. Equivalent to {@link GeometryInstance3D.lod_bias}.
    */
@@ -858,7 +858,7 @@ declare interface RenderingServer extends GodotObject {
    */
   instance_set_surface_override_material(instance: RID, surface: int, material: RID): void;
   /** Sets the world space transform of the instance. Equivalent to {@link Node3D.global_transform}. */
-  instance_set_transform(instance: RID, transform: Transform3D): void;
+  instance_set_transform(instance: RID, transform: Transform3D | Projection): void;
   /** Sets the visibility parent for the given instance. Equivalent to {@link Node3D.visibility_parent}. */
   instance_set_visibility_parent(instance: RID, parent: RID): void;
   /** Sets whether an instance is drawn or not. Equivalent to {@link Node3D.visible}. */
@@ -881,7 +881,7 @@ declare interface RenderingServer extends GodotObject {
    * Returns an array of object IDs intersecting with the provided 3D ray. Only 3D nodes that inherit from {@link VisualInstance3D} are considered, such as {@link MeshInstance3D} or {@link DirectionalLight3D}. Use {@link @GlobalScope.instance_from_id} to obtain the actual nodes. A scenario RID must be provided, which is available in the {@link World3D} you want to query. This forces an update for all resources queued to update.
    * **Warning:** This function is primarily intended for editor usage. For in-game use cases, prefer physics collision.
    */
-  instances_cull_ray(from_: Vector3, to: Vector3, scenario?: RID): PackedInt64Array;
+  instances_cull_ray(from_: Vector3 | Vector3i, to: Vector3 | Vector3i, scenario?: RID): PackedInt64Array;
   /** Returns `true` if our code is currently executing on the rendering thread. */
   is_on_render_thread(): boolean;
   /**
@@ -975,7 +975,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the probe capture data for the given lightmap instance. See {@link lightmap_get_probe_capture_points}, {@link lightmap_get_probe_capture_sh}, {@link lightmap_get_probe_capture_tetrahedra}, and {@link lightmap_get_probe_capture_bsp_tree} for the expected data formats.
    */
-  lightmap_set_probe_capture_data(lightmap: RID, points: PackedVector3Array, point_sh: PackedColorArray, tetrahedra: PackedInt32Array, bsp_tree: PackedInt32Array): void;
+  lightmap_set_probe_capture_data(lightmap: RID, points: PackedVector3Array | Array<unknown>, point_sh: PackedColorArray | Array<unknown>, tetrahedra: PackedInt32Array | Array<unknown>, bsp_tree: PackedInt32Array | Array<unknown>): void;
   /**
    * The framerate-independent update speed when representing dynamic object lighting from {@link LightmapProbe}s. Higher values make dynamic object lighting update faster. Higher values can prevent fast-moving objects from having "outdated" indirect lighting displayed on them, at the cost of possible flickering when an object moves from a bright area to a shaded area. See also {@link ProjectSettings.rendering/lightmapping/probe_capture/update_speed}.
    */
@@ -1033,7 +1033,7 @@ declare interface RenderingServer extends GodotObject {
    * See {@link ArrayMesh.add_surface_from_arrays} and {@link ImporterMesh.add_surface} for higher-level equivalents of this method.
    * **Note:** When using indices, it is recommended to only use points, lines, or triangles.
    */
-  mesh_add_surface_from_arrays(mesh: RID, primitive: int, arrays: Array<unknown>, blend_shapes?: Array<unknown>, lods?: Dictionary, compress_format?: int): void;
+  mesh_add_surface_from_arrays(mesh: RID, primitive: int, arrays: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, blend_shapes?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, lods?: Dictionary, compress_format?: int): void;
   /** Removes all surfaces from a mesh. */
   mesh_clear(mesh: RID): void;
   /**
@@ -1105,23 +1105,23 @@ declare interface RenderingServer extends GodotObject {
    * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each attribute.
    * A {@link PackedVector3Array} of attribute locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
    */
-  mesh_surface_update_attribute_region(mesh: RID, surface: int, offset: int, data: PackedByteArray): void;
+  mesh_surface_update_attribute_region(mesh: RID, surface: int, offset: int, data: PackedByteArray | Array<unknown>): void;
   /**
    * Updates the index buffer of the mesh surface with the given `data`. The expected data are 16 or 32-bit unsigned integers, which can be determined with {@link mesh_surface_get_format_index_stride}.
    */
-  mesh_surface_update_index_region(mesh: RID, surface: int, offset: int, data: PackedByteArray): void;
+  mesh_surface_update_index_region(mesh: RID, surface: int, offset: int, data: PackedByteArray | Array<unknown>): void;
   /**
    * Updates the skin buffer of the mesh surface with the given `data`. The expected data per skin is 8 or 12 bytes (4 bytes per float, 2 floats per {@link Vector2}, and 3 floats per {@link Vector3}) depending on if the mesh is using {@link Vector2} or {@link Vector3} vertices. This value can be determined with {@link mesh_surface_get_format_skin_stride} instead.
    * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each skin.
    * A {@link PackedVector3Array} of skin locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
    */
-  mesh_surface_update_skin_region(mesh: RID, surface: int, offset: int, data: PackedByteArray): void;
+  mesh_surface_update_skin_region(mesh: RID, surface: int, offset: int, data: PackedByteArray | Array<unknown>): void;
   /**
    * Updates the vertex buffer of the mesh surface with the given `data`. The expected data per vertex is 8 or 12 bytes (4 bytes per float, 2 floats per {@link Vector2}, and 3 floats per {@link Vector3}) depending on if the mesh is using {@link Vector2} or {@link Vector3} vertices. This value can be determined with {@link mesh_surface_get_format_vertex_stride} instead.
    * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each vertex.
    * A {@link PackedVector3Array} of vertex locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
    */
-  mesh_surface_update_vertex_region(mesh: RID, surface: int, offset: int, data: PackedByteArray): void;
+  mesh_surface_update_vertex_region(mesh: RID, surface: int, offset: int, data: PackedByteArray | Array<unknown>): void;
   /**
    * Sets up the multimesh using the specified data. The number of instances is set by `instances`. The format of the instance transforms is set by `transform_format`, which should be set according to whether the multimesh is meant to be rendered in 2D or 3D. If `color_format` is `true`, each instance will have a color associated with it. If `custom_data_format` is `true`, each instance will have a custom data vector associated with it. If `use_indirect` is `true`, an indirect command buffer will be created for this multimesh, allowing the instance count to be modified directly on the GPU. See also {@link multimesh_get_command_buffer_rd_rid}.
    */
@@ -1200,7 +1200,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the {@link Transform3D} for this instance. Equivalent to {@link MultiMesh.set_instance_transform}.
    */
-  multimesh_instance_set_transform(multimesh: RID, index: int, transform: Transform3D): void;
+  multimesh_instance_set_transform(multimesh: RID, index: int, transform: Transform3D | Projection): void;
   /**
    * Sets the {@link Transform2D} for this instance. For use when multimesh is used in 2D. Equivalent to {@link MultiMesh.set_instance_transform_2d}.
    */
@@ -1229,12 +1229,12 @@ declare interface RenderingServer extends GodotObject {
    * - For {@link Transform2D} the float-order is: `(x.x, y.x, padding_float, origin.x, x.y, y.y, padding_float, origin.y)`.
    * - For {@link Transform3D} the float-order is: `(basis.x.x, basis.y.x, basis.z.x, origin.x, basis.x.y, basis.y.y, basis.z.y, origin.y, basis.x.z, basis.y.z, basis.z.z, origin.z)`.
    */
-  multimesh_set_buffer(multimesh: RID, buffer: PackedFloat32Array): void;
+  multimesh_set_buffer(multimesh: RID, buffer: PackedFloat32Array | Array<unknown>): void;
   /**
    * Alternative version of {@link multimesh_set_buffer} for use with physics interpolation.
    * Takes both an array of current data and an array of data for the previous physics tick.
    */
-  multimesh_set_buffer_interpolated(multimesh: RID, buffer: PackedFloat32Array, buffer_previous: PackedFloat32Array): void;
+  multimesh_set_buffer_interpolated(multimesh: RID, buffer: PackedFloat32Array | Array<unknown>, buffer_previous: PackedFloat32Array | Array<unknown>): void;
   /** Sets the custom AABB for this MultiMesh resource. */
   multimesh_set_custom_aabb(multimesh: RID, aabb: AABB): void;
   /** Sets the mesh to be drawn by the multimesh. Equivalent to {@link MultiMesh.mesh}. */
@@ -1259,7 +1259,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the mesh data for the given occluder RID, which controls the shape of the occlusion culling that will be performed.
    */
-  occluder_set_mesh(occluder: RID, vertices: PackedVector3Array, indices: PackedInt32Array): void;
+  occluder_set_mesh(occluder: RID, vertices: PackedVector3Array | Array<unknown>, indices: PackedInt32Array | Array<unknown>): void;
   /**
    * Creates a new omni light and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID can be used in most `light_*` RenderingServer functions.
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
@@ -1291,7 +1291,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the `extents` for the 3D GPU particles collision by the `particles_collision` RID. Equivalent to {@link GPUParticlesCollisionBox3D.size}, {@link GPUParticlesCollisionSDF3D.size}, {@link GPUParticlesCollisionHeightField3D.size}, {@link GPUParticlesAttractorBox3D.size} or {@link GPUParticlesAttractorVectorField3D.size} depending on the `particles_collision` type.
    */
-  particles_collision_set_box_extents(particles_collision: RID, extents: Vector3): void;
+  particles_collision_set_box_extents(particles_collision: RID, extents: Vector3 | Vector3i): void;
   /**
    * Sets the collision or attractor shape `type` for the 3D GPU particles collision or attractor specified by the `particles_collision` RID.
    */
@@ -1325,7 +1325,7 @@ declare interface RenderingServer extends GodotObject {
    */
   particles_create(): RID;
   /** Manually emits particles from the `particles` instance. */
-  particles_emit(particles: RID, transform: Transform3D, velocity: Vector3, color: Color, custom: Color, emit_flags: int): void;
+  particles_emit(particles: RID, transform: Transform3D | Projection, velocity: Vector3 | Vector3i, color: Color, custom: Color, emit_flags: int): void;
   /**
    * Calculates and returns the axis-aligned bounding box that contains all the particles. Equivalent to {@link GPUParticles3D.capture_aabb}.
    */
@@ -1367,11 +1367,11 @@ declare interface RenderingServer extends GodotObject {
   /** Sets the number of draw passes to use. Equivalent to {@link GPUParticles3D.draw_passes}. */
   particles_set_draw_passes(particles: RID, count: int): void;
   /** Sets the {@link Transform3D} that will be used by the particles when they first emit. */
-  particles_set_emission_transform(particles: RID, transform: Transform3D): void;
+  particles_set_emission_transform(particles: RID, transform: Transform3D | Projection): void;
   /**
    * Sets the velocity of a particle node, that will be used by {@link ParticleProcessMaterial.inherit_velocity_ratio}.
    */
-  particles_set_emitter_velocity(particles: RID, velocity: Vector3): void;
+  particles_set_emitter_velocity(particles: RID, velocity: Vector3 | Vector3i): void;
   /**
    * If `true`, particles will emit over time. Setting to `false` does not reset the particles, but only stops their emission. Equivalent to {@link GPUParticles3D.emitting}.
    */
@@ -1491,7 +1491,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the origin offset to be used when this reflection probe is in box project mode. Equivalent to {@link ReflectionProbe.origin_offset}.
    */
-  reflection_probe_set_origin_offset(probe: RID, offset: Vector3): void;
+  reflection_probe_set_origin_offset(probe: RID, offset: Vector3 | Vector3i): void;
   /**
    * Sets the render reflection mask for this reflection probe. Only instances with a matching layer will have reflections applied from this probe. Equivalent to {@link ReflectionProbe.reflection_mask}.
    */
@@ -1501,7 +1501,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Sets the size of the area that the reflection probe will capture. Equivalent to {@link ReflectionProbe.size}.
    */
-  reflection_probe_set_size(probe: RID, size: Vector3): void;
+  reflection_probe_set_size(probe: RID, size: Vector3 | Vector3i): void;
   /** Sets how often the reflection probe updates. Can either be once or every frame. */
   reflection_probe_set_update_mode(probe: RID, mode: int): void;
   /** Schedules a callback to the given callable after a frame has been drawn. */
@@ -1584,7 +1584,7 @@ declare interface RenderingServer extends GodotObject {
   /** Returns the {@link Transform2D} set for a specific bone of this skeleton. */
   skeleton_bone_get_transform_2d(skeleton: RID, bone: int): Transform2D;
   /** Sets the {@link Transform3D} for a specific bone of this skeleton. */
-  skeleton_bone_set_transform(skeleton: RID, bone: int, transform: Transform3D): void;
+  skeleton_bone_set_transform(skeleton: RID, bone: int, transform: Transform3D | Projection): void;
   /** Sets the {@link Transform2D} for a specific bone of this skeleton. */
   skeleton_bone_set_transform_2d(skeleton: RID, bone: int, transform: Transform2D): void;
   /**
@@ -1601,7 +1601,7 @@ declare interface RenderingServer extends GodotObject {
    * **Note:** The image is saved using linear encoding without any tonemapping performed, which means it will look too dark if viewed directly in an image editor. `energy` values above `1.0` can be used to brighten the resulting image.
    * **Note:** `size` should be a 2:1 aspect ratio for the generated panorama to have square pixels. For radiance maps, there is no point in using a height greater than {@link Sky.radiance_size}, as it won't increase detail. Irradiance maps only contain low-frequency data, so there is usually no point in going past a size of 128×64 pixels when saving an irradiance map.
    */
-  sky_bake_panorama(sky: RID, energy: float, bake_irradiance: boolean, size: Vector2i): Image | null;
+  sky_bake_panorama(sky: RID, energy: float, bake_irradiance: boolean, size: Vector2i | Vector2): Image | null;
   /**
    * Creates an empty sky and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `sky_*` RenderingServer functions.
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
@@ -1691,7 +1691,7 @@ declare interface RenderingServer extends GodotObject {
    * Draws to `rect` on up to 4 given Drawable `textures`, using a TextureBlit Shader from `material`. `modulate` and up to 4 `source_textures` are uniforms for the Shader to process with. `to_mipmap` can specify to perform this draw to a lower mipmap level.
    * **Note:** All `textures` must be the same size and format.
    */
-  texture_drawable_blit_rect(textures: Array<RID>, rect: Rect2i, material: RID, modulate: Color, source_textures: Array<RID>, to_mipmap?: int): void;
+  texture_drawable_blit_rect(textures: Array<RID>, rect: Rect2i | Rect2, material: RID, modulate: Color, source_textures: Array<RID>, to_mipmap?: int): void;
   /**
    * Creates a 2-dimensional texture and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `texture_drawable*` RenderingServer functions.
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
@@ -1755,7 +1755,7 @@ declare interface RenderingServer extends GodotObject {
    * For example, you can set the root viewport to not render at all with the following code:
    * Using this can result in significant optimization, especially on lower-end devices. However, it comes at the cost of having to manage your viewports manually. For further optimization, see {@link viewport_set_render_direct_to_screen}.
    */
-  viewport_attach_to_screen(viewport: RID, rect?: Rect2, screen?: int): void;
+  viewport_attach_to_screen(viewport: RID, rect?: Rect2 | Rect2i, screen?: int): void;
   /**
    * Creates an empty viewport and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `viewport_*` RenderingServer functions.
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
@@ -1956,7 +1956,7 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Allocates and initializes the voxel GI data for the specified `voxel_gi` RID. `octree_cells` must be a multiple of 32. `octree_cells` must be double the size of `data_cells`. The allocated data can be retrieved later using the various `voxel_gi_get_*` methods.
    */
-  voxel_gi_allocate_data(voxel_gi: RID, to_cell_xform: Transform3D, aabb: AABB, octree_size: Vector3i, octree_cells: PackedByteArray, data_cells: PackedByteArray, distance_field: PackedByteArray, level_counts: PackedInt32Array): void;
+  voxel_gi_allocate_data(voxel_gi: RID, to_cell_xform: Transform3D | Projection, aabb: AABB, octree_size: Vector3i | Vector3, octree_cells: PackedByteArray | Array<unknown>, data_cells: PackedByteArray | Array<unknown>, distance_field: PackedByteArray | Array<unknown>, level_counts: PackedInt32Array | Array<unknown>): void;
   /**
    * Creates a new voxel-based global illumination object and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `voxel_gi_*` RenderingServer functions.
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.

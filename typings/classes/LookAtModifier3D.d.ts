@@ -124,7 +124,7 @@ declare class LookAtModifier3D extends SkeletonModifier3D {
   get_origin_external_node(): string;
   set_origin_from(value: int): void;
   get_origin_from(): int;
-  set_origin_offset(value: Vector3): void;
+  set_origin_offset(value: Vector3 | Vector3i): void;
   get_origin_offset(): Vector3;
   set_origin_safe_margin(value: float): void;
   get_origin_safe_margin(): float;

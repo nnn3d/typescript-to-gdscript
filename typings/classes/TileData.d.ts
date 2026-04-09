@@ -41,7 +41,7 @@ declare class TileData extends GodotObject {
   get_terrain(): int;
   set_terrain_set(value: int): void;
   get_terrain_set(): int;
-  set_texture_origin(value: Vector2i): void;
+  set_texture_origin(value: Vector2i | Vector2): void;
   get_texture_origin(): Vector2i;
   set_transpose(value: boolean): void;
   get_transpose(): boolean;
@@ -120,7 +120,7 @@ declare class TileData extends GodotObject {
   /**
    * Sets the points of the polygon at index `polygon_index` for TileSet physics layer with index `layer_id`.
    */
-  set_collision_polygon_points(layer_id: int, polygon_index: int, polygon: PackedVector2Array): void;
+  set_collision_polygon_points(layer_id: int, polygon_index: int, polygon: PackedVector2Array | Array<unknown>): void;
   /** Sets the polygons count for TileSet physics layer with index `layer_id`. */
   set_collision_polygons_count(layer_id: int, polygons_count: int): void;
   /**
@@ -130,7 +130,7 @@ declare class TileData extends GodotObject {
   /**
    * Sets the constant linear velocity. This does not move the tile. This linear velocity is applied to objects colliding with this tile. This is useful to create conveyor belts.
    */
-  set_constant_linear_velocity(layer_id: int, velocity: Vector2): void;
+  set_constant_linear_velocity(layer_id: int, velocity: Vector2 | Vector2i): void;
   /** Sets the tile's custom data value for the TileSet custom data layer with name `layer_name`. */
   set_custom_data(layer_name: string, value: unknown): void;
   /** Sets the tile's custom data value for the TileSet custom data layer with index `layer_id`. */

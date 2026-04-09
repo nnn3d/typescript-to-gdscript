@@ -160,7 +160,7 @@ declare class GPUParticles2D extends Node2D {
   get_trail_sections(): int;
   set_use_fixed_seed(value: boolean): void;
   get_use_fixed_seed(): boolean;
-  set_visibility_rect(value: Rect2): void;
+  set_visibility_rect(value: Rect2 | Rect2i): void;
   get_visibility_rect(): Rect2;
 
   /**
@@ -175,7 +175,7 @@ declare class GPUParticles2D extends Node2D {
    * The default ParticleProcessMaterial will overwrite `color` and use the contents of `custom` as `(rotation, age, animation, lifetime)`.
    * **Note:** {@link emit_particle} is only supported on the Forward+ and Mobile rendering methods, not Compatibility.
    */
-  emit_particle(xform: Transform2D, velocity: Vector2, color: Color, custom: Color, flags: int): void;
+  emit_particle(xform: Transform2D, velocity: Vector2 | Vector2i, color: Color, custom: Color, flags: int): void;
   /**
    * Requests the particles to process for extra process time during a single frame.
    * Useful for particle playback, if used in combination with {@link use_fixed_seed} or by calling {@link restart} with parameter `keep_seed` set to `true`.

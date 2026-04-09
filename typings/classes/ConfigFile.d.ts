@@ -38,7 +38,7 @@ declare class ConfigFile extends RefCounted {
    * Loads the encrypted config file specified as a parameter, using the provided `key` to decrypt it. The file's contents are parsed and loaded in the {@link ConfigFile} object which the method was called on.
    * Returns {@link OK} on success, or one of the other {@link Error} values if the operation failed.
    */
-  load_encrypted(path: string, key: PackedByteArray): int;
+  load_encrypted(path: string, key: PackedByteArray | Array<unknown>): int;
   /**
    * Loads the encrypted config file specified as a parameter, using the provided `password` to decrypt it. The file's contents are parsed and loaded in the {@link ConfigFile} object which the method was called on.
    * Returns {@link OK} on success, or one of the other {@link Error} values if the operation failed.
@@ -58,7 +58,7 @@ declare class ConfigFile extends RefCounted {
    * Saves the contents of the {@link ConfigFile} object to the AES-256 encrypted file specified as a parameter, using the provided `key` to encrypt it. The output file uses an INI-style structure.
    * Returns {@link OK} on success, or one of the other {@link Error} values if the operation failed.
    */
-  save_encrypted(path: string, key: PackedByteArray): int;
+  save_encrypted(path: string, key: PackedByteArray | Array<unknown>): int;
   /**
    * Saves the contents of the {@link ConfigFile} object to the AES-256 encrypted file specified as a parameter, using the provided `password` to encrypt it. The output file uses an INI-style structure.
    * Returns {@link OK} on success, or one of the other {@link Error} values if the operation failed.

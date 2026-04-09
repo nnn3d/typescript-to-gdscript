@@ -95,7 +95,7 @@ declare class FileDialog extends ConfirmationDialog {
   get_file_mode(): int;
   set_filename_filter(value: string): void;
   get_filename_filter(): string;
-  set_filters(value: PackedStringArray): void;
+  set_filters(value: PackedStringArray | Array<unknown>): void;
   get_filters(): PackedStringArray;
   set_mode_overrides_title(value: boolean): void;
   is_mode_overriding_title(): boolean;
@@ -117,7 +117,7 @@ declare class FileDialog extends ConfirmationDialog {
    * Adds an additional {@link OptionButton} to the file dialog. If `values` is empty, a {@link CheckBox} is added instead.
    * `default_value_index` should be an index of the value in the `values`. If `values` is empty it should be either `1` (checked), or `0` (unchecked).
    */
-  add_option(name: string, values: PackedStringArray, default_value_index: int): void;
+  add_option(name: string, values: PackedStringArray | Array<unknown>, default_value_index: int): void;
   /** Clear the filter for file names. */
   clear_filename_filter(): void;
   /** Clear all the added filters in the dialog. */
@@ -174,7 +174,7 @@ declare class FileDialog extends ConfirmationDialog {
    * Sets the list of favorite directories, which is shared by all {@link FileDialog} nodes. Useful to restore the list of favorites saved with {@link get_favorite_list}. This method can be called only from the main thread.
    * **Note:** {@link FileDialog} will update its internal {@link ItemList} of favorites when its visibility changes. Be sure to call this method earlier if you want your changes to have effect.
    */
-  static set_favorite_list(favorites: PackedStringArray): void;
+  static set_favorite_list(favorites: PackedStringArray | Array<unknown>): void;
   /**
    * Sets the callback used by the {@link FileDialog} nodes to get a file icon, when {@link DISPLAY_LIST} mode is used. The callback should take a single {@link String} argument (file path), and return a {@link Texture2D}. If an invalid texture is returned, the  icon will be used instead.
    */
@@ -189,12 +189,12 @@ declare class FileDialog extends ConfirmationDialog {
   /** Sets the name of the {@link OptionButton} or {@link CheckBox} with index `option`. */
   set_option_name(option: int, name: string): void;
   /** Sets the option values of the {@link OptionButton} with index `option`. */
-  set_option_values(option: int, values: PackedStringArray): void;
+  set_option_values(option: int, values: PackedStringArray | Array<unknown>): void;
   /**
    * Sets the list of recent directories, which is shared by all {@link FileDialog} nodes. Useful to restore the list of recents saved with {@link set_recent_list}. This method can be called only from the main thread.
    * **Note:** {@link FileDialog} will update its internal {@link ItemList} of recent directories when its visibility changes. Be sure to call this method earlier if you want your changes to have effect.
    */
-  static set_recent_list(recents: PackedStringArray): void;
+  static set_recent_list(recents: PackedStringArray | Array<unknown>): void;
 
   /** Emitted when the user selects a directory. */
   dir_selected: Signal<[string]>;

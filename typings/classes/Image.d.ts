@@ -15,20 +15,20 @@ declare class Image extends Resource {
   /**
    * Alpha-blends `src_rect` from `src` image to this image at coordinates `dst`, clipped accordingly to both image bounds. This image and `src` image **must** have the same format. `src_rect` with non-positive size is treated as empty.
    */
-  blend_rect(src: Image, src_rect: Rect2i, dst: Vector2i): void;
+  blend_rect(src: Image, src_rect: Rect2i | Rect2, dst: Vector2i | Vector2): void;
   /**
    * Alpha-blends `src_rect` from `src` image to this image using `mask` image at coordinates `dst`, clipped accordingly to both image bounds. Alpha channels are required for both `src` and `mask`. `dst` pixels and `src` pixels will blend if the corresponding mask pixel's alpha value is not 0. This image and `src` image **must** have the same format. `src` image and `mask` image **must** have the same size (width and height) but they can have different formats. `src_rect` with non-positive size is treated as empty.
    */
-  blend_rect_mask(src: Image, mask: Image, src_rect: Rect2i, dst: Vector2i): void;
+  blend_rect_mask(src: Image, mask: Image, src_rect: Rect2i | Rect2, dst: Vector2i | Vector2): void;
   /**
    * Copies `src_rect` from `src` image to this image at coordinates `dst`, clipped accordingly to both image bounds. This image and `src` image **must** have the same format. `src_rect` with non-positive size is treated as empty.
    * **Note:** The alpha channel data in `src` will overwrite the corresponding data in this image at the target position. To blend alpha channels, use {@link blend_rect} instead.
    */
-  blit_rect(src: Image, src_rect: Rect2i, dst: Vector2i): void;
+  blit_rect(src: Image, src_rect: Rect2i | Rect2, dst: Vector2i | Vector2): void;
   /**
    * Blits `src_rect` area from `src` image to this image at the coordinates given by `dst`, clipped accordingly to both image bounds. `src` pixel is copied onto `dst` if the corresponding `mask` pixel's alpha value is not 0. This image and `src` image **must** have the same format. `src` image and `mask` image **must** have the same size (width and height) but they can have different formats. `src_rect` with non-positive size is treated as empty.
    */
-  blit_rect_mask(src: Image, mask: Image, src_rect: Rect2i, dst: Vector2i): void;
+  blit_rect_mask(src: Image, mask: Image, src_rect: Rect2i | Rect2, dst: Vector2i | Vector2): void;
   /**
    * Converts a bump map to a normal map. A bump map provides a height offset per-pixel, while a normal map provides a normal direction per pixel.
    */
@@ -69,7 +69,7 @@ declare class Image extends Resource {
   /**
    * Creates a new image of the given size and format. Fills the image with the given raw data. If `use_mipmaps` is `true`, loads the mipmaps for this image from `data`. See {@link generate_mipmaps}.
    */
-  static create_from_data(width: int, height: int, use_mipmaps: boolean, format: int, data: PackedByteArray): Image;
+  static create_from_data(width: int, height: int, use_mipmaps: boolean, format: int, data: PackedByteArray | Array<unknown>): Image;
   /**
    * Crops the image to the given `width` and `height`. If the specified size is larger than the current size, the extra area is filled with black pixels.
    */
@@ -89,7 +89,7 @@ declare class Image extends Resource {
   /** Fills the image with `color`. */
   fill(color: Color): void;
   /** Fills `rect` with `color`. */
-  fill_rect(rect: Rect2i, color: Color): void;
+  fill_rect(rect: Rect2i | Rect2, color: Color): void;
   /** Blends low-alpha pixels with nearby pixels. */
   fix_alpha_edges(): void;
   /** Flips the image horizontally. */
@@ -126,9 +126,9 @@ declare class Image extends Resource {
    * Returns the color of the pixel at `point`.
    * This is the same as {@link get_pixel}, but with a {@link Vector2i} argument instead of two integer arguments.
    */
-  get_pixelv(point: Vector2i): Color;
+  get_pixelv(point: Vector2i | Vector2): Color;
   /** Returns a new {@link Image} that is a copy of this {@link Image}'s area specified with `region`. */
-  get_region(region: Rect2i): Image | null;
+  get_region(region: Rect2i | Rect2): Image | null;
   /** Returns the image's size (width and height). */
   get_size(): Vector2i;
   /**
@@ -162,32 +162,32 @@ declare class Image extends Resource {
    * **Note:** Godot's BMP module doesn't support 16-bit per pixel images. Only 1-bit, 4-bit, 8-bit, 24-bit, and 32-bit per pixel images are supported.
    * **Note:** This method is only available in engine builds with the BMP module enabled. By default, the BMP module is enabled, but it can be disabled at build-time using the `module_bmp_enabled=no` SCons option.
    */
-  load_bmp_from_buffer(buffer: PackedByteArray): int;
+  load_bmp_from_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /**
    * Loads an image from the binary contents of a DDS file.
    * **Note:** This method is only available in engine builds with the DDS module enabled. By default, the DDS module is enabled, but it can be disabled at build-time using the `module_dds_enabled=no` SCons option.
    */
-  load_dds_from_buffer(buffer: PackedByteArray): int;
+  load_dds_from_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /** Loads an image from the binary contents of an OpenEXR file. */
-  load_exr_from_buffer(buffer: PackedByteArray): int;
+  load_exr_from_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /** Creates a new {@link Image} and loads data from the specified file. */
   static load_from_file(path: string): Image | null;
   /** Loads an image from the binary contents of a JPEG file. */
-  load_jpg_from_buffer(buffer: PackedByteArray): int;
+  load_jpg_from_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /**
    * Loads an image from the binary contents of a KTX (https://github.com/KhronosGroup/KTX-Software) file. Unlike most image formats, KTX can store VRAM-compressed data and embed mipmaps.
    * **Note:** Godot's libktx implementation only supports 2D images. Cubemaps, texture arrays, and de-padding are not supported.
    * **Note:** This method is only available in engine builds with the KTX module enabled. By default, the KTX module is enabled, but it can be disabled at build-time using the `module_ktx_enabled=no` SCons option.
    */
-  load_ktx_from_buffer(buffer: PackedByteArray): int;
+  load_ktx_from_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /** Loads an image from the binary contents of a PNG file. */
-  load_png_from_buffer(buffer: PackedByteArray): int;
+  load_png_from_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /**
    * Loads an image from the UTF-8 binary contents of an **uncompressed** SVG file (**.svg**).
    * **Note:** Beware when using compressed SVG files (like **.svgz**), they need to be `decompressed` before loading.
    * **Note:** This method is only available in engine builds with the SVG module enabled. By default, the SVG module is enabled, but it can be disabled at build-time using the `module_svg_enabled=no` SCons option.
    */
-  load_svg_from_buffer(buffer: PackedByteArray, scale?: float): int;
+  load_svg_from_buffer(buffer: PackedByteArray | Array<unknown>, scale?: float): int;
   /**
    * Loads an image from the string contents of an SVG file (**.svg**).
    * **Note:** This method is only available in engine builds with the SVG module enabled. By default, the SVG module is enabled, but it can be disabled at build-time using the `module_svg_enabled=no` SCons option.
@@ -197,9 +197,9 @@ declare class Image extends Resource {
    * Loads an image from the binary contents of a TGA file.
    * **Note:** This method is only available in engine builds with the TGA module enabled. By default, the TGA module is enabled, but it can be disabled at build-time using the `module_tga_enabled=no` SCons option.
    */
-  load_tga_from_buffer(buffer: PackedByteArray): int;
+  load_tga_from_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /** Loads an image from the binary contents of a WebP file. */
-  load_webp_from_buffer(buffer: PackedByteArray): int;
+  load_webp_from_buffer(buffer: PackedByteArray | Array<unknown>): int;
   /**
    * Converts the image's data to represent coordinates on a 3D plane. This is used when the image represents a normal map. A normal map can add lots of detail to a 3D surface without increasing the polygon count.
    */
@@ -270,7 +270,7 @@ declare class Image extends Resource {
    */
   save_webp_to_buffer(lossy?: boolean, quality?: float): PackedByteArray;
   /** Overwrites data of an existing {@link Image}. Non-static equivalent of {@link create_from_data}. */
-  set_data(width: int, height: int, use_mipmaps: boolean, format: int, data: PackedByteArray): void;
+  set_data(width: int, height: int, use_mipmaps: boolean, format: int, data: PackedByteArray | Array<unknown>): void;
   /**
    * Sets the {@link Color} of the pixel at `(x, y)` to `color`.
    * This is the same as {@link set_pixelv}, but with a two integer arguments instead of a {@link Vector2i} argument.
@@ -284,7 +284,7 @@ declare class Image extends Resource {
    * **Note:** Depending on the image's format, the color set here may be clamped or lose precision. Do not assume the color returned by {@link get_pixelv} to be identical to the one set here; any comparisons will likely need to use an approximation like {@link Color.is_equal_approx}.
    * **Note:** On grayscale image formats, only the red channel of `color` is used (and alpha if relevant). The green and blue channels are ignored.
    */
-  set_pixelv(point: Vector2i, color: Color): void;
+  set_pixelv(point: Vector2i | Vector2, color: Color): void;
   /** Shrinks the image by a factor of 2 on each axis (this divides the pixel count by 4). */
   shrink_x2(): void;
   /**

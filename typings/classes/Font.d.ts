@@ -15,32 +15,32 @@ declare class Font extends Resource {
    * Draw a single Unicode character `char` into a canvas item using the font, at a given position, with `modulate` color. `pos` specifies the baseline, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    * **Note:** Do not use this function to draw strings character by character, use {@link draw_string} or {@link TextLine} instead.
    */
-  draw_char(canvas_item: RID, pos: Vector2, char: int, font_size: int, modulate?: Color, oversampling?: float): float;
+  draw_char(canvas_item: RID, pos: Vector2 | Vector2i, char: int, font_size: int, modulate?: Color, oversampling?: float): float;
   /**
    * Draw a single Unicode character `char` outline into a canvas item using the font, at a given position, with `modulate` color and `size` outline size. `pos` specifies the baseline, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    * **Note:** Do not use this function to draw strings character by character, use {@link draw_string} or {@link TextLine} instead.
    */
-  draw_char_outline(canvas_item: RID, pos: Vector2, char: int, font_size: int, size?: int, modulate?: Color, oversampling?: float): float;
+  draw_char_outline(canvas_item: RID, pos: Vector2 | Vector2i, char: int, font_size: int, size?: int, modulate?: Color, oversampling?: float): float;
   /**
    * Breaks `text` into lines using rules specified by `brk_flags` and draws it into a canvas item using the font, at a given position, with `modulate` color, optionally clipping the width and aligning horizontally. `pos` specifies the baseline of the first line, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    * See also {@link CanvasItem.draw_multiline_string}.
    */
-  draw_multiline_string(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_multiline_string(canvas_item: RID, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Breaks `text` to the lines using rules specified by `brk_flags` and draws text outline into a canvas item using the font, at a given position, with `modulate` color and `size` outline size, optionally clipping the width and aligning horizontally. `pos` specifies the baseline of the first line, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    * See also {@link CanvasItem.draw_multiline_string_outline}.
    */
-  draw_multiline_string_outline(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_multiline_string_outline(canvas_item: RID, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Draw `text` into a canvas item using the font, at a given position, with `modulate` color, optionally clipping the width and aligning horizontally. `pos` specifies the baseline, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    * See also {@link CanvasItem.draw_string}.
    */
-  draw_string(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_string(canvas_item: RID, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Draw `text` outline into a canvas item using the font, at a given position, with `modulate` color and `size` outline size, optionally clipping the width and aligning horizontally. `pos` specifies the baseline, not the top. To draw from the top, *ascent* must be added to the Y axis. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    * See also {@link CanvasItem.draw_string_outline}.
    */
-  draw_string_outline(canvas_item: RID, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_string_outline(canvas_item: RID, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /** Returns {@link TextServer} RID of the font cache for specific variation. */
   find_variation(variation_coordinates: Dictionary, face_index?: int, strength?: float, transform?: Transform2D, spacing_top?: int, spacing_bottom?: int, spacing_space?: int, spacing_glyph?: int, baseline_offset?: float): RID;
   /**

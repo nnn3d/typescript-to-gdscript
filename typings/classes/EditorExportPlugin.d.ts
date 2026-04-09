@@ -7,13 +7,13 @@ declare class EditorExportPlugin extends RefCounted {
    * Return `true` if this plugin will customize resources based on the platform and features used.
    * When enabled, {@link _get_customization_configuration_hash} and {@link _customize_resource} will be called and must be implemented.
    */
-  _begin_customize_resources(platform: EditorExportPlatform, features: PackedStringArray): boolean;
+  _begin_customize_resources(platform: EditorExportPlatform, features: PackedStringArray | Array<unknown>): boolean;
   /**
    * Return `true` if this plugin will customize scenes based on the platform and features used.
    * When enabled, {@link _get_customization_configuration_hash} and {@link _customize_scene} will be called and must be implemented.
    * **Note:** {@link _customize_scene} will only be called for scenes that have been modified since the last export.
    */
-  _begin_customize_scenes(platform: EditorExportPlatform, features: PackedStringArray): boolean;
+  _begin_customize_scenes(platform: EditorExportPlatform, features: PackedStringArray | Array<unknown>): boolean;
   /**
    * Customize a resource. If changes are made to it, return the same or a new resource. Otherwise, return `null`. When a new resource is returned, `resource` will be replaced by a copy of the new resource.
    * The `path` argument is only used when customizing an actual file, otherwise this means that this resource is part of another one and it will be empty.
@@ -44,14 +44,14 @@ declare class EditorExportPlugin extends RefCounted {
   /**
    * Virtual method to be overridden by the user. It is called when the export starts and provides all information about the export. `features` is the list of features for the export, `is_debug` is `true` for debug builds, `path` is the target path for the exported project. `flags` is only used when running a runnable profile, e.g. when using native run on Android.
    */
-  _export_begin(features: PackedStringArray, is_debug: boolean, path: string, flags: int): void;
+  _export_begin(features: PackedStringArray | Array<unknown>, is_debug: boolean, path: string, flags: int): void;
   /** Virtual method to be overridden by the user. Called when the export is finished. */
   _export_end(): void;
   /**
    * Virtual method to be overridden by the user. Called for each exported file before {@link _customize_resource} and {@link _customize_scene}. The arguments can be used to identify the file. `path` is the path of the file, `type` is the {@link Resource} represented by the file (e.g. {@link PackedScene}), and `features` is the list of features for the export.
    * Calling {@link skip} inside this callback will make the file not included in the export.
    */
-  _export_file(path: string, type_: string, features: PackedStringArray): void;
+  _export_file(path: string, type_: string, features: PackedStringArray | Array<unknown>): void;
   /**
    * Virtual method to be overridden by the user. This is called to retrieve the set of Android dependencies provided by this plugin. Each returned Android dependency should have the format of an Android remote binary dependency: `org.godot.example:my-plugin:0.0.0`
    * For more information see Android documentation on dependencies (https://developer.android.com/build/dependencies?agpversion=4.1#dependency-types).
@@ -132,7 +132,7 @@ declare class EditorExportPlugin extends RefCounted {
    * Implementers of this virtual method should take the binary manifest data from `manifest_data`, copy it, modify it, and then return it with the modifications.
    * If no modifications are needed, then an empty {@link PackedByteArray} should be returned.
    */
-  _update_android_prebuilt_manifest(platform: EditorExportPlatform, manifest_data: PackedByteArray): PackedByteArray;
+  _update_android_prebuilt_manifest(platform: EditorExportPlatform, manifest_data: PackedByteArray | Array<unknown>): PackedByteArray;
   /** Adds an Apple embedded platform bundle file from the given `path` to the exported project. */
   add_apple_embedded_platform_bundle_file(path: string): void;
   /**
@@ -160,7 +160,7 @@ declare class EditorExportPlugin extends RefCounted {
    * When called inside {@link _export_file} and `remap` is `true`, the current file will not be exported, but instead remapped to this custom file. `remap` is ignored when called in other places.
    * `file` will not be imported, so consider using {@link _customize_resource} to remap imported resources.
    */
-  add_file(path: string, file: PackedByteArray, remap: boolean): void;
+  add_file(path: string, file: PackedByteArray | Array<unknown>, remap: boolean): void;
   /** Adds an iOS bundle file from the given `path` to the exported project. */
   add_ios_bundle_file(path: string): void;
   /**
@@ -193,7 +193,7 @@ declare class EditorExportPlugin extends RefCounted {
    * **Note:** In case of macOS exports, those shared objects will be added to `Frameworks` directory of app bundle.
    * In case of a directory code-sign will error if you place non code object in directory.
    */
-  add_shared_object(path: string, tags: PackedStringArray, target: string): void;
+  add_shared_object(path: string, tags: PackedStringArray | Array<unknown>, target: string): void;
   /** Returns currently used export platform. */
   get_export_platform(): EditorExportPlatform | null;
   /** Returns currently used export preset. */

@@ -61,29 +61,29 @@ declare class Polygon2D extends Node2D {
   get_invert_border(): float;
   set_invert_enabled(value: boolean): void;
   get_invert_enabled(): boolean;
-  set_offset(value: Vector2): void;
+  set_offset(value: Vector2 | Vector2i): void;
   get_offset(): Vector2;
-  set_polygon(value: PackedVector2Array): void;
+  set_polygon(value: PackedVector2Array | Array<unknown>): void;
   get_polygon(): PackedVector2Array;
-  set_polygons(value: Array<unknown>): void;
+  set_polygons(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_polygons(): Array<unknown>;
   set_skeleton(value: string): void;
   get_skeleton(): string;
   set_texture(value: Texture2D | null): void;
   get_texture(): Texture2D | null;
-  set_texture_offset(value: Vector2): void;
+  set_texture_offset(value: Vector2 | Vector2i): void;
   get_texture_offset(): Vector2;
   set_texture_rotation(value: float): void;
   get_texture_rotation(): float;
-  set_texture_scale(value: Vector2): void;
+  set_texture_scale(value: Vector2 | Vector2i): void;
   get_texture_scale(): Vector2;
-  set_uv(value: PackedVector2Array): void;
+  set_uv(value: PackedVector2Array | Array<unknown>): void;
   get_uv(): PackedVector2Array;
-  set_vertex_colors(value: PackedColorArray): void;
+  set_vertex_colors(value: PackedColorArray | Array<unknown>): void;
   get_vertex_colors(): PackedColorArray;
 
   /** Adds a bone with the specified `path` and `weights`. */
-  add_bone(path: string, weights: PackedFloat32Array): void;
+  add_bone(path: string, weights: PackedFloat32Array | Array<unknown>): void;
   /** Removes all bones from this {@link Polygon2D}. */
   clear_bones(): void;
   /** Removes the specified bone from this {@link Polygon2D}. */
@@ -97,5 +97,5 @@ declare class Polygon2D extends Node2D {
   /** Sets the path to the node associated with the specified bone. */
   set_bone_path(index: int, path: string): void;
   /** Sets the weight values for the specified bone. */
-  set_bone_weights(index: int, weights: PackedFloat32Array): void;
+  set_bone_weights(index: int, weights: PackedFloat32Array | Array<unknown>): void;
 }

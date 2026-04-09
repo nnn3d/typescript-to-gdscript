@@ -20,7 +20,7 @@ declare class EditorExportPlatformExtension extends EditorExportPlatform {
    * This method is called when "Export PCK/ZIP" button is pressed in the export dialog, with "Export as Patch" enabled, and PCK is selected as a file type.
    * **Note:** The patches provided in `patches` have already been loaded when this method is called and are merely provided as context. When empty the patches defined in the export preset have been loaded instead.
    */
-  _export_pack_patch(preset: EditorExportPreset, debug: boolean, path: string, patches: PackedStringArray, flags: int): int;
+  _export_pack_patch(preset: EditorExportPreset, debug: boolean, path: string, patches: PackedStringArray | Array<unknown>, flags: int): int;
   /**
    * Creates a full project at `path` for the specified `preset`.
    * This method is called when "Export" button is pressed in the export dialog.
@@ -37,7 +37,7 @@ declare class EditorExportPlatformExtension extends EditorExportPlatform {
    * This method is called when "Export PCK/ZIP" button is pressed in the export dialog, with "Export as Patch" enabled, and ZIP is selected as a file type.
    * **Note:** The patches provided in `patches` have already been loaded when this method is called and are merely provided as context. When empty the patches defined in the export preset have been loaded instead.
    */
-  _export_zip_patch(preset: EditorExportPreset, debug: boolean, path: string, patches: PackedStringArray, flags: int): int;
+  _export_zip_patch(preset: EditorExportPreset, debug: boolean, path: string, patches: PackedStringArray | Array<unknown>, flags: int): int;
   /** Returns array of supported binary extensions for the full project export. */
   _get_binary_extensions(preset: EditorExportPreset): PackedStringArray;
   /** Returns protocol used for remote debugging. Default implementation return `tcp://`. */

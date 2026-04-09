@@ -33,7 +33,7 @@ declare class VisualShaderNode extends Resource {
   /**
    * Sets the default input ports values using an {@link Array} of the form `[index0, value0, index1, value1, ...]`. For example: `[0, Vector3(0, 0, 0), 1, Vector3(0, 0, 0)]`.
    */
-  set_default_input_values(values: Array<unknown>): void;
+  set_default_input_values(values: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /** Sets the default `value` for the selected input `port`. */
   set_input_port_default_value(port: int, value: unknown, prev_value?: unknown): void;
 

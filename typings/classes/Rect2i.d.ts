@@ -21,11 +21,11 @@ declare interface Rect2i {
    */
   abs(): Rect2i;
   /** Returns `true` if this {@link Rect2i} completely encloses another one. */
-  encloses(b: Rect2i): boolean;
+  encloses(b: Rect2i | Rect2): boolean;
   /**
    * Returns a copy of this rectangle expanded to align the edges with the given `to` point, if necessary.
    */
-  expand(to: Vector2i): Rect2i;
+  expand(to: Vector2i | Vector2): Rect2i;
   /** Returns the rectangle's area. This is equivalent to `size.x * size.y`. See also {@link has_area}. */
   get_area(): int;
   /**
@@ -51,20 +51,20 @@ declare interface Rect2i {
    * Returns `true` if the rectangle contains the given `point`. By convention, points on the right and bottom edges are **not** included.
    * **Note:** This method is not reliable for {@link Rect2i} with a *negative* {@link size}. Use {@link abs} first to get a valid rectangle.
    */
-  has_point(point: Vector2i): boolean;
+  has_point(point: Vector2i | Vector2): boolean;
   /**
    * Returns the intersection between this rectangle and `b`. If the rectangles do not intersect, returns an empty {@link Rect2i}.
    * **Note:** If you only need to know whether two rectangles are overlapping, use {@link intersects}, instead.
    */
-  intersection(b: Rect2i): Rect2i;
+  intersection(b: Rect2i | Rect2): Rect2i;
   /**
    * Returns `true` if this rectangle overlaps with the `b` rectangle. The edges of both rectangles are excluded.
    */
-  intersects(b: Rect2i): boolean;
+  intersects(b: Rect2i | Rect2): boolean;
   /**
    * Returns a {@link Rect2i} that encloses both this rectangle and `b` around the edges. See also {@link encloses}.
    */
-  merge(b: Rect2i): Rect2i;
+  merge(b: Rect2i | Rect2): Rect2i;
 
   // Operator overloads
   [__ops_ne]: { right: Rect2i; ret: boolean };

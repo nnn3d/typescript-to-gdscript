@@ -63,14 +63,14 @@ declare class HTTPClient extends RefCounted {
    * To create a POST request with query strings to push to the server, do:
    * **Note:** The `body` parameter is ignored if `method` is {@link HTTPClient.METHOD_GET}. This is because GET methods can't contain request data. As a workaround, you can pass request data as a query string in the URL. See {@link String.uri_encode} for an example.
    */
-  request(method: int, url: string, headers: PackedStringArray, body?: string): int;
+  request(method: int, url: string, headers: PackedStringArray | Array<unknown>, body?: string): int;
   /**
    * Sends a raw HTTP request to the connected host with the given `method`.
    * The URL parameter is usually just the part after the host, so for `https://example.com/index.php`, it is `/index.php`. When sending requests to an HTTP proxy server, it should be an absolute URL. For {@link HTTPClient.METHOD_OPTIONS} requests, `*` is also allowed. For {@link HTTPClient.METHOD_CONNECT} requests, it should be the authority component (`host:port`).
    * `headers` are HTTP request headers.
    * Sends the body data raw, as a byte array and does not encode it in any way.
    */
-  request_raw(method: int, url: string, headers: PackedStringArray, body: PackedByteArray): int;
+  request_raw(method: int, url: string, headers: PackedStringArray | Array<unknown>, body: PackedByteArray | Array<unknown>): int;
   /**
    * Sets the proxy server for HTTP requests.
    * The proxy server is unset if `host` is empty or `port` is -1.

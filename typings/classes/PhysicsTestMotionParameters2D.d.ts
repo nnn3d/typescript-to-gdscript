@@ -39,7 +39,7 @@ declare class PhysicsTestMotionParameters2D extends RefCounted {
   get_from(): Transform2D;
   set_margin(value: float): void;
   get_margin(): float;
-  set_motion(value: Vector2): void;
+  set_motion(value: Vector2 | Vector2i): void;
   get_motion(): Vector2;
   set_recovery_as_collision_enabled(value: boolean): void;
   is_recovery_as_collision_enabled(): boolean;

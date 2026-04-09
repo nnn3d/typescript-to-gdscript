@@ -13,11 +13,11 @@ declare class ArrayOccluder3D extends Occluder3D {
    * **Note:** The occluder is always updated after setting this value. If creating occluders procedurally, consider using {@link set_arrays} instead to avoid updating the occluder twice when it's created.
    */
   vertices: PackedVector3Array;
-  set_indices(value: PackedInt32Array): void;
-  set_vertices(value: PackedVector3Array): void;
+  set_indices(value: PackedInt32Array | Array<unknown>): void;
+  set_vertices(value: PackedVector3Array | Array<unknown>): void;
 
   /**
    * Sets {@link indices} and {@link vertices}, while updating the final occluder only once after both values are set.
    */
-  set_arrays(vertices: PackedVector3Array, indices: PackedInt32Array): void;
+  set_arrays(vertices: PackedVector3Array | Array<unknown>, indices: PackedInt32Array | Array<unknown>): void;
 }

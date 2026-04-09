@@ -20,9 +20,9 @@ declare class AudioStreamGeneratorPlayback extends AudioStreamPlaybackResampled 
   /**
    * Pushes several audio data frames to the buffer. This is usually more efficient than {@link push_frame} in C# and compiled languages via GDExtension, but {@link push_buffer} may be *less* efficient in GDScript.
    */
-  push_buffer(frames: PackedVector2Array): boolean;
+  push_buffer(frames: PackedVector2Array | Array<unknown>): boolean;
   /**
    * Pushes a single audio data frame to the buffer. This is usually less efficient than {@link push_buffer} in C# and compiled languages via GDExtension, but {@link push_frame} may be *more* efficient in GDScript.
    */
-  push_frame(frame: Vector2): boolean;
+  push_frame(frame: Vector2 | Vector2i): boolean;
 }

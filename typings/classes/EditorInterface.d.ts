@@ -182,17 +182,17 @@ declare interface EditorInterface extends GodotObject {
    * Pops up the `dialog` in the editor UI with {@link Window.popup_exclusive}. The dialog must have no current parent, otherwise the method fails.
    * See also {@link Window.set_unparent_when_invisible}.
    */
-  popup_dialog(dialog: Window, rect?: Rect2i): void;
+  popup_dialog(dialog: Window, rect?: Rect2i | Rect2): void;
   /**
    * Pops up the `dialog` in the editor UI with {@link Window.popup_exclusive_centered}. The dialog must have no current parent, otherwise the method fails.
    * See also {@link Window.set_unparent_when_invisible}.
    */
-  popup_dialog_centered(dialog: Window, minsize?: Vector2i): void;
+  popup_dialog_centered(dialog: Window, minsize?: Vector2i | Vector2): void;
   /**
    * Pops up the `dialog` in the editor UI with {@link Window.popup_exclusive_centered_clamped}. The dialog must have no current parent, otherwise the method fails.
    * See also {@link Window.set_unparent_when_invisible}.
    */
-  popup_dialog_centered_clamped(dialog: Window, minsize?: Vector2i, fallback_ratio?: float): void;
+  popup_dialog_centered_clamped(dialog: Window, minsize?: Vector2i | Vector2, fallback_ratio?: float): void;
   /**
    * Pops up the `dialog` in the editor UI with {@link Window.popup_exclusive_centered_ratio}. The dialog must have no current parent, otherwise the method fails.
    * See also {@link Window.set_unparent_when_invisible}.
@@ -210,7 +210,7 @@ declare interface EditorInterface extends GodotObject {
   /**
    * Pops up an editor dialog for selecting properties from `object`. The `callback` must take a single argument of type {@link NodePath}. It is called on the selected property path (see {@link NodePath.get_as_property_path}) or the empty path `^""` if the dialog is canceled. If `type_filter` is provided, the dialog will only show properties that match one of the listed {@link Variant.Type} values. If `current_value` is provided, the property will be selected automatically in the property list, if it exists.
    */
-  popup_property_selector(object: GodotObject, callback: Callable, type_filter?: PackedInt32Array, current_value?: string): void;
+  popup_property_selector(object: GodotObject, callback: Callable, type_filter?: PackedInt32Array | Array<unknown>, current_value?: string): void;
   /**
    * Pops up an editor dialog for quick selecting a resource file. The `callback` must take a single argument of type {@link String} which will contain the path of the selected resource or be empty if the dialog is canceled. If `base_types` is provided, the dialog will only show resources that match these types. Only types deriving from {@link Resource} are supported.
    */

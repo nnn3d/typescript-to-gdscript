@@ -70,7 +70,7 @@ declare class MultiplayerPeerExtension extends MultiplayerPeer {
   /**
    * Called when a packet needs to be sent by the {@link MultiplayerAPI}, if {@link _put_packet} isn't implemented. Use this when extending this class via GDScript.
    */
-  _put_packet_script(p_buffer: PackedByteArray): int;
+  _put_packet_script(p_buffer: PackedByteArray | Array<unknown>): int;
   /**
    * Called when the "refuse new connections" status is set on this {@link MultiplayerPeer} (see {@link MultiplayerPeer.refuse_new_connections}).
    */

@@ -34,11 +34,11 @@ declare class GodotObject {
    * Initializes the iterator. `iter` stores the iteration state. Since GDScript does not support passing arguments by reference, a single-element array is used as a wrapper. Returns `true` so long as the iterator has not reached the end.
    * **Note:** Alternatively, you can ignore `iter` and use the object's state instead, see online docs ($DOCS_URL/tutorials/scripting/gdscript/gdscript_advanced.html#custom-iterators) for an example. Note that in this case you will not be able to reuse the same iterator instance in nested loops. Also, make sure you reset the iterator state in this method if you want to reuse the same instance multiple times.
    */
-  _iter_init(iter: Array<unknown>): boolean;
+  _iter_init(iter: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): boolean;
   /**
    * Moves the iterator to the next iteration. `iter` stores the iteration state. Since GDScript does not support passing arguments by reference, a single-element array is used as a wrapper. Returns `true` so long as the iterator has not reached the end.
    */
-  _iter_next(iter: Array<unknown>): boolean;
+  _iter_next(iter: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): boolean;
   /**
    * Called when the object receives a notification, which can be identified in `what` by comparing it with a constant. See also {@link notification}.
    * **Note:** The base {@link Object} defines a few notifications ({@link NOTIFICATION_POSTINITIALIZE} and {@link NOTIFICATION_PREDELETE}). Inheriting classes such as {@link Node} define a lot more notifications, which are also received by this method.
@@ -75,7 +75,7 @@ declare class GodotObject {
   /**
    * Adds a user-defined signal named `signal`. Optional arguments for the signal can be added as an {@link Array} of dictionaries, each defining a `name` {@link String} and a `type` [int] (see {@link Variant.Type}). See also {@link has_user_signal} and {@link remove_user_signal}.
    */
-  add_user_signal(signal: string, arguments?: Array<unknown>): void;
+  add_user_signal(signal: string, arguments?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /**
    * Calls the `method` on the object and returns the result. This method supports a variable number of arguments, so parameters can be passed as a comma separated list.
    * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.

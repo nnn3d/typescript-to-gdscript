@@ -5,6 +5,6 @@
 declare class InputEventPanGesture extends InputEventGesture {
   /** Panning amount since last pan event. */
   delta: Vector2;
-  set_delta(value: Vector2): void;
+  set_delta(value: Vector2 | Vector2i): void;
   get_delta(): Vector2;
 }

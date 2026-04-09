@@ -14,6 +14,6 @@ declare class WorldBoundaryShape2D extends Shape2D {
   normal: Vector2;
   set_distance(value: float): void;
   get_distance(): float;
-  set_normal(value: Vector2): void;
+  set_normal(value: Vector2 | Vector2i): void;
   get_normal(): Vector2;
 }

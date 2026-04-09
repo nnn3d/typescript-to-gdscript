@@ -76,24 +76,24 @@ declare class MeshDataTool extends RefCounted {
   /** Sets the material to be used by newly-constructed {@link Mesh}. */
   set_material(material: Material): void;
   /** Sets the position of the given vertex. */
-  set_vertex(idx: int, vertex: Vector3): void;
+  set_vertex(idx: int, vertex: Vector3 | Vector3i): void;
   /** Sets the bones of the given vertex. */
-  set_vertex_bones(idx: int, bones: PackedInt32Array): void;
+  set_vertex_bones(idx: int, bones: PackedInt32Array | Array<unknown>): void;
   /** Sets the color of the given vertex. */
   set_vertex_color(idx: int, color: Color): void;
   /** Sets the metadata associated with the given vertex. */
   set_vertex_meta(idx: int, meta: unknown): void;
   /** Sets the normal of the given vertex. */
-  set_vertex_normal(idx: int, normal: Vector3): void;
+  set_vertex_normal(idx: int, normal: Vector3 | Vector3i): void;
   /**
    * Sets the tangent of the given vertex.
    * **Note:** Even though `tangent` is a {@link Plane}, it does not directly represent the tangent plane. Its {@link Plane.x}, {@link Plane.y}, and {@link Plane.z} represent the tangent vector and {@link Plane.d} should be either `-1` or `1`. See also {@link Mesh.ARRAY_TANGENT}.
    */
   set_vertex_tangent(idx: int, tangent: Plane): void;
   /** Sets the UV of the given vertex. */
-  set_vertex_uv(idx: int, uv: Vector2): void;
+  set_vertex_uv(idx: int, uv: Vector2 | Vector2i): void;
   /** Sets the UV2 of the given vertex. */
-  set_vertex_uv2(idx: int, uv2: Vector2): void;
+  set_vertex_uv2(idx: int, uv2: Vector2 | Vector2i): void;
   /** Sets the bone weights of the given vertex. */
-  set_vertex_weights(idx: int, weights: PackedFloat32Array): void;
+  set_vertex_weights(idx: int, weights: PackedFloat32Array | Array<unknown>): void;
 }

@@ -18,7 +18,7 @@ declare class Curve2D extends Resource {
    * Adds a point with the specified `position` relative to the curve's own position, with control points `in` and `out`. Appends the new point at the end of the point list.
    * If `index` is given, the new point is inserted before the existing point identified by index `index`. Every existing point starting from `index` is shifted further down the list of points. The index must be greater than or equal to `0` and must not exceed the number of existing points in the line. See {@link point_count}.
    */
-  add_point(position: Vector2, in_?: Vector2, out?: Vector2, index?: int): void;
+  add_point(position: Vector2 | Vector2i, in_?: Vector2 | Vector2i, out?: Vector2 | Vector2i, index?: int): void;
   /** Removes all points from the curve. */
   clear_points(): void;
   /**
@@ -31,12 +31,12 @@ declare class Curve2D extends Resource {
    * Returns the closest offset to `to_point`. This offset is meant to be used in {@link sample_baked}.
    * `to_point` must be in this curve's local space.
    */
-  get_closest_offset(to_point: Vector2): float;
+  get_closest_offset(to_point: Vector2 | Vector2i): float;
   /**
    * Returns the closest point on baked segments (in curve's local space) to `to_point`.
    * `to_point` must be in this curve's local space.
    */
-  get_closest_point(to_point: Vector2): Vector2;
+  get_closest_point(to_point: Vector2 | Vector2i): Vector2;
   /**
    * Returns the position of the control point leading to the vertex `idx`. The returned position is relative to the vertex `idx`. If the index is out of bounds, the function sends an error to the console, and returns `(0, 0)`.
    */
@@ -73,15 +73,15 @@ declare class Curve2D extends Resource {
   /**
    * Sets the position of the control point leading to the vertex `idx`. If the index is out of bounds, the function sends an error to the console. The position is relative to the vertex.
    */
-  set_point_in(idx: int, position: Vector2): void;
+  set_point_in(idx: int, position: Vector2 | Vector2i): void;
   /**
    * Sets the position of the control point leading out of the vertex `idx`. If the index is out of bounds, the function sends an error to the console. The position is relative to the vertex.
    */
-  set_point_out(idx: int, position: Vector2): void;
+  set_point_out(idx: int, position: Vector2 | Vector2i): void;
   /**
    * Sets the position for the vertex `idx`. If the index is out of bounds, the function sends an error to the console.
    */
-  set_point_position(idx: int, position: Vector2): void;
+  set_point_position(idx: int, position: Vector2 | Vector2i): void;
   /**
    * Returns a list of points along the curve, with a curvature controlled point density. That is, the curvier parts will have more points than the straighter parts.
    * This approximation makes straight segments between each point, then subdivides those segments until the resulting shape is similar enough.

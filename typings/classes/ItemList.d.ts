@@ -76,7 +76,7 @@ declare class ItemList extends Control {
   has_auto_height(): boolean;
   set_auto_width(value: boolean): void;
   has_auto_width(): boolean;
-  set_fixed_icon_size(value: Vector2i): void;
+  set_fixed_icon_size(value: Vector2i | Vector2): void;
   get_fixed_icon_size(): Vector2i;
   set_icon_scale(value: float): void;
   get_icon_scale(): float;
@@ -136,7 +136,7 @@ declare class ItemList extends Control {
    * When there is no item at that point, -1 will be returned if `exact` is `true`, and the closest item index will be returned otherwise.
    * **Note:** The returned value is unreliable if called right after modifying the {@link ItemList}, before it redraws in the next frame.
    */
-  get_item_at_position(position: Vector2, exact?: boolean): int;
+  get_item_at_position(position: Vector2 | Vector2i, exact?: boolean): int;
   /** Returns item's auto translate mode. */
   get_item_auto_translate_mode(idx: int): int;
   /** Returns the custom background color of the item specified by `idx` index. */
@@ -211,7 +211,7 @@ declare class ItemList extends Control {
   /** Sets a modulating {@link Color} of the item associated with the specified index. */
   set_item_icon_modulate(idx: int, modulate: Color): void;
   /** Sets the region of item's icon used. The whole icon will be used if the region has no area. */
-  set_item_icon_region(idx: int, rect: Rect2): void;
+  set_item_icon_region(idx: int, rect: Rect2 | Rect2i): void;
   /** Sets whether the item icon will be drawn transposed. */
   set_item_icon_transposed(idx: int, transposed: boolean): void;
   /**

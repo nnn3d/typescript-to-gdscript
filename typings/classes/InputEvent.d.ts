@@ -68,7 +68,7 @@ declare class InputEvent extends Resource {
   /**
    * Returns a copy of the given input event which has been offset by `local_ofs` and transformed by `xform`. Relevant for events of type {@link InputEventMouseButton}, {@link InputEventMouseMotion}, {@link InputEventScreenTouch}, {@link InputEventScreenDrag}, {@link InputEventMagnifyGesture} and {@link InputEventPanGesture}.
    */
-  xformed_by(xform: Transform2D, local_ofs?: Vector2): InputEvent;
+  xformed_by(xform: Transform2D, local_ofs?: Vector2 | Vector2i): InputEvent;
 
   /**
    * Device ID used for emulated mouse input from a touchscreen, or for emulated touch input from a mouse. This can be used to distinguish emulated mouse input from physical mouse input, or emulated touch input from physical touch input.

@@ -45,7 +45,7 @@ declare class SkeletonIK3D extends SkeletonModifier3D {
   use_magnet: boolean;
   set_interpolation(value: float): void;
   get_interpolation(): float;
-  set_magnet_position(value: Vector3): void;
+  set_magnet_position(value: Vector3 | Vector3i): void;
   get_magnet_position(): Vector3;
   set_max_iterations(value: int): void;
   get_max_iterations(): int;
@@ -55,7 +55,7 @@ declare class SkeletonIK3D extends SkeletonModifier3D {
   is_override_tip_basis(): boolean;
   set_root_bone(value: string): void;
   get_root_bone(): string;
-  set_target_transform(value: Transform3D): void;
+  set_target_transform(value: Transform3D | Projection): void;
   get_target_transform(): Transform3D;
   set_target_node(value: string): void;
   get_target_node(): string;

@@ -19,7 +19,7 @@ declare interface Transform3D {
    * Returns the result of the linear interpolation between this transform and `xform` by the given `weight`.
    * The `weight` should be between `0.0` and `1.0` (inclusive). Values outside this range are allowed and can be used to perform *extrapolation* instead.
    */
-  interpolate_with(xform: Transform3D, weight: float): Transform3D;
+  interpolate_with(xform: Transform3D | Projection, weight: float): Transform3D;
   /**
    * Returns the inverted version of this transform (https://en.wikipedia.org/wiki/Invertible_matrix). See also {@link Basis.inverse}.
    * **Note:** For this method to return correctly, the transform's {@link basis} needs to be *orthonormal* (see {@link orthonormalized}). That means the basis should only represent a rotation. If it does not, use {@link affine_inverse} instead.
@@ -28,7 +28,7 @@ declare interface Transform3D {
   /**
    * Returns `true` if this transform and `xform` are approximately equal, by running {@link @GlobalScope.is_equal_approx} on each component.
    */
-  is_equal_approx(xform: Transform3D): boolean;
+  is_equal_approx(xform: Transform3D | Projection): boolean;
   /**
    * Returns `true` if this transform is finite, by calling {@link @GlobalScope.is_finite} on each component.
    */
@@ -38,7 +38,7 @@ declare interface Transform3D {
    * The up axis (+Y) points as close to the `up` vector as possible while staying perpendicular to the forward axis. The resulting transform is orthonormalized. The existing rotation, scale, and skew information from the original transform is discarded. The `target` and `up` vectors cannot be zero, cannot be parallel to each other, and are defined in global/parent space.
    * If `use_model_front` is `true`, the +Z axis (asset front) is treated as forward (implies +X is left) and points toward the `target` position. By default, the -Z axis (camera forward) is treated as forward (implies +X is right).
    */
-  looking_at(target: Vector3, up?: Vector3, use_model_front?: boolean): Transform3D;
+  looking_at(target: Vector3 | Vector3i, up?: Vector3 | Vector3i, use_model_front?: boolean): Transform3D;
   /**
    * Returns a copy of this transform with its {@link basis} orthonormalized. An orthonormal basis is both *orthogonal* (the axes are perpendicular to each other) and *normalized* (the axes have a length of `1.0`), which also means it can only represent a rotation. See also {@link Basis.orthonormalized}.
    */
@@ -49,38 +49,38 @@ declare interface Transform3D {
    * This method is an optimized version of multiplying the given transform `X` with a corresponding rotation transform `R` from the left, i.e., `R * X`.
    * This can be seen as transforming with respect to the global/parent frame.
    */
-  rotated(axis: Vector3, angle: float): Transform3D;
+  rotated(axis: Vector3 | Vector3i, angle: float): Transform3D;
   /**
    * Returns a copy of this transform rotated around the given `axis` by the given `angle` (in radians).
    * The `axis` must be a normalized vector in the transform's local coordinate system. For example, to rotate around the local X-axis, use {@link Vector3.RIGHT}.
    * This method is an optimized version of multiplying the given transform `X` with a corresponding rotation transform `R` from the right, i.e., `X * R`.
    * This can be seen as transforming with respect to the local frame.
    */
-  rotated_local(axis: Vector3, angle: float): Transform3D;
+  rotated_local(axis: Vector3 | Vector3i, angle: float): Transform3D;
   /**
    * Returns a copy of this transform scaled by the given `scale` factor.
    * This method is an optimized version of multiplying the given transform `X` with a corresponding scaling transform `S` from the left, i.e., `S * X`.
    * This can be seen as transforming with respect to the global/parent frame.
    */
-  scaled(scale: Vector3): Transform3D;
+  scaled(scale: Vector3 | Vector3i): Transform3D;
   /**
    * Returns a copy of this transform scaled by the given `scale` factor.
    * This method is an optimized version of multiplying the given transform `X` with a corresponding scaling transform `S` from the right, i.e., `X * S`.
    * This can be seen as transforming with respect to the local frame.
    */
-  scaled_local(scale: Vector3): Transform3D;
+  scaled_local(scale: Vector3 | Vector3i): Transform3D;
   /**
    * Returns a copy of this transform translated by the given `offset`.
    * This method is an optimized version of multiplying the given transform `X` with a corresponding translation transform `T` from the left, i.e., `T * X`.
    * This can be seen as transforming with respect to the global/parent frame.
    */
-  translated(offset: Vector3): Transform3D;
+  translated(offset: Vector3 | Vector3i): Transform3D;
   /**
    * Returns a copy of this transform translated by the given `offset`.
    * This method is an optimized version of multiplying the given transform `X` with a corresponding translation transform `T` from the right, i.e., `X * T`.
    * This can be seen as transforming with respect to the local frame.
    */
-  translated_local(offset: Vector3): Transform3D;
+  translated_local(offset: Vector3 | Vector3i): Transform3D;
 
   // Operator overloads
   [__ops_ne]: { right: Transform3D; ret: boolean };

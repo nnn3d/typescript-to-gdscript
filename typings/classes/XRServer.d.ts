@@ -23,7 +23,7 @@ declare interface XRServer extends GodotObject {
   is_camera_locked_to_origin(): boolean;
   set_primary_interface(value: XRInterface | null): void;
   get_primary_interface(): XRInterface | null;
-  set_world_origin(value: Transform3D): void;
+  set_world_origin(value: Transform3D | Projection): void;
   get_world_origin(): Transform3D;
   set_world_scale(value: float): void;
   get_world_scale(): float;

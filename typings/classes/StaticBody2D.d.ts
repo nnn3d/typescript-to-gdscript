@@ -20,7 +20,7 @@ declare class StaticBody2D extends PhysicsBody2D {
   physics_material_override: PhysicsMaterial | null;
   set_constant_angular_velocity(value: float): void;
   get_constant_angular_velocity(): float;
-  set_constant_linear_velocity(value: Vector2): void;
+  set_constant_linear_velocity(value: Vector2 | Vector2i): void;
   get_constant_linear_velocity(): Vector2;
   set_physics_material_override(value: PhysicsMaterial | null): void;
   get_physics_material_override(): PhysicsMaterial | null;

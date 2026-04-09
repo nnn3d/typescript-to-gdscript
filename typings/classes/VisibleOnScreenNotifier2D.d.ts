@@ -9,7 +9,7 @@ declare class VisibleOnScreenNotifier2D extends Node2D {
    * If `true`, shows the rectangle area of {@link rect} in the editor with a translucent magenta fill. Unlike changing the visibility of the VisibleOnScreenNotifier2D, this does not affect the screen culling detection.
    */
   show_rect: boolean;
-  set_rect(value: Rect2): void;
+  set_rect(value: Rect2 | Rect2i): void;
   get_rect(): Rect2;
   set_show_rect(value: boolean): void;
   is_showing_rect(): boolean;

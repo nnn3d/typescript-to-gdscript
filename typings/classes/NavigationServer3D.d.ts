@@ -86,7 +86,7 @@ declare interface NavigationServer3D extends GodotObject {
    */
   agent_set_paused(agent: RID, paused: boolean): void;
   /** Sets the position of the agent in world space. */
-  agent_set_position(agent: RID, position: Vector3): void;
+  agent_set_position(agent: RID, position: Vector3 | Vector3i): void;
   /** Sets the radius of the agent. */
   agent_set_radius(agent: RID, radius: float): void;
   /**
@@ -106,11 +106,11 @@ declare interface NavigationServer3D extends GodotObject {
   /**
    * Sets `velocity` as the new wanted velocity for the specified `agent`. The avoidance simulation will try to fulfill this velocity if possible but will modify it to avoid collision with other agent's and obstacles. When an agent is teleported to a new position use {@link agent_set_velocity_forced} as well to reset the internal simulation velocity.
    */
-  agent_set_velocity(agent: RID, velocity: Vector3): void;
+  agent_set_velocity(agent: RID, velocity: Vector3 | Vector3i): void;
   /**
    * Replaces the internal velocity in the collision avoidance simulation with `velocity` for the specified `agent`. When an agent is teleported to a new position this function should be used in the same frame. If called frequently this function can get agents stuck.
    */
-  agent_set_velocity_forced(agent: RID, velocity: Vector3): void;
+  agent_set_velocity_forced(agent: RID, velocity: Vector3 | Vector3i): void;
   /**
    * Bakes the provided `navigation_mesh` with the data from the provided `source_geometry_data`. After the process is finished the optional `callback` will be called.
    */
@@ -161,7 +161,7 @@ declare interface NavigationServer3D extends GodotObject {
   /** If `enabled` is `true`, the specified `link` will contribute to its current navigation map. */
   link_set_enabled(link: RID, enabled: boolean): void;
   /** Sets the exit position for the `link`. */
-  link_set_end_position(link: RID, position: Vector3): void;
+  link_set_end_position(link: RID, position: Vector3 | Vector3i): void;
   /** Sets the `enter_cost` for this `link`. */
   link_set_enter_cost(link: RID, enter_cost: float): void;
   /** Sets the navigation map {@link RID} for the link. */
@@ -173,7 +173,7 @@ declare interface NavigationServer3D extends GodotObject {
   /** Set the `ObjectID` of the object which manages this link. */
   link_set_owner_id(link: RID, owner_id: int): void;
   /** Sets the entry position for this `link`. */
-  link_set_start_position(link: RID, position: Vector3): void;
+  link_set_start_position(link: RID, position: Vector3 | Vector3i): void;
   /** Sets the `travel_cost` for this `link`. */
   link_set_travel_cost(link: RID, travel_cost: float): void;
   /** Create a new map. */
@@ -196,20 +196,20 @@ declare interface NavigationServer3D extends GodotObject {
   /**
    * Returns the navigation mesh surface point closest to the provided `to_point` on the navigation `map`.
    */
-  map_get_closest_point(map: RID, to_point: Vector3): Vector3;
+  map_get_closest_point(map: RID, to_point: Vector3 | Vector3i): Vector3;
   /**
    * Returns the navigation mesh surface normal closest to the provided `to_point` on the navigation `map`.
    */
-  map_get_closest_point_normal(map: RID, to_point: Vector3): Vector3;
+  map_get_closest_point_normal(map: RID, to_point: Vector3 | Vector3i): Vector3;
   /**
    * Returns the owner region RID for the navigation mesh surface point closest to the provided `to_point` on the navigation `map`.
    */
-  map_get_closest_point_owner(map: RID, to_point: Vector3): RID;
+  map_get_closest_point_owner(map: RID, to_point: Vector3 | Vector3i): RID;
   /**
    * Returns the navigation mesh surface point closest to the provided `start` and `end` segment on the navigation `map`.
    * If `use_collision` is `true`, a closest point test is only done when the segment intersects with the navigation mesh surface.
    */
-  map_get_closest_point_to_segment(map: RID, start: Vector3, end: Vector3, use_collision?: boolean): Vector3;
+  map_get_closest_point_to_segment(map: RID, start: Vector3 | Vector3i, end: Vector3 | Vector3i, use_collision?: boolean): Vector3;
   /**
    * Returns the edge connection margin of the map. This distance is the minimum vertex distance needed to connect two edges from different regions.
    */
@@ -236,7 +236,7 @@ declare interface NavigationServer3D extends GodotObject {
   /**
    * Returns the navigation path to reach the destination from the origin. `navigation_layers` is a bitmask of all region navigation layers that are allowed to be in the path.
    */
-  map_get_path(map: RID, origin: Vector3, destination: Vector3, optimize: boolean, navigation_layers?: int): PackedVector3Array;
+  map_get_path(map: RID, origin: Vector3 | Vector3i, destination: Vector3 | Vector3i, optimize: boolean, navigation_layers?: int): PackedVector3Array;
   /**
    * Returns a random position picked from all map region polygons with matching `navigation_layers`.
    * If `uniformly` is `true`, all map regions, polygons, and faces are weighted by their surface area (slower).
@@ -274,7 +274,7 @@ declare interface NavigationServer3D extends GodotObject {
   /** Set the map's internal merge rasterizer cell scale used to control merging sensitivity. */
   map_set_merge_rasterizer_cell_scale(map: RID, scale: float): void;
   /** Sets the map up direction. */
-  map_set_up(map: RID, up: Vector3): void;
+  map_set_up(map: RID, up: Vector3 | Vector3i): void;
   /**
    * If `enabled` is `true` the `map` synchronization uses an async process that runs on a background thread.
    */
@@ -322,7 +322,7 @@ declare interface NavigationServer3D extends GodotObject {
    */
   obstacle_set_paused(obstacle: RID, paused: boolean): void;
   /** Updates the `position` in world space for the `obstacle`. */
-  obstacle_set_position(obstacle: RID, position: Vector3): void;
+  obstacle_set_position(obstacle: RID, position: Vector3 | Vector3i): void;
   /** Sets the radius of the dynamic obstacle. */
   obstacle_set_radius(obstacle: RID, radius: float): void;
   /** Sets if the `obstacle` uses the 2D avoidance or the 3D avoidance while avoidance is enabled. */
@@ -330,11 +330,11 @@ declare interface NavigationServer3D extends GodotObject {
   /**
    * Sets `velocity` of the dynamic `obstacle`. Allows other agents to better predict the movement of the dynamic obstacle. Only works in combination with the radius of the obstacle.
    */
-  obstacle_set_velocity(obstacle: RID, velocity: Vector3): void;
+  obstacle_set_velocity(obstacle: RID, velocity: Vector3 | Vector3i): void;
   /**
    * Sets the outline vertices for the obstacle. If the vertices are winded in clockwise order agents will be pushed in by the obstacle, else they will be pushed out.
    */
-  obstacle_set_vertices(obstacle: RID, vertices: PackedVector3Array): void;
+  obstacle_set_vertices(obstacle: RID, vertices: PackedVector3Array | Array<unknown>): void;
   /**
    * Parses the {@link SceneTree} for source geometry according to the properties of `navigation_mesh`. Updates the provided `source_geometry_data` resource with the resulting data. The resource can then be used to bake a navigation mesh with {@link bake_from_source_geometry_data}. After the process is finished the optional `callback` will be called.
    * **Note:** This function needs to run on the main thread or with a deferred call as the SceneTree is not thread-safe.
@@ -354,16 +354,16 @@ declare interface NavigationServer3D extends GodotObject {
   /**
    * Returns the navigation mesh surface point closest to the provided `to_point` on the navigation `region`.
    */
-  region_get_closest_point(region: RID, to_point: Vector3): Vector3;
+  region_get_closest_point(region: RID, to_point: Vector3 | Vector3i): Vector3;
   /**
    * Returns the navigation mesh surface normal closest to the provided `to_point` on the navigation `region`.
    */
-  region_get_closest_point_normal(region: RID, to_point: Vector3): Vector3;
+  region_get_closest_point_normal(region: RID, to_point: Vector3 | Vector3i): Vector3;
   /**
    * Returns the navigation mesh surface point closest to the provided `start` and `end` segment on the navigation `region`.
    * If `use_collision` is `true`, a closest point test is only done when the segment intersects with the navigation mesh surface.
    */
-  region_get_closest_point_to_segment(region: RID, start: Vector3, end: Vector3, use_collision?: boolean): Vector3;
+  region_get_closest_point_to_segment(region: RID, start: Vector3 | Vector3i, end: Vector3 | Vector3i, use_collision?: boolean): Vector3;
   /**
    * Returns the ending point of a connection door. `connection` is an index between 0 and the return value of {@link region_get_connections_count}.
    */
@@ -412,7 +412,7 @@ declare interface NavigationServer3D extends GodotObject {
    * If multiple navigation meshes have positions at equal distance the navigation region whose polygons are processed first wins the ownership. Polygons are processed in the same order that navigation regions were registered on the NavigationServer.
    * **Note:** If navigation meshes from different navigation regions overlap (which should be avoided in general) the result might not be what is expected.
    */
-  region_owns_point(region: RID, point: Vector3): boolean;
+  region_owns_point(region: RID, point: Vector3 | Vector3i): boolean;
   /** If `enabled` is `true`, the specified `region` will contribute to its current navigation map. */
   region_set_enabled(region: RID, enabled: boolean): void;
   /** Sets the `enter_cost` for this `region`. */
@@ -428,7 +428,7 @@ declare interface NavigationServer3D extends GodotObject {
   /** Set the `ObjectID` of the object which manages this region. */
   region_set_owner_id(region: RID, owner_id: int): void;
   /** Sets the global transformation for the region. */
-  region_set_transform(region: RID, transform: Transform3D): void;
+  region_set_transform(region: RID, transform: Transform3D | Projection): void;
   /** Sets the `travel_cost` for this `region`. */
   region_set_travel_cost(region: RID, travel_cost: float): void;
   /**
@@ -447,7 +447,7 @@ declare interface NavigationServer3D extends GodotObject {
    * Returns a simplified version of `path` with less critical path points removed. The simplification amount is in worlds units and controlled by `epsilon`. The simplification uses a variant of Ramer-Douglas-Peucker algorithm for curve point decimation.
    * Path simplification can be helpful to mitigate various path following issues that can arise with certain agent types and script behaviors. E.g. "steering" agents or avoidance in "open fields".
    */
-  simplify_path(path: PackedVector3Array, epsilon: float): PackedVector3Array;
+  simplify_path(path: PackedVector3Array | Array<unknown>, epsilon: float): PackedVector3Array;
   /**
    * Creates a new source geometry parser. If a {@link Callable} is set for the parser with {@link source_geometry_parser_set_callback} the callback will be called for every single node that gets parsed whenever {@link parse_source_geometry_data} is used.
    */

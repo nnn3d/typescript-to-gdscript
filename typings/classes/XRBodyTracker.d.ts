@@ -20,7 +20,7 @@ declare class XRBodyTracker extends XRPositionalTracker {
   /** Sets flags about the validity of the tracking data for the given body joint. */
   set_joint_flags(joint: int, flags: int): void;
   /** Sets the transform for the given body joint. */
-  set_joint_transform(joint: int, transform: Transform3D): void;
+  set_joint_transform(joint: int, transform: Transform3D | Projection): void;
 
   // enum BodyFlags
   /** Upper body tracking supported. */

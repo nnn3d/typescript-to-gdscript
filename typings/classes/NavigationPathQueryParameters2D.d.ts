@@ -79,9 +79,9 @@ declare class NavigationPathQueryParameters2D extends RefCounted {
   get_simplify_epsilon(): float;
   set_simplify_path(value: boolean): void;
   get_simplify_path(): boolean;
-  set_start_position(value: Vector2): void;
+  set_start_position(value: Vector2 | Vector2i): void;
   get_start_position(): Vector2;
-  set_target_position(value: Vector2): void;
+  set_target_position(value: Vector2 | Vector2i): void;
   get_target_position(): Vector2;
 
   // enum PathfindingAlgorithm

@@ -15,7 +15,7 @@ declare class OccluderPolygon2D extends Resource {
   is_closed(): boolean;
   set_cull_mode(value: int): void;
   get_cull_mode(): int;
-  set_polygon(value: PackedVector2Array): void;
+  set_polygon(value: PackedVector2Array | Array<unknown>): void;
   get_polygon(): PackedVector2Array;
 
   // enum CullMode

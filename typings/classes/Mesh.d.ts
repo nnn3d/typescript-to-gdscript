@@ -5,7 +5,7 @@
 declare class Mesh extends Resource {
   /** Sets a hint to be used for lightmap resolution. */
   lightmap_size_hint: Vector2i;
-  set_lightmap_size_hint(value: Vector2i): void;
+  set_lightmap_size_hint(value: Vector2i | Vector2): void;
   get_lightmap_size_hint(): Vector2i;
 
   /** Virtual method to override the {@link AABB} for a custom class extending {@link Mesh}. */

@@ -25,15 +25,15 @@ declare class XRHandTracker extends XRPositionalTracker {
   /** Returns the transform for the given hand joint. */
   get_hand_joint_transform(joint: int): Transform3D;
   /** Sets the angular velocity for the given hand joint. */
-  set_hand_joint_angular_velocity(joint: int, angular_velocity: Vector3): void;
+  set_hand_joint_angular_velocity(joint: int, angular_velocity: Vector3 | Vector3i): void;
   /** Sets flags about the validity of the tracking data for the given hand joint. */
   set_hand_joint_flags(joint: int, flags: int): void;
   /** Sets the linear velocity for the given hand joint. */
-  set_hand_joint_linear_velocity(joint: int, linear_velocity: Vector3): void;
+  set_hand_joint_linear_velocity(joint: int, linear_velocity: Vector3 | Vector3i): void;
   /** Sets the radius of the given hand joint. */
   set_hand_joint_radius(joint: int, radius: float): void;
   /** Sets the transform for the given hand joint. */
-  set_hand_joint_transform(joint: int, transform: Transform3D): void;
+  set_hand_joint_transform(joint: int, transform: Transform3D | Projection): void;
 
   // enum HandTrackingSource
   /** The source of hand tracking data is unknown. */

@@ -12,7 +12,7 @@ declare class MeshTexture extends Texture2D {
   resource_local_to_scene: boolean;
   set_base_texture(value: Texture2D | null): void;
   get_base_texture(): Texture2D | null;
-  set_image_size(value: Vector2): void;
+  set_image_size(value: Vector2 | Vector2i): void;
   get_image_size(): Vector2;
   set_mesh(value: Mesh | null): void;
   get_mesh(): Mesh | null;

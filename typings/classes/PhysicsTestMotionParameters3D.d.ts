@@ -39,13 +39,13 @@ declare class PhysicsTestMotionParameters3D extends RefCounted {
   get_exclude_bodies(): Array<RID>;
   set_exclude_objects(value: Array<int>): void;
   get_exclude_objects(): Array<int>;
-  set_from(value: Transform3D): void;
+  set_from(value: Transform3D | Projection): void;
   get_from(): Transform3D;
   set_margin(value: float): void;
   get_margin(): float;
   set_max_collisions(value: int): void;
   get_max_collisions(): int;
-  set_motion(value: Vector3): void;
+  set_motion(value: Vector3 | Vector3i): void;
   get_motion(): Vector3;
   set_recovery_as_collision_enabled(value: boolean): void;
   is_recovery_as_collision_enabled(): boolean;

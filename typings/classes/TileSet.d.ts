@@ -25,7 +25,7 @@ declare class TileSet extends Resource {
   get_tile_offset_axis(): int;
   set_tile_shape(value: int): void;
   get_tile_shape(): int;
-  set_tile_size(value: Vector2i): void;
+  set_tile_size(value: Vector2i | Vector2): void;
   get_tile_size(): Vector2i;
   set_uv_clipping(value: boolean): void;
   is_uv_clipping(): boolean;
@@ -76,12 +76,12 @@ declare class TileSet extends Resource {
    * Returns the alternative-level proxy for the given identifiers. The returned array contains the three proxie's target identifiers (source ID, atlas coords ID and alternative tile ID).
    * If the TileSet has no proxy for the given identifiers, returns an empty Array.
    */
-  get_alternative_level_tile_proxy(source_from: int, coords_from: Vector2i, alternative_from: int): Array<unknown>;
+  get_alternative_level_tile_proxy(source_from: int, coords_from: Vector2i | Vector2, alternative_from: int): Array<unknown>;
   /**
    * Returns the coordinate-level proxy for the given identifiers. The returned array contains the two target identifiers of the proxy (source ID and atlas coordinates ID).
    * If the TileSet has no proxy for the given identifiers, returns an empty Array.
    */
-  get_coords_level_tile_proxy(source_from: int, coords_from: Vector2i): Array<unknown>;
+  get_coords_level_tile_proxy(source_from: int, coords_from: Vector2i | Vector2): Array<unknown>;
   /** Returns the index of the custom data layer identified by the given name. */
   get_custom_data_layer_by_name(layer_name: string): int;
   /** Returns the name of the custom data layer identified by the given index. */
@@ -146,9 +146,9 @@ declare class TileSet extends Resource {
   /** Returns the number of terrains in the given terrain set. */
   get_terrains_count(terrain_set: int): int;
   /** Returns if there is an alternative-level proxy for the given identifiers. */
-  has_alternative_level_tile_proxy(source_from: int, coords_from: Vector2i, alternative_from: int): boolean;
+  has_alternative_level_tile_proxy(source_from: int, coords_from: Vector2i | Vector2, alternative_from: int): boolean;
   /** Returns if there is a coodinates-level proxy for the given identifiers. */
-  has_coords_level_tile_proxy(source_from: int, coords_from: Vector2i): boolean;
+  has_coords_level_tile_proxy(source_from: int, coords_from: Vector2i | Vector2): boolean;
   /** Returns if there is a custom data layer named `layer_name`. */
   has_custom_data_layer_by_name(layer_name: string): boolean;
   /** Returns if this TileSet has a source for the given source ID. */
@@ -160,7 +160,7 @@ declare class TileSet extends Resource {
    * This function first look for matching alternative-level proxies, then coordinates-level proxies, then source-level proxies.
    * If no proxy corresponding to provided identifiers are found, returns the same values the ones used as arguments.
    */
-  map_tile_proxy(source_from: int, coords_from: Vector2i, alternative_from: int): Array<unknown>;
+  map_tile_proxy(source_from: int, coords_from: Vector2i | Vector2, alternative_from: int): Array<unknown>;
   /**
    * Moves the custom data layer at index `layer_index` to the given position `to_position` in the array. Also updates the atlas tiles accordingly.
    */
@@ -186,9 +186,9 @@ declare class TileSet extends Resource {
    */
   move_terrain_set(terrain_set: int, to_position: int): void;
   /** Removes an alternative-level proxy for the given identifiers. */
-  remove_alternative_level_tile_proxy(source_from: int, coords_from: Vector2i, alternative_from: int): void;
+  remove_alternative_level_tile_proxy(source_from: int, coords_from: Vector2i | Vector2, alternative_from: int): void;
   /** Removes a coordinates-level proxy for the given identifiers. */
-  remove_coords_level_tile_proxy(source_from: int, coords_from: Vector2i): void;
+  remove_coords_level_tile_proxy(source_from: int, coords_from: Vector2i | Vector2): void;
   /** Removes the custom data layer at index `layer_index`. Also updates the atlas tiles accordingly. */
   remove_custom_data_layer(layer_index: int): void;
   /** Removes the navigation layer at index `layer_index`. Also updates the atlas tiles accordingly. */
@@ -213,12 +213,12 @@ declare class TileSet extends Resource {
    * Create an alternative-level proxy for the given identifiers. A proxy will map set of tile identifiers to another set of identifiers.
    * Proxied tiles can be automatically replaced in TileMapLayer nodes using the editor.
    */
-  set_alternative_level_tile_proxy(source_from: int, coords_from: Vector2i, alternative_from: int, source_to: int, coords_to: Vector2i, alternative_to: int): void;
+  set_alternative_level_tile_proxy(source_from: int, coords_from: Vector2i | Vector2, alternative_from: int, source_to: int, coords_to: Vector2i | Vector2, alternative_to: int): void;
   /**
    * Creates a coordinates-level proxy for the given identifiers. A proxy will map set of tile identifiers to another set of identifiers. The alternative tile ID is kept the same when using coordinates-level proxies.
    * Proxied tiles can be automatically replaced in TileMapLayer nodes using the editor.
    */
-  set_coords_level_tile_proxy(p_source_from: int, coords_from: Vector2i, source_to: int, coords_to: Vector2i): void;
+  set_coords_level_tile_proxy(p_source_from: int, coords_from: Vector2i | Vector2, source_to: int, coords_to: Vector2i | Vector2): void;
   /**
    * Sets the name of the custom data layer identified by the given index. Names are identifiers of the layer therefore if the name is already taken it will fail and raise an error.
    */

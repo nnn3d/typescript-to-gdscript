@@ -67,7 +67,7 @@ declare class SystemFont extends Font {
   get_disable_embedded_bitmaps(): boolean;
   set_font_italic(value: boolean): void;
   get_font_italic(): boolean;
-  set_font_names(value: PackedStringArray): void;
+  set_font_names(value: PackedStringArray | Array<unknown>): void;
   get_font_names(): PackedStringArray;
   set_font_stretch(value: int): void;
   set_font_weight(value: int): void;

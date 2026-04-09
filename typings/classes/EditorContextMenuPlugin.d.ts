@@ -6,7 +6,7 @@ declare class EditorContextMenuPlugin extends RefCounted {
   /**
    * Called when creating a context menu, custom options can be added by using the {@link add_context_menu_item} or {@link add_context_menu_item_from_shortcut} functions. `paths` contains currently selected paths (depending on menu), which can be used to conditionally add options.
    */
-  _popup_menu(paths: PackedStringArray): void;
+  _popup_menu(paths: PackedStringArray | Array<unknown>): void;
   /**
    * Add custom option to the context menu of the plugin's specified slot. When the option is activated, `callback` will be called. Callback should take single {@link Array} argument; array contents depend on context menu slot.
    * If you want to assign shortcut to the menu item, use {@link add_context_menu_item_from_shortcut} instead.

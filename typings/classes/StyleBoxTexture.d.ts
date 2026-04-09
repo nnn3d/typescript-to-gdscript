@@ -67,7 +67,7 @@ declare class StyleBoxTexture extends StyleBox {
   is_draw_center_enabled(): boolean;
   set_modulate(value: Color): void;
   get_modulate(): Color;
-  set_region_rect(value: Rect2): void;
+  set_region_rect(value: Rect2 | Rect2i): void;
   get_region_rect(): Rect2;
   set_texture(value: Texture2D | null): void;
   get_texture(): Texture2D | null;

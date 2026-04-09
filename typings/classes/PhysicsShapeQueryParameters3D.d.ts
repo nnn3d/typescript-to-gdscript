@@ -40,12 +40,12 @@ declare class PhysicsShapeQueryParameters3D extends RefCounted {
   get_exclude(): Array<RID>;
   set_margin(value: float): void;
   get_margin(): float;
-  set_motion(value: Vector3): void;
+  set_motion(value: Vector3 | Vector3i): void;
   get_motion(): Vector3;
   set_shape(value: Resource | null): void;
   get_shape(): Resource | null;
   set_shape_rid(value: RID): void;
   get_shape_rid(): RID;
-  set_transform(value: Transform3D): void;
+  set_transform(value: Transform3D | Projection): void;
   get_transform(): Transform3D;
 }

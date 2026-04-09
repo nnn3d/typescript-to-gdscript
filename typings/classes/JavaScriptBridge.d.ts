@@ -18,7 +18,7 @@ declare interface JavaScriptBridge extends GodotObject {
    * **Note:** Browsers might block the download if {@link download_buffer} is not being called from a user interaction (e.g. button click).
    * **Note:** Browsers might ask the user for permission or block the download if multiple download requests are made in a quick succession.
    */
-  download_buffer(buffer: PackedByteArray, name: string, mime?: string): void;
+  download_buffer(buffer: PackedByteArray | Array<unknown>, name: string, mime?: string): void;
   /**
    * Execute the string `code` as JavaScript code within the browser window. This is a call to the actual global JavaScript function [code skip-lint]eval()[/code].
    * If `use_global_execution_context` is `true`, the code will be evaluated in the global execution context. Otherwise, it is evaluated in the execution context of a function within the engine's runtime environment.

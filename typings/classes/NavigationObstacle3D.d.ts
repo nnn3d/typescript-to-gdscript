@@ -54,9 +54,9 @@ declare class NavigationObstacle3D extends Node3D {
   get_radius(): float;
   set_use_3d_avoidance(value: boolean): void;
   get_use_3d_avoidance(): boolean;
-  set_velocity(value: Vector3): void;
+  set_velocity(value: Vector3 | Vector3i): void;
   get_velocity(): Vector3;
-  set_vertices(value: PackedVector3Array): void;
+  set_vertices(value: PackedVector3Array | Array<unknown>): void;
   get_vertices(): PackedVector3Array;
 
   /**

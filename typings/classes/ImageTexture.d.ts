@@ -15,7 +15,7 @@ declare class ImageTexture extends Texture2D {
    */
   set_image(image: Image): void;
   /** Resizes the texture to the specified dimensions. */
-  set_size_override(size: Vector2i): void;
+  set_size_override(size: Vector2i | Vector2): void;
   /**
    * Replaces the texture's data with a new {@link Image}.
    * **Note:** The texture has to be created using {@link create_from_image} or initialized first with the {@link set_image} method before it can be updated. The new image dimensions, format, and mipmaps configuration should match the existing texture's image configuration.

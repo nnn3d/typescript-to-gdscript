@@ -25,7 +25,7 @@ declare class GPUParticlesCollisionSDF3D extends GPUParticlesCollision3D {
   get_bake_mask(): int;
   set_resolution(value: int): void;
   get_resolution(): int;
-  set_size(value: Vector3): void;
+  set_size(value: Vector3 | Vector3i): void;
   get_size(): Vector3;
   set_texture(value: Texture3D | null): void;
   get_texture(): Texture3D | null;

@@ -5,6 +5,6 @@
 declare class VisualShaderNodeVec4Constant extends VisualShaderNodeConstant {
   /** A 4D vector (represented as a {@link Quaternion}) constant which represents the state of this node. */
   constant: Quaternion;
-  set_constant(value: Quaternion): void;
+  set_constant(value: Quaternion | Basis): void;
   get_constant(): Quaternion;
 }

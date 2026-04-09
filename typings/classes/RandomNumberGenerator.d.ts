@@ -24,7 +24,7 @@ declare class RandomNumberGenerator extends RefCounted {
   /**
    * Returns a random index with non-uniform weights. Prints an error and returns `-1` if the array is empty.
    */
-  rand_weighted(weights: PackedFloat32Array): int;
+  rand_weighted(weights: PackedFloat32Array | Array<unknown>): int;
   /** Returns a pseudo-random float between `0.0` and `1.0` (inclusive). */
   randf(): float;
   /** Returns a pseudo-random float between `from` and `to` (inclusive). */

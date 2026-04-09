@@ -25,8 +25,8 @@ declare class AtlasTexture extends Texture2D {
   get_atlas(): Texture2D | null;
   set_filter_clip(value: boolean): void;
   has_filter_clip(): boolean;
-  set_margin(value: Rect2): void;
+  set_margin(value: Rect2 | Rect2i): void;
   get_margin(): Rect2;
-  set_region(value: Rect2): void;
+  set_region(value: Rect2 | Rect2i): void;
   get_region(): Rect2;
 }

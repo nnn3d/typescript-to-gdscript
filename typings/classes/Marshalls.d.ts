@@ -14,7 +14,7 @@ declare interface Marshalls extends GodotObject {
    */
   base64_to_variant(base64_str: string, allow_objects?: boolean): unknown;
   /** Returns a Base64-encoded string of a given {@link PackedByteArray}. */
-  raw_to_base64(array: PackedByteArray): string;
+  raw_to_base64(array: PackedByteArray | Array<unknown>): string;
   /** Returns a Base64-encoded string of the UTF-8 string `utf8_str`. */
   utf8_to_base64(utf8_str: string): string;
   /**

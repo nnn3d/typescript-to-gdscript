@@ -32,7 +32,7 @@ declare class AudioStreamWAV extends AudioStream {
    * **Note:** Only WAV files using a `LIST` chunk with an identifier of `INFO` to encode the tags are currently supported.
    */
   tags: Dictionary;
-  set_data(value: PackedByteArray): void;
+  set_data(value: PackedByteArray | Array<unknown>): void;
   get_data(): PackedByteArray;
   set_format(value: int): void;
   get_format(): int;
@@ -53,7 +53,7 @@ declare class AudioStreamWAV extends AudioStream {
    * Creates a new {@link AudioStreamWAV} instance from the given buffer. The buffer must contain WAV data.
    * The keys and values of `options` match the properties of {@link ResourceImporterWAV}. The usage of `options` is identical to {@link AudioStreamWAV.load_from_file}.
    */
-  static load_from_buffer(stream_data: PackedByteArray, options?: Dictionary): AudioStreamWAV | null;
+  static load_from_buffer(stream_data: PackedByteArray | Array<unknown>, options?: Dictionary): AudioStreamWAV | null;
   /**
    * Creates a new {@link AudioStreamWAV} instance from the given file path. The file must be in WAV format.
    * The keys and values of `options` match the properties of {@link ResourceImporterWAV}.

@@ -8,7 +8,7 @@ declare class RenderSceneBuffersRD extends RenderSceneBuffers {
   /**
    * Create a new texture with the given definition and cache this under the given name. Will return the existing texture if it already exists.
    */
-  create_texture(context: string, name: string, data_format: int, usage_bits: int, texture_samples: int, size: Vector2i, layers: int, mipmaps: int, unique: boolean, discardable: boolean): RID;
+  create_texture(context: string, name: string, data_format: int, usage_bits: int, texture_samples: int, size: Vector2i | Vector2, layers: int, mipmaps: int, unique: boolean, discardable: boolean): RID;
   /**
    * Create a new texture using the given format and view and cache this under the given name. Will return the existing texture if it already exists.
    */

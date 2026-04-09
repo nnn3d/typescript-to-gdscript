@@ -65,7 +65,7 @@ declare class StreamPeer extends RefCounted {
   /**
    * Sends a chunk of data through the connection, blocking if necessary until the data is done sending. This function returns an {@link Error} code.
    */
-  put_data(data: PackedByteArray): int;
+  put_data(data: PackedByteArray | Array<unknown>): int;
   /** Puts a double-precision float into the stream. */
   put_double(value: float): void;
   /** Puts a single-precision float into the stream. */
@@ -75,7 +75,7 @@ declare class StreamPeer extends RefCounted {
   /**
    * Sends a chunk of data through the connection. If all the data could not be sent at once, only part of it will. This function returns two values, an {@link Error} code and an integer, describing how much data was actually sent.
    */
-  put_partial_data(data: PackedByteArray): Array<unknown>;
+  put_partial_data(data: PackedByteArray | Array<unknown>): Array<unknown>;
   /**
    * Puts a zero-terminated ASCII string into the stream prepended by a 32-bit unsigned integer representing its size.
    * **Note:** To put an ASCII string without prepending its size, you can use {@link put_data}:

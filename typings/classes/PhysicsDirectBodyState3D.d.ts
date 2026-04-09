@@ -34,7 +34,7 @@ declare class PhysicsDirectBodyState3D extends GodotObject {
   total_linear_damp: float;
   /** The body's transformation matrix. */
   transform: Transform3D;
-  set_angular_velocity(value: Vector3): void;
+  set_angular_velocity(value: Vector3 | Vector3i): void;
   get_angular_velocity(): Vector3;
   get_center_of_mass(): Vector3;
   get_center_of_mass_local(): Vector3;
@@ -45,7 +45,7 @@ declare class PhysicsDirectBodyState3D extends GodotObject {
   get_inverse_inertia(): Vector3;
   get_inverse_inertia_tensor(): Basis;
   get_inverse_mass(): float;
-  set_linear_velocity(value: Vector3): void;
+  set_linear_velocity(value: Vector3 | Vector3i): void;
   get_linear_velocity(): Vector3;
   get_principal_inertia_axes(): Basis;
   set_sleep_state(value: boolean): void;
@@ -54,56 +54,56 @@ declare class PhysicsDirectBodyState3D extends GodotObject {
   get_total_angular_damp(): float;
   get_total_gravity(): Vector3;
   get_total_linear_damp(): float;
-  set_transform(value: Transform3D): void;
+  set_transform(value: Transform3D | Projection): void;
   get_transform(): Transform3D;
 
   /**
    * Adds a constant directional force without affecting rotation that keeps being applied over time until cleared with `constant_force = Vector3(0, 0, 0)`.
    * This is equivalent to using {@link add_constant_force} at the body's center of mass.
    */
-  add_constant_central_force(force?: Vector3): void;
+  add_constant_central_force(force?: Vector3 | Vector3i): void;
   /**
    * Adds a constant positioned force to the body that keeps being applied over time until cleared with `constant_force = Vector3(0, 0, 0)`.
    * `position` is the offset from the body origin in global coordinates.
    */
-  add_constant_force(force: Vector3, position?: Vector3): void;
+  add_constant_force(force: Vector3 | Vector3i, position?: Vector3 | Vector3i): void;
   /**
    * Adds a constant rotational force without affecting position that keeps being applied over time until cleared with `constant_torque = Vector3(0, 0, 0)`.
    */
-  add_constant_torque(torque: Vector3): void;
+  add_constant_torque(torque: Vector3 | Vector3i): void;
   /**
    * Applies a directional force without affecting rotation. A force is time dependent and meant to be applied every physics update.
    * This is equivalent to using {@link apply_force} at the body's center of mass.
    */
-  apply_central_force(force?: Vector3): void;
+  apply_central_force(force?: Vector3 | Vector3i): void;
   /**
    * Applies a directional impulse without affecting rotation.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * This is equivalent to using {@link apply_impulse} at the body's center of mass.
    */
-  apply_central_impulse(impulse?: Vector3): void;
+  apply_central_impulse(impulse?: Vector3 | Vector3i): void;
   /**
    * Applies a positioned force to the body. A force is time dependent and meant to be applied every physics update.
    * `position` is the offset from the body origin in global coordinates.
    */
-  apply_force(force: Vector3, position?: Vector3): void;
+  apply_force(force: Vector3 | Vector3i, position?: Vector3 | Vector3i): void;
   /**
    * Applies a positioned impulse to the body.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * `position` is the offset from the body origin in global coordinates.
    */
-  apply_impulse(impulse: Vector3, position?: Vector3): void;
+  apply_impulse(impulse: Vector3 | Vector3i, position?: Vector3 | Vector3i): void;
   /**
    * Applies a rotational force without affecting position. A force is time dependent and meant to be applied every physics update.
    * **Note:** {@link inverse_inertia} is required for this to work. To have {@link inverse_inertia}, an active {@link CollisionShape3D} must be a child of the node, or you can manually set {@link inverse_inertia}.
    */
-  apply_torque(torque: Vector3): void;
+  apply_torque(torque: Vector3 | Vector3i): void;
   /**
    * Applies a rotational impulse to the body without affecting the position.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * **Note:** {@link inverse_inertia} is required for this to work. To have {@link inverse_inertia}, an active {@link CollisionShape3D} must be a child of the node, or you can manually set {@link inverse_inertia}.
    */
-  apply_torque_impulse(impulse: Vector3): void;
+  apply_torque_impulse(impulse: Vector3 | Vector3i): void;
   /**
    * Returns the body's total constant positional forces applied during each physics update.
    * See {@link add_constant_force} and {@link add_constant_central_force}.
@@ -147,7 +147,7 @@ declare class PhysicsDirectBodyState3D extends GodotObject {
    * Returns the body's velocity at the given relative position.
    * `local_position` is the offset from the body origin in global coordinates.
    */
-  get_velocity_at_local_position(local_position: Vector3): Vector3;
+  get_velocity_at_local_position(local_position: Vector3 | Vector3i): Vector3;
   /**
    * Updates the body's linear and angular velocity by applying gravity and damping for the equivalent of one physics tick.
    */
@@ -156,10 +156,10 @@ declare class PhysicsDirectBodyState3D extends GodotObject {
    * Sets the body's total constant positional forces applied during each physics update.
    * See {@link add_constant_force} and {@link add_constant_central_force}.
    */
-  set_constant_force(force: Vector3): void;
+  set_constant_force(force: Vector3 | Vector3i): void;
   /**
    * Sets the body's total constant rotational forces applied during each physics update.
    * See {@link add_constant_torque}.
    */
-  set_constant_torque(torque: Vector3): void;
+  set_constant_torque(torque: Vector3 | Vector3i): void;
 }

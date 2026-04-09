@@ -21,11 +21,11 @@ declare interface Rect2 {
    */
   abs(): Rect2;
   /** Returns `true` if this rectangle *completely* encloses the `b` rectangle. */
-  encloses(b: Rect2): boolean;
+  encloses(b: Rect2 | Rect2i): boolean;
   /**
    * Returns a copy of this rectangle expanded to align the edges with the given `to` point, if necessary.
    */
-  expand(to: Vector2): Rect2;
+  expand(to: Vector2 | Vector2i): Rect2;
   /** Returns the rectangle's area. This is equivalent to `size.x * size.y`. See also {@link has_area}. */
   get_area(): float;
   /** Returns the center point of the rectangle. This is the same as `position + (size / 2.0)`. */
@@ -33,7 +33,7 @@ declare interface Rect2 {
   /**
    * Returns the vertex's position of this rect that's the farthest in the given direction. This point is commonly known as the support point in collision detection algorithms.
    */
-  get_support(direction: Vector2): Vector2;
+  get_support(direction: Vector2 | Vector2i): Vector2;
   /**
    * Returns a copy of this rectangle extended on all sides by the given `amount`. A negative `amount` shrinks the rectangle instead. See also {@link grow_individual} and {@link grow_side}.
    */
@@ -52,20 +52,20 @@ declare interface Rect2 {
    * Returns `true` if the rectangle contains the given `point`. By convention, points on the right and bottom edges are **not** included.
    * **Note:** This method is not reliable for {@link Rect2} with a *negative* {@link size}. Use {@link abs} first to get a valid rectangle.
    */
-  has_point(point: Vector2): boolean;
+  has_point(point: Vector2 | Vector2i): boolean;
   /**
    * Returns the intersection between this rectangle and `b`. If the rectangles do not intersect, returns an empty {@link Rect2}.
    * **Note:** If you only need to know whether two rectangles are overlapping, use {@link intersects}, instead.
    */
-  intersection(b: Rect2): Rect2;
+  intersection(b: Rect2 | Rect2i): Rect2;
   /**
    * Returns `true` if this rectangle overlaps with the `b` rectangle. The edges of both rectangles are excluded, unless `include_borders` is `true`.
    */
-  intersects(b: Rect2, include_borders?: boolean): boolean;
+  intersects(b: Rect2 | Rect2i, include_borders?: boolean): boolean;
   /**
    * Returns `true` if this rectangle and `rect` are approximately equal, by calling {@link Vector2.is_equal_approx} on the {@link position} and the {@link size}.
    */
-  is_equal_approx(rect: Rect2): boolean;
+  is_equal_approx(rect: Rect2 | Rect2i): boolean;
   /**
    * Returns `true` if this rectangle's values are finite, by calling {@link Vector2.is_finite} on the {@link position} and the {@link size}.
    */
@@ -73,7 +73,7 @@ declare interface Rect2 {
   /**
    * Returns a {@link Rect2} that encloses both this rectangle and `b` around the edges. See also {@link encloses}.
    */
-  merge(b: Rect2): Rect2;
+  merge(b: Rect2 | Rect2i): Rect2;
 
   // Operator overloads
   [__ops_ne]: { right: Rect2; ret: boolean };

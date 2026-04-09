@@ -88,9 +88,9 @@ declare class SkeletonProfile extends Resource {
    * Sets the offset of the bone at `bone_idx` that will be the button position in the {@link BoneMap} editor.
    * This is the offset with origin at the top left corner of the square.
    */
-  set_handle_offset(bone_idx: int, handle_offset: Vector2): void;
+  set_handle_offset(bone_idx: int, handle_offset: Vector2 | Vector2i): void;
   /** Sets the reference pose transform for bone `bone_idx`. */
-  set_reference_pose(bone_idx: int, bone_name: Transform3D): void;
+  set_reference_pose(bone_idx: int, bone_name: Transform3D | Projection): void;
   /** Sets the required status for bone `bone_idx` to `required`. */
   set_required(bone_idx: int, required: boolean): void;
   /**

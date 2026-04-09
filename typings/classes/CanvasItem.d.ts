@@ -107,15 +107,15 @@ declare class CanvasItem extends Node {
    * If `width` is negative, it will be ignored and the arc will be drawn using {@link RenderingServer.PRIMITIVE_LINE_STRIP}. This means that when the CanvasItem is scaled, the arc will remain thin. If this behavior is not desired, then pass a positive `width` like `1.0`.
    * The arc is drawn from `start_angle` towards the value of `end_angle` so in clockwise direction if `start_angle < end_angle` and counter-clockwise otherwise. Passing the same angles but in reversed order will produce the same arc. If absolute difference of `start_angle` and `end_angle` is greater than {@link @GDScript.TAU} radians, then a full circle arc is drawn (i.e. arc will not overlap itself).
    */
-  draw_arc(center: Vector2, radius: float, start_angle: float, end_angle: float, point_count: int, color: Color, width?: float, antialiased?: boolean): void;
+  draw_arc(center: Vector2 | Vector2i, radius: float, start_angle: float, end_angle: float, point_count: int, color: Color, width?: float, antialiased?: boolean): void;
   /**
    * Draws a string first character using a custom font. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used. `pos` is defined in local space.
    */
-  draw_char(font: Font, pos: Vector2, char: string, font_size?: int, modulate?: Color, oversampling?: float): void;
+  draw_char(font: Font, pos: Vector2 | Vector2i, char: string, font_size?: int, modulate?: Color, oversampling?: float): void;
   /**
    * Draws a string first character outline using a custom font. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used. `pos` is defined in local space.
    */
-  draw_char_outline(font: Font, pos: Vector2, char: string, font_size?: int, size?: int, modulate?: Color, oversampling?: float): void;
+  draw_char_outline(font: Font, pos: Vector2 | Vector2i, char: string, font_size?: int, size?: int, modulate?: Color, oversampling?: float): void;
   /**
    * Draws a circle, with `position` defined in local space. See also {@link draw_ellipse}, {@link draw_arc}, {@link draw_polyline}, and {@link draw_polygon}.
    * If `filled` is `true`, the circle will be filled with the `color` specified. If `filled` is `false`, the circle will be drawn as a stroke with the `color` and `width` specified.
@@ -123,13 +123,13 @@ declare class CanvasItem extends Node {
    * If `antialiased` is `true`, half transparent "feathers" will be attached to the boundary, making outlines smooth.
    * **Note:** `width` is only effective if `filled` is `false`.
    */
-  draw_circle(position: Vector2, radius: float, color: Color, filled?: boolean, width?: float, antialiased?: boolean): void;
+  draw_circle(position: Vector2 | Vector2i, radius: float, color: Color, filled?: boolean, width?: float, antialiased?: boolean): void;
   /**
    * Draws a colored polygon of any number of points, convex or concave. The points in the `points` array are defined in local space. Unlike {@link draw_polygon}, a single color must be specified for the whole polygon.
    * **Note:** If you frequently redraw the same polygon with a large number of vertices, consider pre-calculating the triangulation with {@link Geometry2D.triangulate_polygon} and using {@link draw_mesh}, {@link draw_multimesh}, or {@link RenderingServer.canvas_item_add_triangle_array}.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
    */
-  draw_colored_polygon(points: PackedVector2Array, color: Color, uvs?: PackedVector2Array, texture?: Texture2D): void;
+  draw_colored_polygon(points: PackedVector2Array | Array<unknown>, color: Color, uvs?: PackedVector2Array | Array<unknown>, texture?: Texture2D): void;
   /**
    * Draws a dashed line from a 2D point to another, with a given color and width. The `from` and `to` positions are defined in local space. See also {@link draw_line}, {@link draw_multiline}, and {@link draw_polyline}.
    * If `width` is negative, then a two-point primitives will be drawn instead of a four-point ones. This means that when the CanvasItem is scaled, the line parts will remain thin. If this behavior is not desired, then pass a positive `width` like `1.0`.
@@ -137,7 +137,7 @@ declare class CanvasItem extends Node {
    * If `antialiased` is `true`, half transparent "feathers" will be attached to the boundary, making outlines smooth.
    * **Note:** `antialiased` is only effective if `width` is greater than `0.0`.
    */
-  draw_dashed_line(from_: Vector2, to: Vector2, color: Color, width?: float, dash?: float, aligned?: boolean, antialiased?: boolean): void;
+  draw_dashed_line(from_: Vector2 | Vector2i, to: Vector2 | Vector2i, color: Color, width?: float, dash?: float, aligned?: boolean, antialiased?: boolean): void;
   /**
    * Draws an ellipse with semi-major axis `major` and semi-minor axis `minor`. See also {@link draw_circle}, {@link draw_ellipse_arc}, {@link draw_polyline}, and {@link draw_polygon}.
    * If `filled` is `true`, the ellipse will be filled with the `color` specified. If `filled` is `false`, the ellipse will be drawn as a stroke with the `color` and `width` specified.
@@ -145,13 +145,13 @@ declare class CanvasItem extends Node {
    * If `antialiased` is `true`, half transparent "feathers" will be attached to the boundary, making outlines smooth.
    * **Note:** `width` is only effective if `filled` is `false`.
    */
-  draw_ellipse(position: Vector2, major: float, minor: float, color: Color, filled?: boolean, width?: float, antialiased?: boolean): void;
+  draw_ellipse(position: Vector2 | Vector2i, major: float, minor: float, color: Color, filled?: boolean, width?: float, antialiased?: boolean): void;
   /**
    * Draws an unfilled elliptical arc between the given angles with a uniform `color` and `width` and optional antialiasing (supported only for positive `width`). The larger the value of `point_count`, the smoother the curve. For circular arcs, see {@link draw_arc}. See also {@link draw_ellipse}.
    * If `width` is negative, it will be ignored and the arc will be drawn using {@link RenderingServer.PRIMITIVE_LINE_STRIP}. This means that when the CanvasItem is scaled, the arc will remain thin. If this behavior is not desired, then pass a positive `width` like `1.0`.
    * The arc is drawn from `start_angle` towards the value of `end_angle` so in clockwise direction if `start_angle < end_angle` and counter-clockwise otherwise. Passing the same angles but in reversed order will produce the same arc. If absolute difference of `start_angle` and `end_angle` is greater than {@link @GDScript.TAU} radians, then a full ellipse is drawn (i.e. arc will not overlap itself).
    */
-  draw_ellipse_arc(center: Vector2, major: float, minor: float, start_angle: float, end_angle: float, point_count: int, color: Color, width?: float, antialiased?: boolean): void;
+  draw_ellipse_arc(center: Vector2 | Vector2i, major: float, minor: float, start_angle: float, end_angle: float, point_count: int, color: Color, width?: float, antialiased?: boolean): void;
   /**
    * After submitting all animations slices via {@link draw_animation_slice}, this function can be used to revert drawing to its default state (all subsequent drawing commands will be visible). If you don't care about this particular use case, usage of this function after submitting the slices is not required.
    */
@@ -161,12 +161,12 @@ declare class CanvasItem extends Node {
    * Texture is drawn using the following blend operation, blend mode of the {@link CanvasItemMaterial} is ignored:
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
    */
-  draw_lcd_texture_rect_region(texture: Texture2D, rect: Rect2, src_rect: Rect2, modulate?: Color): void;
+  draw_lcd_texture_rect_region(texture: Texture2D, rect: Rect2 | Rect2i, src_rect: Rect2 | Rect2i, modulate?: Color): void;
   /**
    * Draws a line from a 2D point to another, with a given color and width. It can be optionally antialiased. The `from` and `to` positions are defined in local space. See also {@link draw_dashed_line}, {@link draw_multiline}, and {@link draw_polyline}.
    * If `width` is negative, then a two-point primitive will be drawn instead of a four-point one. This means that when the CanvasItem is scaled, the line will remain thin. If this behavior is not desired, then pass a positive `width` like `1.0`.
    */
-  draw_line(from_: Vector2, to: Vector2, color: Color, width?: float, antialiased?: boolean): void;
+  draw_line(from_: Vector2 | Vector2i, to: Vector2 | Vector2i, color: Color, width?: float, antialiased?: boolean): void;
   /**
    * Draws a {@link Mesh} in 2D, using the provided texture. See {@link MeshInstance2D} for related documentation. The `transform` is defined in local space.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
@@ -178,27 +178,27 @@ declare class CanvasItem extends Node {
    * Value of the `pixel_range` should the same that was used during distance field texture generation.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
    */
-  draw_msdf_texture_rect_region(texture: Texture2D, rect: Rect2, src_rect: Rect2, modulate?: Color, outline?: float, pixel_range?: float, scale?: float): void;
+  draw_msdf_texture_rect_region(texture: Texture2D, rect: Rect2 | Rect2i, src_rect: Rect2 | Rect2i, modulate?: Color, outline?: float, pixel_range?: float, scale?: float): void;
   /**
    * Draws multiple disconnected lines with a uniform `width` and `color`. Each line is defined by two consecutive points from `points` array in local space, i.e. i-th segment consists of `points[2 * i]`, `points[2 * i + 1]` endpoints. When drawing large amounts of lines, this is faster than using individual {@link draw_line} calls. To draw interconnected lines, use {@link draw_polyline} instead.
    * If `width` is negative, then two-point primitives will be drawn instead of a four-point ones. This means that when the CanvasItem is scaled, the lines will remain thin. If this behavior is not desired, then pass a positive `width` like `1.0`.
    * **Note:** `antialiased` is only effective if `width` is greater than `0.0`.
    */
-  draw_multiline(points: PackedVector2Array, color: Color, width?: float, antialiased?: boolean): void;
+  draw_multiline(points: PackedVector2Array | Array<unknown>, color: Color, width?: float, antialiased?: boolean): void;
   /**
    * Draws multiple disconnected lines with a uniform `width` and segment-by-segment coloring. Each segment is defined by two consecutive points from `points` array in local space and a corresponding color from `colors` array, i.e. i-th segment consists of `points[2 * i]`, `points[2 * i + 1]` endpoints and has `colors[i]` color. When drawing large amounts of lines, this is faster than using individual {@link draw_line} calls. To draw interconnected lines, use {@link draw_polyline_colors} instead.
    * If `width` is negative, then two-point primitives will be drawn instead of a four-point ones. This means that when the CanvasItem is scaled, the lines will remain thin. If this behavior is not desired, then pass a positive `width` like `1.0`.
    * **Note:** `antialiased` is only effective if `width` is greater than `0.0`.
    */
-  draw_multiline_colors(points: PackedVector2Array, colors: PackedColorArray, width?: float, antialiased?: boolean): void;
+  draw_multiline_colors(points: PackedVector2Array | Array<unknown>, colors: PackedColorArray | Array<unknown>, width?: float, antialiased?: boolean): void;
   /**
    * Breaks `text` into lines and draws it using the specified `font` at the `pos` in local space (top-left corner). The text will have its color multiplied by `modulate`. If `width` is greater than or equal to 0, the text will be clipped if it exceeds the specified width. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  draw_multiline_string(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_multiline_string(font: Font, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Breaks `text` to the lines and draws text outline using the specified `font` at the `pos` in local space (top-left corner). The text will have its color multiplied by `modulate`. If `width` is greater than or equal to 0, the text will be clipped if it exceeds the specified width. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  draw_multiline_string_outline(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_multiline_string_outline(font: Font, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, max_lines?: int, size?: int, modulate?: Color, brk_flags?: int, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Draws a {@link MultiMesh} in 2D with the provided texture. See {@link MultiMeshInstance2D} for related documentation.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
@@ -209,22 +209,22 @@ declare class CanvasItem extends Node {
    * **Note:** If you frequently redraw the same polygon with a large number of vertices, consider pre-calculating the triangulation with {@link Geometry2D.triangulate_polygon} and using {@link draw_mesh}, {@link draw_multimesh}, or {@link RenderingServer.canvas_item_add_triangle_array}.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
    */
-  draw_polygon(points: PackedVector2Array, colors: PackedColorArray, uvs?: PackedVector2Array, texture?: Texture2D): void;
+  draw_polygon(points: PackedVector2Array | Array<unknown>, colors: PackedColorArray | Array<unknown>, uvs?: PackedVector2Array | Array<unknown>, texture?: Texture2D): void;
   /**
    * Draws interconnected line segments with a uniform `color` and `width` and optional antialiasing (supported only for positive `width`). The `points` array is defined in local space. When drawing large amounts of lines, this is faster than using individual {@link draw_line} calls. To draw disconnected lines, use {@link draw_multiline} instead. See also {@link draw_polygon}.
    * If `width` is negative, it will be ignored and the polyline will be drawn using {@link RenderingServer.PRIMITIVE_LINE_STRIP}. This means that when the CanvasItem is scaled, the polyline will remain thin. If this behavior is not desired, then pass a positive `width` like `1.0`.
    */
-  draw_polyline(points: PackedVector2Array, color: Color, width?: float, antialiased?: boolean): void;
+  draw_polyline(points: PackedVector2Array | Array<unknown>, color: Color, width?: float, antialiased?: boolean): void;
   /**
    * Draws interconnected line segments with a uniform `width`, point-by-point coloring, and optional antialiasing (supported only for positive `width`). Colors assigned to line points match by index between `points` and `colors`, i.e. each line segment is filled with a gradient between the colors of the endpoints. The `points` array is defined in local space. When drawing large amounts of lines, this is faster than using individual {@link draw_line} calls. To draw disconnected lines, use {@link draw_multiline_colors} instead. See also {@link draw_polygon}.
    * If `width` is negative, it will be ignored and the polyline will be drawn using {@link RenderingServer.PRIMITIVE_LINE_STRIP}. This means that when the CanvasItem is scaled, the polyline will remain thin. If this behavior is not desired, then pass a positive `width` like `1.0`.
    */
-  draw_polyline_colors(points: PackedVector2Array, colors: PackedColorArray, width?: float, antialiased?: boolean): void;
+  draw_polyline_colors(points: PackedVector2Array | Array<unknown>, colors: PackedColorArray | Array<unknown>, width?: float, antialiased?: boolean): void;
   /**
    * Draws a custom primitive. 1 point for a point, 2 points for a line, 3 points for a triangle, and 4 points for a quad. If 0 points or more than 4 points are specified, nothing will be drawn and an error message will be printed. The `points` array is defined in local space. See also {@link draw_line}, {@link draw_polyline}, {@link draw_polygon}, and {@link draw_rect}.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
    */
-  draw_primitive(points: PackedVector2Array, colors: PackedColorArray, uvs: PackedVector2Array, texture?: Texture2D): void;
+  draw_primitive(points: PackedVector2Array | Array<unknown>, colors: PackedColorArray | Array<unknown>, uvs: PackedVector2Array | Array<unknown>, texture?: Texture2D): void;
   /**
    * Draws a rectangle. If `filled` is `true`, the rectangle will be filled with the `color` specified. If `filled` is `false`, the rectangle will be drawn as a stroke with the `color` and `width` specified. The `rect` is specified in local space. See also {@link draw_texture_rect}.
    * If `width` is negative, then two-point primitives will be drawn instead of a four-point ones. This means that when the CanvasItem is scaled, the lines will remain thin. If this behavior is not desired, then pass a positive `width` like `1.0`.
@@ -232,12 +232,12 @@ declare class CanvasItem extends Node {
    * **Note:** `width` is only effective if `filled` is `false`.
    * **Note:** Unfilled rectangles drawn with a negative `width` may not display perfectly. For example, corners may be missing or brighter due to overlapping lines (for a translucent `color`).
    */
-  draw_rect(rect: Rect2, color: Color, filled?: boolean, width?: float, antialiased?: boolean): void;
+  draw_rect(rect: Rect2 | Rect2i, color: Color, filled?: boolean, width?: float, antialiased?: boolean): void;
   /**
    * Sets a custom local transform for drawing via components. Anything drawn afterwards will be transformed by this.
    * **Note:** {@link FontFile.oversampling} does *not* take `scale` into account. This means that scaling up/down will cause bitmap fonts and rasterized (non-MSDF) dynamic fonts to appear blurry or pixelated. To ensure text remains crisp regardless of scale, you can enable MSDF font rendering by enabling {@link ProjectSettings.gui/theme/default_font_multichannel_signed_distance_field} (applies to the default project font only), or enabling **Multichannel Signed Distance Field** in the import options of a DynamicFont for custom fonts. On system fonts, {@link SystemFont.multichannel_signed_distance_field} can be enabled in the inspector.
    */
-  draw_set_transform(position: Vector2, rotation?: float, scale?: Vector2): void;
+  draw_set_transform(position: Vector2 | Vector2i, rotation?: float, scale?: Vector2 | Vector2i): void;
   /**
    * Sets a custom local transform for drawing via matrix. Anything drawn afterwards will be transformed by this.
    */
@@ -247,31 +247,31 @@ declare class CanvasItem extends Node {
    * **Example:** Draw "Hello world", using the project's default font:
    * See also {@link Font.draw_string}.
    */
-  draw_string(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_string(font: Font, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Draws `text` outline using the specified `font` at the `pos` in local space (bottom-left corner using the baseline of the font). The text will have its color multiplied by `modulate`. If `width` is greater than or equal to 0, the text will be clipped if it exceeds the specified width. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  draw_string_outline(font: Font, pos: Vector2, text: string, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
+  draw_string_outline(font: Font, pos: Vector2 | Vector2i, text: string, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /**
    * Draws a styled rectangle. The `rect` is defined in local space.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
    */
-  draw_style_box(style_box: StyleBox, rect: Rect2): void;
+  draw_style_box(style_box: StyleBox, rect: Rect2 | Rect2i): void;
   /**
    * Draws a texture at a given position. The `position` is defined in local space.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
    */
-  draw_texture(texture: Texture2D, position: Vector2, modulate?: Color): void;
+  draw_texture(texture: Texture2D, position: Vector2 | Vector2i, modulate?: Color): void;
   /**
    * Draws a textured rectangle at a given position, optionally modulated by a color. The `rect` is defined in local space. If `transpose` is `true`, the texture will have its X and Y coordinates swapped. See also {@link draw_rect} and {@link draw_texture_rect_region}.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
    */
-  draw_texture_rect(texture: Texture2D, rect: Rect2, tile: boolean, modulate?: Color, transpose?: boolean): void;
+  draw_texture_rect(texture: Texture2D, rect: Rect2 | Rect2i, tile: boolean, modulate?: Color, transpose?: boolean): void;
   /**
    * Draws a textured rectangle from a texture's region (specified by `src_rect`) at a given position in local space, optionally modulated by a color. If `transpose` is `true`, the texture will have its X and Y coordinates swapped. See also {@link draw_texture_rect}.
    * **Note:** Styleboxes, textures, and meshes stored only inside local variables should **not** be used with this method in GDScript, because the drawing operation doesn't begin immediately once this method is called. In GDScript, when the function with the local variables ends, the local variables get destroyed before the rendering takes place.
    */
-  draw_texture_rect_region(texture: Texture2D, rect: Rect2, src_rect: Rect2, modulate?: Color, transpose?: boolean, clip_uv?: boolean): void;
+  draw_texture_rect_region(texture: Texture2D, rect: Rect2 | Rect2i, src_rect: Rect2 | Rect2i, modulate?: Color, transpose?: boolean, clip_uv?: boolean): void;
   /**
    * Forces the node's transform to update. Fails if the node is not inside the tree. See also {@link get_transform}.
    * **Note:** For performance reasons, transform changes are usually accumulated and applied *once* at the end of the frame. The update propagates through {@link CanvasItem} children, as well. Therefore, use this method only when you need an up-to-date transform (such as during physics operations).
@@ -352,7 +352,7 @@ declare class CanvasItem extends Node {
    * Transforms `viewport_point` from the viewport's coordinates to this node's local coordinates.
    * For the opposite operation, use {@link get_global_transform_with_canvas}.
    */
-  make_canvas_position_local(viewport_point: Vector2): Vector2;
+  make_canvas_position_local(viewport_point: Vector2 | Vector2i): Vector2;
   /**
    * Returns a copy of the given `event` with its coordinates converted from global space to this {@link CanvasItem}'s local space. If not possible, returns the same {@link InputEvent} unchanged.
    */

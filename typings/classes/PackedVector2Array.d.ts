@@ -4,38 +4,38 @@
 /** A packed array of {@link Vector2}s. */
 declare interface PackedVector2Array {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
-  append(value: Vector2): boolean;
+  append(value: Vector2 | Vector2i): boolean;
   /** Appends a {@link PackedVector2Array} at the end of this array. */
-  append_array(array: PackedVector2Array): void;
+  append_array(array: PackedVector2Array | Array<unknown>): void;
   /**
    * Finds the index of an existing value (or the insertion index that maintains sorting order, if the value is not yet present in the array) using binary search. Optionally, a `before` specifier can be passed. If `false`, the returned index comes after all existing entries of the value in the array.
    * **Note:** Calling {@link bsearch} on an unsorted array results in unexpected behavior.
    * **Note:** Vectors with {@link @GDScript.NAN} elements don't behave the same as other vectors. Therefore, the results from this method may not be accurate if NaNs are included.
    */
-  bsearch(value: Vector2, before?: boolean): int;
+  bsearch(value: Vector2 | Vector2i, before?: boolean): int;
   /** Clears the array. This is equivalent to using {@link resize} with a size of `0`. */
   clear(): void;
   /**
    * Returns the number of times an element is in the array.
    * **Note:** Vectors with {@link @GDScript.NAN} elements don't behave the same as other vectors. Therefore, the results from this method may not be accurate if NaNs are included.
    */
-  count(value: Vector2): int;
+  count(value: Vector2 | Vector2i): int;
   /** Creates a copy of the array, and returns it. */
   duplicate(): PackedVector2Array;
   /**
    * Removes the first occurrence of a value from the array and returns `true`. If the value does not exist in the array, nothing happens and `false` is returned. To remove an element by index, use {@link remove_at} instead.
    * **Note:** Vectors with {@link @GDScript.NAN} elements don't behave the same as other vectors. Therefore, the results from this method may not be accurate if NaNs are included.
    */
-  erase(value: Vector2): boolean;
+  erase(value: Vector2 | Vector2i): boolean;
   /**
    * Assigns the given value to all elements in the array. This can typically be used together with {@link resize} to create an array with a given size and initialized elements.
    */
-  fill(value: Vector2): void;
+  fill(value: Vector2 | Vector2i): void;
   /**
    * Searches the array for a value and returns its index or `-1` if not found. Optionally, the initial search index can be passed.
    * **Note:** Vectors with {@link @GDScript.NAN} elements don't behave the same as other vectors. Therefore, the results from this method may not be accurate if NaNs are included.
    */
-  find(value: Vector2, from_?: int): int;
+  find(value: Vector2 | Vector2i, from_?: int): int;
   /**
    * Returns the {@link Vector2} at the given `index` in the array. If `index` is out-of-bounds or negative, this method fails and returns `Vector2(0, 0)`.
    * This method is similar (but not identical) to the `[]` operator. Most notably, when this method fails, it doesn't pause project execution if run from the editor.
@@ -45,15 +45,15 @@ declare interface PackedVector2Array {
    * Returns `true` if the array contains `value`.
    * **Note:** Vectors with {@link @GDScript.NAN} elements don't behave the same as other vectors. Therefore, the results from this method may not be accurate if NaNs are included.
    */
-  has(value: Vector2): boolean;
+  has(value: Vector2 | Vector2i): boolean;
   /**
    * Inserts a new element at a given position in the array. The position must be valid, or at the end of the array (`idx == size()`).
    */
-  insert(at_index: int, value: Vector2): int;
+  insert(at_index: int, value: Vector2 | Vector2i): int;
   /** Returns `true` if the array is empty. */
   is_empty(): boolean;
   /** Inserts a {@link Vector2} at the end. */
-  push_back(value: Vector2): boolean;
+  push_back(value: Vector2 | Vector2i): boolean;
   /** Removes an element from the array by index. */
   remove_at(index: int): void;
   /**
@@ -67,9 +67,9 @@ declare interface PackedVector2Array {
    * Searches the array in reverse order. Optionally, a start search index can be passed. If negative, the start index is considered relative to the end of the array.
    * **Note:** Vectors with {@link @GDScript.NAN} elements don't behave the same as other vectors. Therefore, the results from this method may not be accurate if NaNs are included.
    */
-  rfind(value: Vector2, from_?: int): int;
+  rfind(value: Vector2 | Vector2i, from_?: int): int;
   /** Changes the {@link Vector2} at the given index. */
-  set(index: int, value: Vector2): void;
+  set(index: int, value: Vector2 | Vector2i): void;
   /** Returns the number of elements in the array. */
   size(): int;
   /**

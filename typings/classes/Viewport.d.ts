@@ -469,7 +469,7 @@ declare class Viewport extends Node {
    * Moves the mouse pointer to the specified position in this {@link Viewport} using the coordinate system of this {@link Viewport}.
    * **Note:** {@link warp_mouse} is only supported on Windows, macOS and Linux. It has no effect on Android, iOS and Web.
    */
-  warp_mouse(position: Vector2): void;
+  warp_mouse(position: Vector2 | Vector2i): void;
 
   /**
    * Emitted when a Control node grabs keyboard focus.

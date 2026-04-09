@@ -1795,7 +1795,7 @@ declare class EditorSettings extends Resource {
   /** Overrides the built-in editor action `name` with the input actions defined in `actions_list`. */
   set_builtin_action_override(name: string, actions_list: Array<InputEvent>): void;
   /** Sets the list of favorite files and directories for this project. */
-  set_favorites(dirs: PackedStringArray): void;
+  set_favorites(dirs: PackedStringArray | Array<unknown>): void;
   /**
    * Sets the initial value of the setting specified by `name` to `value`. This is used to provide a value for the Revert button in the Editor Settings. If `update_current` is `true`, the setting is reset to `value` as well.
    */
@@ -1805,7 +1805,7 @@ declare class EditorSettings extends Resource {
    */
   set_project_metadata(section: string, key: string, data: unknown): void;
   /** Sets the list of recently visited folders in the file dialog for this project. */
-  set_recent_dirs(dirs: PackedStringArray): void;
+  set_recent_dirs(dirs: PackedStringArray | Array<unknown>): void;
   /**
    * Sets the `value` of the setting specified by `name`. This is equivalent to using {@link Object.set} on the EditorSettings instance.
    */

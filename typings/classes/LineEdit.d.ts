@@ -168,7 +168,7 @@ declare class LineEdit extends Control {
   is_shortcut_keys_enabled(): boolean;
   set_structured_text_bidi_override(value: int): void;
   get_structured_text_bidi_override(): int;
-  set_structured_text_bidi_override_options(value: Array<unknown>): void;
+  set_structured_text_bidi_override_options(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_structured_text_bidi_override_options(): Array<unknown>;
   set_text(value: string): void;
   get_text(): string;

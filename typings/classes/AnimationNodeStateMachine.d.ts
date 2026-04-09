@@ -24,7 +24,7 @@ declare class AnimationNodeStateMachine extends AnimationRootNode {
   get_state_machine_type(): int;
 
   /** Adds a new animation node to the graph. The `position` is used for display in the editor. */
-  add_node(name: string, node: AnimationNode, position?: Vector2): void;
+  add_node(name: string, node: AnimationNode, position?: Vector2 | Vector2i): void;
   /** Adds a transition between the given animation nodes. */
   add_transition(from_: string, to: string, transition: AnimationNodeStateMachineTransition): void;
   /** Returns the draw offset of the graph. Used for display in the editor. */
@@ -60,9 +60,9 @@ declare class AnimationNodeStateMachine extends AnimationRootNode {
   /** Replaces the given animation node with a new animation node. */
   replace_node(name: string, node: AnimationNode): void;
   /** Sets the draw offset of the graph. Used for display in the editor. */
-  set_graph_offset(offset: Vector2): void;
+  set_graph_offset(offset: Vector2 | Vector2i): void;
   /** Sets the animation node's coordinates. Used for display in the editor. */
-  set_node_position(name: string, position: Vector2): void;
+  set_node_position(name: string, position: Vector2 | Vector2i): void;
 
   // enum StateMachineType
   /**

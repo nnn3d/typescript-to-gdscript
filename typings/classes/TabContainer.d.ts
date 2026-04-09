@@ -98,7 +98,7 @@ declare class TabContainer extends Container {
   /**
    * Returns the index of the tab at local coordinates `point`. Returns `-1` if the point is outside the control boundaries or if there's no tab at the queried position.
    */
-  get_tab_idx_at_point(point: Vector2): int;
+  get_tab_idx_at_point(point: Vector2 | Vector2i): int;
   /**
    * Returns the index of the tab tied to the given `control`. The control must be a child of the {@link TabContainer}.
    */

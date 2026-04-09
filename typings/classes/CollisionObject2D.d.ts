@@ -122,7 +122,7 @@ declare class CollisionObject2D extends Node2D {
   /**
    * Sets the `one_way_collision_direction` of the shape owner identified by the given `owner_id` to `p_direction`.
    */
-  shape_owner_set_one_way_collision_direction(owner_id: int, p_direction: Vector2): void;
+  shape_owner_set_one_way_collision_direction(owner_id: int, p_direction: Vector2 | Vector2i): void;
   /**
    * Sets the `one_way_collision_margin` of the shape owner identified by given `owner_id` to `margin` pixels.
    */

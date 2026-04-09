@@ -53,7 +53,7 @@ declare interface Projection {
   /**
    * Returns a {@link Projection} with the X and Y values from the given {@link Vector2} added to the first and second values of the final column respectively.
    */
-  jitter_offseted(offset: Vector2): Projection;
+  jitter_offseted(offset: Vector2 | Vector2i): Projection;
   /**
    * Returns a {@link Projection} with the near clipping distance adjusted to be `new_znear`.
    * **Note:** The original {@link Projection} must be a perspective projection.
@@ -138,9 +138,9 @@ declare interface ProjectionConstructor {
    * Creates a new {@link Projection} that projects positions in a frustum with the given size, X:Y aspect ratio, offset, and clipping planes.
    * `flip_fov` determines whether the projection's field of view is flipped over its diagonal.
    */
-  create_frustum_aspect(size: float, aspect: float, offset: Vector2, z_near: float, z_far: float, flip_fov?: boolean): Projection;
+  create_frustum_aspect(size: float, aspect: float, offset: Vector2 | Vector2i, z_near: float, z_far: float, flip_fov?: boolean): Projection;
   /** Creates a new {@link Projection} that projects positions into the given {@link Rect2}. */
-  create_light_atlas_rect(rect: Rect2): Projection;
+  create_light_atlas_rect(rect: Rect2 | Rect2i): Projection;
   /**
    * Creates a new {@link Projection} that projects positions using an orthogonal projection with the given clipping planes.
    */

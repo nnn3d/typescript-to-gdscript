@@ -15,7 +15,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   mutable_bone_axes: boolean;
   /** The number of settings. */
   setting_count: int;
-  set_external_force(value: Vector3): void;
+  set_external_force(value: Vector3 | Vector3i): void;
   get_external_force(): Vector3;
   set_mutable_bone_axes(value: boolean): void;
   are_bone_axes_mutable(): boolean;
@@ -200,7 +200,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
    * Sets the gravity direction of the bone chain. This value is internally normalized and then multiplied by {@link set_gravity}.
    * The value is cached in each joint setting in the joint list.
    */
-  set_gravity_direction(index: int, gravity_direction: Vector3): void;
+  set_gravity_direction(index: int, gravity_direction: Vector3 | Vector3i): void;
   /** If `enabled` is `true`, the config can be edited individually for each joint. */
   set_individual_config(index: int, enabled: boolean): void;
   /**
@@ -214,7 +214,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /**
    * Sets the gravity direction at `joint` in the bone chain's joint list when {@link is_config_individual} is `true`.
    */
-  set_joint_gravity_direction(index: int, joint: int, gravity_direction: Vector3): void;
+  set_joint_gravity_direction(index: int, joint: int, gravity_direction: Vector3 | Vector3i): void;
   /**
    * Sets the joint radius at `joint` in the bone chain's joint list when {@link is_config_individual} is `true`.
    */
@@ -230,7 +230,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
    * This vector is normalized by an internal process and represents the axis around which the bone chain can rotate.
    * If the vector length is `0`, it is considered synonymous with {@link SkeletonModifier3D.ROTATION_AXIS_ALL}.
    */
-  set_joint_rotation_axis_vector(index: int, joint: int, vector: Vector3): void;
+  set_joint_rotation_axis_vector(index: int, joint: int, vector: Vector3 | Vector3i): void;
   /**
    * Sets the stiffness force at `joint` in the bone chain's joint list when {@link is_config_individual} is `true`.
    */
@@ -257,7 +257,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
    * This vector is normalized by an internal process and represents the axis around which the bone chain can rotate.
    * If the vector length is `0`, it is considered synonymous with {@link SkeletonModifier3D.ROTATION_AXIS_ALL}.
    */
-  set_rotation_axis_vector(index: int, vector: Vector3): void;
+  set_rotation_axis_vector(index: int, vector: Vector3 | Vector3i): void;
   /**
    * Sets the stiffness force of the bone chain. The greater the value, the faster it recovers to its initial pose.
    * If `stiffness` is `0`, the modified pose will not return to the original pose.

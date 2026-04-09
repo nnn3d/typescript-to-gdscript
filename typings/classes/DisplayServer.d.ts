@@ -46,7 +46,7 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** This method is implemented on Linux, macOS, and Windows.
    * **Note:** Advanced users only! {@link Window} objects call this method automatically.
    */
-  accessibility_set_window_rect(window_id: int, rect_out: Rect2, rect_in: Rect2): void;
+  accessibility_set_window_rect(window_id: int, rect_out: Rect2 | Rect2i, rect_in: Rect2 | Rect2i): void;
   /**
    * Returns `1` if a high-contrast user interface theme should be used, `0` otherwise. Returns `-1` if status is unknown.
    * **Note:** This method is implemented on Linux (X11/Wayland, GNOME), macOS, and Windows.
@@ -95,7 +95,7 @@ declare interface DisplayServer extends GodotObject {
   /** Sets element background color. */
   accessibility_update_set_background_color(id: RID, color: Color): void;
   /** Sets element bounding box, relative to the node position. */
-  accessibility_update_set_bounds(id: RID, p_rect: Rect2): void;
+  accessibility_update_set_bounds(id: RID, p_rect: Rect2 | Rect2i): void;
   /** Sets element checked state. */
   accessibility_update_set_checked(id: RID, checekd: boolean): void;
   /** Sets element class name. */
@@ -245,7 +245,7 @@ declare interface DisplayServer extends GodotObject {
    * `cursor` can be either a {@link Texture2D} or an {@link Image}, and it should not be larger than 256×256 to display correctly. Optionally, `hotspot` can be set to offset the image's position relative to the click point. By default, `hotspot` is set to the top-left corner of the image. See also {@link cursor_set_shape}.
    * **Note:** On Web, calling this method every frame can cause the cursor to flicker.
    */
-  cursor_set_custom_image(cursor: Resource, shape: int, hotspot?: Vector2): void;
+  cursor_set_custom_image(cursor: Resource, shape: int, hotspot?: Vector2 | Vector2i): void;
   /**
    * Sets the default mouse cursor shape. The cursor's appearance will vary depending on the user's operating system and mouse cursor theme. See also {@link cursor_get_shape} and {@link cursor_set_custom_image}.
    */
@@ -261,7 +261,7 @@ declare interface DisplayServer extends GodotObject {
    * Shows a text dialog which uses the operating system's native look-and-feel. `callback` should accept a single [int] parameter which corresponds to the index of the pressed button.
    * **Note:** This method is implemented if the display server has the {@link FEATURE_NATIVE_DIALOG} feature. Supported platforms include macOS, Windows, and Android.
    */
-  dialog_show(title: string, description: string, buttons: PackedStringArray, callback: Callable): int;
+  dialog_show(title: string, description: string, buttons: PackedStringArray | Array<unknown>, callback: Callable): int;
   /**
    * Allows the `process_id` PID to steal focus from this window. In other words, this disables the operating system's focus stealing protection for the specified PID.
    * **Note:** This method is implemented only on Windows.
@@ -283,7 +283,7 @@ declare interface DisplayServer extends GodotObject {
    * To avoid opening the file picker again after each app restart, you can take persistable URI permission as follows:
    * The persistable URI permission remains valid across app restarts as long as the directory is not moved, renamed, or deleted.
    */
-  file_dialog_show(title: string, current_directory: string, filename: string, show_hidden: boolean, mode: int, filters: PackedStringArray, callback: Callable, parent_window_id?: int): int;
+  file_dialog_show(title: string, current_directory: string, filename: string, show_hidden: boolean, mode: int, filters: PackedStringArray | Array<unknown>, callback: Callable, parent_window_id?: int): int;
   /**
    * Displays OS native dialog for selecting files or directories in the file system with additional user selectable options.
    * Each filter string in the `filters` array should be formatted like this: `*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg`. The description text of the filter is optional and can be omitted. It is recommended to set both file extension and MIME type. See also {@link FileDialog.filters}.
@@ -299,7 +299,7 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** On macOS, native file dialogs have no title.
    * **Note:** On macOS, sandboxed apps will save security-scoped bookmarks to retain access to the opened folders across multiple sessions. Use {@link OS.get_granted_permissions} to get a list of saved bookmarks.
    */
-  file_dialog_with_options_show(title: string, current_directory: string, root: string, filename: string, show_hidden: boolean, mode: int, filters: PackedStringArray, options: Array<Dictionary>, callback: Callable, parent_window_id?: int): int;
+  file_dialog_with_options_show(title: string, current_directory: string, root: string, filename: string, show_hidden: boolean, mode: int, filters: PackedStringArray | Array<unknown>, options: Array<Dictionary>, callback: Callable, parent_window_id?: int): int;
   /**
    * Forces window manager processing while ignoring all {@link InputEvent}s. See also {@link process_events}.
    * **Note:** This method is implemented on Windows and macOS.
@@ -348,7 +348,7 @@ declare interface DisplayServer extends GodotObject {
   /**
    * Returns the index of the screen that overlaps the most with the given rectangle. Returns {@link INVALID_SCREEN} if the rectangle doesn't overlap with any screen or has no area.
    */
-  get_screen_from_rect(rect: Rect2): int;
+  get_screen_from_rect(rect: Rect2 | Rect2i): int;
   /**
    * Returns `true` if positions of **OK** and **Cancel** buttons are swapped in dialogs. This is enabled by default on Windows to follow interface conventions, and be toggled by changing {@link ProjectSettings.gui/common/swap_cancel_ok}.
    * **Note:** This doesn't affect native dialogs such as the ones spawned by {@link DisplayServer.dialog_show}.
@@ -365,7 +365,7 @@ declare interface DisplayServer extends GodotObject {
    * +-------------+ +-------+
    * [/codeblock]
    */
-  get_window_at_screen_position(position: Vector2i): int;
+  get_window_at_screen_position(position: Vector2i | Vector2): int;
   /**
    * Returns the list of Godot window IDs belonging to this process.
    * **Note:** Native dialogs are not included in this list.
@@ -881,7 +881,7 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** This method is implemented on macOS and Windows. On other platforms, this method always returns `null`.
    * **Note:** On macOS, this method requires the "Screen Recording" permission. If permission is not granted, this method returns a screenshot that will not include other application windows or OS elements not related to the application.
    */
-  screen_get_image_rect(rect: Rect2i): Image | null;
+  screen_get_image_rect(rect: Rect2i | Rect2): Image | null;
   /**
    * Returns the greatest scale factor of all screens.
    * **Note:** On macOS returned value is `2.0` if there is at least one hiDPI (Retina) screen in the system, and `1.0` in all other cases.
@@ -899,7 +899,7 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** This method is implemented on Linux (X11, excluding XWayland), macOS, and Windows. On other platforms, this method always returns `Color(0, 0, 0, 1)`.
    * **Note:** On macOS, this method requires the "Screen Recording" permission. If permission is not granted, this method returns a color from a screenshot that will not include other application windows or OS elements not related to the application.
    */
-  screen_get_pixel(position: Vector2i): Color;
+  screen_get_pixel(position: Vector2i | Vector2): Color;
   /**
    * Returns the screen's top-left corner position in pixels. Returns {@link Vector2i.ZERO} if `screen` is invalid. On multi-monitor setups, the screen position is relative to the virtual desktop area. On multi-monitor setups with different screen resolutions or orientations, the origin might be located outside any display like this:
    * [codeblock lang=text]
@@ -1112,12 +1112,12 @@ declare interface DisplayServer extends GodotObject {
    * `cursor_start` and `cursor_end` can optionally define the current text selection.
    * **Note:** This method is implemented on Android, iOS and Web.
    */
-  virtual_keyboard_show(existing_text: string, position?: Rect2, type_?: int, max_length?: int, cursor_start?: int, cursor_end?: int): void;
+  virtual_keyboard_show(existing_text: string, position?: Rect2 | Rect2i, type_?: int, max_length?: int, cursor_start?: int, cursor_end?: int): void;
   /**
    * Sets the mouse cursor position to the given `position` relative to an origin at the upper left corner of the currently focused game Window Manager window.
    * **Note:** {@link warp_mouse} is only supported on Windows, macOS, and Linux (X11/Wayland). It has no effect on Android, iOS, and Web.
    */
-  warp_mouse(position: Vector2i): void;
+  warp_mouse(position: Vector2i | Vector2): void;
   /**
    * Returns `true` if anything can be drawn in the window specified by `window_id`, `false` otherwise. Using the `--disable-render-loop` command line argument or a headless build will return `false`.
    */
@@ -1273,7 +1273,7 @@ declare interface DisplayServer extends GodotObject {
   /**
    * Sets the position of the Input Method Editor (https://en.wikipedia.org/wiki/Input_method) popup for the specified `window_id`. Only effective if {@link window_set_ime_active} was set to `true` for the specified `window_id`.
    */
-  window_set_ime_position(position: Vector2i, window_id?: int): void;
+  window_set_ime_position(position: Vector2i | Vector2, window_id?: int): void;
   /**
    * Sets the `callback` that should be called when any {@link InputEvent} is sent to the window specified by `window_id`.
    * **Warning:** Advanced users only! Adding such a callback to a {@link Window} node will override its default implementation, which can introduce bugs.
@@ -1289,14 +1289,14 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** It's recommended to change this value using {@link Window.max_size} instead.
    * **Note:** Using third-party tools, it is possible for users to disable window geometry restrictions and therefore bypass this limit.
    */
-  window_set_max_size(max_size: Vector2i, window_id?: int): void;
+  window_set_max_size(max_size: Vector2i | Vector2, window_id?: int): void;
   /**
    * Sets the minimum size for the given window to `min_size` in pixels. Normally, the user will not be able to drag the window to make it smaller than the specified size. See also {@link window_get_min_size}.
    * **Note:** It's recommended to change this value using {@link Window.min_size} instead.
    * **Note:** By default, the main window has a minimum size of `Vector2i(64, 64)`. This prevents issues that can arise when the window is resized to a near-zero size.
    * **Note:** Using third-party tools, it is possible for users to disable window geometry restrictions and therefore bypass this limit.
    */
-  window_set_min_size(min_size: Vector2i, window_id?: int): void;
+  window_set_min_size(min_size: Vector2i | Vector2, window_id?: int): void;
   /**
    * Sets window mode for the given window to `mode`.
    * **Note:** On Android, setting it to {@link WINDOW_MODE_FULLSCREEN} or {@link WINDOW_MODE_EXCLUSIVE_FULLSCREEN} will enable immersive mode.
@@ -1309,11 +1309,11 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** On Windows, the portion of a window that lies outside the region is not drawn, while on Linux (X11) and macOS it is.
    * **Note:** This method is implemented on Linux (X11), macOS and Windows.
    */
-  window_set_mouse_passthrough(region: PackedVector2Array, window_id?: int): void;
+  window_set_mouse_passthrough(region: PackedVector2Array | Array<unknown>, window_id?: int): void;
   /**
    * Sets the bounding box of control, or menu item that was used to open the popup window, in the screen coordinate system. Clicking this area will not auto-close this popup.
    */
-  window_set_popup_safe_rect(window: int, rect: Rect2i): void;
+  window_set_popup_safe_rect(window: int, rect: Rect2i | Rect2): void;
   /**
    * Sets the position of the given window to `position`. On multi-monitor setups, the screen position is relative to the virtual desktop area. On multi-monitor setups with different screen resolutions or orientations, the origin may be located outside any display like this:
    * [codeblock lang=text]
@@ -1328,7 +1328,7 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** It's recommended to change this value using {@link Window.position} instead.
    * **Note:** On Linux (Wayland): this method is a no-op.
    */
-  window_set_position(position: Vector2i, window_id?: int): void;
+  window_set_position(position: Vector2i | Vector2, window_id?: int): void;
   /**
    * Sets the `callback` that will be called when the window specified by `window_id` is moved or resized.
    * **Warning:** Advanced users only! Adding such a callback to a {@link Window} node will override its default implementation, which can introduce bugs.
@@ -1338,7 +1338,7 @@ declare interface DisplayServer extends GodotObject {
    * Sets the size of the given window to `size` (in pixels). See also {@link window_get_size} and {@link window_get_position}.
    * **Note:** It's recommended to change this value using {@link Window.size} instead.
    */
-  window_set_size(size: Vector2i, window_id?: int): void;
+  window_set_size(size: Vector2i | Vector2, window_id?: int): void;
   /**
    * Sets the type and state of the progress bar on the taskbar/dock icon of the window specified by `window_id`. See {@link ProgressState} for possible values and how each mode behaves.
    * **Note:** This method is implemented only on Windows and macOS.
@@ -1374,7 +1374,7 @@ declare interface DisplayServer extends GodotObject {
    * When {@link WINDOW_FLAG_EXTEND_TO_TITLE} flag is set, set offset to the center of the first titlebar button.
    * **Note:** This flag is implemented only on macOS.
    */
-  window_set_window_buttons_offset(offset: Vector2i, window_id?: int): void;
+  window_set_window_buttons_offset(offset: Vector2i | Vector2, window_id?: int): void;
   /**
    * Sets the `callback` that will be called when an event occurs in the window specified by `window_id`.
    * **Warning:** Advanced users only! Adding such a callback to a {@link Window} node will override its default implementation, which can introduce bugs.

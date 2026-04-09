@@ -31,7 +31,7 @@ declare class LinkButton extends BaseButton {
   uri: string;
   set_ellipsis_char(value: string): void;
   get_ellipsis_char(): string;
-  set_structured_text_bidi_override_options(value: Array<unknown>): void;
+  set_structured_text_bidi_override_options(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_structured_text_bidi_override_options(): Array<unknown>;
   set_text(value: string): void;
   get_text(): string;

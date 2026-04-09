@@ -15,9 +15,9 @@ declare class TextServerExtension extends TextServer {
   /** Creates a new buffer for complex text layout, with the given `direction` and `orientation`. */
   _create_shaped_text(direction: int, orientation: int): RID;
   /** Draws box displaying character hexadecimal code. */
-  _draw_hex_code_box(canvas: RID, size: int, pos: Vector2, index: int, color: Color): void;
+  _draw_hex_code_box(canvas: RID, size: int, pos: Vector2 | Vector2i, index: int, color: Color): void;
   /** Removes all rendered glyph information from the cache entry. */
-  _font_clear_glyphs(font_rid: RID, size: Vector2i): void;
+  _font_clear_glyphs(font_rid: RID, size: Vector2i | Vector2): void;
   /** Removes all kerning overrides. */
   _font_clear_kerning_map(font_rid: RID, size: int): void;
   /** Removes all font sizes from the cache entry. */
@@ -25,15 +25,15 @@ declare class TextServerExtension extends TextServer {
   /** Frees all automatically loaded system fonts. */
   _font_clear_system_fallback_cache(): void;
   /** Removes all textures from font cache entry. */
-  _font_clear_textures(font_rid: RID, size: Vector2i): void;
+  _font_clear_textures(font_rid: RID, size: Vector2i | Vector2): void;
   /**
    * Draws single glyph into a canvas item at the position, using `font_rid` at the size `size`. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  _font_draw_glyph(font_rid: RID, canvas: RID, size: int, pos: Vector2, index: int, color: Color, oversampling: float): void;
+  _font_draw_glyph(font_rid: RID, canvas: RID, size: int, pos: Vector2 | Vector2i, index: int, color: Color, oversampling: float): void;
   /**
    * Draws single glyph outline of size `outline_size` into a canvas item at the position, using `font_rid` at the size `size`. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  _font_draw_glyph_outline(font_rid: RID, canvas: RID, size: int, outline_size: int, pos: Vector2, index: int, color: Color, oversampling: float): void;
+  _font_draw_glyph_outline(font_rid: RID, canvas: RID, size: int, outline_size: int, pos: Vector2 | Vector2i, index: int, color: Color, oversampling: float): void;
   /** Returns font anti-aliasing mode. */
   _font_get_antialiasing(font_rid: RID): int;
   /** Returns the font ascent (number of pixels above the baseline). */
@@ -67,19 +67,19 @@ declare class TextServerExtension extends TextServer {
   /** Returns the glyph index of a `char`, optionally modified by the `variation_selector`. */
   _font_get_glyph_index(font_rid: RID, size: int, char: int, variation_selector: int): int;
   /** Returns list of rendered glyphs in the cache entry. */
-  _font_get_glyph_list(font_rid: RID, size: Vector2i): PackedInt32Array;
+  _font_get_glyph_list(font_rid: RID, size: Vector2i | Vector2): PackedInt32Array;
   /** Returns glyph offset from the baseline. */
-  _font_get_glyph_offset(font_rid: RID, size: Vector2i, glyph: int): Vector2;
+  _font_get_glyph_offset(font_rid: RID, size: Vector2i | Vector2, glyph: int): Vector2;
   /** Returns size of the glyph. */
-  _font_get_glyph_size(font_rid: RID, size: Vector2i, glyph: int): Vector2;
+  _font_get_glyph_size(font_rid: RID, size: Vector2i | Vector2, glyph: int): Vector2;
   /** Returns index of the cache texture containing the glyph. */
-  _font_get_glyph_texture_idx(font_rid: RID, size: Vector2i, glyph: int): int;
+  _font_get_glyph_texture_idx(font_rid: RID, size: Vector2i | Vector2, glyph: int): int;
   /** Returns resource ID of the cache texture containing the glyph. */
-  _font_get_glyph_texture_rid(font_rid: RID, size: Vector2i, glyph: int): RID;
+  _font_get_glyph_texture_rid(font_rid: RID, size: Vector2i | Vector2, glyph: int): RID;
   /** Returns size of the cache texture containing the glyph. */
-  _font_get_glyph_texture_size(font_rid: RID, size: Vector2i, glyph: int): Vector2;
+  _font_get_glyph_texture_size(font_rid: RID, size: Vector2i | Vector2, glyph: int): Vector2;
   /** Returns rectangle in the cache texture containing the glyph. */
-  _font_get_glyph_uv_rect(font_rid: RID, size: Vector2i, glyph: int): Rect2;
+  _font_get_glyph_uv_rect(font_rid: RID, size: Vector2i | Vector2, glyph: int): Rect2;
   /** Returns the font hinting mode. Used by dynamic fonts only. */
   _font_get_hinting(font_rid: RID): int;
   /**
@@ -87,7 +87,7 @@ declare class TextServerExtension extends TextServer {
    */
   _font_get_keep_rounding_remainders(font_rid: RID): boolean;
   /** Returns kerning for the pair of glyphs. */
-  _font_get_kerning(font_rid: RID, size: int, glyph_pair: Vector2i): Vector2;
+  _font_get_kerning(font_rid: RID, size: int, glyph_pair: Vector2i | Vector2): Vector2;
   /** Returns list of the kerning overrides. */
   _font_get_kerning_list(font_rid: RID, size: int): Array<Vector2i>;
   /** Returns `true` if support override is enabled for the `language`. */
@@ -143,11 +143,11 @@ declare class TextServerExtension extends TextServer {
   /** Returns an array containing all glyph indices in the font. */
   _font_get_supported_glyphs(font_rid: RID): PackedInt32Array;
   /** Returns number of textures used by font cache entry. */
-  _font_get_texture_count(font_rid: RID, size: Vector2i): int;
+  _font_get_texture_count(font_rid: RID, size: Vector2i | Vector2): int;
   /** Returns font cache texture image data. */
-  _font_get_texture_image(font_rid: RID, size: Vector2i, texture_index: int): Image | null;
+  _font_get_texture_image(font_rid: RID, size: Vector2i | Vector2, texture_index: int): Image | null;
   /** Returns array containing glyph packing data. */
-  _font_get_texture_offsets(font_rid: RID, size: Vector2i, texture_index: int): PackedInt32Array;
+  _font_get_texture_offsets(font_rid: RID, size: Vector2i | Vector2, texture_index: int): PackedInt32Array;
   /** Returns 2D transform applied to the font outlines. */
   _font_get_transform(font_rid: RID): Transform2D;
   /** Returns pixel offset of the underline below the baseline. */
@@ -181,21 +181,21 @@ declare class TextServerExtension extends TextServer {
    */
   _font_is_script_supported(font_rid: RID, script: string): boolean;
   /** Removes specified rendered glyph information from the cache entry. */
-  _font_remove_glyph(font_rid: RID, size: Vector2i, glyph: int): void;
+  _font_remove_glyph(font_rid: RID, size: Vector2i | Vector2, glyph: int): void;
   /** Removes kerning override for the pair of glyphs. */
-  _font_remove_kerning(font_rid: RID, size: int, glyph_pair: Vector2i): void;
+  _font_remove_kerning(font_rid: RID, size: int, glyph_pair: Vector2i | Vector2): void;
   /** Remove language support override. */
   _font_remove_language_support_override(font_rid: RID, language: string): void;
   /** Removes script support override. */
   _font_remove_script_support_override(font_rid: RID, script: string): void;
   /** Removes specified font size from the cache entry. */
-  _font_remove_size_cache(font_rid: RID, size: Vector2i): void;
+  _font_remove_size_cache(font_rid: RID, size: Vector2i | Vector2): void;
   /** Removes specified texture from the cache entry. */
-  _font_remove_texture(font_rid: RID, size: Vector2i, texture_index: int): void;
+  _font_remove_texture(font_rid: RID, size: Vector2i | Vector2, texture_index: int): void;
   /** Renders specified glyph to the font cache texture. */
-  _font_render_glyph(font_rid: RID, size: Vector2i, index: int): void;
+  _font_render_glyph(font_rid: RID, size: Vector2i | Vector2, index: int): void;
   /** Renders the range of characters to the font cache texture. */
-  _font_render_range(font_rid: RID, size: Vector2i, start: int, end: int): void;
+  _font_render_range(font_rid: RID, size: Vector2i | Vector2, start: int, end: int): void;
   /** If set to `true`, system fonts can be automatically used as fallbacks. */
   _font_set_allow_system_fallback(font_rid: RID, allow_system_fallback: boolean): void;
   /** Sets font anti-aliasing mode. */
@@ -205,7 +205,7 @@ declare class TextServerExtension extends TextServer {
   /** Sets extra baseline offset (as a fraction of font height). */
   _font_set_baseline_offset(font_rid: RID, baseline_offset: float): void;
   /** Sets font source data, e.g contents of the dynamic font source file. */
-  _font_set_data(font_rid: RID, data: PackedByteArray): void;
+  _font_set_data(font_rid: RID, data: PackedByteArray | Array<unknown>): void;
   /** Sets pointer to the font source data, e.g contents of the dynamic font source file. */
   _font_set_data_ptr(font_rid: RID, data_ptr: int, data_size: int): void;
   /** Sets the font descent (number of pixels below the baseline). */
@@ -231,15 +231,15 @@ declare class TextServerExtension extends TextServer {
   /** Sets oversampling factor, shared by all font in the TextServer. */
   _font_set_global_oversampling(oversampling: float): void;
   /** Sets glyph advance (offset of the next glyph). */
-  _font_set_glyph_advance(font_rid: RID, size: int, glyph: int, advance: Vector2): void;
+  _font_set_glyph_advance(font_rid: RID, size: int, glyph: int, advance: Vector2 | Vector2i): void;
   /** Sets glyph offset from the baseline. */
-  _font_set_glyph_offset(font_rid: RID, size: Vector2i, glyph: int, offset: Vector2): void;
+  _font_set_glyph_offset(font_rid: RID, size: Vector2i | Vector2, glyph: int, offset: Vector2 | Vector2i): void;
   /** Sets size of the glyph. */
-  _font_set_glyph_size(font_rid: RID, size: Vector2i, glyph: int, gl_size: Vector2): void;
+  _font_set_glyph_size(font_rid: RID, size: Vector2i | Vector2, glyph: int, gl_size: Vector2 | Vector2i): void;
   /** Sets index of the cache texture containing the glyph. */
-  _font_set_glyph_texture_idx(font_rid: RID, size: Vector2i, glyph: int, texture_idx: int): void;
+  _font_set_glyph_texture_idx(font_rid: RID, size: Vector2i | Vector2, glyph: int, texture_idx: int): void;
   /** Sets rectangle in the cache texture containing the glyph. */
-  _font_set_glyph_uv_rect(font_rid: RID, size: Vector2i, glyph: int, uv_rect: Rect2): void;
+  _font_set_glyph_uv_rect(font_rid: RID, size: Vector2i | Vector2, glyph: int, uv_rect: Rect2 | Rect2i): void;
   /** Sets font hinting mode. Used by dynamic fonts only. */
   _font_set_hinting(font_rid: RID, hinting: int): void;
   /**
@@ -247,7 +247,7 @@ declare class TextServerExtension extends TextServer {
    */
   _font_set_keep_rounding_remainders(font_rid: RID, keep_rounding_remainders: boolean): void;
   /** Sets kerning for the pair of glyphs. */
-  _font_set_kerning(font_rid: RID, size: int, glyph_pair: Vector2i, kerning: Vector2): void;
+  _font_set_kerning(font_rid: RID, size: int, glyph_pair: Vector2i | Vector2, kerning: Vector2 | Vector2i): void;
   /** Adds override for {@link _font_is_language_supported}. */
   _font_set_language_support_override(font_rid: RID, language: string, supported: boolean): void;
   /**
@@ -287,9 +287,9 @@ declare class TextServerExtension extends TextServer {
   /** Sets font subpixel glyph positioning mode. */
   _font_set_subpixel_positioning(font_rid: RID, subpixel_positioning: int): void;
   /** Sets font cache texture image data. */
-  _font_set_texture_image(font_rid: RID, size: Vector2i, texture_index: int, image: Image): void;
+  _font_set_texture_image(font_rid: RID, size: Vector2i | Vector2, texture_index: int, image: Image): void;
   /** Sets array containing glyph packing data. */
-  _font_set_texture_offsets(font_rid: RID, size: Vector2i, texture_index: int, offset: PackedInt32Array): void;
+  _font_set_texture_offsets(font_rid: RID, size: Vector2i | Vector2, texture_index: int, offset: PackedInt32Array | Array<unknown>): void;
   /**
    * Sets 2D transform, applied to the font outlines, can be used for slanting, flipping, and rotating glyphs.
    */
@@ -336,7 +336,7 @@ declare class TextServerExtension extends TextServer {
   /**
    * Returns index of the first string in `dict` which is visually confusable with the `string`, or `-1` if none is found.
    */
-  _is_confusable(string: string, dict: PackedStringArray): int;
+  _is_confusable(string: string, dict: PackedStringArray | Array<unknown>): int;
   /** Returns `true` if locale is right-to-left. */
   _is_locale_right_to_left(locale: string): boolean;
   /** Returns `true` if the locale requires text server support data for line/word breaking. */
@@ -354,7 +354,7 @@ declare class TextServerExtension extends TextServer {
    */
   _parse_number(number: string, language: string): string;
   /** Default implementation of the BiDi algorithm override function. */
-  _parse_structured_text(parser_type: int, args: Array<unknown>, text: string): Array<Vector3i>;
+  _parse_structured_text(parser_type: int, args: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, text: string): Array<Vector3i>;
   /** Returns percent sign used in the given `language`. */
   _percent_sign(language: string): string;
   /**
@@ -400,7 +400,7 @@ declare class TextServerExtension extends TextServer {
   /**
    * Adds inline object to the text buffer, `key` must be unique. In the text, object is represented as `length` object replacement characters.
    */
-  _shaped_text_add_object(shaped: RID, key: unknown, size: Vector2, inline_align: int, length: int, baseline: float): boolean;
+  _shaped_text_add_object(shaped: RID, key: unknown, size: Vector2 | Vector2i, inline_align: int, length: int, baseline: float): boolean;
   /** Adds text span and font to draw it to the text buffer. */
   _shaped_text_add_string(shaped: RID, text: string, fonts: Array<RID>, size: int, opentype_features: Dictionary, language: string, meta: unknown): boolean;
   /** Clears text buffer (removes text and inline objects). */
@@ -410,11 +410,11 @@ declare class TextServerExtension extends TextServer {
   /**
    * Draw shaped text into a canvas item at a given position, with `color`. `pos` specifies the leftmost point of the baseline (for horizontal layout) or topmost point of the baseline (for vertical layout). If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  _shaped_text_draw(shaped: RID, canvas: RID, pos: Vector2, clip_l: float, clip_r: float, color: Color, oversampling: float): void;
+  _shaped_text_draw(shaped: RID, canvas: RID, pos: Vector2 | Vector2i, clip_l: float, clip_r: float, color: Color, oversampling: float): void;
   /**
    * Draw the outline of the shaped text into a canvas item at a given position, with `color`. `pos` specifies the leftmost point of the baseline (for horizontal layout) or topmost point of the baseline (for vertical layout). If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  _shaped_text_draw_outline(shaped: RID, canvas: RID, pos: Vector2, clip_l: float, clip_r: float, outline_size: int, color: Color, oversampling: float): void;
+  _shaped_text_draw_outline(shaped: RID, canvas: RID, pos: Vector2 | Vector2i, clip_l: float, clip_r: float, outline_size: int, color: Color, oversampling: float): void;
   /** Duplicates shaped text buffer. */
   _shaped_text_duplicate(shaped: RID): RID;
   /** Adjusts text width to fit to specified width, returns new text width. */
@@ -460,7 +460,7 @@ declare class TextServerExtension extends TextServer {
   /** Breaks text to the lines and returns character ranges for each line. */
   _shaped_text_get_line_breaks(shaped: RID, width: float, start: int, break_flags: int): PackedInt32Array;
   /** Breaks text to the lines and columns. Returns character ranges for each segment. */
-  _shaped_text_get_line_breaks_adv(shaped: RID, width: PackedFloat32Array, start: int, once: boolean, break_flags: int): PackedInt32Array;
+  _shaped_text_get_line_breaks_adv(shaped: RID, width: PackedFloat32Array | Array<unknown>, start: int, once: boolean, break_flags: int): PackedInt32Array;
   /** Returns the glyph index of the inline object. */
   _shaped_text_get_object_glyph(shaped: RID, key: unknown): int;
   /** Returns the character range of the inline object. */
@@ -520,9 +520,9 @@ declare class TextServerExtension extends TextServer {
   /** Returns grapheme start position closest to the `pos`. */
   _shaped_text_prev_grapheme_pos(shaped: RID, pos: int): int;
   /** Sets new size and alignment of embedded object. */
-  _shaped_text_resize_object(shaped: RID, key: unknown, size: Vector2, inline_align: int, baseline: float): boolean;
+  _shaped_text_resize_object(shaped: RID, key: unknown, size: Vector2 | Vector2i, inline_align: int, baseline: float): boolean;
   /** Overrides BiDi for the structured text. */
-  _shaped_text_set_bidi_override(shaped: RID, override: Array<unknown>): void;
+  _shaped_text_set_bidi_override(shaped: RID, override: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /** Sets ellipsis character used for text clipping. */
   _shaped_text_set_custom_ellipsis(shaped: RID, char: int): void;
   /**
@@ -552,7 +552,7 @@ declare class TextServerExtension extends TextServer {
    */
   _shaped_text_substr(shaped: RID, start: int, length: int): RID;
   /** Aligns shaped text to the given tab-stops. */
-  _shaped_text_tab_align(shaped: RID, tab_stops: PackedFloat32Array): float;
+  _shaped_text_tab_align(shaped: RID, tab_stops: PackedFloat32Array | Array<unknown>): float;
   /**
    * Updates break points in the shaped text. This method is called by default implementation of text breaking functions.
    */

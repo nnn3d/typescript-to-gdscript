@@ -34,7 +34,7 @@ declare class PhysicsBody3D extends CollisionObject3D {
    * If `recovery_as_collision` is `true`, any depenetration from the recovery phase is also reported as a collision; this is used e.g. by {@link CharacterBody3D} for improving floor detection during floor snapping.
    * `max_collisions` allows to retrieve more than one collision result.
    */
-  move_and_collide(motion: Vector3, test_only?: boolean, safe_margin?: float, recovery_as_collision?: boolean, max_collisions?: int): KinematicCollision3D | null;
+  move_and_collide(motion: Vector3 | Vector3i, test_only?: boolean, safe_margin?: float, recovery_as_collision?: boolean, max_collisions?: int): KinematicCollision3D | null;
   /** Removes a body from the list of bodies that this body can't collide with. */
   remove_collision_exception_with(body: Node): void;
   /** Locks or unlocks the specified linear or rotational `axis` depending on the value of `lock`. */
@@ -47,5 +47,5 @@ declare class PhysicsBody3D extends CollisionObject3D {
    * If `recovery_as_collision` is `true`, any depenetration from the recovery phase is also reported as a collision; this is useful for checking whether the body would *touch* any other bodies.
    * `max_collisions` allows to retrieve more than one collision result.
    */
-  test_move(from_: Transform3D, motion: Vector3, collision?: KinematicCollision3D, safe_margin?: float, recovery_as_collision?: boolean, max_collisions?: int): boolean;
+  test_move(from_: Transform3D | Projection, motion: Vector3 | Vector3i, collision?: KinematicCollision3D, safe_margin?: float, recovery_as_collision?: boolean, max_collisions?: int): boolean;
 }

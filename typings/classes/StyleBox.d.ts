@@ -26,18 +26,18 @@ declare class StyleBox extends Resource {
    */
   content_margin_top: float;
 
-  _draw(to_canvas_item: RID, rect: Rect2): void;
-  _get_draw_rect(rect: Rect2): Rect2;
+  _draw(to_canvas_item: RID, rect: Rect2 | Rect2i): void;
+  _get_draw_rect(rect: Rect2 | Rect2i): Rect2;
   /**
    * Virtual method to be implemented by the user. Returns a custom minimum size that the stylebox must respect when drawing. By default {@link get_minimum_size} only takes content margins into account. This method can be overridden to add another size restriction. A combination of the default behavior and the output of this method will be used, to account for both sizes.
    */
   _get_minimum_size(): Vector2;
-  _test_mask(point: Vector2, rect: Rect2): boolean;
+  _test_mask(point: Vector2 | Vector2i, rect: Rect2 | Rect2i): boolean;
   /**
    * Draws this stylebox using a canvas item identified by the given {@link RID}.
    * The {@link RID} value can either be the result of {@link CanvasItem.get_canvas_item} called on an existing {@link CanvasItem}-derived node, or directly from creating a canvas item in the {@link RenderingServer} with {@link RenderingServer.canvas_item_create}.
    */
-  draw(canvas_item: RID, rect: Rect2): void;
+  draw(canvas_item: RID, rect: Rect2 | Rect2i): void;
   /** Returns the default margin of the specified {@link Side}. */
   get_content_margin(margin: int): float;
   /**
@@ -60,5 +60,5 @@ declare class StyleBox extends Resource {
   /** Sets the default margin to `offset` pixels for all sides. */
   set_content_margin_all(offset: float): void;
   /** Test a position in a rectangle, return whether it passes the mask test. */
-  test_mask(point: Vector2, rect: Rect2): boolean;
+  test_mask(point: Vector2 | Vector2i, rect: Rect2 | Rect2i): boolean;
 }

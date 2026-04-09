@@ -148,13 +148,13 @@ declare class Skeleton3D extends Node3D {
    * Sets the global pose transform, `pose`, for the bone at `bone_idx`.
    * **Note:** If other bone poses have been changed, this method executes a dirty poses recalculation and will cause performance to deteriorate. If you know that multiple global poses will be applied, consider using {@link set_bone_pose} with precalculation.
    */
-  set_bone_global_pose(bone_idx: int, pose: Transform3D): void;
+  set_bone_global_pose(bone_idx: int, pose: Transform3D | Projection): void;
   /**
    * Sets the global pose transform, `pose`, for the bone at `bone_idx`.
    * `amount` is the interpolation strength that will be used when applying the pose, and `persistent` determines if the applied pose will remain.
    * **Note:** The pose transform needs to be a global pose! To convert a world transform from a {@link Node3D} to a global bone pose, multiply the {@link Transform3D.affine_inverse} of the node's {@link Node3D.global_transform} by the desired world transform.
    */
-  set_bone_global_pose_override(bone_idx: int, pose: Transform3D, amount: float, persistent?: boolean): void;
+  set_bone_global_pose_override(bone_idx: int, pose: Transform3D | Projection, amount: float, persistent?: boolean): void;
   /** Sets the metadata with the given `key` to `value` for the bone at index `bone_idx`. */
   set_bone_meta(bone_idx: int, key: string, value: unknown): void;
   /** Sets the bone name, `name`, for the bone at `bone_idx`. */
@@ -165,19 +165,19 @@ declare class Skeleton3D extends Node3D {
    */
   set_bone_parent(bone_idx: int, parent_idx: int): void;
   /** Sets the pose transform, `pose`, for the bone at `bone_idx`. */
-  set_bone_pose(bone_idx: int, pose: Transform3D): void;
+  set_bone_pose(bone_idx: int, pose: Transform3D | Projection): void;
   /**
    * Sets the pose position of the bone at `bone_idx` to `position`. `position` is a {@link Vector3} describing a position local to the {@link Skeleton3D} node.
    */
-  set_bone_pose_position(bone_idx: int, position: Vector3): void;
+  set_bone_pose_position(bone_idx: int, position: Vector3 | Vector3i): void;
   /**
    * Sets the pose rotation of the bone at `bone_idx` to `rotation`. `rotation` is a {@link Quaternion} describing a rotation in the bone's local coordinate space with respect to the rotation of any parent bones.
    */
-  set_bone_pose_rotation(bone_idx: int, rotation: Quaternion): void;
+  set_bone_pose_rotation(bone_idx: int, rotation: Quaternion | Basis): void;
   /** Sets the pose scale of the bone at `bone_idx` to `scale`. */
-  set_bone_pose_scale(bone_idx: int, scale: Vector3): void;
+  set_bone_pose_scale(bone_idx: int, scale: Vector3 | Vector3i): void;
   /** Sets the rest transform for bone `bone_idx`. */
-  set_bone_rest(bone_idx: int, rest: Transform3D): void;
+  set_bone_rest(bone_idx: int, rest: Transform3D | Projection): void;
   /**
    * Unparents the bone at `bone_idx` and sets its rest position to that of its parent prior to being reset.
    */

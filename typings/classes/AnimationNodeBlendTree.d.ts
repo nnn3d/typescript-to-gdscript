@@ -7,13 +7,13 @@
 declare class AnimationNodeBlendTree extends AnimationRootNode {
   /** The global offset of all sub animation nodes. */
   graph_offset: Vector2;
-  set_graph_offset(value: Vector2): void;
+  set_graph_offset(value: Vector2 | Vector2i): void;
   get_graph_offset(): Vector2;
 
   /**
    * Adds an {@link AnimationNode} at the given `position`. The `name` is used to identify the created sub animation node later.
    */
-  add_node(name: string, node: AnimationNode, position?: Vector2): void;
+  add_node(name: string, node: AnimationNode, position?: Vector2 | Vector2i): void;
   /**
    * Connects the output of an {@link AnimationNode} as input for another {@link AnimationNode}, at the input port specified by `input_index`.
    */
@@ -33,7 +33,7 @@ declare class AnimationNodeBlendTree extends AnimationRootNode {
   /** Changes the name of a sub animation node. */
   rename_node(name: string, new_name: string): void;
   /** Modifies the position of a sub animation node. */
-  set_node_position(name: string, position: Vector2): void;
+  set_node_position(name: string, position: Vector2 | Vector2i): void;
 
   /** Emitted when the input port information is changed. */
   node_changed: Signal<[string]>;

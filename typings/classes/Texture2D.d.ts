@@ -7,17 +7,17 @@ declare class Texture2D extends Texture {
    * Called when the entire {@link Texture2D} is requested to be drawn over a {@link CanvasItem}, with the top-left offset specified in `pos`. `modulate` specifies a multiplier for the colors being drawn, while `transpose` specifies whether drawing should be performed in column-major order instead of row-major order (resulting in 90-degree clockwise rotation).
    * **Note:** This is only used in 2D rendering, not 3D.
    */
-  _draw(to_canvas_item: RID, pos: Vector2, modulate: Color, transpose: boolean): void;
+  _draw(to_canvas_item: RID, pos: Vector2 | Vector2i, modulate: Color, transpose: boolean): void;
   /**
    * Called when the {@link Texture2D} is requested to be drawn onto {@link CanvasItem}'s specified `rect`. `modulate` specifies a multiplier for the colors being drawn, while `transpose` specifies whether drawing should be performed in column-major order instead of row-major order (resulting in 90-degree clockwise rotation).
    * **Note:** This is only used in 2D rendering, not 3D.
    */
-  _draw_rect(to_canvas_item: RID, rect: Rect2, tile: boolean, modulate: Color, transpose: boolean): void;
+  _draw_rect(to_canvas_item: RID, rect: Rect2 | Rect2i, tile: boolean, modulate: Color, transpose: boolean): void;
   /**
    * Called when a part of the {@link Texture2D} specified by `src_rect`'s coordinates is requested to be drawn onto {@link CanvasItem}'s specified `rect`. `modulate` specifies a multiplier for the colors being drawn, while `transpose` specifies whether drawing should be performed in column-major order instead of row-major order (resulting in 90-degree clockwise rotation).
    * **Note:** This is only used in 2D rendering, not 3D.
    */
-  _draw_rect_region(to_canvas_item: RID, rect: Rect2, src_rect: Rect2, modulate: Color, transpose: boolean, clip_uv: boolean): void;
+  _draw_rect_region(to_canvas_item: RID, rect: Rect2 | Rect2i, src_rect: Rect2 | Rect2i, modulate: Color, transpose: boolean, clip_uv: boolean): void;
   /** Called when {@link get_format} is called. */
   _get_format(): int;
   /** Called when the {@link Texture2D}'s height is queried. */
@@ -41,11 +41,11 @@ declare class Texture2D extends Texture {
   /**
    * Draws the texture using a {@link CanvasItem} with the {@link RenderingServer} API at the specified `position`.
    */
-  draw(canvas_item: RID, position: Vector2, modulate?: Color, transpose?: boolean): void;
+  draw(canvas_item: RID, position: Vector2 | Vector2i, modulate?: Color, transpose?: boolean): void;
   /** Draws the texture using a {@link CanvasItem} with the {@link RenderingServer} API. */
-  draw_rect(canvas_item: RID, rect: Rect2, tile: boolean, modulate?: Color, transpose?: boolean): void;
+  draw_rect(canvas_item: RID, rect: Rect2 | Rect2i, tile: boolean, modulate?: Color, transpose?: boolean): void;
   /** Draws a part of the texture using a {@link CanvasItem} with the {@link RenderingServer} API. */
-  draw_rect_region(canvas_item: RID, rect: Rect2, src_rect: Rect2, modulate?: Color, transpose?: boolean, clip_uv?: boolean): void;
+  draw_rect_region(canvas_item: RID, rect: Rect2 | Rect2i, src_rect: Rect2 | Rect2i, modulate?: Color, transpose?: boolean, clip_uv?: boolean): void;
   /** Returns the image format of the texture. */
   get_format(): int;
   /** Returns the texture height in pixels. */

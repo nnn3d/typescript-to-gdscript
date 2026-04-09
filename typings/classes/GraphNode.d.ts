@@ -21,7 +21,7 @@ declare class GraphNode extends GraphElement {
   set_title(value: string): void;
   get_title(): string;
 
-  _draw_port(slot_index: int, position: Vector2i, left: boolean, color: Color): void;
+  _draw_port(slot_index: int, position: Vector2i | Vector2, left: boolean, color: Color): void;
   /** Disables all slots of the GraphNode. This will remove all input/output ports from the GraphNode. */
   clear_all_slots(): void;
   /**

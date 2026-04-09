@@ -24,7 +24,7 @@ declare class PacketPeer extends RefCounted {
    */
   get_var(allow_objects?: boolean): unknown;
   /** Sends a raw packet. */
-  put_packet(buffer: PackedByteArray): int;
+  put_packet(buffer: PackedByteArray | Array<unknown>): int;
   /**
    * Sends a {@link Variant} as a packet. If `full_objects` is `true`, encoding objects is allowed (and can potentially include code).
    * Internally, this uses the same encoding mechanism as the {@link @GlobalScope.var_to_bytes} method.

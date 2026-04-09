@@ -62,7 +62,7 @@ declare class Line2D extends Node2D {
   get_gradient(): Gradient | null;
   set_joint_mode(value: int): void;
   get_joint_mode(): int;
-  set_points(value: PackedVector2Array): void;
+  set_points(value: PackedVector2Array | Array<unknown>): void;
   get_points(): PackedVector2Array;
   set_round_precision(value: int): void;
   get_round_precision(): int;
@@ -81,7 +81,7 @@ declare class Line2D extends Node2D {
    * Adds a point with the specified `position` relative to the polyline's own position. If no `index` is provided, the new point will be added to the end of the points array.
    * If `index` is given, the new point is inserted before the existing point identified by index `index`. The indices of the points after the new point get increased by 1. The provided `index` must not exceed the number of existing points in the polyline. See {@link get_point_count}.
    */
-  add_point(position: Vector2, index?: int): void;
+  add_point(position: Vector2 | Vector2i, index?: int): void;
   /** Removes all points from the polyline, making it empty. */
   clear_points(): void;
   /** Returns the number of points in the polyline. */
@@ -91,7 +91,7 @@ declare class Line2D extends Node2D {
   /** Removes the point at index `index` from the polyline. */
   remove_point(index: int): void;
   /** Overwrites the position of the point at the given `index` with the supplied `position`. */
-  set_point_position(index: int, position: Vector2): void;
+  set_point_position(index: int, position: Vector2 | Vector2i): void;
 
   // enum LineJointMode
   /**

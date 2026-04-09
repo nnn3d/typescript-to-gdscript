@@ -179,7 +179,7 @@ declare class NavigationAgent3D extends Node {
   get_simplify_path(): boolean;
   set_target_desired_distance(value: float): void;
   get_target_desired_distance(): float;
-  set_target_position(value: Vector3): void;
+  set_target_position(value: Vector3 | Vector3i): void;
   get_target_position(): Vector3;
   set_time_horizon_agents(value: float): void;
   get_time_horizon_agents(): float;
@@ -187,7 +187,7 @@ declare class NavigationAgent3D extends Node {
   get_time_horizon_obstacles(): float;
   set_use_3d_avoidance(value: boolean): void;
   get_use_3d_avoidance(): boolean;
-  set_velocity(value: Vector3): void;
+  set_velocity(value: Vector3 | Vector3i): void;
   get_velocity(): Vector3;
 
   /**
@@ -264,7 +264,7 @@ declare class NavigationAgent3D extends Node {
   /**
    * Replaces the internal velocity in the collision avoidance simulation with `velocity`. When an agent is teleported to a new position this function should be used in the same frame. If called frequently this function can get agents stuck.
    */
-  set_velocity_forced(velocity: Vector3): void;
+  set_velocity_forced(velocity: Vector3 | Vector3i): void;
 
   /**
    * Signals that the agent reached a navigation link. Emitted when the agent moves within {@link path_desired_distance} of the next position of the path when that position is a navigation link.

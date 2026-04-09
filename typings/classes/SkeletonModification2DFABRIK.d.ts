@@ -31,7 +31,7 @@ declare class SkeletonModification2DFABRIK extends SkeletonModification2D {
    */
   set_fabrik_joint_bone_index(joint_idx: int, bone_idx: int): void;
   /** Sets the magnet position vector for the joint at `joint_idx`. */
-  set_fabrik_joint_magnet_position(joint_idx: int, magnet_position: Vector2): void;
+  set_fabrik_joint_magnet_position(joint_idx: int, magnet_position: Vector2 | Vector2i): void;
   /**
    * Sets whether the joint at `joint_idx` will use the target node's rotation rather than letting FABRIK rotate the node.
    * **Note:** This option only works for the tip/final joint in the chain. For all other nodes, this option will be ignored.

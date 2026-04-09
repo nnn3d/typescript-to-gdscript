@@ -112,7 +112,7 @@ declare class EditorPlugin extends Node {
    * This function is called when an individual scene is about to be played in the editor. `args` is a list of command line arguments that will be passed to the new Godot instance, which will be replaced by the list returned by this function.
    * **Note:** Text that is printed in this method will not be visible in the editor's Output panel unless {@link EditorSettings.run/output/always_clear_output_on_play} is `false`.
    */
-  _run_scene(scene: string, args: PackedStringArray): PackedStringArray;
+  _run_scene(scene: string, args: PackedStringArray | Array<unknown>): PackedStringArray;
   /**
    * This method is called after the editor saves the project or when it's closed. It asks the plugin to save edited external scenes/resources.
    */

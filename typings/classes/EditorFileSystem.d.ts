@@ -22,7 +22,7 @@ declare class EditorFileSystem extends Node {
    * If the file type changed or the file was newly created, use {@link update_file} or {@link scan}.
    * **Note:** This function blocks until the import is finished. However, the main loop iteration, including timers and {@link Node._process}, will occur during the import process due to progress bar updates. Avoid calls to {@link reimport_files} or {@link scan} while an import is in progress.
    */
-  reimport_files(files: PackedStringArray): void;
+  reimport_files(files: PackedStringArray | Array<unknown>): void;
   /** Scan the filesystem for changes. */
   scan(): void;
   /** Check if the source of any imported resource changed. */

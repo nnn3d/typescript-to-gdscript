@@ -42,7 +42,7 @@ declare class DPITexture extends Texture2D {
   /** Returns this SVG texture's source code. */
   get_source(): string;
   /** Resizes the texture to the specified dimensions. */
-  set_size_override(size: Vector2i): void;
+  set_size_override(size: Vector2i | Vector2): void;
   /** Sets this SVG texture's source code. */
   set_source(source: string): void;
 }

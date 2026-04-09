@@ -48,5 +48,5 @@ declare class VideoStreamPlayback extends Resource {
   /**
    * Render `num_frames` audio frames (of {@link _get_channels} floats each) from `buffer`, starting from index `offset` in the array. Returns the number of audio frames rendered, or -1 on error.
    */
-  mix_audio(num_frames: int, buffer?: PackedFloat32Array, offset?: int): int;
+  mix_audio(num_frames: int, buffer?: PackedFloat32Array | Array<unknown>, offset?: int): int;
 }

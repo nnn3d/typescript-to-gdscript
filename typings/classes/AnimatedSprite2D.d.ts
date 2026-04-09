@@ -51,7 +51,7 @@ declare class AnimatedSprite2D extends Node2D {
   get_frame(): int;
   set_frame_progress(value: float): void;
   get_frame_progress(): float;
-  set_offset(value: Vector2): void;
+  set_offset(value: Vector2 | Vector2i): void;
   get_offset(): Vector2;
   set_speed_scale(value: float): void;
   get_speed_scale(): float;

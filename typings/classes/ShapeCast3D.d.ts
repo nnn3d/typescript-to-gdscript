@@ -53,7 +53,7 @@ declare class ShapeCast3D extends Node3D {
   get_max_results(): int;
   set_shape(value: Shape3D | null): void;
   get_shape(): Shape3D | null;
-  set_target_position(value: Vector3): void;
+  set_target_position(value: Vector3 | Vector3i): void;
   get_target_position(): Vector3;
 
   /** Adds a collision exception so the shape does not report collisions with the specified node. */

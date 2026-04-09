@@ -264,7 +264,7 @@ declare interface NativeMenu extends GodotObject {
    * Shows the global menu at `position` in the screen coordinates.
    * **Note:** This method is implemented on macOS and Windows.
    */
-  popup(rid: RID, position: Vector2i): void;
+  popup(rid: RID, position: Vector2i | Vector2): void;
   /**
    * Removes the item at index `idx` from the global menu `rid`.
    * **Note:** The indices of items after the removed item will be shifted by one.

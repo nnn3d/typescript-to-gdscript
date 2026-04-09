@@ -39,13 +39,13 @@ declare class NavigationLink2D extends Node2D {
   is_bidirectional(): boolean;
   set_enabled(value: boolean): void;
   is_enabled(): boolean;
-  set_end_position(value: Vector2): void;
+  set_end_position(value: Vector2 | Vector2i): void;
   get_end_position(): Vector2;
   set_enter_cost(value: float): void;
   get_enter_cost(): float;
   set_navigation_layers(value: int): void;
   get_navigation_layers(): int;
-  set_start_position(value: Vector2): void;
+  set_start_position(value: Vector2 | Vector2i): void;
   get_start_position(): Vector2;
   set_travel_cost(value: float): void;
   get_travel_cost(): float;
@@ -63,9 +63,9 @@ declare class NavigationLink2D extends Node2D {
   /** Returns the {@link RID} of this link on the {@link NavigationServer2D}. */
   get_rid(): RID;
   /** Sets the {@link end_position} that is relative to the link from a global `position`. */
-  set_global_end_position(position: Vector2): void;
+  set_global_end_position(position: Vector2 | Vector2i): void;
   /** Sets the {@link start_position} that is relative to the link from a global `position`. */
-  set_global_start_position(position: Vector2): void;
+  set_global_start_position(position: Vector2 | Vector2i): void;
   /**
    * Based on `value`, enables or disables the specified layer in the {@link navigation_layers} bitmask, given a `layer_number` between 1 and 32.
    */

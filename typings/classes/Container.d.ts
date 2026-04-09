@@ -22,7 +22,7 @@ declare class Container extends Control {
    */
   _get_allowed_size_flags_vertical(): PackedInt32Array;
   /** Fit a child control in a given rect. This is mainly a helper for creating custom container classes. */
-  fit_child_in_rect(child: Control, rect: Rect2): void;
+  fit_child_in_rect(child: Control, rect: Rect2 | Rect2i): void;
   /**
    * Queue resort of the contained children. This is called automatically anyway, but can be called upon request.
    */

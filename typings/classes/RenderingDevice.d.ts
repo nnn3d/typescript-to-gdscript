@@ -53,7 +53,7 @@ declare class RenderingDevice extends GodotObject {
    * - a draw list is currently active (created by {@link draw_list_begin})
    * - a compute list is currently active (created by {@link compute_list_begin})
    */
-  buffer_update(buffer: RID, offset: int, size_bytes: int, data: PackedByteArray): int;
+  buffer_update(buffer: RID, offset: int, size_bytes: int, data: PackedByteArray | Array<unknown>): int;
   /**
    * Creates a timestamp marker with the specified `name`. This is used for performance reporting with the {@link get_captured_timestamp_cpu_time}, {@link get_captured_timestamp_gpu_time} and {@link get_captured_timestamp_name} methods.
    */
@@ -87,7 +87,7 @@ declare class RenderingDevice extends GodotObject {
   /**
    * Sets the push constant data to `buffer` for the specified `compute_list`. The shader determines how this binary data is used. The buffer's size in bytes must also be specified in `size_bytes` (this can be obtained by calling the {@link PackedByteArray.size} method on the passed `buffer`).
    */
-  compute_list_set_push_constant(compute_list: int, buffer: PackedByteArray, size_bytes: int): void;
+  compute_list_set_push_constant(compute_list: int, buffer: PackedByteArray | Array<unknown>, size_bytes: int): void;
   /**
    * Creates a new compute pipeline. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
@@ -119,14 +119,14 @@ declare class RenderingDevice extends GodotObject {
    * The `breadcrumb` parameter can be an arbitrary 32-bit integer that is useful to diagnose GPU crashes. If Godot is built in dev or debug mode; when the GPU crashes Godot will dump all shaders that were being executed at the time of the crash and the breadcrumb is useful to diagnose what passes did those shaders belong to.
    * It does not affect rendering behavior and can be set to 0. It is recommended to use {@link BreadcrumbMarker} enumerations for consistency but it's not required. It is also possible to use bitwise operations to add extra data. e.g.
    */
-  draw_list_begin(framebuffer: RID, draw_flags: int, clear_color_values?: PackedColorArray, clear_depth_value?: float, clear_stencil_value?: int, region?: Rect2, breadcrumb?: int): int;
+  draw_list_begin(framebuffer: RID, draw_flags: int, clear_color_values?: PackedColorArray | Array<unknown>, clear_depth_value?: float, clear_stencil_value?: int, region?: Rect2 | Rect2i, breadcrumb?: int): int;
   /**
    * High-level variant of {@link draw_list_begin}, with the parameters automatically being adjusted for drawing onto the window specified by the `screen` ID.
    * **Note:** Cannot be used with local RenderingDevices, as these don't have a screen. If called on a local RenderingDevice, {@link draw_list_begin_for_screen} returns {@link INVALID_ID}.
    */
   draw_list_begin_for_screen(screen?: int, clear_color?: Color): int;
   /** This method does nothing and always returns an empty {@link PackedInt64Array}. */
-  draw_list_begin_split(framebuffer: RID, splits: int, initial_color_action: int, final_color_action: int, initial_depth_action: int, final_depth_action: int, clear_color_values?: PackedColorArray, clear_depth?: float, clear_stencil?: int, region?: Rect2, storage_textures?: Array<RID>): PackedInt64Array;
+  draw_list_begin_split(framebuffer: RID, splits: int, initial_color_action: int, final_color_action: int, initial_depth_action: int, final_depth_action: int, clear_color_values?: PackedColorArray | Array<unknown>, clear_depth?: float, clear_stencil?: int, region?: Rect2 | Rect2i, storage_textures?: Array<RID>): PackedInt64Array;
   /** Binds `index_array` to the specified `draw_list`. */
   draw_list_bind_index_array(draw_list: int, index_array: RID): void;
   /** Binds `render_pipeline` to the specified `draw_list`. */
@@ -140,7 +140,7 @@ declare class RenderingDevice extends GodotObject {
   /**
    * Binds a set of `vertex_buffers` directly to the specified `draw_list` using `vertex_format` without creating a vertex array RID. Provide the number of vertices in `vertex_count`; optional per-buffer byte `offsets` may also be supplied.
    */
-  draw_list_bind_vertex_buffers_format(draw_list: int, vertex_format: int, vertex_count: int, vertex_buffers: Array<RID>, offsets?: PackedInt64Array): void;
+  draw_list_bind_vertex_buffers_format(draw_list: int, vertex_format: int, vertex_count: int, vertex_buffers: Array<RID>, offsets?: PackedInt64Array | Array<unknown>): void;
   /**
    * Removes and disables the scissor rectangle for the specified `draw_list`. See also {@link draw_list_enable_scissor}.
    */
@@ -157,7 +157,7 @@ declare class RenderingDevice extends GodotObject {
    * Creates a scissor rectangle and enables it for the specified `draw_list`. Scissor rectangles are used for clipping by discarding fragments that fall outside a specified rectangular portion of the screen. See also {@link draw_list_disable_scissor}.
    * **Note:** The specified `rect` is automatically intersected with the screen's dimensions, which means it cannot exceed the screen's dimensions.
    */
-  draw_list_enable_scissor(draw_list: int, rect?: Rect2): void;
+  draw_list_enable_scissor(draw_list: int, rect?: Rect2 | Rect2i): void;
   /** Finishes a list of raster drawing commands created with the `draw_*` methods. */
   draw_list_end(): void;
   /**
@@ -167,7 +167,7 @@ declare class RenderingDevice extends GodotObject {
   /**
    * Sets the push constant data to `buffer` for the specified `draw_list`. The shader determines how this binary data is used. The buffer's size in bytes must also be specified in `size_bytes` (this can be obtained by calling the {@link PackedByteArray.size} method on the passed `buffer`).
    */
-  draw_list_set_push_constant(draw_list: int, buffer: PackedByteArray, size_bytes: int): void;
+  draw_list_set_push_constant(draw_list: int, buffer: PackedByteArray | Array<unknown>, size_bytes: int): void;
   /** Switches to the next draw pass. */
   draw_list_switch_to_next_pass(): int;
   /** This method does nothing and always returns an empty {@link PackedInt64Array}. */
@@ -182,7 +182,7 @@ declare class RenderingDevice extends GodotObject {
    * Creates a new empty framebuffer. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    */
-  framebuffer_create_empty(size: Vector2i, samples: int, validate_with_format?: int): RID;
+  framebuffer_create_empty(size: Vector2i | Vector2, samples: int, validate_with_format?: int): RID;
   /**
    * Creates a new multipass framebuffer. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
@@ -345,7 +345,7 @@ declare class RenderingDevice extends GodotObject {
    * Creates a new index buffer. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    */
-  index_buffer_create(size_indices: int, format: int, data?: PackedByteArray, use_restart_indices?: boolean, creation_bits?: int): RID;
+  index_buffer_create(size_indices: int, format: int, data?: PackedByteArray | Array<unknown>, use_restart_indices?: boolean, creation_bits?: int): RID;
   /**
    * Returns the value of the specified `limit`. This limit varies depending on the current graphics hardware (and sometimes the driver version). If the given limit is exceeded, rendering errors will occur.
    * Limits for various graphics hardware can be found in the Vulkan Hardware Database (https://vulkan.gpuinfo.org/).
@@ -366,7 +366,7 @@ declare class RenderingDevice extends GodotObject {
   /**
    * Sets the push constant data to `buffer` for the specified `raytracing_list`. The shader determines how this binary data is used. The buffer's size in bytes must also be specified in `size_bytes` (this can be obtained by calling the {@link PackedByteArray.size} method on the passed `buffer`).
    */
-  raytracing_list_set_push_constant(raytracing_list: int, buffer: PackedByteArray, size_bytes: int): void;
+  raytracing_list_set_push_constant(raytracing_list: int, buffer: PackedByteArray | Array<unknown>, size_bytes: int): void;
   /**
    * Initializes a ray tracing dispatch for the specified `raytracing_list` assembling a group of `width` x `height` rays.
    */
@@ -435,7 +435,7 @@ declare class RenderingDevice extends GodotObject {
    * Creates a new shader instance from a binary compiled shader. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method. See also {@link shader_compile_binary_from_spirv} and {@link shader_create_from_spirv}.
    */
-  shader_create_from_bytecode(binary_data: PackedByteArray, placeholder_rid?: RID): RID;
+  shader_create_from_bytecode(binary_data: PackedByteArray | Array<unknown>, placeholder_rid?: RID): RID;
   /**
    * Creates a new shader instance from SPIR-V intermediate code. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method. See also {@link shader_compile_spirv_from_source} and {@link shader_create_from_bytecode}.
@@ -453,7 +453,7 @@ declare class RenderingDevice extends GodotObject {
    * Creates a storage buffer (https://vkguide.dev/docs/chapter-4/storage_buffers/) with the specified `data` and `usage`. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    */
-  storage_buffer_create(size_bytes: int, data?: PackedByteArray, usage?: int, creation_bits?: int): RID;
+  storage_buffer_create(size_bytes: int, data?: PackedByteArray | Array<unknown>, usage?: int, creation_bits?: int): RID;
   /**
    * Pushes the frame setup and draw command buffers then marks the local device as currently processing (which allows calling {@link sync}).
    * **Note:** Only available in local RenderingDevices.
@@ -469,7 +469,7 @@ declare class RenderingDevice extends GodotObject {
    * Creates a new texture buffer. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    */
-  texture_buffer_create(size_bytes: int, format: int, data?: PackedByteArray): RID;
+  texture_buffer_create(size_bytes: int, format: int, data?: PackedByteArray | Array<unknown>): RID;
   /**
    * Clears the specified `texture` by replacing all of its pixels with the specified `color`. `base_mipmap` and `mipmap_count` determine which mipmaps of the texture are affected by this clear operation, while `base_layer` and `layer_count` determine which layers of a 3D texture (or texture array) are affected by this clear operation. For 2D textures (which only have one layer by design), `base_layer` must be `0` and `layer_count` must be `1`.
    * **Note:** `texture` can't be cleared while a draw list that uses it as part of a framebuffer is being created. Ensure the draw list is finalized (and that the color/depth texture using it is not set to {@link FINAL_ACTION_CONTINUE}) to clear this texture.
@@ -483,7 +483,7 @@ declare class RenderingDevice extends GodotObject {
    * **Note:** `to_texture` requires the {@link TEXTURE_USAGE_CAN_COPY_TO_BIT} to be retrieved.
    * **Note:** `from_texture` and `to_texture` must be of the same type (color or depth).
    */
-  texture_copy(from_texture: RID, to_texture: RID, from_pos: Vector3, to_pos: Vector3, size: Vector3, src_mipmap: int, dst_mipmap: int, src_layer: int, dst_layer: int): int;
+  texture_copy(from_texture: RID, to_texture: RID, from_pos: Vector3 | Vector3i, to_pos: Vector3 | Vector3i, size: Vector3 | Vector3i, src_mipmap: int, dst_mipmap: int, src_layer: int, dst_layer: int): int;
   /**
    * Creates a new texture. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
@@ -562,7 +562,7 @@ declare class RenderingDevice extends GodotObject {
    * **Note:** The existing `texture` can't be updated while a draw list that uses it as part of a framebuffer is being created. Ensure the draw list is finalized (and that the color/depth texture using it is not set to {@link FINAL_ACTION_CONTINUE}) to update this texture.
    * **Note:** The existing `texture` requires the {@link TEXTURE_USAGE_CAN_UPDATE_BIT} to be updatable.
    */
-  texture_update(texture: RID, layer: int, data: PackedByteArray): int;
+  texture_update(texture: RID, layer: int, data: PackedByteArray | Array<unknown>): int;
   /**
    * Creates a new Top Level Acceleration Structure. It can be accessed with the RID that is returned.
    * The instances buffer passed as input is expected to be filled before building the TLAS.
@@ -582,7 +582,7 @@ declare class RenderingDevice extends GodotObject {
    * Creates a new uniform buffer. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    */
-  uniform_buffer_create(size_bytes: int, data?: PackedByteArray, creation_bits?: int): RID;
+  uniform_buffer_create(size_bytes: int, data?: PackedByteArray | Array<unknown>, creation_bits?: int): RID;
   /**
    * Creates a new uniform set. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
@@ -596,12 +596,12 @@ declare class RenderingDevice extends GodotObject {
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    * This will be freed automatically when any of the `src_buffers` is freed.
    */
-  vertex_array_create(vertex_count: int, vertex_format: int, src_buffers: Array<RID>, offsets?: PackedInt64Array): RID;
+  vertex_array_create(vertex_count: int, vertex_format: int, src_buffers: Array<RID>, offsets?: PackedInt64Array | Array<unknown>): RID;
   /**
    * Creates a new vertex buffer. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    */
-  vertex_buffer_create(size_bytes: int, data?: PackedByteArray, creation_bits?: int): RID;
+  vertex_buffer_create(size_bytes: int, data?: PackedByteArray | Array<unknown>, creation_bits?: int): RID;
   /**
    * Creates a new vertex format with the specified `vertex_descriptions`. Returns a unique vertex format ID corresponding to the newly created vertex format.
    */

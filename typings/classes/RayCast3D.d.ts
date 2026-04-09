@@ -54,7 +54,7 @@ declare class RayCast3D extends Node3D {
   is_hit_back_faces_enabled(): boolean;
   set_hit_from_inside(value: boolean): void;
   is_hit_from_inside_enabled(): boolean;
-  set_target_position(value: Vector3): void;
+  set_target_position(value: Vector3 | Vector3i): void;
   get_target_position(): Vector3;
 
   /** Adds a collision exception so the ray does not report collisions with the specified `node`. */

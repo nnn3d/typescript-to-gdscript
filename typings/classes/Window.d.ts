@@ -187,7 +187,7 @@ declare class Window extends Viewport {
   get_content_scale_factor(): float;
   set_content_scale_mode(value: int): void;
   get_content_scale_mode(): int;
-  set_content_scale_size(value: Vector2i): void;
+  set_content_scale_size(value: Vector2i | Vector2): void;
   get_content_scale_size(): Vector2i;
   set_content_scale_stretch(value: int): void;
   get_content_scale_stretch(): int;
@@ -203,19 +203,19 @@ declare class Window extends Viewport {
   get_initial_position(): int;
   set_keep_title_visible(value: boolean): void;
   get_keep_title_visible(): boolean;
-  set_max_size(value: Vector2i): void;
+  set_max_size(value: Vector2i | Vector2): void;
   get_max_size(): Vector2i;
-  set_min_size(value: Vector2i): void;
+  set_min_size(value: Vector2i | Vector2): void;
   get_min_size(): Vector2i;
   set_mode(value: int): void;
   get_mode(): int;
-  set_mouse_passthrough_polygon(value: PackedVector2Array): void;
+  set_mouse_passthrough_polygon(value: PackedVector2Array | Array<unknown>): void;
   get_mouse_passthrough_polygon(): PackedVector2Array;
-  set_nonclient_area(value: Rect2i): void;
+  set_nonclient_area(value: Rect2i | Rect2): void;
   get_nonclient_area(): Rect2i;
-  set_position(value: Vector2i): void;
+  set_position(value: Vector2i | Vector2): void;
   get_position(): Vector2i;
-  set_size(value: Vector2i): void;
+  set_size(value: Vector2i | Vector2): void;
   get_size(): Vector2i;
   set_theme(value: Theme | null): void;
   get_theme(): Theme | null;
@@ -438,17 +438,17 @@ declare class Window extends Viewport {
    * If {@link ProjectSettings.display/window/subwindows/embed_subwindows} is `false` (multi-window mode), `rect`'s coordinates are global and relative to the top-left corner of the leftmost screen. If `rect`'s position coordinates are negative, the window will be placed at the top-left corner of the screen.
    * **Note:** `rect` must be in global coordinates if specified.
    */
-  popup(rect?: Rect2i): void;
+  popup(rect?: Rect2i | Rect2): void;
   /**
    * Popups the {@link Window} at the center of the current screen, with optionally given minimum size. If the {@link Window} is embedded, it will be centered in the parent {@link Viewport} instead.
    * **Note:** Calling it with the default value of `minsize` is equivalent to calling it with {@link size}.
    */
-  popup_centered(minsize?: Vector2i): void;
+  popup_centered(minsize?: Vector2i | Vector2): void;
   /**
    * Popups the {@link Window} centered inside its parent {@link Window}. `fallback_ratio` determines the maximum size of the {@link Window}, in relation to its parent.
    * **Note:** Calling it with the default value of `minsize` is equivalent to calling it with {@link size}.
    */
-  popup_centered_clamped(minsize?: Vector2i, fallback_ratio?: float): void;
+  popup_centered_clamped(minsize?: Vector2i | Vector2, fallback_ratio?: float): void;
   /**
    * If {@link Window} is embedded, popups the {@link Window} centered inside its embedder and sets its size as a `ratio` of embedder's size.
    * If {@link Window} is a native window, popups the {@link Window} centered inside the screen of its parent {@link Window} and sets its size as a `ratio` of the screen size.
@@ -458,17 +458,17 @@ declare class Window extends Viewport {
    * Attempts to parent this dialog to the last exclusive window relative to `from_node`, and then calls {@link Window.popup} on it. The dialog must have no current parent, otherwise the method fails.
    * See also {@link set_unparent_when_invisible} and {@link Node.get_last_exclusive_window}.
    */
-  popup_exclusive(from_node: Node, rect?: Rect2i): void;
+  popup_exclusive(from_node: Node, rect?: Rect2i | Rect2): void;
   /**
    * Attempts to parent this dialog to the last exclusive window relative to `from_node`, and then calls {@link Window.popup_centered} on it. The dialog must have no current parent, otherwise the method fails.
    * See also {@link set_unparent_when_invisible} and {@link Node.get_last_exclusive_window}.
    */
-  popup_exclusive_centered(from_node: Node, minsize?: Vector2i): void;
+  popup_exclusive_centered(from_node: Node, minsize?: Vector2i | Vector2): void;
   /**
    * Attempts to parent this dialog to the last exclusive window relative to `from_node`, and then calls {@link Window.popup_centered_clamped} on it. The dialog must have no current parent, otherwise the method fails.
    * See also {@link set_unparent_when_invisible} and {@link Node.get_last_exclusive_window}.
    */
-  popup_exclusive_centered_clamped(from_node: Node, minsize?: Vector2i, fallback_ratio?: float): void;
+  popup_exclusive_centered_clamped(from_node: Node, minsize?: Vector2i | Vector2, fallback_ratio?: float): void;
   /**
    * Attempts to parent this dialog to the last exclusive window relative to `from_node`, and then calls {@link Window.popup_centered_ratio} on it. The dialog must have no current parent, otherwise the method fails.
    * See also {@link set_unparent_when_invisible} and {@link Node.get_last_exclusive_window}.
@@ -478,11 +478,11 @@ declare class Window extends Viewport {
    * Attempts to parent this dialog to the last exclusive window relative to `from_node`, and then calls {@link Window.popup_on_parent} on it. The dialog must have no current parent, otherwise the method fails.
    * See also {@link set_unparent_when_invisible} and {@link Node.get_last_exclusive_window}.
    */
-  popup_exclusive_on_parent(from_node: Node, parent_rect: Rect2i): void;
+  popup_exclusive_on_parent(from_node: Node, parent_rect: Rect2i | Rect2): void;
   /**
    * Popups the {@link Window} with a position shifted by parent {@link Window}'s position. If the {@link Window} is embedded, has the same effect as {@link popup}.
    */
-  popup_on_parent(parent_rect: Rect2i): void;
+  popup_on_parent(parent_rect: Rect2i | Rect2): void;
   /**
    * Removes a local override for a theme {@link Color} with the specified `name` previously added by {@link add_theme_color_override} or via the Inspector dock.
    */
@@ -520,7 +520,7 @@ declare class Window extends Viewport {
   /** If `active` is `true`, enables system's native IME (Input Method Editor). */
   set_ime_active(active: boolean): void;
   /** Moves IME to the given position. */
-  set_ime_position(position: Vector2i): void;
+  set_ime_position(position: Vector2i | Vector2): void;
   /**
    * Sets layout direction and text writing direction. Right-to-left layouts are necessary for certain languages (e.g. Arabic and Hebrew).
    */

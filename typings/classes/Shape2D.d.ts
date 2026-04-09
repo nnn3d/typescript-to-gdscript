@@ -27,14 +27,14 @@ declare class Shape2D extends Resource {
    * Returns whether this shape would collide with another, if a given movement was applied.
    * This method needs the transformation matrix for this shape (`local_xform`), the movement to test on this shape (`local_motion`), the shape to check collisions with (`with_shape`), the transformation matrix of that shape (`shape_xform`), and the movement to test onto the other object (`shape_motion`).
    */
-  collide_with_motion(local_xform: Transform2D, local_motion: Vector2, with_shape: Shape2D, shape_xform: Transform2D, shape_motion: Vector2): boolean;
+  collide_with_motion(local_xform: Transform2D, local_motion: Vector2 | Vector2i, with_shape: Shape2D, shape_xform: Transform2D, shape_motion: Vector2 | Vector2i): boolean;
   /**
    * Returns a list of contact point pairs where this shape would touch another, if a given movement was applied.
    * If there would be no collisions, the returned list is empty. Otherwise, the returned list contains contact points arranged in pairs, with entries alternating between points on the boundary of this shape and points on the boundary of `with_shape`.
    * A collision pair A, B can be used to calculate the collision normal with `(B - A).normalized()`, and the collision depth with `(B - A).length()`. This information is typically used to separate shapes, particularly in collision solvers.
    * This method needs the transformation matrix for this shape (`local_xform`), the movement to test on this shape (`local_motion`), the shape to check collisions with (`with_shape`), the transformation matrix of that shape (`shape_xform`), and the movement to test onto the other object (`shape_motion`).
    */
-  collide_with_motion_and_get_contacts(local_xform: Transform2D, local_motion: Vector2, with_shape: Shape2D, shape_xform: Transform2D, shape_motion: Vector2): PackedVector2Array;
+  collide_with_motion_and_get_contacts(local_xform: Transform2D, local_motion: Vector2 | Vector2i, with_shape: Shape2D, shape_xform: Transform2D, shape_motion: Vector2 | Vector2i): PackedVector2Array;
   /**
    * Draws a solid shape onto a {@link CanvasItem} with the {@link RenderingServer} API filled with the specified `color`. The exact drawing method is specific for each shape and cannot be configured.
    */

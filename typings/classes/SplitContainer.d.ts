@@ -66,7 +66,7 @@ declare class SplitContainer extends Container {
   is_dragging_enabled(): boolean;
   set_split_offset(value: int): void;
   get_split_offset(): int;
-  set_split_offsets(value: PackedInt32Array): void;
+  set_split_offsets(value: PackedInt32Array | Array<unknown>): void;
   get_split_offsets(): PackedInt32Array;
   set_touch_dragger_enabled(value: boolean): void;
   is_touch_dragger_enabled(): boolean;

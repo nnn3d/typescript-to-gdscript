@@ -162,13 +162,13 @@ declare class NavigationAgent2D extends Node {
   get_simplify_path(): boolean;
   set_target_desired_distance(value: float): void;
   get_target_desired_distance(): float;
-  set_target_position(value: Vector2): void;
+  set_target_position(value: Vector2 | Vector2i): void;
   get_target_position(): Vector2;
   set_time_horizon_agents(value: float): void;
   get_time_horizon_agents(): float;
   set_time_horizon_obstacles(value: float): void;
   get_time_horizon_obstacles(): float;
-  set_velocity(value: Vector2): void;
+  set_velocity(value: Vector2 | Vector2i): void;
   get_velocity(): Vector2;
 
   /**
@@ -245,7 +245,7 @@ declare class NavigationAgent2D extends Node {
   /**
    * Replaces the internal velocity in the collision avoidance simulation with `velocity`. When an agent is teleported to a new position this function should be used in the same frame. If called frequently this function can get agents stuck.
    */
-  set_velocity_forced(velocity: Vector2): void;
+  set_velocity_forced(velocity: Vector2 | Vector2i): void;
 
   /**
    * Signals that the agent reached a navigation link. Emitted when the agent moves within {@link path_desired_distance} of the next position of the path when that position is a navigation link.

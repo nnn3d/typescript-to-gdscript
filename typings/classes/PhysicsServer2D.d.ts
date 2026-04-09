@@ -109,12 +109,12 @@ declare interface PhysicsServer2D extends GodotObject {
    * Adds a constant directional force to the body. The force does not affect rotation. The force remains applied over time until cleared with `PhysicsServer2D.body_set_constant_force(body, Vector2(0, 0))`.
    * This is equivalent to using {@link body_add_constant_force} at the body's center of mass.
    */
-  body_add_constant_central_force(body: RID, force: Vector2): void;
+  body_add_constant_central_force(body: RID, force: Vector2 | Vector2i): void;
   /**
    * Adds a constant positioned force to the body. The force can affect rotation if `position` is different from the body's center of mass. The force remains applied over time until cleared with `PhysicsServer2D.body_set_constant_force(body, Vector2(0, 0))`.
    * `position` is the offset from the body origin in global coordinates.
    */
-  body_add_constant_force(body: RID, force: Vector2, position?: Vector2): void;
+  body_add_constant_force(body: RID, force: Vector2 | Vector2i, position?: Vector2 | Vector2i): void;
   /**
    * Adds a constant rotational force to the body. The force does not affect position. The force remains applied over time until cleared with `PhysicsServer2D.body_set_constant_torque(body, 0)`.
    */
@@ -127,24 +127,24 @@ declare interface PhysicsServer2D extends GodotObject {
    * Applies a directional force to the body, at the body's center of mass. The force does not affect rotation. A force is time dependent and meant to be applied every physics update.
    * This is equivalent to using {@link body_apply_force} at the body's center of mass.
    */
-  body_apply_central_force(body: RID, force: Vector2): void;
+  body_apply_central_force(body: RID, force: Vector2 | Vector2i): void;
   /**
    * Applies a directional impulse to the body, at the body's center of mass. The impulse does not affect rotation.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * This is equivalent to using {@link body_apply_impulse} at the body's center of mass.
    */
-  body_apply_central_impulse(body: RID, impulse: Vector2): void;
+  body_apply_central_impulse(body: RID, impulse: Vector2 | Vector2i): void;
   /**
    * Applies a positioned force to the body. The force can affect rotation if `position` is different from the body's center of mass. A force is time dependent and meant to be applied every physics update.
    * `position` is the offset from the body origin in global coordinates.
    */
-  body_apply_force(body: RID, force: Vector2, position?: Vector2): void;
+  body_apply_force(body: RID, force: Vector2 | Vector2i, position?: Vector2 | Vector2i): void;
   /**
    * Applies a positioned impulse to the body. The impulse can affect rotation if `position` is different from the body's center of mass.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * `position` is the offset from the body origin in global coordinates.
    */
-  body_apply_impulse(body: RID, impulse: Vector2, position?: Vector2): void;
+  body_apply_impulse(body: RID, impulse: Vector2 | Vector2i, position?: Vector2 | Vector2i): void;
   /**
    * Applies a rotational force to the body. The force does not affect position. A force is time dependent and meant to be applied every physics update.
    */
@@ -242,7 +242,7 @@ declare interface PhysicsServer2D extends GodotObject {
   /**
    * Modifies the body's linear velocity so that its projection to the axis `axis_velocity.normalized()` is exactly `axis_velocity.length()`. This is useful for jumping behavior.
    */
-  body_set_axis_velocity(body: RID, axis_velocity: Vector2): void;
+  body_set_axis_velocity(body: RID, axis_velocity: Vector2 | Vector2i): void;
   /** Sets the physics layer or layers the body belongs to, via a bitmask. */
   body_set_collision_layer(body: RID, layer: int): void;
   /** Sets the physics layer or layers the body can collide with, via a bitmask. */
@@ -255,7 +255,7 @@ declare interface PhysicsServer2D extends GodotObject {
    * Sets the body's total constant positional force applied during each physics update.
    * See {@link body_add_constant_force} and {@link body_add_constant_central_force}.
    */
-  body_set_constant_force(body: RID, force: Vector2): void;
+  body_set_constant_force(body: RID, force: Vector2 | Vector2i): void;
   /**
    * Sets the body's total constant rotational force applied during each physics update.
    * See {@link body_add_constant_torque}.
@@ -295,7 +295,7 @@ declare interface PhysicsServer2D extends GodotObject {
   /**
    * Sets the one-way collision properties of the body's shape with the given index. If `enable` is `true`, the one-way collision direction given by `direction` in the shape's local space (that is `body_get_shape_transform(body, shape_idx).basis_xform(direction).normalized()` in the body's local space) will be used to ignore collisions with the shape in the opposite direction, and to ensure depenetration of kinematic bodies happens in this direction.
    */
-  body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float, direction?: Vector2): void;
+  body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float, direction?: Vector2 | Vector2i): void;
   /**
    * Sets the disabled property of the body's shape with the given index. If `disabled` is `true`, then the shape will be ignored in all collision detection.
    */
@@ -370,13 +370,13 @@ declare interface PhysicsServer2D extends GodotObject {
   /**
    * Makes the joint a damped spring joint, attached at the point `anchor_a` (given in global coordinates) on the body `body_a` and at the point `anchor_b` (given in global coordinates) on the body `body_b`. To set the parameters which are specific to the damped spring, see {@link damped_spring_joint_set_param}.
    */
-  joint_make_damped_spring(joint: RID, anchor_a: Vector2, anchor_b: Vector2, body_a: RID, body_b?: RID): void;
+  joint_make_damped_spring(joint: RID, anchor_a: Vector2 | Vector2i, anchor_b: Vector2 | Vector2i, body_a: RID, body_b?: RID): void;
   /** Makes the joint a groove joint. */
-  joint_make_groove(joint: RID, groove1_a: Vector2, groove2_a: Vector2, anchor_b: Vector2, body_a?: RID, body_b?: RID): void;
+  joint_make_groove(joint: RID, groove1_a: Vector2 | Vector2i, groove2_a: Vector2 | Vector2i, anchor_b: Vector2 | Vector2i, body_a?: RID, body_b?: RID): void;
   /**
    * Makes the joint a pin joint. If `body_b` is an empty {@link RID}, then `body_a` is pinned to the point `anchor` (given in global coordinates); otherwise, `body_a` is pinned to `body_b` at the point `anchor` (given in global coordinates). To set the parameters which are specific to the pin joint, see {@link pin_joint_set_param}.
    */
-  joint_make_pin(joint: RID, anchor: Vector2, body_a: RID, body_b?: RID): void;
+  joint_make_pin(joint: RID, anchor: Vector2 | Vector2i, body_a: RID, body_b?: RID): void;
   /** Sets the value of the given joint parameter. */
   joint_set_param(joint: RID, param: int, value: float): void;
   /** Gets a pin joint flag. */

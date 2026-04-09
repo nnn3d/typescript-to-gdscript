@@ -8,6 +8,6 @@ declare class PolygonOccluder3D extends Occluder3D {
    * The polygon must *not* have intersecting lines. Otherwise, triangulation will fail (with an error message printed).
    */
   polygon: PackedVector2Array;
-  set_polygon(value: PackedVector2Array): void;
+  set_polygon(value: PackedVector2Array | Array<unknown>): void;
   get_polygon(): PackedVector2Array;
 }

@@ -19,7 +19,7 @@ declare interface Vector4 {
   /**
    * Returns a new vector with all components clamped between the components of `min` and `max`, by running {@link @GlobalScope.clamp} on each component.
    */
-  clamp(min: Vector4, max: Vector4): Vector4;
+  clamp(min: Vector4 | Vector4i, max: Vector4 | Vector4i): Vector4;
   /**
    * Returns a new vector with all components clamped between `min` and `max`, by running {@link @GlobalScope.clamp} on each component.
    */
@@ -27,25 +27,25 @@ declare interface Vector4 {
   /**
    * Performs a cubic interpolation between this vector and `b` using `pre_a` and `post_b` as handles, and returns the result at position `weight`. `weight` is on the range of 0.0 to 1.0, representing the amount of interpolation.
    */
-  cubic_interpolate(b: Vector4, pre_a: Vector4, post_b: Vector4, weight: float): Vector4;
+  cubic_interpolate(b: Vector4 | Vector4i, pre_a: Vector4 | Vector4i, post_b: Vector4 | Vector4i, weight: float): Vector4;
   /**
    * Performs a cubic interpolation between this vector and `b` using `pre_a` and `post_b` as handles, and returns the result at position `weight`. `weight` is on the range of 0.0 to 1.0, representing the amount of interpolation.
    * It can perform smoother interpolation than {@link cubic_interpolate} by the time values.
    */
-  cubic_interpolate_in_time(b: Vector4, pre_a: Vector4, post_b: Vector4, weight: float, b_t: float, pre_a_t: float, post_b_t: float): Vector4;
+  cubic_interpolate_in_time(b: Vector4 | Vector4i, pre_a: Vector4 | Vector4i, post_b: Vector4 | Vector4i, weight: float, b_t: float, pre_a_t: float, post_b_t: float): Vector4;
   /**
    * Returns the normalized vector pointing from this vector to `to`. This is equivalent to using `(b - a).normalized()`.
    */
-  direction_to(to: Vector4): Vector4;
+  direction_to(to: Vector4 | Vector4i): Vector4;
   /**
    * Returns the squared distance between this vector and `to`.
    * This method runs faster than {@link distance_to}, so prefer it if you need to compare vectors or need the squared distance for some formula.
    */
-  distance_squared_to(to: Vector4): float;
+  distance_squared_to(to: Vector4 | Vector4i): float;
   /** Returns the distance between this vector and `to`. */
-  distance_to(to: Vector4): float;
+  distance_to(to: Vector4 | Vector4i): float;
   /** Returns the dot product of this vector and `with`. */
-  dot(with_: Vector4): float;
+  dot(with_: Vector4 | Vector4i): float;
   /** Returns a new vector with all components rounded down (towards negative infinity). */
   floor(): Vector4;
   /**
@@ -55,7 +55,7 @@ declare interface Vector4 {
   /**
    * Returns `true` if this vector and `to` are approximately equal, by running {@link @GlobalScope.is_equal_approx} on each component.
    */
-  is_equal_approx(to: Vector4): boolean;
+  is_equal_approx(to: Vector4 | Vector4i): boolean;
   /**
    * Returns `true` if this vector is finite, by calling {@link @GlobalScope.is_finite} on each component.
    */
@@ -77,11 +77,11 @@ declare interface Vector4 {
   /**
    * Returns the result of the linear interpolation between this vector and `to` by amount `weight`. `weight` is on the range of `0.0` to `1.0`, representing the amount of interpolation.
    */
-  lerp(to: Vector4, weight: float): Vector4;
+  lerp(to: Vector4 | Vector4i, weight: float): Vector4;
   /**
    * Returns the component-wise maximum of this and `with`, equivalent to `Vector4(maxf(x, with.x), maxf(y, with.y), maxf(z, with.z), maxf(w, with.w))`.
    */
-  max(with_: Vector4): Vector4;
+  max(with_: Vector4 | Vector4i): Vector4;
   /**
    * Returns the axis of the vector's highest value. See `AXIS_*` constants. If all components are equal, this method returns {@link AXIS_X}.
    */
@@ -93,7 +93,7 @@ declare interface Vector4 {
   /**
    * Returns the component-wise minimum of this and `with`, equivalent to `Vector4(minf(x, with.x), minf(y, with.y), minf(z, with.z), minf(w, with.w))`.
    */
-  min(with_: Vector4): Vector4;
+  min(with_: Vector4 | Vector4i): Vector4;
   /**
    * Returns the axis of the vector's lowest value. See `AXIS_*` constants. If all components are equal, this method returns {@link AXIS_W}.
    */
@@ -114,7 +114,7 @@ declare interface Vector4 {
   /**
    * Returns a vector composed of the {@link @GlobalScope.fposmod} of this vector's components and `modv`'s components.
    */
-  posmodv(modv: Vector4): Vector4;
+  posmodv(modv: Vector4 | Vector4i): Vector4;
   /**
    * Returns a new vector with all components rounded to the nearest integer, with halfway cases rounded away from zero.
    */
@@ -126,7 +126,7 @@ declare interface Vector4 {
   /**
    * Returns a new vector with each component snapped to the nearest multiple of the corresponding component in `step`. This can also be used to round the components to an arbitrary number of decimals.
    */
-  snapped(step: Vector4): Vector4;
+  snapped(step: Vector4 | Vector4i): Vector4;
   /**
    * Returns a new vector with each component snapped to the nearest multiple of `step`. This can also be used to round the components to an arbitrary number of decimals.
    */

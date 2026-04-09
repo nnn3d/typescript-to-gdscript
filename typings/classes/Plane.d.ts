@@ -23,13 +23,13 @@ declare interface Plane {
   /**
    * Returns the shortest distance from the plane to the position `point`. If the point is above the plane, the distance will be positive. If below, the distance will be negative.
    */
-  distance_to(point: Vector3): float;
+  distance_to(point: Vector3 | Vector3i): float;
   /** Returns the center of the plane. */
   get_center(): Vector3;
   /**
    * Returns `true` if `point` is inside the plane. Comparison uses a custom minimum `tolerance` threshold.
    */
-  has_point(point: Vector3, tolerance?: float): boolean;
+  has_point(point: Vector3 | Vector3i, tolerance?: float): boolean;
   /**
    * Returns the intersection point of the three planes `b`, `c` and this plane. If no intersection is found, `null` is returned.
    */
@@ -37,11 +37,11 @@ declare interface Plane {
   /**
    * Returns the intersection point of a ray consisting of the position `from` and the direction normal `dir` with this plane. If no intersection is found, `null` is returned.
    */
-  intersects_ray(from_: Vector3, dir: Vector3): unknown;
+  intersects_ray(from_: Vector3 | Vector3i, dir: Vector3 | Vector3i): unknown;
   /**
    * Returns the intersection point of a segment from position `from` to position `to` with this plane. If no intersection is found, `null` is returned.
    */
-  intersects_segment(from_: Vector3, to: Vector3): unknown;
+  intersects_segment(from_: Vector3 | Vector3i, to: Vector3 | Vector3i): unknown;
   /**
    * Returns `true` if this plane and `to_plane` are approximately equal, by running {@link @GlobalScope.is_equal_approx} on each component.
    */
@@ -51,13 +51,13 @@ declare interface Plane {
    */
   is_finite(): boolean;
   /** Returns `true` if `point` is located above the plane. */
-  is_point_over(point: Vector3): boolean;
+  is_point_over(point: Vector3 | Vector3i): boolean;
   /**
    * Returns a copy of the plane, with normalized {@link normal} (so it's a unit vector). Returns `Plane(0, 0, 0, 0)` if {@link normal} can't be normalized (it has zero length).
    */
   normalized(): Plane;
   /** Returns the orthogonal projection of `point` into a point in the plane. */
-  project(point: Vector3): Vector3;
+  project(point: Vector3 | Vector3i): Vector3;
 
   // Operator overloads
   [__ops_ne]: { right: Plane; ret: boolean };

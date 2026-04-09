@@ -41,9 +41,9 @@ declare class NavigationObstacle2D extends Node2D {
   get_carve_navigation_mesh(): boolean;
   set_radius(value: float): void;
   get_radius(): float;
-  set_velocity(value: Vector2): void;
+  set_velocity(value: Vector2 | Vector2i): void;
   get_velocity(): Vector2;
-  set_vertices(value: PackedVector2Array): void;
+  set_vertices(value: PackedVector2Array | Array<unknown>): void;
   get_vertices(): PackedVector2Array;
 
   /**

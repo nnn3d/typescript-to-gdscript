@@ -6,7 +6,7 @@ declare class KinematicCollision2D extends RefCounted {
   /**
    * Returns the collision angle according to `up_direction`, which is {@link Vector2.UP} by default. This value is always positive.
    */
-  get_angle(up_direction?: Vector2): float;
+  get_angle(up_direction?: Vector2 | Vector2i): float;
   /** Returns the colliding body's attached {@link Object}. */
   get_collider(): GodotObject | null;
   /**

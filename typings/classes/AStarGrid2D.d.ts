@@ -42,7 +42,7 @@ declare class AStarGrid2D extends RefCounted {
   size: Vector2i;
   set_cell_shape(value: int): void;
   get_cell_shape(): int;
-  set_cell_size(value: Vector2): void;
+  set_cell_size(value: Vector2 | Vector2i): void;
   get_cell_size(): Vector2;
   set_default_compute_heuristic(value: int): void;
   get_default_compute_heuristic(): int;
@@ -52,46 +52,46 @@ declare class AStarGrid2D extends RefCounted {
   get_diagonal_mode(): int;
   set_jumping_enabled(value: boolean): void;
   is_jumping_enabled(): boolean;
-  set_offset(value: Vector2): void;
+  set_offset(value: Vector2 | Vector2i): void;
   get_offset(): Vector2;
-  set_region(value: Rect2i): void;
+  set_region(value: Rect2i | Rect2): void;
   get_region(): Rect2i;
-  set_size(value: Vector2i): void;
+  set_size(value: Vector2i | Vector2): void;
   get_size(): Vector2i;
 
   /**
    * Called when computing the cost between two connected points.
    * Note that this function is hidden in the default {@link AStarGrid2D} class.
    */
-  _compute_cost(from_id: Vector2i, to_id: Vector2i): float;
+  _compute_cost(from_id: Vector2i | Vector2, to_id: Vector2i | Vector2): float;
   /**
    * Called when estimating the cost between a point and the path's ending point.
    * Note that this function is hidden in the default {@link AStarGrid2D} class.
    */
-  _estimate_cost(from_id: Vector2i, end_id: Vector2i): float;
+  _estimate_cost(from_id: Vector2i | Vector2, end_id: Vector2i | Vector2): float;
   /** Clears the grid and sets the {@link region} to `Rect2i(0, 0, 0, 0)`. */
   clear(): void;
   /**
    * Fills the given `region` on the grid with the specified value for the solid flag.
    * **Note:** Calling {@link update} is not needed after the call of this function.
    */
-  fill_solid_region(region: Rect2i, solid?: boolean): void;
+  fill_solid_region(region: Rect2i | Rect2, solid?: boolean): void;
   /**
    * Fills the given `region` on the grid with the specified value for the weight scale.
    * **Note:** Calling {@link update} is not needed after the call of this function.
    */
-  fill_weight_scale_region(region: Rect2i, weight_scale: float): void;
+  fill_weight_scale_region(region: Rect2i | Rect2, weight_scale: float): void;
   /**
    * Returns an array with the IDs of the points that form the path found by AStar2D between the given points. The array is ordered from the starting point to the ending point of the path.
    * If `from_id` point is disabled, returns an empty array (even if `from_id == to_id`).
    * If `from_id` point is not disabled, there is no valid path to the target, and `allow_partial_path` is `true`, returns a path to the point closest to the target that can be reached.
    * **Note:** When `allow_partial_path` is `true` and `to_id` is solid the search may take an unusually long time to finish.
    */
-  get_id_path(from_id: Vector2i, to_id: Vector2i, allow_partial_path?: boolean): Array<Vector2i>;
+  get_id_path(from_id: Vector2i | Vector2, to_id: Vector2i | Vector2, allow_partial_path?: boolean): Array<Vector2i>;
   /**
    * Returns an array of dictionaries with point data (`id`: {@link Vector2i}, `position`: {@link Vector2}, `solid`: [bool], `weight_scale`: [float]) within a `region`.
    */
-  get_point_data_in_region(region: Rect2i): Array<Dictionary>;
+  get_point_data_in_region(region: Rect2i | Rect2): Array<Dictionary>;
   /**
    * Returns an array with the points that are in the path found by {@link AStarGrid2D} between the given points. The array is ordered from the starting point to the ending point of the path.
    * If `from_id` point is disabled, returns an empty array (even if `from_id == to_id`).
@@ -99,11 +99,11 @@ declare class AStarGrid2D extends RefCounted {
    * **Note:** This method is not thread-safe; it can only be used from a single {@link Thread} at a given time. Consider using {@link Mutex} to ensure exclusive access to one thread to avoid race conditions.
    * Additionally, when `allow_partial_path` is `true` and `to_id` is solid the search may take an unusually long time to finish.
    */
-  get_point_path(from_id: Vector2i, to_id: Vector2i, allow_partial_path?: boolean): PackedVector2Array;
+  get_point_path(from_id: Vector2i | Vector2, to_id: Vector2i | Vector2, allow_partial_path?: boolean): PackedVector2Array;
   /** Returns the position of the point associated with the given `id`. */
-  get_point_position(id: Vector2i): Vector2;
+  get_point_position(id: Vector2i | Vector2): Vector2;
   /** Returns the weight scale of the point associated with the given `id`. */
-  get_point_weight_scale(id: Vector2i): float;
+  get_point_weight_scale(id: Vector2i | Vector2): float;
   /** Indicates that the grid parameters were changed and {@link update} needs to be called. */
   is_dirty(): boolean;
   /**
@@ -113,19 +113,19 @@ declare class AStarGrid2D extends RefCounted {
   /**
    * Returns `true` if the `id` vector is a valid grid coordinate, i.e. if it is inside {@link region}. Equivalent to `region.has_point(id)`.
    */
-  is_in_boundsv(id: Vector2i): boolean;
+  is_in_boundsv(id: Vector2i | Vector2): boolean;
   /** Returns `true` if a point is disabled for pathfinding. By default, all points are enabled. */
-  is_point_solid(id: Vector2i): boolean;
+  is_point_solid(id: Vector2i | Vector2): boolean;
   /**
    * Disables or enables the specified point for pathfinding. Useful for making an obstacle. By default, all points are enabled.
    * **Note:** Calling {@link update} is not needed after the call of this function.
    */
-  set_point_solid(id: Vector2i, solid?: boolean): void;
+  set_point_solid(id: Vector2i | Vector2, solid?: boolean): void;
   /**
    * Sets the `weight_scale` for the point with the given `id`. The `weight_scale` is multiplied by the result of {@link _compute_cost} when determining the overall cost of traveling across a segment from a neighboring point to this point.
    * **Note:** Calling {@link update} is not needed after the call of this function.
    */
-  set_point_weight_scale(id: Vector2i, weight_scale: float): void;
+  set_point_weight_scale(id: Vector2i | Vector2, weight_scale: float): void;
   /**
    * Updates the internal state of the grid according to the parameters to prepare it to search the path. Needs to be called if parameters like {@link region}, {@link cell_size} or {@link offset} are changed. {@link is_dirty} will return `true` if this is the case and this needs to be called.
    * **Note:** All point data (solidity and weight scale) will be cleared.

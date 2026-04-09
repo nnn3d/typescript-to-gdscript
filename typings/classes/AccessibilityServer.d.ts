@@ -42,7 +42,7 @@ declare interface AccessibilityServer extends GodotObject {
    * **Note:** This method is implemented on Linux, macOS, and Windows.
    * **Note:** Advanced users only! {@link Window} objects call this method automatically.
    */
-  set_window_rect(window_id: int, rect_out: Rect2, rect_in: Rect2): void;
+  set_window_rect(window_id: int, rect_out: Rect2 | Rect2i, rect_in: Rect2 | Rect2i): void;
   /**
    * Adds a callback for the accessibility action (action which can be performed by using a special screen reader command or buttons on the Braille display), and marks this action as supported. The action callback receives one {@link Variant} argument, which value depends on action type.
    */
@@ -76,7 +76,7 @@ declare interface AccessibilityServer extends GodotObject {
   /** Sets element background color. */
   update_set_background_color(id: RID, color: Color): void;
   /** Sets element bounding box, relative to the node position. */
-  update_set_bounds(id: RID, p_rect: Rect2): void;
+  update_set_bounds(id: RID, p_rect: Rect2 | Rect2i): void;
   /** Sets element accessibility label for Braille display. */
   update_set_braille_label(id: RID, name: string): void;
   /** Sets element accessibility role description for Braille display. */

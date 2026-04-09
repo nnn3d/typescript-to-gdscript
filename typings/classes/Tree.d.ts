@@ -115,9 +115,9 @@ declare class Tree extends Control {
    */
   ensure_cursor_is_visible(): void;
   /** Returns the button ID at `position`, or -1 if no button is there. */
-  get_button_id_at_position(position: Vector2): int;
+  get_button_id_at_position(position: Vector2 | Vector2i): int;
   /** Returns the column index at `position`, or -1 if no item is there. */
-  get_column_at_position(position: Vector2): int;
+  get_column_at_position(position: Vector2 | Vector2i): int;
   /** Returns the expand ratio assigned to the column. */
   get_column_expand_ratio(column: int): int;
   /** Returns the column's title. */
@@ -141,7 +141,7 @@ declare class Tree extends Control {
    * Values -1, 0, or 1 will be returned for the "above item", "on item", and "below item" drop sections, respectively. See {@link DropModeFlags} for a description of each drop section.
    * To get the item which the returned drop section is relative to, use {@link get_item_at_position}.
    */
-  get_drop_section_at_position(position: Vector2): int;
+  get_drop_section_at_position(position: Vector2 | Vector2i): int;
   /**
    * Returns the currently edited item. Can be used with {@link item_edited} to get the item that was modified.
    */
@@ -153,7 +153,7 @@ declare class Tree extends Control {
    */
   get_item_area_rect(item: TreeItem, column?: int, button_index?: int): Rect2;
   /** Returns the tree item at the specified position (relative to the tree origin position). */
-  get_item_at_position(position: Vector2): TreeItem | null;
+  get_item_at_position(position: Vector2 | Vector2i): TreeItem | null;
   /**
    * Returns the next selected {@link TreeItem} after the given one, or `null` if the end is reached.
    * If `from` is `null`, this returns the first selected item.

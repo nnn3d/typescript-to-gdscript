@@ -44,7 +44,7 @@ declare class ScriptLanguageExtension extends ScriptLanguage {
   _is_control_flow_keyword(keyword: string): boolean;
   _is_using_templates(): boolean;
   _lookup_code(code: string, symbol: string, path: string, owner: GodotObject): Dictionary;
-  _make_function(class_name: string, function_name: string, function_args: PackedStringArray): string;
+  _make_function(class_name: string, function_name: string, function_args: PackedStringArray | Array<unknown>): string;
   _make_template(template: string, class_name: string, base_class_name: string): Script;
   _open_in_external_editor(script: Script, line: int, column: int): int;
   _overrides_external_editor(): boolean;
@@ -55,7 +55,7 @@ declare class ScriptLanguageExtension extends ScriptLanguage {
   _profiling_start(): void;
   _profiling_stop(): void;
   _reload_all_scripts(): void;
-  _reload_scripts(scripts: Array<unknown>, soft_reload: boolean): void;
+  _reload_scripts(scripts: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, soft_reload: boolean): void;
   _reload_tool_script(script: Script, soft_reload: boolean): void;
   _remove_named_global_constant(name: string): void;
   _supports_builtin_mode(): boolean;

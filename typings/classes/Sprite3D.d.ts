@@ -31,13 +31,13 @@ declare class Sprite3D extends SpriteBase3D {
   vframes: int;
   set_frame(value: int): void;
   get_frame(): int;
-  set_frame_coords(value: Vector2i): void;
+  set_frame_coords(value: Vector2i | Vector2): void;
   get_frame_coords(): Vector2i;
   set_hframes(value: int): void;
   get_hframes(): int;
   set_region_enabled(value: boolean): void;
   is_region_enabled(): boolean;
-  set_region_rect(value: Rect2): void;
+  set_region_rect(value: Rect2 | Rect2i): void;
   get_region_rect(): Rect2;
   set_texture(value: Texture2D | null): void;
   get_texture(): Texture2D | null;

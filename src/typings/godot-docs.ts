@@ -234,7 +234,7 @@ function emitMethodSignature(
   // Once we see an optional param, all subsequent must be optional too
   let seenOptional = false;
   const params: string[] = method.parameters.map((p) => {
-    const tsType = godotTypeToTs(p.type);
+    const tsType = widenParamType(p.type);
     if (p.defaultValue !== undefined) seenOptional = true;
     const optional = seenOptional ? '?' : '';
     return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
@@ -346,7 +346,7 @@ function deriveValueTypes(classes: Map<string, GodotClassXml>): Set<string> {
   for (const [name, cls] of classes) {
     if (name.startsWith('@')) continue;
     // Skip types that godotTypeToTs maps to a different name (e.g. StringName→string,
-    // NodePath→string, bool→boolean) — they're handled as primitives, not value types.
+    // bool→boolean) — they're handled as primitives, not value types.
     if (godotTypeToTs(name) !== name) continue;
     // Skip types handled as TS interfaces (Array, Dictionary, String, Callable)
     if (INTERFACE_CLASSES.has(name)) continue;
@@ -364,6 +364,56 @@ function deriveValueTypes(classes: Map<string, GodotClassXml>): Set<string> {
  * Populated from `src/typings/non-nullable.json` by `generateGodotDocsTypings()`.
  */
 let nonNullableMembers = new Map<string, Set<string>>();
+
+/**
+ * Map of Godot type name → set of types that can be implicitly converted to it.
+ * Built from single-parameter "from" constructors in the XML docs.
+ * Used to widen method parameter types (e.g. `Vector2` parameter also accepts `Vector2i`).
+ */
+let variantParamConverts = new Map<string, string[]>();
+
+/**
+ * Derive variant conversion map from parsed XML class data.
+ * For each class with single-parameter "from" constructors, records which types
+ * can be converted to this class.
+ */
+function deriveVariantParamConverts(
+  classes: Map<string, GodotClassXml>,
+): Map<string, string[]> {
+  const result = new Map<string, string[]>();
+  for (const [name, cls] of classes) {
+    if (name.startsWith('@')) continue;
+    const convertFrom: string[] = [];
+    for (const ctor of cls.constructors) {
+      if (ctor.parameters.length !== 1) continue;
+      const param = ctor.parameters[0]!;
+      if (param.name !== 'from' && !param.name.startsWith('from')) continue;
+      if (param.type === name) continue; // skip self-copy constructor
+      convertFrom.push(param.type);
+    }
+    if (convertFrom.length > 0) result.set(name, convertFrom);
+  }
+  return result;
+}
+
+/**
+ * Widen a Godot type for use as a method parameter by including all types
+ * that can be variant-converted to it.
+ * Returns the TS type string, potentially as a union (e.g. `Vector2 | Vector2i`).
+ */
+/** TS types that should not be added as widened alternatives (primitives are too noisy). */
+const WIDEN_EXCLUDE_TS = new Set(['int', 'float', 'boolean', 'string', 'void', 'unknown', 'NodePath']);
+
+function widenParamType(gdType: string): string {
+  const tsType = godotTypeToTs(gdType);
+  const converts = variantParamConverts.get(gdType);
+  if (!converts || converts.length === 0) return tsType;
+  const tsConverts = converts
+    .map((t) => godotTypeToTs(t))
+    .filter((t) => t !== tsType && !WIDEN_EXCLUDE_TS.has(t));
+  if (tsConverts.length === 0) return tsType;
+  return `${tsType} | ${tsConverts.join(' | ')}`;
+}
 
 /**
  * Load `non-nullable.json` from the override directory.
@@ -561,6 +611,7 @@ function generateClassDeclaration(
   // or with a property name (TS doesn't allow property + method with same name).
   for (const prop of cls.properties) {
     const tsType = godotTypeToTs(prop.type);
+    const setterType = widenParamType(prop.type);
     const nullable = isNullableGodotType(prop.type) && !nonNullMembers.has(prop.name) ? ' | null' : '';
     if (
       prop.setter &&
@@ -568,7 +619,7 @@ function generateClassDeclaration(
       !propNames.has(prop.setter) &&
       !inheritedMethodNames?.has(prop.setter)
     ) {
-      lines.push(`  ${prop.setter}(value: ${tsType}${nullable}): void;`);
+      lines.push(`  ${prop.setter}(value: ${setterType}${nullable}): void;`);
     }
     if (
       prop.getter &&
@@ -1468,6 +1519,9 @@ export function generateGodotDocsTypings(
   // and for routing classes to generateValueTypeDeclaration vs generateClassDeclaration.
   valueTypes = deriveValueTypes(classes);
 
+  // Derive variant param conversion map for widening method parameter types
+  variantParamConverts = deriveVariantParamConverts(classes);
+
   // Load override .d.ts files
   const overrides = options.overrideDir
     ? loadOverrides(options.overrideDir)
@@ -1566,6 +1620,15 @@ export function generateGodotDocsTypings(
 
     // Skip primitive types handled by gd-helpers.d.ts or TS builtins
     if (SKIP_CLASSES.has(name)) continue;
+
+    // StringName has identical API to String — emit as a type alias
+    if (name === 'StringName') {
+      const content = header + '\ntype StringName = String;\n';
+      const fileName = 'StringName.d.ts';
+      writeFileSync(join(classesDir, fileName), content);
+      generatedFiles.push(fileName);
+      continue;
+    }
 
     // Some GD classes are emitted as TS interfaces (replacing built-in types)
     const interfaceName = INTERFACE_CLASSES.get(name);

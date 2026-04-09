@@ -17,7 +17,7 @@ declare class LightmapGIData extends Resource {
   get_shadowmask_textures(): Array<TextureLayered>;
 
   /** Adds an object that is considered baked within this {@link LightmapGIData}. */
-  add_user(path: string, uv_scale: Rect2, slice_index: int, sub_instance: int): void;
+  add_user(path: string, uv_scale: Rect2 | Rect2i, slice_index: int, sub_instance: int): void;
   /** Clear all objects that are considered baked within this {@link LightmapGIData}. */
   clear_users(): void;
   /** Returns the number of objects that are considered baked within this {@link LightmapGIData}. */

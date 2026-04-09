@@ -17,10 +17,10 @@ declare class ParallaxLayer extends Node2D {
   /** Multiplies the ParallaxLayer's motion. If an axis is set to `0`, it will not scroll. */
   motion_scale: Vector2;
   physics_interpolation_mode: int;
-  set_mirroring(value: Vector2): void;
+  set_mirroring(value: Vector2 | Vector2i): void;
   get_mirroring(): Vector2;
-  set_motion_offset(value: Vector2): void;
+  set_motion_offset(value: Vector2 | Vector2i): void;
   get_motion_offset(): Vector2;
-  set_motion_scale(value: Vector2): void;
+  set_motion_scale(value: Vector2 | Vector2i): void;
   get_motion_scale(): Vector2;
 }

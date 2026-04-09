@@ -276,7 +276,7 @@ declare class Control extends CanvasItem {
   is_auto_translating(): boolean;
   set_clip_contents(value: boolean): void;
   is_clipping_contents(): boolean;
-  set_custom_minimum_size(value: Vector2): void;
+  set_custom_minimum_size(value: Vector2 | Vector2i): void;
   get_custom_minimum_size(): Vector2;
   set_focus_behavior_recursive(value: int): void;
   get_focus_behavior_recursive(): int;
@@ -286,7 +286,7 @@ declare class Control extends CanvasItem {
   get_focus_next(): string;
   set_focus_previous(value: string): void;
   get_focus_previous(): string;
-  _set_global_position(value: Vector2): void;
+  _set_global_position(value: Vector2 | Vector2i): void;
   get_global_position(): Vector2;
   set_h_grow_direction(value: int): void;
   get_h_grow_direction(): int;
@@ -306,33 +306,33 @@ declare class Control extends CanvasItem {
   is_force_pass_scroll_events(): boolean;
   set_offset_transform_enabled(value: boolean): void;
   is_offset_transform_enabled(): boolean;
-  set_offset_transform_pivot(value: Vector2): void;
+  set_offset_transform_pivot(value: Vector2 | Vector2i): void;
   get_offset_transform_pivot(): Vector2;
-  set_offset_transform_pivot_ratio(value: Vector2): void;
+  set_offset_transform_pivot_ratio(value: Vector2 | Vector2i): void;
   get_offset_transform_pivot_ratio(): Vector2;
-  set_offset_transform_position(value: Vector2): void;
+  set_offset_transform_position(value: Vector2 | Vector2i): void;
   get_offset_transform_position(): Vector2;
-  set_offset_transform_position_ratio(value: Vector2): void;
+  set_offset_transform_position_ratio(value: Vector2 | Vector2i): void;
   get_offset_transform_position_ratio(): Vector2;
   set_offset_transform_rotation(value: float): void;
   get_offset_transform_rotation(): float;
-  set_offset_transform_scale(value: Vector2): void;
+  set_offset_transform_scale(value: Vector2 | Vector2i): void;
   get_offset_transform_scale(): Vector2;
   set_offset_transform_visual_only(value: boolean): void;
   is_offset_transform_visual_only(): boolean;
-  set_pivot_offset_ratio(value: Vector2): void;
+  set_pivot_offset_ratio(value: Vector2 | Vector2i): void;
   get_pivot_offset_ratio(): Vector2;
-  _set_position(value: Vector2): void;
+  _set_position(value: Vector2 | Vector2i): void;
   get_position(): Vector2;
   set_rotation(value: float): void;
   get_rotation(): float;
   set_rotation_degrees(value: float): void;
   get_rotation_degrees(): float;
-  set_scale(value: Vector2): void;
+  set_scale(value: Vector2 | Vector2i): void;
   get_scale(): Vector2;
   set_shortcut_context(value: Node | null): void;
   get_shortcut_context(): Node | null;
-  _set_size(value: Vector2): void;
+  _set_size(value: Vector2 | Vector2i): void;
   get_size(): Vector2;
   set_h_size_flags(value: int): void;
   get_h_size_flags(): int;
@@ -356,12 +356,12 @@ declare class Control extends CanvasItem {
    * This method should only be used to test the data. Process the data in {@link _drop_data}.
    * **Note:** If the drag was initiated by a keyboard shortcut or {@link accessibility_drag}, `at_position` is set to {@link Vector2.INF}, and the currently selected item/text position should be used as the drop position.
    */
-  _can_drop_data(at_position: Vector2, data: unknown): boolean;
+  _can_drop_data(at_position: Vector2 | Vector2i, data: unknown): boolean;
   /**
    * Godot calls this method to pass you the `data` from a control's {@link _get_drag_data} result. Godot first calls {@link _can_drop_data} to test if `data` is allowed to drop at `at_position` where `at_position` is local to this control.
    * **Note:** If the drag was initiated by a keyboard shortcut or {@link accessibility_drag}, `at_position` is set to {@link Vector2.INF}, and the currently selected item/text position should be used as the drop position.
    */
-  _drop_data(at_position: Vector2, data: unknown): void;
+  _drop_data(at_position: Vector2 | Vector2i, data: unknown): void;
   /**
    * Override this method to return a human-readable description of the position of the child `node` in the custom container, added to the {@link accessibility_name}.
    */
@@ -371,7 +371,7 @@ declare class Control extends CanvasItem {
    * A preview that will follow the mouse that should represent the data can be set with {@link set_drag_preview}. A good time to set the preview is in this method.
    * **Note:** If the drag was initiated by a keyboard shortcut or {@link accessibility_drag}, `at_position` is set to {@link Vector2.INF}, and the currently selected item/text position should be used as the drag position.
    */
-  _get_drag_data(at_position: Vector2): unknown;
+  _get_drag_data(at_position: Vector2 | Vector2i): unknown;
   /**
    * Virtual method to be implemented by the user. Returns the minimum size for this control. Alternative to {@link custom_minimum_size} for controlling minimum size via code. The actual minimum size will be the max value of these two (in each axis separately).
    * If not overridden, defaults to {@link Vector2.ZERO}.
@@ -382,7 +382,7 @@ declare class Control extends CanvasItem {
    * Virtual method to be implemented by the user. Returns the tooltip text for the position `at_position` in control's local coordinates, which will typically appear when the cursor is resting over this control. See {@link get_tooltip}.
    * **Note:** If this method returns an empty {@link String} and {@link _make_custom_tooltip} is not overridden, no tooltip is displayed.
    */
-  _get_tooltip(at_position: Vector2): string;
+  _get_tooltip(at_position: Vector2 | Vector2i): string;
   /**
    * Virtual method to be implemented by the user. Override this method to handle and accept inputs on UI elements. See also {@link accept_event}.
    * **Example:** Click on the control to print a message:
@@ -400,7 +400,7 @@ declare class Control extends CanvasItem {
    * If not overridden, default behavior is checking if the point is within control's Rect.
    * **Note:** If you want to check if a point is inside the control, you can use `Rect2(Vector2.ZERO, size).has_point(point)`.
    */
-  _has_point(point: Vector2): boolean;
+  _has_point(point: Vector2 | Vector2i): boolean;
   /**
    * Virtual method to be implemented by the user. Returns a {@link Control} node that should be used as a tooltip instead of the default one. `for_text` is the return value of {@link get_tooltip}.
    * The returned node must be of type {@link Control} or Control-derived. It can have child nodes of any type. It is freed when the tooltip disappears, so make sure you always provide a new instance (if you want to use a pre-existing node from your scene tree, you can duplicate it and pass the duplicated instance). When `null` or a non-Control node is returned, the default tooltip will be used instead.
@@ -416,7 +416,7 @@ declare class Control extends CanvasItem {
    * User defined BiDi algorithm override function.
    * Returns an {@link Array} of {@link Vector3i} text ranges and text base directions, in the left-to-right order. Ranges should cover full source `text` without overlaps. BiDi algorithm will be used on each range separately.
    */
-  _structured_text_parser(args: Array<unknown>, text: string): Array<Vector3i>;
+  _structured_text_parser(args: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, text: string): Array<Vector3i>;
   /**
    * Marks an input event as handled. Once you accept an input event, it stops propagating, even to nodes listening to {@link Node._unhandled_input} or {@link Node._unhandled_key_input}.
    * **Note:** This does not affect the methods in {@link Input}, only the way events are propagated.
@@ -493,7 +493,7 @@ declare class Control extends CanvasItem {
   /**
    * Returns the mouse cursor shape for this control when hovered over `position` in local coordinates. For most controls, this is the same as {@link mouse_default_cursor_shape}, but some built-in controls implement more complex logic.
    */
-  get_cursor_shape(position?: Vector2): int;
+  get_cursor_shape(position?: Vector2 | Vector2i): int;
   /** Returns {@link offset_right} and {@link offset_bottom}. */
   get_end(): Vector2;
   /**
@@ -587,7 +587,7 @@ declare class Control extends CanvasItem {
    * This method can be overridden to customize its behavior. See {@link _get_tooltip}.
    * **Note:** If this method returns an empty {@link String} and {@link _make_custom_tooltip} is not overridden, no tooltip is displayed.
    */
-  get_tooltip(at_position?: Vector2): string;
+  get_tooltip(at_position?: Vector2 | Vector2i): string;
   /**
    * Creates an {@link InputEventMouseButton} that attempts to click the control. If the event is received, the control gains focus.
    */
@@ -722,7 +722,7 @@ declare class Control extends CanvasItem {
   /**
    * Sets {@link offset_left} and {@link offset_top} at the same time. Equivalent of changing {@link position}.
    */
-  set_begin(position: Vector2): void;
+  set_begin(position: Vector2 | Vector2i): void;
   /**
    * Sets the given callables to be used instead of the control's own drag-and-drop virtual methods. If a callable is empty, its respective virtual method is used as normal.
    * The arguments for each callable should be exactly the same as their respective virtual methods, which would be:
@@ -736,7 +736,7 @@ declare class Control extends CanvasItem {
    */
   set_drag_preview(control: Control): void;
   /** Sets {@link offset_right} and {@link offset_bottom} at the same time. */
-  set_end(position: Vector2): void;
+  set_end(position: Vector2 | Vector2i): void;
   /**
    * Sets the focus neighbor for the specified {@link Side} to the {@link Control} at `neighbor` node path. A setter method for {@link focus_neighbor_bottom}, {@link focus_neighbor_left}, {@link focus_neighbor_right} and {@link focus_neighbor_top}.
    */
@@ -745,7 +745,7 @@ declare class Control extends CanvasItem {
    * Sets the {@link global_position} to given `position`.
    * If `keep_offsets` is `true`, control's anchors will be updated instead of offsets.
    */
-  set_global_position(position: Vector2, keep_offsets?: boolean): void;
+  set_global_position(position: Vector2 | Vector2i, keep_offsets?: boolean): void;
   /**
    * Sets the offset for the specified {@link Side} to `offset`. A setter method for {@link offset_bottom}, {@link offset_left}, {@link offset_right} and {@link offset_top}.
    */
@@ -760,12 +760,12 @@ declare class Control extends CanvasItem {
    * Sets the {@link position} to given `position`.
    * If `keep_offsets` is `true`, control's anchors will be updated instead of offsets.
    */
-  set_position(position: Vector2, keep_offsets?: boolean): void;
+  set_position(position: Vector2 | Vector2i, keep_offsets?: boolean): void;
   /**
    * Sets the size (see {@link size}).
    * If `keep_offsets` is `true`, control's anchors will be updated instead of offsets.
    */
-  set_size(size: Vector2, keep_offsets?: boolean): void;
+  set_size(size: Vector2 | Vector2i, keep_offsets?: boolean): void;
   /**
    * Invalidates the size cache in this node and in parent nodes up to top level. Intended to be used with {@link get_minimum_size} when the return value is changed. Setting {@link custom_minimum_size} directly calls this method automatically.
    */
@@ -774,7 +774,7 @@ declare class Control extends CanvasItem {
    * Moves the mouse cursor to `position`, relative to {@link position} of this {@link Control}.
    * **Note:** {@link warp_mouse} is only supported on Windows, macOS and Linux. It has no effect on Android, iOS and Web.
    */
-  warp_mouse(position: Vector2): void;
+  warp_mouse(position: Vector2 | Vector2i): void;
 
   /** Emitted when the node gains focus. */
   focus_entered: Signal<[]>;

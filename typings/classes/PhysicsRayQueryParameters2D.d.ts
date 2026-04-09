@@ -32,15 +32,15 @@ declare class PhysicsRayQueryParameters2D extends RefCounted {
   get_collision_mask(): int;
   set_exclude(value: Array<RID>): void;
   get_exclude(): Array<RID>;
-  set_from(value: Vector2): void;
+  set_from(value: Vector2 | Vector2i): void;
   get_from(): Vector2;
   set_hit_from_inside(value: boolean): void;
   is_hit_from_inside_enabled(): boolean;
-  set_to(value: Vector2): void;
+  set_to(value: Vector2 | Vector2i): void;
   get_to(): Vector2;
 
   /**
    * Returns a new, pre-configured {@link PhysicsRayQueryParameters2D} object. Use it to quickly create query parameters using the most common options.
    */
-  static create(from_: Vector2, to: Vector2, collision_mask?: int, exclude?: Array<RID>): PhysicsRayQueryParameters2D;
+  static create(from_: Vector2 | Vector2i, to: Vector2 | Vector2i, collision_mask?: int, exclude?: Array<RID>): PhysicsRayQueryParameters2D;
 }

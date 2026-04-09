@@ -88,7 +88,7 @@ declare class Decal extends VisualInstance3D {
   get_modulate(): Color;
   set_normal_fade(value: float): void;
   get_normal_fade(): float;
-  set_size(value: Vector3): void;
+  set_size(value: Vector3 | Vector3i): void;
   get_size(): Vector3;
   set_upper_fade(value: float): void;
   get_upper_fade(): float;

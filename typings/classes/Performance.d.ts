@@ -8,7 +8,7 @@ declare interface Performance extends GodotObject {
    * The debugger calls the callable to get the value of custom monitor. The callable must return a zero or positive integer or floating-point number.
    * Callables are called with arguments supplied in argument array.
    */
-  add_custom_monitor(id: string, callable: Callable, arguments?: Array<unknown>, type_?: int): void;
+  add_custom_monitor(id: string, callable: Callable, arguments?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, type_?: int): void;
   /**
    * Returns the value of custom monitor with given `id`. The callable is called to get the value of custom monitor. See also {@link has_custom_monitor}. Prints an error if the given `id` is absent.
    */

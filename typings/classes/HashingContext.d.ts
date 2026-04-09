@@ -10,7 +10,7 @@ declare class HashingContext extends RefCounted {
    */
   start(type_: int): int;
   /** Updates the computation with the given `chunk` of data. */
-  update(chunk: PackedByteArray): int;
+  update(chunk: PackedByteArray | Array<unknown>): int;
 
   // enum HashType
   /** Hashing algorithm: MD5. */

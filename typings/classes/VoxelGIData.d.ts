@@ -49,7 +49,7 @@ declare class VoxelGIData extends Resource {
   /**
    * Initializes this {@link VoxelGIData} with the specified data. `octree_cells` must be a multiple of 32. `octree_cells` must be double the size of `data_cells`. The allocated data can be retrieved later using the various getter methods.
    */
-  allocate(to_cell_xform: Transform3D, aabb: AABB, octree_size: Vector3, octree_cells: PackedByteArray, data_cells: PackedByteArray, distance_field: PackedByteArray, level_counts: PackedInt32Array): void;
+  allocate(to_cell_xform: Transform3D | Projection, aabb: AABB, octree_size: Vector3 | Vector3i, octree_cells: PackedByteArray | Array<unknown>, data_cells: PackedByteArray | Array<unknown>, distance_field: PackedByteArray | Array<unknown>, level_counts: PackedInt32Array | Array<unknown>): void;
   /**
    * Returns the bounds of the baked voxel data as an {@link AABB}, which should match {@link VoxelGI.size} after being baked (which only contains the size as a {@link Vector3}).
    * **Note:** If the size was modified without baking the VoxelGI data, then the value of {@link get_bounds} and {@link VoxelGI.size} will not match.

@@ -21,6 +21,6 @@ declare class FogVolume extends VisualInstance3D {
   get_material(): Material | null;
   set_shape(value: int): void;
   get_shape(): int;
-  set_size(value: Vector3): void;
+  set_size(value: Vector3 | Vector3i): void;
   get_size(): Vector3;
 }

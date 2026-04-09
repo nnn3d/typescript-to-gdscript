@@ -17,7 +17,7 @@ declare class EditorExportPlatform extends RefCounted {
    * Creates a patch PCK archive at `path` for the specified `preset`, containing only the files that have changed since the last patch.
    * **Note:** `patches` is an optional override of the set of patches defined in the export preset. When empty the patches defined in the export preset will be used instead.
    */
-  export_pack_patch(preset: EditorExportPreset, debug: boolean, path: string, patches?: PackedStringArray, flags?: int): int;
+  export_pack_patch(preset: EditorExportPreset, debug: boolean, path: string, patches?: PackedStringArray | Array<unknown>, flags?: int): int;
   /** Creates a full project at `path` for the specified `preset`. */
   export_project(preset: EditorExportPreset, debug: boolean, path: string, flags: int): int;
   /**
@@ -33,7 +33,7 @@ declare class EditorExportPlatform extends RefCounted {
    * Create a patch ZIP archive at `path` for the specified `preset`, containing only the files that have changed since the last patch.
    * **Note:** `patches` is an optional override of the set of patches defined in the export preset. When empty the patches defined in the export preset will be used instead.
    */
-  export_zip_patch(preset: EditorExportPreset, debug: boolean, path: string, patches?: PackedStringArray, flags?: int): int;
+  export_zip_patch(preset: EditorExportPreset, debug: boolean, path: string, patches?: PackedStringArray | Array<unknown>, flags?: int): int;
   /**
    * Locates export template for the platform, and returns {@link Dictionary} with the following keys: `path: String` and `error: String`. This method is provided for convenience and custom export platforms aren't required to use it or keep export templates stored in the same way official templates are.
    */
@@ -82,15 +82,15 @@ declare class EditorExportPlatform extends RefCounted {
    */
   save_zip_patch(preset: EditorExportPreset, debug: boolean, path: string): Dictionary;
   /** Uploads specified file over SCP protocol to the remote host. */
-  ssh_push_to_remote(host: string, port: string, scp_args: PackedStringArray, src_file: string, dst_file: string): int;
+  ssh_push_to_remote(host: string, port: string, scp_args: PackedStringArray | Array<unknown>, src_file: string, dst_file: string): int;
   /**
    * Executes specified command on the remote host via SSH protocol and returns command output in the `output`.
    */
-  ssh_run_on_remote(host: string, port: string, ssh_arg: PackedStringArray, cmd_args: string, output?: Array<unknown>, port_fwd?: int): int;
+  ssh_run_on_remote(host: string, port: string, ssh_arg: PackedStringArray | Array<unknown>, cmd_args: string, output?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, port_fwd?: int): int;
   /**
    * Executes specified command on the remote host via SSH protocol and returns process ID (on the remote host) without waiting for command to finish.
    */
-  ssh_run_on_remote_no_wait(host: string, port: string, ssh_args: PackedStringArray, cmd_args: string, port_fwd?: int): int;
+  ssh_run_on_remote_no_wait(host: string, port: string, ssh_args: PackedStringArray | Array<unknown>, cmd_args: string, port_fwd?: int): int;
 
   // enum ExportMessageType
   /** Invalid message type used as the default value when no type is specified. */

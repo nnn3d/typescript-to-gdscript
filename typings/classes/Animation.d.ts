@@ -93,7 +93,7 @@ declare class Animation extends Resource {
    * Inserts a Bezier Track key at the given `time` in seconds. The `track_idx` must be the index of a Bezier Track.
    * `in_handle` is the left-side weight of the added Bezier curve point, `out_handle` is the right-side one, while `value` is the actual value at this point.
    */
-  bezier_track_insert_key(track_idx: int, time: float, value: float, in_handle?: Vector2, out_handle?: Vector2): int;
+  bezier_track_insert_key(track_idx: int, time: float, value: float, in_handle?: Vector2 | Vector2i, out_handle?: Vector2 | Vector2i): int;
   /**
    * Returns the interpolated value at the given `time` (in seconds). The `track_idx` must be the index of a Bezier Track.
    */
@@ -101,11 +101,11 @@ declare class Animation extends Resource {
   /**
    * Sets the in handle of the key identified by `key_idx` to value `in_handle`. The `track_idx` must be the index of a Bezier Track.
    */
-  bezier_track_set_key_in_handle(track_idx: int, key_idx: int, in_handle: Vector2, balanced_value_time_ratio?: float): void;
+  bezier_track_set_key_in_handle(track_idx: int, key_idx: int, in_handle: Vector2 | Vector2i, balanced_value_time_ratio?: float): void;
   /**
    * Sets the out handle of the key identified by `key_idx` to value `out_handle`. The `track_idx` must be the index of a Bezier Track.
    */
-  bezier_track_set_key_out_handle(track_idx: int, key_idx: int, out_handle: Vector2, balanced_value_time_ratio?: float): void;
+  bezier_track_set_key_out_handle(track_idx: int, key_idx: int, out_handle: Vector2 | Vector2i, balanced_value_time_ratio?: float): void;
   /**
    * Sets the value of the key identified by `key_idx` to the given value. The `track_idx` must be the index of a Bezier Track.
    */
@@ -156,7 +156,7 @@ declare class Animation extends Resource {
    */
   optimize(allowed_velocity_err?: float, allowed_angular_err?: float, precision?: int): void;
   /** Inserts a key in a given 3D position track. Returns the key index. */
-  position_track_insert_key(track_idx: int, time: float, position: Vector3): int;
+  position_track_insert_key(track_idx: int, time: float, position: Vector3 | Vector3i): int;
   /**
    * Returns the interpolated position value at the given time (in seconds). The `track_idx` must be the index of a 3D position track.
    */
@@ -166,13 +166,13 @@ declare class Animation extends Resource {
   /** Removes a track by specifying the track index. */
   remove_track(track_idx: int): void;
   /** Inserts a key in a given 3D rotation track. Returns the key index. */
-  rotation_track_insert_key(track_idx: int, time: float, rotation: Quaternion): int;
+  rotation_track_insert_key(track_idx: int, time: float, rotation: Quaternion | Basis): int;
   /**
    * Returns the interpolated rotation value at the given time (in seconds). The `track_idx` must be the index of a 3D rotation track.
    */
   rotation_track_interpolate(track_idx: int, time_sec: float, backward?: boolean): Quaternion;
   /** Inserts a key in a given 3D scale track. Returns the key index. */
-  scale_track_insert_key(track_idx: int, time: float, scale: Vector3): int;
+  scale_track_insert_key(track_idx: int, time: float, scale: Vector3 | Vector3i): int;
   /**
    * Returns the interpolated scale value at the given time (in seconds). The `track_idx` must be the index of a 3D scale track.
    */

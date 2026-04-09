@@ -46,7 +46,7 @@ declare class ShapeCast2D extends Node2D {
   get_max_results(): int;
   set_shape(value: Shape2D | null): void;
   get_shape(): Shape2D | null;
-  set_target_position(value: Vector2): void;
+  set_target_position(value: Vector2 | Vector2i): void;
   get_target_position(): Vector2;
 
   /** Adds a collision exception so the shape does not report collisions with the specified node. */

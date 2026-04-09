@@ -45,7 +45,7 @@ declare class LabelSettings extends Resource {
   get_paragraph_spacing(): float;
   set_shadow_color(value: Color): void;
   get_shadow_color(): Color;
-  set_shadow_offset(value: Vector2): void;
+  set_shadow_offset(value: Vector2 | Vector2i): void;
   get_shadow_offset(): Vector2;
   set_shadow_size(value: int): void;
   get_shadow_size(): int;
@@ -87,7 +87,7 @@ declare class LabelSettings extends Resource {
   /** Sets the color of the stacked shadow identified by the given `index` to `color`. */
   set_stacked_shadow_color(index: int, color: Color): void;
   /** Sets the offset of the stacked shadow identified by the given `index` to `offset`. */
-  set_stacked_shadow_offset(index: int, offset: Vector2): void;
+  set_stacked_shadow_offset(index: int, offset: Vector2 | Vector2i): void;
   /** Sets the outline size of the stacked shadow identified by the given `index` to `size`. */
   set_stacked_shadow_outline_size(index: int, size: int): void;
 }

@@ -41,9 +41,9 @@ declare class NavigationPolygon extends Resource {
   source_geometry_mode: int;
   set_agent_radius(value: float): void;
   get_agent_radius(): float;
-  set_baking_rect(value: Rect2): void;
+  set_baking_rect(value: Rect2 | Rect2i): void;
   get_baking_rect(): Rect2;
-  set_baking_rect_offset(value: Vector2): void;
+  set_baking_rect_offset(value: Vector2 | Vector2i): void;
   get_baking_rect_offset(): Vector2;
   set_border_size(value: float): void;
   get_border_size(): float;
@@ -63,13 +63,13 @@ declare class NavigationPolygon extends Resource {
   /**
    * Appends a {@link PackedVector2Array} that contains the vertices of an outline to the internal array that contains all the outlines.
    */
-  add_outline(outline: PackedVector2Array): void;
+  add_outline(outline: PackedVector2Array | Array<unknown>): void;
   /**
    * Adds a {@link PackedVector2Array} that contains the vertices of an outline to the internal array that contains all the outlines at a fixed position.
    */
-  add_outline_at_index(outline: PackedVector2Array, index: int): void;
+  add_outline_at_index(outline: PackedVector2Array | Array<unknown>, index: int): void;
   /** Adds a polygon using the indices of the vertices you get when calling {@link get_vertices}. */
-  add_polygon(polygon: PackedInt32Array): void;
+  add_polygon(polygon: PackedInt32Array | Array<unknown>): void;
   /** Clears the internal arrays for vertices and polygon indices. */
   clear(): void;
   /**
@@ -107,13 +107,13 @@ declare class NavigationPolygon extends Resource {
   /**
    * Changes an outline created in the editor or by script. You have to call {@link make_polygons_from_outlines} for the polygons to update.
    */
-  set_outline(idx: int, outline: PackedVector2Array): void;
+  set_outline(idx: int, outline: PackedVector2Array | Array<unknown>): void;
   /**
    * Based on `value`, enables or disables the specified layer in the {@link parsed_collision_mask}, given a `layer_number` between 1 and 32.
    */
   set_parsed_collision_mask_value(layer_number: int, value: boolean): void;
   /** Sets the vertices that can be then indexed to create polygons with the {@link add_polygon} method. */
-  set_vertices(vertices: PackedVector2Array): void;
+  set_vertices(vertices: PackedVector2Array | Array<unknown>): void;
 
   // enum SamplePartitionType
   /** Convex partitioning that results in a navigation mesh with convex polygons. */

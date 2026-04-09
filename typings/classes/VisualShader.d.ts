@@ -5,11 +5,11 @@
 declare class VisualShader extends Shader {
   /** Deprecated. */
   graph_offset: Vector2;
-  set_graph_offset(value: Vector2): void;
+  set_graph_offset(value: Vector2 | Vector2i): void;
   get_graph_offset(): Vector2;
 
   /** Adds the specified `node` to the shader. */
-  add_node(type_: int, node: VisualShaderNode, position: Vector2, id: int): void;
+  add_node(type_: int, node: VisualShaderNode, position: Vector2 | Vector2i, id: int): void;
   /** Adds a new varying value node to the shader. */
   add_varying(name: string, mode: int, type_: int): void;
   /** Attaches the given node to the given frame. */
@@ -51,7 +51,7 @@ declare class VisualShader extends Shader {
   /** Sets the mode of this shader. */
   set_mode(mode: int): void;
   /** Sets the position of the specified node. */
-  set_node_position(type_: int, id: int, position: Vector2): void;
+  set_node_position(type_: int, id: int, position: Vector2 | Vector2i): void;
 
   // enum Type
   /** A vertex shader, operating on vertices. */

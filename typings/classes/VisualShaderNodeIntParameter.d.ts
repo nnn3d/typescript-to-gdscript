@@ -31,7 +31,7 @@ declare class VisualShaderNodeIntParameter extends VisualShaderNodeParameter {
   get_default_value(): int;
   set_default_value_enabled(value: boolean): void;
   is_default_value_enabled(): boolean;
-  set_enum_names(value: PackedStringArray): void;
+  set_enum_names(value: PackedStringArray | Array<unknown>): void;
   get_enum_names(): PackedStringArray;
   set_hint(value: int): void;
   get_hint(): int;

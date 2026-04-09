@@ -28,9 +28,9 @@ declare class GradientTexture2D extends Texture2D {
   width: int;
   set_fill(value: int): void;
   get_fill(): int;
-  set_fill_from(value: Vector2): void;
+  set_fill_from(value: Vector2 | Vector2i): void;
   get_fill_from(): Vector2;
-  set_fill_to(value: Vector2): void;
+  set_fill_to(value: Vector2 | Vector2i): void;
   get_fill_to(): Vector2;
   set_gradient(value: Gradient | null): void;
   get_gradient(): Gradient | null;

@@ -531,7 +531,7 @@ declare class Environment extends Resource {
   get_sky(): Sky | null;
   set_sky_custom_fov(value: float): void;
   get_sky_custom_fov(): float;
-  set_sky_rotation(value: Vector3): void;
+  set_sky_rotation(value: Vector3 | Vector3i): void;
   get_sky_rotation(): Vector3;
   set_ssao_ao_channel_affect(value: float): void;
   get_ssao_ao_channel_affect(): float;

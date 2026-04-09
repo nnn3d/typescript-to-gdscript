@@ -34,6 +34,6 @@ declare class CollisionPolygon3D extends Node3D {
   is_disabled(): boolean;
   set_margin(value: float): void;
   get_margin(): float;
-  set_polygon(value: PackedVector2Array): void;
+  set_polygon(value: PackedVector2Array | Array<unknown>): void;
   get_polygon(): PackedVector2Array;
 }

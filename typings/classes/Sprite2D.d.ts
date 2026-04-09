@@ -54,17 +54,17 @@ declare class Sprite2D extends Node2D {
   is_flipped_v(): boolean;
   set_frame(value: int): void;
   get_frame(): int;
-  set_frame_coords(value: Vector2i): void;
+  set_frame_coords(value: Vector2i | Vector2): void;
   get_frame_coords(): Vector2i;
   set_hframes(value: int): void;
   get_hframes(): int;
-  set_offset(value: Vector2): void;
+  set_offset(value: Vector2 | Vector2i): void;
   get_offset(): Vector2;
   set_region_enabled(value: boolean): void;
   is_region_enabled(): boolean;
   set_region_filter_clip_enabled(value: boolean): void;
   is_region_filter_clip_enabled(): boolean;
-  set_region_rect(value: Rect2): void;
+  set_region_rect(value: Rect2 | Rect2i): void;
   get_region_rect(): Rect2;
   set_texture(value: Texture2D | null): void;
   get_texture(): Texture2D | null;
@@ -79,7 +79,7 @@ declare class Sprite2D extends Node2D {
   /**
    * Returns `true` if the pixel at the given position is opaque, `false` otherwise. Also returns `false` if the given position is out of bounds or this sprite's {@link texture} is `null`. `pos` is in local coordinates.
    */
-  is_pixel_opaque(pos: Vector2): boolean;
+  is_pixel_opaque(pos: Vector2 | Vector2i): boolean;
 
   /** Emitted when the {@link frame} changes. */
   frame_changed: Signal<[]>;

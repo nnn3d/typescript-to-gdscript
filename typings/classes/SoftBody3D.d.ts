@@ -79,19 +79,19 @@ declare class SoftBody3D extends MeshInstance3D {
   /**
    * Distributes and applies a force to all points. A force is time dependent and meant to be applied every physics update.
    */
-  apply_central_force(force: Vector3): void;
+  apply_central_force(force: Vector3 | Vector3i): void;
   /**
    * Distributes and applies an impulse to all points.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    */
-  apply_central_impulse(impulse: Vector3): void;
+  apply_central_impulse(impulse: Vector3 | Vector3i): void;
   /** Applies a force to a point. A force is time dependent and meant to be applied every physics update. */
-  apply_force(point_index: int, force: Vector3): void;
+  apply_force(point_index: int, force: Vector3 | Vector3i): void;
   /**
    * Applies an impulse to a point.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    */
-  apply_impulse(point_index: int, impulse: Vector3): void;
+  apply_impulse(point_index: int, impulse: Vector3 | Vector3i): void;
   /** Returns an array of nodes that were added as collision exceptions for this body. */
   get_collision_exceptions(): Array<PhysicsBody3D>;
   /**

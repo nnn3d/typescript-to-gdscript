@@ -26,6 +26,6 @@ declare class PhysicsPointQueryParameters3D extends RefCounted {
   get_collision_mask(): int;
   set_exclude(value: Array<RID>): void;
   get_exclude(): Array<RID>;
-  set_position(value: Vector3): void;
+  set_position(value: Vector3 | Vector3i): void;
   get_position(): Vector3;
 }

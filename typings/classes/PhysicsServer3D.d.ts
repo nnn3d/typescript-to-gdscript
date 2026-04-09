@@ -6,7 +6,7 @@ declare interface PhysicsServer3D extends GodotObject {
   /**
    * Adds a shape to the area, along with a transform matrix. Shapes are usually referenced by their index, so you should track which shape has a given index.
    */
-  area_add_shape(area: RID, shape: RID, transform?: Transform3D, disabled?: boolean): void;
+  area_add_shape(area: RID, shape: RID, transform?: Transform3D | Projection, disabled?: boolean): void;
   /** Assigns the area to a descendant of {@link Object}, so it can exist in the node tree. */
   area_attach_object_instance_id(area: RID, id: int): void;
   /** Removes all shapes from an area. It does not delete the shapes, so they can be reassigned later. */
@@ -75,62 +75,62 @@ declare interface PhysicsServer3D extends GodotObject {
   area_set_shape(area: RID, shape_idx: int, shape: RID): void;
   area_set_shape_disabled(area: RID, shape_idx: int, disabled: boolean): void;
   /** Sets the transform matrix for an area shape. */
-  area_set_shape_transform(area: RID, shape_idx: int, transform: Transform3D): void;
+  area_set_shape_transform(area: RID, shape_idx: int, transform: Transform3D | Projection): void;
   /** Assigns a space to the area. */
   area_set_space(area: RID, space: RID): void;
   /** Sets the transform matrix for an area. */
-  area_set_transform(area: RID, transform: Transform3D): void;
+  area_set_transform(area: RID, transform: Transform3D | Projection): void;
   /** Adds a body to the list of bodies exempt from collisions. */
   body_add_collision_exception(body: RID, excepted_body: RID): void;
   /**
    * Adds a constant directional force without affecting rotation that keeps being applied over time until cleared with `body_set_constant_force(body, Vector3(0, 0, 0))`.
    * This is equivalent to using {@link body_add_constant_force} at the body's center of mass.
    */
-  body_add_constant_central_force(body: RID, force: Vector3): void;
+  body_add_constant_central_force(body: RID, force: Vector3 | Vector3i): void;
   /**
    * Adds a constant positioned force to the body that keeps being applied over time until cleared with `body_set_constant_force(body, Vector3(0, 0, 0))`.
    * `position` is the offset from the body origin in global coordinates.
    */
-  body_add_constant_force(body: RID, force: Vector3, position?: Vector3): void;
+  body_add_constant_force(body: RID, force: Vector3 | Vector3i, position?: Vector3 | Vector3i): void;
   /**
    * Adds a constant rotational force without affecting position that keeps being applied over time until cleared with `body_set_constant_torque(body, Vector3(0, 0, 0))`.
    */
-  body_add_constant_torque(body: RID, torque: Vector3): void;
+  body_add_constant_torque(body: RID, torque: Vector3 | Vector3i): void;
   /**
    * Adds a shape to the body, along with a transform matrix. Shapes are usually referenced by their index, so you should track which shape has a given index.
    */
-  body_add_shape(body: RID, shape: RID, transform?: Transform3D, disabled?: boolean): void;
+  body_add_shape(body: RID, shape: RID, transform?: Transform3D | Projection, disabled?: boolean): void;
   /**
    * Applies a directional force without affecting rotation. A force is time dependent and meant to be applied every physics update.
    * This is equivalent to using {@link body_apply_force} at the body's center of mass.
    */
-  body_apply_central_force(body: RID, force: Vector3): void;
+  body_apply_central_force(body: RID, force: Vector3 | Vector3i): void;
   /**
    * Applies a directional impulse without affecting rotation.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * This is equivalent to using {@link body_apply_impulse} at the body's center of mass.
    */
-  body_apply_central_impulse(body: RID, impulse: Vector3): void;
+  body_apply_central_impulse(body: RID, impulse: Vector3 | Vector3i): void;
   /**
    * Applies a positioned force to the body. A force is time dependent and meant to be applied every physics update.
    * `position` is the offset from the body origin in global coordinates.
    */
-  body_apply_force(body: RID, force: Vector3, position?: Vector3): void;
+  body_apply_force(body: RID, force: Vector3 | Vector3i, position?: Vector3 | Vector3i): void;
   /**
    * Applies a positioned impulse to the body.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    * `position` is the offset from the body origin in global coordinates.
    */
-  body_apply_impulse(body: RID, impulse: Vector3, position?: Vector3): void;
+  body_apply_impulse(body: RID, impulse: Vector3 | Vector3i, position?: Vector3 | Vector3i): void;
   /**
    * Applies a rotational force without affecting position. A force is time dependent and meant to be applied every physics update.
    */
-  body_apply_torque(body: RID, torque: Vector3): void;
+  body_apply_torque(body: RID, torque: Vector3 | Vector3i): void;
   /**
    * Applies a rotational impulse to the body without affecting the position.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    */
-  body_apply_torque_impulse(body: RID, impulse: Vector3): void;
+  body_apply_torque_impulse(body: RID, impulse: Vector3 | Vector3i): void;
   /** Assigns the area to a descendant of {@link Object}, so it can exist in the node tree. */
   body_attach_object_instance_id(body: RID, id: int): void;
   /** Removes all shapes from a body. */
@@ -202,7 +202,7 @@ declare interface PhysicsServer3D extends GodotObject {
   /**
    * Sets an axis velocity. The velocity in the given vector axis will be set as the given vector length. This is useful for jumping behavior.
    */
-  body_set_axis_velocity(body: RID, axis_velocity: Vector3): void;
+  body_set_axis_velocity(body: RID, axis_velocity: Vector3 | Vector3i): void;
   /** Sets the physics layer or layers a body belongs to. */
   body_set_collision_layer(body: RID, layer: int): void;
   /** Sets the physics layer or layers a body can collide with. */
@@ -213,12 +213,12 @@ declare interface PhysicsServer3D extends GodotObject {
    * Sets the body's total constant positional forces applied during each physics update.
    * See {@link body_add_constant_force} and {@link body_add_constant_central_force}.
    */
-  body_set_constant_force(body: RID, force: Vector3): void;
+  body_set_constant_force(body: RID, force: Vector3 | Vector3i): void;
   /**
    * Sets the body's total constant rotational forces applied during each physics update.
    * See {@link body_add_constant_torque}.
    */
-  body_set_constant_torque(body: RID, torque: Vector3): void;
+  body_set_constant_torque(body: RID, torque: Vector3 | Vector3i): void;
   /**
    * If `true`, the continuous collision detection mode is enabled.
    * Continuous collision detection tries to predict where a moving body will collide, instead of moving it and correcting its movement if it collided.
@@ -254,7 +254,7 @@ declare interface PhysicsServer3D extends GodotObject {
   body_set_shape(body: RID, shape_idx: int, shape: RID): void;
   body_set_shape_disabled(body: RID, shape_idx: int, disabled: boolean): void;
   /** Sets the transform matrix for a body shape. */
-  body_set_shape_transform(body: RID, shape_idx: int, transform: Transform3D): void;
+  body_set_shape_transform(body: RID, shape_idx: int, transform: Transform3D | Projection): void;
   /** Assigns a space to the body (see {@link space_create}). */
   body_set_space(body: RID, space: RID): void;
   /** Sets a body state. */
@@ -338,14 +338,14 @@ declare interface PhysicsServer3D extends GodotObject {
   joint_get_type(joint: RID): int;
   /** Returns whether the bodies attached to the {@link Joint3D} will collide with each other. */
   joint_is_disabled_collisions_between_bodies(joint: RID): boolean;
-  joint_make_cone_twist(joint: RID, body_A: RID, local_ref_A: Transform3D, body_B: RID, local_ref_B: Transform3D): void;
+  joint_make_cone_twist(joint: RID, body_A: RID, local_ref_A: Transform3D | Projection, body_B: RID, local_ref_B: Transform3D | Projection): void;
   /**
    * Make the joint a generic six degrees of freedom (6DOF) joint. Use {@link generic_6dof_joint_set_flag} and {@link generic_6dof_joint_set_param} to set the joint's flags and parameters respectively.
    */
-  joint_make_generic_6dof(joint: RID, body_A: RID, local_ref_A: Transform3D, body_B: RID, local_ref_B: Transform3D): void;
-  joint_make_hinge(joint: RID, body_A: RID, hinge_A: Transform3D, body_B: RID, hinge_B: Transform3D): void;
-  joint_make_pin(joint: RID, body_A: RID, local_A: Vector3, body_B: RID, local_B: Vector3): void;
-  joint_make_slider(joint: RID, body_A: RID, local_ref_A: Transform3D, body_B: RID, local_ref_B: Transform3D): void;
+  joint_make_generic_6dof(joint: RID, body_A: RID, local_ref_A: Transform3D | Projection, body_B: RID, local_ref_B: Transform3D | Projection): void;
+  joint_make_hinge(joint: RID, body_A: RID, hinge_A: Transform3D | Projection, body_B: RID, hinge_B: Transform3D | Projection): void;
+  joint_make_pin(joint: RID, body_A: RID, local_A: Vector3 | Vector3i, body_B: RID, local_B: Vector3 | Vector3i): void;
+  joint_make_slider(joint: RID, body_A: RID, local_ref_A: Transform3D | Projection, body_B: RID, local_ref_B: Transform3D | Projection): void;
   /**
    * Sets the priority value of the Joint3D.
    * **Note:** Only supported when using GodotPhysics3D. This method has no effect when using Jolt Physics, as it does not support joint solver priority.
@@ -358,9 +358,9 @@ declare interface PhysicsServer3D extends GodotObject {
   /** Gets a pin joint parameter. */
   pin_joint_get_param(joint: RID, param: int): float;
   /** Sets position of the joint in the local space of body a of the joint. */
-  pin_joint_set_local_a(joint: RID, local_A: Vector3): void;
+  pin_joint_set_local_a(joint: RID, local_A: Vector3 | Vector3i): void;
   /** Sets position of the joint in the local space of body b of the joint. */
-  pin_joint_set_local_b(joint: RID, local_B: Vector3): void;
+  pin_joint_set_local_b(joint: RID, local_B: Vector3 | Vector3i): void;
   /** Sets a pin joint parameter. */
   pin_joint_set_param(joint: RID, param: int, value: float): void;
   /**
@@ -409,19 +409,19 @@ declare interface PhysicsServer3D extends GodotObject {
   /**
    * Distributes and applies a force to all points. A force is time dependent and meant to be applied every physics update.
    */
-  soft_body_apply_central_force(body: RID, force: Vector3): void;
+  soft_body_apply_central_force(body: RID, force: Vector3 | Vector3i): void;
   /**
    * Distributes and applies an impulse to all points.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    */
-  soft_body_apply_central_impulse(body: RID, impulse: Vector3): void;
+  soft_body_apply_central_impulse(body: RID, impulse: Vector3 | Vector3i): void;
   /** Applies a force to a point. A force is time dependent and meant to be applied every physics update. */
-  soft_body_apply_point_force(body: RID, point_index: int, force: Vector3): void;
+  soft_body_apply_point_force(body: RID, point_index: int, force: Vector3 | Vector3i): void;
   /**
    * Applies an impulse to a point.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_force" functions otherwise).
    */
-  soft_body_apply_point_impulse(body: RID, point_index: int, impulse: Vector3): void;
+  soft_body_apply_point_impulse(body: RID, point_index: int, impulse: Vector3 | Vector3i): void;
   /** Creates a new soft body and returns its internal {@link RID}. */
   soft_body_create(): RID;
   /** Returns the bounds of the given soft body in global coordinates. */
@@ -456,7 +456,7 @@ declare interface PhysicsServer3D extends GodotObject {
   /** Returns whether the given soft body point is pinned. */
   soft_body_is_point_pinned(body: RID, point_index: int): boolean;
   /** Moves the given soft body point to a position in global coordinates. */
-  soft_body_move_point(body: RID, point_index: int, global_position: Vector3): void;
+  soft_body_move_point(body: RID, point_index: int, global_position: Vector3 | Vector3i): void;
   /**
    * Pins or unpins the given soft body point based on the value of `pin`.
    * **Note:** Pinning a point effectively makes it kinematic, preventing it from being affected by forces, but you can still move it using {@link soft_body_move_point}.
@@ -507,7 +507,7 @@ declare interface PhysicsServer3D extends GodotObject {
   /** Sets the total mass for the given soft body. */
   soft_body_set_total_mass(body: RID, total_mass: float): void;
   /** Sets the global transform of the given soft body. */
-  soft_body_set_transform(body: RID, transform: Transform3D): void;
+  soft_body_set_transform(body: RID, transform: Transform3D | Projection): void;
   /**
    * Requests that the physics server updates the rendering server with the latest positions of the given soft body's points through the `rendering_server_handler` interface.
    */

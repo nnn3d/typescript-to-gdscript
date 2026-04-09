@@ -43,13 +43,13 @@ declare class TileMap extends Node2D {
    * **Warning:** The `tile_data` object's sub-resources are the same as the one in the TileSet. Modifying them might impact the whole TileSet. Instead, make sure to duplicate those resources.
    * **Note:** If the properties of `tile_data` object should change over time, use {@link notify_runtime_tile_data_update} to notify the TileMap it needs an update.
    */
-  _tile_data_runtime_update(layer: int, coords: Vector2i, tile_data: TileData): void;
+  _tile_data_runtime_update(layer: int, coords: Vector2i | Vector2, tile_data: TileData): void;
   /**
    * Should return `true` if the tile at coordinates `coords` on layer `layer` requires a runtime update.
    * **Warning:** Make sure this function only return `true` when needed. Any tile processed at runtime without a need for it will imply a significant performance penalty.
    * **Note:** If the result of this function should changed, use {@link notify_runtime_tile_data_update} to notify the TileMap it needs an update.
    */
-  _use_tile_data_runtime_update(layer: int, coords: Vector2i): boolean;
+  _use_tile_data_runtime_update(layer: int, coords: Vector2i | Vector2): boolean;
   /**
    * Adds a layer at the given position `to_position` in the array. If `to_position` is negative, the position is counted from the end, with `-1` adding the layer at the end of the array.
    */
@@ -65,7 +65,7 @@ declare class TileMap extends Node2D {
    * Erases the cell on layer `layer` at coordinates `coords`.
    * If `layer` is negative, the layers are accessed from the last one.
    */
-  erase_cell(layer: int, coords: Vector2i): void;
+  erase_cell(layer: int, coords: Vector2i | Vector2): void;
   /** Clears cells that do not exist in the tileset. */
   fix_invalid_tiles(): void;
   /** Forces the TileMap and the layer `layer` to update. */
@@ -75,25 +75,25 @@ declare class TileMap extends Node2D {
    * If `use_proxies` is `false`, ignores the {@link TileSet}'s tile proxies, returning the raw alternative identifier. See {@link TileSet.map_tile_proxy}.
    * If `layer` is negative, the layers are accessed from the last one.
    */
-  get_cell_alternative_tile(layer: int, coords: Vector2i, use_proxies?: boolean): int;
+  get_cell_alternative_tile(layer: int, coords: Vector2i | Vector2, use_proxies?: boolean): int;
   /**
    * Returns the tile atlas coordinates ID of the cell on layer `layer` at coordinates `coords`. Returns `Vector2i(-1, -1)` if the cell does not exist.
    * If `use_proxies` is `false`, ignores the {@link TileSet}'s tile proxies, returning the raw atlas coordinate identifier. See {@link TileSet.map_tile_proxy}.
    * If `layer` is negative, the layers are accessed from the last one.
    */
-  get_cell_atlas_coords(layer: int, coords: Vector2i, use_proxies?: boolean): Vector2i;
+  get_cell_atlas_coords(layer: int, coords: Vector2i | Vector2, use_proxies?: boolean): Vector2i;
   /**
    * Returns the tile source ID of the cell on layer `layer` at coordinates `coords`. Returns `-1` if the cell does not exist.
    * If `use_proxies` is `false`, ignores the {@link TileSet}'s tile proxies, returning the raw source identifier. See {@link TileSet.map_tile_proxy}.
    * If `layer` is negative, the layers are accessed from the last one.
    */
-  get_cell_source_id(layer: int, coords: Vector2i, use_proxies?: boolean): int;
+  get_cell_source_id(layer: int, coords: Vector2i | Vector2, use_proxies?: boolean): int;
   /**
    * Returns the {@link TileData} object associated with the given cell, or `null` if the cell does not exist or is not a {@link TileSetAtlasSource}.
    * If `layer` is negative, the layers are accessed from the last one.
    * If `use_proxies` is `false`, ignores the {@link TileSet}'s tile proxies. See {@link TileSet.map_tile_proxy}.
    */
-  get_cell_tile_data(layer: int, coords: Vector2i, use_proxies?: boolean): TileData | null;
+  get_cell_tile_data(layer: int, coords: Vector2i | Vector2, use_proxies?: boolean): TileData | null;
   /**
    * Returns the coordinates of the tile for given physics body RID. Such RID can be retrieved from {@link KinematicCollision2D.get_collider_rid}, when colliding with a tile.
    */
@@ -138,14 +138,14 @@ declare class TileMap extends Node2D {
   /**
    * Returns the neighboring cell to the one at coordinates `coords`, identified by the `neighbor` direction. This method takes into account the different layouts a TileMap can take.
    */
-  get_neighbor_cell(coords: Vector2i, neighbor: int): Vector2i;
+  get_neighbor_cell(coords: Vector2i | Vector2, neighbor: int): Vector2i;
   /**
    * Creates a new {@link TileMapPattern} from the given layer and set of cells.
    * If `layer` is negative, the layers are accessed from the last one.
    */
   get_pattern(layer: int, coords_array: Array<Vector2i>): TileMapPattern;
   /** Returns the list of all neighbourings cells to the one at `coords`. */
-  get_surrounding_cells(coords: Vector2i): Array<Vector2i>;
+  get_surrounding_cells(coords: Vector2i | Vector2): Array<Vector2i>;
   /**
    * Returns a {@link Vector2i} array with the positions of all cells containing a tile in the given layer. A cell is considered empty if its source identifier equals -1, its atlas coordinates identifiers is `Vector2(-1, -1)` and its alternative identifier is -1.
    * If `layer` is negative, the layers are accessed from the last one.
@@ -157,21 +157,21 @@ declare class TileMap extends Node2D {
    * A cell is considered empty if its source identifier equals -1, its atlas coordinates identifiers is `Vector2(-1, -1)` and its alternative identifier is -1.
    * If `layer` is negative, the layers are accessed from the last one.
    */
-  get_used_cells_by_id(layer: int, source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): Array<Vector2i>;
+  get_used_cells_by_id(layer: int, source_id?: int, atlas_coords?: Vector2i | Vector2, alternative_tile?: int): Array<Vector2i>;
   /** Returns a rectangle enclosing the used (non-empty) tiles of the map, including all layers. */
   get_used_rect(): Rect2i;
   /**
    * Returns `true` if the cell on layer `layer` at coordinates `coords` is flipped horizontally. The result is valid only for atlas sources.
    */
-  is_cell_flipped_h(layer: int, coords: Vector2i, use_proxies?: boolean): boolean;
+  is_cell_flipped_h(layer: int, coords: Vector2i | Vector2, use_proxies?: boolean): boolean;
   /**
    * Returns `true` if the cell on layer `layer` at coordinates `coords` is flipped vertically. The result is valid only for atlas sources.
    */
-  is_cell_flipped_v(layer: int, coords: Vector2i, use_proxies?: boolean): boolean;
+  is_cell_flipped_v(layer: int, coords: Vector2i | Vector2, use_proxies?: boolean): boolean;
   /**
    * Returns `true` if the cell on layer `layer` at coordinates `coords` is transposed. The result is valid only for atlas sources.
    */
-  is_cell_transposed(layer: int, coords: Vector2i, use_proxies?: boolean): boolean;
+  is_cell_transposed(layer: int, coords: Vector2i | Vector2, use_proxies?: boolean): boolean;
   /**
    * Returns if a layer is enabled.
    * If `layer` is negative, the layers are accessed from the last one.
@@ -187,16 +187,16 @@ declare class TileMap extends Node2D {
   /**
    * Returns the map coordinates of the cell containing the given `local_position`. If `local_position` is in global coordinates, consider using {@link Node2D.to_local} before passing it to this method. See also {@link map_to_local}.
    */
-  local_to_map(local_position: Vector2): Vector2i;
+  local_to_map(local_position: Vector2 | Vector2i): Vector2i;
   /**
    * Returns for the given coordinate `coords_in_pattern` in a {@link TileMapPattern} the corresponding cell coordinates if the pattern was pasted at the `position_in_tilemap` coordinates (see {@link set_pattern}). This mapping is required as in half-offset tile shapes, the mapping might not work by calculating `position_in_tile_map + coords_in_pattern`.
    */
-  map_pattern(position_in_tilemap: Vector2i, coords_in_pattern: Vector2i, pattern: TileMapPattern): Vector2i;
+  map_pattern(position_in_tilemap: Vector2i | Vector2, coords_in_pattern: Vector2i | Vector2, pattern: TileMapPattern): Vector2i;
   /**
    * Returns the centered position of a cell in the TileMap's local coordinate space. To convert the returned value into global coordinates, use {@link Node2D.to_global}. See also {@link local_to_map}.
    * **Note:** This may not correspond to the visual position of the tile, i.e. it ignores the {@link TileData.texture_origin} property of individual tiles.
    */
-  map_to_local(map_position: Vector2i): Vector2;
+  map_to_local(map_position: Vector2i | Vector2): Vector2;
   /** Moves the layer at index `layer` to the given position `to_position` in the array. */
   move_layer(layer: int, to_position: int): void;
   /**
@@ -216,7 +216,7 @@ declare class TileMap extends Node2D {
    * If `source_id` is set to `-1`, `atlas_coords` to `Vector2i(-1, -1)` or `alternative_tile` to `-1`, the cell will be erased. An erased cell gets **all** its identifiers automatically set to their respective invalid values, namely `-1`, `Vector2i(-1, -1)` and `-1`.
    * If `layer` is negative, the layers are accessed from the last one.
    */
-  set_cell(layer: int, coords: Vector2i, source_id?: int, atlas_coords?: Vector2i, alternative_tile?: int): void;
+  set_cell(layer: int, coords: Vector2i | Vector2, source_id?: int, atlas_coords?: Vector2i | Vector2, alternative_tile?: int): void;
   /**
    * Update all the cells in the `cells` coordinates array so that they use the given `terrain` for the given `terrain_set`. If an updated cell has the same terrain as one of its neighboring cells, this function tries to join the two. This function might update neighboring tiles if needed to create correct terrain transitions.
    * If `ignore_empty_terrains` is `true`, empty terrains will be ignored when trying to find the best fitting tile for the given terrain constraints.
@@ -282,7 +282,7 @@ declare class TileMap extends Node2D {
    * Paste the given {@link TileMapPattern} at the given `position` and `layer` in the tile map.
    * If `layer` is negative, the layers are accessed from the last one.
    */
-  set_pattern(layer: int, position: Vector2i, pattern: TileMapPattern): void;
+  set_pattern(layer: int, position: Vector2i | Vector2, pattern: TileMapPattern): void;
   /**
    * Triggers a direct update of the TileMap. Usually, calling this function is not needed, as TileMap node updates automatically when one of its properties or cells is modified.
    * However, for performance reasons, those updates are batched and delayed to the end of the frame. Calling this function will force the TileMap to update right away instead.

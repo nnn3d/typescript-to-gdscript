@@ -16,7 +16,7 @@ declare class ImporterMesh extends Resource {
    * The `flags` argument is the bitwise OR of, as required: One value of {@link Mesh.ArrayCustomFormat} left shifted by `ARRAY_FORMAT_CUSTOMn_SHIFT` for each custom channel in use, {@link Mesh.ARRAY_FLAG_USE_DYNAMIC_UPDATE}, {@link Mesh.ARRAY_FLAG_USE_8_BONE_WEIGHTS}, or {@link Mesh.ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY}.
    * **Note:** When using indices, it is recommended to only use points, lines, or triangles.
    */
-  add_surface(primitive: int, arrays: Array<unknown>, blend_shapes?: Array<Array<unknown>>, lods?: Dictionary, material?: Material, name?: string, flags?: int): void;
+  add_surface(primitive: int, arrays: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, blend_shapes?: Array<Array<unknown>>, lods?: Dictionary, material?: Material, name?: string, flags?: int): void;
   /** Removes all surfaces and blend shapes from this {@link ImporterMesh}. */
   clear(): void;
   /**
@@ -30,7 +30,7 @@ declare class ImporterMesh extends Resource {
    * The number of generated lods can be accessed using {@link get_surface_lod_count}, and each LOD is available in {@link get_surface_lod_size} and {@link get_surface_lod_indices}.
    * `bone_transform_array` is an {@link Array} which can be either empty or contain {@link Transform3D}s which, for each of the mesh's bone IDs, will apply mesh skinning when generating the LOD mesh variations. This is usually used to account for discrepancies in scale between the mesh itself and its skinning data.
    */
-  generate_lods(normal_merge_angle: float, normal_split_angle: float, bone_transform_array: Array<unknown>): void;
+  generate_lods(normal_merge_angle: float, normal_split_angle: float, bone_transform_array: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /** Returns the number of blend shapes that the mesh holds. */
   get_blend_shape_count(): int;
   /** Returns the blend shape mode for this Mesh. */
@@ -76,7 +76,7 @@ declare class ImporterMesh extends Resource {
   /** Sets the blend shape mode. */
   set_blend_shape_mode(mode: int): void;
   /** Sets the size hint of this mesh for lightmap-unwrapping in UV-space. */
-  set_lightmap_size_hint(size: Vector2i): void;
+  set_lightmap_size_hint(size: Vector2i | Vector2): void;
   /** Sets a {@link Material} for a given surface. Surface will be rendered using this material. */
   set_surface_material(surface_idx: int, material: Material): void;
   /** Sets a name for a given surface. */

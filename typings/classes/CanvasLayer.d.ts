@@ -43,11 +43,11 @@ declare class CanvasLayer extends Node {
   get_follow_viewport_scale(): float;
   set_layer(value: int): void;
   get_layer(): int;
-  set_offset(value: Vector2): void;
+  set_offset(value: Vector2 | Vector2i): void;
   get_offset(): Vector2;
   set_rotation(value: float): void;
   get_rotation(): float;
-  set_scale(value: Vector2): void;
+  set_scale(value: Vector2 | Vector2i): void;
   get_scale(): Vector2;
   set_transform(value: Transform2D): void;
   get_transform(): Transform2D;

@@ -40,7 +40,7 @@ declare class PhysicsShapeQueryParameters2D extends RefCounted {
   get_exclude(): Array<RID>;
   set_margin(value: float): void;
   get_margin(): float;
-  set_motion(value: Vector2): void;
+  set_motion(value: Vector2 | Vector2i): void;
   get_motion(): Vector2;
   set_shape(value: Resource | null): void;
   get_shape(): Resource | null;

@@ -52,13 +52,13 @@ declare class MultiMesh extends Resource {
    * Limits the number of instances drawn, -1 draws all instances. Changing this does not change the sizes of the buffers.
    */
   visible_instance_count: int;
-  set_buffer(value: PackedFloat32Array): void;
+  set_buffer(value: PackedFloat32Array | Array<unknown>): void;
   get_buffer(): PackedFloat32Array;
-  _set_color_array(value: PackedColorArray): void;
+  _set_color_array(value: PackedColorArray | Array<unknown>): void;
   _get_color_array(): PackedColorArray;
   set_custom_aabb(value: AABB): void;
   get_custom_aabb(): AABB;
-  _set_custom_data_array(value: PackedColorArray): void;
+  _set_custom_data_array(value: PackedColorArray | Array<unknown>): void;
   _get_custom_data_array(): PackedColorArray;
   set_instance_count(value: int): void;
   get_instance_count(): int;
@@ -66,9 +66,9 @@ declare class MultiMesh extends Resource {
   get_mesh(): Mesh | null;
   set_physics_interpolation_quality(value: int): void;
   get_physics_interpolation_quality(): int;
-  _set_transform_2d_array(value: PackedVector2Array): void;
+  _set_transform_2d_array(value: PackedVector2Array | Array<unknown>): void;
   _get_transform_2d_array(): PackedVector2Array;
-  _set_transform_array(value: PackedVector3Array): void;
+  _set_transform_array(value: PackedVector3Array | Array<unknown>): void;
   _get_transform_array(): PackedVector3Array;
   set_transform_format(value: int): void;
   get_transform_format(): int;
@@ -104,7 +104,7 @@ declare class MultiMesh extends Resource {
    * This is useful for situations where the order of instances may change from physics tick to tick, such as particle systems.
    * When the order of instances is coherent, the simpler alternative of setting {@link buffer} can still be used with interpolation.
    */
-  set_buffer_interpolated(buffer_curr: PackedFloat32Array, buffer_prev: PackedFloat32Array): void;
+  set_buffer_interpolated(buffer_curr: PackedFloat32Array | Array<unknown>, buffer_prev: PackedFloat32Array | Array<unknown>): void;
   /**
    * Sets the color of a specific instance by *multiplying* the mesh's existing vertex colors. This allows for different color tinting per instance.
    * **Note:** Each component is stored in 32 bits in the Forward+ and Mobile rendering methods, but is packed into 16 bits in the Compatibility rendering method.
@@ -119,7 +119,7 @@ declare class MultiMesh extends Resource {
    */
   set_instance_custom_data(instance: int, custom_data: Color): void;
   /** Sets the {@link Transform3D} for a specific instance. */
-  set_instance_transform(instance: int, transform: Transform3D): void;
+  set_instance_transform(instance: int, transform: Transform3D | Projection): void;
   /** Sets the {@link Transform2D} for a specific instance. */
   set_instance_transform_2d(instance: int, transform: Transform2D): void;
 

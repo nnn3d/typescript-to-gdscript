@@ -77,7 +77,7 @@ declare class RDShaderSPIRV extends Resource {
   /**
    * Sets the SPIR-V `bytecode` for the given shader `stage`. Equivalent to setting one of {@link bytecode_compute}, {@link bytecode_fragment}, {@link bytecode_tesselation_control}, {@link bytecode_tesselation_evaluation}, {@link bytecode_vertex}.
    */
-  set_stage_bytecode(stage: int, bytecode: PackedByteArray): void;
+  set_stage_bytecode(stage: int, bytecode: PackedByteArray | Array<unknown>): void;
   /**
    * Sets the compilation error message for the given shader `stage` to `compile_error`. Equivalent to setting one of {@link compile_error_compute}, {@link compile_error_fragment}, {@link compile_error_tesselation_control}, {@link compile_error_tesselation_evaluation}, {@link compile_error_vertex}.
    */

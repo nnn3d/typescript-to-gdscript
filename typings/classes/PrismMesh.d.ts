@@ -17,7 +17,7 @@ declare class PrismMesh extends PrimitiveMesh {
   subdivide_width: int;
   set_left_to_right(value: float): void;
   get_left_to_right(): float;
-  set_size(value: Vector3): void;
+  set_size(value: Vector3 | Vector3i): void;
   get_size(): Vector3;
   set_subdivide_depth(value: int): void;
   get_subdivide_depth(): int;

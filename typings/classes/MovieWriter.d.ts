@@ -18,7 +18,7 @@ declare class MovieWriter extends GodotObject {
   /**
    * Called once before the engine starts writing video and audio data. `movie_size` is the width and height of the video to save. `fps` is the number of frames per second specified in the project settings or using the `--fixed-fps <fps>` command line argument ($DOCS_URL/tutorials/editor/command_line_tutorial.html).
    */
-  _write_begin(movie_size: Vector2i, fps: int, base_path: string): int;
+  _write_begin(movie_size: Vector2i | Vector2, fps: int, base_path: string): int;
   /**
    * Called when the engine finishes writing. This occurs when the engine quits by pressing the window manager's close button, or when {@link SceneTree.quit} is called.
    * **Note:** Pressing `Ctrl + C` on the terminal running the editor/project does *not* result in {@link _write_end} being called.

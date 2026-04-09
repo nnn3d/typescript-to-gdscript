@@ -57,9 +57,9 @@ declare class PhysicalBone3D extends PhysicsBody3D {
   get_angular_damp(): float;
   set_angular_damp_mode(value: int): void;
   get_angular_damp_mode(): int;
-  set_angular_velocity(value: Vector3): void;
+  set_angular_velocity(value: Vector3 | Vector3i): void;
   get_angular_velocity(): Vector3;
-  set_body_offset(value: Transform3D): void;
+  set_body_offset(value: Transform3D | Projection): void;
   get_body_offset(): Transform3D;
   set_bounce(value: float): void;
   get_bounce(): float;
@@ -71,9 +71,9 @@ declare class PhysicalBone3D extends PhysicsBody3D {
   get_friction(): float;
   set_gravity_scale(value: float): void;
   get_gravity_scale(): float;
-  set_joint_offset(value: Transform3D): void;
+  set_joint_offset(value: Transform3D | Projection): void;
   get_joint_offset(): Transform3D;
-  set_joint_rotation(value: Vector3): void;
+  set_joint_rotation(value: Vector3 | Vector3i): void;
   get_joint_rotation(): Vector3;
   set_joint_type(value: int): void;
   get_joint_type(): int;
@@ -81,7 +81,7 @@ declare class PhysicalBone3D extends PhysicsBody3D {
   get_linear_damp(): float;
   set_linear_damp_mode(value: int): void;
   get_linear_damp_mode(): int;
-  set_linear_velocity(value: Vector3): void;
+  set_linear_velocity(value: Vector3 | Vector3i): void;
   get_linear_velocity(): Vector3;
   set_mass(value: float): void;
   get_mass(): float;
@@ -95,13 +95,13 @@ declare class PhysicalBone3D extends PhysicsBody3D {
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_integrate_forces" functions otherwise).
    * This is equivalent to using {@link apply_impulse} at the body's center of mass.
    */
-  apply_central_impulse(impulse: Vector3): void;
+  apply_central_impulse(impulse: Vector3 | Vector3i): void;
   /**
    * Applies a positioned impulse to the PhysicsBone3D.
    * An impulse is time-independent! Applying an impulse every frame would result in a framerate-dependent force. For this reason, it should only be used when simulating one-time impacts (use the "_integrate_forces" functions otherwise).
    * `position` is the offset from the PhysicsBone3D origin in global coordinates.
    */
-  apply_impulse(impulse: Vector3, position?: Vector3): void;
+  apply_impulse(impulse: Vector3 | Vector3i, position?: Vector3 | Vector3i): void;
   /** Returns the unique identifier of the PhysicsBone3D. */
   get_bone_id(): int;
   /** Returns `true` if the PhysicsBone3D is allowed to simulate physics. */

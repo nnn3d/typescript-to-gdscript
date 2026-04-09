@@ -79,13 +79,13 @@ declare class GraphEdit extends Control {
   is_minimap_enabled(): boolean;
   set_minimap_opacity(value: float): void;
   get_minimap_opacity(): float;
-  set_minimap_size(value: Vector2): void;
+  set_minimap_size(value: Vector2 | Vector2i): void;
   get_minimap_size(): Vector2;
   set_panning_scheme(value: int): void;
   get_panning_scheme(): int;
   set_right_disconnects(value: boolean): void;
   is_right_disconnects_enabled(): boolean;
-  set_scroll_offset(value: Vector2): void;
+  set_scroll_offset(value: Vector2 | Vector2i): void;
   get_scroll_offset(): Vector2;
   set_show_arrange_button(value: boolean): void;
   is_showing_arrange_button(): boolean;
@@ -117,18 +117,18 @@ declare class GraphEdit extends Control {
   get_zoom_step(): float;
 
   /** Virtual method which can be overridden to customize how connections are drawn. */
-  _get_connection_line(from_position: Vector2, to_position: Vector2): PackedVector2Array;
+  _get_connection_line(from_position: Vector2 | Vector2i, to_position: Vector2 | Vector2i): PackedVector2Array;
   /**
    * Returns whether the `mouse_position` is in the input hot zone.
    * By default, a hot zone is a {@link Rect2} positioned such that its center is at `in_node`.{@link GraphNode.get_input_port_position}(`in_port`) (For output's case, call {@link GraphNode.get_output_port_position} instead). The hot zone's width is twice the Theme Property `port_grab_distance_horizontal`, and its height is twice the `port_grab_distance_vertical`.
    * Below is a sample code to help get started:
    */
-  _is_in_input_hotzone(in_node: GodotObject, in_port: int, mouse_position: Vector2): boolean;
+  _is_in_input_hotzone(in_node: GodotObject, in_port: int, mouse_position: Vector2 | Vector2i): boolean;
   /**
    * Returns whether the `mouse_position` is in the output hot zone. For more information on hot zones, see {@link _is_in_input_hotzone}.
    * Below is a sample code to help get started:
    */
-  _is_in_output_hotzone(in_node: GodotObject, in_port: int, mouse_position: Vector2): boolean;
+  _is_in_output_hotzone(in_node: GodotObject, in_port: int, mouse_position: Vector2 | Vector2i): boolean;
   /**
    * This virtual method can be used to insert additional error detection while the user is dragging a connection over a valid port.
    * Return `true` if the connection is indeed valid or return `false` if the connection is impossible. If the connection is impossible, no snapping to the port and thus no connection request to that port will happen.
@@ -182,11 +182,11 @@ declare class GraphEdit extends Control {
    * A connection is represented as a {@link Dictionary} in the form of:
    * For example, getting a connection at a given mouse position can be achieved like this:
    */
-  get_closest_connection_at_point(point: Vector2, max_distance?: float): Dictionary;
+  get_closest_connection_at_point(point: Vector2 | Vector2i, max_distance?: float): Dictionary;
   /** Returns the number of connections from `from_port` of `from_node`. */
   get_connection_count(from_node: string, from_port: int): int;
   /** Returns the points which would make up a connection between `from_node` and `to_node`. */
-  get_connection_line(from_node: Vector2, to_node: Vector2): PackedVector2Array;
+  get_connection_line(from_node: Vector2 | Vector2i, to_node: Vector2 | Vector2i): PackedVector2Array;
   /**
    * Returns an {@link Array} containing a list of all connections for `node`.
    * A connection is represented as a {@link Dictionary} in the form of:
@@ -197,7 +197,7 @@ declare class GraphEdit extends Control {
    * Returns an {@link Array} containing the list of connections that intersect with the given {@link Rect2}.
    * A connection is represented as a {@link Dictionary} in the form of:
    */
-  get_connections_intersecting_with_rect(rect: Rect2): Array<Dictionary>;
+  get_connections_intersecting_with_rect(rect: Rect2 | Rect2i): Array<Dictionary>;
   /** Returns the {@link GraphFrame} that contains the {@link GraphElement} with the given name. */
   get_element_frame(element: string): GraphFrame | null;
   /**

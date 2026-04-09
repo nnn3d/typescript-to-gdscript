@@ -176,7 +176,7 @@ declare class GPUParticles3D extends GeometryInstance3D {
    * The default ParticleProcessMaterial will overwrite `color` and use the contents of `custom` as `(rotation, age, animation, lifetime)`.
    * **Note:** {@link emit_particle} is only supported on the Forward+ and Mobile rendering methods, not Compatibility.
    */
-  emit_particle(xform: Transform3D, velocity: Vector3, color: Color, custom: Color, flags: int): void;
+  emit_particle(xform: Transform3D | Projection, velocity: Vector3 | Vector3i, color: Color, custom: Color, flags: int): void;
   /** Returns the {@link Mesh} that is drawn at index `pass`. */
   get_draw_pass_mesh(pass: int): Mesh | null;
   /**

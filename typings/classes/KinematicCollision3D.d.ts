@@ -6,7 +6,7 @@ declare class KinematicCollision3D extends RefCounted {
   /**
    * Returns the collision angle according to `up_direction`, which is {@link Vector3.UP} by default. This value is always positive.
    */
-  get_angle(collision_index?: int, up_direction?: Vector3): float;
+  get_angle(collision_index?: int, up_direction?: Vector3 | Vector3i): float;
   /**
    * Returns the colliding body's attached {@link Object} given a collision index (the deepest collision by default).
    */

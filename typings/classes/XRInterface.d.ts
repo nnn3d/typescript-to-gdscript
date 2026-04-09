@@ -58,7 +58,7 @@ declare class XRInterface extends RefCounted {
    * `view` is the view/eye index.
    * `cam_transform` is the transform that maps device coordinates to scene coordinates, typically the {@link Node3D.global_transform} of the current XROrigin3D.
    */
-  get_transform_for_view(view: int, cam_transform: Transform3D): Transform3D;
+  get_transform_for_view(view: int, cam_transform: Transform3D | Projection): Transform3D;
   /**
    * Returns the number of views that need to be rendered for this device. 1 for Monoscopic, 2 for Stereoscopic.
    */

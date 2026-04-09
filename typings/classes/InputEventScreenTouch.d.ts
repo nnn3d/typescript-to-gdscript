@@ -18,7 +18,7 @@ declare class InputEventScreenTouch extends InputEventFromWindow {
   is_double_tap(): boolean;
   set_index(value: int): void;
   get_index(): int;
-  set_position(value: Vector2): void;
+  set_position(value: Vector2 | Vector2i): void;
   get_position(): Vector2;
   set_pressed(value: boolean): void;
 }

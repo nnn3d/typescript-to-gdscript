@@ -112,7 +112,7 @@ declare class RichTextLabel extends Control {
   get_autowrap_trim_flags(): int;
   set_use_bbcode(value: boolean): void;
   is_using_bbcode(): boolean;
-  set_effects(value: Array<unknown>): void;
+  set_effects(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_effects(): Array<unknown>;
   set_deselect_on_focus_loss_enabled(value: boolean): void;
   is_deselect_on_focus_loss_enabled(): boolean;
@@ -142,11 +142,11 @@ declare class RichTextLabel extends Control {
   is_shortcut_keys_enabled(): boolean;
   set_structured_text_bidi_override(value: int): void;
   get_structured_text_bidi_override(): int;
-  set_structured_text_bidi_override_options(value: Array<unknown>): void;
+  set_structured_text_bidi_override_options(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_structured_text_bidi_override_options(): Array<unknown>;
   set_tab_size(value: int): void;
   get_tab_size(): int;
-  set_tab_stops(value: PackedFloat32Array): void;
+  set_tab_stops(value: PackedFloat32Array | Array<unknown>): void;
   get_tab_stops(): PackedFloat32Array;
   set_text(value: string): void;
   get_text(): string;
@@ -179,7 +179,7 @@ declare class RichTextLabel extends Control {
    * If `height_in_percent` is set, `height` values are percentages of the control width instead of pixels.
    * `alt_text` is used as the image description for assistive apps.
    */
-  add_image(image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2, key?: unknown, pad?: boolean, tooltip?: string, width_in_percent?: boolean, height_in_percent?: boolean, alt_text?: string): void;
+  add_image(image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2 | Rect2i, key?: unknown, pad?: boolean, tooltip?: string, width_in_percent?: boolean, height_in_percent?: boolean, alt_text?: string): void;
   /** Adds raw non-BBCode-parsed text to the tag stack. */
   add_text(text: string): void;
   /**
@@ -322,7 +322,7 @@ declare class RichTextLabel extends Control {
   /** The assignment version of {@link append_text}. Clears the tag stack and inserts the new content. */
   parse_bbcode(bbcode: string): void;
   /** Parses BBCode parameter `expressions` into a dictionary. */
-  parse_expressions_for_values(expressions: PackedStringArray): Dictionary;
+  parse_expressions_for_values(expressions: PackedStringArray | Array<unknown>): Dictionary;
   /**
    * Terminates the current tag. Use after `push_*` methods to close BBCodes manually. Does not need to follow `add_*` methods.
    */
@@ -359,7 +359,7 @@ declare class RichTextLabel extends Control {
   /**
    * Adds a [code skip-lint][dropcap][/code] tag to the tag stack. Drop cap (dropped capital) is a decorative element at the beginning of a paragraph that is larger than the rest of the text.
    */
-  push_dropcap(string: string, font: Font, size: int, dropcap_margins?: Rect2, color?: Color, outline_size?: int, outline_color?: Color): void;
+  push_dropcap(string: string, font: Font, size: int, dropcap_margins?: Rect2 | Rect2i, color?: Color, outline_size?: int, outline_color?: Color): void;
   /**
    * Adds a [code skip-lint][fgcolor][/code] tag to the tag stack.
    * **Note:** The foreground color has padding applied by default, which is controlled using  and . This can lead to overlapping highlights if foreground colors are placed on neighboring lines/columns, so consider setting those theme items to `0` if you want to avoid this.
@@ -411,7 +411,7 @@ declare class RichTextLabel extends Control {
    */
   push_outline_size(outline_size: int): void;
   /** Adds a [code skip-lint][p][/code] tag to the tag stack. */
-  push_paragraph(alignment: int, base_direction: int, language?: string, st_parser?: int, justification_flags?: int, tab_stops?: PackedFloat32Array): void;
+  push_paragraph(alignment: int, base_direction: int, language?: string, st_parser?: int, justification_flags?: int, tab_stops?: PackedFloat32Array | Array<unknown>): void;
   /**
    * Adds a [code skip-lint][s][/code] tag to the tag stack. If `color`'s alpha value is `0.0`, the current font's color with its alpha multiplied by  is used.
    */
@@ -446,11 +446,11 @@ declare class RichTextLabel extends Control {
   /** Sets color of a table cell border. */
   set_cell_border_color(color: Color): void;
   /** Sets inner padding of a table cell. */
-  set_cell_padding(padding: Rect2): void;
+  set_cell_padding(padding: Rect2 | Rect2i): void;
   /** Sets color of a table cell. Separate colors for alternating rows can be specified. */
   set_cell_row_background_color(odd_row_bg: Color, even_row_bg: Color): void;
   /** Sets minimum and maximum size overrides for a table cell. */
-  set_cell_size_override(min_size: Vector2, max_size: Vector2): void;
+  set_cell_size_override(min_size: Vector2 | Vector2i, max_size: Vector2 | Vector2i): void;
   /**
    * Edits the selected column's expansion options. If `expand` is `true`, the column expands in proportion to its expansion ratio versus the other columns' ratios.
    * For example, 2 columns with ratios 3 and 4 plus 70 pixels in available width would expand 30 and 40 pixels, respectively.
@@ -462,7 +462,7 @@ declare class RichTextLabel extends Control {
   /**
    * Updates the existing images with the key `key`. Only properties specified by `mask` bits are updated. See {@link add_image}.
    */
-  update_image(key: unknown, mask: int, image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2, pad?: boolean, tooltip?: string, width_in_percent?: boolean, height_in_percent?: boolean): void;
+  update_image(key: unknown, mask: int, image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2 | Rect2i, pad?: boolean, tooltip?: string, width_in_percent?: boolean, height_in_percent?: boolean): void;
 
   /**
    * Triggered when the document is fully loaded.

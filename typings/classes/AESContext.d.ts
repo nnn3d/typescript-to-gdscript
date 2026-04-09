@@ -13,12 +13,12 @@ declare class AESContext extends RefCounted {
   /**
    * Start the AES context in the given `mode`. A `key` of either 16 or 32 bytes must always be provided, while an `iv` (initialization vector) of exactly 16 bytes, is only needed when `mode` is either {@link MODE_CBC_ENCRYPT} or {@link MODE_CBC_DECRYPT}.
    */
-  start(mode: int, key: PackedByteArray, iv?: PackedByteArray): int;
+  start(mode: int, key: PackedByteArray | Array<unknown>, iv?: PackedByteArray | Array<unknown>): int;
   /**
    * Run the desired operation for this AES context. Will return a {@link PackedByteArray} containing the result of encrypting (or decrypting) the given `src`. See {@link start} for mode of operation.
    * **Note:** The size of `src` must be a multiple of 16. Apply some padding if needed.
    */
-  update(src: PackedByteArray): PackedByteArray;
+  update(src: PackedByteArray | Array<unknown>): PackedByteArray;
 
   // enum Mode
   /** AES electronic codebook encryption mode. */

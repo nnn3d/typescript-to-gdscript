@@ -43,7 +43,7 @@ declare class TextLine extends RefCounted {
   /**
    * Adds inline object to the text buffer, `key` must be unique. In the text, object is represented as `length` object replacement characters.
    */
-  add_object(key: unknown, size: Vector2, inline_align: int, length?: int, baseline?: float): boolean;
+  add_object(key: unknown, size: Vector2 | Vector2i, inline_align: int, length?: int, baseline?: float): boolean;
   /** Adds text span and font to draw it. */
   add_string(text: string, font: Font, font_size: int, language?: string, meta?: unknown): boolean;
   /** Clears text line (removes text and inline objects). */
@@ -51,11 +51,11 @@ declare class TextLine extends RefCounted {
   /**
    * Draw text into a canvas item at a given position, with `color`. `pos` specifies the top left corner of the bounding box. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  draw(canvas: RID, pos: Vector2, color?: Color, oversampling?: float): void;
+  draw(canvas: RID, pos: Vector2 | Vector2i, color?: Color, oversampling?: float): void;
   /**
    * Draw text into a canvas item at a given position, with `color`. `pos` specifies the top left corner of the bounding box. If `oversampling` is greater than zero, it is used as font oversampling factor, otherwise viewport oversampling settings are used.
    */
-  draw_outline(canvas: RID, pos: Vector2, outline_size?: int, color?: Color, oversampling?: float): void;
+  draw_outline(canvas: RID, pos: Vector2 | Vector2i, outline_size?: int, color?: Color, oversampling?: float): void;
   /** Duplicates this {@link TextLine}. */
   duplicate(): TextLine;
   /** Returns the text writing direction inferred by the BiDi algorithm. */
@@ -89,12 +89,12 @@ declare class TextLine extends RefCounted {
    */
   hit_test(coords: float): int;
   /** Sets new size and alignment of embedded object. */
-  resize_object(key: unknown, size: Vector2, inline_align: int, baseline?: float): boolean;
+  resize_object(key: unknown, size: Vector2 | Vector2i, inline_align: int, baseline?: float): boolean;
   /**
    * Overrides BiDi for the structured text.
    * Override ranges should cover full source text without overlaps. BiDi algorithm will be used on each range separately.
    */
-  set_bidi_override(override: Array<unknown>): void;
+  set_bidi_override(override: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /** Aligns text to the given tab-stops. */
-  tab_align(tab_stops: PackedFloat32Array): void;
+  tab_align(tab_stops: PackedFloat32Array | Array<unknown>): void;
 }

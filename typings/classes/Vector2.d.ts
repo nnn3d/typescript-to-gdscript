@@ -21,34 +21,34 @@ declare interface Vector2 {
    * Returns the signed angle to the given vector, in radians. The result ranges from `-PI` to `PI` (inclusive).
    * Illustration of the returned angle. (https://raw.githubusercontent.com/godotengine/godot-docs/master/img/vector2_angle_to.png)
    */
-  angle_to(to: Vector2): float;
+  angle_to(to: Vector2 | Vector2i): float;
   /**
    * Returns the signed angle between the X axis and the line from this vector to point `to`, in radians. The result ranges from `-PI` to `PI` (inclusive).
    * `a.angle_to_point(b)` is equivalent to `(b - a).angle()`. See also {@link angle}.
    * Illustration of the returned angle. (https://raw.githubusercontent.com/godotengine/godot-docs/master/img/vector2_angle_to_point.png)
    */
-  angle_to_point(to: Vector2): float;
+  angle_to_point(to: Vector2 | Vector2i): float;
   /** Returns this vector's aspect ratio, which is {@link x} divided by {@link y}. */
   aspect(): float;
   /**
    * Returns the derivative at the given `t` on the Bézier curve (https://en.wikipedia.org/wiki/B%C3%A9zier_curve) defined by this vector and the given `control_1`, `control_2`, and `end` points.
    */
-  bezier_derivative(control_1: Vector2, control_2: Vector2, end: Vector2, t: float): Vector2;
+  bezier_derivative(control_1: Vector2 | Vector2i, control_2: Vector2 | Vector2i, end: Vector2 | Vector2i, t: float): Vector2;
   /**
    * Returns the point at the given `t` on the Bézier curve (https://en.wikipedia.org/wiki/B%C3%A9zier_curve) defined by this vector and the given `control_1`, `control_2`, and `end` points.
    */
-  bezier_interpolate(control_1: Vector2, control_2: Vector2, end: Vector2, t: float): Vector2;
+  bezier_interpolate(control_1: Vector2 | Vector2i, control_2: Vector2 | Vector2i, end: Vector2 | Vector2i, t: float): Vector2;
   /**
    * Returns the vector "bounced off" from a line defined by the given normal `n` perpendicular to the line.
    * **Note:** {@link bounce} performs the operation that most engines and frameworks call [code skip-lint]reflect()[/code].
    */
-  bounce(n: Vector2): Vector2;
+  bounce(n: Vector2 | Vector2i): Vector2;
   /** Returns a new vector with all components rounded up (towards positive infinity). */
   ceil(): Vector2;
   /**
    * Returns a new vector with all components clamped between the components of `min` and `max`, by running {@link @GlobalScope.clamp} on each component.
    */
-  clamp(min: Vector2, max: Vector2): Vector2;
+  clamp(min: Vector2 | Vector2i, max: Vector2 | Vector2i): Vector2;
   /**
    * Returns a new vector with all components clamped between `min` and `max`, by running {@link @GlobalScope.clamp} on each component.
    */
@@ -58,41 +58,41 @@ declare interface Vector2 {
    * This is the signed area of the parallelogram formed by the two vectors. If the second vector is clockwise from the first vector, then the cross product is the positive area. If counter-clockwise, the cross product is the negative area. If the two vectors are parallel this returns zero, making it useful for testing if two vectors are parallel.
    * **Note:** Cross product is not defined in 2D mathematically. This method embeds the 2D vectors in the XY plane of 3D space and uses their cross product's Z component as the analog.
    */
-  cross(with_: Vector2): float;
+  cross(with_: Vector2 | Vector2i): float;
   /**
    * Performs a cubic interpolation between this vector and `b` using `pre_a` and `post_b` as handles, and returns the result at position `weight`. `weight` is on the range of 0.0 to 1.0, representing the amount of interpolation.
    */
-  cubic_interpolate(b: Vector2, pre_a: Vector2, post_b: Vector2, weight: float): Vector2;
+  cubic_interpolate(b: Vector2 | Vector2i, pre_a: Vector2 | Vector2i, post_b: Vector2 | Vector2i, weight: float): Vector2;
   /**
    * Performs a cubic interpolation between this vector and `b` using `pre_a` and `post_b` as handles, and returns the result at position `weight`. `weight` is on the range of 0.0 to 1.0, representing the amount of interpolation.
    * It can perform smoother interpolation than {@link cubic_interpolate} by the time values.
    */
-  cubic_interpolate_in_time(b: Vector2, pre_a: Vector2, post_b: Vector2, weight: float, b_t: float, pre_a_t: float, post_b_t: float): Vector2;
+  cubic_interpolate_in_time(b: Vector2 | Vector2i, pre_a: Vector2 | Vector2i, post_b: Vector2 | Vector2i, weight: float, b_t: float, pre_a_t: float, post_b_t: float): Vector2;
   /**
    * Returns the normalized vector pointing from this vector to `to`.
    * `a.direction_to(b)` is equivalent to `(b - a).normalized()`. See also {@link normalized}.
    */
-  direction_to(to: Vector2): Vector2;
+  direction_to(to: Vector2 | Vector2i): Vector2;
   /**
    * Returns the squared distance between this vector and `to`.
    * This method runs faster than {@link distance_to}, so prefer it if you need to compare vectors or need the squared distance for some formula.
    */
-  distance_squared_to(to: Vector2): float;
+  distance_squared_to(to: Vector2 | Vector2i): float;
   /** Returns the distance between this vector and `to`. */
-  distance_to(to: Vector2): float;
+  distance_to(to: Vector2 | Vector2i): float;
   /**
    * Returns the dot product of this vector and `with`. This can be used to compare the angle between two vectors. For example, this can be used to determine whether an enemy is facing the player.
    * The dot product will be `0` for a right angle (90 degrees), greater than 0 for angles narrower than 90 degrees and lower than 0 for angles wider than 90 degrees.
    * When using unit (normalized) vectors, the result will always be between `-1.0` (180 degree angle) when the vectors are facing opposite directions, and `1.0` (0 degree angle) when the vectors are aligned.
    * **Note:** `a.dot(b)` is equivalent to `b.dot(a)`.
    */
-  dot(with_: Vector2): float;
+  dot(with_: Vector2 | Vector2i): float;
   /** Returns a new vector with all components rounded down (towards negative infinity). */
   floor(): Vector2;
   /**
    * Returns `true` if this vector and `to` are approximately equal, by running {@link @GlobalScope.is_equal_approx} on each component.
    */
-  is_equal_approx(to: Vector2): boolean;
+  is_equal_approx(to: Vector2 | Vector2i): boolean;
   /**
    * Returns `true` if this vector is finite, by calling {@link @GlobalScope.is_finite} on each component.
    */
@@ -114,7 +114,7 @@ declare interface Vector2 {
   /**
    * Returns the result of the linear interpolation between this vector and `to` by amount `weight`. `weight` is on the range of `0.0` to `1.0`, representing the amount of interpolation.
    */
-  lerp(to: Vector2, weight: float): Vector2;
+  lerp(to: Vector2 | Vector2i, weight: float): Vector2;
   /**
    * Returns the vector with a maximum length by limiting its length to `length`. If the vector is non-finite, the result is undefined.
    */
@@ -122,7 +122,7 @@ declare interface Vector2 {
   /**
    * Returns the component-wise maximum of this and `with`, equivalent to `Vector2(maxf(x, with.x), maxf(y, with.y))`.
    */
-  max(with_: Vector2): Vector2;
+  max(with_: Vector2 | Vector2i): Vector2;
   /**
    * Returns the axis of the vector's highest value. See `AXIS_*` constants. If all components are equal, this method returns {@link AXIS_X}.
    */
@@ -134,7 +134,7 @@ declare interface Vector2 {
   /**
    * Returns the component-wise minimum of this and `with`, equivalent to `Vector2(minf(x, with.x), minf(y, with.y))`.
    */
-  min(with_: Vector2): Vector2;
+  min(with_: Vector2 | Vector2i): Vector2;
   /**
    * Returns the axis of the vector's lowest value. See `AXIS_*` constants. If all components are equal, this method returns {@link AXIS_Y}.
    */
@@ -146,7 +146,7 @@ declare interface Vector2 {
   /**
    * Returns a new vector moved toward `to` by the fixed `delta` amount. Will not go past the final value.
    */
-  move_toward(to: Vector2, delta: float): Vector2;
+  move_toward(to: Vector2 | Vector2i, delta: float): Vector2;
   /**
    * Returns the result of scaling the vector to unit length. Equivalent to `v / v.length()`. Returns `(0, 0)` if `v.length() == 0`. See also {@link is_normalized}.
    * **Note:** This function may return incorrect values if the input vector length is near zero.
@@ -163,17 +163,17 @@ declare interface Vector2 {
   /**
    * Returns a vector composed of the {@link @GlobalScope.fposmod} of this vector's components and `modv`'s components.
    */
-  posmodv(modv: Vector2): Vector2;
+  posmodv(modv: Vector2 | Vector2i): Vector2;
   /**
    * Returns a new vector resulting from projecting this vector onto the given vector `b`. The resulting new vector is parallel to `b`. See also {@link slide}.
    * **Note:** If the vector `b` is a zero vector, the components of the resulting new vector will be {@link @GDScript.NAN}.
    */
-  project(b: Vector2): Vector2;
+  project(b: Vector2 | Vector2i): Vector2;
   /**
    * Returns the result of reflecting the vector from a line defined by the given direction vector `line`.
    * **Note:** {@link reflect} differs from what other engines and frameworks call [code skip-lint]reflect()[/code]. In other engines, [code skip-lint]reflect()[/code] takes a normal direction which is a direction perpendicular to the line. In Godot, you specify the direction of the line directly. See also {@link bounce} which does what most engines call [code skip-lint]reflect()[/code].
    */
-  reflect(line: Vector2): Vector2;
+  reflect(line: Vector2 | Vector2i): Vector2;
   /**
    * Returns the result of rotating this vector by `angle` (in radians). See also {@link @GlobalScope.deg_to_rad}.
    */
@@ -190,16 +190,16 @@ declare interface Vector2 {
    * Returns the result of spherical linear interpolation between this vector and `to`, by amount `weight`. `weight` is on the range of 0.0 to 1.0, representing the amount of interpolation.
    * This method also handles interpolating the lengths if the input vectors have different lengths. For the special case of one or both input vectors having zero length, this method behaves like {@link lerp}.
    */
-  slerp(to: Vector2, weight: float): Vector2;
+  slerp(to: Vector2 | Vector2i, weight: float): Vector2;
   /**
    * Returns a new vector resulting from sliding this vector along a line with normal `n`. The resulting new vector is perpendicular to `n`, and is equivalent to this vector minus its projection on `n`. See also {@link project}.
    * **Note:** The vector `n` must be normalized. See also {@link normalized}.
    */
-  slide(n: Vector2): Vector2;
+  slide(n: Vector2 | Vector2i): Vector2;
   /**
    * Returns a new vector with each component snapped to the nearest multiple of the corresponding component in `step`. This can also be used to round the components to an arbitrary number of decimals.
    */
-  snapped(step: Vector2): Vector2;
+  snapped(step: Vector2 | Vector2i): Vector2;
   /**
    * Returns a new vector with each component snapped to the nearest multiple of `step`. This can also be used to round the components to an arbitrary number of decimals.
    */

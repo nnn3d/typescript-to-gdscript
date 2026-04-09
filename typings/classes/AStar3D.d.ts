@@ -30,7 +30,7 @@ declare class AStar3D extends RefCounted {
    * The `weight_scale` is multiplied by the result of {@link _compute_cost} when determining the overall cost of traveling across a segment from a neighboring point to this point. Thus, all else being equal, the algorithm prefers points with lower `weight_scale`s to form a path.
    * If there already exists a point for the given `id`, its position and weight scale are updated to the given values.
    */
-  add_point(id: int, position: Vector3, weight_scale?: float): void;
+  add_point(id: int, position: Vector3 | Vector3i, weight_scale?: float): void;
   /**
    * Returns whether the two given points are directly connected by a segment. If `bidirectional` is `false`, returns whether movement from `id` to `to_id` is possible through this segment.
    */
@@ -51,12 +51,12 @@ declare class AStar3D extends RefCounted {
    * Returns the ID of the closest point to `to_position`, optionally taking disabled points into account. Returns `-1` if there are no points in the points pool.
    * **Note:** If several points are the closest to `to_position`, the one with the smallest ID will be returned, ensuring a deterministic result.
    */
-  get_closest_point(to_position: Vector3, include_disabled?: boolean): int;
+  get_closest_point(to_position: Vector3 | Vector3i, include_disabled?: boolean): int;
   /**
    * Returns the closest position to `to_position` that resides inside a segment between two connected points.
    * The result is in the segment that goes from `y = 0` to `y = 5`. It's the closest position in the segment to the given point.
    */
-  get_closest_position_in_segment(to_position: Vector3): Vector3;
+  get_closest_position_in_segment(to_position: Vector3 | Vector3i): Vector3;
   /**
    * Returns an array with the IDs of the points that form the path found by AStar3D between the given points. The array is ordered from the starting point to the ending point of the path.
    * If `from_id` point is disabled, returns an empty array (even if `from_id == to_id`).
@@ -100,7 +100,7 @@ declare class AStar3D extends RefCounted {
   /** Disables or enables the specified point for pathfinding. Useful for making a temporary obstacle. */
   set_point_disabled(id: int, disabled?: boolean): void;
   /** Sets the `position` for the point with the given `id`. */
-  set_point_position(id: int, position: Vector3): void;
+  set_point_position(id: int, position: Vector3 | Vector3i): void;
   /**
    * Sets the `weight_scale` for the point with the given `id`. The `weight_scale` is multiplied by the result of {@link _compute_cost} when determining the overall cost of traveling across a segment from a neighboring point to this point.
    */

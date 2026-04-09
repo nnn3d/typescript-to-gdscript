@@ -85,11 +85,11 @@ declare class Area3D extends CollisionObject3D {
   is_overriding_audio_bus(): boolean;
   set_gravity(value: float): void;
   get_gravity(): float;
-  set_gravity_direction(value: Vector3): void;
+  set_gravity_direction(value: Vector3 | Vector3i): void;
   get_gravity_direction(): Vector3;
   set_gravity_is_point(value: boolean): void;
   is_gravity_a_point(): boolean;
-  set_gravity_point_center(value: Vector3): void;
+  set_gravity_point_center(value: Vector3 | Vector3i): void;
   get_gravity_point_center(): Vector3;
   set_gravity_point_unit_distance(value: float): void;
   get_gravity_point_unit_distance(): float;

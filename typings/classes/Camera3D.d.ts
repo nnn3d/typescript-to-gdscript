@@ -80,7 +80,7 @@ declare class Camera3D extends Node3D {
   get_far(): float;
   set_fov(value: float): void;
   get_fov(): float;
-  set_frustum_offset(value: Vector2): void;
+  set_frustum_offset(value: Vector2 | Vector2i): void;
   get_frustum_offset(): Vector2;
   set_h_offset(value: float): void;
   get_h_offset(): float;
@@ -125,11 +125,11 @@ declare class Camera3D extends Node3D {
    * Returns `true` if the given position is behind the camera (the blue part of the linked diagram). See this diagram (https://raw.githubusercontent.com/godotengine/godot-docs/master/img/camera3d_position_frustum.png) for an overview of position query methods.
    * **Note:** A position which returns `false` may still be outside the camera's field of view.
    */
-  is_position_behind(world_point: Vector3): boolean;
+  is_position_behind(world_point: Vector3 | Vector3i): boolean;
   /**
    * Returns `true` if the given position is inside the camera's frustum (the green part of the linked diagram). See this diagram (https://raw.githubusercontent.com/godotengine/godot-docs/master/img/camera3d_position_frustum.png) for an overview of position query methods.
    */
-  is_position_in_frustum(world_point: Vector3): boolean;
+  is_position_in_frustum(world_point: Vector3 | Vector3i): boolean;
   /**
    * Makes this camera the current camera for the {@link Viewport} (see class description). If the camera node is outside the scene tree, it will attempt to become current once it's added.
    */
@@ -137,19 +137,19 @@ declare class Camera3D extends Node3D {
   /**
    * Returns a normal vector from the screen point location directed along the camera. Orthogonal cameras are normalized. Perspective cameras account for perspective, screen width/height, etc.
    */
-  project_local_ray_normal(screen_point: Vector2): Vector3;
+  project_local_ray_normal(screen_point: Vector2 | Vector2i): Vector3;
   /**
    * Returns the 3D point in world space that maps to the given 2D coordinate in the {@link Viewport} rectangle on a plane that is the given `z_depth` distance into the scene away from the camera.
    */
-  project_position(screen_point: Vector2, z_depth: float): Vector3;
+  project_position(screen_point: Vector2 | Vector2i, z_depth: float): Vector3;
   /**
    * Returns a normal vector in world space, that is the result of projecting a point on the {@link Viewport} rectangle by the inverse camera projection. This is useful for casting rays in the form of (origin, normal) for object intersection or picking.
    */
-  project_ray_normal(screen_point: Vector2): Vector3;
+  project_ray_normal(screen_point: Vector2 | Vector2i): Vector3;
   /**
    * Returns a 3D position in world space, that is the result of projecting a point on the {@link Viewport} rectangle by the inverse camera projection. This is useful for casting rays in the form of (origin, normal) for object intersection or picking.
    */
-  project_ray_origin(screen_point: Vector2): Vector3;
+  project_ray_origin(screen_point: Vector2 | Vector2i): Vector3;
   /**
    * Based on `value`, enables or disables the specified layer in the {@link cull_mask}, given a `layer_number` between 1 and 20.
    */
@@ -157,7 +157,7 @@ declare class Camera3D extends Node3D {
   /**
    * Sets the camera projection to frustum mode (see {@link PROJECTION_FRUSTUM}), by specifying a `size`, an `offset`, and the `z_near` and `z_far` clip planes in world space units. The `size` parameter represents the size of the near plane, either its width or height depending on the value of {@link keep_aspect}. See also {@link frustum_offset}.
    */
-  set_frustum(size: float, offset: Vector2, z_near: float, z_far: float): void;
+  set_frustum(size: float, offset: Vector2 | Vector2i, z_near: float, z_far: float): void;
   /**
    * Sets the camera projection to orthogonal mode (see {@link PROJECTION_ORTHOGONAL}), by specifying a `size`, and the `z_near` and `z_far` clip planes in world space units.
    * As a hint, 3D games that look 2D often use this projection, with `size` specified in pixels.
@@ -171,7 +171,7 @@ declare class Camera3D extends Node3D {
    * Returns the 2D coordinate in the {@link Viewport} rectangle that maps to the given 3D point in world space.
    * **Note:** When using this to position GUI elements over a 3D viewport, use {@link is_position_behind} to prevent them from appearing if the 3D point is behind the camera:
    */
-  unproject_position(world_point: Vector3): Vector2;
+  unproject_position(world_point: Vector3 | Vector3i): Vector2;
 
   // enum ProjectionType
   /** Perspective projection. Objects on the screen becomes smaller when they are far away. */

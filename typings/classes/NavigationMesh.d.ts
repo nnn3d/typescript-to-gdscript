@@ -116,7 +116,7 @@ declare class NavigationMesh extends Resource {
   get_edge_max_length(): float;
   set_filter_baking_aabb(value: AABB): void;
   get_filter_baking_aabb(): AABB;
-  set_filter_baking_aabb_offset(value: Vector3): void;
+  set_filter_baking_aabb_offset(value: Vector3 | Vector3i): void;
   get_filter_baking_aabb_offset(): Vector3;
   set_filter_ledge_spans(value: boolean): void;
   get_filter_ledge_spans(): boolean;
@@ -142,7 +142,7 @@ declare class NavigationMesh extends Resource {
   get_vertices_per_polygon(): float;
 
   /** Adds a polygon using the indices of the vertices you get when calling {@link get_vertices}. */
-  add_polygon(polygon: PackedInt32Array): void;
+  add_polygon(polygon: PackedInt32Array | Array<unknown>): void;
   /** Clears the internal arrays for vertices and polygon indices. */
   clear(): void;
   /** Clears the array of polygons, but it doesn't clear the array of vertices. */
@@ -167,7 +167,7 @@ declare class NavigationMesh extends Resource {
    */
   set_collision_mask_value(layer_number: int, value: boolean): void;
   /** Sets the vertices that can be then indexed to create polygons with the {@link add_polygon} method. */
-  set_vertices(vertices: PackedVector3Array): void;
+  set_vertices(vertices: PackedVector3Array | Array<unknown>): void;
 
   // enum SamplePartitionType
   /**

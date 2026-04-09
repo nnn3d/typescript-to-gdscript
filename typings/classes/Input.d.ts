@@ -322,7 +322,7 @@ declare interface Input extends GodotObject {
    * Sets the acceleration value of the accelerometer sensor. Can be used for debugging on devices without a hardware sensor, for example in an editor on a PC.
    * **Note:** This value can be immediately overwritten by the hardware sensor value on Android and iOS.
    */
-  set_accelerometer(value: Vector3): void;
+  set_accelerometer(value: Vector3 | Vector3i): void;
   /**
    * Sets a custom mouse cursor image, which is only visible inside the game window, for the given mouse `shape`. The hotspot can also be specified. Passing `null` to the image parameter resets to the system cursor.
    * `image` can be either {@link Texture2D} or {@link Image} and its size must be lower than or equal to 256×256. To avoid rendering issues, sizes lower than or equal to 128×128 are recommended.
@@ -331,7 +331,7 @@ declare interface Input extends GodotObject {
    * **Note:** The **Lossless**, **Lossy** or **Uncompressed** compression modes are recommended. The **Video RAM** compression mode can be used, but it will be decompressed on the CPU, which means loading times are slowed down and no memory is saved compared to lossless modes.
    * **Note:** On the web platform, the maximum allowed cursor image size is 128×128. Cursor images larger than 32×32 will also only be displayed if the mouse cursor image is entirely located within the page for security reasons (https://chromestatus.com/feature/5825971391299584).
    */
-  set_custom_mouse_cursor(image: Resource, shape: int, hotspot?: Vector2): void;
+  set_custom_mouse_cursor(image: Resource, shape: int, hotspot?: Vector2 | Vector2i): void;
   /**
    * Sets the default cursor shape to be used in the viewport instead of {@link CURSOR_ARROW}.
    * **Note:** If you want to change the default cursor shape for {@link Control}'s nodes, use {@link Control.mouse_default_cursor_shape} instead.
@@ -342,12 +342,12 @@ declare interface Input extends GodotObject {
    * Sets the gravity value of the accelerometer sensor. Can be used for debugging on devices without a hardware sensor, for example in an editor on a PC.
    * **Note:** This value can be immediately overwritten by the hardware sensor value on Android and iOS.
    */
-  set_gravity(value: Vector3): void;
+  set_gravity(value: Vector3 | Vector3i): void;
   /**
    * Sets the value of the rotation rate of the gyroscope sensor. Can be used for debugging on devices without a hardware sensor, for example in an editor on a PC.
    * **Note:** This value can be immediately overwritten by the hardware sensor value on Android and iOS.
    */
-  set_gyroscope(value: Vector3): void;
+  set_gyroscope(value: Vector3 | Vector3i): void;
   /**
    * Sets the joypad's LED light, if available, to the specified color. See also {@link has_joy_light}.
    * **Note:** There is no way to get the color of the light from a joypad. If you need to know the assigned color, store it separately.
@@ -371,7 +371,7 @@ declare interface Input extends GodotObject {
    * Sets the value of the magnetic field of the magnetometer sensor. Can be used for debugging on devices without a hardware sensor, for example in an editor on a PC.
    * **Note:** This value can be immediately overwritten by the hardware sensor value on Android and iOS.
    */
-  set_magnetometer(value: Vector3): void;
+  set_magnetometer(value: Vector3 | Vector3i): void;
   /**
    * Queries whether an input device should be ignored or not. Devices can be ignored by setting the environment variable `SDL_GAMECONTROLLER_IGNORE_DEVICES`. Read the SDL documentation (https://wiki.libsdl.org/SDL2) for more information.
    * **Note:** Some 3rd party tools can contribute to the list of ignored devices. For example, *SteamInput* creates virtual devices from physical devices for remapping purposes. To avoid handling the same input device twice, the original device is added to the ignore list.
@@ -420,7 +420,7 @@ declare interface Input extends GodotObject {
    * Mouse position is clipped to the limits of the screen resolution, or to the limits of the game window if {@link MouseMode} is set to {@link MOUSE_MODE_CONFINED} or {@link MOUSE_MODE_CONFINED_HIDDEN}.
    * **Note:** {@link warp_mouse} is only supported on Windows, macOS and Linux. It has no effect on Android, iOS and Web.
    */
-  warp_mouse(position: Vector2): void;
+  warp_mouse(position: Vector2 | Vector2i): void;
 
   /** Emitted when a joypad device has been connected or disconnected. */
   joy_connection_changed: Signal<[int, boolean]>;

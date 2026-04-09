@@ -5,6 +5,6 @@
 declare class GPUParticlesAttractorBox3D extends GPUParticlesAttractor3D {
   /** The attractor box's size in 3D units. */
   size: Vector3;
-  set_size(value: Vector3): void;
+  set_size(value: Vector3 | Vector3i): void;
   get_size(): Vector3;
 }

@@ -44,7 +44,7 @@ declare class XRInterfaceExtension extends XRInterface {
   /** Returns the current status of our tracking. */
   _get_tracking_status(): int;
   /** Returns a {@link Transform3D} for a given view. */
-  _get_transform_for_view(view: int, cam_transform: Transform3D): Transform3D;
+  _get_transform_for_view(view: int, cam_transform: Transform3D | Projection): Transform3D;
   /** Return velocity texture into which to render (if applicable). */
   _get_velocity_texture(): RID;
   /** Returns the number of views this interface requires, 1 for mono, 2 for stereoscopic. */
@@ -57,7 +57,7 @@ declare class XRInterfaceExtension extends XRInterface {
   /** Returns `true` if this interface has been initialized. */
   _is_initialized(): boolean;
   /** Called after the XR {@link Viewport} draw logic has completed. */
-  _post_draw_viewport(render_target: RID, screen_rect: Rect2): void;
+  _post_draw_viewport(render_target: RID, screen_rect: Rect2 | Rect2i): void;
   /**
    * Called if this is our primary {@link XRInterfaceExtension} before we start processing a {@link Viewport} for every active XR {@link Viewport}, returns `true` if that viewport should be rendered. An XR interface may return `false` if the user has taken off their headset and we can pause rendering.
    */
@@ -83,7 +83,7 @@ declare class XRInterfaceExtension extends XRInterface {
   /**
    * Blits our render results to screen optionally applying lens distortion. This can only be called while processing `_commit_views`.
    */
-  add_blit(render_target: RID, src_rect: Rect2, dst_rect: Rect2i, use_layer: boolean, layer: int, apply_lens_distortion: boolean, eye_center: Vector2, k1: float, k2: float, upscale: float, aspect_ratio: float): void;
+  add_blit(render_target: RID, src_rect: Rect2 | Rect2i, dst_rect: Rect2i | Rect2, use_layer: boolean, layer: int, apply_lens_distortion: boolean, eye_center: Vector2 | Vector2i, k1: float, k2: float, upscale: float, aspect_ratio: float): void;
   get_color_texture(): RID;
   get_depth_texture(): RID;
   /**

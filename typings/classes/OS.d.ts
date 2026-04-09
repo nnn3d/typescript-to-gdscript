@@ -47,7 +47,7 @@ declare interface OS extends GodotObject {
    * See {@link create_process} if you wish to run a different process.
    * **Note:** This method is implemented on Android, Linux, macOS and Windows.
    */
-  create_instance(arguments: PackedStringArray): int;
+  create_instance(arguments: PackedStringArray | Array<unknown>): int;
   /**
    * Creates a new process that runs independently of Godot. It will not terminate when Godot terminates. The path specified in `path` must exist and be an executable file or macOS `.app` bundle. The path is resolved based on the current platform. The `arguments` are used in the given order and separated by a space.
    * On Windows, if `open_console` is `true` and the process is a console app, a new terminal window will be opened.
@@ -57,7 +57,7 @@ declare interface OS extends GodotObject {
    * **Note:** This method is implemented on Android, Linux, macOS, and Windows.
    * **Note:** On macOS, sandboxed applications are limited to run only embedded helper executables, specified during export or system .app bundle, system .app bundles will ignore arguments.
    */
-  create_process(path: string, arguments: PackedStringArray, open_console?: boolean): int;
+  create_process(path: string, arguments: PackedStringArray | Array<unknown>, open_console?: boolean): int;
   /**
    * Delays execution of the current thread by `msec` milliseconds. `msec` must be greater than or equal to `0`. Otherwise, {@link delay_msec} does nothing and prints an error message.
    * **Note:** {@link delay_msec} is a *blocking* way to delay code execution. To delay code execution in a non-blocking way, you may use {@link SceneTree.create_timer}. Awaiting with {@link SceneTreeTimer} delays the execution of code placed below the `await` without affecting the rest of the project (or editor, for {@link EditorPlugin}s and {@link EditorScript}s).
@@ -85,7 +85,7 @@ declare interface OS extends GodotObject {
    * **Note:** On macOS, sandboxed applications are limited to run only embedded helper executables, specified during export.
    * **Note:** On Android, system commands such as `dumpsys` can only be run on a rooted device.
    */
-  execute(path: string, arguments: PackedStringArray, output?: Array<unknown>, read_stderr?: boolean, open_console?: boolean): int;
+  execute(path: string, arguments: PackedStringArray | Array<unknown>, output?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, read_stderr?: boolean, open_console?: boolean): int;
   /**
    * Creates a new process that runs independently of Godot with redirected IO. It will not terminate when Godot terminates. The path specified in `path` must exist and be an executable file or macOS `.app` bundle. The path is resolved based on the current platform. The `arguments` are used in the given order and separated by a space.
    * If `blocking` is `false`, created pipes work in non-blocking mode, i.e. read and write operations will return immediately. Use {@link FileAccess.get_error} to check if the last read/write operation was successful.
@@ -99,7 +99,7 @@ declare interface OS extends GodotObject {
    * **Note:** To execute a Unix shell built-in command, specify shell executable name in `path`, `-c` as the first argument, and the desired command as the second argument.
    * **Note:** On macOS, sandboxed applications are limited to run only embedded helper executables, specified during export or system .app bundle, system .app bundles will ignore arguments.
    */
-  execute_with_pipe(path: string, arguments: PackedStringArray, blocking?: boolean): Dictionary;
+  execute_with_pipe(path: string, arguments: PackedStringArray | Array<unknown>, blocking?: boolean): Dictionary;
   /**
    * Finds the keycode for the given string. The returned values are equivalent to the {@link Key} constants.
    * See also {@link get_keycode_string}.
@@ -416,7 +416,7 @@ declare interface OS extends GodotObject {
    * **Note:** This method is mostly only relevant for macOS, where opening files using {@link create_process} might fail. On other platforms, this falls back to using {@link create_process}.
    * **Note:** On macOS, `program_path` should ideally be the path to a `.app` bundle.
    */
-  open_with_program(program_path: string, paths: PackedStringArray): int;
+  open_with_program(program_path: string, paths: PackedStringArray | Array<unknown>): int;
   /**
    * Reads a user input as raw data from the standard input. This operation can be *blocking*, which causes the window to freeze if {@link read_buffer_from_stdin} is called on the main thread.
    * - If standard input is console, this method will block until the program receives a line break in standard input (usually by the user pressing `Enter`).
@@ -470,7 +470,7 @@ declare interface OS extends GodotObject {
    * **Note:** This method is only effective on desktop platforms, and only when the project isn't started from the editor. It will have no effect on mobile and Web platforms, or when the project is started from the editor.
    * **Note:** If the project process crashes or is *killed* by the user (by sending `SIGKILL` instead of the usual `SIGTERM`), the project won't restart automatically.
    */
-  set_restart_on_exit(restart: boolean, arguments?: PackedStringArray): void;
+  set_restart_on_exit(restart: boolean, arguments?: PackedStringArray | Array<unknown>): void;
   /**
    * Assigns the given name to the current thread. Returns {@link ERR_UNAVAILABLE} if unavailable on the current platform.
    */

@@ -7,17 +7,17 @@ declare class Crypto extends RefCounted {
    * Compares two {@link PackedByteArray}s for equality without leaking timing information in order to prevent timing attacks.
    * See this blog post (https://paragonie.com/blog/2015/11/preventing-timing-attacks-on-string-comparison-with-double-hmac-strategy) for more information.
    */
-  constant_time_compare(trusted: PackedByteArray, received: PackedByteArray): boolean;
+  constant_time_compare(trusted: PackedByteArray | Array<unknown>, received: PackedByteArray | Array<unknown>): boolean;
   /**
    * Decrypt the given `ciphertext` with the provided private `key`.
    * **Note:** The maximum size of accepted ciphertext is limited by the key size.
    */
-  decrypt(key: CryptoKey, ciphertext: PackedByteArray): PackedByteArray;
+  decrypt(key: CryptoKey, ciphertext: PackedByteArray | Array<unknown>): PackedByteArray;
   /**
    * Encrypt the given `plaintext` with the provided public `key`.
    * **Note:** The maximum size of accepted plaintext is limited by the key size.
    */
-  encrypt(key: CryptoKey, plaintext: PackedByteArray): PackedByteArray;
+  encrypt(key: CryptoKey, plaintext: PackedByteArray | Array<unknown>): PackedByteArray;
   /** Generates a {@link PackedByteArray} of cryptographically secure random bytes with given `size`. */
   generate_random_bytes(size: int): PackedByteArray;
   /**
@@ -33,9 +33,9 @@ declare class Crypto extends RefCounted {
    * Generates an HMAC (https://en.wikipedia.org/wiki/HMAC) digest of `msg` using `key`. The `hash_type` parameter is the hashing algorithm that is used for the inner and outer hashes.
    * Currently, only {@link HashingContext.HASH_SHA256} and {@link HashingContext.HASH_SHA1} are supported.
    */
-  hmac_digest(hash_type: int, key: PackedByteArray, msg: PackedByteArray): PackedByteArray;
+  hmac_digest(hash_type: int, key: PackedByteArray | Array<unknown>, msg: PackedByteArray | Array<unknown>): PackedByteArray;
   /** Sign a given `hash` of type `hash_type` with the provided private `key`. */
-  sign(hash_type: int, hash: PackedByteArray, key: CryptoKey): PackedByteArray;
+  sign(hash_type: int, hash: PackedByteArray | Array<unknown>, key: CryptoKey): PackedByteArray;
   /** Verify that a given `signature` for `hash` of type `hash_type` against the provided public `key`. */
-  verify(hash_type: int, hash: PackedByteArray, signature: PackedByteArray, key: CryptoKey): boolean;
+  verify(hash_type: int, hash: PackedByteArray | Array<unknown>, signature: PackedByteArray | Array<unknown>, key: CryptoKey): boolean;
 }

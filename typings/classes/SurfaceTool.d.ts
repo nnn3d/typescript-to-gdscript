@@ -11,15 +11,15 @@ declare class SurfaceTool extends RefCounted {
    * Inserts a triangle fan made of array data into {@link Mesh} being constructed.
    * Requires the primitive type be set to {@link Mesh.PRIMITIVE_TRIANGLES}.
    */
-  add_triangle_fan(vertices: PackedVector3Array, uvs?: PackedVector2Array, colors?: PackedColorArray, uv2s?: PackedVector2Array, normals?: PackedVector3Array, tangents?: Array<Plane>): void;
+  add_triangle_fan(vertices: PackedVector3Array | Array<unknown>, uvs?: PackedVector2Array | Array<unknown>, colors?: PackedColorArray | Array<unknown>, uv2s?: PackedVector2Array | Array<unknown>, normals?: PackedVector3Array | Array<unknown>, tangents?: Array<Plane>): void;
   /**
    * Specifies the position of current vertex. Should be called after specifying other vertex properties (e.g. Color, UV).
    */
-  add_vertex(vertex: Vector3): void;
+  add_vertex(vertex: Vector3 | Vector3i): void;
   /**
    * Append vertices from a given {@link Mesh} surface onto the current vertex array with specified {@link Transform3D}.
    */
-  append_from(existing: Mesh, surface: int, transform: Transform3D): void;
+  append_from(existing: Mesh, surface: int, transform: Transform3D | Projection): void;
   /**
    * Called before adding any vertices. Takes the primitive type as an argument (e.g. {@link Mesh.PRIMITIVE_TRIANGLES}).
    */
@@ -40,7 +40,7 @@ declare class SurfaceTool extends RefCounted {
   /**
    * Creates this SurfaceTool from existing vertex arrays such as returned by {@link commit_to_arrays}, {@link Mesh.surface_get_arrays}, {@link Mesh.surface_get_blend_shape_arrays}, {@link ImporterMesh.get_surface_arrays}, and {@link ImporterMesh.get_surface_blend_shape_arrays}. `primitive_type` controls the type of mesh data, defaulting to {@link Mesh.PRIMITIVE_TRIANGLES}.
    */
-  create_from_arrays(arrays: Array<unknown>, primitive_type: int): void;
+  create_from_arrays(arrays: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, primitive_type: int): void;
   /**
    * Creates a vertex array from the specified blend shape of an existing {@link Mesh}. This can be used to extract a specific pose from a blend shape.
    */
@@ -84,7 +84,7 @@ declare class SurfaceTool extends RefCounted {
    */
   optimize_indices_for_cache(): void;
   /** Specifies an array of bones to use for the *next* vertex. `bones` must contain 4 integers. */
-  set_bones(bones: PackedInt32Array): void;
+  set_bones(bones: PackedInt32Array | Array<unknown>): void;
   /**
    * Specifies a {@link Color} to use for the *next* vertex. If every vertex needs to have this information set and you fail to submit it for the first vertex, this information may not be used at all.
    * **Note:** The material must have {@link BaseMaterial3D.vertex_color_use_as_albedo} enabled for the vertex color to be visible.
@@ -105,7 +105,7 @@ declare class SurfaceTool extends RefCounted {
   /**
    * Specifies a normal to use for the *next* vertex. If every vertex needs to have this information set and you fail to submit it for the first vertex, this information may not be used at all.
    */
-  set_normal(normal: Vector3): void;
+  set_normal(normal: Vector3 | Vector3i): void;
   /**
    * Set to {@link SKIN_8_WEIGHTS} to indicate that up to 8 bone influences per vertex may be used.
    * By default, only 4 bone influences are used ({@link SKIN_4_WEIGHTS}).
@@ -125,15 +125,15 @@ declare class SurfaceTool extends RefCounted {
   /**
    * Specifies a set of UV coordinates to use for the *next* vertex. If every vertex needs to have this information set and you fail to submit it for the first vertex, this information may not be used at all.
    */
-  set_uv(uv: Vector2): void;
+  set_uv(uv: Vector2 | Vector2i): void;
   /**
    * Specifies an optional second set of UV coordinates to use for the *next* vertex. If every vertex needs to have this information set and you fail to submit it for the first vertex, this information may not be used at all.
    */
-  set_uv2(uv2: Vector2): void;
+  set_uv2(uv2: Vector2 | Vector2i): void;
   /**
    * Specifies weight values to use for the *next* vertex. `weights` must contain 4 values. If every vertex needs to have this information set and you fail to submit it for the first vertex, this information may not be used at all.
    */
-  set_weights(weights: PackedFloat32Array): void;
+  set_weights(weights: PackedFloat32Array | Array<unknown>): void;
 
   // enum CustomFormat
   /**

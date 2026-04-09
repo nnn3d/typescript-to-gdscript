@@ -18,7 +18,7 @@ declare class MultiplayerAPIExtension extends MultiplayerAPI {
   /** Callback for {@link MultiplayerAPI.poll}. */
   _poll(): int;
   /** Callback for {@link MultiplayerAPI.rpc}. */
-  _rpc(peer: int, object: GodotObject, method: string, args: Array<unknown>): int;
+  _rpc(peer: int, object: GodotObject, method: string, args: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): int;
   /** Called when the {@link MultiplayerAPI.multiplayer_peer} is set. */
   _set_multiplayer_peer(multiplayer_peer: MultiplayerPeer): void;
 }

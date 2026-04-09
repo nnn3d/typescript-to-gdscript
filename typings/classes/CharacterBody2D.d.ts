@@ -92,9 +92,9 @@ declare class CharacterBody2D extends PhysicsBody2D {
   get_safe_margin(): float;
   set_slide_on_ceiling_enabled(value: boolean): void;
   is_slide_on_ceiling_enabled(): boolean;
-  set_up_direction(value: Vector2): void;
+  set_up_direction(value: Vector2 | Vector2i): void;
   get_up_direction(): Vector2;
-  set_velocity(value: Vector2): void;
+  set_velocity(value: Vector2 | Vector2i): void;
   get_velocity(): Vector2;
   set_wall_min_slide_angle(value: float): void;
   get_wall_min_slide_angle(): float;
@@ -106,7 +106,7 @@ declare class CharacterBody2D extends PhysicsBody2D {
   /**
    * Returns the floor's collision angle at the last collision point according to `up_direction`, which is {@link Vector2.UP} by default. This value is always positive and only valid after calling {@link move_and_slide} and when {@link is_on_floor} returns `true`.
    */
-  get_floor_angle(up_direction?: Vector2): float;
+  get_floor_angle(up_direction?: Vector2 | Vector2i): float;
   /**
    * Returns the collision normal of the floor at the last collision point. Only valid after calling {@link move_and_slide} and when {@link is_on_floor} returns `true`.
    * **Warning:** The collision normal is not always the same as the surface normal.

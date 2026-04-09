@@ -17,5 +17,5 @@ declare class ConcavePolygonShape3D extends Shape3D {
   /**
    * Sets the faces of the trimesh shape from an array of vertices. The `faces` array should be composed of triples such that each triple of vertices defines a triangle.
    */
-  set_faces(faces: PackedVector3Array): void;
+  set_faces(faces: PackedVector3Array | Array<unknown>): void;
 }

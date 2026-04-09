@@ -28,7 +28,7 @@ declare class Translation extends Resource {
    * Adds a message involving plural translation if nonexistent, followed by its translation.
    * An additional context could be used to specify the translation context or differentiate polysemic words.
    */
-  add_plural_message(src_message: string, xlated_messages: PackedStringArray, context?: string): void;
+  add_plural_message(src_message: string, xlated_messages: PackedStringArray | Array<unknown>, context?: string): void;
   /** Erases a message. */
   erase_message(src_message: string, context?: string): void;
   /** Returns a message's translation. */

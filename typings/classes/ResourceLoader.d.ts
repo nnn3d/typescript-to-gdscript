@@ -60,7 +60,7 @@ declare interface ResourceLoader extends GodotObject {
    * An array variable can optionally be passed via `progress`, and will return a one-element array containing the ratio of completion of the threaded loading (between `0.0` and `1.0`).
    * **Note:** The recommended way of using this method is to call it during different frames (e.g., in {@link Node._process}, instead of a loop).
    */
-  load_threaded_get_status(path: string, progress?: Array<unknown>): int;
+  load_threaded_get_status(path: string, progress?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): int;
   /**
    * Loads the resource using threads. If `use_sub_threads` is `true`, multiple threads will be used to load the resource, which makes loading faster, but may affect the main thread (and thus cause game slowdowns).
    * The `cache_mode` parameter defines whether and how the cache should be used or updated when loading the resource.

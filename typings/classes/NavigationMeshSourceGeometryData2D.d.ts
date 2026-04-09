@@ -4,13 +4,13 @@
 /** Container for parsed source geometry data used in navigation mesh baking. */
 declare class NavigationMeshSourceGeometryData2D extends Resource {
   /** Adds the outline points of a shape as obstructed area. */
-  add_obstruction_outline(shape_outline: PackedVector2Array): void;
+  add_obstruction_outline(shape_outline: PackedVector2Array | Array<unknown>): void;
   /**
    * Adds a projected obstruction shape to the source geometry. If `carve` is `true` the carved shape will not be affected by additional offsets (e.g. agent radius) of the navigation mesh baking process.
    */
-  add_projected_obstruction(vertices: PackedVector2Array, carve: boolean): void;
+  add_projected_obstruction(vertices: PackedVector2Array | Array<unknown>, carve: boolean): void;
   /** Adds the outline points of a shape as traversable area. */
-  add_traversable_outline(shape_outline: PackedVector2Array): void;
+  add_traversable_outline(shape_outline: PackedVector2Array | Array<unknown>): void;
   /**
    * Appends another array of `obstruction_outlines` at the end of the existing obstruction outlines array.
    */
@@ -46,7 +46,7 @@ declare class NavigationMeshSourceGeometryData2D extends Resource {
   /** Sets all the obstructed area outlines arrays. */
   set_obstruction_outlines(obstruction_outlines: Array<PackedVector2Array>): void;
   /** Sets the projected obstructions with an Array of Dictionaries with the following key value pairs: */
-  set_projected_obstructions(projected_obstructions: Array<unknown>): void;
+  set_projected_obstructions(projected_obstructions: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /** Sets all the traversable area outlines arrays. */
   set_traversable_outlines(traversable_outlines: Array<PackedVector2Array>): void;
 }

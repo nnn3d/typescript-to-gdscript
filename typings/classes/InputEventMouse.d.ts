@@ -20,6 +20,6 @@ declare class InputEventMouse extends InputEventWithModifiers {
   position: Vector2;
   set_button_mask(value: int): void;
   get_button_mask(): int;
-  set_position(value: Vector2): void;
+  set_position(value: Vector2 | Vector2i): void;
   get_position(): Vector2;
 }

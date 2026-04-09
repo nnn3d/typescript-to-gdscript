@@ -22,7 +22,7 @@ declare class GraphElement extends Container {
   selected: boolean;
   set_draggable(value: boolean): void;
   is_draggable(): boolean;
-  set_position_offset(value: Vector2): void;
+  set_position_offset(value: Vector2 | Vector2i): void;
   get_position_offset(): Vector2;
   set_resizable(value: boolean): void;
   is_resizable(): boolean;

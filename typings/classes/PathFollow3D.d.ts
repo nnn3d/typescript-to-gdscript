@@ -58,7 +58,7 @@ declare class PathFollow3D extends Node3D {
   /**
    * Correct the `transform`. `rotation_mode` implicitly specifies how posture (forward, up and sideway direction) is calculated.
    */
-  static correct_posture(transform: Transform3D, rotation_mode: int): Transform3D;
+  static correct_posture(transform: Transform3D | Projection, rotation_mode: int): Transform3D;
 
   // enum RotationMode
   /** Forbids the PathFollow3D to rotate. */

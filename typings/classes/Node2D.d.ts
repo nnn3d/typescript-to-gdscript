@@ -41,45 +41,45 @@ declare class Node2D extends CanvasItem {
   skew: float;
   /** The node's {@link Transform2D}, relative to the node's parent. See also {@link global_transform}. */
   transform: Transform2D;
-  set_global_position(value: Vector2): void;
+  set_global_position(value: Vector2 | Vector2i): void;
   get_global_position(): Vector2;
   set_global_rotation(value: float): void;
   get_global_rotation(): float;
   set_global_rotation_degrees(value: float): void;
   get_global_rotation_degrees(): float;
-  set_global_scale(value: Vector2): void;
+  set_global_scale(value: Vector2 | Vector2i): void;
   get_global_scale(): Vector2;
   set_global_skew(value: float): void;
   get_global_skew(): float;
   set_global_transform(value: Transform2D): void;
-  set_position(value: Vector2): void;
+  set_position(value: Vector2 | Vector2i): void;
   get_position(): Vector2;
   set_rotation(value: float): void;
   get_rotation(): float;
   set_rotation_degrees(value: float): void;
   get_rotation_degrees(): float;
-  set_scale(value: Vector2): void;
+  set_scale(value: Vector2 | Vector2i): void;
   get_scale(): Vector2;
   set_skew(value: float): void;
   get_skew(): float;
   set_transform(value: Transform2D): void;
 
   /** Multiplies the current scale by the `ratio` vector. */
-  apply_scale(ratio: Vector2): void;
+  apply_scale(ratio: Vector2 | Vector2i): void;
   /**
    * Returns the angle between the node and the `point` in radians. See also {@link look_at}.
    * Illustration of the returned angle. (https://raw.githubusercontent.com/godotengine/godot-docs/master/img/node2d_get_angle_to.png)
    */
-  get_angle_to(point: Vector2): float;
+  get_angle_to(point: Vector2 | Vector2i): float;
   /** Returns the {@link Transform2D} relative to this node's parent. */
   get_relative_transform_to_parent(parent: Node): Transform2D;
   /** Adds the `offset` vector to the node's global position. */
-  global_translate(offset: Vector2): void;
+  global_translate(offset: Vector2 | Vector2i): void;
   /**
    * Rotates the node so that its local +X axis points towards the `point`, which is expected to use global coordinates. This method is a combination of both {@link rotate} and {@link get_angle_to}.
    * `point` should not be the same as the node's position, otherwise the node always looks to the right.
    */
-  look_at(point: Vector2): void;
+  look_at(point: Vector2 | Vector2i): void;
   /**
    * Applies a local translation on the node's X axis with the amount specified in `delta`. If `scaled` is `false`, normalizes the movement to occur independently of the node's {@link scale}.
    */
@@ -95,13 +95,13 @@ declare class Node2D extends CanvasItem {
   /**
    * Transforms the provided local position into a position in global coordinate space. The input is expected to be local relative to the {@link Node2D} it is called on. e.g. Applying this method to the positions of child nodes will correctly transform their positions into the global coordinate space, but applying it to a node's own position will give an incorrect result, as it will incorporate the node's own transformation into its global position.
    */
-  to_global(local_point: Vector2): Vector2;
+  to_global(local_point: Vector2 | Vector2i): Vector2;
   /**
    * Transforms the provided global position into a position in local coordinate space. The output will be local relative to the {@link Node2D} it is called on. e.g. It is appropriate for determining the positions of child nodes, but it is not appropriate for determining its own position relative to its parent.
    */
-  to_local(global_point: Vector2): Vector2;
+  to_local(global_point: Vector2 | Vector2i): Vector2;
   /**
    * Translates the node by the given `offset` in local coordinates. This is equivalent to `position += offset`.
    */
-  translate(offset: Vector2): void;
+  translate(offset: Vector2 | Vector2i): void;
 }

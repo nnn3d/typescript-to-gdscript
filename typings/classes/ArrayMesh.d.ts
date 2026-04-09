@@ -34,7 +34,7 @@ declare class ArrayMesh extends Mesh {
    * The `flags` argument is the bitwise OR of, as required: One value of {@link Mesh.ArrayCustomFormat} left shifted by `ARRAY_FORMAT_CUSTOMn_SHIFT` for each custom channel in use, {@link Mesh.ARRAY_FLAG_USE_DYNAMIC_UPDATE}, {@link Mesh.ARRAY_FLAG_USE_8_BONE_WEIGHTS}, or {@link Mesh.ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY}.
    * **Note:** When using indices, it is recommended to only use points, lines, or triangles.
    */
-  add_surface_from_arrays(primitive: int, arrays: Array<unknown>, blend_shapes?: Array<Array<unknown>>, lods?: Dictionary, flags?: int): void;
+  add_surface_from_arrays(primitive: int, arrays: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, blend_shapes?: Array<Array<unknown>>, lods?: Dictionary, flags?: int): void;
   /** Removes all blend shapes from this {@link ArrayMesh}. */
   clear_blend_shapes(): void;
   /** Removes all surfaces from this {@link ArrayMesh}. */
@@ -44,7 +44,7 @@ declare class ArrayMesh extends Mesh {
   /** Returns the name of the blend shape at this index. */
   get_blend_shape_name(index: int): string;
   /** Performs a UV unwrap on the {@link ArrayMesh} to prepare the mesh for lightmapping. */
-  lightmap_unwrap(transform: Transform3D, texel_size: float): int;
+  lightmap_unwrap(transform: Transform3D | Projection, texel_size: float): int;
   /** Regenerates tangents for each of the {@link ArrayMesh}'s surfaces. */
   regen_normal_maps(): void;
   /** Sets the name of the blend shape at this index. */
@@ -78,17 +78,17 @@ declare class ArrayMesh extends Mesh {
    * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each attribute.
    * A {@link PackedVector3Array} of attribute locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
    */
-  surface_update_attribute_region(surf_idx: int, offset: int, data: PackedByteArray): void;
+  surface_update_attribute_region(surf_idx: int, offset: int, data: PackedByteArray | Array<unknown>): void;
   /**
    * Updates the skin buffer of this mesh's surface with the given `data`. The expected data per skin is 12 or 8 bytes (4 bytes per float, 2 floats per {@link Vector2}, and 3 floats per {@link Vector3}) depending on if the mesh is using {@link Vector3} or {@link Vector2} vertices. This value can be determined with {@link RenderingServer.mesh_surface_get_format_skin_stride}.
    * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each skin.
    * A {@link PackedVector3Array} of skin locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
    */
-  surface_update_skin_region(surf_idx: int, offset: int, data: PackedByteArray): void;
+  surface_update_skin_region(surf_idx: int, offset: int, data: PackedByteArray | Array<unknown>): void;
   /**
    * Updates the vertex buffer of this mesh's surface with the given `data`. The expected data per vertex is 12 or 8 bytes (4 bytes per float, 2 floats per {@link Vector2}, and 3 floats per {@link Vector3}) depending on if the mesh is using {@link Vector3} or {@link Vector2} vertices. This value can be determined with {@link RenderingServer.mesh_surface_get_format_vertex_stride}.
    * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each vertex.
    * A {@link PackedVector3Array} of vertex locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
    */
-  surface_update_vertex_region(surf_idx: int, offset: int, data: PackedByteArray): void;
+  surface_update_vertex_region(surf_idx: int, offset: int, data: PackedByteArray | Array<unknown>): void;
 }

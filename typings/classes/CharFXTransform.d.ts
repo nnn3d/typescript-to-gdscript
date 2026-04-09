@@ -73,11 +73,11 @@ declare class CharFXTransform extends RefCounted {
   get_glyph_flags(): int;
   set_glyph_index(value: int): void;
   get_glyph_index(): int;
-  set_offset(value: Vector2): void;
+  set_offset(value: Vector2 | Vector2i): void;
   get_offset(): Vector2;
   set_outline(value: boolean): void;
   is_outline(): boolean;
-  set_range(value: Vector2i): void;
+  set_range(value: Vector2i | Vector2): void;
   get_range(): Vector2i;
   set_relative_index(value: int): void;
   get_relative_index(): int;

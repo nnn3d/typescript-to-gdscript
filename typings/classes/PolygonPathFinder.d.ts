@@ -2,17 +2,17 @@
 // Manual overrides applied from src/typings/overrides/*.d.ts
 
 declare class PolygonPathFinder extends Resource {
-  find_path(from_: Vector2, to: Vector2): PackedVector2Array;
+  find_path(from_: Vector2 | Vector2i, to: Vector2 | Vector2i): PackedVector2Array;
   get_bounds(): Rect2;
-  get_closest_point(point: Vector2): Vector2;
-  get_intersections(from_: Vector2, to: Vector2): PackedVector2Array;
+  get_closest_point(point: Vector2 | Vector2i): Vector2;
+  get_intersections(from_: Vector2 | Vector2i, to: Vector2 | Vector2i): PackedVector2Array;
   get_point_penalty(idx: int): float;
   /** Returns `true` if `point` falls inside the polygon area. */
-  is_point_inside(point: Vector2): boolean;
+  is_point_inside(point: Vector2 | Vector2i): boolean;
   set_point_penalty(idx: int, penalty: float): void;
   /**
    * Sets up {@link PolygonPathFinder} with an array of points that define the vertices of the polygon, and an array of indices that determine the edges of the polygon.
    * The length of `connections` must be even, returns an error if odd.
    */
-  setup(points: PackedVector2Array, connections: PackedInt32Array): void;
+  setup(points: PackedVector2Array | Array<unknown>, connections: PackedInt32Array | Array<unknown>): void;
 }

@@ -35,7 +35,7 @@ declare class Curve extends Resource {
   /**
    * Adds a point to the curve. For each side, if the `*_mode` is {@link TANGENT_LINEAR}, the `*_tangent` angle (in degrees) uses the slope of the curve halfway to the adjacent point. Allows custom assignments to the `*_tangent` angle if `*_mode` is set to {@link TANGENT_FREE}.
    */
-  add_point(position: Vector2, left_tangent?: float, right_tangent?: float, left_mode?: int, right_mode?: int): int;
+  add_point(position: Vector2 | Vector2i, left_tangent?: float, right_tangent?: float, left_mode?: int, right_mode?: int): int;
   /** Recomputes the baked cache of points for the curve. */
   bake(): void;
   /**

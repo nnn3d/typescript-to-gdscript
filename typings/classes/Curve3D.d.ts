@@ -30,7 +30,7 @@ declare class Curve3D extends Resource {
    * Adds a point with the specified `position` relative to the curve's own position, with control points `in` and `out`. Appends the new point at the end of the point list.
    * If `index` is given, the new point is inserted before the existing point identified by index `index`. Every existing point starting from `index` is shifted further down the list of points. The index must be greater than or equal to `0` and must not exceed the number of existing points in the line. See {@link point_count}.
    */
-  add_point(position: Vector3, in_?: Vector3, out?: Vector3, index?: int): void;
+  add_point(position: Vector3 | Vector3i, in_?: Vector3 | Vector3i, out?: Vector3 | Vector3i, index?: int): void;
   /** Removes all points from the curve. */
   clear_points(): void;
   /**
@@ -50,12 +50,12 @@ declare class Curve3D extends Resource {
    * Returns the closest offset to `to_point`. This offset is meant to be used in {@link sample_baked} or {@link sample_baked_up_vector}.
    * `to_point` must be in this curve's local space.
    */
-  get_closest_offset(to_point: Vector3): float;
+  get_closest_offset(to_point: Vector3 | Vector3i): float;
   /**
    * Returns the closest point on baked segments (in curve's local space) to `to_point`.
    * `to_point` must be in this curve's local space.
    */
-  get_closest_point(to_point: Vector3): Vector3;
+  get_closest_point(to_point: Vector3 | Vector3i): Vector3;
   /**
    * Returns the position of the control point leading to the vertex `idx`. The returned position is relative to the vertex `idx`. If the index is out of bounds, the function sends an error to the console, and returns `(0, 0, 0)`.
    */
@@ -100,15 +100,15 @@ declare class Curve3D extends Resource {
   /**
    * Sets the position of the control point leading to the vertex `idx`. If the index is out of bounds, the function sends an error to the console. The position is relative to the vertex.
    */
-  set_point_in(idx: int, position: Vector3): void;
+  set_point_in(idx: int, position: Vector3 | Vector3i): void;
   /**
    * Sets the position of the control point leading out of the vertex `idx`. If the index is out of bounds, the function sends an error to the console. The position is relative to the vertex.
    */
-  set_point_out(idx: int, position: Vector3): void;
+  set_point_out(idx: int, position: Vector3 | Vector3i): void;
   /**
    * Sets the position for the vertex `idx`. If the index is out of bounds, the function sends an error to the console.
    */
-  set_point_position(idx: int, position: Vector3): void;
+  set_point_position(idx: int, position: Vector3 | Vector3i): void;
   /**
    * Sets the tilt angle in radians for the point `idx`. If the index is out of bounds, the function sends an error to the console.
    * The tilt controls the rotation along the look-at axis an object traveling the path would have. In the case of a curve controlling a {@link PathFollow3D}, this tilt is an offset over the natural tilt the {@link PathFollow3D} calculates.

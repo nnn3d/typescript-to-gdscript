@@ -5,6 +5,6 @@
 declare class VisualShaderNodeVec3Constant extends VisualShaderNodeConstant {
   /** A {@link Vector3} constant which represents the state of this node. */
   constant: Vector3;
-  set_constant(value: Vector3): void;
+  set_constant(value: Vector3 | Vector3i): void;
   get_constant(): Vector3;
 }

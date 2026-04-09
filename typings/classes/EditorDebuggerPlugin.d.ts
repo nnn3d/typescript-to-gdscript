@@ -10,7 +10,7 @@ declare class EditorDebuggerPlugin extends RefCounted {
   /**
    * Override this method to process incoming messages. The `session_id` is the ID of the {@link EditorDebuggerSession} that received the `message`. Use {@link get_session} to retrieve the session. This method should return `true` if the message is recognized.
    */
-  _capture(message: string, data: Array<unknown>, session_id: int): boolean;
+  _capture(message: string, data: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, session_id: int): boolean;
   /**
    * Override this method to be notified when a breakpoint line has been clicked in the debugger breakpoint panel.
    */

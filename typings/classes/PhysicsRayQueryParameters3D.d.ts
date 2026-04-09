@@ -36,17 +36,17 @@ declare class PhysicsRayQueryParameters3D extends RefCounted {
   get_collision_mask(): int;
   set_exclude(value: Array<RID>): void;
   get_exclude(): Array<RID>;
-  set_from(value: Vector3): void;
+  set_from(value: Vector3 | Vector3i): void;
   get_from(): Vector3;
   set_hit_back_faces(value: boolean): void;
   is_hit_back_faces_enabled(): boolean;
   set_hit_from_inside(value: boolean): void;
   is_hit_from_inside_enabled(): boolean;
-  set_to(value: Vector3): void;
+  set_to(value: Vector3 | Vector3i): void;
   get_to(): Vector3;
 
   /**
    * Returns a new, pre-configured {@link PhysicsRayQueryParameters3D} object. Use it to quickly create query parameters using the most common options.
    */
-  static create(from_: Vector3, to: Vector3, collision_mask?: int, exclude?: Array<RID>): PhysicsRayQueryParameters3D;
+  static create(from_: Vector3 | Vector3i, to: Vector3 | Vector3i, collision_mask?: int, exclude?: Array<RID>): PhysicsRayQueryParameters3D;
 }

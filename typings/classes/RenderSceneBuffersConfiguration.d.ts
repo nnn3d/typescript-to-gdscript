@@ -29,7 +29,7 @@ declare class RenderSceneBuffersConfiguration extends RefCounted {
   get_anisotropic_filtering_level(): int;
   set_fsr_sharpness(value: float): void;
   get_fsr_sharpness(): float;
-  set_internal_size(value: Vector2i): void;
+  set_internal_size(value: Vector2i | Vector2): void;
   get_internal_size(): Vector2i;
   set_msaa_3d(value: int): void;
   get_msaa_3d(): int;
@@ -39,7 +39,7 @@ declare class RenderSceneBuffersConfiguration extends RefCounted {
   get_scaling_3d_mode(): int;
   set_screen_space_aa(value: int): void;
   get_screen_space_aa(): int;
-  set_target_size(value: Vector2i): void;
+  set_target_size(value: Vector2i | Vector2): void;
   get_target_size(): Vector2i;
   set_texture_mipmap_bias(value: float): void;
   get_texture_mipmap_bias(): float;

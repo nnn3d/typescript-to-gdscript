@@ -62,12 +62,12 @@ declare class HTTPRequest extends Node {
    * **Note:** When `method` is {@link HTTPClient.METHOD_GET}, the payload sent via `request_data` might be ignored by the server or even cause the server to reject the request (check RFC 7231 section 4.3.1 (https://datatracker.ietf.org/doc/html/rfc7231#section-4.3.1) for more details). As a workaround, you can send data as a query string in the URL (see {@link String.uri_encode} for an example).
    * **Note:** It's recommended to use transport encryption (TLS) and to avoid sending sensitive information (such as login credentials) in HTTP GET URL parameters. Consider using HTTP POST requests or HTTP headers for such information instead.
    */
-  request(url: string, custom_headers?: PackedStringArray, method?: int, request_data?: string): int;
+  request(url: string, custom_headers?: PackedStringArray | Array<unknown>, method?: int, request_data?: string): int;
   /**
    * Creates request on the underlying {@link HTTPClient} using a raw array of bytes for the request body. If there is no configuration errors, it tries to connect using {@link HTTPClient.connect_to_host} and passes parameters onto {@link HTTPClient.request}.
    * Returns {@link OK} if request is successfully created. (Does not imply that the server has responded), {@link ERR_UNCONFIGURED} if not in the tree, {@link ERR_BUSY} if still processing previous request, {@link ERR_INVALID_PARAMETER} if given string is not a valid URL format, or {@link ERR_CANT_CONNECT} if not using thread and the {@link HTTPClient} cannot connect to host.
    */
-  request_raw(url: string, custom_headers?: PackedStringArray, method?: int, request_data_raw?: PackedByteArray): int;
+  request_raw(url: string, custom_headers?: PackedStringArray | Array<unknown>, method?: int, request_data_raw?: PackedByteArray | Array<unknown>): int;
   /**
    * Sets the proxy server for HTTP requests.
    * The proxy server is unset if `host` is empty or `port` is -1.

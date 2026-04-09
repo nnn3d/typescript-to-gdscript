@@ -20,7 +20,7 @@ declare class PhysicsBody2D extends CollisionObject2D {
    * `safe_margin` is the extra margin used for collision recovery (see {@link CharacterBody2D.safe_margin} for more details).
    * If `recovery_as_collision` is `true`, any depenetration from the recovery phase is also reported as a collision; this is used e.g. by {@link CharacterBody2D} for improving floor detection during floor snapping.
    */
-  move_and_collide(motion: Vector2, test_only?: boolean, safe_margin?: float, recovery_as_collision?: boolean): KinematicCollision2D | null;
+  move_and_collide(motion: Vector2 | Vector2i, test_only?: boolean, safe_margin?: float, recovery_as_collision?: boolean): KinematicCollision2D | null;
   /** Removes a body from the list of bodies that this body can't collide with. */
   remove_collision_exception_with(body: Node): void;
   /**
@@ -30,5 +30,5 @@ declare class PhysicsBody2D extends CollisionObject2D {
    * `safe_margin` is the extra margin used for collision recovery (see {@link CharacterBody2D.safe_margin} for more details).
    * If `recovery_as_collision` is `true`, any depenetration from the recovery phase is also reported as a collision; this is useful for checking whether the body would *touch* any other bodies.
    */
-  test_move(from_: Transform2D, motion: Vector2, collision?: KinematicCollision2D, safe_margin?: float, recovery_as_collision?: boolean): boolean;
+  test_move(from_: Transform2D, motion: Vector2 | Vector2i, collision?: KinematicCollision2D, safe_margin?: float, recovery_as_collision?: boolean): boolean;
 }

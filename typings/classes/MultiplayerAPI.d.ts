@@ -50,7 +50,7 @@ declare class MultiplayerAPI extends RefCounted {
    * Sends an RPC to the target `peer`. The given `method` will be called on the remote `object` with the provided `arguments`. The RPC may also be called locally depending on the implementation and RPC configuration. See {@link Node.rpc} and {@link Node.rpc_config}.
    * **Note:** Prefer using {@link Node.rpc}, {@link Node.rpc_id}, or `my_method.rpc(peer, arg1, arg2, ...)` (in GDScript), since they are faster. This method is mostly useful in conjunction with {@link MultiplayerAPIExtension} when extending or replacing the multiplayer capabilities.
    */
-  rpc(peer: int, object: GodotObject, method: string, arguments?: Array<unknown>): int;
+  rpc(peer: int, object: GodotObject, method: string, arguments?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): int;
   /**
    * Sets the default MultiplayerAPI implementation class. This method can be used by modules and extensions to configure which implementation will be used by {@link SceneTree} when the engine starts.
    */

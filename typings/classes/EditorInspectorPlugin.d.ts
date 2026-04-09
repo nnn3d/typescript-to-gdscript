@@ -30,5 +30,5 @@ declare class EditorInspectorPlugin extends RefCounted {
   /**
    * Adds an editor that allows modifying multiple properties. The `editor` control must extend {@link EditorProperty}.
    */
-  add_property_editor_for_multiple_properties(label: string, properties: PackedStringArray, editor: Control): void;
+  add_property_editor_for_multiple_properties(label: string, properties: PackedStringArray | Array<unknown>, editor: Control): void;
 }

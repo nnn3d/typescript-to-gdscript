@@ -88,35 +88,35 @@ declare class Node3D extends Node {
    * If `true`, this node can be visible. The node is only rendered when all of its ancestors are visible, as well. That means {@link is_visible_in_tree} must return `true`.
    */
   visible: boolean;
-  set_basis(value: Basis): void;
+  set_basis(value: Basis | Quaternion): void;
   get_basis(): Basis;
-  set_global_basis(value: Basis): void;
+  set_global_basis(value: Basis | Quaternion): void;
   get_global_basis(): Basis;
-  set_global_position(value: Vector3): void;
+  set_global_position(value: Vector3 | Vector3i): void;
   get_global_position(): Vector3;
-  set_global_rotation(value: Vector3): void;
+  set_global_rotation(value: Vector3 | Vector3i): void;
   get_global_rotation(): Vector3;
-  set_global_rotation_degrees(value: Vector3): void;
+  set_global_rotation_degrees(value: Vector3 | Vector3i): void;
   get_global_rotation_degrees(): Vector3;
-  set_global_transform(value: Transform3D): void;
+  set_global_transform(value: Transform3D | Projection): void;
   get_global_transform(): Transform3D;
-  set_position(value: Vector3): void;
+  set_position(value: Vector3 | Vector3i): void;
   get_position(): Vector3;
-  set_quaternion(value: Quaternion): void;
+  set_quaternion(value: Quaternion | Basis): void;
   get_quaternion(): Quaternion;
-  set_rotation(value: Vector3): void;
+  set_rotation(value: Vector3 | Vector3i): void;
   get_rotation(): Vector3;
-  set_rotation_degrees(value: Vector3): void;
+  set_rotation_degrees(value: Vector3 | Vector3i): void;
   get_rotation_degrees(): Vector3;
   set_rotation_edit_mode(value: int): void;
   get_rotation_edit_mode(): int;
   set_rotation_order(value: int): void;
   get_rotation_order(): int;
-  set_scale(value: Vector3): void;
+  set_scale(value: Vector3 | Vector3i): void;
   get_scale(): Vector3;
   set_as_top_level(value: boolean): void;
   is_set_as_top_level(): boolean;
-  set_transform(value: Transform3D): void;
+  set_transform(value: Transform3D | Projection): void;
   get_transform(): Transform3D;
   set_visibility_parent(value: string): void;
   get_visibility_parent(): string;
@@ -160,16 +160,16 @@ declare class Node3D extends Node {
   /**
    * Rotates this node's {@link global_basis} around the global `axis` by the given `angle`, in radians. This operation is calculated in global space (relative to the world) and preserves the {@link global_position}.
    */
-  global_rotate(axis: Vector3, angle: float): void;
+  global_rotate(axis: Vector3 | Vector3i, angle: float): void;
   /**
    * Scales this node's {@link global_basis} by the given `scale` factor. This operation is calculated in global space (relative to the world) and preserves the {@link global_position}.
    * **Note:** This method is not to be confused with the {@link scale} property.
    */
-  global_scale(scale: Vector3): void;
+  global_scale(scale: Vector3 | Vector3i): void;
   /**
    * Adds the given translation `offset` to the node's {@link global_position} in global space (relative to the world).
    */
-  global_translate(offset: Vector3): void;
+  global_translate(offset: Vector3 | Vector3i): void;
   /**
    * Prevents this node from being rendered. Equivalent to setting {@link visible} to `false`. This is the opposite of {@link show}.
    */
@@ -199,11 +199,11 @@ declare class Node3D extends Node {
    * If `use_model_front` is `true`, the +Z axis (asset front) is treated as forward (implies +X is left) and points toward the `target` position. By default, the -Z axis (camera forward) is treated as forward (implies +X is right).
    * **Note:** This method fails if the node is not in the scene tree. If necessary, use {@link look_at_from_position} instead.
    */
-  look_at(target: Vector3, up?: Vector3, use_model_front?: boolean): void;
+  look_at(target: Vector3 | Vector3i, up?: Vector3 | Vector3i, use_model_front?: boolean): void;
   /**
    * Moves the node to the specified `position`, then rotates the node to point toward the `target` position, similar to {@link look_at}. This operation is calculated in global space (relative to the world).
    */
-  look_at_from_position(position: Vector3, target: Vector3, up?: Vector3, use_model_front?: boolean): void;
+  look_at_from_position(position: Vector3 | Vector3i, target: Vector3 | Vector3i, up?: Vector3 | Vector3i, use_model_front?: boolean): void;
   /**
    * Orthonormalizes this node's {@link basis}. This method sets this node's {@link scale} to {@link Vector3.ONE} (or its negative counterpart), but preserves the {@link position} and {@link rotation}. See also {@link Transform3D.orthonormalized}.
    */
@@ -211,11 +211,11 @@ declare class Node3D extends Node {
   /**
    * Rotates this node's {@link basis} around the `axis` by the given `angle`, in radians. This operation is calculated in parent space (relative to the parent) and preserves the {@link position}.
    */
-  rotate(axis: Vector3, angle: float): void;
+  rotate(axis: Vector3 | Vector3i, angle: float): void;
   /**
    * Rotates this node's {@link basis} around the `axis` by the given `angle`, in radians. This operation is calculated in local space (relative to this node) and preserves the {@link position}.
    */
-  rotate_object_local(axis: Vector3, angle: float): void;
+  rotate_object_local(axis: Vector3 | Vector3i, angle: float): void;
   /**
    * Rotates this node's {@link basis} around the X axis by the given `angle`, in radians. This operation is calculated in parent space (relative to the parent) and preserves the {@link position}.
    */
@@ -231,7 +231,7 @@ declare class Node3D extends Node {
   /**
    * Scales this node's {@link basis} by the given `scale` factor. This operation is calculated in local space (relative to this node) and preserves the {@link position}.
    */
-  scale_object_local(scale: Vector3): void;
+  scale_object_local(scale: Vector3 | Vector3i): void;
   /**
    * If `true`, this node's {@link global_transform} is automatically orthonormalized. This results in this node not appearing distorted, as if its global scale were set to {@link Vector3.ONE} (or its negative counterpart). See also {@link is_scale_disabled} and {@link orthonormalize}.
    * **Note:** {@link transform} is not affected by this setting.
@@ -261,7 +261,7 @@ declare class Node3D extends Node {
    * Selects the `gizmo`'s subgizmo with the given `id` and sets its transform. Only works in the editor.
    * **Note:** The gizmo object would typically be an instance of {@link EditorNode3DGizmo}, but the argument type is kept generic to avoid creating a dependency on editor classes in {@link Node3D}.
    */
-  set_subgizmo_selection(gizmo: Node3DGizmo, id: int, transform: Transform3D): void;
+  set_subgizmo_selection(gizmo: Node3DGizmo, id: int, transform: Transform3D | Projection): void;
   /**
    * Allows this node to be rendered. Equivalent to setting {@link visible} to `true`. This is the opposite of {@link hide}.
    */
@@ -269,19 +269,19 @@ declare class Node3D extends Node {
   /**
    * Returns the `local_point` converted from this node's local space to global space. This is the opposite of {@link to_local}.
    */
-  to_global(local_point: Vector3): Vector3;
+  to_global(local_point: Vector3 | Vector3i): Vector3;
   /**
    * Returns the `global_point` converted from global space to this node's local space. This is the opposite of {@link to_global}.
    */
-  to_local(global_point: Vector3): Vector3;
+  to_local(global_point: Vector3 | Vector3i): Vector3;
   /**
    * Adds the given translation `offset` to the node's position, in local space (relative to this node).
    * **Note:** Prefer using {@link translate_object_local}, instead, as this method may be changed in a future release.
    * **Note:** Despite the naming convention, this operation is **not** calculated in parent space for compatibility reasons. To translate in parent space, add `offset` to the {@link position} (`node_3d.position += offset`).
    */
-  translate(offset: Vector3): void;
+  translate(offset: Vector3 | Vector3i): void;
   /** Adds the given translation `offset` to the node's position, in local space (relative to this node). */
-  translate_object_local(offset: Vector3): void;
+  translate_object_local(offset: Vector3 | Vector3i): void;
   /** Updates all the {@link EditorNode3DGizmo} objects attached to this node. Only works in the editor. */
   update_gizmos(): void;
 

@@ -62,7 +62,7 @@ declare class TextureProgressBar extends Range {
   tint_under: Color;
   set_fill_mode(value: int): void;
   get_fill_mode(): int;
-  set_radial_center_offset(value: Vector2): void;
+  set_radial_center_offset(value: Vector2 | Vector2i): void;
   get_radial_center_offset(): Vector2;
   set_fill_degrees(value: float): void;
   get_fill_degrees(): float;
@@ -72,7 +72,7 @@ declare class TextureProgressBar extends Range {
   get_over_texture(): Texture2D | null;
   set_progress_texture(value: Texture2D | null): void;
   get_progress_texture(): Texture2D | null;
-  set_texture_progress_offset(value: Vector2): void;
+  set_texture_progress_offset(value: Vector2 | Vector2i): void;
   get_texture_progress_offset(): Vector2;
   set_under_texture(value: Texture2D | null): void;
   get_under_texture(): Texture2D | null;

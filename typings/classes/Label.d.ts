@@ -92,9 +92,9 @@ declare class Label extends Control {
   get_lines_skipped(): int;
   set_max_lines_visible(value: int): void;
   get_max_lines_visible(): int;
-  set_structured_text_bidi_override_options(value: Array<unknown>): void;
+  set_structured_text_bidi_override_options(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_structured_text_bidi_override_options(): Array<unknown>;
-  set_tab_stops(value: PackedFloat32Array): void;
+  set_tab_stops(value: PackedFloat32Array | Array<unknown>): void;
   get_tab_stops(): PackedFloat32Array;
   set_text(value: string): void;
   get_text(): string;

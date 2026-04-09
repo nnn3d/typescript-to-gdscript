@@ -56,7 +56,7 @@ declare interface Basis {
   /**
    * Returns `true` if this basis and `b` are approximately equal, by calling {@link @GlobalScope.is_equal_approx} on all vector components.
    */
-  is_equal_approx(b: Basis): boolean;
+  is_equal_approx(b: Basis | Quaternion): boolean;
   /**
    * Returns `true` if this basis is finite, by calling {@link @GlobalScope.is_finite} on all vector components.
    */
@@ -74,37 +74,37 @@ declare interface Basis {
    * Returns a copy of this basis rotated around the given `axis` by the given `angle` (in radians).
    * The `axis` must be a normalized vector (see {@link Vector3.normalized}). If `angle` is positive, the basis is rotated counter-clockwise around the axis.
    */
-  rotated(axis: Vector3, angle: float): Basis;
+  rotated(axis: Vector3 | Vector3i, angle: float): Basis;
   /**
    * Returns this basis with each axis's components scaled by the given `scale`'s components.
    * The basis matrix's rows are multiplied by `scale`'s components. This operation is a global scale (relative to the parent).
    */
-  scaled(scale: Vector3): Basis;
+  scaled(scale: Vector3 | Vector3i): Basis;
   /**
    * Returns this basis with each axis scaled by the corresponding component in the given `scale`.
    * The basis matrix's columns are multiplied by `scale`'s components. This operation is a local scale (relative to self).
    */
-  scaled_local(scale: Vector3): Basis;
+  scaled_local(scale: Vector3 | Vector3i): Basis;
   /**
    * Performs a spherical-linear interpolation with the `to` basis, given a `weight`. Both this basis and `to` should represent a rotation.
    * **Example:** Smoothly rotate a {@link Node3D} to the target basis over time, with a {@link Tween}:
    */
-  slerp(to: Basis, weight: float): Basis;
+  slerp(to: Basis | Quaternion, weight: float): Basis;
   /**
    * Returns the transposed dot product between `with` and the {@link x} axis (see {@link transposed}).
    * This is equivalent to `basis.x.dot(vector)`.
    */
-  tdotx(with_: Vector3): float;
+  tdotx(with_: Vector3 | Vector3i): float;
   /**
    * Returns the transposed dot product between `with` and the {@link y} axis (see {@link transposed}).
    * This is equivalent to `basis.y.dot(vector)`.
    */
-  tdoty(with_: Vector3): float;
+  tdoty(with_: Vector3 | Vector3i): float;
   /**
    * Returns the transposed dot product between `with` and the {@link z} axis (see {@link transposed}).
    * This is equivalent to `basis.z.dot(vector)`.
    */
-  tdotz(with_: Vector3): float;
+  tdotz(with_: Vector3 | Vector3i): float;
   /**
    * Returns the transposed version of this basis. This turns the basis matrix's columns into rows, and its rows into columns.
    */
@@ -183,19 +183,19 @@ declare interface BasisConstructor {
    * - The {@link Vector3.z} should contain the angle around the {@link z} axis (roll).
    * The order of each consecutive rotation can be changed with `order` (see {@link EulerOrder} constants). By default, the YXZ convention is used ({@link EULER_ORDER_YXZ}): the basis rotates first around the Y axis (yaw), then X (pitch), and lastly Z (roll). When using the opposite method {@link get_euler}, this order is reversed.
    */
-  from_euler(euler: Vector3, order?: int): Basis;
+  from_euler(euler: Vector3 | Vector3i, order?: int): Basis;
   /**
    * Constructs a new {@link Basis} that only represents scale, with no rotation or shear, from the given `scale` vector.
    * **Note:** In linear algebra, the matrix of this basis is also known as a diagonal matrix (https://en.wikipedia.org/wiki/Diagonal_matrix).
    */
-  from_scale(scale: Vector3): Basis;
+  from_scale(scale: Vector3 | Vector3i): Basis;
   /**
    * Creates a new {@link Basis} with a rotation such that the forward axis (-Z) points towards the `target` position.
    * By default, the -Z axis (camera forward) is treated as forward (implies +X is right). If `use_model_front` is `true`, the +Z axis (asset front) is treated as forward (implies +X is left) and points toward the `target` position.
    * The up axis (+Y) points as close to the `up` vector as possible while staying perpendicular to the forward axis. The returned basis is orthonormalized (see {@link orthonormalized}).
    * The `target` and the `up` cannot be {@link Vector3.ZERO}, and shouldn't be colinear to avoid unintended rotation around local Z axis.
    */
-  looking_at(target: Vector3, up?: Vector3, use_model_front?: boolean): Basis;
+  looking_at(target: Vector3 | Vector3i, up?: Vector3 | Vector3i, use_model_front?: boolean): Basis;
 
   /**
    * The identity {@link Basis}. This is an orthonormal basis with no rotation, no shear, and a scale of {@link Vector3.ONE}. This also means that:

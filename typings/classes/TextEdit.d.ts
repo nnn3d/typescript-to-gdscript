@@ -212,7 +212,7 @@ declare class TextEdit extends Control {
   is_shortcut_keys_enabled(): boolean;
   set_structured_text_bidi_override(value: int): void;
   get_structured_text_bidi_override(): int;
-  set_structured_text_bidi_override_options(value: Array<unknown>): void;
+  set_structured_text_bidi_override_options(value: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   get_structured_text_bidi_override_options(): Array<unknown>;
   set_syntax_highlighter(value: SyntaxHighlighter | null): void;
   get_syntax_highlighter(): SyntaxHighlighter | null;
@@ -374,7 +374,7 @@ declare class TextEdit extends Control {
    * If `clamp_line` is `false` and `position` is below the last line, `Vector2i(-1, -1)` is returned.
    * If `clamp_column` is `false` and `position` is outside the column range of the line, `Vector2i(-1, -1)` is returned.
    */
-  get_line_column_at_pos(position: Vector2i, clamp_line?: boolean, clamp_column?: boolean): Vector2i;
+  get_line_column_at_pos(position: Vector2i | Vector2, clamp_line?: boolean, clamp_column?: boolean): Vector2i;
   /** Returns the number of lines in the text. */
   get_line_count(): int;
   /**
@@ -420,7 +420,7 @@ declare class TextEdit extends Control {
    */
   get_menu(): PopupMenu;
   /** Returns the equivalent minimap line at `position`. */
-  get_minimap_line_at_pos(position: Vector2i): int;
+  get_minimap_line_at_pos(position: Vector2i | Vector2): int;
   /** Returns the number of lines that may be drawn on the minimap. */
   get_minimap_visible_lines(): int;
   /**
@@ -508,7 +508,7 @@ declare class TextEdit extends Control {
    */
   get_visible_line_count_in_range(from_line: int, to_line: int): int;
   /** Returns the word at `position`. */
-  get_word_at_pos(position: Vector2): string;
+  get_word_at_pos(position: Vector2 | Vector2i): string;
   /** Returns a {@link String} text with the word under the caret's location. */
   get_word_under_caret(caret_index?: int): string;
   /**

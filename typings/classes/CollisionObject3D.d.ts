@@ -46,7 +46,7 @@ declare class CollisionObject3D extends Node3D {
    * Receives unhandled {@link InputEvent}s. `event_position` is the location in world space of the mouse pointer on the surface of the shape with index `shape_idx` and `normal` is the normal vector of the surface at that point. Connect to the {@link input_event} signal to easily pick up these events.
    * **Note:** {@link _input_event} requires {@link input_ray_pickable} to be `true` and at least one {@link collision_layer} bit to be set.
    */
-  _input_event(camera: Camera3D, event: InputEvent, event_position: Vector3, normal: Vector3, shape_idx: int): void;
+  _input_event(camera: Camera3D, event: InputEvent, event_position: Vector3 | Vector3i, normal: Vector3 | Vector3i, shape_idx: int): void;
   /**
    * Called when the mouse pointer enters any of this object's shapes. Requires {@link input_ray_pickable} to be `true` and at least one {@link collision_layer} bit to be set. Note that moving between different shapes within a single {@link CollisionObject3D} won't cause this function to be called.
    */
@@ -106,7 +106,7 @@ declare class CollisionObject3D extends Node3D {
   /** If `true`, disables the given shape owner. */
   shape_owner_set_disabled(owner_id: int, disabled: boolean): void;
   /** Sets the {@link Transform3D} of the given shape owner. */
-  shape_owner_set_transform(owner_id: int, transform: Transform3D): void;
+  shape_owner_set_transform(owner_id: int, transform: Transform3D | Projection): void;
 
   /**
    * Emitted when the object receives an unhandled {@link InputEvent}. `event_position` is the location in world space of the mouse pointer on the surface of the shape with index `shape_idx` and `normal` is the normal vector of the surface at that point.

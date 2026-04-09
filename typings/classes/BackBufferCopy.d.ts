@@ -11,7 +11,7 @@ declare class BackBufferCopy extends Node2D {
   rect: Rect2;
   set_copy_mode(value: int): void;
   get_copy_mode(): int;
-  set_rect(value: Rect2): void;
+  set_rect(value: Rect2 | Rect2i): void;
   get_rect(): Rect2;
 
   // enum CopyMode

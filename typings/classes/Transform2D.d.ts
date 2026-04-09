@@ -26,12 +26,12 @@ declare interface Transform2D {
   /**
    * Returns a copy of the `v` vector, transformed (multiplied) by the transform basis's matrix. Unlike the multiplication operator (`*`), this method ignores the {@link origin}.
    */
-  basis_xform(v: Vector2): Vector2;
+  basis_xform(v: Vector2 | Vector2i): Vector2;
   /**
    * Returns a copy of the `v` vector, transformed (multiplied) by the inverse transform basis's matrix (see {@link inverse}). This method ignores the {@link origin}.
    * **Note:** This method assumes that this transform's basis is *orthonormal* (see {@link orthonormalized}). If the basis is not orthonormal, `transform.affine_inverse().basis_xform(vector)` should be used instead (see {@link affine_inverse}).
    */
-  basis_xform_inv(v: Vector2): Vector2;
+  basis_xform_inv(v: Vector2 | Vector2i): Vector2;
   /**
    * Returns the determinant (https://en.wikipedia.org/wiki/Determinant) of this transform basis's matrix. For advanced math, this number can be used to determine a few attributes:
    * - If the determinant is exactly `0.0`, the basis is not invertible (see {@link inverse}).
@@ -77,7 +77,7 @@ declare interface Transform2D {
   /**
    * Returns a copy of the transform rotated such that the rotated X-axis points towards the `target` position, in global space.
    */
-  looking_at(target?: Vector2): Transform2D;
+  looking_at(target?: Vector2 | Vector2i): Transform2D;
   /**
    * Returns a copy of this transform with its basis orthonormalized. An orthonormal basis is both *orthogonal* (the axes are perpendicular to each other) and *normalized* (the axes have a length of `1.0`), which also means it can only represent a rotation.
    */
@@ -100,25 +100,25 @@ declare interface Transform2D {
    * This method is an optimized version of multiplying the given transform `X` with a corresponding scaling transform `S` from the left, i.e., `S * X`.
    * This can be seen as transforming with respect to the global/parent frame.
    */
-  scaled(scale: Vector2): Transform2D;
+  scaled(scale: Vector2 | Vector2i): Transform2D;
   /**
    * Returns a copy of the transform scaled by the given `scale` factor.
    * This method is an optimized version of multiplying the given transform `X` with a corresponding scaling transform `S` from the right, i.e., `X * S`.
    * This can be seen as transforming with respect to the local frame.
    */
-  scaled_local(scale: Vector2): Transform2D;
+  scaled_local(scale: Vector2 | Vector2i): Transform2D;
   /**
    * Returns a copy of the transform translated by the given `offset`.
    * This method is an optimized version of multiplying the given transform `X` with a corresponding translation transform `T` from the left, i.e., `T * X`.
    * This can be seen as transforming with respect to the global/parent frame.
    */
-  translated(offset: Vector2): Transform2D;
+  translated(offset: Vector2 | Vector2i): Transform2D;
   /**
    * Returns a copy of the transform translated by the given `offset`.
    * This method is an optimized version of multiplying the given transform `X` with a corresponding translation transform `T` from the right, i.e., `X * T`.
    * This can be seen as transforming with respect to the local frame.
    */
-  translated_local(offset: Vector2): Transform2D;
+  translated_local(offset: Vector2 | Vector2i): Transform2D;
 
   // Operator overloads
   [__ops_ne]: { right: Transform2D; ret: boolean };

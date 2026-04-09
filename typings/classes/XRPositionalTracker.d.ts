@@ -33,7 +33,7 @@ declare class XRPositionalTracker extends XRTracker {
   /**
    * Sets the transform, linear velocity, angular velocity and tracking confidence for the given pose. This method is called by an {@link XRInterface} implementation and should not be used directly.
    */
-  set_pose(name: string, transform: Transform3D, linear_velocity: Vector3, angular_velocity: Vector3, tracking_confidence: int): void;
+  set_pose(name: string, transform: Transform3D | Projection, linear_velocity: Vector3 | Vector3i, angular_velocity: Vector3 | Vector3i, tracking_confidence: int): void;
 
   /**
    * Emitted when a button on this tracker is pressed. Note that many XR runtimes allow other inputs to be mapped to buttons.

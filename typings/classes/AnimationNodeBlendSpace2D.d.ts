@@ -30,11 +30,11 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   get_auto_triangles(): boolean;
   set_blend_mode(value: int): void;
   get_blend_mode(): int;
-  set_max_space(value: Vector2): void;
+  set_max_space(value: Vector2 | Vector2i): void;
   get_max_space(): Vector2;
-  set_min_space(value: Vector2): void;
+  set_min_space(value: Vector2 | Vector2i): void;
   get_min_space(): Vector2;
-  set_snap(value: Vector2): void;
+  set_snap(value: Vector2 | Vector2i): void;
   get_snap(): Vector2;
   set_use_sync(value: boolean): void;
   is_using_sync(): boolean;
@@ -47,7 +47,7 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
    * Adds a new point with `name` that represents a `node` at the position set by `pos`. You can insert it at a specific index using the `at_index` argument. If you use the default value for `at_index`, the point is inserted at the end of the blend points array.
    * **Note:** If no name is provided, safe index is used as reference. In the future, empty names will be deprecated, so explicitly passing a name is recommended.
    */
-  add_blend_point(node: AnimationRootNode, pos: Vector2, at_index?: int, name?: string): void;
+  add_blend_point(node: AnimationRootNode, pos: Vector2 | Vector2i, at_index?: int, name?: string): void;
   /**
    * Creates a new triangle using three points `x`, `y`, and `z`. Triangles can overlap. You can insert the triangle at a specific index using the `at_index` argument. If you use the default value for `at_index`, the point is inserted at the end of the blend points array.
    */
@@ -83,7 +83,7 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   /** Changes the {@link AnimationNode} referenced by the point at index `point`. */
   set_blend_point_node(point: int, node: AnimationRootNode): void;
   /** Updates the position of the point at index `point` in the blend space. */
-  set_blend_point_position(point: int, pos: Vector2): void;
+  set_blend_point_position(point: int, pos: Vector2 | Vector2i): void;
 
   /**
    * Emitted every time the blend space's triangles are created, removed, or when one of their vertices changes position.

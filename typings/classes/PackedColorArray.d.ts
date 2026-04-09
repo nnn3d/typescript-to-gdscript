@@ -6,7 +6,7 @@ declare interface PackedColorArray {
   /** Appends an element at the end of the array (alias of {@link push_back}). */
   append(value: Color): boolean;
   /** Appends a {@link PackedColorArray} at the end of this array. */
-  append_array(array: PackedColorArray): void;
+  append_array(array: PackedColorArray | Array<unknown>): void;
   /**
    * Finds the index of an existing value (or the insertion index that maintains sorting order, if the value is not yet present in the array) using binary search. Optionally, a `before` specifier can be passed. If `false`, the returned index comes after all existing entries of the value in the array.
    * **Note:** Calling {@link bsearch} on an unsorted array results in unexpected behavior.

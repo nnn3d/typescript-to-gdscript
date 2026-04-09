@@ -15,9 +15,9 @@ declare class SpringBoneCollision3D extends Node3D {
   get_bone(): int;
   set_bone_name(value: string): void;
   get_bone_name(): string;
-  set_position_offset(value: Vector3): void;
+  set_position_offset(value: Vector3 | Vector3i): void;
   get_position_offset(): Vector3;
-  set_rotation_offset(value: Quaternion): void;
+  set_rotation_offset(value: Quaternion | Basis): void;
   get_rotation_offset(): Quaternion;
 
   /** Get parent {@link Skeleton3D} node of the parent {@link SpringBoneSimulator3D} if found. */

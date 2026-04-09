@@ -84,11 +84,11 @@ declare class ReflectionProbe extends VisualInstance3D {
   get_max_distance(): float;
   set_mesh_lod_threshold(value: float): void;
   get_mesh_lod_threshold(): float;
-  set_origin_offset(value: Vector3): void;
+  set_origin_offset(value: Vector3 | Vector3i): void;
   get_origin_offset(): Vector3;
   set_reflection_mask(value: int): void;
   get_reflection_mask(): int;
-  set_size(value: Vector3): void;
+  set_size(value: Vector3 | Vector3i): void;
   get_size(): Vector3;
   set_update_mode(value: int): void;
   get_update_mode(): int;

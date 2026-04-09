@@ -58,11 +58,11 @@ declare class Area2D extends CollisionObject2D {
   is_overriding_audio_bus(): boolean;
   set_gravity(value: float): void;
   get_gravity(): float;
-  set_gravity_direction(value: Vector2): void;
+  set_gravity_direction(value: Vector2 | Vector2i): void;
   get_gravity_direction(): Vector2;
   set_gravity_is_point(value: boolean): void;
   is_gravity_a_point(): boolean;
-  set_gravity_point_center(value: Vector2): void;
+  set_gravity_point_center(value: Vector2 | Vector2i): void;
   get_gravity_point_center(): Vector2;
   set_gravity_point_unit_distance(value: float): void;
   get_gravity_point_unit_distance(): float;

@@ -212,7 +212,7 @@ declare class FileAccess extends RefCounted {
    * **Note:** The provided key must be 32 bytes long.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static open_encrypted(path: string, mode_flags: int, key: PackedByteArray, iv?: PackedByteArray): FileAccess | null;
+  static open_encrypted(path: string, mode_flags: int, key: PackedByteArray | Array<unknown>, iv?: PackedByteArray | Array<unknown>): FileAccess | null;
   /**
    * Creates a new {@link FileAccess} object and opens an encrypted file in write or read mode. You need to pass a password to encrypt/decrypt it.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
@@ -246,7 +246,7 @@ declare class FileAccess extends RefCounted {
    * **Note:** On Linux, only "user" namespace attributes are accessible, namespace prefix should not be included.
    * **Note:** On Windows, alternate data streams are used to store extended attributes.
    */
-  static set_extended_attribute(file: string, attribute_name: string, data: PackedByteArray): int;
+  static set_extended_attribute(file: string, attribute_name: string, data: PackedByteArray | Array<unknown>): int;
   /**
    * Writes file extended attribute with name `attribute_name` as a UTF-8 encoded string.
    * **Note:** This method is implemented on Linux, macOS, and Windows.
@@ -301,13 +301,13 @@ declare class FileAccess extends RefCounted {
    * Stores the given array of bytes in the file. This advances the file cursor by the number of bytes written. Returns `true` if the operation is successful.
    * **Note:** If an error occurs, the resulting value of the file position indicator is indeterminate.
    */
-  store_buffer(buffer: PackedByteArray): boolean;
+  store_buffer(buffer: PackedByteArray | Array<unknown>): boolean;
   /**
    * Stores the given {@link PackedStringArray} in the file as a line formatted in the CSV (Comma-Separated Values) format. You can pass a different delimiter `delim` to use other than the default `","` (comma). This delimiter must be one-character long.
    * Text will be encoded as UTF-8. Returns `true` if the operation is successful.
    * **Note:** If an error occurs, the resulting value of the file position indicator is indeterminate.
    */
-  store_csv_line(values: PackedStringArray, delim?: string): boolean;
+  store_csv_line(values: PackedStringArray | Array<unknown>, delim?: string): boolean;
   /**
    * Stores a floating-point number as 64 bits in the file. This advances the file cursor by 8 bytes. Returns `true` if the operation is successful.
    * **Note:** If an error occurs, the resulting value of the file position indicator is indeterminate.

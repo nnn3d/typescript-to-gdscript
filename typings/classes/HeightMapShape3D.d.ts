@@ -11,7 +11,7 @@ declare class HeightMapShape3D extends Shape3D {
   map_depth: int;
   /** Number of vertices in the width of the heightmap. Changing this will resize the {@link map_data}. */
   map_width: int;
-  set_map_data(value: PackedFloat32Array): void;
+  set_map_data(value: PackedFloat32Array | Array<unknown>): void;
   get_map_data(): PackedFloat32Array;
   set_map_depth(value: int): void;
   get_map_depth(): int;

@@ -22,7 +22,7 @@ declare class VoxelGI extends VisualInstance3D {
   get_camera_attributes(): CameraAttributes | null;
   set_probe_data(value: VoxelGIData | null): void;
   get_probe_data(): VoxelGIData | null;
-  set_size(value: Vector3): void;
+  set_size(value: Vector3 | Vector3i): void;
   get_size(): Vector3;
   set_subdiv(value: int): void;
   get_subdiv(): int;

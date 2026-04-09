@@ -537,7 +537,7 @@ declare class Node extends GodotObject {
    * Calls the given `method` name, passing `args` as arguments, on this node and all of its children, recursively.
    * If `parent_first` is `true`, the method is called on this node first, then on all of its children. If `false`, the children's methods are called first.
    */
-  propagate_call(method: string, args?: Array<unknown>, parent_first?: boolean): void;
+  propagate_call(method: string, args?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, parent_first?: boolean): void;
   /** Calls {@link Object.notification} with `what` on this node and all of its children, recursively. */
   propagate_notification(what: int): void;
   /** Queues an accessibility information update for this node. */

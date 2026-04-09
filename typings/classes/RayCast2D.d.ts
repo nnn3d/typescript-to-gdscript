@@ -35,7 +35,7 @@ declare class RayCast2D extends Node2D {
   get_exclude_parent_body(): boolean;
   set_hit_from_inside(value: boolean): void;
   is_hit_from_inside_enabled(): boolean;
-  set_target_position(value: Vector2): void;
+  set_target_position(value: Vector2 | Vector2i): void;
   get_target_position(): Vector2;
 
   /** Adds a collision exception so the ray does not report collisions with the specified `node`. */

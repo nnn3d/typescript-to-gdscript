@@ -302,7 +302,7 @@ declare class TreeItem extends GodotObject {
    */
   set_icon_overlay(column: int, texture: Texture2D): void;
   /** Sets the given column's icon's texture region. */
-  set_icon_region(column: int, region: Rect2): void;
+  set_icon_region(column: int, region: Rect2 | Rect2i): void;
   /**
    * If `indeterminate` is `true`, the given `column` is marked indeterminate.
    * **Note:** If set `true` from `false`, then column is cleared of checked status.
@@ -328,7 +328,7 @@ declare class TreeItem extends GodotObject {
   /** Set BiDi algorithm override for the structured text. Has effect for cells that display text. */
   set_structured_text_bidi_override(column: int, parser: int): void;
   /** Set additional options for BiDi override. Has effect for cells that display text. */
-  set_structured_text_bidi_override_options(column: int, args: Array<unknown>): void;
+  set_structured_text_bidi_override_options(column: int, args: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /** Sets a string to be shown after a column's value (for example, a unit abbreviation). */
   set_suffix(column: int, text: string): void;
   /** Sets the given column's text value. */

@@ -60,14 +60,14 @@ declare class IterateIK3D extends ChainIK3D {
   /** Sets the joint limitation right axis at `joint` in the bone chain's joint list. */
   set_joint_limitation_right_axis(index: int, joint: int, direction: int): void;
   /** Sets the optional joint limitation right axis vector at `joint` in the bone chain's joint list. */
-  set_joint_limitation_right_axis_vector(index: int, joint: int, vector: Vector3): void;
+  set_joint_limitation_right_axis_vector(index: int, joint: int, vector: Vector3 | Vector3i): void;
   /**
    * Sets the joint limitation rotation offset at `joint` in the bone chain's joint list.
    * Rotation is done in the local space which is constructed by the bone direction (in general parent to child) as the +Y axis and {@link get_joint_limitation_right_axis_vector} as the +X axis.
    * If the +X and +Y axes are not orthogonal, the +X axis is implicitly modified to make it orthogonal.
    * Also, if the length of {@link get_joint_limitation_right_axis_vector} is zero, the space is created by rotating the bone rest using the shortest arc that rotates the +Y axis of the bone rest to match the bone direction.
    */
-  set_joint_limitation_rotation_offset(index: int, joint: int, offset: Quaternion): void;
+  set_joint_limitation_rotation_offset(index: int, joint: int, offset: Quaternion | Basis): void;
   /**
    * Sets the rotation axis at `joint` in the bone chain's joint list.
    * The axes are based on the {@link Skeleton3D.get_bone_rest}'s space, if `axis` is {@link SkeletonModifier3D.ROTATION_AXIS_CUSTOM}, you can specify any axis.
@@ -79,7 +79,7 @@ declare class IterateIK3D extends ChainIK3D {
    * This vector is normalized by an internal process and represents the axis around which the bone chain can rotate.
    * If the vector length is `0`, it is considered synonymous with {@link SkeletonModifier3D.ROTATION_AXIS_ALL}.
    */
-  set_joint_rotation_axis_vector(index: int, joint: int, axis_vector: Vector3): void;
+  set_joint_rotation_axis_vector(index: int, joint: int, axis_vector: Vector3 | Vector3i): void;
   /** Sets the target node that the end bone is trying to reach. */
   set_target_node(index: int, target_node: string): void;
 }

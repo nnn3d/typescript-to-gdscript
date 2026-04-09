@@ -18,7 +18,7 @@ declare class EditorDebuggerSession extends RefCounted {
   /**
    * Sends the given `message` to the attached remote instance, optionally passing additionally `data`. See {@link EngineDebugger} for how to retrieve those messages.
    */
-  send_message(message: string, data?: Array<unknown>): void;
+  send_message(message: string, data?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
   /**
    * Enables or disables a specific breakpoint based on `enabled`, updating the Editor Breakpoint Panel accordingly.
    */
@@ -26,7 +26,7 @@ declare class EditorDebuggerSession extends RefCounted {
   /**
    * Toggle the given `profiler` on the attached remote instance, optionally passing additionally `data`. See {@link EngineProfiler} for more details.
    */
-  toggle_profiler(profiler: string, enable: boolean, data?: Array<unknown>): void;
+  toggle_profiler(profiler: string, enable: boolean, data?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): void;
 
   /**
    * Emitted when the attached remote instance enters a break state. If `can_debug` is `true`, the remote instance will enter the debug loop.

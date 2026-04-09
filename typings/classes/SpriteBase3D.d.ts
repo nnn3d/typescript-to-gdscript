@@ -88,7 +88,7 @@ declare class SpriteBase3D extends GeometryInstance3D {
   is_flipped_v(): boolean;
   set_modulate(value: Color): void;
   get_modulate(): Color;
-  set_offset(value: Vector2): void;
+  set_offset(value: Vector2 | Vector2i): void;
   get_offset(): Vector2;
   set_pixel_size(value: float): void;
   get_pixel_size(): float;
