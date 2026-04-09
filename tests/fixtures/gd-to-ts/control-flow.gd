@@ -41,3 +41,11 @@ func test_is(x):
 		print(x, "is Node2D")
 	if x is not Node2D:
 		print(x, "is not Node2D")
+	if not x is Node2D:
+		print(x, "not is Node2D")
+	if x is int:
+		print(x, "is int")
+	if x is not float:
+		print(x, "is not float")
+	if not x is String:
+		print(x, "not is String")

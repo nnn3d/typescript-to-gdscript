@@ -17,6 +17,14 @@ type float = number;
 /** GDScript `float()` cast function — converts to float */
 declare function float(from?: int | float | String | boolean): float;
 
+/** Alias for boolean representing a bool in GDScript */
+type bool = boolean;
+/** GDScript `bool()` cast function — converts to boolean */
+declare function bool(from?: int | float | String | boolean): boolean;
+
+/** GDScript `String()` cast function — converts to string */
+declare function String(from?: unknown): string;
+
 /** Global helper for StringName */
 declare function StringName(value: string): string;
 
@@ -190,6 +198,12 @@ declare const gd: {
     value: T,
     type: new (...args: any[]) => U,
   ): T extends U ? U : U | null;
+
+  /** GDScript `is` check for primitive types (int, float, bool, String). Use `instanceof` for class types. */
+  is(value: unknown, type: typeof int): value is int;
+  is(value: unknown, type: typeof float): value is float;
+  is(value: unknown, type: typeof bool): value is boolean;
+  is(value: unknown, type: typeof String): value is string;
 
   /**
    * Emit raw GDScript code. The string is inserted as-is into the output.

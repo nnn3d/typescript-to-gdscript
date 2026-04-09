@@ -2145,6 +2145,15 @@ export class TsToGdTransformer {
         }
       }
 
+      // gd.is(value, Type) → value is Type
+      if (ts.isIdentifier(obj) && obj.text === 'gd' && method === 'is') {
+        if (node.arguments.length >= 2) {
+          const value = this.emitExpression(node.arguments[0]!);
+          const type = this.emitExpression(node.arguments[1]!);
+          return `${value} is ${type}`;
+        }
+      }
+
       // gd.dict([[key, value], ...]) -> {key: value, ...}
       if (ts.isIdentifier(obj) && obj.text === 'gd' && method === 'dict') {
         return this.emitGdDict(node);

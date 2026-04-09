@@ -120,9 +120,11 @@ Options:
 - `--no-explicit-convert-helper` — Disable TS-based variant-type auto-fix (explicit `gd.as` insertion)
 - `--no-ready-field-types-helper` — Disable TS-based class property auto-fix (adds `!` and infers types from `_ready()` assignments)
 - `--no-extends-type-helper` — Disable TS-based override-method parameter auto-fix (copies parameter types from parent class)
-- `--unsafe-use-any` — Less strict but less error-prone conversion mode. Currently affects two places:
+- `--unsafe-use-any` — Less strict but less error-prone conversion mode. Currently affects:
   - `gd.getset` fallback type: uses `any` instead of `unknown` when neither a GDScript type annotation nor a typeof-able value expression is available.
   - Ready field types helper: non-primitive TS2564 fields that aren't assigned in `_ready()` get `!` (definite-assignment) instead of `?` (optional) — avoids downstream `X | undefined` errors at usage sites at the cost of losing the runtime safety check.
+  - Unsafe non-null assertions: TS2531/18047/18048/18046 "possibly null/undefined" errors get `!` inserted after the expression. TS2322/2345 where the root cause is a null union type get `!` after the RHS/argument.
+  - TS7034 "variable implicitly has type `any[]`" gets `: any[]` annotation added.
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `/* ERROR: ... */` comments)
 
 #### Conversion Helpers
@@ -133,7 +135,7 @@ GD-to-TS conversion includes optional helpers that enhance the output:
 
 - **Operator fix helper** (default: enabled) — After conversion and typings generation, runs the TypeScript type-checker on converted files to find operator type errors (e.g., `Vector2 + Vector2`). Automatically wraps them in `gd.ops.X()` calls (e.g., `gd.ops.add(v1, v2)`). Catches cases that GDScript-time type inference misses (inherited members, method return values, etc.).
 
-- **Explicit convert helper** (default: enabled) — Runs alongside operator fix. Detects TS2345/TS2322 assignment/argument errors where the source and target are both variant types (Vector2 ↔ Vector2i, PackedColorArray ↔ Array, etc.) and inserts an explicit `gd.as(value, Target)` conversion. Uses `variantConverts` metadata in `godot-class-registry.json` (derived from Godot XML "from" constructors). Example: `wants_v2i(Vector2.DOWN)` → `wants_v2i(gd.as(Vector2.DOWN, Vector2i))`.
+- **Explicit convert helper** (default: enabled) — Runs alongside operator fix. Detects TS2345/TS2322/TS2739/TS2740/TS2741 assignment/argument errors where the source and target are both variant types (Vector2 ↔ Vector2i, PackedColorArray ↔ Array, etc.) and inserts an explicit `gd.as(value, Target)` conversion. Uses `variantConverts` metadata in `godot-class-registry.json` (derived from Godot XML "from" constructors). Handles return statements (wraps returned expression, not the `return` keyword) and property access assignments (redirects from LHS to RHS). Example: `wants_v2i(Vector2.DOWN)` → `wants_v2i(gd.as(Vector2.DOWN, Vector2i))`.
 
 - **Extends type helper** (default: enabled) — Detects TS7006 ("Parameter X implicitly has an any type") on method parameters where the method overrides one inherited from a parent class. Copies the parameter types from the parent class signature, preserving type aliases (`float`, `int`) by using the syntactic type text from the parent's `.d.ts`. Example:
 
@@ -481,6 +483,27 @@ f: typeof this.e = gd.getset({
 
 When the value expression is not typeof-able (a literal like `10`, a call, an operator expression, etc.) and there's no GDScript type annotation, the fallback is `unknown` by default, or `any` when `--unsafe-use-any` is passed to `convert-gd`.
 
+### Type checking (`is`)
+
+For class types, use standard `instanceof`:
+
+```typescript
+if (x instanceof Node2D) { ... }
+// ↔ if x is Node2D:
+```
+
+For primitive types (`int`, `float`, `bool`, `String`), use `gd.is()`:
+
+```typescript
+if (gd.is(x, int)) { ... }
+// ↔ if x is int:
+
+if (!gd.is(x, int)) { ... }
+// ↔ if x is not int:
+```
+
+Negation of `not x is Y` in GDScript converts to `!(gd.is(x, Y))` or `!(x instanceof Y)` with correct parenthesization.
+
 ### StringName / NodePath
 
 ```typescript
@@ -500,6 +523,8 @@ Each `.ts` file must contain exactly one class. Named classes are available glob
 - `undefined` is restricted — use `null`.
 - `var` is restricted — use `let` or `const` (both convert to GDScript `var`).
 - `TSOnly<T>` wrapper type is stripped during transformation.
+- `bool` is a type alias for `boolean` and also a cast function (`bool(x)` → GDScript `bool(x)`).
+- `String` is also a cast function (`String(x)` → GDScript `String(x)`).
 
 ### Constructor
 
@@ -559,7 +584,7 @@ This generates in your `typingsDir`:
 - **`.tscn.d.ts`** — Tree type structure for each scene (node types, parent/child relationships, flat paths)
 - **`.gd.d.ts`** — Module augmentation per script with typed `get_node()` overloads
 - **`_resources.d.ts`** — Bundled `GodotResources` entries for all asset files
-- **`_index.d.ts`** — Empty global interfaces + autoload singleton declarations
+- **`_index.d.ts`** — Empty global interfaces + autoload singleton declarations, including `GodotScenes` (maps scene resource paths to root node types)
 
 ### Features
 

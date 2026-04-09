@@ -56,5 +56,17 @@ export class ControlFlow extends Node {
     if (!(x instanceof Node2D)) {
       print(x, "is not Node2D");
     }
+    if (!(x instanceof Node2D)) {
+      print(x, "not is Node2D");
+    }
+    if (gd.is(x, int)) {
+      print(x, "is int");
+    }
+    if (!gd.is(x, float)) {
+      print(x, "is not float");
+    }
+    if (!(gd.is(x, String))) {
+      print(x, "not is String");
+    }
   }
 }

@@ -2226,6 +2226,9 @@ function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
  *  In real GDScript, `not a == 0` means `not (a == 0)`. */
 const NOT_LIFT_OPS = new Set(['==', '!=', '<', '>', '<=', '>=', 'in', 'is']);
 
+/** GDScript primitive types that use `gd.is()` instead of `instanceof` */
+const GD_IS_PRIMITIVE_TYPES = new Set(['int', 'float', 'bool', 'String']);
+
 /**
  * Detect %"UniqueNode"/Child or %UniqueNode/Child patterns.
  * Tree-sitter parses the `/` as a binary division operator.
@@ -2288,7 +2291,7 @@ function emitBinaryOp(node: SyntaxNode, ctx: GdToTsContext): string {
   const opText =
     opNode?.text ?? node.children.find((c) => !c.isNamed)?.text ?? '??';
 
-  // GD `is not` -> !(... instanceof ...)
+  // GD `is not` -> !(... instanceof ...) or !gd.is<T>(...) for primitives
   // tree-sitter parses `x is not Y` as binary_operator with children: x, "is", "not", Y
   if (opText === 'is') {
     const anonymousChildren = node.children.filter((c) => !c.isNamed);
@@ -2296,6 +2299,9 @@ function emitBinaryOp(node: SyntaxNode, ctx: GdToTsContext): string {
     if (hasNot) {
       const leftStr = left ? emitExpr(left, ctx) : '';
       const rightStr = right?.text ?? '';
+      if (GD_IS_PRIMITIVE_TYPES.has(rightStr)) {
+        return `!gd.is(${leftStr}, ${rightStr})`;
+      }
       return `!(${leftStr} instanceof ${rightStr})`;
     }
   }
@@ -2320,6 +2326,9 @@ function emitBinaryOp(node: SyntaxNode, ctx: GdToTsContext): string {
       };
       const tsOp = gdToTsOp[opText] ?? opText;
       if (opText === 'is') {
+        if (GD_IS_PRIMITIVE_TYPES.has(rightStr)) {
+          return `!gd.is(${innerLeftStr}, ${rightStr})`;
+        }
         return `!(${innerLeftStr} instanceof ${rightStr})`;
       }
       return `!(${innerLeftStr} ${tsOp} ${rightStr})`;
@@ -2333,10 +2342,13 @@ function emitBinaryOp(node: SyntaxNode, ctx: GdToTsContext): string {
     return `gd.as(${leftStr}, ${rightStr})`;
   }
 
-  // GD `is` -> instanceof (or keep as is)
+  // GD `is` -> instanceof for classes, gd.is<T>() for primitives
   if (opText === 'is') {
     const leftStr = left ? emitExpr(left, ctx) : '';
     const rightStr = right?.text ?? '';
+    if (GD_IS_PRIMITIVE_TYPES.has(rightStr)) {
+      return `gd.is(${leftStr}, ${rightStr})`;
+    }
     return `${leftStr} instanceof ${rightStr}`;
   }
 
@@ -2370,7 +2382,12 @@ function emitUnaryOp(node: SyntaxNode, ctx: GdToTsContext): string {
   const operand = node.namedChildren[0];
   const op = node.children.find((c) => !c.isNamed)?.text ?? '';
   const tsOp = op === 'not' ? '!' : op;
-  return `${tsOp}${operand ? emitExpr(operand, ctx) : ''}`;
+  const operandStr = operand ? emitExpr(operand, ctx) : '';
+  // `not X is Y` → `!(X instanceof Y)` — needs parens so `!` applies to the whole expression
+  if (tsOp === '!' && operand?.type === SyntaxType.BinaryOperator) {
+    return `!(${operandStr})`;
+  }
+  return `${tsOp}${operandStr}`;
 }
 
 // ─── Lambda ───────────────────────────────────────────────────
