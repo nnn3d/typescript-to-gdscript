@@ -74,7 +74,7 @@ declare class EditorProperty extends Container {
    * Returns the edited object.
    * **Note:** This method could return `null` if the editor has not yet been associated with a property. However, in {@link _update_property} and {@link _set_read_only}, this value is *guaranteed* to be non-`null`.
    */
-  get_edited_object(): GodotObject;
+  get_edited_object(): GodotObject | null;
   /**
    * Returns the edited property. If your editor is for a single property (added via {@link EditorInspectorPlugin._parse_property}), then this will return the property.
    * **Note:** This method could return `null` if the editor has not yet been associated with a property. However, in {@link _update_property} and {@link _set_read_only}, this value is *guaranteed* to be non-`null`.

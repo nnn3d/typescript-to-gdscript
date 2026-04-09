@@ -16,7 +16,7 @@ declare class GPUParticlesCollisionSDF3D extends GPUParticlesCollision3D {
    */
   size: Vector3;
   /** The 3D texture representing the signed distance field. */
-  texture: Texture3D;
+  texture: Texture3D | null;
   /**
    * The collision shape's thickness. Unlike other particle colliders, {@link GPUParticlesCollisionSDF3D} is actually hollow on the inside. {@link thickness} can be increased to prevent particles from tunneling through the collision shape at high speeds, or when the {@link GPUParticlesCollisionSDF3D} is moved.
    */
@@ -27,8 +27,8 @@ declare class GPUParticlesCollisionSDF3D extends GPUParticlesCollision3D {
   get_resolution(): int;
   set_size(value: Vector3): void;
   get_size(): Vector3;
-  set_texture(value: Texture3D): void;
-  get_texture(): Texture3D;
+  set_texture(value: Texture3D | null): void;
+  get_texture(): Texture3D | null;
   set_thickness(value: float): void;
   get_thickness(): float;
 

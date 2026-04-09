@@ -16,7 +16,7 @@ declare class Node extends GodotObject {
    * The {@link MultiplayerAPI} instance associated with this node. See {@link SceneTree.get_multiplayer}.
    * **Note:** Renaming the node, or moving it in the tree, will not move the {@link MultiplayerAPI} to the new path, you will have to update this manually.
    */
-  multiplayer: MultiplayerAPI;
+  multiplayer: MultiplayerAPI | null;
   /**
    * The name of the node. This name must be unique among the siblings (other child nodes from the same parent). When set to an existing sibling's name, the node is automatically renamed.
    * **Note:** When changing the name, the following characters will be replaced with an underscore: (`.` `:` `@` `/` `"` `%`). In particular, the `@` character is reserved for auto-generated names. See also {@link String.validate_node_name}.
@@ -27,7 +27,7 @@ declare class Node extends GodotObject {
    * **Note:** In the editor, nodes not owned by the scene root are usually not displayed in the Scene dock, and will **not** be saved. To prevent this, remember to set the owner after calling {@link add_child}.
    * **Note:** The owner needs to be the current scene root. See Instancing scenes ($DOCS_URL/tutorials/plugins/running_code_in_the_editor.html#instancing-scenes) in the documentation for more information.
    */
-  owner: Node;
+  owner: Node | null;
   /**
    * The physics interpolation mode to use for this node. Only effective if {@link ProjectSettings.physics/common/physics_interpolation} or {@link SceneTree.physics_interpolation} is `true`.
    * By default, nodes inherit the physics interpolation mode from their parent. This property can enable or disable physics interpolation individually for each node, regardless of their parents' physics interpolation mode.
@@ -75,11 +75,11 @@ declare class Node extends GodotObject {
   get_auto_translate_mode(): int;
   set_editor_description(value: string): void;
   get_editor_description(): string;
-  get_multiplayer(): MultiplayerAPI;
+  get_multiplayer(): MultiplayerAPI | null;
   set_name(value: string): void;
   get_name(): string;
-  set_owner(value: Node): void;
-  get_owner(): Node;
+  set_owner(value: Node | null): void;
+  get_owner(): Node | null;
   set_physics_interpolation_mode(value: int): void;
   get_physics_interpolation_mode(): int;
   set_process_mode(value: int): void;
@@ -252,13 +252,13 @@ declare class Node extends GodotObject {
    * The Tween will start automatically on the next process frame or physics frame (depending on {@link Tween.TweenProcessMode}). See {@link Tween.bind_node} for more info on Tweens bound to nodes.
    * **Note:** The method can still be used when the node is not inside {@link SceneTree}. It can fail in an unlikely case of using a custom {@link MainLoop}.
    */
-  create_tween(): Tween;
+  create_tween(): Tween | null;
   /**
    * Duplicates the node, returning a new node with all of its properties, signals, groups, and children copied from the original, recursively. The behavior can be tweaked through the `flags` (see {@link DuplicateFlags}). Internal nodes are not duplicated.
    * **Note:** For nodes with a {@link Script} attached, if {@link Object._init} has been defined with required parameters, the duplicated node will not have a {@link Script}.
    * **Note:** By default, this method will duplicate only properties marked for serialization (i.e. using {@link @GlobalScope.PROPERTY_USAGE_STORAGE}, or in GDScript, ). If you want to duplicate all properties, use {@link DUPLICATE_INTERNAL_STATE}.
    */
-  duplicate(flags?: int): Node;
+  duplicate(flags?: int): Node | null;
   /**
    * Finds the first descendant of this node whose {@link name} matches `pattern`, returning `null` if no match is found. The matching is done against node names, *not* their paths, through {@link String.match}. As such, it is case-sensitive, `"*"` matches zero or more characters, and `"?"` matches any single character.
    * If `recursive` is `false`, only this node's direct children are checked. Nodes are checked in tree order, so this node's first direct child is checked first, then its own direct children, etc., before moving to the second direct child, and so on. Internal children are also included in the search (see `internal` parameter in {@link add_child}).
@@ -266,7 +266,7 @@ declare class Node extends GodotObject {
    * **Note:** This method can be very slow. Consider storing a reference to the found node in a variable. Alternatively, use {@link get_node} with unique names (see {@link unique_name_in_owner}).
    * **Note:** To find all descendant nodes matching a pattern or a class type, see {@link find_children}.
    */
-  find_child(pattern: string, recursive?: boolean, owned?: boolean): Node;
+  find_child(pattern: string, recursive?: boolean, owned?: boolean): Node | null;
   /**
    * Finds all descendants of this node whose names match `pattern`, returning an empty {@link Array} if no match is found. The matching is done against node names, *not* their paths, through {@link String.match}. As such, it is case-sensitive, `"*"` matches zero or more characters, and `"?"` matches any single character.
    * If `type` is not empty, only descendants inheriting from `type` are included (see {@link Object.is_class}).
@@ -280,7 +280,7 @@ declare class Node extends GodotObject {
    * Finds the first ancestor of this node whose {@link name} matches `pattern`, returning `null` if no match is found. The matching is done through {@link String.match}. As such, it is case-sensitive, `"*"` matches zero or more characters, and `"?"` matches any single character. See also {@link find_child} and {@link find_children}.
    * **Note:** As this method walks upwards in the scene tree, it can be slow in large, deeply nested nodes. Consider storing a reference to the found node in a variable. Alternatively, use {@link get_node} with unique names (see {@link unique_name_in_owner}).
    */
-  find_parent(pattern: string): Node;
+  find_parent(pattern: string): Node | null;
   /**
    * Returns main accessibility element RID.
    * **Note:** This method should be called only during accessibility information updates ({@link NOTIFICATION_ACCESSIBILITY_UPDATE}).
@@ -291,7 +291,7 @@ declare class Node extends GodotObject {
    * If `include_internal` is `false`, internal children are ignored (see {@link add_child}'s `internal` parameter).
    * **Note:** To fetch a node by {@link NodePath}, use {@link get_node}.
    */
-  get_child(idx: int, include_internal?: boolean): Node;
+  get_child(idx: int, include_internal?: boolean): Node | null;
   /**
    * Returns the number of children of this node.
    * If `include_internal` is `false`, internal children are not counted (see {@link add_child}'s `internal` parameter).
@@ -316,7 +316,7 @@ declare class Node extends GodotObject {
   /**
    * Returns the {@link Window} that contains this node, or the last exclusive child in a chain of windows starting with the one that contains this node.
    */
-  get_last_exclusive_window(): Window;
+  get_last_exclusive_window(): Window | null;
   /**
    * Returns the peer ID of the multiplayer authority for this node. See {@link set_multiplayer_authority}.
    */

@@ -35,7 +35,7 @@ declare class SpriteFrames extends Resource {
    */
   get_frame_duration(anim: string, idx: int): float;
   /** Returns the texture of the frame `idx` in the `anim` animation. */
-  get_frame_texture(anim: string, idx: int): Texture2D;
+  get_frame_texture(anim: string, idx: int): Texture2D | null;
   /** Returns `true` if the `anim` animation exists. */
   has_animation(anim: string): boolean;
   /** Removes the `anim` animation. */

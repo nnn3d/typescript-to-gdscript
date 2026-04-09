@@ -6,7 +6,7 @@ declare class CPUParticles3D extends GeometryInstance3D {
   /** Number of particles emitted in one emission cycle. */
   amount: int;
   /** Each particle's rotation will be animated along this {@link Curve}. Should be a unit {@link Curve}. */
-  angle_curve: Curve;
+  angle_curve: Curve | null;
   /** Maximum angle. */
   angle_max: float;
   /** Minimum angle. */
@@ -14,7 +14,7 @@ declare class CPUParticles3D extends GeometryInstance3D {
   /**
    * Each particle's angular velocity (rotation speed) will vary along this {@link Curve} over its lifetime. Should be a unit {@link Curve}.
    */
-  angular_velocity_curve: Curve;
+  angular_velocity_curve: Curve | null;
   /** Maximum initial angular velocity (rotation speed) applied to each particle in *degrees* per second. */
   angular_velocity_max: float;
   /** Minimum initial angular velocity (rotation speed) applied to each particle in *degrees* per second. */
@@ -22,13 +22,13 @@ declare class CPUParticles3D extends GeometryInstance3D {
   /**
    * Each particle's animation offset will vary along this {@link Curve}. Should be a unit {@link Curve}.
    */
-  anim_offset_curve: Curve;
+  anim_offset_curve: Curve | null;
   /** Maximum animation offset. */
   anim_offset_max: float;
   /** Minimum animation offset. */
   anim_offset_min: float;
   /** Each particle's animation speed will vary along this {@link Curve}. Should be a unit {@link Curve}. */
-  anim_speed_curve: Curve;
+  anim_speed_curve: Curve | null;
   /** Maximum particle animation speed. */
   anim_speed_max: float;
   /** Minimum particle animation speed. */
@@ -42,14 +42,14 @@ declare class CPUParticles3D extends GeometryInstance3D {
    * Each particle's initial color will vary along this {@link Gradient} (multiplied with {@link color}).
    * **Note:** {@link color_initial_ramp} multiplies the particle mesh's vertex colors. To have a visible effect on a {@link BaseMaterial3D}, {@link BaseMaterial3D.vertex_color_use_as_albedo} *must* be `true`. For a {@link ShaderMaterial}, `ALBEDO *= COLOR.rgb;` must be inserted in the shader's `fragment()` function. Otherwise, {@link color_initial_ramp} will have no visible effect.
    */
-  color_initial_ramp: Gradient;
+  color_initial_ramp: Gradient | null;
   /**
    * Each particle's color will vary along this {@link Gradient} over its lifetime (multiplied with {@link color}).
    * **Note:** {@link color_ramp} multiplies the particle mesh's vertex colors. To have a visible effect on a {@link BaseMaterial3D}, {@link BaseMaterial3D.vertex_color_use_as_albedo} *must* be `true`. For a {@link ShaderMaterial}, `ALBEDO *= COLOR.rgb;` must be inserted in the shader's `fragment()` function. Otherwise, {@link color_ramp} will have no visible effect.
    */
-  color_ramp: Gradient;
+  color_ramp: Gradient | null;
   /** Damping will vary along this {@link Curve}. Should be a unit {@link Curve}. */
-  damping_curve: Curve;
+  damping_curve: Curve | null;
   /** Maximum damping. */
   damping_max: float;
   /** Minimum damping. */
@@ -109,7 +109,7 @@ declare class CPUParticles3D extends GeometryInstance3D {
   /** Gravity applied to every particle. */
   gravity: Vector3;
   /** Each particle's hue will vary along this {@link Curve}. Should be a unit {@link Curve}. */
-  hue_variation_curve: Curve;
+  hue_variation_curve: Curve | null;
   /** Maximum hue variation. */
   hue_variation_max: float;
   /** Minimum hue variation. */
@@ -125,7 +125,7 @@ declare class CPUParticles3D extends GeometryInstance3D {
   /**
    * Each particle's linear acceleration will vary along this {@link Curve}. Should be a unit {@link Curve}.
    */
-  linear_accel_curve: Curve;
+  linear_accel_curve: Curve | null;
   /** Maximum linear acceleration. */
   linear_accel_max: float;
   /** Minimum linear acceleration. */
@@ -135,7 +135,7 @@ declare class CPUParticles3D extends GeometryInstance3D {
    */
   local_coords: boolean;
   /** The {@link Mesh} used for each particle. If `null`, particles will be spheres. */
-  mesh: Mesh;
+  mesh: Mesh | null;
   /**
    * If `true`, only one emission cycle occurs. If set `true` during a cycle, emission will stop at the cycle's end.
    */
@@ -143,7 +143,7 @@ declare class CPUParticles3D extends GeometryInstance3D {
   /**
    * Each particle's orbital velocity will vary along this {@link Curve}. Should be a unit {@link Curve}.
    */
-  orbit_velocity_curve: Curve;
+  orbit_velocity_curve: Curve | null;
   /** Maximum orbit velocity. */
   orbit_velocity_max: float;
   /** Minimum orbit velocity. */
@@ -159,7 +159,7 @@ declare class CPUParticles3D extends GeometryInstance3D {
   /**
    * Each particle's radial acceleration will vary along this {@link Curve}. Should be a unit {@link Curve}.
    */
-  radial_accel_curve: Curve;
+  radial_accel_curve: Curve | null;
   /** Maximum radial acceleration. */
   radial_accel_max: float;
   /** Minimum radial acceleration. */
@@ -167,17 +167,17 @@ declare class CPUParticles3D extends GeometryInstance3D {
   /** Emission lifetime randomness ratio. */
   randomness: float;
   /** Each particle's scale will vary along this {@link Curve}. Should be a unit {@link Curve}. */
-  scale_amount_curve: Curve;
+  scale_amount_curve: Curve | null;
   /** Maximum scale. */
   scale_amount_max: float;
   /** Minimum scale. */
   scale_amount_min: float;
   /** Curve for the scale over life, along the x axis. */
-  scale_curve_x: Curve;
+  scale_curve_x: Curve | null;
   /** Curve for the scale over life, along the y axis. */
-  scale_curve_y: Curve;
+  scale_curve_y: Curve | null;
   /** Curve for the scale over life, along the z axis. */
-  scale_curve_z: Curve;
+  scale_curve_z: Curve | null;
   /**
    * Sets the random seed used by the particle system. Only effective if {@link use_fixed_seed} is `true`.
    */
@@ -193,7 +193,7 @@ declare class CPUParticles3D extends GeometryInstance3D {
   /**
    * Each particle's tangential acceleration will vary along this {@link Curve}. Should be a unit {@link Curve}.
    */
-  tangential_accel_curve: Curve;
+  tangential_accel_curve: Curve | null;
   /** Maximum tangent acceleration. */
   tangential_accel_max: float;
   /** Minimum tangent acceleration. */
@@ -211,10 +211,10 @@ declare class CPUParticles3D extends GeometryInstance3D {
   get_amount(): int;
   set_color(value: Color): void;
   get_color(): Color;
-  set_color_initial_ramp(value: Gradient): void;
-  get_color_initial_ramp(): Gradient;
-  set_color_ramp(value: Gradient): void;
-  get_color_ramp(): Gradient;
+  set_color_initial_ramp(value: Gradient | null): void;
+  get_color_initial_ramp(): Gradient | null;
+  set_color_ramp(value: Gradient | null): void;
+  get_color_ramp(): Gradient | null;
   set_direction(value: Vector3): void;
   get_direction(): Vector3;
   set_draw_order(value: int): void;
@@ -259,20 +259,20 @@ declare class CPUParticles3D extends GeometryInstance3D {
   get_lifetime_randomness(): float;
   set_use_local_coordinates(value: boolean): void;
   get_use_local_coordinates(): boolean;
-  set_mesh(value: Mesh): void;
-  get_mesh(): Mesh;
+  set_mesh(value: Mesh | null): void;
+  get_mesh(): Mesh | null;
   set_one_shot(value: boolean): void;
   get_one_shot(): boolean;
   set_pre_process_time(value: float): void;
   get_pre_process_time(): float;
   set_randomness_ratio(value: float): void;
   get_randomness_ratio(): float;
-  set_scale_curve_x(value: Curve): void;
-  get_scale_curve_x(): Curve;
-  set_scale_curve_y(value: Curve): void;
-  get_scale_curve_y(): Curve;
-  set_scale_curve_z(value: Curve): void;
-  get_scale_curve_z(): Curve;
+  set_scale_curve_x(value: Curve | null): void;
+  get_scale_curve_x(): Curve | null;
+  set_scale_curve_y(value: Curve | null): void;
+  get_scale_curve_y(): Curve | null;
+  set_scale_curve_z(value: Curve | null): void;
+  get_scale_curve_z(): Curve | null;
   set_seed(value: int): void;
   get_seed(): int;
   set_speed_scale(value: float): void;
@@ -295,7 +295,7 @@ declare class CPUParticles3D extends GeometryInstance3D {
    */
   convert_from_particles(particles: Node): void;
   /** Returns the {@link Curve} of the parameter specified by {@link Parameter}. */
-  get_param_curve(param: int): Curve;
+  get_param_curve(param: int): Curve | null;
   /** Returns the maximum value range for the given parameter. */
   get_param_max(param: int): float;
   /** Returns the minimum value range for the given parameter. */

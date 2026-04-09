@@ -34,7 +34,7 @@ declare class SkeletonModifier3D extends Node3D {
    */
   _validate_bone_names(): void;
   /** Returns the parent {@link Skeleton3D} node if it exists. Otherwise, returns `null`. */
-  get_skeleton(): Skeleton3D;
+  get_skeleton(): Skeleton3D | null;
 
   /**
    * Notifies when the modification have been finished.

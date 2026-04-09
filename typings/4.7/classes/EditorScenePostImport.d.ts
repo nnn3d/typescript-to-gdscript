@@ -4,7 +4,7 @@
 /** Post-processes scenes after import. */
 declare class EditorScenePostImport extends RefCounted {
   /** Called after the scene was imported. This method must return the modified version of the scene. */
-  _post_import(scene: Node): GodotObject;
+  _post_import(scene: Node): GodotObject | null;
   /** Returns the source file path which got imported (e.g. `res://scene.dae`). */
   get_source_file(): string;
 }

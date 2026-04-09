@@ -159,7 +159,7 @@ declare interface PhysicsServer3D extends GodotObject {
   /**
    * Returns the {@link PhysicsDirectBodyState3D} of the body. Returns `null` if the body is destroyed or removed from the physics space.
    */
-  body_get_direct_state(body: RID): PhysicsDirectBodyState3D;
+  body_get_direct_state(body: RID): PhysicsDirectBodyState3D | null;
   /** Returns the maximum contacts that can be reported. See {@link body_set_max_contacts_reported}. */
   body_get_max_contacts_reported(body: RID): int;
   /** Returns the body mode. */
@@ -519,7 +519,7 @@ declare interface PhysicsServer3D extends GodotObject {
   /**
    * Returns the state of a space, a {@link PhysicsDirectSpaceState3D}. This object can be used to make collision/intersection queries.
    */
-  space_get_direct_state(space: RID): PhysicsDirectSpaceState3D;
+  space_get_direct_state(space: RID): PhysicsDirectSpaceState3D | null;
   /** Returns the value of a space parameter. */
   space_get_param(space: RID, param: int): float;
   /** Returns whether the space is active. */

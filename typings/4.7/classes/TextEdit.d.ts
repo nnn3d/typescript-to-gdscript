@@ -119,7 +119,7 @@ declare class TextEdit extends Control {
    * The syntax highlighter to use.
    * **Note:** A {@link SyntaxHighlighter} instance should not be used across multiple {@link TextEdit} nodes.
    */
-  syntax_highlighter: SyntaxHighlighter;
+  syntax_highlighter: SyntaxHighlighter | null;
   /**
    * If `true`, {@link ProjectSettings.input/ui_text_indent} input `Tab` character, otherwise it moves keyboard focus to the next {@link Control} in the scene.
    */
@@ -214,8 +214,8 @@ declare class TextEdit extends Control {
   get_structured_text_bidi_override(): int;
   set_structured_text_bidi_override_options(value: Array<unknown>): void;
   get_structured_text_bidi_override_options(): Array<unknown>;
-  set_syntax_highlighter(value: SyntaxHighlighter): void;
-  get_syntax_highlighter(): SyntaxHighlighter;
+  set_syntax_highlighter(value: SyntaxHighlighter | null): void;
+  get_syntax_highlighter(): SyntaxHighlighter | null;
   set_tab_input_mode(value: boolean): void;
   get_tab_input_mode(): boolean;
   set_text(value: string): void;
@@ -380,7 +380,7 @@ declare class TextEdit extends Control {
   /**
    * Returns the icon currently in `gutter` at `line`. This only works when the gutter type is {@link GUTTER_TYPE_ICON} (see {@link set_gutter_type}).
    */
-  get_line_gutter_icon(line: int, gutter: int): Texture2D;
+  get_line_gutter_icon(line: int, gutter: int): Texture2D | null;
   /** Returns the color currently in `gutter` at `line`. */
   get_line_gutter_item_color(line: int, gutter: int): Color;
   /** Returns the metadata currently in `gutter` at `line`. */

@@ -22,7 +22,7 @@ declare class PhysicalSkyMaterial extends Material {
   /**
    * {@link Texture2D} for the night sky. This is added to the sky, so if it is bright enough, it may be visible during the day.
    */
-  night_sky: Texture2D;
+  night_sky: Texture2D | null;
   /**
    * Controls the strength of the Rayleigh scattering (https://en.wikipedia.org/wiki/Rayleigh_scattering). Rayleigh scattering results from light colliding with small particles. It is responsible for the blue color of the sky.
    */
@@ -51,8 +51,8 @@ declare class PhysicalSkyMaterial extends Material {
   get_mie_color(): Color;
   set_mie_eccentricity(value: float): void;
   get_mie_eccentricity(): float;
-  set_night_sky(value: Texture2D): void;
-  get_night_sky(): Texture2D;
+  set_night_sky(value: Texture2D | null): void;
+  get_night_sky(): Texture2D | null;
   set_rayleigh_coefficient(value: float): void;
   get_rayleigh_coefficient(): float;
   set_rayleigh_color(value: Color): void;

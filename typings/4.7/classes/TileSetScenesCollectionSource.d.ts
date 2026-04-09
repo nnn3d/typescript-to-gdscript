@@ -15,7 +15,7 @@ declare class TileSetScenesCollectionSource extends TileSetSource {
   /** Returns the scene tile ID of the scene tile at `index`. */
   get_scene_tile_id(index: int): int;
   /** Returns the {@link PackedScene} resource of scene tile with `id`. */
-  get_scene_tile_scene(id: int): PackedScene;
+  get_scene_tile_scene(id: int): PackedScene | null;
   /** Returns the number or scene tiles this TileSet source has. */
   get_scene_tiles_count(): int;
   /** Returns whether this TileSet source has a scene tile with `id`. */

@@ -21,5 +21,5 @@ declare class SpringBoneCollision3D extends Node3D {
   get_rotation_offset(): Quaternion;
 
   /** Get parent {@link Skeleton3D} node of the parent {@link SpringBoneSimulator3D} if found. */
-  get_skeleton(): Skeleton3D;
+  get_skeleton(): Skeleton3D | null;
 }

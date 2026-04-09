@@ -4,13 +4,13 @@
 /** A {@link Cubemap} sampling node to be used within the visual shader graph. */
 declare class VisualShaderNodeCubemap extends VisualShaderNode {
   /** The {@link Cubemap} texture to sample when using {@link SOURCE_TEXTURE} as {@link source}. */
-  cube_map: TextureLayered;
+  cube_map: TextureLayered | null;
   /** Defines which source should be used for the sampling. */
   source: int;
   /** Defines the type of data provided by the source texture. */
   texture_type: int;
-  set_cube_map(value: TextureLayered): void;
-  get_cube_map(): TextureLayered;
+  set_cube_map(value: TextureLayered | null): void;
+  get_cube_map(): TextureLayered | null;
   set_source(value: int): void;
   get_source(): int;
   set_texture_type(value: int): void;

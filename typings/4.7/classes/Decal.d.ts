@@ -47,25 +47,25 @@ declare class Decal extends VisualInstance3D {
    * {@link Texture2D} with the base {@link Color} of the Decal. Either this or the {@link texture_emission} must be set for the Decal to be visible. Use the alpha channel like a mask to smoothly blend the edges of the decal with the underlying object.
    * **Note:** Unlike {@link BaseMaterial3D} whose filter mode can be adjusted on a per-material basis, the filter mode for {@link Decal} textures is set globally with {@link ProjectSettings.rendering/textures/decals/filter}.
    */
-  texture_albedo: Texture2D;
+  texture_albedo: Texture2D | null;
   /**
    * {@link Texture2D} with the emission {@link Color} of the Decal. Either this or the {@link texture_albedo} must be set for the Decal to be visible. Use the alpha channel like a mask to smoothly blend the edges of the decal with the underlying object.
    * **Note:** Unlike {@link BaseMaterial3D} whose filter mode can be adjusted on a per-material basis, the filter mode for {@link Decal} textures is set globally with {@link ProjectSettings.rendering/textures/decals/filter}.
    */
-  texture_emission: Texture2D;
+  texture_emission: Texture2D | null;
   /**
    * {@link Texture2D} with the per-pixel normal map for the decal. Use this to add extra detail to decals.
    * **Note:** Unlike {@link BaseMaterial3D} whose filter mode can be adjusted on a per-material basis, the filter mode for {@link Decal} textures is set globally with {@link ProjectSettings.rendering/textures/decals/filter}.
    * **Note:** Setting this texture alone will not result in a visible decal, as {@link texture_albedo} must also be set. To create a normal-only decal, load an albedo texture into {@link texture_albedo} and set {@link albedo_mix} to `0.0`. The albedo texture's alpha channel will be used to determine where the underlying surface's normal map should be overridden (and its intensity).
    */
-  texture_normal: Texture2D;
+  texture_normal: Texture2D | null;
   /**
    * {@link Texture2D} storing ambient occlusion, roughness, and metallic for the decal. Use this to add extra detail to decals.
    * **Note:** Unlike {@link BaseMaterial3D} whose filter mode can be adjusted on a per-material basis, the filter mode for {@link Decal} textures is set globally with {@link ProjectSettings.rendering/textures/decals/filter}.
    * **Note:** Setting this texture alone will not result in a visible decal, as {@link texture_albedo} must also be set. To create an ORM-only decal, load an albedo texture into {@link texture_albedo} and set {@link albedo_mix} to `0.0`. The albedo texture's alpha channel will be used to determine where the underlying surface's ORM map should be overridden (and its intensity).
    * **Note:** Due to technical limitations, modifying the underlying surface's roughness using {@link texture_orm} does *not* affect screen-space reflections ({@link Environment.ssr_enabled}), reflections from {@link VoxelGI}, and reflections from SDFGI ({@link Environment.sdfgi_enabled}). Only reflections from {@link ReflectionProbe}s are affected.
    */
-  texture_orm: Texture2D;
+  texture_orm: Texture2D | null;
   /**
    * Sets the curve over which the decal will fade as the surface gets further from the center of the {@link AABB}. Only positive values are valid (negative values will be clamped to `0.0`). See also {@link lower_fade}.
    */
@@ -98,7 +98,7 @@ declare class Decal extends VisualInstance3D {
    * For example, instead of `albedo_tex = $Decal.get_texture(Decal.TEXTURE_ALBEDO)`, use `albedo_tex = $Decal.texture_albedo`.
    * One case where this is better than accessing the texture directly is when you want to copy one Decal's textures to another. For example:
    */
-  get_texture(type_: int): Texture2D;
+  get_texture(type_: int): Texture2D | null;
   /**
    * Sets the {@link Texture2D} associated with the specified {@link DecalTexture}. This is a convenience method, in most cases you should access the texture directly.
    * For example, instead of `$Decal.set_texture(Decal.TEXTURE_ALBEDO, albedo_tex)`, use `$Decal.texture_albedo = albedo_tex`.

@@ -87,9 +87,9 @@ declare class TabBar extends Control {
   /**
    * Returns the icon for the right button of the tab at index `tab_idx` or `null` if the right button has no icon.
    */
-  get_tab_button_icon(tab_idx: int): Texture2D;
+  get_tab_button_icon(tab_idx: int): Texture2D | null;
   /** Returns the icon for the tab at index `tab_idx` or `null` if the tab has no icon. */
-  get_tab_icon(tab_idx: int): Texture2D;
+  get_tab_icon(tab_idx: int): Texture2D | null;
   /** Returns the maximum allowed width of the icon for the tab at index `tab_idx`. */
   get_tab_icon_max_width(tab_idx: int): int;
   /**

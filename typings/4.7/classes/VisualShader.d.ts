@@ -27,7 +27,7 @@ declare class VisualShader extends Shader {
   /** Connects the specified nodes and ports. */
   disconnect_nodes(type_: int, from_node: int, from_port: int, to_node: int, to_port: int): void;
   /** Returns the shader node instance with specified `type` and `id`. */
-  get_node(type_: int, id: int): VisualShaderNode;
+  get_node(type_: int, id: int): VisualShaderNode | null;
   /** Returns the list of connected nodes with the specified type. */
   get_node_connections(type_: int): Array<Dictionary>;
   /** Returns the list of all nodes in the shader with the specified type. */

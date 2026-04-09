@@ -8,9 +8,9 @@ declare class BoneMap extends Resource {
   /**
    * A {@link SkeletonProfile} of the mapping target. Key names in the {@link BoneMap} are synchronized with it.
    */
-  profile: SkeletonProfile;
-  set_profile(value: SkeletonProfile): void;
-  get_profile(): SkeletonProfile;
+  profile: SkeletonProfile | null;
+  set_profile(value: SkeletonProfile | null): void;
+  get_profile(): SkeletonProfile | null;
 
   /**
    * Returns a profile bone name having `skeleton_bone_name`. If not found, an empty {@link StringName} will be returned.

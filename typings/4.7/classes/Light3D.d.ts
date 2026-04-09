@@ -74,7 +74,7 @@ declare class Light3D extends VisualInstance3D {
    * **Note:** Unlike {@link BaseMaterial3D} whose filter mode can be adjusted on a per-material basis, the filter mode for light projector textures is set globally with {@link ProjectSettings.rendering/textures/light_projectors/filter}.
    * **Note:** Light projector textures are only supported in the Forward+ and Mobile rendering methods, not Compatibility.
    */
-  light_projector: Texture2D;
+  light_projector: Texture2D | null;
   /**
    * The size of the light in Godot units. Only available for {@link OmniLight3D}s and {@link SpotLight3D}s. Increasing this value will make the light fade out slower and shadows appear blurrier (also called percentage-closer soft shadows, or PCSS). This can be used to simulate area lights to an extent. Increasing this value above `0.0` for lights with shadows enabled will have a noticeable performance cost due to PCSS.
    * **Note:** {@link light_size} is not affected by {@link Node3D.scale} (the light's scale or its parent's scale).
@@ -140,8 +140,8 @@ declare class Light3D extends VisualInstance3D {
   get_cull_mask(): int;
   set_negative(value: boolean): void;
   is_negative(): boolean;
-  set_projector(value: Texture2D): void;
-  get_projector(): Texture2D;
+  set_projector(value: Texture2D | null): void;
+  get_projector(): Texture2D | null;
   set_temperature(value: float): void;
   get_temperature(): float;
   set_shadow_caster_mask(value: int): void;

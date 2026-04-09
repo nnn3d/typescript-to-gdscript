@@ -6,15 +6,15 @@ declare class HTTPClient extends RefCounted {
   /** If `true`, execution will block until all data is read from the response. */
   blocking_mode_enabled: boolean;
   /** The connection to use for this client. */
-  connection: StreamPeer;
+  connection: StreamPeer | null;
   /**
    * The size of the buffer used and maximum bytes to read per iteration. See {@link read_response_body_chunk}.
    */
   read_chunk_size: int;
   set_blocking_mode(value: boolean): void;
   is_blocking_mode_enabled(): boolean;
-  set_connection(value: StreamPeer): void;
-  get_connection(): StreamPeer;
+  set_connection(value: StreamPeer | null): void;
+  get_connection(): StreamPeer | null;
   set_read_chunk_size(value: int): void;
   get_read_chunk_size(): int;
 

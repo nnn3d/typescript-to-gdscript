@@ -17,7 +17,7 @@ declare class PrimitiveMesh extends Mesh {
    */
   flip_faces: boolean;
   /** The current {@link Material} of the primitive mesh. */
-  material: Material;
+  material: Material | null;
   /**
    * If {@link add_uv2} is set, specifies the padding in pixels applied along seams of the mesh. Lower padding values allow making better use of the lightmap texture (resulting in higher texel density), but may introduce visible lightmap bleeding along edges.
    * If the size of the lightmap texture can't be determined when generating the mesh, UV2 is calculated assuming a texture size of 1024x1024.
@@ -29,8 +29,8 @@ declare class PrimitiveMesh extends Mesh {
   get_custom_aabb(): AABB;
   set_flip_faces(value: boolean): void;
   get_flip_faces(): boolean;
-  set_material(value: Material): void;
-  get_material(): Material;
+  set_material(value: Material | null): void;
+  get_material(): Material | null;
   set_uv2_padding(value: float): void;
   get_uv2_padding(): float;
 

@@ -31,5 +31,5 @@ declare class UDPServer extends RefCounted {
   /**
    * Returns the first pending connection (connected to the appropriate address/port). Will return `null` if no new connection is available. See also {@link is_connection_available}, {@link PacketPeerUDP.connect_to_host}.
    */
-  take_connection(): PacketPeerUDP;
+  take_connection(): PacketPeerUDP | null;
 }

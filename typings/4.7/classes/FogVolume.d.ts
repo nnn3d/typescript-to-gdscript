@@ -6,7 +6,7 @@ declare class FogVolume extends VisualInstance3D {
   /**
    * The {@link Material} used by the {@link FogVolume}. Can be either a built-in {@link FogMaterial} or a custom {@link ShaderMaterial}.
    */
-  material: Material;
+  material: Material | null;
   /**
    * The shape of the {@link FogVolume}. This can be set to either {@link RenderingServer.FOG_VOLUME_SHAPE_ELLIPSOID}, {@link RenderingServer.FOG_VOLUME_SHAPE_CONE}, {@link RenderingServer.FOG_VOLUME_SHAPE_CYLINDER}, {@link RenderingServer.FOG_VOLUME_SHAPE_BOX} or {@link RenderingServer.FOG_VOLUME_SHAPE_WORLD}.
    */
@@ -17,8 +17,8 @@ declare class FogVolume extends VisualInstance3D {
    * **Note:** If {@link shape} is {@link RenderingServer.FOG_VOLUME_SHAPE_CONE} or {@link RenderingServer.FOG_VOLUME_SHAPE_CYLINDER}, the cone/cylinder will be adjusted to fit within the size. Non-uniform scaling of cone/cylinder shapes via the {@link size} property is not supported, but you can scale the {@link FogVolume} node instead.
    */
   size: Vector3;
-  set_material(value: Material): void;
-  get_material(): Material;
+  set_material(value: Material | null): void;
+  get_material(): Material | null;
   set_shape(value: int): void;
   get_shape(): int;
   set_size(value: Vector3): void;

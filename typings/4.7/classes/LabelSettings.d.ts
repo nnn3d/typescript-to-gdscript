@@ -4,7 +4,7 @@
 /** Provides common settings to customize the text in a {@link Label}. */
 declare class LabelSettings extends Resource {
   /** {@link Font} used for the text. */
-  font: Font;
+  font: Font | null;
   /** Color of the text. */
   font_color: Color;
   /** Size of the text. */
@@ -29,8 +29,8 @@ declare class LabelSettings extends Resource {
   stacked_outline_count: int;
   /** The number of stacked shadows. */
   stacked_shadow_count: int;
-  set_font(value: Font): void;
-  get_font(): Font;
+  set_font(value: Font | null): void;
+  get_font(): Font | null;
   set_font_color(value: Color): void;
   get_font_color(): Color;
   set_font_size(value: int): void;

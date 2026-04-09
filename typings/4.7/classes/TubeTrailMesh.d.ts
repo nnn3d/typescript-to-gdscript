@@ -14,7 +14,7 @@ declare class TubeTrailMesh extends PrimitiveMesh {
   /**
    * Determines the radius of the tube along its length. The radius of a particular section ring is obtained by multiplying the baseline {@link radius} by the value of this curve at the given distance. For values smaller than `0`, the faces will be inverted. Should be a unit {@link Curve}.
    */
-  curve: Curve;
+  curve: Curve | null;
   /**
    * The number of sides on the tube. For example, a value of `5` means the tube will be pentagonal. Higher values result in a more detailed tube at the cost of performance.
    */
@@ -35,8 +35,8 @@ declare class TubeTrailMesh extends PrimitiveMesh {
   is_cap_bottom(): boolean;
   set_cap_top(value: boolean): void;
   is_cap_top(): boolean;
-  set_curve(value: Curve): void;
-  get_curve(): Curve;
+  set_curve(value: Curve | null): void;
+  get_curve(): Curve | null;
   set_radial_steps(value: int): void;
   get_radial_steps(): int;
   set_radius(value: float): void;

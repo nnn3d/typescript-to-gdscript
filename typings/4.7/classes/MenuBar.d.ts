@@ -40,7 +40,7 @@ declare class MenuBar extends Control {
   /** Returns number of menu items. */
   get_menu_count(): int;
   /** Returns {@link PopupMenu} associated with menu item. */
-  get_menu_popup(menu: int): PopupMenu;
+  get_menu_popup(menu: int): PopupMenu | null;
   /** Returns menu item title. */
   get_menu_title(menu: int): string;
   /** Returns menu item tooltip. */

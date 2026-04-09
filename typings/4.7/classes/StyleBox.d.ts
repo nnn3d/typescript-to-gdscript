@@ -43,7 +43,7 @@ declare class StyleBox extends Resource {
   /**
    * Returns the {@link CanvasItem} that handles its {@link CanvasItem.NOTIFICATION_DRAW} or {@link CanvasItem._draw} callback at this moment.
    */
-  get_current_item_drawn(): CanvasItem;
+  get_current_item_drawn(): CanvasItem | null;
   /**
    * Returns the content margin offset for the specified {@link Side}.
    * Positive values reduce size inwards, unlike {@link Control}'s margin values.

@@ -10,5 +10,5 @@ declare class SocketServer extends RefCounted {
   /** Stops listening. */
   stop(): void;
   /** If a connection is available, returns a StreamPeerSocket with the connection. */
-  take_socket_connection(): StreamPeerSocket;
+  take_socket_connection(): StreamPeerSocket | null;
 }

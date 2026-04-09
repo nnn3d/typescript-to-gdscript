@@ -92,9 +92,9 @@ declare class CollisionObject3D extends Node3D {
   /** Removes all shapes from the shape owner. */
   shape_owner_clear_shapes(owner_id: int): void;
   /** Returns the parent object of the given shape owner. */
-  shape_owner_get_owner(owner_id: int): GodotObject;
+  shape_owner_get_owner(owner_id: int): GodotObject | null;
   /** Returns the {@link Shape3D} with the given ID from the given shape owner. */
-  shape_owner_get_shape(owner_id: int, shape_id: int): Shape3D;
+  shape_owner_get_shape(owner_id: int, shape_id: int): Shape3D | null;
   /** Returns the number of shapes the given shape owner contains. */
   shape_owner_get_shape_count(owner_id: int): int;
   /** Returns the child index of the {@link Shape3D} with the given ID from the given shape owner. */

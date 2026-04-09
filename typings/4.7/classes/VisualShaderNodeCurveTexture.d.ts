@@ -4,7 +4,7 @@
 /** Performs a {@link CurveTexture} lookup within the visual shader graph. */
 declare class VisualShaderNodeCurveTexture extends VisualShaderNodeResizableBase {
   /** The source texture. */
-  texture: CurveTexture;
-  set_texture(value: CurveTexture): void;
-  get_texture(): CurveTexture;
+  texture: CurveTexture | null;
+  set_texture(value: CurveTexture | null): void;
+  get_texture(): CurveTexture | null;
 }

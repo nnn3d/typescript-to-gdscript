@@ -15,7 +15,7 @@ declare class FogMaterial extends Material {
   /**
    * The 3D texture that is used to scale the {@link density} of the {@link FogVolume}. This can be used to vary fog density within the {@link FogVolume} with any kind of static pattern. For animated effects, consider using a custom fog shader ($DOCS_URL/tutorials/shaders/shader_reference/fog_shader.html).
    */
-  density_texture: Texture3D;
+  density_texture: Texture3D | null;
   /**
    * The hardness of the edges of the {@link FogVolume}. A higher value will result in softer edges, while a lower value will result in harder edges.
    */
@@ -32,8 +32,8 @@ declare class FogMaterial extends Material {
   get_albedo(): Color;
   set_density(value: float): void;
   get_density(): float;
-  set_density_texture(value: Texture3D): void;
-  get_density_texture(): Texture3D;
+  set_density_texture(value: Texture3D | null): void;
+  get_density_texture(): Texture3D | null;
   set_edge_fade(value: float): void;
   get_edge_fade(): float;
   set_emission(value: Color): void;

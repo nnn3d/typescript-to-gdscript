@@ -11,7 +11,7 @@ declare class CanvasItem extends Node {
   /** The rendering layers in which this {@link CanvasItem} responds to {@link Light2D} nodes. */
   light_mask: int;
   /** The material applied to this {@link CanvasItem}. */
-  material: Material;
+  material: Material | null;
   /**
    * The color applied to this {@link CanvasItem}. This property does affect child {@link CanvasItem}s, unlike {@link self_modulate} which only affects the node itself.
    */
@@ -66,8 +66,8 @@ declare class CanvasItem extends Node {
   get_clip_children_mode(): int;
   set_light_mask(value: int): void;
   get_light_mask(): int;
-  set_material(value: Material): void;
-  get_material(): Material;
+  set_material(value: Material | null): void;
+  get_material(): Material | null;
   set_modulate(value: Color): void;
   get_modulate(): Color;
   set_self_modulate(value: Color): void;
@@ -286,7 +286,7 @@ declare class CanvasItem extends Node {
   /**
    * Returns the {@link CanvasLayer} that contains this node, or `null` if the node is not in any {@link CanvasLayer}.
    */
-  get_canvas_layer_node(): CanvasLayer;
+  get_canvas_layer_node(): CanvasLayer | null;
   /**
    * Returns the transform of this node, converted from its registered canvas's coordinate system to its viewport's coordinate system. See also {@link Node.get_viewport}.
    */
@@ -329,7 +329,7 @@ declare class CanvasItem extends Node {
    * Returns the {@link World2D} this node is registered to.
    * Usually, this is the same as this node's viewport (see {@link Node.get_viewport} and {@link Viewport.find_world_2d}).
    */
-  get_world_2d(): World2D;
+  get_world_2d(): World2D | null;
   /**
    * Hide the {@link CanvasItem} if it's currently visible. This is equivalent to setting {@link visible} to `false`.
    */
@@ -356,7 +356,7 @@ declare class CanvasItem extends Node {
   /**
    * Returns a copy of the given `event` with its coordinates converted from global space to this {@link CanvasItem}'s local space. If not possible, returns the same {@link InputEvent} unchanged.
    */
-  make_input_local(event: InputEvent): InputEvent;
+  make_input_local(event: InputEvent): InputEvent | null;
   /**
    * Moves this node below its siblings, usually causing the node to draw on top of its siblings. Does nothing if this node does not have a parent. See also {@link Node.move_child}.
    */

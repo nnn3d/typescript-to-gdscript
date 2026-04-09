@@ -17,11 +17,11 @@ declare class StaticBody3D extends PhysicsBody3D {
    * The physics material override for the body.
    * If a material is assigned to this property, it will be used instead of any other physics material, such as an inherited one.
    */
-  physics_material_override: PhysicsMaterial;
+  physics_material_override: PhysicsMaterial | null;
   set_constant_angular_velocity(value: Vector3): void;
   get_constant_angular_velocity(): Vector3;
   set_constant_linear_velocity(value: Vector3): void;
   get_constant_linear_velocity(): Vector3;
-  set_physics_material_override(value: PhysicsMaterial): void;
-  get_physics_material_override(): PhysicsMaterial;
+  set_physics_material_override(value: PhysicsMaterial | null): void;
+  get_physics_material_override(): PhysicsMaterial | null;
 }

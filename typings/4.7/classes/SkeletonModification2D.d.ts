@@ -40,7 +40,7 @@ declare class SkeletonModification2D extends Resource {
   /**
    * Returns the {@link SkeletonModificationStack2D} that this modification is bound to. Through the modification stack, you can access the Skeleton2D the modification is operating on.
    */
-  get_modification_stack(): SkeletonModificationStack2D;
+  get_modification_stack(): SkeletonModificationStack2D | null;
   /**
    * Sets whether this modification will call {@link _draw_editor_gizmo} in the Godot editor to draw modification-specific gizmos.
    */

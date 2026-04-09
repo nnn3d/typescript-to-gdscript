@@ -39,12 +39,12 @@ declare class GeometryInstance3D extends VisualInstance3D {
    * The material overlay for the whole geometry.
    * If a material is assigned to this property, it will be rendered on top of any other active material for all the surfaces.
    */
-  material_overlay: Material;
+  material_overlay: Material | null;
   /**
    * The material override for the whole geometry.
    * If a material is assigned to this property, it will be used instead of any material set in any material slot of the mesh.
    */
-  material_override: Material;
+  material_override: Material | null;
   /**
    * The transparency applied to the whole geometry (as a multiplier of the materials' existing transparency). `0.0` is fully opaque, while `1.0` is fully transparent. Values greater than `0.0` (exclusive) will force the geometry's materials to go through the transparent pipeline, which is slower to render and can exhibit rendering issues due to incorrect transparency sorting. However, unlike using a transparent material, setting {@link transparency} to a value greater than `0.0` (exclusive) will *not* disable shadow rendering.
    * In spatial shaders, `1.0 - transparency` is set as the default value of the `ALPHA` built-in.
@@ -88,10 +88,10 @@ declare class GeometryInstance3D extends VisualInstance3D {
   is_ignoring_occlusion_culling(): boolean;
   set_lod_bias(value: float): void;
   get_lod_bias(): float;
-  set_material_overlay(value: Material): void;
-  get_material_overlay(): Material;
-  set_material_override(value: Material): void;
-  get_material_override(): Material;
+  set_material_overlay(value: Material | null): void;
+  get_material_overlay(): Material | null;
+  set_material_override(value: Material | null): void;
+  get_material_override(): Material | null;
   set_transparency(value: float): void;
   get_transparency(): float;
   set_visibility_range_begin(value: float): void;

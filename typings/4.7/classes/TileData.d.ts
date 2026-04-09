@@ -10,7 +10,7 @@ declare class TileData extends GodotObject {
   /**
    * The {@link Material} to use for this {@link TileData}. This can be a {@link CanvasItemMaterial} to use the default shader, or a {@link ShaderMaterial} to use a custom shader.
    */
-  material: Material;
+  material: Material | null;
   /** Color modulation of the tile. */
   modulate: Color;
   /** Relative probability of this tile being selected when drawing a pattern of random tiles. */
@@ -31,8 +31,8 @@ declare class TileData extends GodotObject {
   get_flip_h(): boolean;
   set_flip_v(value: boolean): void;
   get_flip_v(): boolean;
-  set_material(value: Material): void;
-  get_material(): Material;
+  set_material(value: Material | null): void;
+  get_material(): Material | null;
   set_modulate(value: Color): void;
   get_modulate(): Color;
   set_probability(value: float): void;
@@ -78,17 +78,17 @@ declare class TileData extends GodotObject {
    * Returns the navigation polygon of the tile for the TileSet navigation layer with index `layer_id`.
    * `flip_h`, `flip_v`, and `transpose` allow transforming the returned polygon.
    */
-  get_navigation_polygon(layer_id: int, flip_h?: boolean, flip_v?: boolean, transpose?: boolean): NavigationPolygon;
+  get_navigation_polygon(layer_id: int, flip_h?: boolean, flip_v?: boolean, transpose?: boolean): NavigationPolygon | null;
   /**
    * Returns the occluder polygon of the tile for the TileSet occlusion layer with index `layer_id`.
    * `flip_h`, `flip_v`, and `transpose` allow transforming the returned polygon.
    */
-  get_occluder(layer_id: int, flip_h?: boolean, flip_v?: boolean, transpose?: boolean): OccluderPolygon2D;
+  get_occluder(layer_id: int, flip_h?: boolean, flip_v?: boolean, transpose?: boolean): OccluderPolygon2D | null;
   /**
    * Returns the occluder polygon at index `polygon_index` from the TileSet occlusion layer with index `layer_id`.
    * The `flip_h`, `flip_v`, and `transpose` parameters can be `true` to transform the returned polygon.
    */
-  get_occluder_polygon(layer_id: int, polygon_index: int, flip_h?: boolean, flip_v?: boolean, transpose?: boolean): OccluderPolygon2D;
+  get_occluder_polygon(layer_id: int, polygon_index: int, flip_h?: boolean, flip_v?: boolean, transpose?: boolean): OccluderPolygon2D | null;
   /**
    * Returns the number of occluder polygons of the tile in the TileSet occlusion layer with index `layer_id`.
    */

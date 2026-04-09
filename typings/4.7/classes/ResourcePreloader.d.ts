@@ -8,7 +8,7 @@ declare class ResourcePreloader extends Node {
    */
   add_resource(name: string, resource: Resource): void;
   /** Returns the resource associated to `name`. */
-  get_resource(name: string): Resource;
+  get_resource(name: string): Resource | null;
   /** Returns the list of resources inside the preloader. */
   get_resource_list(): PackedStringArray;
   /** Returns `true` if the preloader contains a resource associated to `name`. */

@@ -198,7 +198,7 @@ declare interface PhysicsServer2D extends GodotObject {
   /**
    * Returns the {@link PhysicsDirectBodyState2D} of the body. Returns `null` if the body is destroyed or not assigned to a space.
    */
-  body_get_direct_state(body: RID): PhysicsDirectBodyState2D;
+  body_get_direct_state(body: RID): PhysicsDirectBodyState2D | null;
   /**
    * Returns the maximum number of contacts that the body can report. See {@link body_set_max_contacts_reported}.
    */
@@ -429,7 +429,7 @@ declare interface PhysicsServer2D extends GodotObject {
   /**
    * Returns the state of a space, a {@link PhysicsDirectSpaceState2D}. This object can be used for collision/intersection queries.
    */
-  space_get_direct_state(space: RID): PhysicsDirectSpaceState2D;
+  space_get_direct_state(space: RID): PhysicsDirectSpaceState2D | null;
   /** Returns the value of the given space parameter. */
   space_get_param(space: RID, param: int): float;
   /** Returns `true` if the space is active. */

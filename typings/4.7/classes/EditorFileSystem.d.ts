@@ -10,7 +10,7 @@ declare class EditorFileSystem extends Node {
   /** Gets the root directory object. */
   get_filesystem(): EditorFileSystemDirectory;
   /** Returns a view into the filesystem at `path`. */
-  get_filesystem_path(path: string): EditorFileSystemDirectory;
+  get_filesystem_path(path: string): EditorFileSystemDirectory | null;
   /** Returns the scan progress for 0 to 1 if the FS is being scanned. */
   get_scanning_progress(): float;
   /** Returns `true` if resources are currently being imported. */

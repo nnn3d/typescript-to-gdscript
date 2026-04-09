@@ -13,7 +13,7 @@ declare class Environment extends Resource {
    * The {@link Texture2D} or {@link Texture3D} lookup table (LUT) to use for the built-in post-process color grading. Can use a {@link GradientTexture1D} for a 1-dimensional LUT, or a {@link Texture3D} for a more complex LUT. Effective only if {@link adjustment_enabled} is `true`.
    * **Note:** Color correction does not currently support HDR output due to only supporting values in the SDR (0.0 to 1.0) range.
    */
-  adjustment_color_correction: Texture;
+  adjustment_color_correction: Texture | null;
   /**
    * Increasing {@link adjustment_contrast} will make dark values darker and bright values brighter. This simple adjustment is applied to the rendered image after tonemaping. When set to a value greater than `1.0`, {@link adjustment_contrast} is prone to clipping colors that become too bright or too dark. Effective only if {@link adjustment_enabled} is `true`.
    */
@@ -177,7 +177,7 @@ declare class Environment extends Resource {
    * **Note:** The texture will be stretched to fit the screen. Therefore, it's recommended to use a texture with an aspect ratio that matches your project's base aspect ratio (typically 16:9).
    * **Note:** {@link glow_map} has no effect when using the Compatibility rendering method, due to this rendering method using a simpler glow implementation optimized for low-end devices.
    */
-  glow_map: Texture;
+  glow_map: Texture | null;
   /**
    * How strong of an influence the {@link glow_map} should have on the overall glow effect. A strength of `0.0` means the glow map has no influence, while a strength of `1.0` means the glow map has full influence.
    * **Note:** If the glow map has black areas, a value of `1.0` can also turn off the glow effect entirely in specific areas of the screen.
@@ -257,7 +257,7 @@ declare class Environment extends Resource {
    */
   sdfgi_y_scale: int;
   /** The {@link Sky} resource used for this {@link Environment}. */
-  sky: Sky;
+  sky: Sky | null;
   /**
    * If set to a value greater than `0.0`, overrides the field of view to use for sky rendering. If set to `0.0`, the same FOV as the current {@link Camera3D} is used for sky rendering.
    */
@@ -423,8 +423,8 @@ declare class Environment extends Resource {
   volumetric_fog_temporal_reprojection_enabled: boolean;
   set_adjustment_brightness(value: float): void;
   get_adjustment_brightness(): float;
-  set_adjustment_color_correction(value: Texture): void;
-  get_adjustment_color_correction(): Texture;
+  set_adjustment_color_correction(value: Texture | null): void;
+  get_adjustment_color_correction(): Texture | null;
   set_adjustment_contrast(value: float): void;
   get_adjustment_contrast(): float;
   set_adjustment_enabled(value: boolean): void;
@@ -491,8 +491,8 @@ declare class Environment extends Resource {
   get_glow_hdr_bleed_threshold(): float;
   set_glow_intensity(value: float): void;
   get_glow_intensity(): float;
-  set_glow_map(value: Texture): void;
-  get_glow_map(): Texture;
+  set_glow_map(value: Texture | null): void;
+  get_glow_map(): Texture | null;
   set_glow_map_strength(value: float): void;
   get_glow_map_strength(): float;
   set_glow_mix(value: float): void;
@@ -527,8 +527,8 @@ declare class Environment extends Resource {
   is_sdfgi_using_occlusion(): boolean;
   set_sdfgi_y_scale(value: int): void;
   get_sdfgi_y_scale(): int;
-  set_sky(value: Sky): void;
-  get_sky(): Sky;
+  set_sky(value: Sky | null): void;
+  get_sky(): Sky | null;
   set_sky_custom_fov(value: float): void;
   get_sky_custom_fov(): float;
   set_sky_rotation(value: Vector3): void;

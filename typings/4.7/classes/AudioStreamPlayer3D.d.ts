@@ -62,7 +62,7 @@ declare class AudioStreamPlayer3D extends Node3D {
   /** If `true`, audio is playing or is queued to be played (see {@link play}). */
   playing: boolean;
   /** The {@link AudioStream} resource to be played. */
-  stream: AudioStream;
+  stream: AudioStream | null;
   /** If `true`, the playback is paused. You can resume it by setting {@link stream_paused} to `false`. */
   stream_paused: boolean;
   /** The factor for the attenuation effect. Higher values make the sound audible over a larger distance. */
@@ -108,8 +108,8 @@ declare class AudioStreamPlayer3D extends Node3D {
   get_playback_type(): int;
   set_playing(value: boolean): void;
   is_playing(): boolean;
-  set_stream(value: AudioStream): void;
-  get_stream(): AudioStream;
+  set_stream(value: AudioStream | null): void;
+  get_stream(): AudioStream | null;
   set_stream_paused(value: boolean): void;
   get_stream_paused(): boolean;
   set_unit_size(value: float): void;
@@ -122,7 +122,7 @@ declare class AudioStreamPlayer3D extends Node3D {
   /** Returns the position in the {@link AudioStream}. */
   get_playback_position(): float;
   /** Returns the {@link AudioStreamPlayback} object associated with this {@link AudioStreamPlayer3D}. */
-  get_stream_playback(): AudioStreamPlayback;
+  get_stream_playback(): AudioStreamPlayback | null;
   /**
    * Returns whether the {@link AudioStreamPlayer} can return the {@link AudioStreamPlayback} object or not.
    */

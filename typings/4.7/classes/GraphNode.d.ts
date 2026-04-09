@@ -53,9 +53,9 @@ declare class GraphNode extends GraphElement {
   /** Returns the right (output) {@link Color} of the slot with the given `slot_index`. */
   get_slot_color_right(slot_index: int): Color;
   /** Returns the left (input) custom {@link Texture2D} of the slot with the given `slot_index`. */
-  get_slot_custom_icon_left(slot_index: int): Texture2D;
+  get_slot_custom_icon_left(slot_index: int): Texture2D | null;
   /** Returns the right (output) custom {@link Texture2D} of the slot with the given `slot_index`. */
-  get_slot_custom_icon_right(slot_index: int): Texture2D;
+  get_slot_custom_icon_right(slot_index: int): Texture2D | null;
   /** Returns the left (input) metadata of the slot with the given `slot_index`. */
   get_slot_metadata_left(slot_index: int): unknown;
   /** Returns the right (output) metadata of the slot with the given `slot_index`. */

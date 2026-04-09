@@ -9,5 +9,5 @@ declare class UDSServer extends SocketServer {
    */
   listen(path: string): int;
   /** If a connection is available, returns a StreamPeerUDS with the connection. */
-  take_connection(): StreamPeerUDS;
+  take_connection(): StreamPeerUDS | null;
 }

@@ -63,7 +63,7 @@ declare class Resource extends RefCounted {
   /**
    * Duplicates this resource, deeply, like {@link duplicate} when passing `true`, with extra control over how subresources are handled.
    */
-  duplicate_deep(deep_subresources_mode: int): Resource;
+  duplicate_deep(deep_subresources_mode: int): Resource | null;
   /**
    * Emits the {@link changed} signal. This method is called automatically for some built-in resources.
    * **Note:** For custom resources, it's recommended to call this method whenever a meaningful change occurs, such as a modified property. This ensures that custom {@link Object}s depending on the resource are properly updated.
@@ -81,7 +81,7 @@ declare class Resource extends RefCounted {
   /**
    * If {@link resource_local_to_scene} is set to `true` and the resource has been loaded from a {@link PackedScene} instantiation, returns the root {@link Node} of the scene where this resource is used. Otherwise, returns `null`.
    */
-  get_local_scene(): Node;
+  get_local_scene(): Node | null;
   /**
    * Returns the {@link RID} of this resource (or an empty RID). Many resources (such as {@link Texture2D}, {@link Mesh}, and so on) are high-level abstractions of resources stored in a specialized server ({@link DisplayServer}, {@link RenderingServer}, etc.), so this function will return the original {@link RID}.
    */

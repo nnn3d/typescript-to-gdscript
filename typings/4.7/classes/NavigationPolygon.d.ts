@@ -81,7 +81,7 @@ declare class NavigationPolygon extends Resource {
   /**
    * Returns the {@link NavigationMesh} resulting from this navigation polygon. This navigation mesh can be used to update the navigation mesh of a region with the {@link NavigationServer3D.region_set_navigation_mesh} API directly.
    */
-  get_navigation_mesh(): NavigationMesh;
+  get_navigation_mesh(): NavigationMesh | null;
   /**
    * Returns a {@link PackedVector2Array} containing the vertices of an outline that was created in the editor or by script.
    */

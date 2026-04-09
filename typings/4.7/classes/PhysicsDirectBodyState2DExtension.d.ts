@@ -46,7 +46,7 @@ declare class PhysicsDirectBodyState2DExtension extends PhysicsDirectBodyState2D
   /** Overridable version of {@link PhysicsDirectBodyState2D.get_contact_collider_id}. */
   _get_contact_collider_id(contact_idx: int): int;
   /** Overridable version of {@link PhysicsDirectBodyState2D.get_contact_collider_object}. */
-  _get_contact_collider_object(contact_idx: int): GodotObject;
+  _get_contact_collider_object(contact_idx: int): GodotObject | null;
   /** Overridable version of {@link PhysicsDirectBodyState2D.get_contact_collider_position}. */
   _get_contact_collider_position(contact_idx: int): Vector2;
   /** Overridable version of {@link PhysicsDirectBodyState2D.get_contact_collider_shape}. */
@@ -78,7 +78,7 @@ declare class PhysicsDirectBodyState2DExtension extends PhysicsDirectBodyState2D
    */
   _get_linear_velocity(): Vector2;
   /** Overridable version of {@link PhysicsDirectBodyState2D.get_space_state}. */
-  _get_space_state(): PhysicsDirectSpaceState2D;
+  _get_space_state(): PhysicsDirectSpaceState2D | null;
   /**
    * Implement to override the behavior of {@link PhysicsDirectBodyState2D.step} and its respective getter.
    */

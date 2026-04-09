@@ -144,7 +144,7 @@ declare class ItemList extends Control {
   /** Returns the custom foreground color of the item specified by `idx` index. */
   get_item_custom_fg_color(idx: int): Color;
   /** Returns the icon associated with the specified index. */
-  get_item_icon(idx: int): Texture2D;
+  get_item_icon(idx: int): Texture2D | null;
   /** Returns a {@link Color} modulating item's icon at the specified index. */
   get_item_icon_modulate(idx: int): Color;
   /** Returns the region of item's icon used. The whole icon will be used if the region has no area. */

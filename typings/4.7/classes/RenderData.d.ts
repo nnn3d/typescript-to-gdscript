@@ -14,7 +14,7 @@ declare class RenderData extends GodotObject {
   /**
    * Returns the {@link RenderSceneBuffers} object managing the scene buffers for rendering this viewport.
    */
-  get_render_scene_buffers(): RenderSceneBuffers;
+  get_render_scene_buffers(): RenderSceneBuffers | null;
   /** Returns the {@link RenderSceneData} object managing this frames scene data. */
-  get_render_scene_data(): RenderSceneData;
+  get_render_scene_data(): RenderSceneData | null;
 }

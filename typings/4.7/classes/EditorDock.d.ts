@@ -17,9 +17,9 @@ declare class EditorDock extends MarginContainer {
    */
   default_slot: int;
   /** The icon for the dock, as a texture. If specified, it will override {@link icon_name}. */
-  dock_icon: Texture2D;
+  dock_icon: Texture2D | null;
   /** The shortcut used to open the dock. */
-  dock_shortcut: Shortcut;
+  dock_shortcut: Shortcut | null;
   /**
    * If `true`, the dock will always display an icon, regardless of {@link EditorSettings.interface/editor/docks/dock_tab_style} or {@link EditorSettings.interface/editor/docks/bottom_dock_tab_style}.
    */
@@ -52,10 +52,10 @@ declare class EditorDock extends MarginContainer {
   is_closable(): boolean;
   set_default_slot(value: int): void;
   get_default_slot(): int;
-  set_dock_icon(value: Texture2D): void;
-  get_dock_icon(): Texture2D;
-  set_dock_shortcut(value: Shortcut): void;
-  get_dock_shortcut(): Shortcut;
+  set_dock_icon(value: Texture2D | null): void;
+  get_dock_icon(): Texture2D | null;
+  set_dock_shortcut(value: Shortcut | null): void;
+  get_dock_shortcut(): Shortcut | null;
   set_force_show_icon(value: boolean): void;
   get_force_show_icon(): boolean;
   set_global(value: boolean): void;

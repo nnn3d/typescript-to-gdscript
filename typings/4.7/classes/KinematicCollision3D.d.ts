@@ -10,7 +10,7 @@ declare class KinematicCollision3D extends RefCounted {
   /**
    * Returns the colliding body's attached {@link Object} given a collision index (the deepest collision by default).
    */
-  get_collider(collision_index?: int): GodotObject;
+  get_collider(collision_index?: int): GodotObject | null;
   /**
    * Returns the unique instance ID of the colliding body's attached {@link Object} given a collision index (the deepest collision by default). See {@link Object.get_instance_id}.
    */
@@ -20,7 +20,7 @@ declare class KinematicCollision3D extends RefCounted {
    */
   get_collider_rid(collision_index?: int): RID;
   /** Returns the colliding body's shape given a collision index (the deepest collision by default). */
-  get_collider_shape(collision_index?: int): GodotObject;
+  get_collider_shape(collision_index?: int): GodotObject | null;
   /**
    * Returns the colliding body's shape index given a collision index (the deepest collision by default). See {@link CollisionObject3D}.
    */
@@ -34,7 +34,7 @@ declare class KinematicCollision3D extends RefCounted {
   /**
    * Returns the moving object's colliding shape given a collision index (the deepest collision by default).
    */
-  get_local_shape(collision_index?: int): GodotObject;
+  get_local_shape(collision_index?: int): GodotObject | null;
   /**
    * Returns the colliding body's shape's normal at the point of collision given a collision index (the deepest collision by default).
    */

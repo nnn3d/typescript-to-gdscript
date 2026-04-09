@@ -10,7 +10,7 @@ declare class JavaClass extends RefCounted {
    */
   get_java_method_list(): Array<Dictionary>;
   /** Returns a {@link JavaClass} representing the Java parent class of this class. */
-  get_java_parent_class(): JavaClass;
+  get_java_parent_class(): JavaClass | null;
   /** Returns `true` if the given `method` name exists in the object's Java methods. */
   has_java_method(method: string): boolean;
 }

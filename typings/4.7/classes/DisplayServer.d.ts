@@ -209,7 +209,7 @@ declare interface DisplayServer extends GodotObject {
    * Returns the user's clipboard as an image if possible.
    * **Note:** This method uses the copied pixel data, e.g. from an image editing software or a web browser, not an image file copied from file explorer.
    */
-  clipboard_get_image(): Image;
+  clipboard_get_image(): Image | null;
   /**
    * Returns the user's primary (https://unix.stackexchange.com/questions/139191/whats-the-difference-between-primary-selection-and-clipboard-buffer) clipboard as a string if possible. This is the clipboard that is set when the user selects text in any application, rather than when pressing `Ctrl + C`. The clipboard data can then be pasted by clicking the middle mouse button in any application that supports the primary clipboard mechanism.
    * **Note:** This method is only implemented on Linux (X11/Wayland).
@@ -547,7 +547,7 @@ declare interface DisplayServer extends GodotObject {
    * Returns the icon of the item at index `idx`.
    * **Note:** This method is implemented only on macOS.
    */
-  global_menu_get_item_icon(menu_root: string, idx: int): Texture2D;
+  global_menu_get_item_icon(menu_root: string, idx: int): Texture2D | null;
   /**
    * Returns the horizontal offset of the item at the given `idx`.
    * **Note:** This method is implemented only on macOS.
@@ -875,13 +875,13 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** This method is implemented on Linux (X11, excluding XWayland), macOS, and Windows. On other platforms, this method always returns `null`.
    * **Note:** On macOS, this method requires the "Screen Recording" permission. If permission is not granted, this method returns a screenshot that will not include other application windows or OS elements not related to the application.
    */
-  screen_get_image(screen?: int): Image;
+  screen_get_image(screen?: int): Image | null;
   /**
    * Returns a screenshot of the screen region defined by `rect`. Returns `null` if `rect` is outside screen bounds or the {@link DisplayServer} fails to capture screenshot.
    * **Note:** This method is implemented on macOS and Windows. On other platforms, this method always returns `null`.
    * **Note:** On macOS, this method requires the "Screen Recording" permission. If permission is not granted, this method returns a screenshot that will not include other application windows or OS elements not related to the application.
    */
-  screen_get_image_rect(rect: Rect2i): Image;
+  screen_get_image_rect(rect: Rect2i): Image | null;
   /**
    * Returns the greatest scale factor of all screens.
    * **Note:** On macOS returned value is `2.0` if there is at least one hiDPI (Retina) screen in the system, and `1.0` in all other cases.

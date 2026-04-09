@@ -18,7 +18,7 @@ declare class EditorSceneFormatImporter extends RefCounted {
   /**
    * Perform the bulk of the scene import logic here, for example using {@link GLTFDocument} or {@link FBXDocument}.
    */
-  _import_scene(path: string, flags: int, options: Dictionary): GodotObject;
+  _import_scene(path: string, flags: int, options: Dictionary): GodotObject | null;
   /**
    * Add a specific import option (name and default value only). This function can only be called from {@link _get_import_options}.
    */

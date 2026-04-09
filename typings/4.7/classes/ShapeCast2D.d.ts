@@ -26,7 +26,7 @@ declare class ShapeCast2D extends Node2D {
   /** The number of intersections can be limited with this parameter, to reduce the processing time. */
   max_results: int;
   /** The shape to be used for collision queries. */
-  shape: Shape2D;
+  shape: Shape2D | null;
   /** The shape's destination point, relative to this node's {@link Node2D.position}. */
   target_position: Vector2;
   set_collide_with_areas(value: boolean): void;
@@ -44,8 +44,8 @@ declare class ShapeCast2D extends Node2D {
   get_margin(): float;
   set_max_results(value: int): void;
   get_max_results(): int;
-  set_shape(value: Shape2D): void;
-  get_shape(): Shape2D;
+  set_shape(value: Shape2D | null): void;
+  get_shape(): Shape2D | null;
   set_target_position(value: Vector2): void;
   get_target_position(): Vector2;
 
@@ -72,7 +72,7 @@ declare class ShapeCast2D extends Node2D {
   /**
    * Returns the collided {@link Object} of one of the multiple collisions at `index`, or `null` if no object is intersecting the shape (i.e. {@link is_colliding} returns `false`).
    */
-  get_collider(index: int): GodotObject;
+  get_collider(index: int): GodotObject | null;
   /** Returns the {@link RID} of the collided object of one of the multiple collisions at `index`. */
   get_collider_rid(index: int): RID;
   /**

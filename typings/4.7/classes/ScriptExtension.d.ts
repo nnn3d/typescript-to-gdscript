@@ -4,14 +4,14 @@
 declare class ScriptExtension extends Script {
   _can_instantiate(): boolean;
   _editor_can_reload_from_file(): boolean;
-  _get_base_script(): Script;
+  _get_base_script(): Script | null;
   _get_class_icon_path(): string;
   _get_constants(): Dictionary;
   _get_doc_class_name(): string;
   _get_documentation(): Array<Dictionary>;
   _get_global_name(): string;
   _get_instance_base_type(): string;
-  _get_language(): ScriptLanguage;
+  _get_language(): ScriptLanguage | null;
   _get_member_line(member: string): int;
   _get_members(): Array<string>;
   _get_method_info(method: string): Dictionary;

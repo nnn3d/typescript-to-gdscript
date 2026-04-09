@@ -16,13 +16,13 @@ declare class EditorInspector extends ScrollContainer {
    */
   edit(object: GodotObject): void;
   /** Returns the object currently selected in this inspector. */
-  get_edited_object(): GodotObject;
+  get_edited_object(): GodotObject | null;
   /** Gets the path of the currently selected property. */
   get_selected_path(): string;
   /**
    * Creates a property editor that can be used by plugin UI to edit the specified property of an `object`.
    */
-  static instantiate_property_editor(object: GodotObject, type_: int, path: string, hint: int, hint_text: string, usage: int, wide?: boolean): EditorProperty;
+  static instantiate_property_editor(object: GodotObject, type_: int, path: string, hint: int, hint_text: string, usage: int, wide?: boolean): EditorProperty | null;
 
   /** Emitted when the object being edited by the inspector has changed. */
   edited_object_changed: Signal<[]>;

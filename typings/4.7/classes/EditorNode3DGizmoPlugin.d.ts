@@ -23,7 +23,7 @@ declare class EditorNode3DGizmoPlugin extends Resource {
   /**
    * Override this method to return a custom {@link EditorNode3DGizmo} for the 3D nodes of your choice, return `null` for the rest of nodes. See also {@link _has_gizmo}.
    */
-  _create_gizmo(for_node_3d: Node3D): EditorNode3DGizmo;
+  _create_gizmo(for_node_3d: Node3D): EditorNode3DGizmo | null;
   /** Override this method to provide the name that will appear in the gizmo visibility menu. */
   _get_gizmo_name(): string;
   /**
@@ -99,5 +99,5 @@ declare class EditorNode3DGizmoPlugin extends Resource {
   /**
    * Gets material from the internal list of materials. If an {@link EditorNode3DGizmo} is provided, it will try to get the corresponding variant (selected and/or editable).
    */
-  get_material(name: string, gizmo?: EditorNode3DGizmo): StandardMaterial3D;
+  get_material(name: string, gizmo?: EditorNode3DGizmo): StandardMaterial3D | null;
 }

@@ -547,6 +547,17 @@ typings/
     index.d.ts
 ```
 
+### Nullable Reference Types
+
+Generated typings distinguish between value types and reference types for nullability:
+
+- **Reference types** (Node, Material, Texture2D, etc.) — properties and method return types are generated as `T | null`, matching GDScript semantics where these can be `null` at runtime.
+- **Value types** (Vector2, Color, int, float, Rect2, Transform2D, etc.) — remain non-nullable, since GDScript always initializes them to a default value.
+
+A type is classified as a value type if its Godot XML documentation includes a copy constructor (a constructor with a single parameter of its own type). This is derived automatically from the parsed XML docs at generation time — no hardcoded type lists.
+
+**Overrides**: Files in `typings/_overrides/` can restore non-null return types for specific members where `null` is never returned in practice. For example, `typings/_overrides/node.d.ts` overrides `get_tree(): SceneTree`, `get_viewport(): Viewport`, and `get_window(): Window` as non-null.
+
 ## Scene Typings
 
 The scene typings generator creates per-file `.d.ts` declarations that provide typed `get_node()`, `get_parent()`, `get_child()`, and group methods based on your `.tscn` scene structure.

@@ -24,7 +24,7 @@ declare class EditorDebuggerPlugin extends RefCounted {
    */
   _setup_session(session_id: int): void;
   /** Returns the {@link EditorDebuggerSession} with the given `id`. */
-  get_session(id: int): EditorDebuggerSession;
+  get_session(id: int): EditorDebuggerSession | null;
   /**
    * Returns an array of {@link EditorDebuggerSession} currently available to this debugger plugin.
    * **Note:** Sessions in the array may be inactive, check their state via {@link EditorDebuggerSession.is_active}.

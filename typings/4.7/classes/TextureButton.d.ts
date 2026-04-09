@@ -18,27 +18,27 @@ declare class TextureButton extends BaseButton {
   /**
    * Pure black and white {@link BitMap} image to use for click detection. On the mask, white pixels represent the button's clickable area. Use it to create buttons with curved shapes.
    */
-  texture_click_mask: BitMap;
+  texture_click_mask: BitMap | null;
   /**
    * Texture to display when the node is disabled. See {@link BaseButton.disabled}. If not assigned, the {@link TextureButton} displays {@link texture_normal} instead.
    */
-  texture_disabled: Texture2D;
+  texture_disabled: Texture2D | null;
   /**
    * Texture to *overlay on the base texture* when the node has mouse or keyboard focus. Because {@link texture_focused} is displayed on top of the base texture, a partially transparent texture should be used to ensure the base texture remains visible. A texture that represents an outline or an underline works well for this purpose. To disable the focus visual effect, assign a fully transparent texture of any size. Note that disabling the focus visual effect will harm keyboard/controller navigation usability, so this is not recommended for accessibility reasons.
    */
-  texture_focused: Texture2D;
+  texture_focused: Texture2D | null;
   /**
    * Texture to display when the mouse hovers over the node. If not assigned, the {@link TextureButton} displays {@link texture_normal} instead when hovered over.
    */
-  texture_hover: Texture2D;
+  texture_hover: Texture2D | null;
   /**
    * Texture to display by default, when the node is **not** in the disabled, hover or pressed state. This texture is still displayed in the focused state, with {@link texture_focused} drawn on top.
    */
-  texture_normal: Texture2D;
+  texture_normal: Texture2D | null;
   /**
    * Texture to display on mouse down over the node, if the node has keyboard focus and the player presses the Enter key or if the player presses the {@link BaseButton.shortcut} key. If not assigned, the {@link TextureButton} displays {@link texture_hover} instead when pressed.
    */
-  texture_pressed: Texture2D;
+  texture_pressed: Texture2D | null;
   set_flip_h(value: boolean): void;
   is_flipped_h(): boolean;
   set_flip_v(value: boolean): void;
@@ -47,18 +47,18 @@ declare class TextureButton extends BaseButton {
   get_ignore_texture_size(): boolean;
   set_stretch_mode(value: int): void;
   get_stretch_mode(): int;
-  set_click_mask(value: BitMap): void;
-  get_click_mask(): BitMap;
-  set_texture_disabled(value: Texture2D): void;
-  get_texture_disabled(): Texture2D;
-  set_texture_focused(value: Texture2D): void;
-  get_texture_focused(): Texture2D;
-  set_texture_hover(value: Texture2D): void;
-  get_texture_hover(): Texture2D;
-  set_texture_normal(value: Texture2D): void;
-  get_texture_normal(): Texture2D;
-  set_texture_pressed(value: Texture2D): void;
-  get_texture_pressed(): Texture2D;
+  set_click_mask(value: BitMap | null): void;
+  get_click_mask(): BitMap | null;
+  set_texture_disabled(value: Texture2D | null): void;
+  get_texture_disabled(): Texture2D | null;
+  set_texture_focused(value: Texture2D | null): void;
+  get_texture_focused(): Texture2D | null;
+  set_texture_hover(value: Texture2D | null): void;
+  get_texture_hover(): Texture2D | null;
+  set_texture_normal(value: Texture2D | null): void;
+  get_texture_normal(): Texture2D | null;
+  set_texture_pressed(value: Texture2D | null): void;
+  get_texture_pressed(): Texture2D | null;
 
   // enum StretchMode
   /** Scale to fit the node's bounding rectangle. */

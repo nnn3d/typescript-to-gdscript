@@ -14,7 +14,7 @@ declare class NavigationRegion2D extends Node2D {
    */
   navigation_layers: int;
   /** The {@link NavigationPolygon} resource to use. */
-  navigation_polygon: NavigationPolygon;
+  navigation_polygon: NavigationPolygon | null;
   /**
    * When pathfinding moves inside this region's navigation mesh the traveled distances are multiplied with {@link travel_cost} for determining the shortest path.
    */
@@ -29,8 +29,8 @@ declare class NavigationRegion2D extends Node2D {
   get_enter_cost(): float;
   set_navigation_layers(value: int): void;
   get_navigation_layers(): int;
-  set_navigation_polygon(value: NavigationPolygon): void;
-  get_navigation_polygon(): NavigationPolygon;
+  set_navigation_polygon(value: NavigationPolygon | null): void;
+  get_navigation_polygon(): NavigationPolygon | null;
   set_travel_cost(value: float): void;
   get_travel_cost(): float;
   set_use_edge_connections(value: boolean): void;

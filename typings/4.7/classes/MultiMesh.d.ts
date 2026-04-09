@@ -23,7 +23,7 @@ declare class MultiMesh extends Resource {
    * {@link Mesh} resource to be instanced.
    * The looks of the individual instances can be modified using {@link set_instance_color} and {@link set_instance_custom_data}.
    */
-  mesh: Mesh;
+  mesh: Mesh | null;
   /**
    * Choose whether to use an interpolation method that favors speed or quality.
    * When using low physics tick rates (typically below 20) or high rates of object rotation, you may get better results from the high quality setting.
@@ -62,8 +62,8 @@ declare class MultiMesh extends Resource {
   _get_custom_data_array(): PackedColorArray;
   set_instance_count(value: int): void;
   get_instance_count(): int;
-  set_mesh(value: Mesh): void;
-  get_mesh(): Mesh;
+  set_mesh(value: Mesh | null): void;
+  get_mesh(): Mesh | null;
   set_physics_interpolation_quality(value: int): void;
   get_physics_interpolation_quality(): int;
   _set_transform_2d_array(value: PackedVector2Array): void;

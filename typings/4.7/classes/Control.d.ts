@@ -214,7 +214,7 @@ declare class Control extends CanvasItem {
   /**
    * The {@link Node} which must be a parent of the focused {@link Control} for the shortcut to be activated. If `null`, the shortcut can be activated when any control is focused (a global shortcut). This allows shortcuts to be accepted only when the user has a certain area of the GUI focused.
    */
-  shortcut_context: Node;
+  shortcut_context: Node | null;
   /**
    * The size of the node's bounding rectangle, in the node's coordinate system. {@link Container} nodes update this property automatically.
    */
@@ -235,7 +235,7 @@ declare class Control extends CanvasItem {
    * The {@link Theme} resource this node and all its {@link Control} and {@link Window} children use. If a child node has its own {@link Theme} resource set, theme items are merged with child's definitions having higher priority.
    * **Note:** {@link Window} styles will have no effect unless the window is embedded.
    */
-  theme: Theme;
+  theme: Theme | null;
   /**
    * The name of a theme type variation used by this {@link Control} to look up its own theme items. When empty, the class name of the node is used (e.g. [code skip-lint]Button[/code] for the {@link Button} control), as well as the class names of all parent classes (in order of inheritance).
    * When set, this property gives the highest priority to the type of the specified name. This type can in turn extend another type, forming a dependency chain. See {@link Theme.set_type_variation}. If the theme item cannot be found using this type or its base types, lookup falls back on the class names.
@@ -330,8 +330,8 @@ declare class Control extends CanvasItem {
   get_rotation_degrees(): float;
   set_scale(value: Vector2): void;
   get_scale(): Vector2;
-  set_shortcut_context(value: Node): void;
-  get_shortcut_context(): Node;
+  set_shortcut_context(value: Node | null): void;
+  get_shortcut_context(): Node | null;
   _set_size(value: Vector2): void;
   get_size(): Vector2;
   set_h_size_flags(value: int): void;
@@ -340,8 +340,8 @@ declare class Control extends CanvasItem {
   get_stretch_ratio(): float;
   set_v_size_flags(value: int): void;
   get_v_size_flags(): int;
-  set_theme(value: Theme): void;
-  get_theme(): Theme;
+  set_theme(value: Theme | null): void;
+  get_theme(): Theme | null;
   set_theme_type_variation(value: string): void;
   get_theme_type_variation(): string;
   set_tooltip_auto_translate_mode(value: int): void;
@@ -411,7 +411,7 @@ declare class Control extends CanvasItem {
    * **Example:** Use a constructed node as a tooltip:
    * **Example:** Use a scene instance as a tooltip:
    */
-  _make_custom_tooltip(for_text: string): GodotObject;
+  _make_custom_tooltip(for_text: string): GodotObject | null;
   /**
    * User defined BiDi algorithm override function.
    * Returns an {@link Array} of {@link Vector3i} text ranges and text base directions, in the left-to-right order. Ranges should cover full source `text` without overlaps. BiDi algorithm will be used on each range separately.
@@ -465,14 +465,14 @@ declare class Control extends CanvasItem {
   /** Ends a bulk theme override update. See {@link begin_bulk_theme_override}. */
   end_bulk_theme_override(): void;
   /** Finds the next (below in the tree) {@link Control} that can receive the focus. */
-  find_next_valid_focus(): Control;
+  find_next_valid_focus(): Control | null;
   /** Finds the previous (above in the tree) {@link Control} that can receive the focus. */
-  find_prev_valid_focus(): Control;
+  find_prev_valid_focus(): Control | null;
   /**
    * Finds the next {@link Control} that can receive the focus on the specified {@link Side}.
    * **Note:** This is different from {@link get_focus_neighbor}, which returns the path of a specified focus neighbor.
    */
-  find_valid_focus_neighbor(side: int): Control;
+  find_valid_focus_neighbor(side: int): Control | null;
   /**
    * Forces drag and bypasses {@link _get_drag_data} and {@link set_drag_preview} by passing `data` and `preview`. Drag will start even if the mouse is neither over nor pressed on this control.
    * The methods {@link _can_drop_data} and {@link _drop_data} must be implemented on controls that want to receive drop data.
@@ -524,7 +524,7 @@ declare class Control extends CanvasItem {
   /** Returns the width/height occupied in the parent control. */
   get_parent_area_size(): Vector2;
   /** Returns the parent control node. */
-  get_parent_control(): Control;
+  get_parent_control(): Control | null;
   /**
    * Returns the position and size of the control in the coordinate system of the containing node. See {@link position}, {@link scale} and {@link size}.
    * **Note:** If {@link rotation} is not the default rotation, the resulting size is not meaningful.
@@ -556,7 +556,7 @@ declare class Control extends CanvasItem {
    * Returns the default font from the first matching {@link Theme} in the tree if that {@link Theme} has a valid {@link Theme.default_font} value.
    * See {@link get_theme_color} for details.
    */
-  get_theme_default_font(): Font;
+  get_theme_default_font(): Font | null;
   /**
    * Returns the default font size value from the first matching {@link Theme} in the tree if that {@link Theme} has a valid {@link Theme.default_font_size} value.
    * See {@link get_theme_color} for details.
@@ -566,7 +566,7 @@ declare class Control extends CanvasItem {
    * Returns a {@link Font} from the first matching {@link Theme} in the tree if that {@link Theme} has a font item with the specified `name` and `theme_type`.
    * See {@link get_theme_color} for details.
    */
-  get_theme_font(name: string, theme_type?: string): Font;
+  get_theme_font(name: string, theme_type?: string): Font | null;
   /**
    * Returns a font size from the first matching {@link Theme} in the tree if that {@link Theme} has a font size item with the specified `name` and `theme_type`.
    * See {@link get_theme_color} for details.
@@ -576,12 +576,12 @@ declare class Control extends CanvasItem {
    * Returns an icon from the first matching {@link Theme} in the tree if that {@link Theme} has an icon item with the specified `name` and `theme_type`.
    * See {@link get_theme_color} for details.
    */
-  get_theme_icon(name: string, theme_type?: string): Texture2D;
+  get_theme_icon(name: string, theme_type?: string): Texture2D | null;
   /**
    * Returns a {@link StyleBox} from the first matching {@link Theme} in the tree if that {@link Theme} has a stylebox item with the specified `name` and `theme_type`.
    * See {@link get_theme_color} for details.
    */
-  get_theme_stylebox(name: string, theme_type?: string): StyleBox;
+  get_theme_stylebox(name: string, theme_type?: string): StyleBox | null;
   /**
    * Returns the tooltip text for the position `at_position` in control's local coordinates, which will typically appear when the cursor is resting over this control. By default, it returns {@link tooltip_text}.
    * This method can be overridden to customize its behavior. See {@link _get_tooltip}.

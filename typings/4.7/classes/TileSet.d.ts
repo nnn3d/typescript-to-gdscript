@@ -109,7 +109,7 @@ declare class TileSet extends Resource {
   /** Returns the occlusion layers count. */
   get_occlusion_layers_count(): int;
   /** Returns the {@link TileMapPattern} at the given `index`. */
-  get_pattern(index?: int): TileMapPattern;
+  get_pattern(index?: int): TileMapPattern | null;
   /** Returns the number of {@link TileMapPattern} this tile set handles. */
   get_patterns_count(): int;
   /**
@@ -121,11 +121,11 @@ declare class TileSet extends Resource {
   /** Returns the collision priority of bodies on the given TileSet's physics layer. */
   get_physics_layer_collision_priority(layer_index: int): float;
   /** Returns the physics material of bodies on the given TileSet's physics layer. */
-  get_physics_layer_physics_material(layer_index: int): PhysicsMaterial;
+  get_physics_layer_physics_material(layer_index: int): PhysicsMaterial | null;
   /** Returns the physics layers count. */
   get_physics_layers_count(): int;
   /** Returns the {@link TileSetSource} with ID `source_id`. */
-  get_source(source_id: int): TileSetSource;
+  get_source(source_id: int): TileSetSource | null;
   /** Returns the number of {@link TileSetSource} in this TileSet. */
   get_source_count(): int;
   /** Returns the source ID for source with index `index`. */

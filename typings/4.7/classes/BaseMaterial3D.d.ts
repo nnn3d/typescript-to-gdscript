@@ -12,7 +12,7 @@ declare class BaseMaterial3D extends Material {
    * Texture to multiply by {@link albedo_color}. Used for basic texturing of objects.
    * If the texture appears unexpectedly too dark or too bright, check {@link albedo_texture_force_srgb}.
    */
-  albedo_texture: Texture2D;
+  albedo_texture: Texture2D | null;
   /**
    * If `true`, forces a conversion of the {@link albedo_texture} from nonlinear sRGB encoding to linear encoding. See also {@link vertex_color_is_srgb}.
    * This should only be enabled when needed (typically when using a {@link ViewportTexture} as {@link albedo_texture}). If {@link albedo_texture_force_srgb} is `true` when it shouldn't be, the texture will appear to be too dark. If {@link albedo_texture_force_srgb} is `false` when it shouldn't be, the texture will appear to be too bright.
@@ -46,7 +46,7 @@ declare class BaseMaterial3D extends Material {
    * Texture that offsets the tangent map for anisotropy calculations and optionally controls the anisotropy effect (if an alpha channel is present). The flowmap texture is expected to be a derivative map, with the red channel representing distortion on the X axis and green channel representing distortion on the Y axis. Values below 0.5 will result in negative distortion, whereas values above 0.5 will result in positive distortion.
    * If present, the texture's alpha channel will be used to multiply the strength of the {@link anisotropy} effect. Fully opaque pixels will keep the anisotropy effect's original strength while fully transparent pixels will disable the anisotropy effect entirely. The flowmap texture's blue channel is ignored.
    */
-  anisotropy_flowmap: Texture2D;
+  anisotropy_flowmap: Texture2D | null;
   /**
    * If `true`, ambient occlusion is enabled. Ambient occlusion darkens areas based on the {@link ao_texture}.
    */
@@ -58,7 +58,7 @@ declare class BaseMaterial3D extends Material {
   /** If `true`, use `UV2` coordinates to look up from the {@link ao_texture}. */
   ao_on_uv2: boolean;
   /** Texture that defines the amount of ambient occlusion for a given point on the object. */
-  ao_texture: Texture2D;
+  ao_texture: Texture2D | null;
   /**
    * Specifies the channel of the {@link ao_texture} in which the ambient occlusion information is stored. This is useful when you store the information for multiple effects in a single texture. For example if you stored metallic in the red channel, roughness in the blue, and ambient occlusion in the green you could reduce the number of textures you use.
    */
@@ -68,7 +68,7 @@ declare class BaseMaterial3D extends Material {
   /** If `true`, the backlight effect is enabled. See also {@link subsurf_scatter_transmittance_enabled}. */
   backlight_enabled: boolean;
   /** Texture used to control the backlight effect per-pixel. Added to {@link backlight}. */
-  backlight_texture: Texture2D;
+  backlight_texture: Texture2D | null;
   /**
    * If `true`, the bent normal map is enabled. This allows for more accurate indirect lighting and specular occlusion.
    */
@@ -79,7 +79,7 @@ declare class BaseMaterial3D extends Material {
    * **Note:** The mesh must have both normals and tangents defined in its vertex data. Otherwise, the shading produced by the bent normal map will not look correct. If creating geometry with {@link SurfaceTool}, you can use {@link SurfaceTool.generate_normals} and {@link SurfaceTool.generate_tangents} to automatically generate normals and tangents respectively.
    * **Note:** Godot expects the bent normal map to use X+, Y+, and Z+ coordinates. See this page (http://wiki.polycount.com/wiki/Normal_Map_Technical_Details#Common_Swizzle_Coordinates) for a comparison of normal map coordinates expected by popular engines.
    */
-  bent_normal_texture: Texture2D;
+  bent_normal_texture: Texture2D | null;
   /**
    * If `true`, the shader will keep the scale set for the mesh. Otherwise, the scale is lost when billboarding. Only applies when {@link billboard_mode} is not {@link BILLBOARD_DISABLED}.
    */
@@ -110,7 +110,7 @@ declare class BaseMaterial3D extends Material {
   /**
    * Texture that defines the strength of the clearcoat effect and the glossiness of the clearcoat. Strength is specified in the red channel while glossiness is specified in the green channel.
    */
-  clearcoat_texture: Texture2D;
+  clearcoat_texture: Texture2D | null;
   /**
    * Determines which side of the triangle to cull depending on whether the triangle faces towards or away from the camera.
    */
@@ -126,7 +126,7 @@ declare class BaseMaterial3D extends Material {
    * Texture that specifies the color of the detail overlay. {@link detail_albedo}'s alpha channel is used as a mask, even when the material is opaque. To use a dedicated texture as a mask, see {@link detail_mask}.
    * **Note:** {@link detail_albedo} is *not* modulated by {@link albedo_color}.
    */
-  detail_albedo: Texture2D;
+  detail_albedo: Texture2D | null;
   /** Specifies how the {@link detail_albedo} should blend with the current `ALBEDO`. */
   detail_blend_mode: int;
   /**
@@ -136,12 +136,12 @@ declare class BaseMaterial3D extends Material {
   /**
    * Texture used to specify how the detail textures get blended with the base textures. {@link detail_mask} can be used together with {@link detail_albedo}'s alpha channel (if any).
    */
-  detail_mask: Texture2D;
+  detail_mask: Texture2D | null;
   /**
    * Texture that specifies the per-pixel normal of the detail overlay. The {@link detail_normal} texture only uses the red and green channels; the blue and alpha channels are ignored. The normal read from {@link detail_normal} is oriented around the surface normal provided by the {@link Mesh}.
    * **Note:** Godot expects the normal map to use X+, Y+, and Z+ coordinates. See this page (http://wiki.polycount.com/wiki/Normal_Map_Technical_Details#Common_Swizzle_Coordinates) for a comparison of normal map coordinates expected by popular engines.
    */
-  detail_normal: Texture2D;
+  detail_normal: Texture2D | null;
   /** Specifies whether to use `UV` or `UV2` for the detail layer. */
   detail_uv_layer: int;
   /** The algorithm used for diffuse light scattering. */
@@ -187,7 +187,7 @@ declare class BaseMaterial3D extends Material {
   /** Sets how {@link emission} interacts with {@link emission_texture}. Can either add or multiply. */
   emission_operator: int;
   /** Texture that specifies how much surface emits light at a given point. */
-  emission_texture: Texture2D;
+  emission_texture: Texture2D | null;
   /**
    * If `true`, the object is rendered at the same size regardless of distance. The object's size on screen is the same as if the camera was `1.0` units away from the object's origin, regardless of the actual distance from the camera. The {@link Camera3D}'s field of view (or {@link Camera3D.size} when in orthogonal/frustum mode) still affects the size the object is drawn at.
    */
@@ -246,7 +246,7 @@ declare class BaseMaterial3D extends Material {
    * For best results, the texture should be normalized (with {@link heightmap_scale} reduced to compensate). In GIMP (https://gimp.org), this can be done using **Colors > Auto > Equalize**. If the texture only uses a small part of its available range, the parallax effect may look strange, especially when the camera moves.
    * **Note:** To reduce memory usage and improve loading times, you may be able to use a lower-resolution heightmap texture as most heightmaps are only comprised of low-frequency data.
    */
-  heightmap_texture: Texture2D;
+  heightmap_texture: Texture2D | null;
   /**
    * A high value makes the material appear more like a metal. Non-metals use their albedo as the diffuse color and add diffuse to the specular reflection. With non-metals, the reflection appears on top of the albedo color. Metals use their albedo as a multiplier to the specular reflection and set the diffuse color to black resulting in a tinted reflection. Materials work better when fully metal or fully non-metal, values between `0` and `1` should only be used for blending between metal and non-metal sections. To alter the amount of reflection use {@link roughness}.
    */
@@ -257,7 +257,7 @@ declare class BaseMaterial3D extends Material {
    */
   metallic_specular: float;
   /** Texture used to specify metallic for an object. This is multiplied by {@link metallic}. */
-  metallic_texture: Texture2D;
+  metallic_texture: Texture2D | null;
   /**
    * Specifies the channel of the {@link metallic_texture} in which the metallic information is stored. This is useful when you store the information for multiple effects in a single texture. For example if you stored metallic in the red channel, roughness in the blue, and ambient occlusion in the green you could reduce the number of textures you use.
    */
@@ -282,11 +282,11 @@ declare class BaseMaterial3D extends Material {
    * **Note:** Godot expects the normal map to use X+, Y+, and Z+ coordinates. See this page (http://wiki.polycount.com/wiki/Normal_Map_Technical_Details#Common_Swizzle_Coordinates) for a comparison of normal map coordinates expected by popular engines.
    * **Note:** If {@link detail_enabled} is `true`, the {@link detail_albedo} texture is drawn *below* the {@link normal_texture}. To display a normal map *above* the {@link detail_albedo} texture, use {@link detail_normal} instead.
    */
-  normal_texture: Texture2D;
+  normal_texture: Texture2D | null;
   /**
    * The Occlusion/Roughness/Metallic texture to use. This is a more efficient replacement of {@link ao_texture}, {@link roughness_texture} and {@link metallic_texture} in {@link ORMMaterial3D}. Ambient occlusion is stored in the red channel. Roughness map is stored in the green channel. Metallic map is stored in the blue channel. The alpha channel is ignored.
    */
-  orm_texture: Texture2D;
+  orm_texture: Texture2D | null;
   /**
    * The number of horizontal frames in the particle sprite sheet. Only enabled when using {@link BILLBOARD_PARTICLES}. See {@link billboard_mode}.
    */
@@ -319,7 +319,7 @@ declare class BaseMaterial3D extends Material {
   /**
    * Texture that controls the strength of the refraction per-pixel. Multiplied by {@link refraction_scale}.
    */
-  refraction_texture: Texture2D;
+  refraction_texture: Texture2D | null;
   /**
    * Specifies the channel of the {@link refraction_texture} in which the refraction information is stored. This is useful when you store the information for multiple effects in a single texture. For example if you stored refraction in the red channel, roughness in the blue, and ambient occlusion in the green you could reduce the number of textures you use.
    */
@@ -332,7 +332,7 @@ declare class BaseMaterial3D extends Material {
    */
   rim_enabled: boolean;
   /** Texture used to set the strength of the rim lighting effect per-pixel. Multiplied by {@link rim}. */
-  rim_texture: Texture2D;
+  rim_texture: Texture2D | null;
   /**
    * The amount of to blend light and albedo color when rendering rim effect. If `0` the light color is used, while `1` means albedo color is used. An intermediate value generally works best.
    */
@@ -342,7 +342,7 @@ declare class BaseMaterial3D extends Material {
    */
   roughness: float;
   /** Texture used to control the roughness per-pixel. Multiplied by {@link roughness}. */
-  roughness_texture: Texture2D;
+  roughness_texture: Texture2D | null;
   /**
    * Specifies the channel of the {@link roughness_texture} in which the roughness information is stored. This is useful when you store the information for multiple effects in a single texture. For example if you stored metallic in the red channel, roughness in the blue, and ambient occlusion in the green you could reduce the number of textures you use.
    */
@@ -388,7 +388,7 @@ declare class BaseMaterial3D extends Material {
   /**
    * Texture used to control the subsurface scattering strength. Stored in the red texture channel. Multiplied by {@link subsurf_scatter_strength}.
    */
-  subsurf_scatter_texture: Texture2D;
+  subsurf_scatter_texture: Texture2D | null;
   /** The intensity of the subsurface scattering transmittance effect. */
   subsurf_scatter_transmittance_boost: float;
   /**
@@ -404,7 +404,7 @@ declare class BaseMaterial3D extends Material {
   /**
    * The texture to use for multiplying the intensity of the subsurface scattering transmittance intensity. See also {@link subsurf_scatter_texture}. Ignored if {@link subsurf_scatter_skin_mode} is `true`.
    */
-  subsurf_scatter_transmittance_texture: Texture2D;
+  subsurf_scatter_transmittance_texture: Texture2D | null;
   /**
    * Filter flags for the texture.
    * **Note:** {@link heightmap_texture} is always sampled with linear filtering, even if nearest-neighbor filtering is selected here. This is to ensure the heightmap effect looks as intended. If you need sharper height transitions between pixels, resize the heightmap texture in an image editor with nearest-neighbor filtering.
@@ -640,7 +640,7 @@ declare class BaseMaterial3D extends Material {
   /** Returns `true` if the specified `flag` is enabled. */
   get_flag(flag: int): boolean;
   /** Returns the {@link Texture2D} associated with the specified texture `param`. */
-  get_texture(param: int): Texture2D;
+  get_texture(param: int): Texture2D | null;
   /**
    * If `enable` is `true`, enables the specified `feature`. Many features that are available in {@link BaseMaterial3D} need to be enabled before use. This way, the cost for using the feature is only incurred when specified. Features can also be enabled by setting their corresponding property to `true`.
    */

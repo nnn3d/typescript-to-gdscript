@@ -61,7 +61,7 @@ declare interface TranslationServer extends GodotObject {
   /**
    * Returns the {@link Translation} instance that best matches `locale` in the main translation domain. Returns `null` if there are no matches.
    */
-  get_translation_object(locale: string): Translation;
+  get_translation_object(locale: string): Translation | null;
   /**
    * Returns all available {@link Translation} instances in the main translation domain as added by {@link add_translation}.
    */

@@ -34,9 +34,9 @@ declare class SkeletonModificationStack2D extends Resource {
   /** Returns a boolean that indicates whether the modification stack is setup and can execute. */
   get_is_setup(): boolean;
   /** Returns the {@link SkeletonModification2D} at the passed-in index, `mod_idx`. */
-  get_modification(mod_idx: int): SkeletonModification2D;
+  get_modification(mod_idx: int): SkeletonModification2D | null;
   /** Returns the {@link Skeleton2D} node that the SkeletonModificationStack2D is bound to. */
-  get_skeleton(): Skeleton2D;
+  get_skeleton(): Skeleton2D | null;
   /** Sets the modification at `mod_idx` to the passed-in modification, `modification`. */
   set_modification(mod_idx: int, modification: SkeletonModification2D): void;
   /**

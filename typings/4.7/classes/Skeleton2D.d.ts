@@ -10,13 +10,13 @@ declare class Skeleton2D extends Node2D {
   /**
    * Returns a {@link Bone2D} from the node hierarchy parented by Skeleton2D. The object to return is identified by the parameter `idx`. Bones are indexed by descending the node hierarchy from top to bottom, adding the children of each branch before moving to the next sibling.
    */
-  get_bone(idx: int): Bone2D;
+  get_bone(idx: int): Bone2D | null;
   /** Returns the number of {@link Bone2D} nodes in the node hierarchy parented by Skeleton2D. */
   get_bone_count(): int;
   /** Returns the local pose override transform for `bone_idx`. */
   get_bone_local_pose_override(bone_idx: int): Transform2D;
   /** Returns the {@link SkeletonModificationStack2D} attached to this skeleton, if one exists. */
-  get_modification_stack(): SkeletonModificationStack2D;
+  get_modification_stack(): SkeletonModificationStack2D | null;
   /** Returns the {@link RID} of a Skeleton2D instance. */
   get_skeleton(): RID;
   /**

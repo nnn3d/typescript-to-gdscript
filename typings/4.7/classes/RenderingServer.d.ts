@@ -441,7 +441,7 @@ declare interface RenderingServer extends GodotObject {
    * Creates a RenderingDevice that can be used to do draw and compute operations on a separate thread. Cannot draw to the screen nor share data with the global RenderingDevice.
    * **Note:** When using the OpenGL rendering driver or when running in headless mode, this function always returns `null`.
    */
-  create_local_rendering_device(): RenderingDevice;
+  create_local_rendering_device(): RenderingDevice | null;
   /**
    * Returns the bounding rectangle for a canvas item in local space, as calculated by the renderer. This bound is used internally for culling.
    * **Warning:** This function is intended for debugging in the editor, and will pass through and return a zero {@link Rect2} in exported projects.
@@ -512,7 +512,7 @@ declare interface RenderingServer extends GodotObject {
    * **Note:** The image is saved using linear encoding without any tonemapping performed, which means it will look too dark if viewed directly in an image editor.
    * **Note:** `size` should be a 2:1 aspect ratio for the generated panorama to have square pixels. For radiance maps, there is no point in using a height greater than {@link Sky.radiance_size}, as it won't increase detail. Irradiance maps only contain low-frequency data, so there is usually no point in going past a size of 128×64 pixels when saving an irradiance map.
    */
-  environment_bake_panorama(environment: RID, bake_irradiance: boolean, size: Vector2i): Image;
+  environment_bake_panorama(environment: RID, bake_irradiance: boolean, size: Vector2i): Image | null;
   /**
    * Creates an environment and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `environment_*` RenderingServer functions.
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
@@ -673,7 +673,7 @@ declare interface RenderingServer extends GodotObject {
    * Returns the global RenderingDevice.
    * **Note:** When using the OpenGL rendering driver or when running in headless mode, this function always returns `null`.
    */
-  get_rendering_device(): RenderingDevice;
+  get_rendering_device(): RenderingDevice | null;
   /**
    * Returns a statistic about the rendering engine which can be used for performance profiling. See also {@link viewport_get_render_info}, which returns information specific to a viewport.
    * **Note:** Only 3D rendering is currently taken into account by some of these values, such as the number of draw calls.
@@ -1601,7 +1601,7 @@ declare interface RenderingServer extends GodotObject {
    * **Note:** The image is saved using linear encoding without any tonemapping performed, which means it will look too dark if viewed directly in an image editor. `energy` values above `1.0` can be used to brighten the resulting image.
    * **Note:** `size` should be a 2:1 aspect ratio for the generated panorama to have square pixels. For radiance maps, there is no point in using a height greater than {@link Sky.radiance_size}, as it won't increase detail. Irradiance maps only contain low-frequency data, so there is usually no point in going past a size of 128×64 pixels when saving an irradiance map.
    */
-  sky_bake_panorama(sky: RID, energy: float, bake_irradiance: boolean, size: Vector2i): Image;
+  sky_bake_panorama(sky: RID, energy: float, bake_irradiance: boolean, size: Vector2i): Image | null;
   /**
    * Creates an empty sky and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `sky_*` RenderingServer functions.
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
@@ -1642,9 +1642,9 @@ declare interface RenderingServer extends GodotObject {
    * Returns an {@link Image} instance from the given `texture` {@link RID}.
    * **Example:** Get the test texture from {@link get_test_texture} and apply it to a {@link Sprite2D} node:
    */
-  texture_2d_get(texture: RID): Image;
+  texture_2d_get(texture: RID): Image | null;
   /** Returns an {@link Image} instance from the given `texture` {@link RID} and `layer`. */
-  texture_2d_layer_get(texture: RID, layer: int): Image;
+  texture_2d_layer_get(texture: RID, layer: int): Image | null;
   /**
    * Creates a 2-dimensional layered texture and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `texture_2d_layered_*` RenderingServer functions.
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.

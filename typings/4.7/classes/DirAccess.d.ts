@@ -44,7 +44,7 @@ declare class DirAccess extends RefCounted {
    * If `keep` is `true`, the directory is not deleted when the returned {@link DirAccess} is freed.
    * Returns `null` if opening the directory failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static create_temp(prefix?: string, keep?: boolean): DirAccess;
+  static create_temp(prefix?: string, keep?: boolean): DirAccess | null;
   /**
    * Returns whether the current item processed with the last {@link get_next} call is a directory (`.` and `..` are considered directories).
    */
@@ -175,7 +175,7 @@ declare class DirAccess extends RefCounted {
    * Creates a new {@link DirAccess} object and opens an existing directory of the filesystem. The `path` argument can be within the project tree (`res://folder`), the user directory (`user://folder`) or an absolute path of the user filesystem (e.g. `/tmp/folder` or `C:\tmp\folder`).
    * Returns `null` if opening the directory failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static open(path: string): DirAccess;
+  static open(path: string): DirAccess | null;
   /**
    * Returns target of the symbolic link.
    * **Note:** This method is implemented on macOS, Linux, and Windows.

@@ -31,7 +31,7 @@ declare class BoneAttachment3D extends Node3D {
   get_override_pose(): boolean;
 
   /** Returns the parent or external {@link Skeleton3D} node if it exists, otherwise returns `null`. */
-  get_skeleton(): Skeleton3D;
+  get_skeleton(): Skeleton3D | null;
   /**
    * A function that is called automatically when the {@link Skeleton3D} is updated. This function is where the {@link BoneAttachment3D} node updates its position so it is correctly bound when it is *not* set to override the bone pose.
    */

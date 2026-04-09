@@ -36,13 +36,13 @@ declare interface AudioServer extends GodotObject {
   /** Returns the number of channels of the bus at index `bus_idx`. */
   get_bus_channels(bus_idx: int): int;
   /** Returns the {@link AudioEffect} at position `effect_idx` in bus `bus_idx`. */
-  get_bus_effect(bus_idx: int, effect_idx: int): AudioEffect;
+  get_bus_effect(bus_idx: int, effect_idx: int): AudioEffect | null;
   /** Returns the number of effects on the bus at `bus_idx`. */
   get_bus_effect_count(bus_idx: int): int;
   /**
    * Returns the {@link AudioEffectInstance} assigned to the given bus and effect indices (and optionally channel).
    */
-  get_bus_effect_instance(bus_idx: int, effect_idx: int, channel?: int): AudioEffectInstance;
+  get_bus_effect_instance(bus_idx: int, effect_idx: int, channel?: int): AudioEffectInstance | null;
   /**
    * Returns the index of the bus with the name `bus_name`. Returns `-1` if no bus with the specified name exist.
    */

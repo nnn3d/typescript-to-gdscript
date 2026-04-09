@@ -13,5 +13,5 @@ declare class TCPServer extends SocketServer {
    */
   listen(port: int, bind_address?: string): int;
   /** If a connection is available, returns a StreamPeerTCP with the connection. */
-  take_connection(): StreamPeerTCP;
+  take_connection(): StreamPeerTCP | null;
 }

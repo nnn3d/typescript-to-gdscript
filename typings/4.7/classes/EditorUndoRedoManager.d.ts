@@ -59,7 +59,7 @@ declare class EditorUndoRedoManager extends GodotObject {
    * `id` above `0` are mapped to the opened scene tabs (but it doesn't match their order). `id` of `0` or lower have special meaning (see {@link SpecialHistory}).
    * Best used with {@link get_object_history_id}. This method is only provided in case you need some more advanced methods of {@link UndoRedo} (but keep in mind that directly operating on the {@link UndoRedo} object might affect editor's stability).
    */
-  get_history_undo_redo(id: int): UndoRedo;
+  get_history_undo_redo(id: int): UndoRedo | null;
   /**
    * Returns the history ID deduced from the given `object`. It can be used with {@link get_history_undo_redo}.
    */

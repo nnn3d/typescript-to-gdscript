@@ -6,7 +6,7 @@ declare class CPUParticles2D extends Node2D {
   /** Number of particles emitted in one emission cycle. */
   amount: int;
   /** Each particle's rotation will be animated along this {@link Curve}. Should be a unit {@link Curve}. */
-  angle_curve: Curve;
+  angle_curve: Curve | null;
   /** Maximum initial rotation applied to each particle, in degrees. */
   angle_max: float;
   /** Minimum equivalent of {@link angle_max}. */
@@ -14,7 +14,7 @@ declare class CPUParticles2D extends Node2D {
   /**
    * Each particle's angular velocity will vary along this {@link Curve}. Should be a unit {@link Curve}.
    */
-  angular_velocity_curve: Curve;
+  angular_velocity_curve: Curve | null;
   /** Maximum initial angular velocity (rotation speed) applied to each particle in *degrees* per second. */
   angular_velocity_max: float;
   /** Minimum equivalent of {@link angular_velocity_max}. */
@@ -22,7 +22,7 @@ declare class CPUParticles2D extends Node2D {
   /**
    * Each particle's animation offset will vary along this {@link Curve}. Should be a unit {@link Curve}.
    */
-  anim_offset_curve: Curve;
+  anim_offset_curve: Curve | null;
   /**
    * Maximum animation offset that corresponds to frame index in the texture. `0` is the first frame, `1` is the last one. See {@link CanvasItemMaterial.particles_animation}.
    */
@@ -30,7 +30,7 @@ declare class CPUParticles2D extends Node2D {
   /** Minimum equivalent of {@link anim_offset_max}. */
   anim_offset_min: float;
   /** Each particle's animation speed will vary along this {@link Curve}. Should be a unit {@link Curve}. */
-  anim_speed_curve: Curve;
+  anim_speed_curve: Curve | null;
   /**
    * Maximum particle animation speed. Animation speed of `1` means that the particles will make full `0` to `1` offset cycle during lifetime, `2` means `2` cycles etc.
    * With animation speed greater than `1`, remember to enable {@link CanvasItemMaterial.particles_anim_loop} property if you want the animation to repeat.
@@ -43,13 +43,13 @@ declare class CPUParticles2D extends Node2D {
   /**
    * Each particle's initial color will vary along this {@link Gradient} (multiplied with {@link color}).
    */
-  color_initial_ramp: Gradient;
+  color_initial_ramp: Gradient | null;
   /**
    * Each particle's color will vary along this {@link Gradient} over its lifetime (multiplied with {@link color}).
    */
-  color_ramp: Gradient;
+  color_ramp: Gradient | null;
   /** Damping will vary along this {@link Curve}. Should be a unit {@link Curve}. */
-  damping_curve: Curve;
+  damping_curve: Curve | null;
   /**
    * The maximum rate at which particles lose velocity. For example value of `100` means that the particle will go from `100` velocity to `0` in `1` second.
    */
@@ -99,7 +99,7 @@ declare class CPUParticles2D extends Node2D {
   /** Gravity applied to every particle. */
   gravity: Vector2;
   /** Each particle's hue will vary along this {@link Curve}. Should be a unit {@link Curve}. */
-  hue_variation_curve: Curve;
+  hue_variation_curve: Curve | null;
   /** Maximum initial hue variation applied to each particle. It will shift the particle color's hue. */
   hue_variation_max: float;
   /** Minimum equivalent of {@link hue_variation_max}. */
@@ -117,7 +117,7 @@ declare class CPUParticles2D extends Node2D {
   /**
    * Each particle's linear acceleration will vary along this {@link Curve}. Should be a unit {@link Curve}.
    */
-  linear_accel_curve: Curve;
+  linear_accel_curve: Curve | null;
   /** Maximum linear acceleration applied to each particle in the direction of motion. */
   linear_accel_max: float;
   /** Minimum equivalent of {@link linear_accel_max}. */
@@ -133,7 +133,7 @@ declare class CPUParticles2D extends Node2D {
   /**
    * Each particle's orbital velocity will vary along this {@link Curve}. Should be a unit {@link Curve}.
    */
-  orbit_velocity_curve: Curve;
+  orbit_velocity_curve: Curve | null;
   /**
    * Maximum orbital velocity applied to each particle. Makes the particles circle around origin. Specified in number of full rotations around origin per second.
    */
@@ -150,7 +150,7 @@ declare class CPUParticles2D extends Node2D {
   /**
    * Each particle's radial acceleration will vary along this {@link Curve}. Should be a unit {@link Curve}.
    */
-  radial_accel_curve: Curve;
+  radial_accel_curve: Curve | null;
   /**
    * Maximum radial acceleration applied to each particle. Makes particle accelerate away from the origin or towards it if negative.
    */
@@ -160,7 +160,7 @@ declare class CPUParticles2D extends Node2D {
   /** Emission lifetime randomness ratio. */
   randomness: float;
   /** Each particle's scale will vary along this {@link Curve}. Should be a unit {@link Curve}. */
-  scale_amount_curve: Curve;
+  scale_amount_curve: Curve | null;
   /** Maximum initial scale applied to each particle. */
   scale_amount_max: float;
   /** Minimum equivalent of {@link scale_amount_max}. */
@@ -169,12 +169,12 @@ declare class CPUParticles2D extends Node2D {
    * Each particle's horizontal scale will vary along this {@link Curve}. Should be a unit {@link Curve}.
    * {@link split_scale} must be enabled.
    */
-  scale_curve_x: Curve;
+  scale_curve_x: Curve | null;
   /**
    * Each particle's vertical scale will vary along this {@link Curve}. Should be a unit {@link Curve}.
    * {@link split_scale} must be enabled.
    */
-  scale_curve_y: Curve;
+  scale_curve_y: Curve | null;
   /**
    * Sets the random seed used by the particle system. Only effective if {@link use_fixed_seed} is `true`.
    */
@@ -190,7 +190,7 @@ declare class CPUParticles2D extends Node2D {
   /**
    * Each particle's tangential acceleration will vary along this {@link Curve}. Should be a unit {@link Curve}.
    */
-  tangential_accel_curve: Curve;
+  tangential_accel_curve: Curve | null;
   /**
    * Maximum tangential acceleration applied to each particle. Tangential acceleration is perpendicular to the particle's velocity giving the particles a swirling motion.
    */
@@ -198,7 +198,7 @@ declare class CPUParticles2D extends Node2D {
   /** Minimum equivalent of {@link tangential_accel_max}. */
   tangential_accel_min: float;
   /** Particle texture. If `null`, particles will be squares. */
-  texture: Texture2D;
+  texture: Texture2D | null;
   /**
    * If `true`, particles will use the same seed for every simulation using the seed defined in {@link seed}. This is useful for situations where the visual outcome should be consistent across replays, for example when using Movie Maker mode.
    */
@@ -207,10 +207,10 @@ declare class CPUParticles2D extends Node2D {
   get_amount(): int;
   set_color(value: Color): void;
   get_color(): Color;
-  set_color_initial_ramp(value: Gradient): void;
-  get_color_initial_ramp(): Gradient;
-  set_color_ramp(value: Gradient): void;
-  get_color_ramp(): Gradient;
+  set_color_initial_ramp(value: Gradient | null): void;
+  get_color_initial_ramp(): Gradient | null;
+  set_color_ramp(value: Gradient | null): void;
+  get_color_ramp(): Gradient | null;
   set_direction(value: Vector2): void;
   get_direction(): Vector2;
   set_draw_order(value: int): void;
@@ -251,10 +251,10 @@ declare class CPUParticles2D extends Node2D {
   get_one_shot(): boolean;
   set_randomness_ratio(value: float): void;
   get_randomness_ratio(): float;
-  set_scale_curve_x(value: Curve): void;
-  get_scale_curve_x(): Curve;
-  set_scale_curve_y(value: Curve): void;
-  get_scale_curve_y(): Curve;
+  set_scale_curve_x(value: Curve | null): void;
+  get_scale_curve_x(): Curve | null;
+  set_scale_curve_y(value: Curve | null): void;
+  get_scale_curve_y(): Curve | null;
   set_seed(value: int): void;
   get_seed(): int;
   set_speed_scale(value: float): void;
@@ -263,8 +263,8 @@ declare class CPUParticles2D extends Node2D {
   get_split_scale(): boolean;
   set_spread(value: float): void;
   get_spread(): float;
-  set_texture(value: Texture2D): void;
-  get_texture(): Texture2D;
+  set_texture(value: Texture2D | null): void;
+  get_texture(): Texture2D | null;
   set_use_fixed_seed(value: boolean): void;
   get_use_fixed_seed(): boolean;
 
@@ -273,7 +273,7 @@ declare class CPUParticles2D extends Node2D {
    */
   convert_from_particles(particles: Node): void;
   /** Returns the {@link Curve} of the parameter specified by {@link Parameter}. */
-  get_param_curve(param: int): Curve;
+  get_param_curve(param: int): Curve | null;
   /** Returns the maximum value range for the given parameter. */
   get_param_max(param: int): float;
   /** Returns the minimum value range for the given parameter. */

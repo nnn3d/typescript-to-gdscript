@@ -49,7 +49,7 @@ declare class OptionButton extends Button {
   /** Returns the auto translate mode of the item at index `idx`. */
   get_item_auto_translate_mode(idx: int): int;
   /** Returns the icon of the item at index `idx`. */
-  get_item_icon(idx: int): Texture2D;
+  get_item_icon(idx: int): Texture2D | null;
   /** Returns the ID of the item at index `idx`. */
   get_item_id(idx: int): int;
   /** Returns the index of the item with the given `id`. */

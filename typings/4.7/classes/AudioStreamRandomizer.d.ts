@@ -37,7 +37,7 @@ declare class AudioStreamRandomizer extends AudioStream {
    */
   add_stream(index: int, stream: AudioStream, weight?: float): void;
   /** Returns the stream at the specified index. */
-  get_stream(index: int): AudioStream;
+  get_stream(index: int): AudioStream | null;
   /** Returns the probability weight associated with the stream at the given index. */
   get_stream_probability_weight(index: int): float;
   /** Move a stream from one index to another. */

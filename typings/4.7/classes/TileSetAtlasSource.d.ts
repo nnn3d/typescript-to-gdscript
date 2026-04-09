@@ -8,7 +8,7 @@ declare class TileSetAtlasSource extends TileSetSource {
   /** Separation, in pixels, between each tile texture region of the grid. */
   separation: Vector2i;
   /** The atlas texture. */
-  texture: Texture2D;
+  texture: Texture2D | null;
   /**
    * The base tile size in the texture (in pixel). This size must be bigger than or equal to the TileSet's `tile_size` value.
    */
@@ -22,8 +22,8 @@ declare class TileSetAtlasSource extends TileSetSource {
   get_margins(): Vector2i;
   set_separation(value: Vector2i): void;
   get_separation(): Vector2i;
-  set_texture(value: Texture2D): void;
-  get_texture(): Texture2D;
+  set_texture(value: Texture2D | null): void;
+  get_texture(): Texture2D | null;
   set_texture_region_size(value: Vector2i): void;
   get_texture_region_size(): Vector2i;
   set_use_texture_padding(value: boolean): void;
@@ -49,7 +49,7 @@ declare class TileSetAtlasSource extends TileSetSource {
   /**
    * If {@link use_texture_padding} is `false`, returns {@link texture}. Otherwise, returns an internal {@link ImageTexture} created that includes the padding.
    */
-  get_runtime_texture(): Texture2D;
+  get_runtime_texture(): Texture2D | null;
   /**
    * Returns the region of the tile at coordinates `atlas_coords` for the given `frame` inside the texture returned by {@link get_runtime_texture}.
    * **Note:** If {@link use_texture_padding} is `false`, returns the same as {@link get_tile_texture_region}.
@@ -82,7 +82,7 @@ declare class TileSetAtlasSource extends TileSetSource {
    */
   get_tile_at_coords(atlas_coords: Vector2i): Vector2i;
   /** Returns the {@link TileData} object for the given atlas coordinates and alternative ID. */
-  get_tile_data(atlas_coords: Vector2i, alternative_tile: int): TileData;
+  get_tile_data(atlas_coords: Vector2i, alternative_tile: int): TileData | null;
   /** Returns the size of the tile (in the grid coordinates system) at coordinates `atlas_coords`. */
   get_tile_size_in_atlas(atlas_coords: Vector2i): Vector2i;
   /**

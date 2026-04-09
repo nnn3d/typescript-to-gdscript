@@ -15,7 +15,7 @@ declare class AnimationNode extends Resource {
   /**
    * When inheriting from {@link AnimationRootNode}, implement this virtual method to return a child animation node by its `name`.
    */
-  _get_child_by_name(name: string): AnimationNode;
+  _get_child_by_name(name: string): AnimationNode | null;
   /**
    * When inheriting from {@link AnimationRootNode}, implement this virtual method to return all child animation nodes in order as a `name: node` dictionary.
    */

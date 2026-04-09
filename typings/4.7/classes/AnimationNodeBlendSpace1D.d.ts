@@ -47,7 +47,7 @@ declare class AnimationNodeBlendSpace1D extends AnimationRootNode {
   /** Returns the name of the blend point at index `point`. */
   get_blend_point_name(point: int): string;
   /** Returns the {@link AnimationNode} referenced by the point at index `point`. */
-  get_blend_point_node(point: int): AnimationRootNode;
+  get_blend_point_node(point: int): AnimationRootNode | null;
   /** Returns the position of the point at index `point`. */
   get_blend_point_position(point: int): float;
   /** Removes the point at index `point` from the blend axis. */

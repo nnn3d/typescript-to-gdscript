@@ -437,41 +437,22 @@ const GDSCRIPT_BUILTINS = [
 
 // ─── Known constructor types (value types constructed as functions in GDScript) ──
 
-const CONSTRUCTOR_TYPES = new Set([
-  'Vector2',
-  'Vector2i',
-  'Vector3',
-  'Vector3i',
-  'Vector4',
-  'Vector4i',
-  'Color',
-  'Rect2',
-  'Rect2i',
-  'Transform2D',
-  'Transform3D',
-  'Basis',
-  'Quaternion',
-  'AABB',
-  'Plane',
-  'Projection',
-  'RID',
-  'Callable',
-  'Signal',
-  'Dictionary',
-  'Array',
-  'PackedByteArray',
-  'PackedInt32Array',
-  'PackedInt64Array',
-  'PackedFloat32Array',
-  'PackedFloat64Array',
-  'PackedStringArray',
-  'PackedVector2Array',
-  'PackedVector3Array',
-  'PackedColorArray',
-  'PackedVector4Array',
-  'StringName',
-  'NodePath',
-]);
+/**
+ * Derive constructor/value types from parsed XML classes.
+ * A class is a value type if it has a copy constructor — a constructor with
+ * exactly one parameter whose type matches the class name (e.g. `Vector2(from: Vector2)`).
+ */
+function deriveConstructorTypes(classes: Map<string, GodotClassXml>): string[] {
+  const result: string[] = [];
+  for (const [name, cls] of classes) {
+    if (name.startsWith('@')) continue;
+    const hasSelfCtor = cls.constructors.some(
+      (c) => c.parameters.length === 1 && c.parameters[0]!.type === name,
+    );
+    if (hasSelfCtor) result.push(name);
+  }
+  return result;
+}
 
 /**
  * Generates the class registry data from parsed XML classes.
@@ -486,7 +467,7 @@ export function generateRegistryData(
     globalFunctions: [],
     globalConstants: [],
     globalEnums: [],
-    constructors: [...CONSTRUCTOR_TYPES],
+    constructors: deriveConstructorTypes(classes),
     singletons: [],
     bareAnnotations: [],
   };

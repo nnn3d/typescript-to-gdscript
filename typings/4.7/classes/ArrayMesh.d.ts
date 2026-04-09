@@ -13,13 +13,13 @@ declare class ArrayMesh extends Mesh {
    * An optional mesh which can be used for rendering shadows and the depth prepass. Can be used to increase performance by supplying a mesh with fused vertices and only vertex position data (without normals, UVs, colors, etc.).
    * **Note:** This mesh must have exactly the same vertex positions as the source mesh (including the source mesh's LODs, if present). If vertex positions differ, then the mesh will not draw correctly.
    */
-  shadow_mesh: ArrayMesh;
+  shadow_mesh: ArrayMesh | null;
   set_blend_shape_mode(value: int): void;
   get_blend_shape_mode(): int;
   set_custom_aabb(value: AABB): void;
   get_custom_aabb(): AABB;
-  set_shadow_mesh(value: ArrayMesh): void;
-  get_shadow_mesh(): ArrayMesh;
+  set_shadow_mesh(value: ArrayMesh | null): void;
+  get_shadow_mesh(): ArrayMesh | null;
 
   /**
    * Adds name for a blend shape that will be added with {@link add_surface_from_arrays}. Must be called before surface is added.

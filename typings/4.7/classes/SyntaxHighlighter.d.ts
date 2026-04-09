@@ -24,7 +24,7 @@ declare class SyntaxHighlighter extends Resource {
    */
   get_line_syntax_highlighting(line: int): Dictionary;
   /** Returns the associated {@link TextEdit} node. */
-  get_text_edit(): TextEdit;
+  get_text_edit(): TextEdit | null;
   /**
    * Clears then updates the {@link SyntaxHighlighter} caches. Override {@link _update_cache} for a callback.
    * **Note:** This is called automatically when the associated {@link TextEdit} node, updates its own cache.

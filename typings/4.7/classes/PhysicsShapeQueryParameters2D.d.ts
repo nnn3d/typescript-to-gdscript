@@ -23,7 +23,7 @@ declare class PhysicsShapeQueryParameters2D extends RefCounted {
   /**
    * The {@link Shape2D} that will be used for collision/intersection queries. This stores the actual reference which avoids the shape to be released while being used for queries, so always prefer using this over {@link shape_rid}.
    */
-  shape: Resource;
+  shape: Resource | null;
   /**
    * The queried shape's {@link RID} that will be used for collision/intersection queries. Use this over {@link shape} if you want to optimize for performance using the Servers API:
    */
@@ -42,8 +42,8 @@ declare class PhysicsShapeQueryParameters2D extends RefCounted {
   get_margin(): float;
   set_motion(value: Vector2): void;
   get_motion(): Vector2;
-  set_shape(value: Resource): void;
-  get_shape(): Resource;
+  set_shape(value: Resource | null): void;
+  get_shape(): Resource | null;
   set_shape_rid(value: RID): void;
   get_shape_rid(): RID;
   set_transform(value: Transform2D): void;

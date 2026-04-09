@@ -24,7 +24,7 @@ declare class VideoStreamPlayer extends Control {
    */
   speed_scale: float;
   /** The assigned video stream. See description for supported formats. */
-  stream: VideoStream;
+  stream: VideoStream | null;
   /** The current position of the stream, in seconds. */
   stream_position: float;
   /** Audio volume as a linear value. */
@@ -47,8 +47,8 @@ declare class VideoStreamPlayer extends Control {
   is_paused(): boolean;
   set_speed_scale(value: float): void;
   get_speed_scale(): float;
-  set_stream(value: VideoStream): void;
-  get_stream(): VideoStream;
+  set_stream(value: VideoStream | null): void;
+  get_stream(): VideoStream | null;
   set_stream_position(value: float): void;
   get_stream_position(): float;
   set_volume(value: float): void;
@@ -61,7 +61,7 @@ declare class VideoStreamPlayer extends Control {
   /** Returns the video stream's name, or `"<No Stream>"` if no video stream is assigned. */
   get_stream_name(): string;
   /** Returns the current frame as a {@link Texture2D}. */
-  get_video_texture(): Texture2D;
+  get_video_texture(): Texture2D | null;
   /**
    * Returns `true` if the video is playing.
    * **Note:** The video is still considered playing if paused during playback.

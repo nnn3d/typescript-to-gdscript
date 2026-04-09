@@ -36,7 +36,7 @@ declare class AnimatedTexture extends Texture2D {
   /** Returns the given `frame`'s duration, in seconds. */
   get_frame_duration(frame: int): float;
   /** Returns the given frame's {@link Texture2D}. */
-  get_frame_texture(frame: int): Texture2D;
+  get_frame_texture(frame: int): Texture2D | null;
   /**
    * Sets the duration of any given `frame`. The final duration is affected by the {@link speed_scale}. If set to `0`, the frame is skipped during playback.
    */

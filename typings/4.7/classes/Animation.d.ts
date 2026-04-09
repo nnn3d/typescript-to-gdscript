@@ -53,7 +53,7 @@ declare class Animation extends Resource {
   /**
    * Returns the audio stream of the key identified by `key_idx`. The `track_idx` must be the index of an Audio Track.
    */
-  audio_track_get_key_stream(track_idx: int, key_idx: int): Resource;
+  audio_track_get_key_stream(track_idx: int, key_idx: int): Resource | null;
   /**
    * Inserts an Audio Track key at the given `time` in seconds. The `track_idx` must be the index of an Audio Track.
    * `stream` is the {@link AudioStream} resource to play. `start_offset` is the number of seconds cut off at the beginning of the audio stream, while `end_offset` is at the ending.

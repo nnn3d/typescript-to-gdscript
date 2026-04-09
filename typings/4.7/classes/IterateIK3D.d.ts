@@ -31,7 +31,7 @@ declare class IterateIK3D extends ChainIK3D {
   get_min_distance(): float;
 
   /** Returns the joint limitation at `joint` in the bone chain's joint list. */
-  get_joint_limitation(index: int, joint: int): JointLimitation3D;
+  get_joint_limitation(index: int, joint: int): JointLimitation3D | null;
   /** Returns the joint limitation right axis at `joint` in the bone chain's joint list. */
   get_joint_limitation_right_axis(index: int, joint: int): int;
   /**

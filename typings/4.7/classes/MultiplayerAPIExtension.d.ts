@@ -4,7 +4,7 @@
 /** Base class used for extending the {@link MultiplayerAPI}. */
 declare class MultiplayerAPIExtension extends MultiplayerAPI {
   /** Called when the {@link MultiplayerAPI.multiplayer_peer} is retrieved. */
-  _get_multiplayer_peer(): MultiplayerPeer;
+  _get_multiplayer_peer(): MultiplayerPeer | null;
   /** Callback for {@link MultiplayerAPI.get_peers}. */
   _get_peer_ids(): PackedInt32Array;
   /** Callback for {@link MultiplayerAPI.get_remote_sender_id}. */

@@ -119,7 +119,7 @@ declare class CharacterBody2D extends PhysicsBody2D {
   /**
    * Returns a {@link KinematicCollision2D} if a collision occurred. The returned value contains information about the latest collision that occurred during the last call to {@link move_and_slide}. Returns `null` if no collision occurred. See also {@link get_slide_collision}.
    */
-  get_last_slide_collision(): KinematicCollision2D;
+  get_last_slide_collision(): KinematicCollision2D | null;
   /**
    * Returns the linear velocity of the platform at the last collision point. Only valid after calling {@link move_and_slide}.
    */
@@ -134,7 +134,7 @@ declare class CharacterBody2D extends PhysicsBody2D {
    * Returns a {@link KinematicCollision2D}, which contains information about a collision that occurred during the last call to {@link move_and_slide}. Since the body can collide several times in a single call to {@link move_and_slide}, you must specify the index of the collision in the range 0 to ({@link get_slide_collision_count} - 1). See also {@link get_last_slide_collision}.
    * **Example:** Iterate through the collisions with a `for` loop:
    */
-  get_slide_collision(slide_idx: int): KinematicCollision2D;
+  get_slide_collision(slide_idx: int): KinematicCollision2D | null;
   /**
    * Returns the number of times the body collided and changed direction during the last call to {@link move_and_slide}.
    */

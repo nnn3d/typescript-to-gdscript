@@ -12,7 +12,7 @@ declare class Theme extends Resource {
    * The default font of this theme resource. Used as the default value when trying to fetch a font resource that doesn't exist in this theme or is in invalid state. If the default font is also missing or invalid, the engine fallback value is used (see {@link ThemeDB.fallback_font}).
    * Use {@link has_default_font} to check if this value is valid.
    */
-  default_font: Font;
+  default_font: Font | null;
   /**
    * The default font size of this theme resource. Used as the default value when trying to fetch a font size value that doesn't exist in this theme or is in invalid state. If the default font size is also missing or invalid, the engine fallback value is used (see {@link ThemeDB.fallback_font_size}).
    * Values below `1` are invalid and can be used to unset the property. Use {@link has_default_font_size} to check if this value is valid.
@@ -20,8 +20,8 @@ declare class Theme extends Resource {
   default_font_size: int;
   set_default_base_scale(value: float): void;
   get_default_base_scale(): float;
-  set_default_font(value: Font): void;
-  get_default_font(): Font;
+  set_default_font(value: Font | null): void;
+  get_default_font(): Font | null;
   set_default_font_size(value: int): void;
   get_default_font_size(): int;
 
@@ -101,7 +101,7 @@ declare class Theme extends Resource {
    * Returns the default theme font if the property doesn't exist and the default theme font is set up (see {@link default_font}). Use {@link has_font} to check for existence of the property and {@link has_default_font} to check for existence of the default theme font.
    * Returns the engine fallback font value, if neither exist (see {@link ThemeDB.fallback_font}).
    */
-  get_font(name: string, theme_type: string): Font;
+  get_font(name: string, theme_type: string): Font | null;
   /**
    * Returns a list of names for {@link Font} properties defined with `theme_type`. Use {@link get_font_type_list} to get a list of possible theme type names.
    */
@@ -128,7 +128,7 @@ declare class Theme extends Resource {
    * Returns the icon property defined by `name` and `theme_type`, if it exists.
    * Returns the engine fallback icon value if the property doesn't exist (see {@link ThemeDB.fallback_icon}). Use {@link has_icon} to check for existence.
    */
-  get_icon(name: string, theme_type: string): Texture2D;
+  get_icon(name: string, theme_type: string): Texture2D | null;
   /**
    * Returns a list of names for icon properties defined with `theme_type`. Use {@link get_icon_type_list} to get a list of possible theme type names.
    */
@@ -141,7 +141,7 @@ declare class Theme extends Resource {
    * Returns the {@link StyleBox} property defined by `name` and `theme_type`, if it exists.
    * Returns the engine fallback stylebox value if the property doesn't exist (see {@link ThemeDB.fallback_stylebox}). Use {@link has_stylebox} to check for existence.
    */
-  get_stylebox(name: string, theme_type: string): StyleBox;
+  get_stylebox(name: string, theme_type: string): StyleBox | null;
   /**
    * Returns a list of names for {@link StyleBox} properties defined with `theme_type`. Use {@link get_stylebox_type_list} to get a list of possible theme type names.
    */

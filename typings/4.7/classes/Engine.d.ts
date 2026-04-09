@@ -112,7 +112,7 @@ declare interface Engine extends GodotObject {
    * Returns the instance of the {@link MainLoop}. This is usually the main {@link SceneTree} and is the same as {@link Node.get_tree}.
    * **Note:** The type instantiated as the main loop can changed with {@link ProjectSettings.application/run/main_loop_type}.
    */
-  get_main_loop(): MainLoop;
+  get_main_loop(): MainLoop | null;
   /**
    * Returns the total number of frames passed since the engine started. This number is increased every **physics frame**. See also {@link get_process_frames}.
    * This method can be used to run expensive logic less often without relying on a {@link Timer}:
@@ -128,14 +128,14 @@ declare interface Engine extends GodotObject {
    */
   get_process_frames(): int;
   /** Returns an instance of a {@link ScriptLanguage} with the given `index`. */
-  get_script_language(index: int): ScriptLanguage;
+  get_script_language(index: int): ScriptLanguage | null;
   /** Returns the number of available script languages. Use with {@link get_script_language}. */
   get_script_language_count(): int;
   /**
    * Returns the global singleton with the given `name`, or `null` if it does not exist. Often used for plugins. See also {@link has_singleton} and {@link get_singleton_list}.
    * **Note:** Global singletons are not the same as autoloaded nodes, which are configurable in the project settings.
    */
-  get_singleton(name: string): GodotObject;
+  get_singleton(name: string): GodotObject | null;
   /** Returns a list of names of all available global singletons. See also {@link get_singleton}. */
   get_singleton_list(): PackedStringArray;
   /**

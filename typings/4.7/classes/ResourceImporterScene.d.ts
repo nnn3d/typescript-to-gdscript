@@ -90,7 +90,7 @@ declare class ResourceImporterScene extends ResourceImporter {
   /**
    * If set to a valid script, attaches the script to the root node of the imported scene. If the type of the root node is not compatible with the script, the root node will be replaced with a type that is compatible with the script. This setting can also be used on other non-mesh nodes in the scene to attach scripts to them.
    */
-  'nodes/root_script': Script;
+  'nodes/root_script': Script | null;
   /**
    * Override for the root node type. If empty, the root node will use what the scene specifies, or {@link Node3D} if the scene does not specify a root type. Using a node type that inherits from {@link Node3D} is recommended. Otherwise, you'll lose the ability to position the node directly in the 3D editor.
    */

@@ -140,7 +140,7 @@ declare class Window extends Viewport {
    * The {@link Theme} resource this node and all its {@link Control} and {@link Window} children use. If a child node has its own {@link Theme} resource set, theme items are merged with child's definitions having higher priority.
    * **Note:** {@link Window} styles will have no effect unless the window is embedded.
    */
-  theme: Theme;
+  theme: Theme | null;
   /**
    * The name of a theme type variation used by this {@link Window} to look up its own theme items. See {@link Control.theme_type_variation} for more details.
    */
@@ -217,8 +217,8 @@ declare class Window extends Viewport {
   get_position(): Vector2i;
   set_size(value: Vector2i): void;
   get_size(): Vector2i;
-  set_theme(value: Theme): void;
-  get_theme(): Theme;
+  set_theme(value: Theme | null): void;
+  get_theme(): Theme | null;
   set_theme_type_variation(value: string): void;
   get_theme_type_variation(): string;
   set_title(value: string): void;
@@ -284,7 +284,7 @@ declare class Window extends Viewport {
   /** Returns `true` if the `flag` is set. */
   get_flag(flag: int): boolean;
   /** Returns the focused window. */
-  static get_focused_window(): Window;
+  static get_focused_window(): Window | null;
   /** Returns layout direction and text writing direction. */
   get_layout_direction(): int;
   /**
@@ -322,7 +322,7 @@ declare class Window extends Viewport {
    * Returns the default font from the first matching {@link Theme} in the tree if that {@link Theme} has a valid {@link Theme.default_font} value.
    * See {@link Control.get_theme_color} for details.
    */
-  get_theme_default_font(): Font;
+  get_theme_default_font(): Font | null;
   /**
    * Returns the default font size value from the first matching {@link Theme} in the tree if that {@link Theme} has a valid {@link Theme.default_font_size} value.
    * See {@link Control.get_theme_color} for details.
@@ -332,7 +332,7 @@ declare class Window extends Viewport {
    * Returns a {@link Font} from the first matching {@link Theme} in the tree if that {@link Theme} has a font item with the specified `name` and `theme_type`.
    * See {@link Control.get_theme_color} for details.
    */
-  get_theme_font(name: string, theme_type?: string): Font;
+  get_theme_font(name: string, theme_type?: string): Font | null;
   /**
    * Returns a font size from the first matching {@link Theme} in the tree if that {@link Theme} has a font size item with the specified `name` and `theme_type`.
    * See {@link Control.get_theme_color} for details.
@@ -342,12 +342,12 @@ declare class Window extends Viewport {
    * Returns an icon from the first matching {@link Theme} in the tree if that {@link Theme} has an icon item with the specified `name` and `theme_type`.
    * See {@link Control.get_theme_color} for details.
    */
-  get_theme_icon(name: string, theme_type?: string): Texture2D;
+  get_theme_icon(name: string, theme_type?: string): Texture2D | null;
   /**
    * Returns a {@link StyleBox} from the first matching {@link Theme} in the tree if that {@link Theme} has a stylebox item with the specified `name` and `theme_type`.
    * See {@link Control.get_theme_color} for details.
    */
-  get_theme_stylebox(name: string, theme_type?: string): StyleBox;
+  get_theme_stylebox(name: string, theme_type?: string): StyleBox | null;
   /** Returns the ID of the window. */
   get_window_id(): int;
   /** Causes the window to grab focus, allowing it to receive user input. */

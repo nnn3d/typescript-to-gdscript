@@ -34,7 +34,7 @@ declare class DPITexture extends Texture2D {
   /**
    * Creates a new {@link DPITexture} and initializes it by allocating and setting the SVG data to `source`.
    */
-  static create_from_string(source: string, scale?: float, saturation?: float, color_map?: Dictionary): DPITexture;
+  static create_from_string(source: string, scale?: float, saturation?: float, color_map?: Dictionary): DPITexture | null;
   /**
    * Returns the {@link RID} of the texture rasterized to match the oversampling of the currently drawn canvas item.
    */

@@ -17,7 +17,7 @@ declare class SpringArm3D extends Node3D {
    * The {@link Shape3D} to use for the SpringArm3D.
    * When the shape is set, the SpringArm3D will cast the {@link Shape3D} on its z axis instead of performing a ray cast.
    */
-  shape: Shape3D;
+  shape: Shape3D | null;
   /**
    * The maximum extent of the SpringArm3D. This is used as a length for both the ray and the shape cast used internally to calculate the desired position of the SpringArm3D's child nodes.
    * To know more about how to perform a shape cast or a ray cast, please consult the {@link PhysicsDirectSpaceState3D} documentation.
@@ -27,8 +27,8 @@ declare class SpringArm3D extends Node3D {
   get_collision_mask(): int;
   set_margin(value: float): void;
   get_margin(): float;
-  set_shape(value: Shape3D): void;
-  get_shape(): Shape3D;
+  set_shape(value: Shape3D | null): void;
+  get_shape(): Shape3D | null;
   set_length(value: float): void;
   get_length(): float;
 

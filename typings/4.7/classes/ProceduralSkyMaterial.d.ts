@@ -16,7 +16,7 @@ declare class ProceduralSkyMaterial extends Material {
   /**
    * The sky cover texture to use. This texture must use an equirectangular projection (similar to {@link PanoramaSkyMaterial}). The texture's colors will be *added* to the existing sky color, and will be multiplied by {@link sky_energy_multiplier} and {@link sky_cover_modulate}. This is mainly suited to displaying stars at night, but it can also be used to display clouds at day or night (with a non-physically-accurate look).
    */
-  sky_cover: Texture2D;
+  sky_cover: Texture2D | null;
   /**
    * The tint to apply to the {@link sky_cover} texture. This can be used to change the sky cover's colors or opacity independently of the sky energy, which is useful for day/night or weather transitions. Only effective if a texture is defined in {@link sky_cover}.
    */
@@ -47,8 +47,8 @@ declare class ProceduralSkyMaterial extends Material {
   get_ground_energy_multiplier(): float;
   set_ground_horizon_color(value: Color): void;
   get_ground_horizon_color(): Color;
-  set_sky_cover(value: Texture2D): void;
-  get_sky_cover(): Texture2D;
+  set_sky_cover(value: Texture2D | null): void;
+  get_sky_cover(): Texture2D | null;
   set_sky_cover_modulate(value: Color): void;
   get_sky_cover_modulate(): Color;
   set_sky_curve(value: float): void;

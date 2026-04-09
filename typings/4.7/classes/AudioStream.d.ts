@@ -35,7 +35,7 @@ declare class AudioStream extends Resource {
   /**
    * Override this method to customize the returned value of {@link instantiate_playback}. Should return a new {@link AudioStreamPlayback} created when the stream is played (such as by an {@link AudioStreamPlayer}).
    */
-  _instantiate_playback(): AudioStreamPlayback;
+  _instantiate_playback(): AudioStreamPlayback | null;
   /**
    * Override this method to customize the returned value of {@link is_monophonic}. Should return `true` if this audio stream only supports one channel.
    */
@@ -45,7 +45,7 @@ declare class AudioStream extends Resource {
    */
   can_be_sampled(): boolean;
   /** Generates an {@link AudioSample} based on the current stream. */
-  generate_sample(): AudioSample;
+  generate_sample(): AudioSample | null;
   /**
    * Returns the length of the audio stream in seconds. If this stream is an {@link AudioStreamRandomizer}, returns the length of the last played stream. If this stream has an indefinite length (such as for {@link AudioStreamGenerator} and {@link AudioStreamMicrophone}), returns `0.0`.
    */
@@ -53,7 +53,7 @@ declare class AudioStream extends Resource {
   /**
    * Returns a newly created {@link AudioStreamPlayback} intended to play this audio stream. Useful for when you want to extend {@link _instantiate_playback} but call {@link instantiate_playback} from an internally held AudioStream subresource. An example of this can be found in the source code for `AudioStreamRandomPitch::instantiate_playback`.
    */
-  instantiate_playback(): AudioStreamPlayback;
+  instantiate_playback(): AudioStreamPlayback | null;
   /** Returns `true` if the stream is a collection of other streams, `false` otherwise. */
   is_meta_stream(): boolean;
   /**

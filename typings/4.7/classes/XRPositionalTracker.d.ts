@@ -19,7 +19,7 @@ declare class XRPositionalTracker extends XRTracker {
    */
   get_input(name: string): unknown;
   /** Returns the current {@link XRPose} state object for the bound `name` pose. */
-  get_pose(name: string): XRPose;
+  get_pose(name: string): XRPose | null;
   /** Returns `true` if the tracker is available and is currently tracking the bound `name` pose. */
   has_pose(name: string): boolean;
   /**

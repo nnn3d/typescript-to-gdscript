@@ -67,7 +67,7 @@ declare class EditorPlugin extends Node {
    * For main screen plugins, this appears at the top of the screen, to the right of the "2D", "3D", "Script", "Game", and "AssetLib" buttons.
    * Ideally, the plugin icon should be white with a transparent background and 16×16 pixels in size.
    */
-  _get_plugin_icon(): Texture2D;
+  _get_plugin_icon(): Texture2D | null;
   /**
    * Override this method in your plugin to provide the name of the plugin when displayed in the Godot editor.
    * For main screen plugins, this appears at the top of the screen, to the right of the "2D", "3D", "Script", "Game", and "AssetLib" buttons.

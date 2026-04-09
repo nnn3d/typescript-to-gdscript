@@ -9,7 +9,7 @@ declare class BaseButton extends Control {
    * The {@link ButtonGroup} associated with the button. Not to be confused with node groups.
    * **Note:** The button will be configured as a radio button if a {@link ButtonGroup} is assigned to it.
    */
-  button_group: ButtonGroup;
+  button_group: ButtonGroup | null;
   /**
    * Binary mask to choose which mouse buttons this button will respond to.
    * To allow both left-click and right-click, use `MOUSE_BUTTON_MASK_LEFT | MOUSE_BUTTON_MASK_RIGHT`.
@@ -32,7 +32,7 @@ declare class BaseButton extends Control {
    */
   focus_mode: int;
   /** {@link Shortcut} associated to the button. */
-  shortcut: Shortcut;
+  shortcut: Shortcut | null;
   /**
    * If `true`, the button will highlight for a short amount of time when its shortcut is activated. If `false` and {@link toggle_mode} is `false`, the shortcut will activate without any visual feedback.
    */
@@ -48,16 +48,16 @@ declare class BaseButton extends Control {
   toggle_mode: boolean;
   set_action_mode(value: int): void;
   get_action_mode(): int;
-  set_button_group(value: ButtonGroup): void;
-  get_button_group(): ButtonGroup;
+  set_button_group(value: ButtonGroup | null): void;
+  get_button_group(): ButtonGroup | null;
   set_button_mask(value: int): void;
   get_button_mask(): int;
   set_pressed(value: boolean): void;
   is_pressed(): boolean;
   set_disabled(value: boolean): void;
   is_disabled(): boolean;
-  set_shortcut(value: Shortcut): void;
-  get_shortcut(): Shortcut;
+  set_shortcut(value: Shortcut | null): void;
+  get_shortcut(): Shortcut | null;
   set_shortcut_feedback(value: boolean): void;
   is_shortcut_feedback(): boolean;
   set_shortcut_in_tooltip(value: boolean): void;

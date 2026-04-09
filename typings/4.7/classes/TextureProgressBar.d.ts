@@ -40,18 +40,18 @@ declare class TextureProgressBar extends Range {
   /**
    * {@link Texture2D} that draws over the progress bar. Use it to add highlights or an upper-frame that hides part of {@link texture_progress}.
    */
-  texture_over: Texture2D;
+  texture_over: Texture2D | null;
   /**
    * {@link Texture2D} that clips based on the node's `value` and {@link fill_mode}. As `value` increased, the texture fills up. It shows entirely when `value` reaches `max_value`. It doesn't show at all if `value` is equal to `min_value`.
    * The `value` property comes from {@link Range}. See {@link Range.value}, {@link Range.min_value}, {@link Range.max_value}.
    */
-  texture_progress: Texture2D;
+  texture_progress: Texture2D | null;
   /**
    * The offset of {@link texture_progress}. Useful for {@link texture_over} and {@link texture_under} with fancy borders, to avoid transparent margins in your progress texture.
    */
   texture_progress_offset: Vector2;
   /** {@link Texture2D} that draws under the progress bar. The bar's background. */
-  texture_under: Texture2D;
+  texture_under: Texture2D | null;
   /**
    * Multiplies the color of the bar's {@link texture_over} texture. The effect is similar to {@link CanvasItem.modulate}, except it only affects this specific texture instead of the entire node.
    */
@@ -68,14 +68,14 @@ declare class TextureProgressBar extends Range {
   get_fill_degrees(): float;
   set_radial_initial_angle(value: float): void;
   get_radial_initial_angle(): float;
-  set_over_texture(value: Texture2D): void;
-  get_over_texture(): Texture2D;
-  set_progress_texture(value: Texture2D): void;
-  get_progress_texture(): Texture2D;
+  set_over_texture(value: Texture2D | null): void;
+  get_over_texture(): Texture2D | null;
+  set_progress_texture(value: Texture2D | null): void;
+  get_progress_texture(): Texture2D | null;
   set_texture_progress_offset(value: Vector2): void;
   get_texture_progress_offset(): Vector2;
-  set_under_texture(value: Texture2D): void;
-  get_under_texture(): Texture2D;
+  set_under_texture(value: Texture2D | null): void;
+  get_under_texture(): Texture2D | null;
   set_tint_over(value: Color): void;
   get_tint_over(): Color;
   set_tint_progress(value: Color): void;

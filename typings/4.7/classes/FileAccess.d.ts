@@ -23,7 +23,7 @@ declare class FileAccess extends RefCounted {
    * If `keep` is `true`, the file is not deleted when the returned {@link FileAccess} is freed.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static create_temp(mode_flags: int, prefix?: string, extension?: string, keep?: boolean): FileAccess;
+  static create_temp(mode_flags: int, prefix?: string, extension?: string, keep?: boolean): FileAccess | null;
   /**
    * Returns `true` if the file cursor has already read past the end of the file.
    * **Note:** `eof_reached() == false` cannot be used to check whether there is more data available. To loop while there is more data available, use:
@@ -200,24 +200,24 @@ declare class FileAccess extends RefCounted {
    * Creates a new {@link FileAccess} object and opens the file for writing or reading, depending on the flags.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static open(path: string, flags: int): FileAccess;
+  static open(path: string, flags: int): FileAccess | null;
   /**
    * Creates a new {@link FileAccess} object and opens a compressed file for reading or writing.
    * **Note:** {@link open_compressed} can only read files that were saved by Godot, not third-party compression formats. See GitHub issue #28999 (https://github.com/godotengine/godot/issues/28999) for a workaround.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static open_compressed(path: string, mode_flags: int, compression_mode: int): FileAccess;
+  static open_compressed(path: string, mode_flags: int, compression_mode: int): FileAccess | null;
   /**
    * Creates a new {@link FileAccess} object and opens an encrypted file in write or read mode. You need to pass a binary key to encrypt/decrypt it.
    * **Note:** The provided key must be 32 bytes long.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static open_encrypted(path: string, mode_flags: int, key: PackedByteArray, iv?: PackedByteArray): FileAccess;
+  static open_encrypted(path: string, mode_flags: int, key: PackedByteArray, iv?: PackedByteArray): FileAccess | null;
   /**
    * Creates a new {@link FileAccess} object and opens an encrypted file in write or read mode. You need to pass a password to encrypt/decrypt it.
    * Returns `null` if opening the file failed. You can use {@link get_open_error} to check the error that occurred.
    */
-  static open_encrypted_with_pass(path: string, mode_flags: int, pass: string): FileAccess;
+  static open_encrypted_with_pass(path: string, mode_flags: int, pass: string): FileAccess | null;
   /**
    * Removes file extended attribute with name `attribute_name`.
    * **Note:** This method is implemented on Linux, macOS, and Windows.

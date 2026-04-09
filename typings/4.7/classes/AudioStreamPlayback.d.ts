@@ -47,7 +47,7 @@ declare class AudioStreamPlayback extends RefCounted {
   /**
    * Returns the {@link AudioSamplePlayback} associated with this {@link AudioStreamPlayback} for playing back the audio sample of this stream.
    */
-  get_sample_playback(): AudioSamplePlayback;
+  get_sample_playback(): AudioSamplePlayback | null;
   /** Returns `true` if the stream is playing. */
   is_playing(): boolean;
   /**

@@ -151,12 +151,12 @@ declare class Node3D extends Node {
    * Returns the parent {@link Node3D} that directly affects this node's {@link global_transform}. Returns `null` if no parent exists, the parent is not a {@link Node3D}, or {@link top_level} is `true`.
    * **Note:** This method is not always equivalent to {@link Node.get_parent}, which does not take {@link top_level} into account.
    */
-  get_parent_node_3d(): Node3D;
+  get_parent_node_3d(): Node3D | null;
   /**
    * Returns the {@link World3D} this node is registered to.
    * Usually, this is the same as the world used by this node's viewport (see {@link Node.get_viewport} and {@link Viewport.find_world_3d}).
    */
-  get_world_3d(): World3D;
+  get_world_3d(): World3D | null;
   /**
    * Rotates this node's {@link global_basis} around the global `axis` by the given `angle`, in radians. This operation is calculated in global space (relative to the world) and preserves the {@link global_position}.
    */

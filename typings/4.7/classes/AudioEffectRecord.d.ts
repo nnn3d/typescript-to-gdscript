@@ -9,7 +9,7 @@ declare class AudioEffectRecord extends AudioEffect {
   get_format(): int;
 
   /** Returns the recorded sample. */
-  get_recording(): AudioStreamWAV;
+  get_recording(): AudioStreamWAV | null;
   /** Returns whether the recording is active or not. */
   is_recording_active(): boolean;
   /**

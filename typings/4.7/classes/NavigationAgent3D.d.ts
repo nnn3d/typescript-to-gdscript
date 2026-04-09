@@ -209,7 +209,7 @@ declare class NavigationAgent3D extends Node {
   /** Returns which index the agent is currently on in the navigation path's {@link PackedVector3Array}. */
   get_current_navigation_path_index(): int;
   /** Returns the path query result for the path the agent is currently following. */
-  get_current_navigation_result(): NavigationPathQueryResult3D;
+  get_current_navigation_result(): NavigationPathQueryResult3D | null;
   /**
    * Returns the reachable final position of the current navigation path in global coordinates. This position can change if the agent needs to update the navigation path which makes the agent emit the {@link path_changed} signal.
    */

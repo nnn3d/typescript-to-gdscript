@@ -10,7 +10,7 @@ declare class GradientTexture2D extends Texture2D {
   /** The final offset used to fill the texture specified in UV coordinates. */
   fill_to: Vector2;
   /** The {@link Gradient} used to fill the texture. */
-  gradient: Gradient;
+  gradient: Gradient | null;
   /**
    * The number of vertical color samples that will be obtained from the {@link Gradient}, which also represents the texture's height.
    */
@@ -32,8 +32,8 @@ declare class GradientTexture2D extends Texture2D {
   get_fill_from(): Vector2;
   set_fill_to(value: Vector2): void;
   get_fill_to(): Vector2;
-  set_gradient(value: Gradient): void;
-  get_gradient(): Gradient;
+  set_gradient(value: Gradient | null): void;
+  get_gradient(): Gradient | null;
   set_height(value: int): void;
   set_repeat(value: int): void;
   get_repeat(): int;

@@ -53,13 +53,13 @@ declare class AudioStreamWAV extends AudioStream {
    * Creates a new {@link AudioStreamWAV} instance from the given buffer. The buffer must contain WAV data.
    * The keys and values of `options` match the properties of {@link ResourceImporterWAV}. The usage of `options` is identical to {@link AudioStreamWAV.load_from_file}.
    */
-  static load_from_buffer(stream_data: PackedByteArray, options?: Dictionary): AudioStreamWAV;
+  static load_from_buffer(stream_data: PackedByteArray, options?: Dictionary): AudioStreamWAV | null;
   /**
    * Creates a new {@link AudioStreamWAV} instance from the given file path. The file must be in WAV format.
    * The keys and values of `options` match the properties of {@link ResourceImporterWAV}.
    * **Example:** Load the first file dropped as a WAV and play it:
    */
-  static load_from_file(path: string, options?: Dictionary): AudioStreamWAV;
+  static load_from_file(path: string, options?: Dictionary): AudioStreamWAV | null;
   /**
    * Saves the AudioStreamWAV as a WAV file to `path`. Samples with IMA ADPCM or Quite OK Audio formats can't be saved.
    * **Note:** A `.wav` extension is automatically appended to `path` if it is missing.

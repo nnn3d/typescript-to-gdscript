@@ -6,7 +6,7 @@ declare class AtlasTexture extends Texture2D {
   /**
    * The texture that contains the atlas. Can be any type inheriting from {@link Texture2D}, including another {@link AtlasTexture}.
    */
-  atlas: Texture2D;
+  atlas: Texture2D | null;
   /**
    * If `true`, the area outside of the {@link region} is clipped to avoid bleeding of the surrounding texture pixels.
    */
@@ -21,8 +21,8 @@ declare class AtlasTexture extends Texture2D {
    */
   region: Rect2;
   resource_local_to_scene: boolean;
-  set_atlas(value: Texture2D): void;
-  get_atlas(): Texture2D;
+  set_atlas(value: Texture2D | null): void;
+  get_atlas(): Texture2D | null;
   set_filter_clip(value: boolean): void;
   has_filter_clip(): boolean;
   set_margin(value: Rect2): void;

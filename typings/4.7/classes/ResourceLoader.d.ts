@@ -18,7 +18,7 @@ declare interface ResourceLoader extends GodotObject {
    * Returns the cached resource reference for the given `path`.
    * **Note:** If the resource is not cached, the returned {@link Resource} will be invalid.
    */
-  get_cached_ref(path: string): Resource;
+  get_cached_ref(path: string): Resource | null;
   /**
    * Returns the dependencies for the resource at the given `path`.
    * Each dependency is a string that can be divided into sections by `::`. There can be either one section or three sections, with the second section always being empty. When there is one section, it contains the file path. When there are three sections, the first section contains the UID and the third section contains the fallback path.
@@ -49,12 +49,12 @@ declare interface ResourceLoader extends GodotObject {
    * **Note:** If {@link ProjectSettings.editor/export/convert_text_resources_to_binary} is `true`, {@link @GDScript.load} will not be able to read converted files in an exported project. If you rely on run-time loading of files present within the PCK, set {@link ProjectSettings.editor/export/convert_text_resources_to_binary} to `false`.
    * **Note:** Relative paths will be prefixed with `"res://"` before loading, to avoid unexpected results make sure your paths are absolute.
    */
-  load(path: string, type_hint?: string, cache_mode?: int): Resource;
+  load(path: string, type_hint?: string, cache_mode?: int): Resource | null;
   /**
    * Returns the resource loaded by {@link load_threaded_request}.
    * If this is called before the loading thread is done (i.e. {@link load_threaded_get_status} is not {@link THREAD_LOAD_LOADED}), the calling thread will be blocked until the resource has finished loading. However, it's recommended to use {@link load_threaded_get_status} to known when the load has actually completed.
    */
-  load_threaded_get(path: string): Resource;
+  load_threaded_get(path: string): Resource | null;
   /**
    * Returns the status of a threaded loading operation started with {@link load_threaded_request} for the resource at `path`.
    * An array variable can optionally be passed via `progress`, and will return a one-element array containing the ratio of completion of the threaded loading (between `0.0` and `1.0`).

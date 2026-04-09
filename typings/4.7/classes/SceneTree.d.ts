@@ -12,7 +12,7 @@ declare class SceneTree extends MainLoop {
    * The root node of the currently loaded main scene, usually as a direct child of {@link root}. See also {@link change_scene_to_file}, {@link change_scene_to_packed}, and {@link reload_current_scene}.
    * **Warning:** Setting this property directly may not work as expected, as it does *not* add or remove any nodes from this tree.
    */
-  current_scene: Node;
+  current_scene: Node | null;
   /**
    * If `true`, collision shapes will be visible when running the game from the editor for debugging purposes.
    * **Note:** This property is not designed to be changed at run-time. Changing the value of {@link debug_collisions_hint} while the project is running will not have the desired effect.
@@ -32,7 +32,7 @@ declare class SceneTree extends MainLoop {
    * The root of the scene currently being edited in the editor. This is usually a direct child of {@link root}.
    * **Note:** This property does nothing in release builds.
    */
-  edited_scene_root: Node;
+  edited_scene_root: Node | null;
   /**
    * If `true` (default value), enables automatic polling of the {@link MultiplayerAPI} for this SceneTree during {@link process_frame}.
    * If `false`, you need to manually call {@link MultiplayerAPI.poll} to process network packets and deliver RPCs. This allows running RPCs in a different loop (e.g. physics, thread, specific time step) and for manual {@link Mutex} protection when accessing the {@link MultiplayerAPI} from threads.
@@ -62,16 +62,16 @@ declare class SceneTree extends MainLoop {
   root: Window;
   set_auto_accept_quit(value: boolean): void;
   is_auto_accept_quit(): boolean;
-  set_current_scene(value: Node): void;
-  get_current_scene(): Node;
+  set_current_scene(value: Node | null): void;
+  get_current_scene(): Node | null;
   set_debug_collisions_hint(value: boolean): void;
   is_debugging_collisions_hint(): boolean;
   set_debug_navigation_hint(value: boolean): void;
   is_debugging_navigation_hint(): boolean;
   set_debug_paths_hint(value: boolean): void;
   is_debugging_paths_hint(): boolean;
-  set_edited_scene_root(value: Node): void;
-  get_edited_scene_root(): Node;
+  set_edited_scene_root(value: Node | null): void;
+  get_edited_scene_root(): Node | null;
   set_multiplayer_poll_enabled(value: boolean): void;
   is_multiplayer_poll_enabled(): boolean;
   set_pause(value: boolean): void;

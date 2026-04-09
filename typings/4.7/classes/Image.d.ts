@@ -128,7 +128,7 @@ declare class Image extends Resource {
    */
   get_pixelv(point: Vector2i): Color;
   /** Returns a new {@link Image} that is a copy of this {@link Image}'s area specified with `region`. */
-  get_region(region: Rect2i): Image;
+  get_region(region: Rect2i): Image | null;
   /** Returns the image's size (width and height). */
   get_size(): Vector2i;
   /**
@@ -171,7 +171,7 @@ declare class Image extends Resource {
   /** Loads an image from the binary contents of an OpenEXR file. */
   load_exr_from_buffer(buffer: PackedByteArray): int;
   /** Creates a new {@link Image} and loads data from the specified file. */
-  static load_from_file(path: string): Image;
+  static load_from_file(path: string): Image | null;
   /** Loads an image from the binary contents of a JPEG file. */
   load_jpg_from_buffer(buffer: PackedByteArray): int;
   /**
@@ -220,7 +220,7 @@ declare class Image extends Resource {
   /**
    * Converts a standard linear RGBE (Red Green Blue Exponent) image to an image that uses nonlinear sRGB encoding.
    */
-  rgbe_to_srgb(): Image;
+  rgbe_to_srgb(): Image | null;
   /**
    * Rotates the image in the specified `direction` by `90` degrees. The width and height of the image must be greater than `1`. If the width and height are not equal, the image will be resized.
    */

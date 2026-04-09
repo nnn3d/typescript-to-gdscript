@@ -61,7 +61,7 @@ declare class SkeletonProfile extends Resource {
   /**
    * Returns the texture of the group at `group_idx` that will be the drawing group background image in the {@link BoneMap} editor.
    */
-  get_texture(group_idx: int): Texture2D;
+  get_texture(group_idx: int): Texture2D | null;
   /**
    * Returns whether the bone at `bone_idx` is required for retargeting.
    * This value is used by the bone map editor. If this method returns `true`, and no bone is assigned, the handle color will be red on the bone map editor.

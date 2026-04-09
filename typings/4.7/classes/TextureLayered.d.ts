@@ -10,7 +10,7 @@ declare class TextureLayered extends Texture {
   /** Called when the {@link TextureLayered}'s height is queried. */
   _get_height(): int;
   /** Called when the data for a layer in the {@link TextureLayered} is queried. */
-  _get_layer_data(layer_index: int): Image;
+  _get_layer_data(layer_index: int): Image | null;
   /** Called when the layers' type in the {@link TextureLayered} is queried. */
   _get_layered_type(): int;
   /** Called when the number of layers in the {@link TextureLayered} is queried. */
@@ -24,7 +24,7 @@ declare class TextureLayered extends Texture {
   /** Returns the height of the texture in pixels. Height is typically represented by the Y axis. */
   get_height(): int;
   /** Returns an {@link Image} resource with the data from specified `layer`. */
-  get_layer_data(layer: int): Image;
+  get_layer_data(layer: int): Image | null;
   /**
    * Returns the {@link TextureLayered}'s type. The type determines how the data is accessed, with cubemaps having special types.
    */

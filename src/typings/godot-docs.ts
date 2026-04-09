@@ -222,7 +222,10 @@ function emitJsDoc(
   return result;
 }
 
-function emitMethodSignature(method: GodotMethodXml): string[] {
+function emitMethodSignature(
+  method: GodotMethodXml,
+  nonNullMembers?: Set<string>,
+): string[] {
   const lines: string[] = [];
 
   // JSDoc
@@ -241,12 +244,14 @@ function emitMethodSignature(method: GodotMethodXml): string[] {
   }
 
   const returnType = godotTypeToTs(method.returnType);
+  const nullable = isNullableGodotType(method.returnType) && !nonNullMembers?.has(method.name)
+    ? ' | null' : '';
   const staticPrefix = method.isStatic ? 'static ' : '';
   const methodName = needsQuoting(method.name)
     ? `'${method.name}'`
     : method.name;
   lines.push(
-    `  ${staticPrefix}${methodName}(${params.join(', ')}): ${returnType};`,
+    `  ${staticPrefix}${methodName}(${params.join(', ')}): ${returnType}${nullable};`,
   );
   return lines;
 }
@@ -324,35 +329,88 @@ const SKIP_CLASSES = new Set(['int', 'float', 'bool', 'Nil']);
  * Fundamental value types that are constructed as function calls in GDScript (not `new`).
  * These are emitted as interface + constructor function instead of `declare class`.
  */
-const VALUE_TYPES = new Set([
-  'Vector2',
-  'Vector2i',
-  'Vector3',
-  'Vector3i',
-  'Vector4',
-  'Vector4i',
-  'Color',
-  'Rect2',
-  'Rect2i',
-  'Transform2D',
-  'Transform3D',
-  'Basis',
-  'Quaternion',
-  'AABB',
-  'Plane',
-  'Projection',
-  'RID',
-  'PackedByteArray',
-  'PackedInt32Array',
-  'PackedInt64Array',
-  'PackedFloat32Array',
-  'PackedFloat64Array',
-  'PackedStringArray',
-  'PackedVector2Array',
-  'PackedVector3Array',
-  'PackedColorArray',
-  'PackedVector4Array',
+/**
+ * Derived set of Godot value/variant types — classes that have a copy constructor
+ * (a constructor with exactly one parameter of its own type).
+ * Populated by `generateGodotDocsTypings()` before any class generation.
+ */
+let valueTypes = new Set<string>();
+
+/**
+ * Derive value types from parsed XML class data.
+ * A class is a value type if it has a constructor with a single parameter of
+ * its own type (e.g. `Vector2(from: Vector2)`).
+ */
+function deriveValueTypes(classes: Map<string, GodotClassXml>): Set<string> {
+  const result = new Set<string>();
+  for (const [name, cls] of classes) {
+    if (name.startsWith('@')) continue;
+    // Skip types that godotTypeToTs maps to a different name (e.g. StringName→string,
+    // NodePath→string, bool→boolean) — they're handled as primitives, not value types.
+    if (godotTypeToTs(name) !== name) continue;
+    // Skip types handled as TS interfaces (Array, Dictionary, String, Callable)
+    if (INTERFACE_CLASSES.has(name)) continue;
+    const hasSelfCtor = cls.constructors.some(
+      (c) => c.parameters.length === 1 && c.parameters[0]!.type === name,
+    );
+    if (hasSelfCtor) result.add(name);
+  }
+  return result;
+}
+
+/**
+ * Per-class set of member names whose types should stay non-nullable even
+ * though they would normally be nullable reference types.
+ * Populated from `typings/_overrides/non-nullable.json` by `generateGodotDocsTypings()`.
+ */
+let nonNullableMembers = new Map<string, Set<string>>();
+
+/**
+ * Load `non-nullable.json` from the override directory.
+ * Returns a map of ClassName → Set of member names that should be non-nullable.
+ */
+function loadNonNullableOverrides(overrideDir: string): Map<string, Set<string>> {
+  const result = new Map<string, Set<string>>();
+  const filePath = join(overrideDir, 'non-nullable.json');
+  if (!existsSync(filePath)) return result;
+  const data: Record<string, string[]> = JSON.parse(readFileSync(filePath, 'utf-8'));
+  for (const [cls, members] of Object.entries(data)) {
+    result.set(cls, new Set(members));
+  }
+  return result;
+}
+
+/** TS type names that are always non-nullable (primitives, void, unknown). */
+const NON_NULLABLE_TS_TYPES = new Set([
+  'int', 'float', 'boolean', 'string', 'void', 'unknown', 'Dictionary',
 ]);
+
+/**
+ * Returns true when a Godot type should be made nullable (`T | null`) in
+ * generated declarations.  Reference types (Node, Resource, Material, etc.)
+ * are nullable; value/variant types, primitives, enums and arrays are not.
+ */
+function isNullableGodotType(gdType: string): boolean {
+  const cleaned = gdType
+    .replace(/[\s*]*\*+\s*$/, '')
+    .replace(/^const\s+/, '')
+    .trim();
+  // Empty / void / Nil / Variant
+  if (cleaned === '' || cleaned === 'Nil' || cleaned === 'Variant') return false;
+  // Derived value types (Vector2, Color, Packed*Array, etc.)
+  if (valueTypes.has(cleaned)) return false;
+  // Interface classes (Array, Dictionary, String, Callable)
+  if (INTERFACE_CLASSES.has(cleaned)) return false;
+  // Typed arrays / dictionaries — the container is never null
+  if (cleaned.endsWith('[]') || cleaned.startsWith('Array[') || cleaned.startsWith('Dictionary['))
+    return false;
+  // Enum references (Node.ProcessMode → int)
+  if (cleaned.includes('.')) return false;
+  // Check the mapped TS type for primitives (int, float, bool→boolean, String→string, etc.)
+  if (NON_NULLABLE_TS_TYPES.has(godotTypeToTs(cleaned))) return false;
+  // Everything else is a reference type → nullable
+  return true;
+}
 
 /**
  * GDScript classes emitted as TS interfaces (replacing standard TS built-in types).
@@ -482,6 +540,9 @@ function generateClassDeclaration(
   const extendsClause = extendsName ? ` extends ${extendsName}` : '';
   lines.push(`declare class ${className}${extendsClause} {`);
 
+  // Non-nullable member overrides for this class
+  const nonNullMembers = nonNullableMembers.get(cls.name) ?? new Set<string>();
+
   // Properties
   const methodNames = new Set(cls.methods.map((m) => m.name));
   // Collect all property names (own) to detect property/method conflicts in children
@@ -489,8 +550,9 @@ function generateClassDeclaration(
   for (const prop of cls.properties) {
     lines.push(...emitJsDoc(prop.description));
     const tsType = godotTypeToTs(prop.type);
+    const nullable = isNullableGodotType(prop.type) && !nonNullMembers.has(prop.name) ? ' | null' : '';
     const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
-    lines.push(`  ${propName}: ${tsType};`);
+    lines.push(`  ${propName}: ${tsType}${nullable};`);
   }
 
   // Property setter/getter methods (implicit methods from Godot properties).
@@ -498,13 +560,14 @@ function generateClassDeclaration(
   // or with a property name (TS doesn't allow property + method with same name).
   for (const prop of cls.properties) {
     const tsType = godotTypeToTs(prop.type);
+    const nullable = isNullableGodotType(prop.type) && !nonNullMembers.has(prop.name) ? ' | null' : '';
     if (
       prop.setter &&
       !methodNames.has(prop.setter) &&
       !propNames.has(prop.setter) &&
       !inheritedMethodNames?.has(prop.setter)
     ) {
-      lines.push(`  ${prop.setter}(value: ${tsType}): void;`);
+      lines.push(`  ${prop.setter}(value: ${tsType}${nullable}): void;`);
     }
     if (
       prop.getter &&
@@ -512,7 +575,7 @@ function generateClassDeclaration(
       !propNames.has(prop.getter) &&
       !inheritedMethodNames?.has(prop.getter)
     ) {
-      lines.push(`  ${prop.getter}(): ${tsType};`);
+      lines.push(`  ${prop.getter}(): ${tsType}${nullable};`);
     }
   }
 
@@ -522,7 +585,7 @@ function generateClassDeclaration(
 
   // Methods
   for (const method of cls.methods) {
-    lines.push(...emitMethodSignature(method));
+    lines.push(...emitMethodSignature(method, nonNullMembers));
   }
 
   // Signals
@@ -1400,12 +1463,21 @@ export function generateGodotDocsTypings(
   // Populate known class names for type resolution
   knownClasses = new Set([...classes.keys()].filter((n) => !n.startsWith('@')));
 
+  // Derive value types (classes with copy constructor) — used for nullable detection
+  // and for routing classes to generateValueTypeDeclaration vs generateClassDeclaration.
+  valueTypes = deriveValueTypes(classes);
+
   // Load override .d.ts files
   const overrides = options.overrideDir
     ? loadOverrides(options.overrideDir)
     : new Map();
   const globalOverrides = options.overrideDir
     ? loadGlobalOverrides(options.overrideDir)
+    : new Map();
+
+  // Load non-nullable member overrides from JSON
+  nonNullableMembers = options.overrideDir
+    ? loadNonNullableOverrides(options.overrideDir)
     : new Map();
 
   // Report unmatched overrides (class name not found in Godot docs)
@@ -1583,7 +1655,7 @@ export function generateGodotDocsTypings(
     }
 
     // Value types: emitted as interface + constructor function (no `new`)
-    if (VALUE_TYPES.has(name)) {
+    if (valueTypes.has(name)) {
       var valueDecl = generateValueTypeDeclaration(cls, allDictMembers);
 
       // Apply overrides if available

@@ -24,16 +24,16 @@ declare class GPUParticles3D extends GeometryInstance3D {
    */
   draw_order: int;
   /** {@link Mesh} that is drawn for the first draw pass. */
-  draw_pass_1: Mesh;
+  draw_pass_1: Mesh | null;
   /** {@link Mesh} that is drawn for the second draw pass. */
-  draw_pass_2: Mesh;
+  draw_pass_2: Mesh | null;
   /** {@link Mesh} that is drawn for the third draw pass. */
-  draw_pass_3: Mesh;
+  draw_pass_3: Mesh | null;
   /** {@link Mesh} that is drawn for the fourth draw pass. */
-  draw_pass_4: Mesh;
+  draw_pass_4: Mesh | null;
   /** The number of draw passes when rendering particles. */
   draw_passes: int;
-  draw_skin: Skin;
+  draw_skin: Skin | null;
   /**
    * If `true`, particles are being emitted. {@link emitting} can be used to start and stop particles from emitting. However, if {@link one_shot} is `true` setting {@link emitting} to `true` will not restart the emission cycle unless all active particles have finished processing. Use the {@link finished} signal to be notified once all active particles finish processing.
    * **Note:** For {@link one_shot} emitters, due to the particles being computed on the GPU, there may be a short period after receiving the {@link finished} signal during which setting this to `true` will not restart the emission cycle.
@@ -77,7 +77,7 @@ declare class GPUParticles3D extends GeometryInstance3D {
   /**
    * {@link Material} for processing particles. Can be a {@link ParticleProcessMaterial} or a {@link ShaderMaterial}.
    */
-  process_material: Material;
+  process_material: Material | null;
   /** Emission randomness ratio. */
   randomness: float;
   /**
@@ -122,8 +122,8 @@ declare class GPUParticles3D extends GeometryInstance3D {
   get_draw_order(): int;
   set_draw_passes(value: int): void;
   get_draw_passes(): int;
-  set_skin(value: Skin): void;
-  get_skin(): Skin;
+  set_skin(value: Skin | null): void;
+  get_skin(): Skin | null;
   set_emitting(value: boolean): void;
   is_emitting(): boolean;
   set_explosiveness_ratio(value: float): void;
@@ -144,8 +144,8 @@ declare class GPUParticles3D extends GeometryInstance3D {
   get_one_shot(): boolean;
   set_pre_process_time(value: float): void;
   get_pre_process_time(): float;
-  set_process_material(value: Material): void;
-  get_process_material(): Material;
+  set_process_material(value: Material | null): void;
+  get_process_material(): Material | null;
   set_randomness_ratio(value: float): void;
   get_randomness_ratio(): float;
   set_seed(value: int): void;
@@ -178,7 +178,7 @@ declare class GPUParticles3D extends GeometryInstance3D {
    */
   emit_particle(xform: Transform3D, velocity: Vector3, color: Color, custom: Color, flags: int): void;
   /** Returns the {@link Mesh} that is drawn at index `pass`. */
-  get_draw_pass_mesh(pass: int): Mesh;
+  get_draw_pass_mesh(pass: int): Mesh | null;
   /**
    * Requests the particles to process for extra process time during a single frame.
    * Useful for particle playback, if used in combination with {@link use_fixed_seed} or by calling {@link restart} with parameter `keep_seed` set to `true`.

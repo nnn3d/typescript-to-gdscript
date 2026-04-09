@@ -19,13 +19,13 @@ declare class TLSOptions extends RefCounted {
    */
   get_common_name_override(): string;
   /** Returns the {@link X509Certificate} specified when creating with {@link TLSOptions.server}. */
-  get_own_certificate(): X509Certificate;
+  get_own_certificate(): X509Certificate | null;
   /** Returns the {@link CryptoKey} specified when creating with {@link TLSOptions.server}. */
-  get_private_key(): CryptoKey;
+  get_private_key(): CryptoKey | null;
   /**
    * Returns the CA {@link X509Certificate} chain specified when creating with {@link TLSOptions.client} or {@link TLSOptions.client_unsafe}.
    */
-  get_trusted_ca_chain(): X509Certificate;
+  get_trusted_ca_chain(): X509Certificate | null;
   /** Returns `true` if created with {@link TLSOptions.server}, `false` otherwise. */
   is_server(): boolean;
   /** Returns `true` if created with {@link TLSOptions.client_unsafe}, `false` otherwise. */

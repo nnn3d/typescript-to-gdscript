@@ -124,7 +124,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /** Overridable version of {@link PhysicsServer2D.body_get_continuous_collision_detection_mode}. */
   _body_get_continuous_collision_detection_mode(body: RID): int;
   /** Overridable version of {@link PhysicsServer2D.body_get_direct_state}. */
-  _body_get_direct_state(body: RID): PhysicsDirectBodyState2D;
+  _body_get_direct_state(body: RID): PhysicsDirectBodyState2D | null;
   /** Overridable version of {@link PhysicsServer2D.body_get_max_contacts_reported}. */
   _body_get_max_contacts_reported(body: RID): int;
   /** Overridable version of {@link PhysicsServer2D.body_get_mode}. */
@@ -317,7 +317,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
    */
   _space_get_contacts(space: RID): PackedVector2Array;
   /** Overridable version of {@link PhysicsServer2D.space_get_direct_state}. */
-  _space_get_direct_state(space: RID): PhysicsDirectSpaceState2D;
+  _space_get_direct_state(space: RID): PhysicsDirectSpaceState2D | null;
   /** Overridable version of {@link PhysicsServer2D.space_get_param}. */
   _space_get_param(space: RID, param: int): float;
   /** Overridable version of {@link PhysicsServer2D.space_is_active}. */

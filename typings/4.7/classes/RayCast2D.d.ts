@@ -53,7 +53,7 @@ declare class RayCast2D extends Node2D {
    * Returns the first object that the ray intersects, or `null` if no object is intersecting the ray (i.e. {@link is_colliding} returns `false`).
    * **Note:** This object is not guaranteed to be a {@link CollisionObject2D}. For example, if the ray intersects a {@link TileMapLayer}, the method will return a {@link TileMapLayer} instance.
    */
-  get_collider(): GodotObject;
+  get_collider(): GodotObject | null;
   /**
    * Returns the {@link RID} of the first object that the ray intersects, or an empty {@link RID} if no object is intersecting the ray (i.e. {@link is_colliding} returns `false`).
    */

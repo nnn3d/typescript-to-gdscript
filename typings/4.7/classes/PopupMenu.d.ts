@@ -168,7 +168,7 @@ declare class PopupMenu extends Popup {
   /** Returns the auto translate mode of the item at the given `index`. */
   get_item_auto_translate_mode(index: int): int;
   /** Returns the icon of the item at the given `index`. */
-  get_item_icon(index: int): Texture2D;
+  get_item_icon(index: int): Texture2D | null;
   /** Returns the maximum allowed width of the icon for the item at the given `index`. */
   get_item_icon_max_width(index: int): int;
   /** Returns a {@link Color} modulating the item's icon at the given `index`. */
@@ -192,7 +192,7 @@ declare class PopupMenu extends Popup {
   /** Returns the max states of the item at the given `index`. */
   get_item_multistate_max(index: int): int;
   /** Returns the {@link Shortcut} associated with the item at the given `index`. */
-  get_item_shortcut(index: int): Shortcut;
+  get_item_shortcut(index: int): Shortcut | null;
   /**
    * Returns the submenu name of the item at the given `index`. See {@link add_submenu_item} for more info on how to add a submenu.
    */
@@ -200,7 +200,7 @@ declare class PopupMenu extends Popup {
   /**
    * Returns the submenu of the item at the given `index`, or `null` if no submenu was added. See {@link add_submenu_node_item} for more info on how to add a submenu.
    */
-  get_item_submenu_node(index: int): PopupMenu;
+  get_item_submenu_node(index: int): PopupMenu | null;
   /** Returns the text of the item at the given `index`. */
   get_item_text(index: int): string;
   /** Returns item's text base writing direction. */

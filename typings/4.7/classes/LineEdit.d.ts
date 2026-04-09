@@ -78,7 +78,7 @@ declare class LineEdit extends Control {
   /**
    * Sets the icon that will appear in the right end of the {@link LineEdit} if there's no {@link text}, or always, if {@link clear_button_enabled} is set to `false`.
    */
-  right_icon: Texture2D;
+  right_icon: Texture2D | null;
   /**
    * Scale ratio of the icon when {@link icon_expand_mode} is set to {@link EXPAND_MODE_FIT_TO_LINE_EDIT}.
    */
@@ -152,8 +152,8 @@ declare class LineEdit extends Control {
   get_max_length(): int;
   set_middle_mouse_paste_enabled(value: boolean): void;
   is_middle_mouse_paste_enabled(): boolean;
-  set_right_icon(value: Texture2D): void;
-  get_right_icon(): Texture2D;
+  set_right_icon(value: Texture2D | null): void;
+  get_right_icon(): Texture2D | null;
   set_right_icon_scale(value: float): void;
   get_right_icon_scale(): float;
   set_secret(value: boolean): void;

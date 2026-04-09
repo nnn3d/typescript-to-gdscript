@@ -23,7 +23,7 @@ declare class AnimationNodeOneShot extends AnimationNodeSync {
   /**
    * Determines how cross-fading between animations is eased. If empty, the transition will be linear. Should be a unit {@link Curve}.
    */
-  fadein_curve: Curve;
+  fadein_curve: Curve | null;
   /**
    * The fade-in duration. For example, setting this to `1.0` for a 5 second length animation will produce a cross-fade that starts at 0 second and ends at 1 second during the animation.
    * **Note:** {@link AnimationNodeOneShot} transitions the current state after the fading has finished.
@@ -32,7 +32,7 @@ declare class AnimationNodeOneShot extends AnimationNodeSync {
   /**
    * Determines how cross-fading between animations is eased. If empty, the transition will be linear. Should be a unit {@link Curve}.
    */
-  fadeout_curve: Curve;
+  fadeout_curve: Curve | null;
   /**
    * The fade-out duration. For example, setting this to `1.0` for a 5 second length animation will produce a cross-fade that starts at 4 second and ends at 5 second during the animation.
    * **Note:** {@link AnimationNodeOneShot} transitions the current state after the fading has finished.
@@ -50,12 +50,12 @@ declare class AnimationNodeOneShot extends AnimationNodeSync {
   get_autorestart_random_delay(): float;
   set_break_loop_at_end(value: boolean): void;
   is_loop_broken_at_end(): boolean;
-  set_fadein_curve(value: Curve): void;
-  get_fadein_curve(): Curve;
+  set_fadein_curve(value: Curve | null): void;
+  get_fadein_curve(): Curve | null;
   set_fadein_time(value: float): void;
   get_fadein_time(): float;
-  set_fadeout_curve(value: Curve): void;
-  get_fadeout_curve(): Curve;
+  set_fadeout_curve(value: Curve | null): void;
+  get_fadeout_curve(): Curve | null;
   set_fadeout_time(value: float): void;
   get_fadeout_time(): float;
   set_mix_mode(value: int): void;

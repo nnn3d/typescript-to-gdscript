@@ -92,7 +92,7 @@ declare class VehicleWheel3D extends Node3D {
    * Returns the contacting body node if valid in the tree, as {@link Node3D}. At the moment, {@link GridMap} is not supported so the node will be always of type {@link PhysicsBody3D}.
    * Returns `null` if the wheel is not in contact with a surface, or the contact body is not a {@link PhysicsBody3D}.
    */
-  get_contact_body(): Node3D;
+  get_contact_body(): Node3D | null;
   /**
    * Returns the normal of the suspension's collision in world space if the wheel is in contact. If the wheel isn't in contact with anything, returns a vector pointing directly along the suspension axis toward the vehicle in world space.
    */

@@ -26,12 +26,12 @@ declare class EditorExportPlugin extends RefCounted {
    * - {@link CompressedTexture2DArray}
    * - {@link CompressedTexture3D}
    */
-  _customize_resource(resource: Resource, path: string): Resource;
+  _customize_resource(resource: Resource, path: string): Resource | null;
   /**
    * Customize a scene. If changes are made to it, return the same or a new scene. Otherwise, return `null`. If a new scene is returned, it is up to you to dispose of the old one.
    * Implementing this method is required if {@link _begin_customize_scenes} returns `true`.
    */
-  _customize_scene(scene: Node, path: string): Node;
+  _customize_scene(scene: Node, path: string): Node | null;
   /** This is called when the customization process for resources ends. */
   _end_customize_resources(): void;
   /** This is called when the customization process for scenes ends. */
@@ -195,9 +195,9 @@ declare class EditorExportPlugin extends RefCounted {
    */
   add_shared_object(path: string, tags: PackedStringArray, target: string): void;
   /** Returns currently used export platform. */
-  get_export_platform(): EditorExportPlatform;
+  get_export_platform(): EditorExportPlatform | null;
   /** Returns currently used export preset. */
-  get_export_preset(): EditorExportPreset;
+  get_export_preset(): EditorExportPreset | null;
   /** Returns the current value of an export option supplied by {@link _get_export_options}. */
   get_option(name: string): unknown;
   /**

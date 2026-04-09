@@ -8,7 +8,7 @@ declare class EditorResourceConversionPlugin extends RefCounted {
   /**
    * Takes an input {@link Resource} and converts it to the type given in {@link _converts_to}. The returned {@link Resource} is the result of the conversion, and the input {@link Resource} remains unchanged.
    */
-  _convert(resource: Resource): Resource;
+  _convert(resource: Resource): Resource | null;
   /**
    * Returns the class name of the target type of {@link Resource} that this plugin converts source resources to.
    */

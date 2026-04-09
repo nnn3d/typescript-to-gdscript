@@ -33,7 +33,7 @@ declare class AudioStreamPlayer extends Node {
   /**
    * The {@link AudioStream} resource to be played. Setting this property stops all currently playing sounds. If left empty, the {@link AudioStreamPlayer} does not work.
    */
-  stream: AudioStream;
+  stream: AudioStream | null;
   /**
    * If `true`, the sounds are paused. Setting {@link stream_paused} to `false` resumes all sounds.
    * **Note:** This property is automatically changed when exiting or entering the tree, or this node is paused (see {@link Node.process_mode}).
@@ -63,8 +63,8 @@ declare class AudioStreamPlayer extends Node {
   get_playback_type(): int;
   set_playing(value: boolean): void;
   is_playing(): boolean;
-  set_stream(value: AudioStream): void;
-  get_stream(): AudioStream;
+  set_stream(value: AudioStream | null): void;
+  get_stream(): AudioStream | null;
   set_stream_paused(value: boolean): void;
   get_stream_paused(): boolean;
   set_volume_db(value: float): void;
@@ -81,7 +81,7 @@ declare class AudioStreamPlayer extends Node {
   /**
    * Returns the latest {@link AudioStreamPlayback} of this node, usually the most recently created by {@link play}. If no sounds are playing, this method fails and returns an empty playback.
    */
-  get_stream_playback(): AudioStreamPlayback;
+  get_stream_playback(): AudioStreamPlayback | null;
   /**
    * Returns `true` if any sound is active, even if {@link stream_paused} is set to `true`. See also {@link playing} and {@link get_stream_playback}.
    */

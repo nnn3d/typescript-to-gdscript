@@ -32,11 +32,11 @@ declare class EditorFileSystemDirectory extends GodotObject {
   /**
    * Returns the parent directory for this directory or `null` if called on a directory at `res://` or `user://`.
    */
-  get_parent(): EditorFileSystemDirectory;
+  get_parent(): EditorFileSystemDirectory | null;
   /** Returns the path to this directory. */
   get_path(): string;
   /** Returns the subdirectory at index `idx`. */
-  get_subdir(idx: int): EditorFileSystemDirectory;
+  get_subdir(idx: int): EditorFileSystemDirectory | null;
   /** Returns the number of subdirectories in this directory. */
   get_subdir_count(): int;
 }

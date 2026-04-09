@@ -31,7 +31,7 @@ declare class ShapeCast3D extends Node3D {
   /** The number of intersections can be limited with this parameter, to reduce the processing time. */
   max_results: int;
   /** The shape to be used for collision queries. */
-  shape: Shape3D;
+  shape: Shape3D | null;
   /** The shape's destination point, relative to this node's {@link Node3D.position}. */
   target_position: Vector3;
   set_collide_with_areas(value: boolean): void;
@@ -51,8 +51,8 @@ declare class ShapeCast3D extends Node3D {
   get_margin(): float;
   set_max_results(value: int): void;
   get_max_results(): int;
-  set_shape(value: Shape3D): void;
-  get_shape(): Shape3D;
+  set_shape(value: Shape3D | null): void;
+  get_shape(): Shape3D | null;
   set_target_position(value: Vector3): void;
   get_target_position(): Vector3;
 
@@ -79,7 +79,7 @@ declare class ShapeCast3D extends Node3D {
   /**
    * Returns the collided {@link Object} of one of the multiple collisions at `index`, or `null` if no object is intersecting the shape (i.e. {@link is_colliding} returns `false`).
    */
-  get_collider(index: int): GodotObject;
+  get_collider(index: int): GodotObject | null;
   /** Returns the {@link RID} of the collided object of one of the multiple collisions at `index`. */
   get_collider_rid(index: int): RID;
   /**

@@ -57,7 +57,7 @@ declare interface EditorInterface extends GodotObject {
   /** Returns the current path being viewed in the {@link FileSystemDock}. */
   get_current_path(): string;
   /** Returns the edited (current) scene's root {@link Node}. */
-  get_edited_scene_root(): Node;
+  get_edited_scene_root(): Node | null;
   /** Returns the language currently used for the editor interface. */
   get_editor_language(): string;
   /**

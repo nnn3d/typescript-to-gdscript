@@ -84,11 +84,11 @@ declare class EditorNode3DGizmo extends Node3DGizmo {
   /** Removes everything in the gizmo including meshes, collisions and handles. */
   clear(): void;
   /** Returns the {@link Node3D} node associated with this gizmo. */
-  get_node_3d(): Node3D;
+  get_node_3d(): Node3D | null;
   /**
    * Returns the {@link EditorNode3DGizmoPlugin} that owns this gizmo. It's useful to retrieve materials using {@link EditorNode3DGizmoPlugin.get_material}.
    */
-  get_plugin(): EditorNode3DGizmoPlugin;
+  get_plugin(): EditorNode3DGizmoPlugin | null;
   /**
    * Returns a list of the currently selected subgizmos. Can be used to highlight selected elements during {@link _redraw}.
    */

@@ -86,7 +86,7 @@ declare class TranslationDomain extends RefCounted {
   /**
    * Returns the {@link Translation} instance that best matches `locale`. Returns `null` if there are no matches.
    */
-  get_translation_object(locale: string): Translation;
+  get_translation_object(locale: string): Translation | null;
   /** Returns all available {@link Translation} instances as added by {@link add_translation}. */
   get_translations(): Array<Translation>;
   /** Returns `true` if this translation domain contains the given `translation`. */

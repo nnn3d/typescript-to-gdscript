@@ -30,7 +30,7 @@ declare class Signal<T extends any[] = any[]> {
   /** Returns the name of this signal. */
   get_name(): string;
   /** Returns the object emitting this signal. */
-  get_object(): GodotObject;
+  get_object(): GodotObject | null;
   /** Returns the ID of the object emitting this signal (see {@link Object.get_instance_id}). */
   get_object_id(): int;
   /** Returns `true` if any {@link Callable} is connected to this signal. */
@@ -45,4 +45,42 @@ declare class Signal<T extends any[] = any[]> {
   // Operator overloads
   [__ops_ne]: { right: Signal; ret: boolean };
   [__ops_eq]: { right: Signal; ret: boolean };
+
+  [__variant_converts]: Signal;
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
 }

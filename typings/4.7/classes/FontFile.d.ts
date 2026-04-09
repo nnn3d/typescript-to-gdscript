@@ -187,7 +187,7 @@ declare class FontFile extends Font {
   /** Returns number of textures used by font cache entry. */
   get_texture_count(cache_index: int, size: Vector2i): int;
   /** Returns a copy of the font cache texture image. */
-  get_texture_image(cache_index: int, size: Vector2i, texture_index: int): Image;
+  get_texture_image(cache_index: int, size: Vector2i, texture_index: int): Image | null;
   /** Returns a copy of the array containing glyph packing data. */
   get_texture_offsets(cache_index: int, size: Vector2i, texture_index: int): PackedInt32Array;
   /**

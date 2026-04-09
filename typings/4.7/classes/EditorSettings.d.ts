@@ -1775,7 +1775,7 @@ declare class EditorSettings extends Resource {
   /**
    * Returns the shortcut specified by `path`. Tries to find a built-in action if no shortcut with the provided path is found in the shortcut list. If found, adds it to the list and returns it, otherwise returns `null`.
    */
-  get_shortcut(path: string): Shortcut;
+  get_shortcut(path: string): Shortcut | null;
   /** Returns the list of stored shortcut paths. */
   get_shortcut_list(): PackedStringArray;
   /** Returns `true` if the setting specified by `name` exists, `false` otherwise. */

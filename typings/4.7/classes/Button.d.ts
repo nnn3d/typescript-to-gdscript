@@ -27,7 +27,7 @@ declare class Button extends BaseButton {
    * Button's icon, if text is present the icon will be placed before the text.
    * To edit margin and spacing of the icon, use  theme property and `content_margin_*` properties of the used {@link StyleBox}es.
    */
-  icon: Texture2D;
+  icon: Texture2D | null;
   /**
    * Specifies if the icon should be aligned horizontally to the left, right, or center of a button. Uses the same {@link HorizontalAlignment} constants as the text alignment. If centered horizontally and vertically, text will draw on top of the icon.
    */
@@ -58,8 +58,8 @@ declare class Button extends BaseButton {
   is_expand_icon(): boolean;
   set_flat(value: boolean): void;
   is_flat(): boolean;
-  set_button_icon(value: Texture2D): void;
-  get_button_icon(): Texture2D;
+  set_button_icon(value: Texture2D | null): void;
+  get_button_icon(): Texture2D | null;
   set_icon_alignment(value: int): void;
   get_icon_alignment(): int;
   set_language(value: string): void;

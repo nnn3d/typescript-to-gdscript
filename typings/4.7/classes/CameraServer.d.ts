@@ -17,7 +17,7 @@ declare interface CameraServer extends GodotObject {
   /** Returns an array of {@link CameraFeed}s. */
   feeds(): Array<CameraFeed>;
   /** Returns the {@link CameraFeed} corresponding to the camera with the given `index`. */
-  get_feed(index: int): CameraFeed;
+  get_feed(index: int): CameraFeed | null;
   /** Returns the number of {@link CameraFeed}s registered. */
   get_feed_count(): int;
   /** Removes the specified camera `feed`. */

@@ -65,7 +65,7 @@ declare class GPUParticles2D extends Node2D {
   /**
    * {@link Material} for processing particles. Can be a {@link ParticleProcessMaterial} or a {@link ShaderMaterial}.
    */
-  process_material: Material;
+  process_material: Material | null;
   /** Emission lifetime randomness ratio. */
   randomness: float;
   /**
@@ -83,7 +83,7 @@ declare class GPUParticles2D extends Node2D {
    * Particle texture. If `null`, particles will be squares with a size of 1×1 pixels.
    * **Note:** To use a flipbook texture, assign a new {@link CanvasItemMaterial} to the {@link GPUParticles2D}'s {@link CanvasItem.material} property, then enable {@link CanvasItemMaterial.particles_animation} and set {@link CanvasItemMaterial.particles_anim_h_frames}, {@link CanvasItemMaterial.particles_anim_v_frames}, and {@link CanvasItemMaterial.particles_anim_loop} to match the flipbook texture.
    */
-  texture: Texture2D;
+  texture: Texture2D | null;
   /**
    * If `true`, enables particle trails using a mesh skinning system.
    * **Note:** Unlike {@link GPUParticles3D}, the number of trail sections and subdivisions is set with the {@link trail_sections} and {@link trail_section_subdivisions} properties.
@@ -138,8 +138,8 @@ declare class GPUParticles2D extends Node2D {
   get_one_shot(): boolean;
   set_pre_process_time(value: float): void;
   get_pre_process_time(): float;
-  set_process_material(value: Material): void;
-  get_process_material(): Material;
+  set_process_material(value: Material | null): void;
+  get_process_material(): Material | null;
   set_randomness_ratio(value: float): void;
   get_randomness_ratio(): float;
   set_seed(value: int): void;
@@ -148,8 +148,8 @@ declare class GPUParticles2D extends Node2D {
   get_speed_scale(): float;
   set_sub_emitter(value: string): void;
   get_sub_emitter(): string;
-  set_texture(value: Texture2D): void;
-  get_texture(): Texture2D;
+  set_texture(value: Texture2D | null): void;
+  get_texture(): Texture2D | null;
   set_trail_enabled(value: boolean): void;
   is_trail_enabled(): boolean;
   set_trail_lifetime(value: float): void;

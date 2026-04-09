@@ -119,7 +119,7 @@ declare class PhysicsDirectBodyState3D extends GodotObject {
   /** Returns the collider's object id. */
   get_contact_collider_id(contact_idx: int): int;
   /** Returns the collider object. */
-  get_contact_collider_object(contact_idx: int): GodotObject;
+  get_contact_collider_object(contact_idx: int): GodotObject | null;
   /** Returns the position of the contact point on the collider in the global coordinate system. */
   get_contact_collider_position(contact_idx: int): Vector3;
   /** Returns the collider's shape index. */
@@ -142,7 +142,7 @@ declare class PhysicsDirectBodyState3D extends GodotObject {
   /** Returns the linear velocity vector at the body's contact point. */
   get_contact_local_velocity_at_position(contact_idx: int): Vector3;
   /** Returns the current state of the space, useful for queries. */
-  get_space_state(): PhysicsDirectSpaceState3D;
+  get_space_state(): PhysicsDirectSpaceState3D | null;
   /**
    * Returns the body's velocity at the given relative position.
    * `local_position` is the offset from the body origin in global coordinates.

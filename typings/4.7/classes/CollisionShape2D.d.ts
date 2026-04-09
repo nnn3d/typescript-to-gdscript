@@ -25,7 +25,7 @@ declare class CollisionShape2D extends Node2D {
    */
   one_way_collision_margin: float;
   /** The actual shape owned by this collision shape. */
-  shape: Shape2D;
+  shape: Shape2D | null;
   set_debug_color(value: Color): void;
   get_debug_color(): Color;
   set_disabled(value: boolean): void;
@@ -36,6 +36,6 @@ declare class CollisionShape2D extends Node2D {
   get_one_way_collision_direction(): Vector2;
   set_one_way_collision_margin(value: float): void;
   get_one_way_collision_margin(): float;
-  set_shape(value: Shape2D): void;
-  get_shape(): Shape2D;
+  set_shape(value: Shape2D | null): void;
+  get_shape(): Shape2D | null;
 }

@@ -44,7 +44,7 @@ declare class MeshDataTool extends RefCounted {
    */
   get_format(): int;
   /** Returns the material assigned to the {@link Mesh}. */
-  get_material(): Material;
+  get_material(): Material | null;
   /** Returns the position of the given vertex. */
   get_vertex(idx: int): Vector3;
   /** Returns the bones of the given vertex. */

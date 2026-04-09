@@ -58,7 +58,7 @@ declare class RenderSceneBuffersRD extends RenderSceneBuffers {
   /** Returns a cached texture with this name. */
   get_texture(context: string, name: string): RID;
   /** Returns the texture format information with which a cached texture was created. */
-  get_texture_format(context: string, name: string): RDTextureFormat;
+  get_texture_format(context: string, name: string): RDTextureFormat | null;
   /** Returns the number of MSAA samples used. */
   get_texture_samples(): int;
   /** Returns a specific slice (layer or mipmap) for a cached texture. */

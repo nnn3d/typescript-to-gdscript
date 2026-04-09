@@ -8,7 +8,7 @@ declare class AnimationLibrary extends Resource {
   /**
    * Returns the {@link Animation} with the key `name`. If the animation does not exist, `null` is returned and an error is logged.
    */
-  get_animation(name: string): Animation;
+  get_animation(name: string): Animation | null;
   /** Returns the keys for the {@link Animation}s stored in the library. */
   get_animation_list(): Array<string>;
   /** Returns the key count for the {@link Animation}s stored in the library. */

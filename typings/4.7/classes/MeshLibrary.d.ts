@@ -15,7 +15,7 @@ declare class MeshLibrary extends Resource {
   /** Returns the list of item IDs in use. */
   get_item_list(): PackedInt32Array;
   /** Returns the item's mesh. */
-  get_item_mesh(id: int): Mesh;
+  get_item_mesh(id: int): Mesh | null;
   /** Returns the item's shadow casting mode. */
   get_item_mesh_cast_shadow(id: int): int;
   /** Returns the transform applied to the item's mesh. */
@@ -25,13 +25,13 @@ declare class MeshLibrary extends Resource {
   /** Returns the item's navigation layers bitmask. */
   get_item_navigation_layers(id: int): int;
   /** Returns the item's navigation mesh. */
-  get_item_navigation_mesh(id: int): NavigationMesh;
+  get_item_navigation_mesh(id: int): NavigationMesh | null;
   /** Returns the transform applied to the item's navigation mesh. */
   get_item_navigation_mesh_transform(id: int): Transform3D;
   /**
    * When running in the editor, returns a generated item preview (a 3D rendering in isometric perspective). When used in a running project, returns the manually-defined item preview which can be set using {@link set_item_preview}. Returns an empty {@link Texture2D} if no preview was manually set in a running project.
    */
-  get_item_preview(id: int): Texture2D;
+  get_item_preview(id: int): Texture2D | null;
   /**
    * Returns an item's collision shapes.
    * The array consists of each {@link Shape3D} followed by its {@link Transform3D}.

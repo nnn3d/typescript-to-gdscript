@@ -6,7 +6,7 @@ declare class SceneState extends RefCounted {
   /**
    * Returns the {@link SceneState} of the scene that this scene inherits from, or `null` if it doesn't inherit from any scene.
    */
-  get_base_scene_state(): SceneState;
+  get_base_scene_state(): SceneState | null;
   /** Returns the list of bound parameters for the signal at `idx`. */
   get_connection_binds(idx: int): Array<unknown>;
   /**
@@ -42,7 +42,7 @@ declare class SceneState extends RefCounted {
   /**
    * Returns a {@link PackedScene} for the node at `idx` (i.e. the whole branch starting at this node, with its child nodes and resources), or `null` if the node is not an instance.
    */
-  get_node_instance(idx: int): PackedScene;
+  get_node_instance(idx: int): PackedScene | null;
   /**
    * Returns the path to the represented scene file if the node at `idx` is an {@link InstancePlaceholder}.
    */

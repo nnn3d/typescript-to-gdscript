@@ -35,7 +35,7 @@ declare class AudioStreamPlayer2D extends Node2D {
   /** If `true`, audio is playing or is queued to be played (see {@link play}). */
   playing: boolean;
   /** The {@link AudioStream} object to be played. */
-  stream: AudioStream;
+  stream: AudioStream | null;
   /** If `true`, the playback is paused. You can resume it by setting {@link stream_paused} to `false`. */
   stream_paused: boolean;
   /** Base volume before attenuation, in decibels. */
@@ -65,8 +65,8 @@ declare class AudioStreamPlayer2D extends Node2D {
   get_playback_type(): int;
   set_playing(value: boolean): void;
   is_playing(): boolean;
-  set_stream(value: AudioStream): void;
-  get_stream(): AudioStream;
+  set_stream(value: AudioStream | null): void;
+  get_stream(): AudioStream | null;
   set_stream_paused(value: boolean): void;
   get_stream_paused(): boolean;
   set_volume_db(value: float): void;
@@ -77,7 +77,7 @@ declare class AudioStreamPlayer2D extends Node2D {
   /** Returns the position in the {@link AudioStream}. */
   get_playback_position(): float;
   /** Returns the {@link AudioStreamPlayback} object associated with this {@link AudioStreamPlayer2D}. */
-  get_stream_playback(): AudioStreamPlayback;
+  get_stream_playback(): AudioStreamPlayback | null;
   /**
    * Returns whether the {@link AudioStreamPlayer} can return the {@link AudioStreamPlayback} object or not.
    */

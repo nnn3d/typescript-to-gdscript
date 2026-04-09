@@ -18,7 +18,7 @@ declare class BoneTwistDisperser3D extends SkeletonModifier3D {
   /** Clears all settings. */
   clear_settings(): void;
   /** Returns the damping curve when {@link get_disperse_mode} is {@link DISPERSE_MODE_CUSTOM}. */
-  get_damping_curve(index: int): Curve;
+  get_damping_curve(index: int): Curve | null;
   /** Returns whether to use automatic amount assignment or to allow manual assignment. */
   get_disperse_mode(index: int): int;
   /** Returns the end bone index of the bone chain. */

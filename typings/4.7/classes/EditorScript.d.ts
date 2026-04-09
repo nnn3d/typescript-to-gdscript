@@ -14,5 +14,5 @@ declare class EditorScript extends RefCounted {
   /**
    * Returns the edited (current) scene's root {@link Node}. Equivalent of {@link EditorInterface.get_edited_scene_root}.
    */
-  get_scene(): Node;
+  get_scene(): Node | null;
 }

@@ -26,7 +26,7 @@ declare class Label extends Control {
   /**
    * A {@link LabelSettings} resource that can be shared between multiple {@link Label} nodes. Takes priority over theme properties.
    */
-  label_settings: LabelSettings;
+  label_settings: LabelSettings | null;
   /**
    * Language code used for line-breaking and text shaping algorithms. If left empty, the current locale is used instead.
    */
@@ -84,8 +84,8 @@ declare class Label extends Control {
   get_horizontal_alignment(): int;
   set_justification_flags(value: int): void;
   get_justification_flags(): int;
-  set_label_settings(value: LabelSettings): void;
-  get_label_settings(): LabelSettings;
+  set_label_settings(value: LabelSettings | null): void;
+  get_label_settings(): LabelSettings | null;
   set_language(value: string): void;
   get_language(): string;
   set_lines_skipped(value: int): void;

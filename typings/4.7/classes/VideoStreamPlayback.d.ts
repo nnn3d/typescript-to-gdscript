@@ -16,7 +16,7 @@ declare class VideoStreamPlayback extends Resource {
    */
   _get_playback_position(): float;
   /** Allocates a {@link Texture2D} in which decoded video frames will be drawn. */
-  _get_texture(): Texture2D;
+  _get_texture(): Texture2D | null;
   /** Returns the paused status, as set by {@link _set_paused}. */
   _is_paused(): boolean;
   /** Returns the playback state, as determined by calls to {@link _play} and {@link _stop}. */

@@ -6,7 +6,7 @@ declare interface GDExtensionManager extends GodotObject {
   /**
    * Returns the {@link GDExtension} at the given file `path`, or `null` if it has not been loaded or does not exist.
    */
-  get_extension(path: string): GDExtension;
+  get_extension(path: string): GDExtension | null;
   /** Returns the file paths of all currently loaded extensions. */
   get_loaded_extensions(): PackedStringArray;
   /**

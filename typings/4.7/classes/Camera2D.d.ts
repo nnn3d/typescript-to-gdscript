@@ -8,7 +8,7 @@ declare class Camera2D extends Node2D {
   /**
    * The custom {@link Viewport} node attached to the {@link Camera2D}. If `null` or not a {@link Viewport}, uses the default viewport instead.
    */
-  custom_viewport: Node;
+  custom_viewport: Node | null;
   /**
    * Bottom margin needed to drag the camera. A value of `1` makes the camera move only when reaching the bottom edge of the screen.
    */
@@ -114,8 +114,8 @@ declare class Camera2D extends Node2D {
   zoom: Vector2;
   set_anchor_mode(value: int): void;
   get_anchor_mode(): int;
-  set_custom_viewport(value: Node): void;
-  get_custom_viewport(): Node;
+  set_custom_viewport(value: Node | null): void;
+  get_custom_viewport(): Node | null;
   set_drag_horizontal_enabled(value: boolean): void;
   is_drag_horizontal_enabled(): boolean;
   set_drag_horizontal_offset(value: float): void;

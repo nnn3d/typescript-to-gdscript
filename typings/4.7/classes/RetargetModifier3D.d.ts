@@ -10,7 +10,7 @@ declare class RetargetModifier3D extends SkeletonModifier3D {
    */
   enable: int;
   /** {@link SkeletonProfile} for retargeting bones with names matching the bone list. */
-  profile: SkeletonProfile;
+  profile: SkeletonProfile | null;
   /**
    * If `false`, in case the target skeleton has fewer bones than the source skeleton, the source bone parent's transform will be ignored.
    * Instead, it is possible to retarget between models with different body shapes, and position, rotation, and scale can be retargeted separately.
@@ -21,8 +21,8 @@ declare class RetargetModifier3D extends SkeletonModifier3D {
   use_global_pose: boolean;
   set_enable_flags(value: int): void;
   get_enable_flags(): int;
-  set_profile(value: SkeletonProfile): void;
-  get_profile(): SkeletonProfile;
+  set_profile(value: SkeletonProfile | null): void;
+  get_profile(): SkeletonProfile | null;
   set_use_global_pose(value: boolean): void;
   is_using_global_pose(): boolean;
 

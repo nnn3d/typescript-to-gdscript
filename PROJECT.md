@@ -30,6 +30,7 @@ typings/                 # Versioned Godot typings (committed to git, used as TS
     globals.d.ts         # Generated global class declarations + scene typings
   _overrides/            # Manual type overrides applied during typings generation
     *.d.ts               # Per-class override files (node.d.ts, array.d.ts, etc.)
+                         # Can restore non-null returns for specific members (e.g. get_tree, get_viewport, get_window)
   4.7/
     classes/             # Per-class .d.ts files (916 classes)
     godot-class-registry.json  # Class hierarchy JSON (916 classes)
@@ -113,12 +114,13 @@ tests/
   - **Addon typings** (`generate-addon-typings`): converts `addons/*.gd` → `.ts` via GD-to-TS, generates `.gd.d.ts` with global classes/enums/GodotScripts entries. Two-pass: convert all, then scan with TS program for cross-file resolution.
   - **Incremental generation** (`generateFileTypings`): per-file `.gd.d.ts`/`.tscn.d.ts` regeneration for watch mode (full generation only on first run, addon typings only on first run)
   - **Value type interfaces** (Vector2, Color, Rect2, Packed*Array, etc.): generated with instance interface + `*Constructor` interface + `declare const`. No `new` — constructors are call signatures only (matches GDScript)
+  - **Nullable reference types**: properties and method returns of reference types (Node, Material, Texture2D, etc.) are emitted as `T | null` in generated `.d.ts` files. Value/variant types (Vector2, Color, int, float, etc.) stay non-nullable. A type is a value type if its Godot XML docs include a copy constructor (a constructor with a single parameter of its own type). Both `valueTypes` and `constructorTypes` sets are derived from parsed XML at generation time (no hardcoded lists). `isNullableGodotType()` in `godot-docs.ts` determines nullability based on the derived value types. Nullability is applied at 4 emit sites in `godot-docs.ts` (properties, method returns, signal parameters, etc.). Overrides in `typings/_overrides/` can restore non-null for specific members (e.g. `node.d.ts` overrides `get_tree(): SceneTree`, `get_viewport(): Viewport`, `get_window(): Window`).
   - `[__variant_converts]` on value-type instance interfaces: union of types accepted by single-parameter "from" constructors (e.g. `Vector2[__variant_converts]: Vector2 | Vector2i`). Enables `gd.as(val, Target)` type narrowing
   - `readonly prototype: ClassName` on `*Constructor` interfaces enables `v instanceof Vector2` type narrowing
   - Packed array types get `[Symbol.iterator](): IterableIterator<ItemType>` (item type inferred from `append(value: T)` method signature) for typed `for (const x of arr)` loops
   - `Array` interface: `[__variant_converts]` includes all Packed array types (from XML constructors); `ArrayConstructor` has `<T>(from_: PackedXArray): Array<T>` call signatures (no `new`)
   - `GodotArray` removed (use `Array()` call syntax instead of `new GodotArray()`)
-- [x] Godot class registry (916 classes, inheritance chain, global functions, per-class `variantConverts` from single-param "from" constructors, from `vendor/godot` XML docs)
+- [x] Godot class registry (916 classes, inheritance chain, global functions, per-class `variantConverts` from single-param "from" constructors, from `vendor/godot` XML docs). Constructor types (`deriveConstructorTypes()` in `godot-registry.ts`) and value types are derived from parsed XML at generation time — not hardcoded
 - [x] Converter diagnostics + ESLint plugin (`ts2gd/convert` rule, flat config ESLint >= 9)
   - Runs full TS→GD conversion + optional Godot validation per file, reports converter diagnostics and Godot errors inline
   - `x in y` validation: `emitBinaryExpression` checks the RHS type via `checker.getTypeAtLocation()`. Reports an error if the type is an array (`checker.isArrayType`/`isTupleType`), a number, a boolean, or a Godot variant type (derived from `resolveRegistry().getData().constructors` minus `GD_IN_ALLOWED_CONTAINER_TYPES` = `{Dictionary}`). Registry-derived sets are lazily cached at module scope; `Packed*Array` entries (detected by `startsWith('Packed')` + `endsWith('Array')`) get a dedicated "the array type `X`" label vs "the value type `X`" for non-packed variants. Only `Dictionary`/object-literal types and `String` are valid RHS targets.

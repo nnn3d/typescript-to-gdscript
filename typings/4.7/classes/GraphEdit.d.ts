@@ -199,7 +199,7 @@ declare class GraphEdit extends Control {
    */
   get_connections_intersecting_with_rect(rect: Rect2): Array<Dictionary>;
   /** Returns the {@link GraphFrame} that contains the {@link GraphElement} with the given name. */
-  get_element_frame(element: string): GraphFrame;
+  get_element_frame(element: string): GraphFrame | null;
   /**
    * Gets the {@link HBoxContainer} that contains the zooming and grid snap controls in the top left of the graph. You can use this method to reposition the toolbar or to add your own custom controls to it.
    * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their {@link CanvasItem.visible} property.

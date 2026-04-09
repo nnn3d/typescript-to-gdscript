@@ -70,12 +70,12 @@ declare class TabContainer extends Container {
   get_use_hidden_tabs_for_min_size(): boolean;
 
   /** Returns the child {@link Control} node located at the active tab index. */
-  get_current_tab_control(): Control;
+  get_current_tab_control(): Control | null;
   /**
    * Returns the {@link Popup} node instance if one has been set already with {@link set_popup}.
    * **Warning:** This is a required internal node, removing and freeing it may cause a crash. If you wish to hide it or any of its children, use their {@link Window.visible} property.
    */
-  get_popup(): Popup;
+  get_popup(): Popup | null;
   /** Returns the previously active tab index. */
   get_previous_tab(): int;
   /**
@@ -84,15 +84,15 @@ declare class TabContainer extends Container {
    */
   get_tab_bar(): TabBar;
   /** Returns the button icon from the tab at index `tab_idx`. */
-  get_tab_button_icon(tab_idx: int): Texture2D;
+  get_tab_button_icon(tab_idx: int): Texture2D | null;
   /** Returns the {@link Control} node from the tab at index `tab_idx`. */
-  get_tab_control(tab_idx: int): Control;
+  get_tab_control(tab_idx: int): Control | null;
   /** Returns the number of tabs. */
   get_tab_count(): int;
   /**
    * Returns the {@link Texture2D} for the tab at index `tab_idx` or `null` if the tab has no {@link Texture2D}.
    */
-  get_tab_icon(tab_idx: int): Texture2D;
+  get_tab_icon(tab_idx: int): Texture2D | null;
   /** Returns the maximum allowed width of the icon for the tab at index `tab_idx`. */
   get_tab_icon_max_width(tab_idx: int): int;
   /**

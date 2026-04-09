@@ -23,7 +23,7 @@ declare class PhysicsDirectBodyState3DExtension extends PhysicsDirectBodyState3D
   _get_constant_torque(): Vector3;
   _get_contact_collider(contact_idx: int): RID;
   _get_contact_collider_id(contact_idx: int): int;
-  _get_contact_collider_object(contact_idx: int): GodotObject;
+  _get_contact_collider_object(contact_idx: int): GodotObject | null;
   _get_contact_collider_position(contact_idx: int): Vector3;
   _get_contact_collider_shape(contact_idx: int): int;
   _get_contact_collider_velocity_at_position(contact_idx: int): Vector3;
@@ -38,7 +38,7 @@ declare class PhysicsDirectBodyState3DExtension extends PhysicsDirectBodyState3D
   _get_inverse_mass(): float;
   _get_linear_velocity(): Vector3;
   _get_principal_inertia_axes(): Basis;
-  _get_space_state(): PhysicsDirectSpaceState3D;
+  _get_space_state(): PhysicsDirectSpaceState3D | null;
   _get_step(): float;
   _get_total_angular_damp(): float;
   _get_total_gravity(): Vector3;

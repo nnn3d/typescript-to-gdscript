@@ -4,7 +4,7 @@
 /** A modification that holds and executes a {@link SkeletonModificationStack2D}. */
 declare class SkeletonModification2DStackHolder extends SkeletonModification2D {
   /** Returns the {@link SkeletonModificationStack2D} that this modification is holding. */
-  get_held_modification_stack(): SkeletonModificationStack2D;
+  get_held_modification_stack(): SkeletonModificationStack2D | null;
   /**
    * Sets the {@link SkeletonModificationStack2D} that this modification is holding. This modification stack will then be executed when this modification is executed.
    */

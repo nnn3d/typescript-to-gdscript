@@ -116,7 +116,7 @@ declare class PhysicsDirectBodyState2D extends GodotObject {
   /**
    * Returns the collider object. This depends on how it was created (will return a scene node if such was used to create it).
    */
-  get_contact_collider_object(contact_idx: int): GodotObject;
+  get_contact_collider_object(contact_idx: int): GodotObject | null;
   /** Returns the position of the contact point on the collider in the global coordinate system. */
   get_contact_collider_position(contact_idx: int): Vector2;
   /** Returns the collider's shape index. */
@@ -139,7 +139,7 @@ declare class PhysicsDirectBodyState2D extends GodotObject {
   /** Returns the velocity vector at the body's contact point. */
   get_contact_local_velocity_at_position(contact_idx: int): Vector2;
   /** Returns the current state of the space, useful for queries. */
-  get_space_state(): PhysicsDirectSpaceState2D;
+  get_space_state(): PhysicsDirectSpaceState2D | null;
   /**
    * Returns the body's velocity at the given relative position.
    * `local_position` is the offset from the body origin in global coordinates.

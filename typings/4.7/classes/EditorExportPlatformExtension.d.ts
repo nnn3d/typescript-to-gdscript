@@ -68,13 +68,13 @@ declare class EditorExportPlatformExtension extends EditorExportPlatform {
   /**
    * Returns the platform logo displayed in the export dialog. The logo should be 32×32 pixels, adjusted for the current editor scale (see {@link EditorInterface.get_editor_scale}).
    */
-  _get_logo(): Texture2D;
+  _get_logo(): Texture2D | null;
   /** Returns export platform name. */
   _get_name(): string;
   /**
    * Returns the item icon for the specified `device` in the one-click deploy menu. The icon should be 16×16 pixels, adjusted for the current editor scale (see {@link EditorInterface.get_editor_scale}).
    */
-  _get_option_icon(device: int): Texture2D;
+  _get_option_icon(device: int): Texture2D | null;
   /** Returns one-click deploy menu item label for the specified `device`. */
   _get_option_label(device: int): string;
   /** Returns one-click deploy menu item tooltip for the specified `device`. */
@@ -92,7 +92,7 @@ declare class EditorExportPlatformExtension extends EditorExportPlatform {
   /**
    * Returns the icon of the one-click deploy menu button. The icon should be 16×16 pixels, adjusted for the current editor scale (see {@link EditorInterface.get_editor_scale}).
    */
-  _get_run_icon(): Texture2D;
+  _get_run_icon(): Texture2D | null;
   /** Returns `true` if export configuration is valid. */
   _has_valid_export_configuration(preset: EditorExportPreset, debug: boolean): boolean;
   /** Returns `true` if project configuration is valid. */

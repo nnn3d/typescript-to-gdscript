@@ -7,9 +7,9 @@ declare class ParticleProcessMaterial extends Material {
    * The alpha value of each particle's color will be multiplied by this {@link CurveTexture} over its lifetime.
    * **Note:** {@link alpha_curve} multiplies the particle mesh's vertex colors. To have a visible effect on a {@link BaseMaterial3D}, {@link BaseMaterial3D.vertex_color_use_as_albedo} *must* be `true`. For a {@link ShaderMaterial}, `ALPHA *= COLOR.a;` must be inserted in the shader's `fragment()` function. Otherwise, {@link alpha_curve} will have no visible effect.
    */
-  alpha_curve: Texture2D;
+  alpha_curve: Texture2D | null;
   /** Each particle's rotation will be animated along this {@link CurveTexture}. */
-  angle_curve: Texture2D;
+  angle_curve: Texture2D | null;
   /**
    * Maximum initial rotation applied to each particle, in degrees.
    * Only applied when {@link particle_flag_disable_z} or {@link particle_flag_rotate_y} are `true` or the {@link BaseMaterial3D} being used to draw the particle is using {@link BaseMaterial3D.BILLBOARD_PARTICLES}.
@@ -20,7 +20,7 @@ declare class ParticleProcessMaterial extends Material {
   /**
    * Each particle's angular velocity (rotation speed) will vary along this {@link CurveTexture} over its lifetime.
    */
-  angular_velocity_curve: Texture2D;
+  angular_velocity_curve: Texture2D | null;
   /**
    * Maximum initial angular velocity (rotation speed) applied to each particle in *degrees* per second.
    * Only applied when {@link particle_flag_disable_z} or {@link particle_flag_rotate_y} are `true` or the {@link BaseMaterial3D} being used to draw the particle is using {@link BaseMaterial3D.BILLBOARD_PARTICLES}.
@@ -29,7 +29,7 @@ declare class ParticleProcessMaterial extends Material {
   /** Minimum equivalent of {@link angular_velocity_max}. */
   angular_velocity_min: float;
   /** Each particle's animation offset will vary along this {@link CurveTexture}. */
-  anim_offset_curve: Texture2D;
+  anim_offset_curve: Texture2D | null;
   /**
    * Maximum animation offset that corresponds to frame index in the texture. `0` is the first frame, `1` is the last one. See {@link CanvasItemMaterial.particles_animation}.
    */
@@ -37,7 +37,7 @@ declare class ParticleProcessMaterial extends Material {
   /** Minimum equivalent of {@link anim_offset_max}. */
   anim_offset_min: float;
   /** Each particle's animation speed will vary along this {@link CurveTexture}. */
-  anim_speed_curve: Texture2D;
+  anim_speed_curve: Texture2D | null;
   /**
    * Maximum particle animation speed. Animation speed of `1` means that the particles will make full `0` to `1` offset cycle during lifetime, `2` means `2` cycles etc.
    * With animation speed greater than `1`, remember to enable {@link CanvasItemMaterial.particles_anim_loop} property if you want the animation to repeat.
@@ -76,14 +76,14 @@ declare class ParticleProcessMaterial extends Material {
    * Each particle's initial color will vary along this {@link GradientTexture1D} (multiplied with {@link color}).
    * **Note:** {@link color_initial_ramp} multiplies the particle mesh's vertex colors. To have a visible effect on a {@link BaseMaterial3D}, {@link BaseMaterial3D.vertex_color_use_as_albedo} *must* be `true`. For a {@link ShaderMaterial}, `ALBEDO *= COLOR.rgb;` must be inserted in the shader's `fragment()` function. Otherwise, {@link color_initial_ramp} will have no visible effect.
    */
-  color_initial_ramp: Texture2D;
+  color_initial_ramp: Texture2D | null;
   /**
    * Each particle's color will vary along this {@link GradientTexture1D} over its lifetime (multiplied with {@link color}).
    * **Note:** {@link color_ramp} multiplies the particle mesh's vertex colors. To have a visible effect on a {@link BaseMaterial3D}, {@link BaseMaterial3D.vertex_color_use_as_albedo} *must* be `true`. For a {@link ShaderMaterial}, `ALBEDO *= COLOR.rgb;` must be inserted in the shader's `fragment()` function. Otherwise, {@link color_ramp} will have no visible effect.
    */
-  color_ramp: Texture2D;
+  color_ramp: Texture2D | null;
   /** Damping will vary along this {@link CurveTexture}. */
-  damping_curve: Texture2D;
+  damping_curve: Texture2D | null;
   /**
    * The maximum rate at which particles lose velocity. For example value of `100` means that the particle will go from `100` velocity to `0` in `1` second.
    */
@@ -96,7 +96,7 @@ declare class ParticleProcessMaterial extends Material {
    * A curve that specifies the velocity along each of the axes of the particle system along its lifetime.
    * **Note:** Animated velocities will not be affected by damping, use {@link velocity_limit_curve} instead.
    */
-  directional_velocity_curve: Texture2D;
+  directional_velocity_curve: Texture2D | null;
   /**
    * Maximum directional velocity value, which is multiplied by {@link directional_velocity_curve}.
    * **Note:** Animated velocities will not be affected by damping, use {@link velocity_limit_curve} instead.
@@ -116,16 +116,16 @@ declare class ParticleProcessMaterial extends Material {
    * Particle color will be modulated by color determined by sampling this texture at the same point as the {@link emission_point_texture}.
    * **Note:** {@link emission_color_texture} multiplies the particle mesh's vertex colors. To have a visible effect on a {@link BaseMaterial3D}, {@link BaseMaterial3D.vertex_color_use_as_albedo} *must* be `true`. For a {@link ShaderMaterial}, `ALBEDO *= COLOR.rgb;` must be inserted in the shader's `fragment()` function. Otherwise, {@link emission_color_texture} will have no visible effect.
    */
-  emission_color_texture: Texture2D;
+  emission_color_texture: Texture2D | null;
   /**
    * Each particle's color will be multiplied by this {@link CurveTexture} over its lifetime.
    * **Note:** {@link emission_curve} multiplies the particle mesh's vertex colors. To have a visible effect on a {@link BaseMaterial3D}, {@link BaseMaterial3D.vertex_color_use_as_albedo} *must* be `true`. For a {@link ShaderMaterial}, `ALBEDO *= COLOR.rgb;` must be inserted in the shader's `fragment()` function. Otherwise, {@link emission_curve} will have no visible effect.
    */
-  emission_curve: Texture2D;
+  emission_curve: Texture2D | null;
   /**
    * Particle velocity and rotation will be set by sampling this texture at the same point as the {@link emission_point_texture}. Used only in {@link EMISSION_SHAPE_DIRECTED_POINTS}. Can be created automatically from mesh or node by selecting "Create Emission Points from Mesh/Node" under the "Particles" tool in the toolbar.
    */
-  emission_normal_texture: Texture2D;
+  emission_normal_texture: Texture2D | null;
   /**
    * The number of emission points if {@link emission_shape} is set to {@link EMISSION_SHAPE_POINTS} or {@link EMISSION_SHAPE_DIRECTED_POINTS}.
    */
@@ -133,7 +133,7 @@ declare class ParticleProcessMaterial extends Material {
   /**
    * Particles will be emitted at positions determined by sampling this texture at a random position. Used with {@link EMISSION_SHAPE_POINTS} and {@link EMISSION_SHAPE_DIRECTED_POINTS}. Can be created automatically from mesh or node by selecting "Create Emission Points from Mesh/Node" under the "Particles" tool in the toolbar.
    */
-  emission_point_texture: Texture2D;
+  emission_point_texture: Texture2D | null;
   /** The axis of the ring when using the emitter {@link EMISSION_SHAPE_RING}. */
   emission_ring_axis: Vector3;
   /**
@@ -160,7 +160,7 @@ declare class ParticleProcessMaterial extends Material {
   /** Gravity applied to every particle. */
   gravity: Vector3;
   /** Each particle's hue will vary along this {@link CurveTexture}. */
-  hue_variation_curve: Texture2D;
+  hue_variation_curve: Texture2D | null;
   /** Maximum initial hue variation applied to each particle. It will shift the particle color's hue. */
   hue_variation_max: float;
   /** Minimum equivalent of {@link hue_variation_max}. */
@@ -180,7 +180,7 @@ declare class ParticleProcessMaterial extends Material {
    */
   lifetime_randomness: float;
   /** Each particle's linear acceleration will vary along this {@link CurveTexture}. */
-  linear_accel_curve: Texture2D;
+  linear_accel_curve: Texture2D | null;
   /** Maximum linear acceleration applied to each particle in the direction of motion. */
   linear_accel_max: float;
   /** Minimum equivalent of {@link linear_accel_max}. */
@@ -190,7 +190,7 @@ declare class ParticleProcessMaterial extends Material {
    * **Note:** For 3D orbital velocity, use a {@link CurveXYZTexture}.
    * **Note:** Animated velocities will not be affected by damping, use {@link velocity_limit_curve} instead.
    */
-  orbit_velocity_curve: Texture2D;
+  orbit_velocity_curve: Texture2D | null;
   /**
    * Maximum orbital velocity applied to each particle. Makes the particles circle around origin. Specified in number of full rotations around origin per second.
    * **Note:** Animated velocities will not be affected by damping, use {@link velocity_limit_curve} instead.
@@ -212,7 +212,7 @@ declare class ParticleProcessMaterial extends Material {
   /** If `true`, particles rotate around Y axis by {@link angle_min}. */
   particle_flag_rotate_y: boolean;
   /** Each particle's radial acceleration will vary along this {@link CurveTexture}. */
-  radial_accel_curve: Texture2D;
+  radial_accel_curve: Texture2D | null;
   /**
    * Maximum radial acceleration applied to each particle. Makes particle accelerate away from the origin or towards it if negative.
    */
@@ -223,7 +223,7 @@ declare class ParticleProcessMaterial extends Material {
    * A {@link CurveTexture} that defines the velocity over the particle's lifetime away (or toward) the {@link velocity_pivot}.
    * **Note:** Animated velocities will not be affected by damping, use {@link velocity_limit_curve} instead.
    */
-  radial_velocity_curve: Texture2D;
+  radial_velocity_curve: Texture2D | null;
   /**
    * Maximum radial velocity applied to each particle. Makes particles move away from the {@link velocity_pivot}, or toward it if negative.
    * **Note:** Animated velocities will not be affected by damping, use {@link velocity_limit_curve} instead.
@@ -237,7 +237,7 @@ declare class ParticleProcessMaterial extends Material {
   /**
    * Each particle's scale will vary along this {@link CurveTexture} over its lifetime. If a {@link CurveXYZTexture} is supplied instead, the scale will be separated per-axis.
    */
-  scale_curve: Texture2D;
+  scale_curve: Texture2D | null;
   /** Maximum initial scale applied to each particle. */
   scale_max: float;
   /** Minimum equivalent of {@link scale_max}. */
@@ -245,7 +245,7 @@ declare class ParticleProcessMaterial extends Material {
   /**
    * Either a {@link CurveTexture} or a {@link CurveXYZTexture} that scales each particle based on its velocity.
    */
-  scale_over_velocity_curve: Texture2D;
+  scale_over_velocity_curve: Texture2D | null;
   /**
    * Maximum velocity value reference for {@link scale_over_velocity_curve}.
    * {@link scale_over_velocity_curve} will be interpolated between {@link scale_over_velocity_min} and {@link scale_over_velocity_max}.
@@ -285,7 +285,7 @@ declare class ParticleProcessMaterial extends Material {
    */
   sub_emitter_mode: int;
   /** Each particle's tangential acceleration will vary along this {@link CurveTexture}. */
-  tangential_accel_curve: Texture2D;
+  tangential_accel_curve: Texture2D | null;
   /**
    * Maximum tangential acceleration applied to each particle. Tangential acceleration is perpendicular to the particle's velocity giving the particles a swirling motion.
    */
@@ -310,7 +310,7 @@ declare class ParticleProcessMaterial extends Material {
   /**
    * Each particle's amount of turbulence will be influenced along this {@link CurveTexture} over its life time.
    */
-  turbulence_influence_over_life: Texture2D;
+  turbulence_influence_over_life: Texture2D | null;
   /**
    * Maximum displacement of each particle's spawn position by the turbulence.
    * The actual amount of displacement will be a factor of the underlying turbulence multiplied by a random value between {@link turbulence_initial_displacement_min} and {@link turbulence_initial_displacement_max}.
@@ -341,11 +341,11 @@ declare class ParticleProcessMaterial extends Material {
    */
   turbulence_noise_strength: float;
   /** A {@link CurveTexture} that defines the maximum velocity of a particle during its lifetime. */
-  velocity_limit_curve: Texture2D;
+  velocity_limit_curve: Texture2D | null;
   /** A pivot point used to calculate radial and orbital velocity of particles. */
   velocity_pivot: Vector3;
-  set_alpha_curve(value: Texture2D): void;
-  get_alpha_curve(): Texture2D;
+  set_alpha_curve(value: Texture2D | null): void;
+  get_alpha_curve(): Texture2D | null;
   set_attractor_interaction_enabled(value: boolean): void;
   is_attractor_interaction_enabled(): boolean;
   set_collision_bounce(value: float): void;
@@ -358,24 +358,24 @@ declare class ParticleProcessMaterial extends Material {
   is_collision_using_scale(): boolean;
   set_color(value: Color): void;
   get_color(): Color;
-  set_color_initial_ramp(value: Texture2D): void;
-  get_color_initial_ramp(): Texture2D;
-  set_color_ramp(value: Texture2D): void;
-  get_color_ramp(): Texture2D;
+  set_color_initial_ramp(value: Texture2D | null): void;
+  get_color_initial_ramp(): Texture2D | null;
+  set_color_ramp(value: Texture2D | null): void;
+  get_color_ramp(): Texture2D | null;
   set_direction(value: Vector3): void;
   get_direction(): Vector3;
   set_emission_box_extents(value: Vector3): void;
   get_emission_box_extents(): Vector3;
-  set_emission_color_texture(value: Texture2D): void;
-  get_emission_color_texture(): Texture2D;
-  set_emission_curve(value: Texture2D): void;
-  get_emission_curve(): Texture2D;
-  set_emission_normal_texture(value: Texture2D): void;
-  get_emission_normal_texture(): Texture2D;
+  set_emission_color_texture(value: Texture2D | null): void;
+  get_emission_color_texture(): Texture2D | null;
+  set_emission_curve(value: Texture2D | null): void;
+  get_emission_curve(): Texture2D | null;
+  set_emission_normal_texture(value: Texture2D | null): void;
+  get_emission_normal_texture(): Texture2D | null;
   set_emission_point_count(value: int): void;
   get_emission_point_count(): int;
-  set_emission_point_texture(value: Texture2D): void;
-  get_emission_point_texture(): Texture2D;
+  set_emission_point_texture(value: Texture2D | null): void;
+  get_emission_point_texture(): Texture2D | null;
   set_emission_ring_axis(value: Vector3): void;
   get_emission_ring_axis(): Vector3;
   set_emission_ring_cone_angle(value: float): void;
@@ -426,8 +426,8 @@ declare class ParticleProcessMaterial extends Material {
   get_turbulence_noise_speed_random(): float;
   set_turbulence_noise_strength(value: float): void;
   get_turbulence_noise_strength(): float;
-  set_velocity_limit_curve(value: Texture2D): void;
-  get_velocity_limit_curve(): Texture2D;
+  set_velocity_limit_curve(value: Texture2D | null): void;
+  get_velocity_limit_curve(): Texture2D | null;
   set_velocity_pivot(value: Vector3): void;
   get_velocity_pivot(): Vector3;
 
@@ -441,7 +441,7 @@ declare class ParticleProcessMaterial extends Material {
   /** Returns the minimum value range for the given parameter. */
   get_param_min(param: int): float;
   /** Returns the {@link Texture2D} used by the specified parameter. */
-  get_param_texture(param: int): Texture2D;
+  get_param_texture(param: int): Texture2D | null;
   /** Returns `true` if the specified particle flag is enabled. */
   get_particle_flag(particle_flag: int): boolean;
   /**

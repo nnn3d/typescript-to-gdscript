@@ -36,7 +36,7 @@ declare class PhysicalBone2D extends RigidBody2D {
   /**
    * Returns the first {@link Joint2D} child node, if one exists. This is mainly a helper function to make it easier to get the {@link Joint2D} that the {@link PhysicalBone2D} is autoconfiguring.
    */
-  get_joint(): Joint2D;
+  get_joint(): Joint2D | null;
   /**
    * Returns a boolean that indicates whether the {@link PhysicalBone2D} is running and simulating using the Godot 2D physics engine. When `true`, the PhysicalBone2D node is using physics.
    */

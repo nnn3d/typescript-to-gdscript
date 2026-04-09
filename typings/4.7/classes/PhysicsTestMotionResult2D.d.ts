@@ -4,7 +4,7 @@
 /** Describes the motion and collision result from {@link PhysicsServer2D.body_test_motion}. */
 declare class PhysicsTestMotionResult2D extends RefCounted {
   /** Returns the colliding body's attached {@link Object}, if a collision occurred. */
-  get_collider(): GodotObject;
+  get_collider(): GodotObject | null;
   /**
    * Returns the unique instance ID of the colliding body's attached {@link Object}, if a collision occurred. See {@link Object.get_instance_id}.
    */

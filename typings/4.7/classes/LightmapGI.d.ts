@@ -19,7 +19,7 @@ declare class LightmapGI extends VisualInstance3D {
   /**
    * The {@link CameraAttributes} resource that specifies exposure levels to bake at. Auto-exposure and non exposure properties will be ignored. Exposure settings should be used to reduce the dynamic range present when baking. If exposure is too high, the {@link LightmapGI} will have banding artifacts or may have over-exposure artifacts.
    */
-  camera_attributes: CameraAttributes;
+  camera_attributes: CameraAttributes | null;
   /**
    * The distance in pixels from which the denoiser samples. Lower values preserve more details, but may give blotchy results if the lightmap quality is not high enough. Only effective if {@link use_denoiser} is `true` and {@link ProjectSettings.rendering/lightmapping/denoising/denoiser} is set to JNLM.
    */
@@ -44,7 +44,7 @@ declare class LightmapGI extends VisualInstance3D {
   /**
    * The sky to use as a source of environment lighting. Only effective if {@link environment_mode} is {@link ENVIRONMENT_MODE_CUSTOM_SKY}.
    */
-  environment_custom_sky: Sky;
+  environment_custom_sky: Sky | null;
   /** The environment mode to use when baking lightmaps. */
   environment_mode: int;
   /**
@@ -58,7 +58,7 @@ declare class LightmapGI extends VisualInstance3D {
   /**
    * The {@link LightmapGIData} associated to this {@link LightmapGI} node. This resource is automatically created after baking, and is not meant to be created manually.
    */
-  light_data: LightmapGIData;
+  light_data: LightmapGIData | null;
   /**
    * The maximum texture size for the generated texture atlas. Higher values will result in fewer slices being generated, but may not work on all hardware as a result of hardware limitations on texture sizes. Leave {@link max_texture_size} at its default value of `16384` if unsure.
    */
@@ -106,8 +106,8 @@ declare class LightmapGI extends VisualInstance3D {
   get_bounce_indirect_energy(): float;
   set_bounces(value: int): void;
   get_bounces(): int;
-  set_camera_attributes(value: CameraAttributes): void;
-  get_camera_attributes(): CameraAttributes;
+  set_camera_attributes(value: CameraAttributes | null): void;
+  get_camera_attributes(): CameraAttributes | null;
   set_denoiser_range(value: int): void;
   get_denoiser_range(): int;
   set_denoiser_strength(value: float): void;
@@ -118,16 +118,16 @@ declare class LightmapGI extends VisualInstance3D {
   get_environment_custom_color(): Color;
   set_environment_custom_energy(value: float): void;
   get_environment_custom_energy(): float;
-  set_environment_custom_sky(value: Sky): void;
-  get_environment_custom_sky(): Sky;
+  set_environment_custom_sky(value: Sky | null): void;
+  get_environment_custom_sky(): Sky | null;
   set_environment_mode(value: int): void;
   get_environment_mode(): int;
   set_generate_probes(value: int): void;
   get_generate_probes(): int;
   set_interior(value: boolean): void;
   is_interior(): boolean;
-  set_light_data(value: LightmapGIData): void;
-  get_light_data(): LightmapGIData;
+  set_light_data(value: LightmapGIData | null): void;
+  get_light_data(): LightmapGIData | null;
   set_max_texture_size(value: int): void;
   get_max_texture_size(): int;
   set_bake_quality(value: int): void;

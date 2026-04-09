@@ -208,15 +208,15 @@ declare class Viewport extends Node {
    * - 8×8 = rgb(255, 255, 0) - #ffff00 - Not supported on most hardware
    * [/codeblock]
    */
-  vrs_texture: Texture2D;
+  vrs_texture: Texture2D | null;
   /**
    * Sets the update mode for Variable Rate Shading (VRS) for the viewport. VRS requires the input texture to be converted to the format usable by the VRS method supported by the hardware. The update mode defines how often this happens. If the GPU does not support VRS, or VRS is not enabled, this property is ignored.
    */
   vrs_update_mode: int;
   /** The custom {@link World2D} which can be used as 2D environment source. */
-  world_2d: World2D;
+  world_2d: World2D | null;
   /** The custom {@link World3D} which can be used as 3D environment source. */
-  world_3d: World3D;
+  world_3d: World3D | null;
   set_anisotropic_filtering_level(value: int): void;
   get_anisotropic_filtering_level(): int;
   set_as_audio_listener_2d(value: boolean): void;
@@ -299,14 +299,14 @@ declare class Viewport extends Node {
   is_using_xr(): boolean;
   set_vrs_mode(value: int): void;
   get_vrs_mode(): int;
-  set_vrs_texture(value: Texture2D): void;
-  get_vrs_texture(): Texture2D;
+  set_vrs_texture(value: Texture2D | null): void;
+  get_vrs_texture(): Texture2D | null;
   set_vrs_update_mode(value: int): void;
   get_vrs_update_mode(): int;
-  set_world_2d(value: World2D): void;
-  get_world_2d(): World2D;
-  set_world_3d(value: World3D): void;
-  get_world_3d(): World3D;
+  set_world_2d(value: World2D | null): void;
+  get_world_2d(): World2D | null;
+  set_world_3d(value: World3D | null): void;
+  get_world_3d(): World3D | null;
 
   /**
    * Returns the first valid {@link World2D} for this viewport, searching the {@link world_2d} property of itself and any Viewport ancestor.
@@ -319,21 +319,21 @@ declare class Viewport extends Node {
   /**
    * Returns the currently active 2D audio listener. Returns `null` if there are no active 2D audio listeners, in which case the active 2D camera will be treated as listener.
    */
-  get_audio_listener_2d(): AudioListener2D;
+  get_audio_listener_2d(): AudioListener2D | null;
   /**
    * Returns the currently active 3D audio listener. Returns `null` if there are no active 3D audio listeners, in which case the active 3D camera will be treated as listener.
    */
-  get_audio_listener_3d(): AudioListener3D;
+  get_audio_listener_3d(): AudioListener3D | null;
   /**
    * Returns the currently active 2D camera. Returns `null` if there are no active cameras.
    * **Note:** If called while the *Camera Override* system is active in editor, this will return the internally managed override camera. It is therefore advised to avoid caching the return value, or to check that the cached value is still a valid instance and is the current camera before use. See {@link @GlobalScope.is_instance_valid} and {@link Camera2D.is_current}.
    */
-  get_camera_2d(): Camera2D;
+  get_camera_2d(): Camera2D | null;
   /**
    * Returns the currently active 3D camera. Returns `null` if there are no active cameras.
    * **Note:** If called while the *Camera Override* system is active in editor, this will return the internally managed override camera. It is therefore advised to avoid caching the return value, or to check that the cached value is a valid instance and is the current camera before use. See {@link @GlobalScope.is_instance_valid} and {@link Camera3D.current}.
    */
-  get_camera_3d(): Camera3D;
+  get_camera_3d(): Camera3D | null;
   /** Returns an individual bit on the rendering layer mask. */
   get_canvas_cull_mask_bit(layer: int): boolean;
   /**
@@ -383,12 +383,12 @@ declare class Viewport extends Node {
   /**
    * Returns the currently focused {@link Control} within this viewport. If no {@link Control} is focused, returns `null`.
    */
-  gui_get_focus_owner(): Control;
+  gui_get_focus_owner(): Control | null;
   /**
    * Returns the {@link Control} that the mouse is currently hovering over in this viewport. If no {@link Control} has the cursor, returns `null`.
    * Typically the leaf {@link Control} node or deepest level of the subtree which claims hover. This is very useful when used together with {@link Node.is_ancestor_of} to find if the mouse is within a control tree.
    */
-  gui_get_hovered_control(): Control;
+  gui_get_hovered_control(): Control | null;
   /** Returns `true` if the drag operation is successful. */
   gui_is_drag_successful(): boolean;
   /**

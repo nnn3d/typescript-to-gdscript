@@ -33,7 +33,7 @@ declare class Label3D extends GeometryInstance3D {
    */
   fixed_size: boolean;
   /** Font configuration used to display text. */
-  font: Font;
+  font: Font | null;
   /**
    * Font size of the {@link Label3D}'s text. To make the font look more detailed when up close, increase {@link font_size} while decreasing {@link pixel_size} at the same time.
    * Higher font sizes require more time to render new characters, which can cause stuttering during gameplay.
@@ -114,8 +114,8 @@ declare class Label3D extends GeometryInstance3D {
   get_autowrap_trim_flags(): int;
   set_billboard_mode(value: int): void;
   get_billboard_mode(): int;
-  set_font(value: Font): void;
-  get_font(): Font;
+  set_font(value: Font | null): void;
+  get_font(): Font | null;
   set_font_size(value: int): void;
   get_font_size(): int;
   set_justification_flags(value: int): void;
@@ -158,7 +158,7 @@ declare class Label3D extends GeometryInstance3D {
   /**
    * Returns a {@link TriangleMesh} with the label's vertices following its current configuration (such as its {@link pixel_size}).
    */
-  generate_triangle_mesh(): TriangleMesh;
+  generate_triangle_mesh(): TriangleMesh | null;
   /** Returns the value of the specified flag. */
   get_draw_flag(flag: int): boolean;
   /** If `true`, the specified `flag` will be enabled. */

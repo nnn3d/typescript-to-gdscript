@@ -23,7 +23,7 @@ declare class Texture2D extends Texture {
   /** Called when the {@link Texture2D}'s height is queried. */
   _get_height(): int;
   /** Called when {@link get_image} is called. */
-  _get_image(): Image;
+  _get_image(): Image | null;
   /** Called when {@link get_mipmap_count} is called. */
   _get_mipmap_count(): int;
   /** Called when the {@link Texture2D}'s width is queried. */
@@ -55,7 +55,7 @@ declare class Texture2D extends Texture {
    * **Note:** This will return `null` if this {@link Texture2D} is invalid.
    * **Note:** This will fetch the texture data from the GPU, which might cause performance problems when overused. Avoid calling {@link get_image} every frame, especially on large textures.
    */
-  get_image(): Image;
+  get_image(): Image | null;
   /** Returns the number of mipmaps of the texture. */
   get_mipmap_count(): int;
   /** Returns the texture size in pixels. */

@@ -131,7 +131,7 @@ declare interface NativeMenu extends GodotObject {
    * Returns the icon of the item at index `idx`.
    * **Note:** This method is implemented on macOS and Windows.
    */
-  get_item_icon(rid: RID, idx: int): Texture2D;
+  get_item_icon(rid: RID, idx: int): Texture2D | null;
   /**
    * Returns the horizontal offset of the item at the given `idx`.
    * **Note:** This method is implemented only on macOS.

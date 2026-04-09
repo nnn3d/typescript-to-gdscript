@@ -97,7 +97,7 @@ declare class Tree extends Control {
    * The new item will be the `index`-th child of parent, or it will be the last child if there are not enough siblings.
    * Prints an error and returns `null` if called during mouse selection, or if the `parent` does not belong to this tree.
    */
-  create_item(parent?: TreeItem, index?: int): TreeItem;
+  create_item(parent?: TreeItem, index?: int): TreeItem | null;
   /**
    * Deselects all tree items (rows and columns). In {@link SELECT_MULTI} mode also removes selection cursor.
    */
@@ -145,7 +145,7 @@ declare class Tree extends Control {
   /**
    * Returns the currently edited item. Can be used with {@link item_edited} to get the item that was modified.
    */
-  get_edited(): TreeItem;
+  get_edited(): TreeItem | null;
   /** Returns the column for the currently edited item. */
   get_edited_column(): int;
   /**
@@ -153,16 +153,16 @@ declare class Tree extends Control {
    */
   get_item_area_rect(item: TreeItem, column?: int, button_index?: int): Rect2;
   /** Returns the tree item at the specified position (relative to the tree origin position). */
-  get_item_at_position(position: Vector2): TreeItem;
+  get_item_at_position(position: Vector2): TreeItem | null;
   /**
    * Returns the next selected {@link TreeItem} after the given one, or `null` if the end is reached.
    * If `from` is `null`, this returns the first selected item.
    */
-  get_next_selected(from_: TreeItem): TreeItem;
+  get_next_selected(from_: TreeItem): TreeItem | null;
   /** Returns the last pressed button's index. */
   get_pressed_button(): int;
   /** Returns the tree's root item, or `null` if the tree is empty. */
-  get_root(): TreeItem;
+  get_root(): TreeItem | null;
   /** Returns the current scrolling position. */
   get_scroll(): Vector2;
   /**
@@ -170,7 +170,7 @@ declare class Tree extends Control {
    * In {@link SELECT_ROW} and {@link SELECT_SINGLE} modes, the focused item is same as the selected item. In {@link SELECT_MULTI} mode, the focused item is the item under the focus cursor, not necessarily selected.
    * To get the currently selected item(s), use {@link get_next_selected}.
    */
-  get_selected(): TreeItem;
+  get_selected(): TreeItem | null;
   /**
    * Returns the currently focused column, or -1 if no column is focused.
    * In {@link SELECT_SINGLE} mode, the focused column is the selected column. In {@link SELECT_ROW} mode, the focused column is always 0 if any item is selected. In {@link SELECT_MULTI} mode, the focused column is the column under the focus cursor, and there are not necessarily any column selected.

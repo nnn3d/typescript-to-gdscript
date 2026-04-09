@@ -24,7 +24,7 @@ declare class Sprite3D extends SpriteBase3D {
   /**
    * {@link Texture2D} object to draw. If {@link GeometryInstance3D.material_override} is used, this will be overridden. The size information is still used.
    */
-  texture: Texture2D;
+  texture: Texture2D | null;
   /**
    * The number of rows in the sprite sheet. When this property is changed, {@link frame} is adjusted so that the same visual frame is maintained (same row and column). If that's impossible, {@link frame} is reset to `0`.
    */
@@ -39,8 +39,8 @@ declare class Sprite3D extends SpriteBase3D {
   is_region_enabled(): boolean;
   set_region_rect(value: Rect2): void;
   get_region_rect(): Rect2;
-  set_texture(value: Texture2D): void;
-  get_texture(): Texture2D;
+  set_texture(value: Texture2D | null): void;
+  get_texture(): Texture2D | null;
   set_vframes(value: int): void;
   get_vframes(): int;
 

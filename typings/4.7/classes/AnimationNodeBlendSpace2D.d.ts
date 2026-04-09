@@ -61,7 +61,7 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   /** Returns the name of the blend point at index `point`. */
   get_blend_point_name(point: int): string;
   /** Returns the {@link AnimationRootNode} referenced by the point at index `point`. */
-  get_blend_point_node(point: int): AnimationRootNode;
+  get_blend_point_node(point: int): AnimationRootNode | null;
   /** Returns the position of the point at index `point`. */
   get_blend_point_position(point: int): Vector2;
   /** Returns the number of triangles in the blend space. */

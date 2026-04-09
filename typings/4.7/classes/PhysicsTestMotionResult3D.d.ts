@@ -6,7 +6,7 @@ declare class PhysicsTestMotionResult3D extends RefCounted {
   /**
    * Returns the colliding body's attached {@link Object} given a collision index (the deepest collision by default), if a collision occurred.
    */
-  get_collider(collision_index?: int): GodotObject;
+  get_collider(collision_index?: int): GodotObject | null;
   /**
    * Returns the unique instance ID of the colliding body's attached {@link Object} given a collision index (the deepest collision by default), if a collision occurred. See {@link Object.get_instance_id}.
    */

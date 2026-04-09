@@ -61,7 +61,7 @@ declare class TreeItem extends GodotObject {
    */
   get_autowrap_trim_flags(column: int): int;
   /** Returns the {@link Texture2D} of the button at index `button_index` in column `column`. */
-  get_button(column: int, button_index: int): Texture2D;
+  get_button(column: int, button_index: int): Texture2D | null;
   /**
    * Returns the button index if there is a button with ID `id` in column `column`, otherwise returns -1.
    */
@@ -82,7 +82,7 @@ declare class TreeItem extends GodotObject {
    * Returns a child item by its `index` (see {@link get_child_count}). This method is often used for iterating all children of an item.
    * Negative indices access the children from the last one.
    */
-  get_child(index: int): TreeItem;
+  get_child(index: int): TreeItem | null;
   /** Returns the number of child items. */
   get_child_count(): int;
   /** Returns an array of references to the item's children. */
@@ -94,25 +94,25 @@ declare class TreeItem extends GodotObject {
   /** Returns the custom callback of column `column`. */
   get_custom_draw_callback(column: int): Callable;
   /** Returns custom font used to draw text in the column `column`. */
-  get_custom_font(column: int): Font;
+  get_custom_font(column: int): Font | null;
   /** Returns custom font size used to draw text in the column `column`. */
   get_custom_font_size(column: int): int;
   /** Returns the given column's custom {@link StyleBox} used to draw the background. */
-  get_custom_stylebox(column: int): StyleBox;
+  get_custom_stylebox(column: int): StyleBox | null;
   /** Returns the given column's description for assistive apps. */
   get_description(column: int): string;
   /** Returns `true` if `expand_right` is set. */
   get_expand_right(column: int): boolean;
   /** Returns the TreeItem's first child. */
-  get_first_child(): TreeItem;
+  get_first_child(): TreeItem | null;
   /** Returns the given column's icon {@link Texture2D}. Error if no icon is set. */
-  get_icon(column: int): Texture2D;
+  get_icon(column: int): Texture2D | null;
   /** Returns the maximum allowed width of the icon in the given `column`. */
   get_icon_max_width(column: int): int;
   /** Returns the {@link Color} modulating the column's icon. */
   get_icon_modulate(column: int): Color;
   /** Returns the given column's icon overlay {@link Texture2D}. */
-  get_icon_overlay(column: int): Texture2D;
+  get_icon_overlay(column: int): Texture2D | null;
   /** Returns the icon {@link Texture2D} region as {@link Rect2}. */
   get_icon_region(column: int): Rect2;
   /**
@@ -124,31 +124,31 @@ declare class TreeItem extends GodotObject {
   /** Returns the metadata value that was set for the given column using {@link set_metadata}. */
   get_metadata(column: int): unknown;
   /** Returns the next sibling TreeItem in the tree or a `null` object if there is none. */
-  get_next(): TreeItem;
+  get_next(): TreeItem | null;
   /**
    * Returns the next TreeItem in the tree (in the context of a depth-first search) or a `null` object if there is none.
    * If `wrap` is enabled, the method will wrap around to the first element in the tree when called on the last element, otherwise it returns `null`.
    */
-  get_next_in_tree(wrap?: boolean): TreeItem;
+  get_next_in_tree(wrap?: boolean): TreeItem | null;
   /**
    * Returns the next visible TreeItem in the tree (in the context of a depth-first search) or a `null` object if there is none.
    * If `wrap` is enabled, the method will wrap around to the first visible element in the tree when called on the last visible element, otherwise it returns `null`.
    */
-  get_next_visible(wrap?: boolean): TreeItem;
+  get_next_visible(wrap?: boolean): TreeItem | null;
   /** Returns the parent TreeItem or a `null` object if there is none. */
-  get_parent(): TreeItem;
+  get_parent(): TreeItem | null;
   /** Returns the previous sibling TreeItem in the tree or a `null` object if there is none. */
-  get_prev(): TreeItem;
+  get_prev(): TreeItem | null;
   /**
    * Returns the previous TreeItem in the tree (in the context of a depth-first search) or a `null` object if there is none.
    * If `wrap` is enabled, the method will wrap around to the last element in the tree when called on the first visible element, otherwise it returns `null`.
    */
-  get_prev_in_tree(wrap?: boolean): TreeItem;
+  get_prev_in_tree(wrap?: boolean): TreeItem | null;
   /**
    * Returns the previous visible sibling TreeItem in the tree (in the context of a depth-first search) or a `null` object if there is none.
    * If `wrap` is enabled, the method will wrap around to the last visible element in the tree when called on the first visible element, otherwise it returns `null`.
    */
-  get_prev_visible(wrap?: boolean): TreeItem;
+  get_prev_visible(wrap?: boolean): TreeItem | null;
   /** Returns the value of a {@link CELL_MODE_RANGE} column. */
   get_range(column: int): float;
   /**
@@ -174,7 +174,7 @@ declare class TreeItem extends GodotObject {
   /** Returns the given column's tooltip text. */
   get_tooltip_text(column: int): string;
   /** Returns the {@link Tree} that owns this TreeItem. */
-  get_tree(): Tree;
+  get_tree(): Tree | null;
   /**
    * Returns `true` if this {@link TreeItem}, or any of its descendants, is collapsed.
    * If `only_visible` is `true` it ignores non-visible {@link TreeItem}s.

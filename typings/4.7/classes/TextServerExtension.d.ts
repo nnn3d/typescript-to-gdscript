@@ -145,7 +145,7 @@ declare class TextServerExtension extends TextServer {
   /** Returns number of textures used by font cache entry. */
   _font_get_texture_count(font_rid: RID, size: Vector2i): int;
   /** Returns font cache texture image data. */
-  _font_get_texture_image(font_rid: RID, size: Vector2i, texture_index: int): Image;
+  _font_get_texture_image(font_rid: RID, size: Vector2i, texture_index: int): Image | null;
   /** Returns array containing glyph packing data. */
   _font_get_texture_offsets(font_rid: RID, size: Vector2i, texture_index: int): PackedInt32Array;
   /** Returns 2D transform applied to the font outlines. */

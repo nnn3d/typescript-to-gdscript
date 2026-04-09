@@ -6,13 +6,13 @@ declare class VisualShaderNodeTexture extends VisualShaderNode {
   /** Determines the source for the lookup. */
   source: int;
   /** The source texture, if needed for the selected {@link source}. */
-  texture: Texture2D;
+  texture: Texture2D | null;
   /** Specifies the type of the texture if {@link source} is set to {@link SOURCE_TEXTURE}. */
   texture_type: int;
   set_source(value: int): void;
   get_source(): int;
-  set_texture(value: Texture2D): void;
-  get_texture(): Texture2D;
+  set_texture(value: Texture2D | null): void;
+  get_texture(): Texture2D | null;
   set_texture_type(value: int): void;
   get_texture_type(): int;
 

@@ -13,7 +13,7 @@ declare class Script extends Resource {
   /** Returns `true` if the script can be instantiated. */
   can_instantiate(): boolean;
   /** Returns the script directly inherited by this script. */
-  get_base_script(): Script;
+  get_base_script(): Script | null;
   /**
    * Returns the class name associated with the script, if there is one. Returns an empty string otherwise.
    * To give the script a global name, you can use the `class_name` keyword in GDScript and the `{@link GlobalClass}` attribute in C#.

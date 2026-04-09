@@ -14,7 +14,7 @@ declare class FoldableGroup extends Resource {
    */
   get_containers(): Array<FoldableContainer>;
   /** Returns the current expanded container. */
-  get_expanded_container(): FoldableContainer;
+  get_expanded_container(): FoldableContainer | null;
 
   /** Emitted when one of the containers of the group is expanded. */
   expanded: Signal<[FoldableContainer]>;

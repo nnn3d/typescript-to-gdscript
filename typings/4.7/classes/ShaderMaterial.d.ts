@@ -4,9 +4,9 @@
 /** A material defined by a custom {@link Shader} program and the values of its shader parameters. */
 declare class ShaderMaterial extends Material {
   /** The {@link Shader} program used to render this material. */
-  shader: Shader;
-  set_shader(value: Shader): void;
-  get_shader(): Shader;
+  shader: Shader | null;
+  set_shader(value: Shader | null): void;
+  get_shader(): Shader | null;
 
   /** Returns the current value set for this material of a uniform in the shader. */
   get_shader_parameter(param: string): unknown;

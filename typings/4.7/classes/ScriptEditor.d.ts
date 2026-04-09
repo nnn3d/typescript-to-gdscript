@@ -11,9 +11,9 @@ declare class ScriptEditor extends PanelContainer {
   /** Returns array of breakpoints. */
   get_breakpoints(): PackedStringArray;
   /** Returns the {@link ScriptEditorBase} object that the user is currently editing. */
-  get_current_editor(): ScriptEditorBase;
+  get_current_editor(): ScriptEditorBase | null;
   /** Returns a {@link Script} that is currently active in editor. */
-  get_current_script(): Script;
+  get_current_script(): Script | null;
   /** Returns an array with all {@link ScriptEditorBase} objects which are currently open in editor. */
   get_open_script_editors(): Array<ScriptEditorBase>;
   /** Returns an array with all {@link Script} objects which are currently open in editor. */

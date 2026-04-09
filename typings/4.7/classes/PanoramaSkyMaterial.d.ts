@@ -8,11 +8,11 @@ declare class PanoramaSkyMaterial extends Material {
   /** A boolean value to determine if the background texture should be filtered or not. */
   filter: boolean;
   /** {@link Texture2D} to be applied to the {@link PanoramaSkyMaterial}. */
-  panorama: Texture2D;
+  panorama: Texture2D | null;
   set_energy_multiplier(value: float): void;
   get_energy_multiplier(): float;
   set_filtering_enabled(value: boolean): void;
   is_filtering_enabled(): boolean;
-  set_panorama(value: Texture2D): void;
-  get_panorama(): Texture2D;
+  set_panorama(value: Texture2D | null): void;
+  get_panorama(): Texture2D | null;
 }

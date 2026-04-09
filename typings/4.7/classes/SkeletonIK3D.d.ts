@@ -67,7 +67,7 @@ declare class SkeletonIK3D extends SkeletonModifier3D {
   /**
    * Returns the parent {@link Skeleton3D} node that was present when SkeletonIK entered the scene tree. Returns `null` if the parent node was not a {@link Skeleton3D} node when SkeletonIK3D entered the scene tree.
    */
-  get_parent_skeleton(): Skeleton3D;
+  get_parent_skeleton(): Skeleton3D | null;
   /**
    * Returns `true` if SkeletonIK is applying IK effects on continues frames to the {@link Skeleton3D} bones. Returns `false` if SkeletonIK is stopped or {@link start} was used with the `one_time` parameter set to `true`.
    */

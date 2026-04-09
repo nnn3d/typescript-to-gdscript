@@ -21,7 +21,7 @@ declare class AnimationNodeBlendTree extends AnimationRootNode {
   /** Disconnects the animation node connected to the specified input. */
   disconnect_node(input_node: string, input_index: int): void;
   /** Returns the sub animation node with the specified `name`. */
-  get_node(name: string): AnimationNode;
+  get_node(name: string): AnimationNode | null;
   /** Returns a list containing the names of all sub animation nodes in this blend tree. */
   get_node_list(): Array<string>;
   /** Returns the position of the sub animation node with the specified `name`. */

@@ -34,7 +34,7 @@ declare class StyleBoxTexture extends StyleBox {
    */
   region_rect: Rect2;
   /** The texture to use when drawing this style box. */
-  texture: Texture2D;
+  texture: Texture2D | null;
   /**
    * Increases the bottom margin of the 3×3 texture box.
    * A higher value means more of the source texture is considered to be part of the bottom border of the 3×3 box.
@@ -69,8 +69,8 @@ declare class StyleBoxTexture extends StyleBox {
   get_modulate(): Color;
   set_region_rect(value: Rect2): void;
   get_region_rect(): Rect2;
-  set_texture(value: Texture2D): void;
-  get_texture(): Texture2D;
+  set_texture(value: Texture2D | null): void;
+  get_texture(): Texture2D | null;
 
   /** Returns the expand margin size of the specified {@link Side}. */
   get_expand_margin(margin: int): float;

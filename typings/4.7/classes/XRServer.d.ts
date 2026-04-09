@@ -9,7 +9,7 @@ declare interface XRServer extends GodotObject {
    */
   camera_locked_to_origin: boolean;
   /** The primary {@link XRInterface} currently bound to the {@link XRServer}. */
-  primary_interface: XRInterface;
+  primary_interface: XRInterface | null;
   /**
    * The current origin of our tracking space in the virtual world. This is used by the renderer to properly position the camera with new tracking data.
    * **Note:** This property is managed by the current {@link XROrigin3D} node. It is exposed for access from GDExtensions.
@@ -21,8 +21,8 @@ declare interface XRServer extends GodotObject {
   world_scale: float;
   set_camera_locked_to_origin(value: boolean): void;
   is_camera_locked_to_origin(): boolean;
-  set_primary_interface(value: XRInterface): void;
-  get_primary_interface(): XRInterface;
+  set_primary_interface(value: XRInterface | null): void;
+  get_primary_interface(): XRInterface | null;
   set_world_origin(value: Transform3D): void;
   get_world_origin(): Transform3D;
   set_world_scale(value: float): void;
@@ -46,11 +46,11 @@ declare interface XRServer extends GodotObject {
   /**
    * Finds an interface by its `name`. For example, if your project uses capabilities of an AR/VR platform, you can find the interface for that platform by name and initialize it.
    */
-  find_interface(name: string): XRInterface;
+  find_interface(name: string): XRInterface | null;
   /** Returns the primary interface's transformation. */
   get_hmd_transform(): Transform3D;
   /** Returns the interface registered at the given `idx` index in the list of interfaces. */
-  get_interface(idx: int): XRInterface;
+  get_interface(idx: int): XRInterface | null;
   /**
    * Returns the number of interfaces currently registered with the AR/VR server. If your project supports multiple AR/VR platforms, you can look through the available interface, and either present the user with a selection or simply try to initialize each interface and use the first one that returns `true`.
    */
@@ -62,7 +62,7 @@ declare interface XRServer extends GodotObject {
    */
   get_reference_frame(): Transform3D;
   /** Returns the positional tracker with the given `tracker_name`. */
-  get_tracker(tracker_name: string): XRTracker;
+  get_tracker(tracker_name: string): XRTracker | null;
   /** Returns a dictionary of trackers for `tracker_types`. */
   get_trackers(tracker_types: int): Dictionary;
   /** Removes this `interface`. */

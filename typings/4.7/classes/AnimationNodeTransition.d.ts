@@ -12,7 +12,7 @@ declare class AnimationNodeTransition extends AnimationNodeSync {
   /**
    * Determines how cross-fading between animations is eased. If empty, the transition will be linear. Should be a unit {@link Curve}.
    */
-  xfade_curve: Curve;
+  xfade_curve: Curve | null;
   /**
    * Cross-fading time (in seconds) between each animation connected to the inputs.
    * **Note:** {@link AnimationNodeTransition} transitions the current state immediately after the start of the fading. The precise remaining time can only be inferred from the main animation. When {@link AnimationNodeOutput} is considered as the most upstream, so the {@link xfade_time} is not scaled depending on the downstream delta. See also {@link AnimationNodeOneShot.fadeout_time}.
@@ -21,8 +21,8 @@ declare class AnimationNodeTransition extends AnimationNodeSync {
   set_allow_transition_to_self(value: boolean): void;
   is_allow_transition_to_self(): boolean;
   set_input_count(value: int): void;
-  set_xfade_curve(value: Curve): void;
-  get_xfade_curve(): Curve;
+  set_xfade_curve(value: Curve | null): void;
+  get_xfade_curve(): Curve | null;
   set_xfade_time(value: float): void;
   get_xfade_time(): float;
 

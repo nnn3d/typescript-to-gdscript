@@ -18,7 +18,7 @@ declare class StreamPeerTLS extends StreamPeer {
   /**
    * Returns the underlying {@link StreamPeer} connection, used in {@link accept_stream} or {@link connect_to_stream}.
    */
-  get_stream(): StreamPeer;
+  get_stream(): StreamPeer | null;
   /**
    * Poll the connection to check for incoming bytes. Call this right before {@link StreamPeer.get_available_bytes} for it to work properly.
    */

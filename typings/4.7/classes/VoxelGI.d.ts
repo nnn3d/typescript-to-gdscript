@@ -6,9 +6,9 @@ declare class VoxelGI extends VisualInstance3D {
   /**
    * The {@link CameraAttributes} resource that specifies exposure levels to bake at. Auto-exposure and non exposure properties will be ignored. Exposure settings should be used to reduce the dynamic range present when baking. If exposure is too high, the {@link VoxelGI} will have banding artifacts or may have over-exposure artifacts.
    */
-  camera_attributes: CameraAttributes;
+  camera_attributes: CameraAttributes | null;
   /** The {@link VoxelGIData} resource that holds the data for this {@link VoxelGI}. */
-  data: VoxelGIData;
+  data: VoxelGIData | null;
   /**
    * The size of the area covered by the {@link VoxelGI}. This must be `1.0` or greater on each axis.
    * **Note:** If you make the size larger without increasing the number of subdivisions with {@link subdiv}, the size of each cell will increase and result in less detailed lighting.
@@ -18,10 +18,10 @@ declare class VoxelGI extends VisualInstance3D {
    * Number of times to subdivide the grid that the {@link VoxelGI} operates on. A higher number results in finer detail and thus higher visual quality, while lower numbers result in better performance.
    */
   subdiv: int;
-  set_camera_attributes(value: CameraAttributes): void;
-  get_camera_attributes(): CameraAttributes;
-  set_probe_data(value: VoxelGIData): void;
-  get_probe_data(): VoxelGIData;
+  set_camera_attributes(value: CameraAttributes | null): void;
+  get_camera_attributes(): CameraAttributes | null;
+  set_probe_data(value: VoxelGIData | null): void;
+  get_probe_data(): VoxelGIData | null;
   set_size(value: Vector3): void;
   get_size(): Vector3;
   set_subdiv(value: int): void;

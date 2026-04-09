@@ -25,7 +25,7 @@ declare class TileMap extends Node2D {
   /**
    * The {@link TileSet} used by this {@link TileMap}. The textures, collisions, and additional behavior of all available tiles are stored here.
    */
-  tile_set: TileSet;
+  tile_set: TileSet | null;
   set_collision_animatable(value: boolean): void;
   is_collision_animatable(): boolean;
   set_collision_visibility_mode(value: int): void;
@@ -34,8 +34,8 @@ declare class TileMap extends Node2D {
   get_navigation_visibility_mode(): int;
   set_rendering_quadrant_size(value: int): void;
   get_rendering_quadrant_size(): int;
-  set_tileset(value: TileSet): void;
-  get_tileset(): TileSet;
+  set_tileset(value: TileSet | null): void;
+  get_tileset(): TileSet | null;
 
   /**
    * Called with a TileData object about to be used internally by the TileMap, allowing its modification at runtime.
@@ -93,7 +93,7 @@ declare class TileMap extends Node2D {
    * If `layer` is negative, the layers are accessed from the last one.
    * If `use_proxies` is `false`, ignores the {@link TileSet}'s tile proxies. See {@link TileSet.map_tile_proxy}.
    */
-  get_cell_tile_data(layer: int, coords: Vector2i, use_proxies?: boolean): TileData;
+  get_cell_tile_data(layer: int, coords: Vector2i, use_proxies?: boolean): TileData | null;
   /**
    * Returns the coordinates of the tile for given physics body RID. Such RID can be retrieved from {@link KinematicCollision2D.get_collider_rid}, when colliding with a tile.
    */

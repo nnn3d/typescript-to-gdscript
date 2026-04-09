@@ -7,7 +7,7 @@ declare interface JavaScriptBridge extends GodotObject {
    * Creates a reference to a {@link Callable} that can be used as a callback by JavaScript. The reference must be kept until the callback happens, or it won't be called at all. See {@link JavaScriptObject} for usage.
    * **Note:** The callback function must take exactly one {@link Array} argument, which is going to be the JavaScript arguments object (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/arguments) converted to an array.
    */
-  create_callback(callable: Callable): JavaScriptObject;
+  create_callback(callable: Callable): JavaScriptObject | null;
   /**
    * Creates a new JavaScript object using the `new` constructor. The `object` must a valid property of the JavaScript `window`. See {@link JavaScriptObject} for usage.
    */
@@ -32,7 +32,7 @@ declare interface JavaScriptBridge extends GodotObject {
   /**
    * Returns an interface to a JavaScript object that can be used by scripts. The `interface` must be a valid property of the JavaScript `window`. The callback must accept a single {@link Array} argument, which will contain the JavaScript `arguments`. See {@link JavaScriptObject} for usage.
    */
-  get_interface(interface_: string): JavaScriptObject;
+  get_interface(interface_: string): JavaScriptObject | null;
   /**
    * Returns `true` if the given `javascript_object` is of type `ArrayBuffer` (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer), `DataView` (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView), or one of the many typed array objects (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray).
    */

@@ -13,7 +13,7 @@ declare class Shader extends Resource {
    * **Note:** `name` must match the name of the uniform in the code exactly.
    * **Note:** If the sampler array is used use `index` to access the specified texture.
    */
-  get_default_texture_parameter(name: string, index?: int): Texture;
+  get_default_texture_parameter(name: string, index?: int): Texture | null;
   /** Returns the shader mode for the shader. */
   get_mode(): int;
   /**

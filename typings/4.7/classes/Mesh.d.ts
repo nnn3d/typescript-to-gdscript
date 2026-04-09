@@ -35,7 +35,7 @@ declare class Mesh extends Resource {
   /** Virtual method to override the surface LODs for a custom class extending {@link Mesh}. */
   _surface_get_lods(index: int): Dictionary;
   /** Virtual method to override the surface material for a custom class extending {@link Mesh}. */
-  _surface_get_material(index: int): Material;
+  _surface_get_material(index: int): Material | null;
   /** Virtual method to override the surface primitive type for a custom class extending {@link Mesh}. */
   _surface_get_primitive_type(index: int): int;
   /**
@@ -52,7 +52,7 @@ declare class Mesh extends Resource {
    * Calculate an outline mesh at a defined offset (margin) from the original mesh.
    * **Note:** This method typically returns the vertices in reverse order (e.g. clockwise to counterclockwise).
    */
-  create_outline(margin: float): Mesh;
+  create_outline(margin: float): Mesh | null;
   /** Creates a placeholder version of this resource ({@link PlaceholderMesh}). */
   create_placeholder(): Resource;
   /** Calculate a {@link ConcavePolygonShape3D} from the mesh. */
@@ -60,7 +60,7 @@ declare class Mesh extends Resource {
   /**
    * Generate a {@link TriangleMesh} from the mesh. Considers only surfaces using one of these primitive types: {@link PRIMITIVE_TRIANGLES}, {@link PRIMITIVE_TRIANGLE_STRIP}.
    */
-  generate_triangle_mesh(): TriangleMesh;
+  generate_triangle_mesh(): TriangleMesh | null;
   /**
    * Returns the smallest {@link AABB} enclosing this mesh in local space. Not affected by `custom_aabb`.
    * **Note:** This is only implemented for {@link ArrayMesh} and {@link PrimitiveMesh}.
@@ -84,7 +84,7 @@ declare class Mesh extends Resource {
    * Returns a {@link Material} in a given surface. Surface is rendered using this material.
    * **Note:** This returns the material within the {@link Mesh} resource, not the {@link Material} associated to the {@link MeshInstance3D}'s Surface Material Override properties. To get the {@link Material} associated to the {@link MeshInstance3D}'s Surface Material Override properties, use {@link MeshInstance3D.get_surface_override_material} instead.
    */
-  surface_get_material(surf_idx: int): Material;
+  surface_get_material(surf_idx: int): Material | null;
   /**
    * Sets a {@link Material} for a given surface. Surface will be rendered using this material.
    * **Note:** This assigns the material within the {@link Mesh} resource, not the {@link Material} associated to the {@link MeshInstance3D}'s Surface Material Override properties. To set the {@link Material} associated to the {@link MeshInstance3D}'s Surface Material Override properties, use {@link MeshInstance3D.set_surface_override_material} instead.

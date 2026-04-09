@@ -55,7 +55,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /** Returns the drag force damping curve of the bone chain. */
   get_drag(index: int): float;
   /** Returns the drag force damping curve of the bone chain. */
-  get_drag_damping_curve(index: int): Curve;
+  get_drag_damping_curve(index: int): Curve | null;
   /** Returns the end bone index of the bone chain. */
   get_end_bone(index: int): int;
   /**
@@ -77,7 +77,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /** Returns the gravity amount of the bone chain. */
   get_gravity(index: int): float;
   /** Returns the gravity amount damping curve of the bone chain. */
-  get_gravity_damping_curve(index: int): Curve;
+  get_gravity_damping_curve(index: int): Curve | null;
   /** Returns the gravity direction of the bone chain. */
   get_gravity_direction(index: int): Vector3;
   /** Returns the bone index at `joint` in the bone chain's joint list. */
@@ -106,7 +106,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /** Returns the joint radius of the bone chain. */
   get_radius(index: int): float;
   /** Returns the joint radius damping curve of the bone chain. */
-  get_radius_damping_curve(index: int): Curve;
+  get_radius_damping_curve(index: int): Curve | null;
   /** Returns the root bone index of the bone chain. */
   get_root_bone(index: int): int;
   /** Returns the root bone name of the bone chain. */
@@ -121,7 +121,7 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   /** Returns the stiffness force of the bone chain. */
   get_stiffness(index: int): float;
   /** Returns the stiffness force damping curve of the bone chain. */
-  get_stiffness_damping_curve(index: int): Curve;
+  get_stiffness_damping_curve(index: int): Curve | null;
   /** Returns `true` if the config can be edited individually for each joint. */
   is_config_individual(index: int): boolean;
   /** Returns `true` if the end bone is extended to have a tail. */

@@ -4,9 +4,9 @@
 /** Camera node, displays from a point of view. */
 declare class Camera3D extends Node3D {
   /** The {@link CameraAttributes} to use for this camera. */
-  attributes: CameraAttributes;
+  attributes: CameraAttributes | null;
   /** The {@link Compositor} to use for this camera. */
-  compositor: Compositor;
+  compositor: Compositor | null;
   /**
    * The culling mask that describes which {@link VisualInstance3D.layers} are rendered by this camera. By default, all 20 user-visible layers are rendered.
    * **Note:** Since the {@link cull_mask} allows for 32 layers to be stored in total, there are an additional 12 layers that are only used internally by the engine and aren't exposed in the editor. Setting {@link cull_mask} using a script allows you to toggle those reserved layers, which can be useful for editor plugins.
@@ -25,7 +25,7 @@ declare class Camera3D extends Node3D {
    */
   doppler_tracking: int;
   /** The {@link Environment} to use for this camera. */
-  environment: Environment;
+  environment: Environment | null;
   /**
    * The distance to the far culling boundary for this camera relative to its local Z axis. Higher values allow the camera to see further away, while decreasing {@link far} can improve performance if it results in objects being partially or fully culled.
    */
@@ -64,18 +64,18 @@ declare class Camera3D extends Node3D {
   size: float;
   /** The vertical (Y) offset of the camera viewport. */
   v_offset: float;
-  set_attributes(value: CameraAttributes): void;
-  get_attributes(): CameraAttributes;
-  set_compositor(value: Compositor): void;
-  get_compositor(): Compositor;
+  set_attributes(value: CameraAttributes | null): void;
+  get_attributes(): CameraAttributes | null;
+  set_compositor(value: Compositor | null): void;
+  get_compositor(): Compositor | null;
   set_cull_mask(value: int): void;
   get_cull_mask(): int;
   set_current(value: boolean): void;
   is_current(): boolean;
   set_doppler_tracking(value: int): void;
   get_doppler_tracking(): int;
-  set_environment(value: Environment): void;
-  get_environment(): Environment;
+  set_environment(value: Environment | null): void;
+  get_environment(): Environment | null;
   set_far(value: float): void;
   get_far(): float;
   set_fov(value: float): void;

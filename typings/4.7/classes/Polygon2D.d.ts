@@ -32,7 +32,7 @@ declare class Polygon2D extends Node2D {
    */
   skeleton: string;
   /** The polygon's fill texture. Use {@link uv} to set texture coordinates. */
-  texture: Texture2D;
+  texture: Texture2D | null;
   /**
    * Amount to offset the polygon's {@link texture}. If set to `Vector2(0, 0)`, the texture's origin (its top-left corner) will be placed at the polygon's position.
    */
@@ -69,8 +69,8 @@ declare class Polygon2D extends Node2D {
   get_polygons(): Array<unknown>;
   set_skeleton(value: string): void;
   get_skeleton(): string;
-  set_texture(value: Texture2D): void;
-  get_texture(): Texture2D;
+  set_texture(value: Texture2D | null): void;
+  get_texture(): Texture2D | null;
   set_texture_offset(value: Vector2): void;
   get_texture_offset(): Vector2;
   set_texture_rotation(value: float): void;

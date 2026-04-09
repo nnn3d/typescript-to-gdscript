@@ -30,7 +30,7 @@ declare class AnimationNodeStateMachineTransition extends Resource {
   /**
    * Ease curve for better control over cross-fade between this state and the next. Should be a unit {@link Curve}.
    */
-  xfade_curve: Curve;
+  xfade_curve: Curve | null;
   /**
    * The time to cross-fade between this state and the next.
    * **Note:** {@link AnimationNodeStateMachine} transitions the current state immediately after the start of the fading. The precise remaining time can only be inferred from the main animation. When {@link AnimationNodeOutput} is considered as the most upstream, so the {@link xfade_time} is not scaled depending on the downstream delta. See also {@link AnimationNodeOneShot.fadeout_time}.
@@ -50,8 +50,8 @@ declare class AnimationNodeStateMachineTransition extends Resource {
   is_reset(): boolean;
   set_switch_mode(value: int): void;
   get_switch_mode(): int;
-  set_xfade_curve(value: Curve): void;
-  get_xfade_curve(): Curve;
+  set_xfade_curve(value: Curve | null): void;
+  get_xfade_curve(): Curve | null;
   set_xfade_time(value: float): void;
   get_xfade_time(): float;
 

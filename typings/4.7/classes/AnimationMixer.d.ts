@@ -94,12 +94,12 @@ declare class AnimationMixer extends Node {
   /**
    * Returns the {@link Animation} with the key `name`. If the animation does not exist, `null` is returned and an error is logged.
    */
-  get_animation(name: string): Animation;
+  get_animation(name: string): Animation | null;
   /**
    * Returns the first {@link AnimationLibrary} with key `name` or `null` if not found.
    * To get the {@link AnimationMixer}'s global animation library, use `get_animation_library("")`.
    */
-  get_animation_library(name: string): AnimationLibrary;
+  get_animation_library(name: string): AnimationLibrary | null;
   /** Returns the list of stored library keys. */
   get_animation_library_list(): Array<string>;
   /** Returns the list of stored animation keys. */

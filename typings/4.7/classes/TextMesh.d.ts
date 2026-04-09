@@ -17,7 +17,7 @@ declare class TextMesh extends PrimitiveMesh {
    */
   depth: float;
   /** Font configuration used to display text. */
-  font: Font;
+  font: Font | null;
   /**
    * Font size of the {@link TextMesh}'s text. This property works in tandem with {@link pixel_size}. Higher values will result in a more detailed font, regardless of {@link curve_step} and {@link pixel_size}. Consider keeping this value below 63 (inclusive) for good performance, and adjust {@link pixel_size} as needed to enlarge text.
    * **Note:** Changing this property will regenerate the mesh, which is a slow operation, especially with large font sizes and long texts. To change the text's size in real-time efficiently, change the node's {@link Node3D.scale} instead.
@@ -70,8 +70,8 @@ declare class TextMesh extends PrimitiveMesh {
   get_curve_step(): float;
   set_depth(value: float): void;
   get_depth(): float;
-  set_font(value: Font): void;
-  get_font(): Font;
+  set_font(value: Font | null): void;
+  get_font(): Font | null;
   set_font_size(value: int): void;
   get_font_size(): int;
   set_horizontal_alignment(value: int): void;

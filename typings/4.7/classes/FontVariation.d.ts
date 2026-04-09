@@ -4,7 +4,7 @@
 /** A variation of a font with additional settings. */
 declare class FontVariation extends Font {
   /** Base font used to create a variation. If not set, default {@link Theme} font is used. */
-  base_font: Font;
+  base_font: Font | null;
   /** Extra baseline offset (as a fraction of font height). */
   baseline_offset: float;
   /**
@@ -37,8 +37,8 @@ declare class FontVariation extends Font {
    * For example, to simulate italic typeface by slanting, apply the following transform `Transform2D(1.0, slant, 0.0, 1.0, 0.0, 0.0)`.
    */
   variation_transform: Transform2D;
-  set_base_font(value: Font): void;
-  get_base_font(): Font;
+  set_base_font(value: Font | null): void;
+  get_base_font(): Font | null;
   set_baseline_offset(value: float): void;
   get_baseline_offset(): float;
   set_opentype_features(value: Dictionary): void;

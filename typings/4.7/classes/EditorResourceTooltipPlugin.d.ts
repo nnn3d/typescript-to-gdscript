@@ -12,7 +12,7 @@ declare class EditorResourceTooltipPlugin extends RefCounted {
    * **Note:** It's unadvised to use {@link ResourceLoader.load}, especially with heavy resources like models or textures, because it will make the editor unresponsive when creating the tooltip. You can use {@link request_thumbnail} if you want to display a preview in your tooltip.
    * **Note:** If you decide to discard the `base`, make sure to call {@link Node.queue_free}, because it's not freed automatically.
    */
-  _make_tooltip_for_path(path: string, metadata: Dictionary, base: Control): Control;
+  _make_tooltip_for_path(path: string, metadata: Dictionary, base: Control): Control | null;
   /**
    * Requests a thumbnail for the given {@link TextureRect}. The thumbnail is created asynchronously by {@link EditorResourcePreview} and automatically set when available.
    */

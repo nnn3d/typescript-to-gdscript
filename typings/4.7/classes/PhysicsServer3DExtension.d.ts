@@ -52,7 +52,7 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _body_get_constant_force(body: RID): Vector3;
   _body_get_constant_torque(body: RID): Vector3;
   _body_get_contacts_reported_depth_threshold(body: RID): float;
-  _body_get_direct_state(body: RID): PhysicsDirectBodyState3D;
+  _body_get_direct_state(body: RID): PhysicsDirectBodyState3D | null;
   _body_get_max_contacts_reported(body: RID): int;
   _body_get_mode(body: RID): int;
   _body_get_object_instance_id(body: RID): int;
@@ -189,7 +189,7 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _space_create(): RID;
   _space_get_contact_count(space: RID): int;
   _space_get_contacts(space: RID): PackedVector3Array;
-  _space_get_direct_state(space: RID): PhysicsDirectSpaceState3D;
+  _space_get_direct_state(space: RID): PhysicsDirectSpaceState3D | null;
   _space_get_param(space: RID, param: int): float;
   _space_is_active(space: RID): boolean;
   _space_set_active(space: RID, active: boolean): void;

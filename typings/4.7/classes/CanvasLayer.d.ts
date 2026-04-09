@@ -6,7 +6,7 @@ declare class CanvasLayer extends Node {
   /**
    * The custom {@link Viewport} node assigned to the {@link CanvasLayer}. If `null`, uses the default viewport instead.
    */
-  custom_viewport: Node;
+  custom_viewport: Node | null;
   /**
    * If enabled, the {@link CanvasLayer} maintains its position in world space. If disabled, the {@link CanvasLayer} stays in a fixed position on the screen.
    * Together with {@link follow_viewport_scale}, this can be used for a pseudo-3D effect.
@@ -35,8 +35,8 @@ declare class CanvasLayer extends Node {
    * Unlike {@link CanvasItem.visible}, visibility of a {@link CanvasLayer} isn't propagated to underlying layers.
    */
   visible: boolean;
-  set_custom_viewport(value: Node): void;
-  get_custom_viewport(): Node;
+  set_custom_viewport(value: Node | null): void;
+  get_custom_viewport(): Node | null;
   set_follow_viewport(value: boolean): void;
   is_following_viewport(): boolean;
   set_follow_viewport_scale(value: float): void;

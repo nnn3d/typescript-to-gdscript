@@ -38,7 +38,7 @@ declare class TileMapLayer extends Node2D {
   /**
    * The {@link TileSet} used by this layer. The textures, collisions, and additional behavior of all available tiles are stored here.
    */
-  tile_set: TileSet;
+  tile_set: TileSet | null;
   /**
    * If `true`, this {@link TileMapLayer} collision shapes will be instantiated as kinematic bodies. This can be needed for moving {@link TileMapLayer} nodes (i.e. moving platforms).
    */
@@ -69,8 +69,8 @@ declare class TileMapLayer extends Node2D {
   get_rendering_quadrant_size(): int;
   set_tile_map_data_from_array(value: PackedByteArray): void;
   get_tile_map_data_as_array(): PackedByteArray;
-  set_tile_set(value: TileSet): void;
-  get_tile_set(): TileSet;
+  set_tile_set(value: TileSet | null): void;
+  get_tile_set(): TileSet | null;
   set_use_kinematic_bodies(value: boolean): void;
   is_using_kinematic_bodies(): boolean;
   set_x_draw_order_reversed(value: boolean): void;
@@ -121,7 +121,7 @@ declare class TileMapLayer extends Node2D {
   /**
    * Returns the {@link TileData} object associated with the given cell, or `null` if the cell does not exist or is not a {@link TileSetAtlasSource}.
    */
-  get_cell_tile_data(coords: Vector2i): TileData;
+  get_cell_tile_data(coords: Vector2i): TileData | null;
   /**
    * Returns the coordinates of the physics quadrant (see {@link physics_quadrant_size}) for given physics body {@link RID}. Such an {@link RID} can be retrieved from {@link KinematicCollision2D.get_collider_rid}, when colliding with a tile.
    * **Note:** Higher values of {@link physics_quadrant_size} will make this function less precise. To get the exact cell coordinates, you need to set {@link physics_quadrant_size} to `1`, which disables physics chunking.

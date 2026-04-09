@@ -14,7 +14,7 @@ declare class ButtonGroup extends Resource {
    */
   get_buttons(): Array<BaseButton>;
   /** Returns the current pressed button. */
-  get_pressed_button(): BaseButton;
+  get_pressed_button(): BaseButton | null;
 
   /** Emitted when one of the buttons of the group is pressed. */
   pressed: Signal<[BaseButton]>;

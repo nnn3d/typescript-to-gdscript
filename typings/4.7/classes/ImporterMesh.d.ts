@@ -22,7 +22,7 @@ declare class ImporterMesh extends Resource {
   /**
    * Converts the given {@link Mesh} into an {@link ImporterMesh} by copying all its surfaces, blend shapes, materials, and metadata into a new {@link ImporterMesh} object.
    */
-  static from_mesh(mesh: Mesh): ImporterMesh;
+  static from_mesh(mesh: Mesh): ImporterMesh | null;
   /**
    * Generates all lods for this ImporterMesh.
    * `normal_merge_angle` is in degrees and used in the same way as the importer settings in `lods`.
@@ -44,7 +44,7 @@ declare class ImporterMesh extends Resource {
    * This method caches the returned mesh, and subsequent calls will return the cached data until {@link clear} is called.
    * If not yet cached and `base_mesh` is provided, `base_mesh` will be used and mutated.
    */
-  get_mesh(base_mesh?: ArrayMesh): ArrayMesh;
+  get_mesh(base_mesh?: ArrayMesh): ArrayMesh | null;
   /**
    * Returns the arrays for the vertices, normals, UVs, etc. that make up the requested surface. See {@link add_surface}.
    */
@@ -62,7 +62,7 @@ declare class ImporterMesh extends Resource {
   /** Returns the screen ratio which activates a lod for a surface. */
   get_surface_lod_size(surface_idx: int, lod_idx: int): float;
   /** Returns a {@link Material} in a given surface. Surface is rendered using this material. */
-  get_surface_material(surface_idx: int): Material;
+  get_surface_material(surface_idx: int): Material | null;
   /** Gets the name assigned to this surface. */
   get_surface_name(surface_idx: int): string;
   /** Returns the primitive type of the requested surface (see {@link add_surface}). */
@@ -72,7 +72,7 @@ declare class ImporterMesh extends Resource {
    * If `deduplicate_surfaces` is `true` and multiple meshes have surfaces with the same names and formats, the surfaces will be merged together when the meshes are merged, and will use the material from the first matching surface. This is useful for reducing the number of surfaces in the resulting mesh, and avoids duplicating materials. Surfaces with bone weights will never be deduplicated. If `deduplicate_surfaces` is `false`, the surfaces will always be kept separate, and will be given unique names.
    * **Warning:** Blend shapes and LODs are not supported and will be discarded. Do not use this function to discard blend shapes and LODs, as support for these may be added in the future.
    */
-  static merge_importer_meshes(importer_meshes: Array<ImporterMesh>, relative_transforms: Array<Transform3D>, deduplicate_surfaces?: boolean): ImporterMesh;
+  static merge_importer_meshes(importer_meshes: Array<ImporterMesh>, relative_transforms: Array<Transform3D>, deduplicate_surfaces?: boolean): ImporterMesh | null;
   /** Sets the blend shape mode. */
   set_blend_shape_mode(mode: int): void;
   /** Sets the size hint of this mesh for lightmap-unwrapping in UV-space. */

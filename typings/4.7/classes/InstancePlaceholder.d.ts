@@ -7,7 +7,7 @@ declare class InstancePlaceholder extends Node {
    * Call this method to actually load in the node. The created node will be placed as a sibling *above* the {@link InstancePlaceholder} in the scene tree. The {@link Node}'s reference is also returned for convenience.
    * **Note:** {@link create_instance} is not thread-safe. Use {@link Object.call_deferred} if calling from a thread.
    */
-  create_instance(replace?: boolean, custom_scene?: PackedScene): Node;
+  create_instance(replace?: boolean, custom_scene?: PackedScene): Node | null;
   /**
    * Gets the path to the {@link PackedScene} resource file that is loaded by default when calling {@link create_instance}. Not thread-safe. Use {@link Object.call_deferred} if calling from a thread.
    */

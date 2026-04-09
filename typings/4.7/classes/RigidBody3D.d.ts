@@ -91,7 +91,7 @@ declare class RigidBody3D extends PhysicsBody3D {
    * The physics material override for the body.
    * If a material is assigned to this property, it will be used instead of any other physics material, such as an inherited one.
    */
-  physics_material_override: PhysicsMaterial;
+  physics_material_override: PhysicsMaterial | null;
   /**
    * If `true`, the body will not move and will not calculate forces until woken up by another body through, for example, a collision, or by using the {@link apply_impulse} or {@link apply_force} methods.
    */
@@ -138,8 +138,8 @@ declare class RigidBody3D extends PhysicsBody3D {
   get_mass(): float;
   set_max_contacts_reported(value: int): void;
   get_max_contacts_reported(): int;
-  set_physics_material_override(value: PhysicsMaterial): void;
-  get_physics_material_override(): PhysicsMaterial;
+  set_physics_material_override(value: PhysicsMaterial | null): void;
+  get_physics_material_override(): PhysicsMaterial | null;
   set_sleeping(value: boolean): void;
   is_sleeping(): boolean;
 

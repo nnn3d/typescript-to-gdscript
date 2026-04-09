@@ -30,7 +30,7 @@ declare class AnimationNodeStateMachine extends AnimationRootNode {
   /** Returns the draw offset of the graph. Used for display in the editor. */
   get_graph_offset(): Vector2;
   /** Returns the animation node with the given name. */
-  get_node(name: string): AnimationNode;
+  get_node(name: string): AnimationNode | null;
   /** Returns a list containing the names of all animation nodes in this state machine. */
   get_node_list(): Array<string>;
   /** Returns the given animation node's name. */
@@ -38,7 +38,7 @@ declare class AnimationNodeStateMachine extends AnimationRootNode {
   /** Returns the given animation node's coordinates. Used for display in the editor. */
   get_node_position(name: string): Vector2;
   /** Returns the given transition. */
-  get_transition(idx: int): AnimationNodeStateMachineTransition;
+  get_transition(idx: int): AnimationNodeStateMachineTransition | null;
   /** Returns the number of connections in the graph. */
   get_transition_count(): int;
   /** Returns the given transition's start node. */

@@ -28,7 +28,7 @@ declare class XRNode3D extends Node3D {
   /**
    * Returns the {@link XRPose} containing the current state of the pose being tracked. This gives access to additional properties of this pose.
    */
-  get_pose(): XRPose;
+  get_pose(): XRPose | null;
   /**
    * Triggers a haptic pulse on a device associated with this interface.
    * `action_name` is the name of the action for this pulse.
