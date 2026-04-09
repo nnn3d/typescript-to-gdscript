@@ -14,12 +14,6 @@
     "*": {
       "typings": [
         "typings/index.d.ts"
-      ],
-      "typings/4.7": [
-        "typings/4.7/index.d.ts"
-      ],
-      "typings/latest": [
-        "typings/latest/index.d.ts"
       ]
     }
   },
@@ -34,8 +28,7 @@
     "lint": "tsc --noEmit",
     "generate:ast-types": "dts-tree-sitter tree-sitter-gdscript > src/parser/gdscript/types.ts && node scripts/fix-tree-sitter-types.js src/parser/gdscript/types.ts",
     "generate:resource-ast-types": "dts-tree-sitter tree-sitter-godot-resource > src/parser/godot-resource/types.ts && node scripts/fix-tree-sitter-types.js src/parser/godot-resource/types.ts",
-    "generate:godot-typings": "tsx src/cli/index.ts generate-gdscript-global-typings --docs-dir vendor/godot/doc/classes --typings-dir typings --set-latest",
-    "set-latest": "tsx src/cli/index.ts set-latest"
+    "generate:godot-typings": "tsx src/cli/index.ts generate-gdscript-global-typings --docs-dir vendor/godot/doc/classes --typings-dir typings"
   },
   "prettier": {
     "trailingComma": "all",

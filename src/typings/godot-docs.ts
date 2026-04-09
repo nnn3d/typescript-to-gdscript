@@ -361,7 +361,7 @@ function deriveValueTypes(classes: Map<string, GodotClassXml>): Set<string> {
 /**
  * Per-class set of member names whose types should stay non-nullable even
  * though they would normally be nullable reference types.
- * Populated from `typings/_overrides/non-nullable.json` by `generateGodotDocsTypings()`.
+ * Populated from `src/typings/non-nullable.json` by `generateGodotDocsTypings()`.
  */
 let nonNullableMembers = new Map<string, Set<string>>();
 
@@ -371,7 +371,8 @@ let nonNullableMembers = new Map<string, Set<string>>();
  */
 function loadNonNullableOverrides(overrideDir: string): Map<string, Set<string>> {
   const result = new Map<string, Set<string>>();
-  const filePath = join(overrideDir, 'non-nullable.json');
+  // non-nullable.json lives one level above the overrides/ directory
+  const filePath = join(overrideDir, '..', 'non-nullable.json');
   if (!existsSync(filePath)) return result;
   const data: Record<string, string[]> = JSON.parse(readFileSync(filePath, 'utf-8'));
   for (const [cls, members] of Object.entries(data)) {
@@ -1521,7 +1522,7 @@ export function generateGodotDocsTypings(
   mkdirSync(classesDir, { recursive: true });
 
   const header =
-    '// AUTO-GENERATED from Godot class documentation.\n// Manual overrides applied from typings/_overrides/*.d.ts\n';
+    '// AUTO-GENERATED from Godot class documentation.\n// Manual overrides applied from src/typings/overrides/*.d.ts\n';
 
   // Track generated files for the index
   const generatedFiles: string[] = [];

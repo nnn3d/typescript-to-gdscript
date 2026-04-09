@@ -9,5 +9,5 @@
     "skipLibCheck": false,
     "types": []
   },
-  "include": ["../../../typings/latest", "./**/*.ts"]
+  "include": ["../../../typings", "./**/*.ts"]
 }

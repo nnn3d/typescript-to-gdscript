@@ -1,0 +1,86 @@
+// AUTO-GENERATED from Godot class documentation.
+// Manual overrides applied from src/typings/overrides/*.d.ts
+
+/**
+ * Override: GodotSignal — typed connect, disconnect, emit for bare Signal variables.
+ * For Signal<[...]> properties on classes, gd-helpers.d.ts already provides typed versions.
+ */
+declare class Signal<T extends any[] = any[]> {
+  /**
+   * Connects this signal to the specified `callable`. Optional `flags` can be also added to configure the connection's behavior (see {@link Object.ConnectFlags} constants). You can provide additional arguments to the connected `callable` by using {@link Callable.bind}.
+   * A signal can only be connected once to the same {@link Callable}. If the signal is already connected, this method returns {@link ERR_INVALID_PARAMETER} and generates an error, unless the signal is connected with {@link Object.CONNECT_REFERENCE_COUNTED}. To prevent this, use {@link is_connected} first to check for existing connections.
+   * **Note:** If the `callable`'s object is freed, the connection will be lost.
+   */
+  connect(callable: (...args: T) => void): void;
+  /**
+   * Disconnects this signal from the specified {@link Callable}. If the connection does not exist, generates an error. Use {@link is_connected} to make sure that the connection exists.
+   */
+  disconnect(callable: (...args: T) => void): void;
+  /**
+   * Emits this signal. All {@link Callable}s connected to this signal will be triggered. This method supports a variable number of arguments, so parameters can be passed as a comma separated list.
+   */
+  emit(...args: T): void;
+  /**
+   * Returns an {@link Array} of connections for this signal. Each connection is represented as a {@link Dictionary} that contains three entries:
+   * - `signal` is a reference to this signal;
+   * - `callable` is a reference to the connected {@link Callable};
+   * - `flags` is a combination of {@link Object.ConnectFlags}.
+   */
+  get_connections(): Array<unknown>;
+  /** Returns the name of this signal. */
+  get_name(): string;
+  /** Returns the object emitting this signal. */
+  get_object(): GodotObject | null;
+  /** Returns the ID of the object emitting this signal (see {@link Object.get_instance_id}). */
+  get_object_id(): int;
+  /** Returns `true` if any {@link Callable} is connected to this signal. */
+  has_connections(): boolean;
+  /** Returns `true` if the specified {@link Callable} is connected to this signal. */
+  is_connected(callable: (...args: T) => void): boolean;
+  /**
+   * Returns `true` if this {@link Signal} has no object and the signal name is empty. Equivalent to `signal == Signal()`.
+   */
+  is_null(): boolean;
+
+  // Operator overloads
+  [__ops_ne]: { right: Signal; ret: boolean };
+  [__ops_eq]: { right: Signal; ret: boolean };
+
+  [__variant_converts]: Signal;
+
+  // Dictionary method overrides (prevent Object interface leaking)
+  assign: never;
+  clear: never;
+  duplicate: never;
+  duplicate_deep: never;
+  erase: never;
+  find_key: never;
+  get: never;
+  get_or_add: never;
+  get_typed_key_builtin: never;
+  get_typed_key_class_name: never;
+  get_typed_key_script: never;
+  get_typed_value_builtin: never;
+  get_typed_value_class_name: never;
+  get_typed_value_script: never;
+  has: never;
+  has_all: never;
+  hash: never;
+  is_empty: never;
+  is_read_only: never;
+  is_same_typed: never;
+  is_same_typed_key: never;
+  is_same_typed_value: never;
+  is_typed: never;
+  is_typed_key: never;
+  is_typed_value: never;
+  keys: never;
+  make_read_only: never;
+  merge: never;
+  merged: never;
+  recursive_equal: never;
+  set: never;
+  size: never;
+  sort: never;
+  values: never;
+}

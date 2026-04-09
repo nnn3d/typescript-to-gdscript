@@ -108,8 +108,7 @@ Registry resolution order:
 
 1. `--registry` CLI flag (explicit path to `godot-class-registry.json`)
 2. `registryPath` from `tstogd.json` in CWD
-3. `godotVersion` from `tstogd.json` → bundled `typings/<version>/`
-4. Bundled `typings/latest/godot-class-registry.json`
+3. Bundled `typings/godot-class-registry.json`
 
 Options:
 
@@ -213,7 +212,7 @@ Options:
 Generate TypeScript typings and class registry from Godot XML docs. Requires the `vendor/godot` git submodule.
 
 ```bash
-ts2gd generate-typings --docs-dir vendor/godot/doc/classes --set-latest
+ts2gd generate-typings --docs-dir vendor/godot/doc/classes
 ```
 
 Options:
@@ -222,15 +221,6 @@ Options:
 - `--typings-dir <dir>` — Root typings directory (default: `typings`)
 - `--patch-dir <dir>` — Directory containing `.patch` files for manual type improvements
 - `--version <ver>` — Godot version label (auto-detected from `vendor/godot/version.py`)
-- `--set-latest` — Also copy to `latest/` (default: true)
-
-### `ts2gd set-latest <version>`
-
-Switch the active "latest" typings to an already-generated version.
-
-```bash
-ts2gd set-latest 4.6
-```
 
 ### `ts2gd generate-addon-typings`
 
@@ -529,23 +519,20 @@ TypeScript `constructor()` maps to GDScript `_init()`.
 - TS `this.method()` → GD `method()` (for own/inherited methods)
 - TS `this.property` → GD `property` or `self.property`
 
-## Versioned Typings
+## Typings
 
-Typings are stored in `typings/<version>/` folders:
+Typings are stored in a flat `typings/` folder (no version subdirectories):
 
 ```
 typings/
-  index.d.ts          # Entry point (references _globals/ + latest/)
-  _globals/           # Global type definitions
-    gd-helpers.d.ts   # gd namespace types
-    globals.d.ts      # Generated global class declarations
-  _overrides/         # Manual type overrides for generated typings
-  4.7/
-    classes/          # Per-class .d.ts files
-    godot-class-registry.json
-  latest/             # Pointer to active version
-    index.d.ts
+  index.d.ts                # Entry point (references globals.d.ts, gd-helpers.d.ts, classes/)
+  globals.d.ts              # Generated global class declarations
+  gd-helpers.d.ts           # gd namespace types (signal, enum_, as, ops, decorators)
+  godot-class-registry.json # Class hierarchy JSON (916 classes)
+  classes/                  # Per-class .d.ts files
 ```
+
+The `generate-typings` command outputs directly to `typings/` root.
 
 ### Nullable Reference Types
 
@@ -556,7 +543,7 @@ Generated typings distinguish between value types and reference types for nullab
 
 A type is classified as a value type if its Godot XML documentation includes a copy constructor (a constructor with a single parameter of its own type). This is derived automatically from the parsed XML docs at generation time — no hardcoded type lists.
 
-**Overrides**: Files in `typings/_overrides/` can restore non-null return types for specific members where `null` is never returned in practice. For example, `typings/_overrides/node.d.ts` overrides `get_tree(): SceneTree`, `get_viewport(): Viewport`, and `get_window(): Window` as non-null.
+**Overrides**: Files in `src/typings/overrides/` can restore non-null return types for specific members where `null` is never returned in practice. For example, `src/typings/overrides/node.d.ts` overrides `get_tree(): SceneTree`, `get_viewport(): Viewport`, and `get_window(): Window` as non-null.
 
 ## Scene Typings
 

@@ -153,38 +153,13 @@ function getPackageTypingsDir(): string {
 }
 
 /**
- * Reads the latest version from typings/latest/index.d.ts.
- * Parses the "// @version X.Y" comment.
+ * Resolves the bundled registry JSON path.
+ * The registry lives directly in typings/godot-class-registry.json.
  */
-function getLatestVersion(): string | null {
+function getBundledRegistryPath(): string | null {
   const typingsDir = getPackageTypingsDir();
-  const latestIndex = join(typingsDir, 'latest', 'index.d.ts');
-  if (!existsSync(latestIndex)) return null;
-  const content = readFileSync(latestIndex, 'utf-8');
-  const match = content.match(/\/\/\s*@version\s+(\S+)/);
-  return match?.[1] ?? null;
-}
-
-/**
- * Resolves the bundled registry JSON path for a given version.
- * Falls back to the version referenced by latest/index.d.ts.
- */
-function getBundledRegistryPath(version?: string): string | null {
-  const typingsDir = getPackageTypingsDir();
-  if (version) {
-    const versionedPath = join(
-      typingsDir,
-      version,
-      'godot-class-registry.json',
-    );
-    if (existsSync(versionedPath)) return versionedPath;
-  }
-  // Resolve from latest/ pointer
-  const latestVersion = getLatestVersion();
-  if (latestVersion) {
-    const path = join(typingsDir, latestVersion, 'godot-class-registry.json');
-    if (existsSync(path)) return path;
-  }
+  const registryPath = join(typingsDir, 'godot-class-registry.json');
+  if (existsSync(registryPath)) return registryPath;
   return null;
 }
 
@@ -231,8 +206,7 @@ export interface ResolveRegistryOptions {
  * Resolves the GodotClassRegistry with the following priority:
  * 1. Explicit --registry CLI path
  * 2. registryPath from tstogd.json
- * 3. godotVersion from tstogd.json → bundled typings/<version>/
- * 4. Bundled typings/latest/
+ * 3. Bundled typings/godot-class-registry.json
  */
 export function resolveRegistry(
   options?: ResolveRegistryOptions,
@@ -250,17 +224,12 @@ export function resolveRegistry(
       resolve(configDir, config.registryPath),
     );
   }
-  if (config?.godotVersion) {
-    const path = getBundledRegistryPath(config.godotVersion);
-    if (path) return GodotClassRegistry.fromJsonFile(path);
-  }
-
-  // 4. Bundled latest
-  const latestPath = getBundledRegistryPath();
-  if (latestPath) return GodotClassRegistry.fromJsonFile(latestPath);
+  // 3. Bundled registry
+  const bundledPath = getBundledRegistryPath();
+  if (bundledPath) return GodotClassRegistry.fromJsonFile(bundledPath);
 
   throw new Error(
-    'Could not find Godot class registry. Provide --registry flag, ' +
-      'set godotVersion in tstogd.json, or ensure typings/latest/ exists in the package.',
+    'Could not find Godot class registry. Provide --registry flag ' +
+      'or ensure typings/godot-class-registry.json exists in the package.',
   );
 }

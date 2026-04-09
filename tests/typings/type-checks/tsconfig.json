@@ -10,7 +10,7 @@
     "types": []
   },
   "include": [
-    "../../../typings/latest",
+    "../../../typings",
     "./**/*.ts"
   ]
 }

@@ -16,7 +16,6 @@ const REGISTRY_PATH = join(
   '..',
   '..',
   'typings',
-  '4.7',
   'godot-class-registry.json',
 );
 const registry = GodotClassRegistry.fromJsonFile(REGISTRY_PATH);
@@ -199,7 +198,7 @@ async function makeTsHelperTmp(
     `ts2gd-helper-${label}-${randomBytes(4).toString('hex')}`,
   );
   mkdirSync(tmpDir, { recursive: true });
-  const typingsDir = join(__dirname, '..', '..', 'typings', 'latest');
+  const typingsDir = join(__dirname, '..', '..', 'typings');
   writeFileSync(
     join(tmpDir, 'tsconfig.json'),
     JSON.stringify({

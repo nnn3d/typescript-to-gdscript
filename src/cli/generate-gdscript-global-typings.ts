@@ -1,9 +1,10 @@
 import type { Command } from 'commander';
 import { existsSync, mkdirSync } from 'fs';
-import { resolve, join } from 'path';
+import { resolve, join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import { generateGodotDocsTypings } from '../typings/godot-docs.ts';
 import { parseGodotVersion } from '../typings/godot-registry.ts';
-import { writeVersionIndexDts, writeLatestIndexDts } from './helpers.ts';
+import { writeTypingsIndexDts } from './helpers.ts';
 
 /**
  * Detects Godot version from vendor/godot/version.py relative to the given godot docs dir.
@@ -22,11 +23,23 @@ function detectGodotVersion(docsDir: string): string | null {
   return null;
 }
 
+/** Resolve the bundled src/typings/overrides directory next to this source file. */
+function getDefaultOverrideDir(): string {
+  const thisDir = dirname(fileURLToPath(import.meta.url));
+  return resolve(thisDir, '..', 'typings', 'overrides');
+}
+
+/** Resolve the bundled src/typings/non-nullable.json next to this source file. */
+function getDefaultNonNullablePath(): string {
+  const thisDir = dirname(fileURLToPath(import.meta.url));
+  return resolve(thisDir, '..', 'typings', 'non-nullable.json');
+}
+
 export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): void {
   program
     .command('generate-gdscript-global-typings')
     .description(
-      'Generate TypeScript typings and class registry from Godot docs into versioned typings folder',
+      'Generate TypeScript typings and class registry from Godot docs',
     )
     .option('--docs-dir <dir>', 'Godot XML class documentation directory')
     .option('--typings-dir <dir>', 'Root typings directory', 'typings')
@@ -35,7 +48,6 @@ export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): 
       '--version <ver>',
       'Godot version label (auto-detected from vendor/godot/version.py if omitted)',
     )
-    .option('--set-latest', 'Also update latest/ reference', true)
     .action((opts) => {
       if (!opts.docsDir) {
         console.error('--docs-dir is required');
@@ -44,6 +56,8 @@ export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): 
 
       const docsDir = resolve(opts.docsDir);
       const typingsRoot = resolve(opts.typingsDir);
+      mkdirSync(typingsRoot, { recursive: true });
+
       const version = opts.version ?? detectGodotVersion(docsDir);
 
       if (!version) {
@@ -53,29 +67,20 @@ export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): 
         process.exit(1);
       }
 
-      const versionDir = join(typingsRoot, version);
-      mkdirSync(versionDir, { recursive: true });
-
-      const registryPath = join(versionDir, 'godot-class-registry.json');
+      const registryPath = join(typingsRoot, 'godot-class-registry.json');
       const overrideDir = opts.overrideDir
         ? resolve(opts.overrideDir)
-        : join(typingsRoot, '_overrides');
+        : getDefaultOverrideDir();
 
       generateGodotDocsTypings({
         classDocsDir: docsDir,
-        outputDir: versionDir,
+        outputDir: typingsRoot,
         overrideDir: existsSync(overrideDir) ? overrideDir : undefined,
         registryOutputPath: registryPath,
         version,
       });
 
-      writeVersionIndexDts(versionDir);
-      console.log(`Generated typings for Godot ${version} in ${versionDir}`);
-
-      if (opts.setLatest) {
-        const latestDir = join(typingsRoot, 'latest');
-        writeLatestIndexDts(latestDir, version);
-        console.log(`Updated latest/ → ${version}`);
-      }
+      writeTypingsIndexDts(typingsRoot);
+      console.log(`Generated typings for Godot ${version} in ${typingsRoot}`);
     });
 }

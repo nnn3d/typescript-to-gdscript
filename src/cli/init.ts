@@ -22,7 +22,7 @@ const TSCONFIG_TEMPLATE = `{
     "noEmit": true,
     "types": []
   },
-  "include": ["typescript-to-gdscript/typings/latest", "{{tsDir}}/**/*.ts", "{{typingsDir}}/**/*.d.ts"]
+  "include": ["typescript-to-gdscript/typings", "{{tsDir}}/**/*.ts", "{{typingsDir}}/**/*.d.ts"]
 }
 `;
 

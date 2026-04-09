@@ -5,11 +5,11 @@ import { tmpdir } from 'os';
 import { generateGodotDocsTypings } from '../../src/typings/godot-docs.js';
 
 const GODOT_DOCS_DIR = join(__dirname, '../../vendor/godot/doc/classes');
-const OVERRIDE_DIR = join(__dirname, '../../typings/_overrides');
-const VERSION_CLASSES_DIR = join(__dirname, '../../typings/4.7/classes');
+const OVERRIDE_DIR = join(__dirname, '../../src/typings/overrides');
+const VERSION_CLASSES_DIR = join(__dirname, '../../typings/classes');
 
 describe('Godot Docs: typings generation', () => {
-  it('should generate per-class files matching typings/4.7/classes/', () => {
+  it('should generate per-class files matching typings/classes/', () => {
     const tmpDir = mkdtempSync(join(tmpdir(), 'godot-typings-'));
 
     try {

@@ -164,31 +164,9 @@ export function generateAllTypings(cfg: {
   );
 }
 
-/** Helper functions for generate-gdscript-global-typings and set-latest commands */
+/** Helper functions for generate-gdscript-global-typings command */
 
-import { mkdirSync } from 'fs';
-
-export function writeVersionIndexDts(versionDir: string): void {
-  const content = `/// <reference path="../_globals/globals.d.ts" />\n/// <reference path="../_globals/gd-helpers.d.ts" />\n/// <reference path="classes/index.d.ts" />\n`;
-  writeFileSync(join(versionDir, 'index.d.ts'), content);
-}
-
-export function writeLatestIndexDts(latestDir: string, version: string): void {
-  mkdirSync(latestDir, { recursive: true });
-  const content = `// @version ${version}\n/// <reference path="../${version}/index.d.ts" />\n`;
-  writeFileSync(join(latestDir, 'index.d.ts'), content);
-}
-
-export function getAvailableVersions(typingsRoot: string): string[] {
-  if (!existsSync(typingsRoot)) return [];
-  return readdirSync(typingsRoot).filter((name) => {
-    if (name === 'latest' || name.endsWith('.d.ts') || name.endsWith('.ts'))
-      return false;
-    const fullPath = join(typingsRoot, name);
-    return (
-      statSync(fullPath).isDirectory() &&
-      (existsSync(join(fullPath, 'classes')) ||
-        existsSync(join(fullPath, 'godot.d.ts')))
-    );
-  });
+export function writeTypingsIndexDts(typingsDir: string): void {
+  const content = `/// <reference path="globals.d.ts" />\n/// <reference path="gd-helpers.d.ts" />\n/// <reference path="classes/index.d.ts" />\n`;
+  writeFileSync(join(typingsDir, 'index.d.ts'), content);
 }
