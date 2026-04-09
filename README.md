@@ -121,7 +121,9 @@ Options:
 - `--no-explicit-convert-helper` — Disable TS-based variant-type auto-fix (explicit `gd.as` insertion)
 - `--no-ready-field-types-helper` — Disable TS-based class property auto-fix (adds `!` and infers types from `_ready()` assignments)
 - `--no-extends-type-helper` — Disable TS-based override-method parameter auto-fix (copies parameter types from parent class)
-- `--unsafe-use-any` — Use `any` instead of `unknown` as the fallback for unresolvable types (e.g. `gd.getset` without a GDScript type annotation and without a typeof-able value expression). Less strict but more error-prone.
+- `--unsafe-use-any` — Less strict but less error-prone conversion mode. Currently affects two places:
+  - `gd.getset` fallback type: uses `any` instead of `unknown` when neither a GDScript type annotation nor a typeof-able value expression is available.
+  - Ready field types helper: non-primitive TS2564 fields that aren't assigned in `_ready()` get `!` (definite-assignment) instead of `?` (optional) — avoids downstream `X | undefined` errors at usage sites at the cost of losing the runtime safety check.
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `/* ERROR: ... */` comments)
 
 #### Conversion Helpers
@@ -156,7 +158,7 @@ GD-to-TS conversion includes optional helpers that enhance the output:
   Methods that don't override anything (`custom_method(arg)`) are left untouched.
 
 - **Ready field types helper** (default: enabled) — Detects TS7008 ("Member implicitly has an any type") and TS2564 ("Property has no initializer") on class properties:
-  - **TS2564** (`field: Type;`) — if assigned in `_ready()`, adds `!` (definite-assignment). If not assigned in `_ready()` but the type is a GDScript primitive (`int`, `float`, `bool`, `String`, `Vector2`, `Color`, any value type with a guaranteed default), still adds `!`. Otherwise marks the field optional with `?`.
+  - **TS2564** (`field: Type;`) — if assigned in `_ready()`, adds `!` (definite-assignment). If not assigned in `_ready()` but the type is a GDScript primitive (`int`, `float`, `bool`, `String`, `Vector2`, `Color`, any value type with a guaranteed default), still adds `!`. Otherwise marks the field optional with `?` — or with `!` when `--unsafe-use-any` is passed.
   - **TS7008** (`field;`) — if assigned in `_ready()`, adds `!: <inferred type>` (type taken from the `_ready()` expression). Otherwise left untouched (no type to infer from).
 
   Example:

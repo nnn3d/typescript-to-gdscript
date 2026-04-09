@@ -23,6 +23,12 @@ export interface TsHelperOptions {
   tsConfigPath?: string;
   /** Godot class registry (required for explicitConvert helper) */
   registry?: GodotClassRegistry;
+  /**
+   * Use `!` (definite-assignment) instead of `?` (optional) for non-primitive
+   * TS2564 fields that aren't assigned in `_ready()`. Less strict but fewer
+   * downstream `X | undefined` errors at usage sites.
+   */
+  unsafeUseAny?: boolean;
   /** Which helpers to run (all default to true) */
   helpers?: {
     /** Fix operator type errors by wrapping in gd.ops.X() */
@@ -444,6 +450,7 @@ function collectReadyFieldTypeFixes(
   program: ts.Program,
   filePaths: Set<string>,
   registry: GodotClassRegistry | undefined,
+  unsafeUseAny: boolean,
 ): Map<string, SourceFix[]> {
   const fixesByFile = new Map<string, SourceFix[]>();
   const checker = program.getTypeChecker();
@@ -501,14 +508,19 @@ function collectReadyFieldTypeFixes(
         //  - Assigned in _ready  → `!` (definite-assignment assertion)
         //  - GDScript primitive type (int, float, Vector2, Color, etc.) → `!`
         //    (these always have a non-null default value at runtime)
-        //  - Otherwise → `?` (mark as optional)
+        //  - Otherwise → `?` (mark as optional), or `!` when
+        //    `--unsafe-use-any` is set (fewer `X | undefined` errors downstream)
         if (rhs) {
           insertText = '!';
         } else {
           const declaredType = propDecl.type
             ? propDecl.type.getText(sourceFile)
             : '';
-          insertText = isGdPrimitiveType(declaredType, registry) ? '!' : '?';
+          if (isGdPrimitiveType(declaredType, registry)) {
+            insertText = '!';
+          } else {
+            insertText = unsafeUseAny ? '!' : '?';
+          }
         }
       } else {
         // TS7008: no type declared — only fixable if we can infer from _ready
@@ -680,6 +692,103 @@ function collectExtendsTypeFixes(
   return fixesByFile;
 }
 
+// ─── Unsafe Any Fallback Helper ──────────────────────────────
+
+/**
+ * (unsafe) Add `any` type annotations to any class properties and function
+ * parameters that still have no explicit type after other helpers have run.
+ * Only activated via `--unsafe-use-any`. Intended as a final cleanup pass so
+ * the converted TS code compiles even when earlier helpers couldn't infer a
+ * concrete type.
+ *
+ * - Class property without a type → insert `!: any` after the name (or `: any`
+ *   after an existing `!`/`?` token). Ignores properties that already have
+ *   a type annotation.
+ * - Function/method/arrow/constructor parameter without a type → insert
+ *   `: any` after the parameter name (or after its `?` token if optional).
+ *   Rest parameters get `: any[]`.
+ */
+function collectUnsafeAnyFieldFixes(
+  program: ts.Program,
+  filePaths: Set<string>,
+): Map<string, SourceFix[]> {
+  const fixesByFile = new Map<string, SourceFix[]>();
+
+  for (const sourceFile of program.getSourceFiles()) {
+    const fileName = sourceFile.fileName;
+    if (!filePaths.has(fileName)) continue;
+
+    const diagnostics = program.getSemanticDiagnostics(sourceFile);
+    const fixedPositions = new Set<number>();
+    const fixes: SourceFix[] = [];
+
+    const pushFix = (start: number, replacement: string) => {
+      if (fixedPositions.has(start)) return;
+      fixedPositions.add(start);
+      fixes.push({ start, end: start, replacement });
+    };
+
+    for (const diag of diagnostics) {
+      // TS7006: Parameter 'X' implicitly has an 'any' type.
+      // TS7008: Member 'X' implicitly has an 'any' type.
+      if (diag.code !== 7006 && diag.code !== 7008) continue;
+      if (diag.start === undefined || diag.length === undefined) continue;
+
+      const node = findNodeAt(sourceFile, diag.start, diag.length);
+      if (!node) continue;
+
+      // Walk up to either a PropertyDeclaration or a ParameterDeclaration
+      let current: ts.Node | undefined = node;
+      let propDecl: ts.PropertyDeclaration | undefined;
+      let paramDecl: ts.ParameterDeclaration | undefined;
+      while (current) {
+        if (ts.isPropertyDeclaration(current)) {
+          propDecl = current;
+          break;
+        }
+        if (ts.isParameter(current)) {
+          paramDecl = current;
+          break;
+        }
+        current = current.parent;
+      }
+
+      if (propDecl) {
+        if (propDecl.type) continue; // already typed
+        // Insert after `!`/`?` if present, otherwise after the name. Add
+        // `!` ourselves if neither is present so TS2564 doesn't fire later.
+        if (propDecl.exclamationToken) {
+          pushFix(propDecl.exclamationToken.getEnd(), ': any');
+        } else if (propDecl.questionToken) {
+          pushFix(propDecl.questionToken.getEnd(), ': any');
+        } else {
+          pushFix(propDecl.name.getEnd(), '!: any');
+        }
+        continue;
+      }
+
+      if (paramDecl) {
+        if (paramDecl.type) continue;
+        // Rest parameter → `: any[]`
+        const typeText = paramDecl.dotDotDotToken ? ': any[]' : ': any';
+        // Insert after `?` if optional, otherwise after the name
+        if (paramDecl.questionToken) {
+          pushFix(paramDecl.questionToken.getEnd(), typeText);
+        } else {
+          pushFix(paramDecl.name.getEnd(), typeText);
+        }
+        continue;
+      }
+    }
+
+    if (fixes.length > 0) {
+      fixesByFile.set(fileName, fixes);
+    }
+  }
+
+  return fixesByFile;
+}
+
 /**
  * Apply fixes to source text, processing from end to start to preserve positions.
  */
@@ -701,6 +810,7 @@ function applyFixes(source: string, fixes: SourceFix[]): string {
  */
 export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
   const { files, rootDir, tsConfigPath, registry, helpers = {} } = options;
+  const unsafeUseAny = !!options.unsafeUseAny;
   const result: TsHelperResult = { fixedFiles: [], diagnostics: [] };
 
   if (files.length === 0) return result;
@@ -709,18 +819,20 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
   const explicitConvertEnabled = helpers.explicitConvert !== false && !!registry;
   const readyFieldTypesEnabled = helpers.readyFieldTypes !== false;
   const extendsTypeEnabled = helpers.extendsType !== false;
+  // `unsafeAnyFallback` is a final cleanup pass that types any remaining
+  // untyped fields/parameters as `any`. Only enabled by `--unsafe-use-any`.
+  const unsafeAnyFallbackEnabled = unsafeUseAny;
 
   if (
     !operatorFixEnabled &&
     !explicitConvertEnabled &&
     !readyFieldTypesEnabled &&
-    !extendsTypeEnabled
+    !extendsTypeEnabled &&
+    !unsafeAnyFallbackEnabled
   ) {
     return result;
   }
 
-  // Run fixes in a loop — each round may expose new errors in chained/nested
-  // expressions (e.g. operator-wrapping creates new call sites).
   const MAX_FIX_PASSES = 10;
   const allFixedFiles = new Set<string>();
 
@@ -728,69 +840,94 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
     files.map((f) => resolve(f).replace(/\\/g, '/')),
   );
 
-  for (let pass = 0; pass < MAX_FIX_PASSES; pass++) {
-    const program = createTsProgram({ rootDir, files, tsConfigPath });
+  /** Run a set of fix collectors in a multi-pass loop until convergence. */
+  const runFixLoop = (
+    collectors: Array<(program: ts.Program, filePaths: Set<string>) => Map<string, SourceFix[]>>,
+  ) => {
+    for (let pass = 0; pass < MAX_FIX_PASSES; pass++) {
+      const program = createTsProgram({ rootDir, files, tsConfigPath });
 
-    // Build set of file paths to process, normalized for comparison
-    const filePaths = new Set<string>();
-    for (const sf of program.getSourceFiles()) {
-      const normalizedSf = resolve(sf.fileName).replace(/\\/g, '/');
-      if (normalizedInputFiles.has(normalizedSf)) {
-        filePaths.add(sf.fileName);
+      const filePaths = new Set<string>();
+      for (const sf of program.getSourceFiles()) {
+        const normalizedSf = resolve(sf.fileName).replace(/\\/g, '/');
+        if (normalizedInputFiles.has(normalizedSf)) {
+          filePaths.add(sf.fileName);
+        }
       }
-    }
 
-    // Merge fixes from both helpers
-    const mergedFixes = new Map<string, SourceFix[]>();
-    const mergeFixes = (from: Map<string, SourceFix[]>) => {
-      for (const [file, fixes] of from) {
-        const existing = mergedFixes.get(file) ?? [];
-        mergedFixes.set(file, [...existing, ...fixes]);
+      // Merge fixes from all collectors in this pass
+      const mergedFixes = new Map<string, SourceFix[]>();
+      for (const collect of collectors) {
+        const from = collect(program, filePaths);
+        for (const [file, fs] of from) {
+          const existing = mergedFixes.get(file) ?? [];
+          mergedFixes.set(file, [...existing, ...fs]);
+        }
       }
-    };
 
-    if (operatorFixEnabled) {
-      mergeFixes(collectOperatorFixes(program, filePaths));
-    }
-    if (explicitConvertEnabled) {
-      mergeFixes(collectExplicitConvertFixes(program, filePaths, registry!));
-    }
-    if (readyFieldTypesEnabled) {
-      mergeFixes(collectReadyFieldTypeFixes(program, filePaths, registry));
-    }
-    if (extendsTypeEnabled) {
-      mergeFixes(collectExtendsTypeFixes(program, filePaths));
-    }
+      let fixedInPass = 0;
+      for (const [fileName, fixes] of mergedFixes) {
+        if (fixes.length === 0) continue;
 
-    let fixedInPass = 0;
-    for (const [fileName, fixes] of mergedFixes) {
-      if (fixes.length === 0) continue;
+        // Drop overlapping fixes within a single pass — keep innermost/earliest.
+        const dedupedFixes: SourceFix[] = [];
+        const used: Array<{ start: number; end: number }> = [];
+        for (const f of fixes) {
+          const overlap = used.some(
+            (u) =>
+              (f.start >= u.start && f.start < u.end) ||
+              (f.end > u.start && f.end <= u.end) ||
+              (f.start <= u.start && f.end >= u.end),
+          );
+          if (overlap) continue;
+          dedupedFixes.push(f);
+          used.push({ start: f.start, end: f.end });
+        }
+        if (dedupedFixes.length === 0) continue;
 
-      // Drop overlapping fixes within a single pass — keep innermost/earliest.
-      // Sorted descending by start so nested fixes are applied safely.
-      const dedupedFixes: SourceFix[] = [];
-      const used: Array<{ start: number; end: number }> = [];
-      for (const f of fixes) {
-        const overlap = used.some(
-          (u) =>
-            (f.start >= u.start && f.start < u.end) ||
-            (f.end > u.start && f.end <= u.end) ||
-            (f.start <= u.start && f.end >= u.end),
-        );
-        if (overlap) continue;
-        dedupedFixes.push(f);
-        used.push({ start: f.start, end: f.end });
+        const source = readFileSync(fileName, 'utf-8');
+        const fixed = applyFixes(source, dedupedFixes);
+        writeFileSync(fileName, fixed);
+        allFixedFiles.add(fileName);
+        fixedInPass += dedupedFixes.length;
       }
-      if (dedupedFixes.length === 0) continue;
 
-      const source = readFileSync(fileName, 'utf-8');
-      const fixed = applyFixes(source, dedupedFixes);
-      writeFileSync(fileName, fixed);
-      allFixedFiles.add(fileName);
-      fixedInPass += dedupedFixes.length;
+      if (fixedInPass === 0) break;
     }
+  };
 
-    if (fixedInPass === 0) break;
+  // Phase 1: primary helpers (converge first so the unsafe fallback only
+  // fires on fields/params the other helpers couldn't resolve).
+  const primaryCollectors: Array<(program: ts.Program, filePaths: Set<string>) => Map<string, SourceFix[]>> = [];
+  if (operatorFixEnabled) {
+    primaryCollectors.push((program, filePaths) =>
+      collectOperatorFixes(program, filePaths),
+    );
+  }
+  if (explicitConvertEnabled) {
+    primaryCollectors.push((program, filePaths) =>
+      collectExplicitConvertFixes(program, filePaths, registry!),
+    );
+  }
+  if (readyFieldTypesEnabled) {
+    primaryCollectors.push((program, filePaths) =>
+      collectReadyFieldTypeFixes(program, filePaths, registry, unsafeUseAny),
+    );
+  }
+  if (extendsTypeEnabled) {
+    primaryCollectors.push((program, filePaths) =>
+      collectExtendsTypeFixes(program, filePaths),
+    );
+  }
+  if (primaryCollectors.length > 0) {
+    runFixLoop(primaryCollectors);
+  }
+
+  // Phase 2 (unsafe mode only): type any remaining untyped fields/params as `any`.
+  if (unsafeAnyFallbackEnabled) {
+    runFixLoop([
+      (program, filePaths) => collectUnsafeAnyFieldFixes(program, filePaths),
+    ]);
   }
 
   result.fixedFiles = [...allFixedFiles];

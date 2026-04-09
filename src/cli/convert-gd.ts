@@ -157,6 +157,7 @@ export function registerConvertGdCommand(program: Command): void {
           rootDir: cfg.rootDir,
           tsConfigPath: cfg.tsconfig,
           registry,
+          unsafeUseAny: !!opts.unsafeUseAny,
           helpers: {
             operatorFix: operatorFixEnabled,
             explicitConvert: explicitConvertEnabled,

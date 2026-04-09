@@ -131,10 +131,10 @@ tests/
   - Ready field types helper: TS-based post-processing that fixes TS7008 (implicit any) and TS2564 (no initializer) on class properties. Behavior:
     - **TS2564** (`field: T`) + assigned in `_ready` → `!` (definite-assignment assertion)
     - **TS2564** (`field: T`) + NOT assigned in `_ready` + `T` is a GDScript primitive → `!` (GDScript primitives have a guaranteed default value at runtime, so they're effectively initialized)
-    - **TS2564** (`field: T`) + NOT assigned in `_ready` + non-primitive `T` → `?` (mark optional)
+    - **TS2564** (`field: T`) + NOT assigned in `_ready` + non-primitive `T` → `?` (mark optional), **or `!` when `unsafeUseAny` is set** (fewer `X | undefined` errors downstream at the cost of runtime safety)
     - **TS7008** (`field`) + assigned in `_ready` → `!: <inferred type>` (inferred via `typeof <expr>` for identifier/property-access RHS, else `checker.typeToString(getBaseTypeOfLiteralType(getTypeAtLocation(rhs)))`)
     - **TS7008** (`field`) + NOT assigned in `_ready` → left untouched (no type to infer)
-    Fields that already have `!` or `?` are skipped. "GDScript primitive" check uses `GD_BUILTIN_PRIMITIVE_TYPES` (int/float/bool/String/etc.) plus `registry.isConstructor()` (Vector2, Color, Packed*Array, Array, Dictionary, StringName, NodePath, Callable, Signal, etc. — everything in the registry's `constructors` list).
+    Fields that already have `!` or `?` are skipped. "GDScript primitive" check uses `GD_BUILTIN_PRIMITIVE_TYPES` (int/float/bool/String/etc.) plus `registry.isConstructor()` (Vector2, Color, Packed*Array, Array, Dictionary, StringName, NodePath, Callable, Signal, etc. — everything in the registry's `constructors` list). `unsafeUseAny` is plumbed through `TsHelperOptions.unsafeUseAny` → `collectReadyFieldTypeFixes(..., unsafeUseAny)` from the CLI `--unsafe-use-any` flag.
   - Extends type helper: TS-based post-processing that fixes TS7006 (implicit any) on parameters of overridden methods. Walks the class's base type chain via `checker.getBaseTypes()` to find an inherited method with the same name, then copies parameter types by index using the SYNTACTIC type text from the parent's `.d.ts` (preserving aliases like `float`/`int` rather than collapsing them to `number`).
 - [ ] Source map integration with Godot LSP (map LSP errors back to TS in IDE)
 

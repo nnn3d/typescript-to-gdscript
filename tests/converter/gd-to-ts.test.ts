@@ -456,4 +456,51 @@ describe('GD to TS: Ready field types helper', () => {
       cleanup();
     }
   });
+
+  it('with --unsafe-use-any, non-primitive fields not in _ready get `!` instead of `?`', async () => {
+    const { runTsHelpers } = await import('../../src/converter/gd-to-ts/ts-helpers.js');
+    const { resolveRegistry } = await import('../../src/config/index.js');
+    const { readFileSync: readFile } = await import('fs');
+
+    const { tmpDir, cleanup, writeFile } = await makeTsHelperTmp('ready-field-unsafe');
+    try {
+      const tsContent = [
+        'export class TestReadyUnsafe extends Node2D {',
+        '  // TS2564 + NOT in _ready + non-primitive → `!` with unsafeUseAny',
+        '  not_prim: Node2D;',
+        '  // TS2564 + NOT in _ready + primitive → `!` (unchanged)',
+        '  prim: int;',
+        '  // TS2564 + assigned in _ready → `!` (unchanged)',
+        '  timer: float;',
+        '',
+        '  _ready() {',
+        '    this.timer = 0.0;',
+        '  }',
+        '}',
+      ].join('\n');
+      const filePath = writeFile('test-ready-unsafe.ts', tsContent);
+
+      const result = runTsHelpers({
+        files: [filePath],
+        rootDir: tmpDir,
+        tsConfigPath: join(tmpDir, 'tsconfig.json'),
+        registry: resolveRegistry(),
+        unsafeUseAny: true,
+        helpers: { operatorFix: false, explicitConvert: false, extendsType: false },
+      });
+
+      expect(result.fixedFiles.length).toBe(1);
+      const fixed = readFile(filePath, 'utf-8');
+
+      // With unsafeUseAny, non-primitive non-_ready fields get `!` (not `?`)
+      expect(fixed).toContain('not_prim!: Node2D;');
+      expect(fixed).not.toContain('not_prim?');
+
+      // Primitives and _ready-assigned fields still get `!` (unchanged)
+      expect(fixed).toContain('prim!: int;');
+      expect(fixed).toContain('timer!: float;');
+    } finally {
+      cleanup();
+    }
+  });
 });
