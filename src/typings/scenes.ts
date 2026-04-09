@@ -924,6 +924,8 @@ interface TreeNodeInfo {
   instanceSceneResPath?: string;
   /** Whether this node has unique_name_in_owner */
   uniqueInOwner?: boolean;
+  /** res:// path of GDScript attached to this node, if any */
+  scriptResPath?: string;
 }
 
 /**
@@ -998,6 +1000,14 @@ function buildNodeTree(
   // Check for unique names from nodeTypes
   // We need to re-scan the original parsed nodes for uniqueInOwner
   // Since we don't have that info in rootScript.children, use nodeTypes + instancedNodes
+
+  // Attach scriptResPath for any node that has a script (other than root, which
+  // is handled separately via rootScriptResPath in the emit step).
+  for (const script of sceneData.scripts) {
+    if (script.nodePath === '.') continue;
+    const node = nodeMap.get(script.nodePath);
+    if (node) node.scriptResPath = script.scriptResPath;
+  }
 
   // Link children to parents
   for (const [path, node] of nodeMap) {
@@ -1164,8 +1174,11 @@ function generateSceneTypingContent(
       lines.push(`  [__node_parent]: ${parentTypeName};`);
       lines.push(`  [__node_children]: [${childTupleEntries.join(', ')}];`);
     } else {
+      const nodeTypeExpr = node.scriptResPath
+        ? `_GDGetInterfaceNode<GodotScripts, "${node.scriptResPath}">`
+        : node.type;
       lines.push(`type ${typeName} = {`);
-      lines.push(`  [__node_type]: ${node.type};`);
+      lines.push(`  [__node_type]: ${nodeTypeExpr};`);
       lines.push(`  [__node_parent]: ${parentTypeName};`);
       lines.push(`  [__node_children]: [${childTupleEntries.join(', ')}];`);
     }
@@ -1217,6 +1230,17 @@ function generateSceneTypingContent(
     const treesInterface = scriptResPathToTreesInterfaceName(rootScriptResPath);
     lines.push(`  interface ${treesInterface} {`);
     lines.push(`    "${sceneResPath}": ${treeName};`);
+    lines.push(`  }\n`);
+  }
+
+  // __ScriptGd__Trees entries for non-root scripted nodes: map the script's
+  // Trees interface to the sub-tree type for this node.
+  for (const node of emittableNodes) {
+    if (!node.scriptResPath) continue;
+    const treesInterface = scriptResPathToTreesInterfaceName(node.scriptResPath);
+    const subTypeName = nodePathToTypeName(alias, node.fullPath);
+    lines.push(`  interface ${treesInterface} {`);
+    lines.push(`    "${sceneResPath}": ${subTypeName};`);
     lines.push(`  }\n`);
   }
 

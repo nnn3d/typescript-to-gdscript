@@ -191,6 +191,22 @@ describe('Scene typings generation', () => {
     expect(levelScene).toContain('interface __Level2Tscn__Parents { "res://Level.tscn": _LevelTscn_Tree; }');
   });
 
+  it('should resolve non-root scripted child nodes to their script class and register their subtree', () => {
+    generate();
+    const levelScene = readOutput('Level.tscn.d.ts');
+
+    // UI child has script = GameManager.gd → __node_type must resolve via GodotScripts,
+    // not the raw CanvasLayer type.
+    expect(levelScene).toContain('type _LevelTscn_UI = {');
+    expect(levelScene).toContain('[__node_type]: _GDGetInterfaceNode<GodotScripts, "res://LevelUI.gd">;');
+    expect(levelScene).not.toContain('[__node_type]: CanvasLayer;');
+
+    // The script's __Trees interface should map the scene to the subtree type.
+    expect(levelScene).toMatch(
+      /interface __LevelUIGd__Trees \{\s*"res:\/\/Level\.tscn": _LevelTscn_UI;\s*\}/,
+    );
+  });
+
   it('should resolve TileMap embedded scenes for parent interfaces', () => {
     generate();
     const tilesetScene = readOutput('TilesetObjects.tscn.d.ts');

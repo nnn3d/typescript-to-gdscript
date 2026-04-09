@@ -59,7 +59,7 @@ declare class Resource extends RefCounted {
    * **Note:** For custom resources, this method will fail if {@link Object._init} has been defined with required parameters.
    * **Note:** When duplicating with `deep` set to `true`, each resource found, including the one on which this method is called, will be only duplicated once and referenced as many times as needed in the duplicate. For instance, if you are duplicating resource A that happens to have resource B referenced twice, you'll get a new resource A' referencing a new resource B' twice.
    */
-  duplicate(deep?: boolean): Resource;
+  duplicate(deep?: boolean): this;
   /**
    * Duplicates this resource, deeply, like {@link duplicate} when passing `true`, with extra control over how subresources are handled.
    */

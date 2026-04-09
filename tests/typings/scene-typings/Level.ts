@@ -36,7 +36,7 @@ export class Level extends Node2D {
 
     // get_parent() on nested child resolves to intermediate node type
     let scoreLabelParent = scoreLabel.get_parent();
-    let _canvasRef: CanvasLayer = scoreLabelParent;
+    let _canvasRef: LevelUI = scoreLabelParent;
 
     let level2Scene = preload('res://Level2.tscn');
     let level2 = level2Scene.instantiate();

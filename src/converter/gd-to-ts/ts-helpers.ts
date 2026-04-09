@@ -195,13 +195,18 @@ function collectOperatorFixes(
 const TS_ASSIGNMENT_ERROR_CODES = new Set([
   2345, // Argument of type 'X' is not assignable to parameter of type 'Y'.
   2322, // Type 'X' is not assignable to type 'Y'.
+  2739, // Type 'X' is missing the following properties from type 'Y': ...
+  2740, // Type 'X' is missing the following properties from type 'Y': ..., and N more.
+  2741, // Property 'p' is missing in type 'X' but required in type 'Y'.
 ]);
 
 /**
- * Extract source and target type names from a TS2345/TS2322 error message.
- * TypeScript message format:
+ * Extract source and target type names from a TS assignment-like error message.
+ * Supported formats:
  *   "Argument of type 'Vector2' is not assignable to parameter of type 'Vector2i'."
  *   "Type 'Vector2' is not assignable to type 'Vector2i'."
+ *   "Type '[]' is missing the following properties from type 'PackedVector2Array': ..."
+ *   "Property 'x' is missing in type '[]' but required in type 'PackedVector2Array'."
  */
 function extractAssignmentTypes(
   messageText: string | ts.DiagnosticMessageChain,
@@ -210,11 +215,37 @@ function extractAssignmentTypes(
     ? messageText
     : messageText.messageText;
 
-  const match = text.match(
+  const notAssignable = text.match(
     /type '([^']+)' is not assignable to (?:parameter of )?type '([^']+)'/,
   );
-  if (!match) return null;
-  return { source: match[1]!, target: match[2]!.replace(/\s*\|\s*null$/, '') };
+  if (notAssignable) {
+    return {
+      source: notAssignable[1]!,
+      target: notAssignable[2]!.replace(/\s*\|\s*null$/, ''),
+    };
+  }
+
+  const missingProps = text.match(
+    /Type '([^']+)' is missing the following properties from type '([^']+)'/,
+  );
+  if (missingProps) {
+    return {
+      source: missingProps[1]!,
+      target: missingProps[2]!.replace(/\s*\|\s*null$/, ''),
+    };
+  }
+
+  const missingProp = text.match(
+    /Property '[^']+' is missing in type '([^']+)' but required in type '([^']+)'/,
+  );
+  if (missingProp) {
+    return {
+      source: missingProp[1]!,
+      target: missingProp[2]!.replace(/\s*\|\s*null$/, ''),
+    };
+  }
+
+  return null;
 }
 
 /**
@@ -231,8 +262,9 @@ function simplifyTypeName(type: string): string {
     .replace(/\s*\|\s*undefined$/, '')
     .replace(/^readonly\s+/, '')
     .trim();
-  // Normalize all array forms to bare "Array" for registry lookup
-  if (/\[\]$/.test(t) || /^Array</.test(t) || /^ReadonlyArray</.test(t)) {
+  // Normalize all array forms (including the empty-array literal type `[]`)
+  // to bare "Array" for registry lookup.
+  if (t === '[]' || /\[\]$/.test(t) || /^Array</.test(t) || /^ReadonlyArray</.test(t)) {
     return 'Array';
   }
   // Strip generic parameters from any other qualified type
@@ -300,8 +332,29 @@ function collectExplicitConvertFixes(
       // Both must be variant types and target must accept source as a variant convert
       if (!registry.canVariantConvert(source, target)) continue;
 
-      const node = findNodeAt(sourceFile, diag.start, diag.length);
+      let node = findNodeAt(sourceFile, diag.start, diag.length);
       if (!node) continue;
+
+      // For TS2739/TS2740/TS2741 the diagnostic points at the LHS (variable
+      // name, property name, or property access chain); we actually want to
+      // wrap the initializer / RHS.
+      {
+        const parent = node.parent;
+        if (
+          ts.isIdentifier(node) &&
+          (ts.isVariableDeclaration(parent) || ts.isPropertyDeclaration(parent)) &&
+          parent.name === node &&
+          parent.initializer
+        ) {
+          node = parent.initializer;
+        } else if (
+          ts.isBinaryExpression(parent) &&
+          parent.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+          parent.left === node
+        ) {
+          node = parent.right;
+        }
+      }
 
       const start = node.getStart(sourceFile);
       const end = node.getEnd();

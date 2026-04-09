@@ -23,7 +23,7 @@ type _LevelTscn_UI_ScoreLabel = {
 };
 
 type _LevelTscn_UI = {
-  [__node_type]: CanvasLayer;
+  [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://LevelUI.gd">;
   [__node_parent]: _LevelTscn_Tree;
   [__node_children]: [_LevelTscn_UI_ScoreLabel];
 
@@ -61,6 +61,10 @@ declare global {
 
   interface __LevelGd__Trees {
     "res://Level.tscn": _LevelTscn_Tree;
+  }
+
+  interface __LevelUIGd__Trees {
+    "res://Level.tscn": _LevelTscn_UI;
   }
 
   // Instanced scene parents

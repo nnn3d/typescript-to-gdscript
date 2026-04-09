@@ -302,6 +302,11 @@ describe('GD to TS: Explicit convert helper', () => {
         '    // Array<Color> → PackedColorArray (via variantConverts)',
         '    const colors: Array<Color> = [];',
         '    wants_packed(colors);',
+        '    // Empty array literal → PackedVector2Array (TS2739: missing properties)',
+        '    const points: PackedVector2Array = [];',
+        '    // Property assignment with LHS PropertyAccessExpression',
+        '    const body: { points: PackedVector2Array } = { points: [] as any };',
+        '    body.points = [];',
         '    // Valid (no fix needed)',
         '    wants_v2(Vector2.UP);',
         '  }',
@@ -324,6 +329,10 @@ describe('GD to TS: Explicit convert helper', () => {
       expect(fixed).toContain('wants_v2i(gd.as(Vector2.DOWN, Vector2i))');
       expect(fixed).toContain('wants_v2(gd.as(Vector2i.ZERO, Vector2))');
       expect(fixed).toContain('wants_packed(gd.as(colors, PackedColorArray))');
+      // TS2739: missing properties (empty array → PackedVector2Array)
+      expect(fixed).toContain('const points: PackedVector2Array = gd.as([], PackedVector2Array)');
+      expect(fixed).toContain('body.points = gd.as([], PackedVector2Array)');
+      expect(fixed).not.toContain('gd.as(body.points, PackedVector2Array) =');
       // Valid call unchanged
       expect(fixed).toContain('wants_v2(Vector2.UP);');
     } finally {
