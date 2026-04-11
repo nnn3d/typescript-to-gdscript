@@ -101,7 +101,10 @@ export interface UserClassInfo {
 /**
  * Extracts class info (class_name, extends, own members) from a GD source without full conversion.
  */
-export function parseGdClassInfo(source: string): UserClassInfo | null {
+export function parseGdClassInfo(
+  source: string,
+  registry?: GodotClassRegistry,
+): UserClassInfo | null {
   const parser = new GDScriptParser();
   const root = parser.parse(fixCommentIndentation(source));
 
@@ -139,7 +142,7 @@ export function parseGdClassInfo(source: string): UserClassInfo | null {
         const inferredType = typeNode
           ? extractGdTypeName(typeNode)
           : valueNode
-            ? inferExprTypeStatic(valueNode)
+            ? inferExprTypeStatic(valueNode, registry)
             : null;
         if (inferredType) memberTypes.set(name, inferredType);
       }
@@ -219,12 +222,12 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
   const userClasses = new Map<string, UserClassInfo>();
   if (options.projectSources) {
     for (const ps of options.projectSources) {
-      const info = parseGdClassInfo(ps.source);
+      const info = parseGdClassInfo(ps.source, options.registry);
       if (info) userClasses.set(info.name, info);
     }
   }
   // Also parse the current file so it's available for inner class extends resolution
-  const selfInfo = parseGdClassInfo(options.source);
+  const selfInfo = parseGdClassInfo(options.source, options.registry);
   if (selfInfo) userClasses.set(selfInfo.name, selfInfo);
 
   const parser = new GDScriptParser();
@@ -2356,7 +2359,7 @@ function emitBinaryOp(node: SyntaxNode, ctx: GdToTsContext): string {
   const mathFn = GD_OPS_MAP[opText];
   if (mathFn && left) {
     const leftType = inferExprType(left, ctx);
-    if (leftType && OPERATOR_OVERLOAD_TYPES.has(leftType)) {
+    if (leftType && ctx.registry.hasOperators(leftType)) {
       const leftStr = emitExpr(left, ctx);
       const rightStr = right ? emitExpr(right, ctx) : '';
       return `gd.ops.${mathFn}(${leftStr}, ${rightStr})`;
@@ -2452,22 +2455,6 @@ function emitCommentInline(node: SyntaxNode): string {
 
 // ─── Type Inference (for gd.ops detection) ──────────────────
 
-/** Types that require gd.ops.* wrappers for arithmetic */
-const OPERATOR_OVERLOAD_TYPES = new Set([
-  'Vector2',
-  'Vector2i',
-  'Vector3',
-  'Vector3i',
-  'Vector4',
-  'Vector4i',
-  'Color',
-  'Quaternion',
-  'Basis',
-  'Transform2D',
-  'Transform3D',
-  'Projection',
-  'Array',
-]);
 
 /** Extract raw GD type name from a type node */
 function extractGdTypeName(typeNode: SyntaxNode): string | null {
@@ -2482,13 +2469,16 @@ function extractGdTypeName(typeNode: SyntaxNode): string | null {
 
 /** Infer the GD type of an expression (best-effort, for gd.ops detection) */
 /** Infer type from expression without context (for parseGdClassInfo). Only handles constructor calls. */
-function inferExprTypeStatic(node: SyntaxNode): string | null {
+function inferExprTypeStatic(
+  node: SyntaxNode,
+  registry?: GodotClassRegistry,
+): string | null {
   if (node.type === SyntaxType.Call) {
     const callee = node.namedChildren[0];
     if (
       callee &&
       callee.type === SyntaxType.Identifier &&
-      OPERATOR_OVERLOAD_TYPES.has(callee.text)
+      registry?.isConstructor(callee.text)
     ) {
       return callee.text;
     }
@@ -2503,7 +2493,7 @@ function inferExprType(node: SyntaxNode, ctx: GdToTsContext): string | null {
     if (
       callee &&
       callee.type === SyntaxType.Identifier &&
-      OPERATOR_OVERLOAD_TYPES.has(callee.text)
+      ctx.registry.hasOperators(callee.text)
     ) {
       return callee.text;
     }

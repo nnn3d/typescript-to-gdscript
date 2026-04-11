@@ -70,8 +70,6 @@ export function godotTypeToTs(type: string): string {
       return 'Array<unknown>';
     case 'Dictionary':
       return 'Dictionary';
-    case 'NodePath':
-      return 'NodePath';
     case 'StringName':
       return 'string';
     case 'Object':

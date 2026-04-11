@@ -48,6 +48,8 @@ export interface GodotRegistryData {
   singletons: Array<{ name: string; type: string }>;
   /** GDScript annotations that take no parameters (bare decorators in TS) */
   bareAnnotations: string[];
+  /** Classes that have operator overloads (need gd.ops.* wrappers in TS) */
+  operatorTypes: string[];
 }
 
 // ─── XML Parsing ──────────────────────────────────────────────
@@ -455,6 +457,29 @@ function deriveConstructorTypes(classes: Map<string, GodotClassXml>): string[] {
 }
 
 /**
+ * GDScript primitive types that use native JS operators (not gd.ops.* wrappers).
+ * These have operator entries in the Godot XML docs but shouldn't be wrapped.
+ */
+const NATIVE_OPERATOR_TYPES = new Set([
+  'int', 'float', 'bool', 'String', 'StringName',
+]);
+
+/**
+ * Derive classes that have operator overloads from parsed XML.
+ * These types need `gd.ops.*` wrappers in TypeScript.
+ * Excludes primitive types that use native JS operators.
+ */
+function deriveOperatorTypes(classes: Map<string, GodotClassXml>): string[] {
+  const result: string[] = [];
+  for (const [name, cls] of classes) {
+    if (name.startsWith('@')) continue;
+    if (NATIVE_OPERATOR_TYPES.has(name)) continue;
+    if (cls.operators.length > 0) result.push(name);
+  }
+  return result;
+}
+
+/**
  * Generates the class registry data from parsed XML classes.
  */
 export function generateRegistryData(
@@ -470,6 +495,7 @@ export function generateRegistryData(
     constructors: deriveConstructorTypes(classes),
     singletons: [],
     bareAnnotations: [],
+    operatorTypes: deriveOperatorTypes(classes),
   };
 
   // Compute bare annotations from @GDScript XML (annotations with no params and not vararg)
@@ -553,6 +579,7 @@ export class GodotClassRegistry {
   private singletonsSet: Set<string>;
 
   private bareAnnotationsSet: Set<string>;
+  private operatorTypesSet: Set<string>;
 
   constructor(data: GodotRegistryData) {
     this.data = data;
@@ -560,6 +587,7 @@ export class GodotClassRegistry {
     this.constructorsSet = new Set(data.constructors);
     this.singletonsSet = new Set((data.singletons ?? []).map((s) => s.name));
     this.bareAnnotationsSet = new Set(data.bareAnnotations ?? []);
+    this.operatorTypesSet = new Set(data.operatorTypes ?? []);
   }
 
   static fromJsonFile(jsonPath: string): GodotClassRegistry {
@@ -635,6 +663,11 @@ export class GodotClassRegistry {
   /** Check if an annotation takes no parameters (bare decorator in TS, no `()` needed) */
   isBareAnnotation(name: string): boolean {
     return this.bareAnnotationsSet.has(name);
+  }
+
+  /** Check if a class has operator overloads (needs gd.ops.* wrappers) */
+  hasOperators(name: string): boolean {
+    return this.operatorTypesSet.has(name);
   }
 
   /** Get the inheritance chain for a class (including itself) */
