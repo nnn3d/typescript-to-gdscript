@@ -43,6 +43,18 @@ function isGdClassType(gdType: string): boolean {
 }
 
 /**
+ * Returns true if a GDScript type is a variant/value type (Vector2, Color, etc.)
+ * — i.e. a registry constructor but not a primitive.
+ */
+function isGdVariantType(gdType: string): boolean {
+  if (GD_PRIMITIVE_TYPES.has(gdType)) return false;
+  try {
+    const registry = resolveRegistry();
+    return registry.isConstructor(gdType);
+  } catch { return false; }
+}
+
+/**
  * Packed array type names are recognized as "array" in error messages.
  * Derived from the registry's `constructors` list, filtered to entries that
  * start with `Packed` (Godot's naming convention for packed arrays).
@@ -1176,6 +1188,37 @@ export class TsToGdTransformer {
 
   // ─── Parameters ──────────────────────────────────────────────
 
+  /** Check a type node for `undefined` keyword and emit a diagnostic. */
+  private checkTypeForUndefined(typeNode: ts.TypeNode): void {
+    if (typeNode.kind === ts.SyntaxKind.UndefinedKeyword) {
+      this.addDiagnostic(
+        typeNode,
+        'error',
+        '`undefined` type is not supported in GDScript; use `null` instead',
+      );
+    }
+    if (ts.isUnionTypeNode(typeNode)) {
+      for (const t of typeNode.types) {
+        if (t.kind === ts.SyntaxKind.UndefinedKeyword) {
+          this.addDiagnostic(
+            t,
+            'error',
+            '`undefined` type is not supported in GDScript; use `null` instead',
+          );
+        }
+      }
+    }
+  }
+
+  /** Check if a resolved TS type contains `undefined` (for runtime value checks). */
+  private typeContainsUndefined(type: ts.Type): boolean {
+    if (type.flags & ts.TypeFlags.Undefined) return true;
+    if (type.isUnion()) {
+      return type.types.some((t) => !!(t.flags & ts.TypeFlags.Undefined));
+    }
+    return false;
+  }
+
   private emitParameters(
     params: ts.NodeArray<ts.ParameterDeclaration>,
   ): string {
@@ -1183,6 +1226,11 @@ export class TsToGdTransformer {
       .map((p) => {
         const name = p.name.getText(this.ctx.sourceFile);
         const isRest = !!p.dotDotDotToken;
+
+        // Check for `undefined` in type annotations (type position, not value)
+        if (p.type) {
+          this.checkTypeForUndefined(p.type);
+        }
 
         if (isRest) {
           // Rest parameter: `...args: Type[]` → `...args: Array` or `...args`
@@ -1244,10 +1292,13 @@ export class TsToGdTransformer {
           return `${name} = null`;
         }
 
-        const typeAnnotation = gdType ? `: ${gdType}` : '';
         const defaultValue = p.initializer
           ? ` = ${this.emitExpression(p.initializer)}`
           : '';
+        // Omit type annotation for variant/constructor types with non-null defaults
+        // (GDScript infers type from the constructor call, e.g. Vector2.DOWN → Vector2)
+        const omitType = gdType && p.initializer && !isNullDefault && isGdVariantType(gdType);
+        const typeAnnotation = gdType && !omitType ? `: ${gdType}` : '';
         return `${name}${typeAnnotation}${defaultValue}`;
       })
       .join(', ');
@@ -2185,6 +2236,23 @@ export class TsToGdTransformer {
         'Optional chaining (`?.`) is not supported in GDScript',
       );
     }
+
+    // Check each argument for `undefined` in its type.
+    // Skip literal `undefined` — already caught by emitExpression's identifier check.
+    const checker = this.ctx.checker;
+    for (const arg of node.arguments) {
+      if (ts.isIdentifier(arg) && arg.text === 'undefined') continue;
+      const argType = checker.getTypeAtLocation(arg);
+      if (this.typeContainsUndefined(argType)) {
+        this.addDiagnostic(
+          arg,
+          'error',
+          `Argument '${arg.getText(this.ctx.sourceFile)}' may be 'undefined', ` +
+            `which is not supported in GDScript. Use 'null' instead.`,
+        );
+      }
+    }
+
     const args = node.arguments.map((a) => this.emitExpression(a)).join(', ');
 
     // Handle gd.* helper calls

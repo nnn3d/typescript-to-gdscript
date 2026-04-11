@@ -1,0 +1,6 @@
+[
+  { "message": "`undefined` type is not supported", "severity": "error" },
+  { "message": "`undefined` type is not supported", "severity": "error" },
+  { "message": "may be 'undefined'", "severity": "error" },
+  { "message": "may be 'undefined'", "severity": "error" }
+]

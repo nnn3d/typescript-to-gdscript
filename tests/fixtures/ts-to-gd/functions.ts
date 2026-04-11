@@ -57,7 +57,7 @@ export class MyClass extends Node {
     var_say_hello();
   }
 
-  optional_args(a: int = 0, b?: string, c?: Node) {
+  optional_args(a: int, b: int = 0, c?: string, d?: Node, e?: Vector2, f?: Node, g: Vector2 = Vector2.DOWN, h?: int) {
   }
 
   optional_args2(a: null | Node, b: string | null = null, c: Node | null = null, d: Node | Node2D | null = null, e: null | Node2D = null) {
