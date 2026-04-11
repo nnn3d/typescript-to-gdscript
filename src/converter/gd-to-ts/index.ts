@@ -1410,10 +1410,10 @@ function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
         '';
       const value = child.childForFieldName('value');
       const valueText = value?.text?.trim() ?? '';
-      // `param = null` → `param?: unknown` (or `any` with unsafe flag)
+      // `param = null` → `param: unknown = null` (or `any` with unsafe flag)
       if (valueText === 'null') {
         const fallbackType = ctx.unsafeUseAny ? 'any' : 'unknown';
-        params.push(`${name}?: ${fallbackType}`);
+        params.push(`${name}: ${fallbackType} = null`);
       } else {
         const valueStr = value ? emitExpr(value, ctx) : '';
         params.push(`${name} = ${valueStr}`);
@@ -1428,10 +1428,10 @@ function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       const rawType = typeNode?.text ?? '';
       const tsType = ctx.classTypeNames.has(rawType) ? `${ctx.className}.${rawType}` : (typeNode ? gdTypeToTs(rawType) : null);
       const valueText = value?.text?.trim() ?? '';
-      // `param: Type = null` → `param?: Type`
+      // `param: Type = null` → `param: Type | null = null`
       if (valueText === 'null') {
-        const typeStr = tsType ? `: ${tsType}` : '';
-        params.push(`${name}?${typeStr}`);
+        const typeStr = tsType ? `: ${tsType} | null` : ': unknown';
+        params.push(`${name}${typeStr} = null`);
       } else {
         const valueStr = value ? emitExpr(value, ctx) : '';
         const typeStr = tsType ? `: ${tsType}` : '';

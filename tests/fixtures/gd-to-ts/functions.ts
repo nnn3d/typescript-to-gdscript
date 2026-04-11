@@ -24,6 +24,6 @@ export class Functions extends RefCounted {
   varargs_typed(a: int, ...rest: Array<any>) {
   }
 
-  optional_args(a: int = 0, b?: unknown, c = '', d?: Node) {
+  optional_args(a: int = 0, b: unknown = null, c = '', d: Node | null = null) {
   }
 }
