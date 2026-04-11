@@ -1409,8 +1409,15 @@ function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
         child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
         '';
       const value = child.childForFieldName('value');
-      const valueStr = value ? emitExpr(value, ctx) : '';
-      params.push(`${name} = ${valueStr}`);
+      const valueText = value?.text?.trim() ?? '';
+      // `param = null` → `param: unknown = null` (or `any` with unsafe flag)
+      if (valueText === 'null') {
+        const fallbackType = ctx.unsafeUseAny ? 'any' : 'unknown';
+        params.push(`${name}: ${fallbackType} = null`);
+      } else {
+        const valueStr = value ? emitExpr(value, ctx) : '';
+        params.push(`${name} = ${valueStr}`);
+      }
       paramIndex++;
     } else if (child.type === SyntaxType.TypedDefaultParameter) {
       const name =
@@ -1420,9 +1427,16 @@ function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       const value = child.childForFieldName('value');
       const rawType = typeNode?.text ?? '';
       const tsType = ctx.classTypeNames.has(rawType) ? `${ctx.className}.${rawType}` : (typeNode ? gdTypeToTs(rawType) : null);
-      const valueStr = value ? emitExpr(value, ctx) : '';
-      const typeStr = tsType ? `: ${tsType}` : '';
-      params.push(`${name}${typeStr} = ${valueStr}`);
+      const valueText = value?.text?.trim() ?? '';
+      // `param: Type = null` → `param: Type | null = null`
+      if (valueText === 'null') {
+        const typeStr = tsType ? `: ${tsType} | null` : ': unknown';
+        params.push(`${name}${typeStr} = null`);
+      } else {
+        const valueStr = value ? emitExpr(value, ctx) : '';
+        const typeStr = tsType ? `: ${tsType}` : '';
+        params.push(`${name}${typeStr} = ${valueStr}`);
+      }
       paramIndex++;
     } else if (child.type === SyntaxType.VariadicParameter) {
       // Variadic: `...args` → `...args: any[]`, `...args: Array` → `...args: Array<unknown>`

@@ -21,3 +21,6 @@ func varargs_untyped(...args):
 
 func varargs_typed(a: int, ...rest: Array):
 	pass
+
+func optional_args(a: int = 0, b = null, c = '', d: Node = null):
+	pass

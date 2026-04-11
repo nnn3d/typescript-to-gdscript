@@ -56,4 +56,10 @@ export class MyClass extends Node {
     let var_say_hello = this.say_hello;
     var_say_hello();
   }
+
+  optional_args(a: int = 0, b?: string, c?: Node) {
+  }
+
+  optional_args2(a: null | Node, b: string | null = null, c: Node | null = null, d: Node | Node2D | null = null, e: null | Node2D = null) {
+  }
 }

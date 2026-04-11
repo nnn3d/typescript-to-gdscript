@@ -23,6 +23,25 @@ export interface TransformerOptions {
  */
 const GD_IN_ALLOWED_CONTAINER_TYPES = new Set(['Dictionary']);
 
+/** GDScript primitive types that don't need type annotation on `= null` optional params. */
+const GD_PRIMITIVE_TYPES = new Set([
+  'int', 'float', 'bool', 'String', 'void',
+]);
+
+/**
+ * Returns true if a GDScript type is a "class type" — i.e. not a primitive and
+ * not a variant/value type (Vector2, Color, etc.). Only class types need an
+ * explicit type annotation when used as optional null-default parameters.
+ */
+function isGdClassType(gdType: string): boolean {
+  if (GD_PRIMITIVE_TYPES.has(gdType)) return false;
+  try {
+    const registry = resolveRegistry();
+    if (registry.isConstructor(gdType)) return false;
+  } catch { /* registry unavailable */ }
+  return true;
+}
+
 /**
  * Packed array type names are recognized as "array" in error messages.
  * Derived from the registry's `constructors` list, filtered to entries that
@@ -1182,12 +1201,49 @@ export class TsToGdTransformer {
           return `...${name}${typeAnnotation}`;
         }
 
-        const gdType = tsTypeNodeToGdType(
-          p.type,
-          this.ctx.checker,
-          this.ctx.sourceFile,
-        this.currentClassName,
-        );
+        const isNullDefault = p.initializer?.kind === ts.SyntaxKind.NullKeyword;
+
+        // Check if the type is a union containing null (e.g. `Node | null`, `null | Node2D`)
+        const isNullableUnion = p.type && ts.isUnionTypeNode(p.type) &&
+          p.type.types.some(
+            (t) =>
+              t.kind === ts.SyntaxKind.NullKeyword ||
+              (ts.isLiteralTypeNode(t) && t.literal.kind === ts.SyntaxKind.NullKeyword),
+          );
+
+        // For nullable unions, strip `| null` and use the base type
+        let gdType: string | null = null;
+        if (p.type && isNullableUnion) {
+          const nonNullTypes = (p.type as ts.UnionTypeNode).types.filter(
+            (t) =>
+              t.kind !== ts.SyntaxKind.NullKeyword &&
+              !(ts.isLiteralTypeNode(t) && t.literal.kind === ts.SyntaxKind.NullKeyword),
+          );
+          if (nonNullTypes.length === 1) {
+            gdType = tsTypeNodeToGdType(
+              nonNullTypes[0]!, this.ctx.checker, this.ctx.sourceFile,
+              this.currentClassName,
+            );
+          }
+          // Multi-type union (e.g. Node | Node2D | null) — can't express in GD
+        } else {
+          gdType = tsTypeNodeToGdType(
+            p.type, this.ctx.checker, this.ctx.sourceFile,
+            this.currentClassName,
+          );
+        }
+
+        // Nullable param with `?` or `= null` → `= null` in GDScript.
+        // Add type annotation only for class types (not primitives/variant types).
+        const needsNullDefault =
+          (p.questionToken && !p.initializer) || isNullDefault;
+        if (needsNullDefault) {
+          if (gdType && isGdClassType(gdType)) {
+            return `${name}: ${gdType} = null`;
+          }
+          return `${name} = null`;
+        }
+
         const typeAnnotation = gdType ? `: ${gdType}` : '';
         const defaultValue = p.initializer
           ? ` = ${this.emitExpression(p.initializer)}`

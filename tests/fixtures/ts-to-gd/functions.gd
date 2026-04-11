@@ -48,3 +48,9 @@ func call(fn: Callable):
 	self.say_hello()
 	var var_say_hello = self.say_hello
 	var_say_hello.call()
+
+func optional_args(a: int = 0, b = null, c: Node = null):
+	pass
+
+func optional_args2(a: Node, b = null, c: Node = null, d = null, e: Node2D = null):
+	pass
