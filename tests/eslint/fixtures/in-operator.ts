@@ -6,10 +6,11 @@ export class __CLASS__ extends Node {
     let b = 0 in Color(0, 0, 0);
     let c = "r" in Transform2D();
 
-    // ❌ Errors — `in` on arrays (not allowed in GDScript)
+    // ✅ OK — `in` on Array (allowed in GDScript)
     let arr: Array<int> = [];
     let d = 1 in arr;
 
+    // ❌ Error — `in` on PackedColorArray (not allowed)
     let packed: PackedColorArray = PackedColorArray();
     let e = 0 in packed;
 

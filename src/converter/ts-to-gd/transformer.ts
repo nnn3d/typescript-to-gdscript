@@ -17,11 +17,12 @@ export interface TransformerOptions {
  * else in the registry's `constructors` list (all Godot variant/value types)
  * is considered banned for use with `in`.
  *
- * Note: `Dictionary` supports `in` (checks key presence). `Array` and all
- * `Packed*Array` types do NOT support `in` in GDScript and are therefore
- * NOT listed here.
+ * `Dictionary` supports `in` (checks key presence).
+ * `Array` supports `in` (checks value presence).
+ * `Packed*Array` types do NOT support `in`.
+ * `String` supports `in` (substring check) but is mapped to `string` primitive.
  */
-const GD_IN_ALLOWED_CONTAINER_TYPES = new Set(['Dictionary']);
+const GD_IN_ALLOWED_CONTAINER_TYPES = new Set(['Dictionary', 'Array', 'ReadonlyArray']);
 
 /** GDScript primitive types that don't need type annotation on `= null` optional params. */
 const GD_PRIMITIVE_TYPES = new Set([
@@ -98,27 +99,24 @@ function classifyInRhsType(
   type: ts.Type,
   checker: ts.TypeChecker,
 ): string | null {
-  // Arrays (Array<T>, T[], ReadonlyArray<T>, tuples)
-  // `checker.isArrayType`/`isTupleType` are available in modern TS versions.
-  const anyChecker = checker as unknown as {
-    isArrayType?: (t: ts.Type) => boolean;
-    isTupleType?: (t: ts.Type) => boolean;
-  };
-  if (anyChecker.isArrayType?.(type)) return 'an array';
-  if (anyChecker.isTupleType?.(type)) return 'a tuple';
-
+  // Check symbol name first for allowed/banned types
   ensureBannedTypeSets();
   const symbol = type.getSymbol() ?? type.aliasSymbol;
   const name = symbol?.getName();
   if (name) {
+    // Array, Dictionary support `in` — allow them
+    if (GD_IN_ALLOWED_CONTAINER_TYPES.has(name)) return null;
     if (cachedBannedValueTypes!.has(name)) {
       return `the value type \`${name}\``;
     }
     if (cachedPackedArrayTypes!.has(name)) {
       return `the array type \`${name}\``;
     }
-    if (name === 'Array' || name === 'ReadonlyArray') return 'an array';
   }
+
+  // TS array types (T[], tuples) — these map to GDScript Array, which supports `in`
+  if (checker.isArrayType?.(type)) return null;
+  if (checker.isTupleType?.(type)) return null;
 
   // Number/boolean primitives: `x in 42` / `x in true` is always wrong too.
   if (type.flags & ts.TypeFlags.NumberLike) return 'a number';
