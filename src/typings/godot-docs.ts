@@ -231,14 +231,27 @@ export function generateGodotDocsTypings(
       // Emit renamed alias so existing references still work
       const renamedName = CLASS_NAME_CONFLICTS.get(name);
       if (renamedName) {
-        const hasGenerics = override?.header.includes('<') ?? false;
         fileLines.push(
-          `type ${renamedName} = ${interfaceName}${hasGenerics ? '<unknown>' : ''};`,
+          `type ${renamedName} = ${interfaceName};`,
         );
       }
-      // Dictionary → Object interface, but keep Dictionary as a type alias + constructor
+      // Dictionary → Object interface + Dictionary<K,V> from override + constructor
       if (name === 'Dictionary') {
-        fileLines.push(`type Dictionary = Object;`);
+        const dictOverride = overrides.get('Dictionary');
+        if (dictOverride) {
+          // Emit Dictionary<K,V> interface from the override file
+          const dictHeader = dictOverride.header ?? 'interface Dictionary<K = unknown, V = unknown> extends Object';
+          fileLines.push(`${dictHeader} {`);
+          for (const [, text] of dictOverride.members) {
+            fileLines.push(text);
+          }
+          for (const extra of dictOverride.extras) {
+            fileLines.push(extra);
+          }
+          fileLines.push('}');
+        } else {
+          fileLines.push(`type Dictionary = Object;`);
+        }
         fileLines.push(generateConstructorInterface(cls, 'Dictionary', 'Dictionary'));
         fileLines.push('declare var Object: typeof GodotObject;');
       }

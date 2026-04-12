@@ -70,6 +70,40 @@ class DictionaryTest extends Node {
     // @ts-expect-error — Node is not Dictionary (structurally incompatible)
     let bad: Dictionary = new Node();
   }
+
+  test_dictionary_generics() {
+    // Typed dictionary via explicit type annotation
+    let scores = Dictionary() as Dictionary<string, int>;
+    scores.set("player", 100);
+    let score: int = scores.get("player");
+    let allKeys: Array<string> = scores.keys();
+    let allValues: Array<int> = scores.values();
+    let hasPlayer: boolean = scores.has("player");
+    scores.erase("player");
+
+    // @ts-expect-error — value must be int, not string
+    scores.set("player", "not a number");
+
+    // @ts-expect-error — key must be string, not int
+    scores.set(42, 100);
+
+    // Typed methods return typed results
+    let found: string | null = scores.find_key(100);
+    let duped: Dictionary<string, int> = scores.duplicate();
+    let merged: Dictionary<string, int> = scores.merged(scores);
+
+    // Untyped dictionary still works (defaults to <unknown, unknown>)
+    let untyped: Dictionary = Dictionary();
+    untyped.set("anything", 42);
+    untyped.set(123, "also fine");
+    let untypedKeys: Array<unknown> = untyped.keys();
+
+    // {} literal has Dictionary methods (via Object interface)
+    let literal = {};
+    literal.has("key");
+    literal.set("key", "value");
+    let litKeys: Array<unknown> = literal.keys();
+  }
 }
 
 // ─── GodotObject / RefCounted methods ───────────────────────
