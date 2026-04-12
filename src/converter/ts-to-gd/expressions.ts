@@ -58,8 +58,19 @@ export function emitExpression(t: TransformerDelegate, node: ts.Expression): str
     return emitPropertyAccess(t, node);
   }
 
-  // Element access: a[b]
+  // Element access: a[b] — convert to .get() when type includes undefined
   if (ts.isElementAccessExpression(node)) {
+    const elemType = t.ctx.checker.getTypeAtLocation(node);
+    if (typeContainsUndefined(elemType)) {
+      const parent = node.parent;
+      const isChainedOrCalled =
+        (ts.isCallExpression(parent) && parent.expression === node) ||
+        (ts.isPropertyAccessExpression(parent) && parent.expression === node) ||
+        (ts.isElementAccessExpression(parent) && parent.expression === node);
+      if (!isChainedOrCalled) {
+        return `${t.emitExpression(node.expression)}.get(${t.emitExpression(node.argumentExpression)})`;
+      }
+    }
     return `${t.emitExpression(node.expression)}[${t.emitExpression(node.argumentExpression)}]`;
   }
 
@@ -231,6 +242,40 @@ export function emitPropertyAccess(
   }
   const obj = t.emitExpression(node.expression);
   const prop = node.name.text;
+
+  // Optional property access: convert standalone `obj.prop` to `obj.get("prop")`
+  // when the property type includes `undefined` (optional or T | undefined).
+  // Skip when:
+  // - chained or called: obj.prop(), obj.prop.inner, obj.prop["key"]
+  // - accessing a class field (always defined in GDScript)
+  const propType = t.ctx.checker.getTypeAtLocation(node);
+  if (typeContainsUndefined(propType)) {
+    // Walk up through non-null assertions (!) and parens to find the real parent
+    let effectiveNode: ts.Node = node;
+    let parent = node.parent;
+    while (
+      parent &&
+      (ts.isNonNullExpression(parent) || ts.isParenthesizedExpression(parent))
+    ) {
+      effectiveNode = parent;
+      parent = parent.parent;
+    }
+    const isChainedOrCalled = parent != null && (
+      (ts.isCallExpression(parent) && parent.expression === effectiveNode) ||
+      (ts.isPropertyAccessExpression(parent) && parent.expression === effectiveNode) ||
+      (ts.isElementAccessExpression(parent) && parent.expression === effectiveNode)
+    );
+    // Check if the property is a class field (declared via PropertyDeclaration in a class body).
+    // PropertySignature (in interfaces/type literals) is NOT a class field.
+    const symbol = t.ctx.checker.getSymbolAtLocation(node.name);
+    const isClassField = symbol?.getDeclarations()?.some(
+      (d) => ts.isPropertyDeclaration(d),
+    ) ?? false;
+    if (!isChainedOrCalled && !isClassField) {
+      return `${obj}.get("${prop}")`;
+    }
+  }
+
   return `${obj}.${prop}`;
 }
 
