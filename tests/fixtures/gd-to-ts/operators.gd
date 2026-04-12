@@ -59,6 +59,22 @@ func test_ops_helpers():
     var v5 = v1 < v2
     var v6 = v1 <= v2
 
+func test_logical_value(arg_a, arg_b):
+    var a: int = 10
+    var b: int = 3
+    # Value context — should wrap in bool()
+    var x = a or b
+    var y = a and b
+    # Boolean context — no bool() needed
+    if a or b:
+        pass
+    # Bool result (comparisons) — no bool() needed
+    var z: bool = a > 0 and b > 0
+    # Nested chain — only outermost wraps
+    var w = a or b and a
+
+    return arg_a or arg_b
+
 func test_remainder():
     var vi1 = Vector2i(10, 20)
     var vi2 = Vector2i(3, 7)

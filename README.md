@@ -31,7 +31,7 @@ This provides:
 - All Godot engine classes (Node, Sprite2D, Vector2, etc.)
 - Global functions (print, load, range, etc.)
 - `gd` namespace helpers (signals, enums, math, decorators, type casting)
-- Type aliases: `int`, `float`, `StringName`, `NodePath`, `Dictionary`
+- Type aliases: `int`, `float`, `bool`, `StringName`, `NodePath`, `Dictionary<K, V>`
 
 ### Configuration: `tstogd.json`
 
@@ -507,6 +507,8 @@ Negation of `not x is Y` in GDScript converts to `!(gd.is(x, Y))` or `!(x instan
 
 ### StringName / NodePath
 
+`StringName` is a type alias for `String` (identical API in GDScript). `NodePath` is its own variant type with a dedicated interface and constructor.
+
 ```typescript
 let sn = StringName('my_signal');
 let np = NodePath('Path/To/Node');
@@ -522,6 +524,8 @@ Each `.ts` file must contain exactly one class. Named classes are available glob
 
 - `int` and `float` are type aliases for `number`. Pure `number` converts to GDScript `float`.
 - `undefined` is restricted — use `null`.
+- `Dictionary<K, V>` has generic key/value types. Typed `get()`, `set()`, `keys()`, `values()`, etc. Untyped `Dictionary` defaults to `<unknown, unknown>`. `{}` object literals keep Dictionary methods via the `Object` interface.
+- Optional property access is auto-converted: `obj.optionalProp` → `obj.get("optionalProp")` when the property type includes `undefined`. Element access `obj["key"]` with undefined type also converts to `obj.get("key")`. Skipped for chained access, calls, and class field access (always defined in GDScript).
 - `var` is restricted — use `let` or `const` (both convert to GDScript `var`).
 - `TSOnly<T>` wrapper type is stripped during transformation.
 - `bool` is a type alias for `boolean` and also a cast function (`bool(x)` → GDScript `bool(x)`).
@@ -559,6 +563,8 @@ typings/
 ```
 
 The `generate-typings` command outputs directly to `typings/` root.
+
+Value types (Vector2, Color, etc.), `Dictionary`, and `Callable` use call syntax constructors (no `new`). `Dictionary` and `Callable` constructors and static methods are generated from Godot XML docs via a shared `generateConstructorInterface()` utility.
 
 ### Nullable Reference Types
 
@@ -626,6 +632,8 @@ This generates in your `typingsDir`:
   ```
 
 - **Static fields on instances**: class static members (enums, etc.) accessible on instances via `StaticProps`
+
+- **Non-Node scripts excluded**: scripts that don't extend Node (e.g. `extends Resource`) skip tree navigation typings (ScriptTree, `get_node` overrides, `__Trees` interface) since they have no scene tree context
 
 ### Configuration
 

@@ -457,7 +457,75 @@ export function emitBinaryOp(node: SyntaxNode, ctx: GdToTsContext): string {
   const leftStr = left ? emitExpr(left, ctx) : '';
   const rightStr = right ? emitExpr(right, ctx) : '';
 
-  return `${leftStr} ${tsOp} ${rightStr}`;
+  const result = `${leftStr} ${tsOp} ${rightStr}`;
+
+  // Wrap `or`/`and` in `bool()` when used as a value (assigned, argument, returned)
+  // AND the expression is not already boolean (comparisons return bool naturally).
+  if ((opText === 'or' || opText === 'and') && isGdLogicalValueContext(node) && !isGdBoolExpression(node)) {
+    return `bool(${result})`;
+  }
+
+  return result;
+}
+
+/**
+ * Check if a GDScript `or`/`and` binary_operator is used as a value
+ * (assigned, passed as argument, returned). In these contexts, we wrap
+ * with `bool()` since GDScript returns bool but TS `||`/`&&` return operands.
+ */
+function isGdLogicalValueContext(node: SyntaxNode): boolean {
+  const parent = node.parent;
+  if (!parent) return false;
+
+  // Assignment RHS: `a = b or c`
+  if (
+    parent.type === SyntaxType.Assignment ||
+    parent.type === SyntaxType.AugmentedAssignment
+  ) {
+    return parent.childForFieldName('right')?.id === node.id;
+  }
+
+  // Variable initializer: `var a = b or c`
+  if (parent.type === SyntaxType.VariableStatement) {
+    return parent.childForFieldName('value')?.id === node.id;
+  }
+
+  // Function argument: `func(a or b)`
+  if (parent.type === SyntaxType.Arguments) return true;
+
+  // Return statement: `return a or b`
+  if (parent.type === SyntaxType.ReturnStatement) return true;
+
+  return false;
+}
+
+/** Comparison operators that always return bool. */
+const GD_COMPARISON_OPS = new Set(['==', '!=', '<', '>', '<=', '>=', 'is', 'in']);
+
+/**
+ * Check if a GDScript expression is inherently boolean — composed entirely of
+ * comparisons and logical operators. If so, `bool()` wrapper is unnecessary.
+ */
+function isGdBoolExpression(node: SyntaxNode): boolean {
+  if (node.type === SyntaxType.BinaryOperator) {
+    const op = node.children.find((c) => !c.isNamed)?.text ?? '';
+    if (GD_COMPARISON_OPS.has(op)) return true;
+    if (op === 'or' || op === 'and') {
+      const left = node.childForFieldName('left');
+      const right = node.childForFieldName('right');
+      return (
+        (left ? isGdBoolExpression(left) : true) &&
+        (right ? isGdBoolExpression(right) : true)
+      );
+    }
+  }
+  if (node.type === SyntaxType.UnaryOperator) {
+    const op = node.children.find((c) => !c.isNamed)?.text ?? '';
+    if (op === 'not' || op === '!') return true;
+  }
+  // `true` / `false` literals
+  if (node.text === 'true' || node.text === 'false') return true;
+  return false;
 }
 
 export function emitUnaryOp(node: SyntaxNode, ctx: GdToTsContext): string {

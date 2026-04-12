@@ -378,6 +378,75 @@ export function emitCallExpression(
   return `${callee}(${args})`;
 }
 
+/**
+ * Check if a logical expression (`||`/`&&`) is in a boolean context where
+ * GDScript `or`/`and` returning `bool` is correct. Contexts:
+ * - if/while condition
+ * - negation (`!expr`)
+ * - nested in another `||`/`&&` that is itself in bool context
+ * - wrapped in `bool()` call
+ * - used as a standalone expression statement (not assigned)
+ */
+function isLogicalBoolContext(node: ts.BinaryExpression): boolean {
+  let current: ts.Node = node;
+  let parent = current.parent;
+
+  // Walk up through parenthesized expressions
+  while (parent && ts.isParenthesizedExpression(parent)) {
+    current = parent;
+    parent = parent.parent;
+  }
+
+  if (!parent) return true;
+
+  // if/while/for condition
+  if (ts.isIfStatement(parent) && parent.expression === current) return true;
+  if (ts.isWhileStatement(parent) && parent.expression === current) return true;
+  if (ts.isForStatement(parent) && parent.condition === current) return true;
+
+  // Negation: !expr
+  if (ts.isPrefixUnaryExpression(parent) && parent.operator === ts.SyntaxKind.ExclamationToken) return true;
+
+  // Nested logical: part of another || or &&
+  if (
+    ts.isBinaryExpression(parent) &&
+    (parent.operatorToken.kind === ts.SyntaxKind.BarBarToken ||
+     parent.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken)
+  ) return true;
+
+  // Wrapped in bool() call — walk up through ternary/parens to find it
+  if (isInsideBoolCall(current)) return true;
+
+  // Expression statement (standalone, not assigned)
+  if (ts.isExpressionStatement(parent)) return true;
+
+  return false;
+}
+
+/** Walk up ancestors to check if this node is inside a `bool()` call. */
+function isInsideBoolCall(node: ts.Node): boolean {
+  let current = node.parent;
+  while (current) {
+    // Skip transparent wrappers
+    if (
+      ts.isParenthesizedExpression(current) ||
+      ts.isConditionalExpression(current)
+    ) {
+      current = current.parent;
+      continue;
+    }
+    // Found bool() call
+    if (
+      ts.isCallExpression(current) &&
+      ts.isIdentifier(current.expression) &&
+      current.expression.text === 'bool'
+    ) return true;
+    // Anything else breaks the chain
+    break;
+  }
+  return false;
+}
+
 /** Check if an expression evaluates to `self` (i.e., is `this`) */
 function isSelfExpression(node: ts.Expression): boolean {
   return node.kind === ts.SyntaxKind.ThisKeyword;
@@ -406,9 +475,30 @@ export function emitBinaryExpression(
     );
   }
   // `x in y` -- GDScript only supports `in` on Dictionary and String.
-  // Arrays, Packed*Array, and all value types (Vector2, Color, ...) are invalid.
   if (node.operatorToken.kind === ts.SyntaxKind.InKeyword) {
     checkInOperatorRhs(t, node);
+  }
+  // Error when `||`/`&&` is used as a non-boolean value.
+  // GDScript `or`/`and` return `bool`, not the operand like JS/TS.
+  // User can wrap in `bool()` to acknowledge the bool return and suppress this error.
+  if (
+    node.operatorToken.kind === ts.SyntaxKind.BarBarToken ||
+    node.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken
+  ) {
+    if (!isLogicalBoolContext(node)) {
+      const resultType = t.ctx.checker.getTypeAtLocation(node);
+      const isBoolResult = !!(resultType.flags & ts.TypeFlags.BooleanLike);
+      if (!isBoolResult) {
+        const op = node.operatorToken.kind === ts.SyntaxKind.BarBarToken ? '||' : '&&';
+        t.addDiagnostic(
+          node,
+          'error',
+          `\`${op}\` used as a non-boolean value. GDScript \`or\`/\`and\` return \`bool\`, ` +
+            `not the operand. Wrap in \`bool()\` to accept bool result, or use a ternary ` +
+            `(\`a if a else b\`) for value coalescing.`,
+        );
+      }
+    }
   }
   const left = t.emitExpression(node.left);
   const right = t.emitExpression(node.right);

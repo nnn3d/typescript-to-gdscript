@@ -6,7 +6,7 @@ export class Enums extends Node {
   static UNIT_ALLY: int = 2;
 
   _ready() {
-    return this.Direction.UP || this.Status.IDLE || this.UNIT_NEUTRAL;
+    return bool(this.Direction.UP || this.Status.IDLE || this.UNIT_NEUTRAL);
   }
 
   static Weapon = class extends Node {

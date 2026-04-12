@@ -7,7 +7,7 @@ export class __CLASS__ extends Node {
   }
 
   get_health() {
-    return this.MAX_HEALTH || this.MAX_HEALTH;
+    return bool(this.MAX_HEALTH || this.MAX_HEALTH);
   }
 
   set_mode(m: __CLASS__.Mode, c: __CLASS__.Config) {

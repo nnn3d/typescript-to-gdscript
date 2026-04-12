@@ -58,6 +58,23 @@ export class Operators extends Node {
     let v6 = gd.ops.lte(this.v1, this.v2);
   }
 
+  test_logical_value(arg_a, arg_b) {
+    let a: int = 10;
+    let b: int = 3;
+    // Value context — should wrap in bool()
+    let x = bool(a || b);
+    let y = bool(a && b);
+    // Boolean context — no bool() needed
+    if (a || b) {
+
+    }
+    // Bool result (comparisons) — no bool() needed
+    let z: boolean = a > 0 && b > 0;
+    // Nested chain — only outermost wraps
+    let w = bool(a || b && a);
+    return bool(arg_a || arg_b);
+  }
+
   test_remainder() {
     let vi1 = Vector2i(10, 20);
     let vi2 = Vector2i(3, 7);

@@ -40,6 +40,7 @@ const convertRule: RuleModule = {
         additionalProperties: false,
       },
     ],
+    fixable: 'code',
     messages: {
       convertError: '{{message}}',
       convertWarning: '{{message}}',
@@ -131,11 +132,49 @@ function reportDiagnostics(
           }
         : undefined;
 
+    // For logical value errors, provide an auto-fix that wraps in bool()
+    const isLogicalValueError = diag.message.includes('non-boolean value');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let fix: ((fixer: any) => any) | undefined;
+    if (isLogicalValueError && loc) {
+      // Find the BinaryExpression (||/&&) at the diagnostic line
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sourceCode = context.sourceCode ?? context.getSourceCode();
+      const nodeAtLoc = sourceCode.getNodeByRangeIndex?.(
+        sourceCode.getIndexFromLoc(loc.start),
+      );
+      // Walk up to find the LogicalExpression, then continue to the outermost
+      // logical in the chain (so `a && b || c` wraps the whole thing, not just `a && b`)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let logicalNode: any = nodeAtLoc;
+      while (logicalNode && logicalNode.type !== 'LogicalExpression') {
+        logicalNode = logicalNode.parent;
+      }
+      // Walk up through parent LogicalExpressions to find the outermost one
+      while (
+        logicalNode?.parent?.type === 'LogicalExpression'
+      ) {
+        logicalNode = logicalNode.parent;
+      }
+      // Skip if already wrapped in bool()
+      const alreadyWrapped =
+        logicalNode?.parent?.type === 'CallExpression' &&
+        logicalNode.parent.callee?.type === 'Identifier' &&
+        logicalNode.parent.callee.name === 'bool';
+      if (logicalNode && !alreadyWrapped) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        fix = (fixer: any) => [
+          fixer.insertTextBefore(logicalNode, 'bool('),
+          fixer.insertTextAfter(logicalNode, ')'),
+        ];
+      }
+    }
+
     context.report({
       messageId,
       data: { message: diag.message },
       ...(loc ? { loc } : { node: context.sourceCode.ast }),
-      // Override severity via messageId — ESLint uses rule config severity, not per-report
+      ...(fix ? { fix } : {}),
     });
   }
 

@@ -11,7 +11,7 @@ export class MyClass extends Node {
 
   set_direction(dir: int) {
     this.current_direction = dir;
-    return MyClass.Direction.LEFT || MyClass.State.IDLE;
+    return bool(MyClass.Direction.LEFT || MyClass.State.IDLE);
   }
 
   test_typed(s: MyClass.State, w: MyClass.Weapon) {
