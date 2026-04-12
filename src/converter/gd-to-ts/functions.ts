@@ -1,0 +1,285 @@
+import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
+import type { GdToTsContext } from './context.ts';
+import { gdTypeToTs, containsAwait, extractGdTypeName } from './type-inference.ts';
+import { getAnnotations } from './members.ts';
+import { emitBody } from './statements.ts';
+import { emitExpr } from './expressions.ts';
+
+// ─── Functions ────────────────────────────────────────────────
+
+export function emitFunction(node: SyntaxNode, ctx: GdToTsContext, isAbstract = false): string {
+  const name = node.childForFieldName('name')?.text ?? 'unknown';
+  const paramsNode = node.childForFieldName('parameters');
+  const returnTypeNode = node.childForFieldName('return_type');
+  const bodyNode = node.childForFieldName('body');
+
+  // Check for @abstract annotation as child (inner class context)
+  const annotations = getAnnotations(node);
+  const childAbstract = annotations.some(
+    (ann) => ann.text === '@abstract',
+  );
+
+  // Create local scope for this function
+  const savedLocals = ctx.localVars;
+  const savedLocalTypes = ctx.localVarTypes;
+  const savedMethodName = ctx.currentMethodName;
+  ctx.localVars = new Set();
+  ctx.localVarTypes = new Map();
+  ctx.currentMethodName = name;
+  collectParamNames(paramsNode, ctx);
+
+  const params = paramsNode ? emitParams(paramsNode, ctx) : '';
+  const returnType = returnTypeNode ? emitReturnType(returnTypeNode, ctx) : '';
+
+  // Root-level abstract (passed from emitSourceFile): native TS abstract keyword, no body
+  if (isAbstract) {
+    ctx.localVars = savedLocals;
+    ctx.localVarTypes = savedLocalTypes;
+    ctx.currentMethodName = savedMethodName;
+    return `  abstract ${name}(${params})${returnType};`;
+  }
+
+  // Child annotation @abstract (inner class): use @abstract decorator
+  if (childAbstract) {
+    const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
+    ctx.localVars = savedLocals;
+    ctx.localVarTypes = savedLocalTypes;
+    ctx.currentMethodName = savedMethodName;
+    if (body) {
+      return `  @abstract\n  ${name}(${params})${returnType} {\n${body}\n  }`;
+    }
+    return `  @abstract\n  ${name}(${params})${returnType} {\n  }`;
+  }
+
+  const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
+  ctx.localVars = savedLocals;
+  ctx.localVarTypes = savedLocalTypes;
+  ctx.currentMethodName = savedMethodName;
+
+  // Check if the body contains await -> mark as async
+  const isAsync = bodyNode ? containsAwait(bodyNode) : false;
+  const asyncPrefix = isAsync ? 'async ' : '';
+
+  if (body) {
+    return `  ${asyncPrefix}${name}(${params})${returnType} {\n${body}\n  }`;
+  }
+  return `  ${asyncPrefix}${name}(${params})${returnType} {\n  }`;
+}
+
+export function emitConstructor(node: SyntaxNode, ctx: GdToTsContext): string {
+  const paramsNode = node.childForFieldName('parameters');
+  const bodyNode = node.childForFieldName('body');
+
+  // Create local scope for constructor
+  const savedLocals = ctx.localVars;
+  const savedLocalTypes = ctx.localVarTypes;
+  ctx.localVars = new Set();
+  ctx.localVarTypes = new Map();
+  collectParamNames(paramsNode, ctx);
+
+  const params = paramsNode ? emitParams(paramsNode, ctx) : '';
+  const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
+  ctx.localVars = savedLocals;
+  ctx.localVarTypes = savedLocalTypes;
+
+  if (body) {
+    return `  constructor(${params}) {\n${body}\n  }`;
+  }
+  return `  constructor(${params}) {\n  }`;
+}
+
+export function collectParamNames(
+  paramsNode: SyntaxNode | null,
+  ctx: GdToTsContext,
+): void {
+  if (!paramsNode) return;
+  for (const child of paramsNode.namedChildren) {
+    if (child.type === SyntaxType.Identifier) {
+      ctx.localVars.add(child.text);
+    } else if (
+      child.type === SyntaxType.TypedParameter ||
+      child.type === SyntaxType.DefaultParameter ||
+      child.type === SyntaxType.TypedDefaultParameter
+    ) {
+      const name = child.namedChildren.find((c) =>
+        c.type === SyntaxType.Identifier,
+      )?.text;
+      if (name) {
+        ctx.localVars.add(name);
+        // Track param type for operator overload inference
+        const typeNode = child.childForFieldName('type');
+        if (typeNode) {
+          const typeName = extractGdTypeName(typeNode);
+          if (typeName) ctx.localVarTypes.set(name, typeName);
+        }
+      }
+    } else if (child.type === SyntaxType.VariadicParameter) {
+      // Variadic param: `...args` or `...args: Array` — inner child holds the name
+      const inner = child.namedChildren.find(
+        (c) =>
+          c.type === SyntaxType.Identifier ||
+          c.type === SyntaxType.TypedParameter,
+      );
+      const name =
+        inner?.type === SyntaxType.Identifier
+          ? inner.text
+          : inner?.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+              ?.text;
+      if (name) ctx.localVars.add(name);
+    }
+  }
+}
+
+export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
+  // Look up signal handler info for the current method (if any)
+  const handlerInfo = ctx.currentMethodName
+    ? ctx.signalHandlers.get(ctx.currentMethodName)
+    : undefined;
+
+  const params: string[] = [];
+  let paramIndex = 0;
+  for (const child of paramsNode.namedChildren) {
+    if (child.type === SyntaxType.Identifier) {
+      // Untyped param — use signal handler type if available
+      if (handlerInfo && paramIndex < handlerInfo.params.length) {
+        const sigParam = handlerInfo.params[paramIndex]!;
+        const tsType = gdTypeToTs(sigParam.gdType);
+        params.push(tsType ? `${child.text}: ${tsType}` : child.text);
+      } else {
+        params.push(child.text);
+      }
+      paramIndex++;
+    } else if (child.type === SyntaxType.TypedParameter) {
+      const name =
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
+        '';
+      const typeNode = child.childForFieldName('type');
+      const rawType = typeNode?.text ?? '';
+      const tsType = ctx.classTypeNames.has(rawType) ? `${ctx.className}.${rawType}` : (typeNode ? gdTypeToTs(rawType) : null);
+      params.push(tsType ? `${name}: ${tsType}` : name);
+      paramIndex++;
+    } else if (child.type === SyntaxType.DefaultParameter) {
+      const name =
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
+        '';
+      const value = child.childForFieldName('value');
+      const valueText = value?.text?.trim() ?? '';
+      // `param = null` → `param: unknown = null` (or `any` with unsafe flag)
+      if (valueText === 'null') {
+        const fallbackType = ctx.unsafeUseAny ? 'any' : 'unknown';
+        params.push(`${name}: ${fallbackType} = null`);
+      } else {
+        const valueStr = value ? emitExpr(value, ctx) : '';
+        params.push(`${name} = ${valueStr}`);
+      }
+      paramIndex++;
+    } else if (child.type === SyntaxType.TypedDefaultParameter) {
+      const name =
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
+        '';
+      const typeNode = child.childForFieldName('type');
+      const value = child.childForFieldName('value');
+      const rawType = typeNode?.text ?? '';
+      const tsType = ctx.classTypeNames.has(rawType) ? `${ctx.className}.${rawType}` : (typeNode ? gdTypeToTs(rawType) : null);
+      const valueText = value?.text?.trim() ?? '';
+      // `param: Type = null` → `param: Type | null = null`
+      if (valueText === 'null') {
+        const typeStr = tsType ? `: ${tsType} | null` : ': unknown';
+        params.push(`${name}${typeStr} = null`);
+      } else {
+        const valueStr = value ? emitExpr(value, ctx) : '';
+        const typeStr = tsType ? `: ${tsType}` : '';
+        params.push(`${name}${typeStr} = ${valueStr}`);
+      }
+      paramIndex++;
+    } else if (child.type === SyntaxType.VariadicParameter) {
+      // Variadic: `...args` → `...args: any[]`, `...args: Array` → `...args: Array<unknown>`
+      const inner = child.namedChildren.find(
+        (c) =>
+          c.type === SyntaxType.Identifier ||
+          c.type === SyntaxType.TypedParameter,
+      );
+      if (inner?.type === SyntaxType.Identifier) {
+        params.push(`...${inner.text}: any[]`);
+      } else if (inner?.type === SyntaxType.TypedParameter) {
+        const name =
+          inner.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+            ?.text ?? '';
+        const typeNode = inner.childForFieldName('type');
+        const rawType = typeNode?.text ?? '';
+        const tsType = gdTypeToTs(rawType);
+        // GDScript varargs always collect into an Array. The mapped TS type
+        // for `Array` is already `Array<unknown>`, so use it directly.
+        // For any other type, it's already an array-like form.
+        params.push(`...${name}: ${tsType ?? 'any[]'}`);
+      }
+      paramIndex++;
+    }
+  }
+  return params.join(', ');
+}
+
+export function emitReturnType(typeNode: SyntaxNode, ctx: GdToTsContext): string {
+  if (typeNode.type === SyntaxType.Type) {
+    const inner = typeNode.namedChildren[0]?.text ?? typeNode.text;
+    if (ctx.classTypeNames.has(inner)) {
+      return `: ${ctx.className}.${inner}`;
+    }
+    const tsType = gdTypeToTs(inner);
+    return tsType ? `: ${tsType}` : '';
+  }
+  const raw = typeNode.text;
+  if (ctx.classTypeNames.has(raw)) {
+    return `: ${ctx.className}.${raw}`;
+  }
+  const tsType = gdTypeToTs(raw);
+  return tsType ? `: ${tsType}` : '';
+}
+
+// ─── Lambda ───────────────────────────────────────────────────
+
+export function emitLambda(node: SyntaxNode, ctx: GdToTsContext): string {
+  const paramsNode = node.childForFieldName('parameters');
+  const returnTypeNode = node.childForFieldName('return_type');
+  const bodyNode = node.childForFieldName('body');
+
+  // Register lambda params in scope for type inference (e.g. operator overload detection)
+  const savedLocalVars = new Set(ctx.localVars);
+  const savedLocalVarTypes = new Map(ctx.localVarTypes);
+  collectParamNames(paramsNode, ctx);
+
+  const params = paramsNode ? emitParams(paramsNode, ctx) : '';
+  const returnType = returnTypeNode ? emitReturnType(returnTypeNode, ctx) : '';
+
+  let result: string;
+
+  // Check if body is a single return expression
+  if (bodyNode && bodyNode.namedChildren.length === 1) {
+    const stmt = bodyNode.namedChildren[0]!;
+    if (
+      stmt.type === SyntaxType.ReturnStatement &&
+      stmt.namedChildren.length > 0
+    ) {
+      const expr = stmt.namedChildren[0]!;
+      result = `(${params})${returnType} => ${emitExpr(expr, ctx)}`;
+    } else if (
+      stmt.type === SyntaxType.ExpressionStatement &&
+      stmt.namedChildren.length > 0
+    ) {
+      const expr = stmt.namedChildren[0]!;
+      result = `(${params})${returnType} => { ${emitExpr(expr, ctx)}; }`;
+    } else {
+      const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
+      result = `(${params})${returnType} => {\n${body}\n  }`;
+    }
+  } else {
+    // Multi-statement lambda
+    const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
+    result = `(${params})${returnType} => {\n${body}\n  }`;
+  }
+
+  // Restore scope
+  ctx.localVars = savedLocalVars;
+  ctx.localVarTypes = savedLocalVarTypes;
+  return result;
+}
