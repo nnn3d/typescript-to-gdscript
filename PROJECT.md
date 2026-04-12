@@ -31,7 +31,7 @@ typings/                 # Godot typings (committed to git, used as TS lib)
   classes/               # Per-class .d.ts files (916 classes)
 
 src/
-  config/index.ts        # tstogd.json loader, registry resolver
+  config/index.ts        # tstogd.json loader (with `exclude` glob patterns), registry resolver
   converter/
     ts-to-gd/            # transformer.ts (AST visitor), emitter.ts (line/col + sourcemap), index.ts
     gd-to-ts/index.ts    # convertGdToTs() with typed AST, scope tracking, GodotClassRegistry

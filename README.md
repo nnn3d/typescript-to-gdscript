@@ -43,7 +43,8 @@ Create a `tstogd.json` in your project root to configure the converter:
   "rootDir": "src",
   "outputDir": "scripts",
   "sourceMap": true,
-  "tsconfig": "tsconfig.json"
+  "tsconfig": "tsconfig.json",
+  "exclude": ["test/**", "**/*.test.ts"]
 }
 ```
 
@@ -56,7 +57,7 @@ Create a `tstogd.json` in your project root to configure the converter:
 | `typingsDir`   | `string`  | Directory for all generated typings (`globals.d.ts`, `scene-typings.d.ts`). Relative to `rootDir`. Defaults to `"_gdtots"`. |
 | `sourceMap`    | `boolean` | Generate source maps.                                                    |
 | `tsconfig`     | `string`  | Path to `tsconfig.json`.                                                 |
-| `ignore`       | `string[]` | Glob patterns for files/folders to ignore in all conversions (e.g. `["addons/**", "test/**"]`). |
+| `exclude`      | `string[]` | Glob patterns (from project root) for files/folders to exclude from all CLI commands (e.g. `["test/**", "**/*.test.ts"]`). Uses [minimatch](https://github.com/isaacs/minimatch) syntax. |
 
 ## CLI Commands
 

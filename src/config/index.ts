@@ -27,8 +27,8 @@ export interface TsToGdConfig {
   sourceMap?: boolean;
   /** Path to Godot executable for GDScript validation */
   godotPath?: string;
-  /** Glob patterns for files/folders to ignore in all conversions and typings generation. */
-  ignore?: string[];
+  /** Glob patterns for files/folders to exclude from all conversions and typings generation. */
+  exclude?: string[];
   /** Path to project.godot file (relative to rootDir). Defaults to "project.godot". */
   projectFile?: string;
 }
@@ -85,7 +85,7 @@ export function resolveConfig(options?: {
     overrides.scenesDir ?? config?.scenesDir ?? '.',
   );
 
-  const ignore = overrides.ignore ?? config?.ignore ?? [];
+  const ignore = overrides.exclude ?? config?.exclude ?? [];
   const projectFile = resolve(
     rootDir,
     overrides.projectFile ?? config?.projectFile ?? 'project.godot',
