@@ -3,7 +3,7 @@
 class DictionaryTest extends Node {
   test_dictionary_class() {
     // Dictionary as a class
-    let dict = new Dictionary();
+    let dict = Dictionary();
     dict.has('key');
     dict.get('key');
     dict.set('key', 'value');
@@ -15,9 +15,9 @@ class DictionaryTest extends Node {
     let v: Array<unknown> = dict.values();
     // @ts-expect-error — Dictionary is not GodotObject
     dict.get_class();
-    dict.is_same_typed_key(new Dictionary());
-    dict.merge(new Dictionary());
-    let merged: Dictionary = dict.merged(new Dictionary());
+    dict.is_same_typed_key(Dictionary());
+    dict.merge(Dictionary());
+    let merged: Dictionary = dict.merged(Dictionary());
     let duped: Dictionary = dict.duplicate();
     dict.sort();
   }
@@ -34,9 +34,9 @@ class DictionaryTest extends Node {
     let empty: boolean = dict.is_empty();
     let k: Array<unknown> = dict.keys();
     let v: Array<unknown> = dict.values();
-    dict.is_same_typed_key(new Dictionary());
-    dict.merge(new Dictionary());
-    let merged: Dictionary = dict.merged(new Dictionary());
+    dict.is_same_typed_key(Dictionary());
+    dict.merge(Dictionary());
+    let merged: Dictionary = dict.merged(Dictionary());
     let duped: Dictionary = dict.duplicate();
     dict.sort();
   }
@@ -65,7 +65,7 @@ class DictionaryTest extends Node {
   }
 
   test_dictionary_type_assignment() {
-    let dict: Dictionary = new Dictionary();
+    let dict: Dictionary = Dictionary();
 
     // @ts-expect-error — Node is not Dictionary (structurally incompatible)
     let bad: Dictionary = new Node();
@@ -82,8 +82,8 @@ class GodotObjectMethodsTest extends RefCounted {
     let has_sig: boolean = this.has_signal('my_signal');
     this.set('property', 42);
     let val: unknown = this.get('property');
-    this.connect('signal_name', new Callable());
-    this.disconnect('signal_name', new Callable());
+    this.connect('signal_name', Callable());
+    this.disconnect('signal_name', Callable());
     let id: int = this.get_instance_id();
     this.set_meta('key', 'value');
     let meta: unknown = this.get_meta('key');
@@ -109,7 +109,7 @@ class GodotObjectMethodsTest extends RefCounted {
     this.has_all([]);
 
     // @ts-expect-error — merged() is never
-    this.merged(new Dictionary());
+    this.merged(Dictionary());
 
     // @ts-expect-error — find_key() is never
     this.find_key('value');

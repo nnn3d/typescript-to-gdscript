@@ -449,9 +449,30 @@ export function generateValueTypeDeclaration(
   lines.push('}');
   lines.push('');
 
-  // Constructor interface with static members
+  lines.push(generateConstructorInterface(cls, className));
+
+  return lines.join('\n');
+}
+
+/**
+ * Generate a constructor interface with call signatures, static methods,
+ * enums, and constants from a Godot class XML. Used for value types (Vector2,
+ * Color, etc.) and interface classes (Dictionary, Callable).
+ *
+ * @param cls - The parsed Godot class XML data
+ * @param className - The TS class/interface name (may differ from cls.name)
+ * @param returnType - The return type for constructor calls (defaults to className)
+ */
+export function generateConstructorInterface(
+  cls: GodotClassXml,
+  className: string,
+  returnType?: string,
+): string {
+  const ret = returnType ?? className;
+  const lines: string[] = [];
+
   lines.push(`declare interface ${className}Constructor {`);
-  lines.push(`  readonly prototype: ${className};`);
+  lines.push(`  readonly prototype: ${ret};`);
 
   // Constructor overloads from XML
   for (const ctor of cls.constructors) {
@@ -463,15 +484,15 @@ export function generateValueTypeDeclaration(
       const optional = seenOptional ? '?' : '';
       return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
     });
-    lines.push(`  (${params.join(', ')}): ${className};`);
+    lines.push(`  (${params.join(', ')}): ${ret};`);
   }
 
   // If no constructors found in XML, add a default one
   if (cls.constructors.length === 0) {
-    lines.push(`  (): ${className};`);
+    lines.push(`  (): ${ret};`);
   }
 
-  // Static methods (emit without 'static' prefix since this is an interface)
+  // Static methods
   for (const method of cls.methods) {
     if (!method.isStatic) continue;
     const sig = emitMethodSignature(method);
@@ -497,7 +518,7 @@ export function generateValueTypeDeclaration(
     lines.push('');
     for (const c of nonEnumConstants) {
       lines.push(...emitJsDoc(c.description));
-      lines.push(`  readonly ${c.name}: ${className};`);
+      lines.push(`  readonly ${c.name}: ${ret};`);
     }
   }
 

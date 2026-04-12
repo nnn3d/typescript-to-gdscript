@@ -141,5 +141,16 @@ declare interface Object {
 }
 
 type Dictionary = Object;
-declare var Dictionary: { new(): Dictionary };
+declare interface DictionaryConstructor {
+  readonly prototype: Dictionary;
+  /** Constructs an empty {@link Dictionary}. */
+  (): Dictionary;
+  /**
+   * Creates a typed dictionary from the `base` dictionary. A typed dictionary can only contain keys and values of the given types, or that inherit from the given classes, as described by this constructor's parameters.
+   */
+  (base: Dictionary, key_type: int, key_class_name: string, key_script: unknown, value_type: int, value_class_name: string, value_script: unknown): Dictionary;
+  /** Returns the same dictionary as `from`. If you need a copy of the dictionary, use {@link duplicate}. */
+  (from_: Dictionary): Dictionary;
+}
+declare const Dictionary: DictionaryConstructor;
 declare var Object: typeof GodotObject;

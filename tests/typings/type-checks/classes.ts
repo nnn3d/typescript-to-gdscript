@@ -82,7 +82,7 @@ class VectorTest extends Node {
 
 class CallableTest extends Node {
   test_callable_class() {
-    let c = new Callable();
+    let c = Callable();
     let result: unknown = c.call();
     c.call_deferred();
     let bound: Callable = c.bind();

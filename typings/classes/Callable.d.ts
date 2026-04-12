@@ -107,7 +107,24 @@ declare interface Function {
 }
 
 type Callable = Function;
-declare var Callable: { new(): Callable; create(object: GodotObject, method: string): Callable };
+declare interface CallableConstructor {
+  readonly prototype: Callable;
+  /** Constructs an empty {@link Callable}, with no object nor method bound. */
+  (): Callable;
+  /** Constructs a {@link Callable} as a copy of the given {@link Callable}. */
+  (from_: Callable): Callable;
+  /**
+   * Creates a new {@link Callable} for the method named `method` in the specified `object`.
+   * **Note:** For methods of built-in {@link Variant} types, use {@link create} instead.
+   */
+  (object: GodotObject, method: string): Callable;
+  /**
+   * Creates a new {@link Callable} for the method named `method` in the specified `variant`. To represent a method of a built-in {@link Variant} type, a custom callable is used (see {@link is_custom}). If `variant` is {@link Object}, then a standard callable will be created instead.
+   * **Note:** This method is always necessary for the {@link Dictionary} type, as property syntax is used to access its entries. You may also use this method when `variant`'s type is not known in advance (for polymorphism).
+   */
+  create(variant: unknown, method: string): Callable;
+}
+declare const Callable: CallableConstructor;
 /**
  * Override: CallableFunction — typed overloads for concrete function types.
  *

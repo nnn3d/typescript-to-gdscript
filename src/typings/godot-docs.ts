@@ -31,6 +31,7 @@ import {
   generateClassDeclaration,
   generateValueTypeDeclaration,
   generateInterfaceDeclaration,
+  generateConstructorInterface,
 } from './class-generator.ts';
 import {
   SKIP_CLASSES,
@@ -238,15 +239,13 @@ export function generateGodotDocsTypings(
       // Dictionary → Object interface, but keep Dictionary as a type alias + constructor
       if (name === 'Dictionary') {
         fileLines.push(`type Dictionary = Object;`);
-        fileLines.push('declare var Dictionary: { new(): Dictionary };');
+        fileLines.push(generateConstructorInterface(cls, 'Dictionary', 'Dictionary'));
         fileLines.push('declare var Object: typeof GodotObject;');
       }
       // Callable → Function, keep Callable alias + constructor + CallableFunction/NewableFunction
       if (name === 'Callable') {
         fileLines.push(`type Callable = Function;`);
-        fileLines.push(
-          'declare var Callable: { new(): Callable; create(object: GodotObject, method: string): Callable };',
-        );
+        fileLines.push(generateConstructorInterface(cls, 'Callable', 'Callable'));
         const cfOverride = overrides.get('CallableFunction');
         if (cfOverride) {
           const cfHeader = cfOverride.header!.replace(

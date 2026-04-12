@@ -121,8 +121,8 @@ class FunctionTest extends Node {
   }
 
   test_callable_constructor() {
-    // new Callable() creates an empty callable
-    let c = new Callable();
+    // Callable() creates an empty callable
+    let c = Callable();
     let is_null: boolean = c.is_null();
     let valid: boolean = c.is_valid();
 
