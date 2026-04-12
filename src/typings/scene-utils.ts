@@ -16,6 +16,8 @@ export interface ScriptInfo {
   tsAbsPath: string;
   enums: EnumInfo[];
   innerClasses: InnerClassInfo[];
+  /** Whether this class extends Node (directly or transitively). */
+  extendsNode: boolean;
 }
 
 export interface ScriptClassInfo {
@@ -391,6 +393,90 @@ export function parseAutoloads(projectFilePath: string): AutoloadEntry[] {
 // ─── TS Class Scanning ──────────────────────────────────────
 
 /**
+ * Check if a class declaration extends Node (directly or transitively).
+ * Walks the heritage chain through both TS types and the Godot class registry.
+ */
+/** Get the `extends` class name from a class declaration's heritage clause. */
+function getExtendsName(decl: ts.ClassDeclaration): string | undefined {
+  const clause = decl.heritageClauses?.find(
+    (c) => c.token === ts.SyntaxKind.ExtendsKeyword,
+  );
+  if (!clause || clause.types.length === 0) return undefined;
+  const expr = clause.types[0]!.expression;
+  if (ts.isIdentifier(expr)) return expr.text;
+  return expr.getText();
+}
+
+/** Find a class declaration by name in any source file of the program. */
+function findClassInProgram(program: ts.Program, name: string): ts.ClassDeclaration | undefined {
+  for (const sf of program.getSourceFiles()) {
+    if (sf.isDeclarationFile) continue;
+    for (const stmt of sf.statements) {
+      if (ts.isClassDeclaration(stmt) && stmt.name?.text === name) return stmt;
+    }
+  }
+  return undefined;
+}
+
+function classExtendsNode(
+  classDecl: ts.ClassDeclaration,
+  checker: ts.TypeChecker,
+  program: ts.Program,
+  registry?: GodotClassRegistry,
+): boolean {
+  const visited = new Set<string>();
+
+  // Strategy 1: Walk the TS type checker's base type chain
+  let current: ts.Type | undefined = checker.getTypeAtLocation(classDecl);
+  while (current) {
+    const name = current.getSymbol()?.getName();
+    if (!name || visited.has(name)) break;
+    visited.add(name);
+    if (name === 'Node') return true;
+
+    // If this class is known to the Godot registry, walk the registry chain
+    if (registry?.hasClass(name)) {
+      return registryExtendsNode(name, registry);
+    }
+
+    const baseTypes = (current as ts.InterfaceType).getBaseTypes?.();
+    if (!baseTypes || baseTypes.length === 0) break;
+    current = baseTypes[0];
+  }
+
+  // Strategy 2: If type checker couldn't resolve (no tsconfig / no Godot typings),
+  // walk heritage clauses syntactically and search all source files for the base class.
+  {
+    let baseName = getExtendsName(classDecl);
+    const syntacticVisited = new Set<string>();
+    while (baseName) {
+      if (syntacticVisited.has(baseName)) break;
+      syntacticVisited.add(baseName);
+      if (baseName === 'Node') return true;
+      if (registry?.hasClass(baseName)) return registryExtendsNode(baseName, registry);
+
+      // Search all source files for a class with this name
+      const baseDecl = findClassInProgram(program, baseName);
+      if (!baseDecl) break;
+      baseName = getExtendsName(baseDecl);
+    }
+  }
+
+  return false;
+}
+
+/** Walk the Godot registry inheritance chain to check if a class extends Node. */
+function registryExtendsNode(name: string, registry: GodotClassRegistry): boolean {
+  let gdClass: string | null = name;
+  while (gdClass) {
+    if (gdClass === 'Node') return true;
+    const info = registry.getClass(gdClass);
+    gdClass = info?.inherits ?? null;
+  }
+  return false;
+}
+
+/**
  * Scan TypeScript source files for class declarations, extracting enums and inner classes.
  * Populates the scriptClassMap with ScriptInfo entries keyed by res:// path.
  */
@@ -399,7 +485,10 @@ export function scanTsFilesForClasses(
   files: string[],
   baseDir: string,
   scriptClassMap: Map<string, ScriptInfo>,
+  registry?: GodotClassRegistry,
 ): void {
+  const checker = program.getTypeChecker();
+
   for (const filePath of files) {
     const sourceFile = program.getSourceFile(filePath);
     if (!sourceFile) continue;
@@ -467,6 +556,7 @@ export function scanTsFilesForClasses(
         tsAbsPath: filePath,
         enums,
         innerClasses,
+        extendsNode: classExtendsNode(statement, checker, program, registry),
       });
     }
   }

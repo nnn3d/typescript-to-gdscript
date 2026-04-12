@@ -86,7 +86,9 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
   // Map: script res:// path -> class info including enums and inner classes
   const scriptClassMap = new Map<string, ScriptInfo>();
 
-  scanTsFilesForClasses(program, options.files, tsDir, scriptClassMap);
+  let registry;
+  try { registry = resolveRegistry({ registryPath: options.registryPath }); } catch { /* optional */ }
+  scanTsFilesForClasses(program, options.files, tsDir, scriptClassMap, registry);
 
   // 2. Find and process all .tscn files
   const sceneFiles = findSceneFiles(scenesDir, rootDir, ignore);
@@ -134,6 +136,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       tsModulePath,
       classInfo.enums,
       classInfo.innerClasses,
+      classInfo.extendsNode,
     );
 
     const outputPath = resolve(outputDir, outputFile);
@@ -236,7 +239,9 @@ export function generateFileTypings(
       tsConfigPath: options.tsConfigPath,
     });
     const scriptClassMap = new Map<string, ScriptInfo>();
-    scanTsFilesForClasses(program, changedTs, tsDir, scriptClassMap);
+    let fileRegistry;
+    try { fileRegistry = resolveRegistry(); } catch { /* optional */ }
+    scanTsFilesForClasses(program, changedTs, tsDir, scriptClassMap, fileRegistry);
 
     for (const [scriptResPath, classInfo] of scriptClassMap) {
       const outputFile = scriptResPathToOutputFile(scriptResPath);
@@ -372,7 +377,7 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
   // Pass 2: Create TS program from addon .ts files, scan for classes
   const scriptClassMap = new Map<string, ScriptInfo>();
   const addonProgram = createTsProgram({ rootDir: outputDir, files: addonTsPaths });
-  scanTsFilesForClasses(addonProgram, addonTsPaths, outputDir, scriptClassMap);
+  scanTsFilesForClasses(addonProgram, addonTsPaths, outputDir, scriptClassMap, registry);
 
   // Pass 3: Generate .gd.d.ts for each addon script
   for (const [scriptResPath, classInfo] of scriptClassMap) {
@@ -388,6 +393,7 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
       tsModulePath,
       classInfo.enums,
       classInfo.innerClasses,
+      classInfo.extendsNode,
     );
 
     const outputPath = resolve(outputDir, outputFile);

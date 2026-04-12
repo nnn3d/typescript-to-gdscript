@@ -288,6 +288,7 @@ export function generateScriptTypingContent(
   tsModulePath: string,
   enums: Array<{ name: string; members: Array<{ name: string; value: number }> }>,
   innerClasses: Array<{ name: string; extendsName?: string }>,
+  extendsNode: boolean = true,
 ): string {
   const lines: string[] = [];
   lines.push('// AUTO-GENERATED — do not edit manually.\n');
@@ -298,40 +299,43 @@ export function generateScriptTypingContent(
   // Import
   lines.push(`import type { ${importName} as ScriptClass } from "${tsImportPath}";\n`);
 
-  // ScriptTree + ScriptPaths (pre-computed) + StaticProps + module augmentation
-  lines.push(`type ScriptTree = _GDGetInterfaceTree<${treesInterface}>;`);
-  lines.push(`type ScriptPaths = _GDGetTreePaths<ScriptTree>;\n`);
-  lines.push(`type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;\n`);
+  if (extendsNode) {
+    // ScriptTree + ScriptPaths (pre-computed) + StaticProps + module augmentation
+    lines.push(`type ScriptTree = _GDGetInterfaceTree<${treesInterface}>;`);
+    lines.push(`type ScriptPaths = _GDGetTreePaths<ScriptTree>;\n`);
+    lines.push(`type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;\n`);
 
-  lines.push(`declare module "${tsModulePath}" {`);
-  lines.push(`  interface ${importName} extends StaticProps {`);
-  lines.push(`    get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;`);
-  lines.push(`    get_node<P extends '/root' | \`/root/\${string}\`>(path: P): _GDGetRootNode<ScriptTree, P>;`);
-  lines.push(`    get_node(path: string): Node | null;`);
-  lines.push(`    get_node_or_null<P extends string & ScriptPaths>(path: P): _GDGetNodeOrNull<ScriptTree, P>;`);
-  lines.push(`    get_node_or_null<P extends '/root' | \`/root/\${string}\`>(path: P): _GDGetRootNode<ScriptTree, P> | null;`);
-  lines.push(`    get_node_or_null(path: string): Node | null;`);
-  lines.push(`    has_node<P extends string & ScriptPaths>(path: P): boolean;`);
-  lines.push(`    has_node(path: string): boolean;`);
-  lines.push(`    get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;`);
-  lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
-  lines.push(`    get_parent(): _GDParentType<ScriptTree>;`);
-  lines.push(`    get_parent<N extends Node = Node>(): N;`);
-  lines.push(`  }`);
-  lines.push(`}\n`);
+    lines.push(`declare module "${tsModulePath}" {`);
+    lines.push(`  interface ${importName} extends StaticProps {`);
+    lines.push(`    get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;`);
+    lines.push(`    get_node<P extends '/root' | \`/root/\${string}\`>(path: P): _GDGetRootNode<ScriptTree, P>;`);
+    lines.push(`    get_node(path: string): Node | null;`);
+    lines.push(`    get_node_or_null<P extends string & ScriptPaths>(path: P): _GDGetNodeOrNull<ScriptTree, P>;`);
+    lines.push(`    get_node_or_null<P extends '/root' | \`/root/\${string}\`>(path: P): _GDGetRootNode<ScriptTree, P> | null;`);
+    lines.push(`    get_node_or_null(path: string): Node | null;`);
+    lines.push(`    has_node<P extends string & ScriptPaths>(path: P): boolean;`);
+    lines.push(`    has_node(path: string): boolean;`);
+    lines.push(`    get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;`);
+    lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
+    lines.push(`    get_parent(): _GDParentType<ScriptTree>;`);
+    lines.push(`    get_parent<N extends Node = Node>(): N;`);
+    lines.push(`  }`);
+    lines.push(`}\n`);
+  }
 
   // Class declaration
   if (isAnonymous) {
     // Module-level _Script class (not in declare global)
     lines.push(`declare class _Script extends ScriptClass {`);
-    lines.push(`  get_node(path: string): Node | null;`);
-    lines.push(`  get_node_or_null(path: string): Node | null;`);
-    lines.push(`  has_node(path: string): boolean;`);
-    lines.push(`  get_child(idx: int, include_internal?: boolean): Node;`);
-    lines.push(`  get_parent<N extends Node = Node>(): N;`);
+    if (extendsNode) {
+      lines.push(`  get_node(path: string): Node | null;`);
+      lines.push(`  get_node_or_null(path: string): Node | null;`);
+      lines.push(`  has_node(path: string): boolean;`);
+      lines.push(`  get_child(idx: int, include_internal?: boolean): Node;`);
+      lines.push(`  get_parent<N extends Node = Node>(): N;`);
+    }
     lines.push(`}\n`);
     // Namespace for enum types and inner class types (merged with __CLASS__ via module augmentation)
-    // For anonymous classes, const enum can't merge with class — use branded number type instead
     if (enums.length > 0 || innerClasses.length > 0) {
       lines.push(`declare module "${tsModulePath}" {`);
       lines.push(`  namespace __CLASS__ {`);
@@ -342,7 +346,6 @@ export function generateScriptTypingContent(
         lines.push(`    type ${ic.name} = InstanceType<typeof ScriptClass.${ic.name}>;`);
       }
       lines.push(`  }`);
-      // Override static enum properties to return branded values instead of plain number
       if (enums.length > 0) {
         lines.push(`  interface __CLASS__ {`);
         for (const e of enums) {
@@ -355,7 +358,9 @@ export function generateScriptTypingContent(
     }
 
     lines.push(`declare global {`);
-    lines.push(`  interface ${treesInterface} {}\n`);
+    if (extendsNode) {
+      lines.push(`  interface ${treesInterface} {}\n`);
+    }
     lines.push(`  interface GodotScripts {`);
     lines.push(`    "${scriptResPath}": _Script;`);
     lines.push(`  }\n`);
@@ -366,14 +371,18 @@ export function generateScriptTypingContent(
   } else {
     // Named class in declare global
     lines.push(`declare global {`);
-    lines.push(`  interface ${treesInterface} {}\n`);
+    if (extendsNode) {
+      lines.push(`  interface ${treesInterface} {}\n`);
+    }
     lines.push(`  /** @see import("${tsModulePath}") */`);
     lines.push(`  class ${className} extends ScriptClass {`);
-    lines.push(`    get_node(path: string): Node | null;`);
-    lines.push(`    get_node_or_null(path: string): Node | null;`);
-    lines.push(`    has_node(path: string): boolean;`);
-    lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
-    lines.push(`    get_parent<N extends Node = Node>(): N;`);
+    if (extendsNode) {
+      lines.push(`    get_node(path: string): Node | null;`);
+      lines.push(`    get_node_or_null(path: string): Node | null;`);
+      lines.push(`    has_node(path: string): boolean;`);
+      lines.push(`    get_child(idx: int, include_internal?: boolean): Node;`);
+      lines.push(`    get_parent<N extends Node = Node>(): N;`);
+    }
     lines.push(`  }`);
     // Namespace for enum types and inner class types
     if (enums.length > 0 || innerClasses.length > 0) {

@@ -1,4 +1,4 @@
-export class __CLASS__ extends Node {
+export class __CLASS__ extends RefCounted {
   score: int = 0;
   level: int = 1;
 

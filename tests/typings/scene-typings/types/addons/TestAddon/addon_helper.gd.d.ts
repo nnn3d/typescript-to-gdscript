@@ -2,39 +2,10 @@
 
 import type { __CLASS__ as ScriptClass } from "./addon_helper.js";
 
-type ScriptTree = _GDGetInterfaceTree<__addons_TestAddon_addon_helperGd__Trees>;
-type ScriptPaths = _GDGetTreePaths<ScriptTree>;
-
-type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
-
-declare module "./addon_helper.ts" {
-  interface __CLASS__ extends StaticProps {
-    get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;
-    get_node<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<ScriptTree, P>;
-    get_node(path: string): Node | null;
-    get_node_or_null<P extends string & ScriptPaths>(path: P): _GDGetNodeOrNull<ScriptTree, P>;
-    get_node_or_null<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<ScriptTree, P> | null;
-    get_node_or_null(path: string): Node | null;
-    has_node<P extends string & ScriptPaths>(path: P): boolean;
-    has_node(path: string): boolean;
-    get_child<Idx extends number & _GDChildIndices<ScriptTree>>(idx: Idx): _GDGetChild<ScriptTree, Idx>;
-    get_child(idx: int, include_internal?: boolean): Node;
-    get_parent(): _GDParentType<ScriptTree>;
-    get_parent<N extends Node = Node>(): N;
-  }
-}
-
 declare class _Script extends ScriptClass {
-  get_node(path: string): Node | null;
-  get_node_or_null(path: string): Node | null;
-  has_node(path: string): boolean;
-  get_child(idx: int, include_internal?: boolean): Node;
-  get_parent<N extends Node = Node>(): N;
 }
 
 declare global {
-  interface __addons_TestAddon_addon_helperGd__Trees {}
-
   interface GodotScripts {
     "res://addons/TestAddon/addon_helper.gd": _Script;
   }
