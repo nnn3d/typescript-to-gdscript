@@ -495,7 +495,7 @@ export function emitBinaryExpression(
           'error',
           `\`${op}\` used as a non-boolean value. GDScript \`or\`/\`and\` return \`bool\`, ` +
             `not the operand. Wrap in \`bool()\` to accept bool result, or use a ternary ` +
-            `(\`a if a else b\`) for value coalescing.`,
+            `(\`a ? a : b\`) for value coalescing.`,
         );
       }
     }
