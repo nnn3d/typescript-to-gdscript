@@ -22,6 +22,8 @@ export class MyClass extends Node {
     let dict4 = {'it\'s': 'value', "say \"hello\"": 'value'};
   }
 
+  test_dict_value?: Node;
+
   test_optional_access() {
     let d: { a?: number, b: number } = { b: 1 };
 
@@ -51,6 +53,8 @@ export class MyClass extends Node {
     if (h.fn) {
       h.fn();
     }
+
+    let i = this.test_dict_value;
 
     // Class field — no .get() (always defined in GDScript)
     let node = new Node2D();

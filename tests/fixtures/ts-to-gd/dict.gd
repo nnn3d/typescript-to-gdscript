@@ -25,6 +25,8 @@ func test_dict():
 		"say \"hello\"": "value",
 	}
 
+var test_dict_value: Node
+
 func test_optional_access():
 	var d = {
 		"b": 1,
@@ -47,6 +49,7 @@ func test_optional_access():
 	h.fn()
 	if h.get("fn"):
 		h.fn()
+	var i = self.test_dict_value
 	# Class field — no .get() (always defined in GDScript)
 	var node = Node2D.new()
 	var pos = node.position
