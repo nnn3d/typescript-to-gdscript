@@ -44,6 +44,10 @@ export function registerConvertGdCommand(program: Command): void {
       'Disable TS-based override-method parameter auto-fix (copies parameter types from parent class)',
     )
     .option(
+      '--no-nullable-return-helper',
+      'Disable TS-based nullable return auto-fix (adds `| null` to return types when function returns null)',
+    )
+    .option(
       '--unsafe-use-any',
       'Use `any` instead of `unknown` as the fallback for unresolvable types (e.g. gd.getset without a GDScript type or typeof-able value). Less strict but more error-prone.',
       false,
@@ -149,8 +153,9 @@ export function registerConvertGdCommand(program: Command): void {
       const explicitConvertEnabled = helpersEnabled && opts.explicitConvertHelper !== false;
       const readyFieldTypesEnabled = helpersEnabled && opts.readyFieldTypesHelper !== false;
       const extendsTypeEnabled = helpersEnabled && opts.extendsTypeHelper !== false;
+      const nullableReturnEnabled = helpersEnabled && opts.nullableReturnHelper !== false;
       const anyTsHelperEnabled =
-        operatorFixEnabled || explicitConvertEnabled || readyFieldTypesEnabled || extendsTypeEnabled;
+        operatorFixEnabled || explicitConvertEnabled || readyFieldTypesEnabled || extendsTypeEnabled || nullableReturnEnabled;
       if (anyTsHelperEnabled && tsOutputFiles.length > 0) {
         const helperResult = runTsHelpers({
           files: tsOutputFiles,
@@ -163,6 +168,7 @@ export function registerConvertGdCommand(program: Command): void {
             explicitConvert: explicitConvertEnabled,
             readyFieldTypes: readyFieldTypesEnabled,
             extendsType: extendsTypeEnabled,
+            nullableReturn: nullableReturnEnabled,
           },
         });
         if (helperResult.fixedFiles.length > 0) {

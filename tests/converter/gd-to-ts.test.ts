@@ -517,3 +517,53 @@ describe('GD to TS: Ready field types helper', () => {
     }
   });
 });
+
+describe('GD to TS: Nullable return helper', () => {
+  it('should add | null to return type when function returns null', async () => {
+    const { runTsHelpers } = await import('../../src/converter/gd-to-ts/ts-helpers.js');
+    const { readFileSync: readFile } = await import('fs');
+
+    const { tmpDir, cleanup, writeFile } = await makeTsHelperTmp('nullable-return');
+    try {
+      const tsContent = [
+        'export class TestNullReturn extends Node2D {',
+        '  // Returns null — should add | null to return type',
+        '  find_node(): Node {',
+        '    if (true) return this;',
+        '    return null;',
+        '  }',
+        '',
+        '  // Already has | null — no change needed',
+        '  find_node_safe(): Node | null {',
+        '    return null;',
+        '  }',
+        '',
+        '  // Returns primitive — no change (null not assignable to int anyway)',
+        '  get_count(): int {',
+        '    return 0;',
+        '  }',
+        '}',
+      ].join('\n');
+      const filePath = writeFile('test-nullable-return.ts', tsContent);
+
+      const result = runTsHelpers({
+        files: [filePath],
+        rootDir: tmpDir,
+        tsConfigPath: join(tmpDir, 'tsconfig.json'),
+        helpers: { operatorFix: false, explicitConvert: false, readyFieldTypes: false, extendsType: false },
+      });
+
+      expect(result.fixedFiles.length).toBe(1);
+      const fixed = readFile(filePath, 'utf-8');
+
+      // Return type gets | null added
+      expect(fixed).toContain('find_node(): Node | null {');
+      // Already nullable — unchanged
+      expect(fixed).toContain('find_node_safe(): Node | null {');
+      // Primitive return — unchanged
+      expect(fixed).toContain('get_count(): int {');
+    } finally {
+      cleanup();
+    }
+  });
+});

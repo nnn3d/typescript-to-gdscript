@@ -20,6 +20,7 @@ import {
   collectUnsafeAnyFieldFixes,
   collectUnsafeNonNullFixes,
 } from './helpers/unsafe-helpers.ts';
+import { collectNullableReturnFixes } from './helpers/nullable-return.ts';
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -48,6 +49,8 @@ export interface TsHelperOptions {
     readyFieldTypes?: boolean;
     /** Fix TS7006 implicit-any parameters on overridden methods by copying types from the parent class */
     extendsType?: boolean;
+    /** Add `| null` to return types when function body returns null */
+    nullableReturn?: boolean;
   };
 }
 
@@ -99,8 +102,7 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
   const explicitConvertEnabled = helpers.explicitConvert !== false && !!registry;
   const readyFieldTypesEnabled = helpers.readyFieldTypes !== false;
   const extendsTypeEnabled = helpers.extendsType !== false;
-  // `unsafeAnyFallback` is a final cleanup pass that types any remaining
-  // untyped fields/parameters as `any`. Only enabled by `--unsafe-use-any`.
+  const nullableReturnEnabled = helpers.nullableReturn !== false;
   const unsafeAnyFallbackEnabled = unsafeUseAny;
 
   if (
@@ -108,6 +110,7 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
     !explicitConvertEnabled &&
     !readyFieldTypesEnabled &&
     !extendsTypeEnabled &&
+    !nullableReturnEnabled &&
     !unsafeAnyFallbackEnabled
   ) {
     return result;
@@ -201,6 +204,11 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
   if (extendsTypeEnabled) {
     primaryCollectors.push((program, filePaths) =>
       collectExtendsTypeFixes(program, filePaths),
+    );
+  }
+  if (helpers.nullableReturn !== false) {
+    primaryCollectors.push((program, filePaths) =>
+      collectNullableReturnFixes(program, filePaths),
     );
   }
   if (primaryCollectors.length > 0) {
