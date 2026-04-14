@@ -1,4 +1,5 @@
 [
   { "message": "non-boolean value", "severity": 2 },
+  { "message": "non-boolean value", "severity": 2 },
   { "message": "non-boolean value", "severity": 2 }
 ]

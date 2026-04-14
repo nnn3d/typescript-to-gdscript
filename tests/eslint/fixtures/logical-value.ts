@@ -10,6 +10,10 @@ export class __CLASS__ extends Node {
     // ❌ Error — || used as non-bool value
     let y = c.a() && c.b() || b;
 
+    let m = {
+      a: c.a() || c.b()
+    }
+
     // ✅ OK — boolean context (if condition)
     if (a || b) {}
 
