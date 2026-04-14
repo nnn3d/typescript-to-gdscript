@@ -25,7 +25,6 @@ export function registerGenerateAddonTypingsCommand(program: Command): void {
         rootDir: cfg.rootDir,
         outputDir,
         ignore: cfg.ignore,
-        registryPath: cfg.registryPath,
       });
       debugLog(`Generated ${writtenFiles.length} addon typings files in ${outputDir}`);
     });

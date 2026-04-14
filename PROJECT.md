@@ -31,7 +31,7 @@ typings/                 # Godot typings (committed to git, used as TS lib)
   classes/               # Per-class .d.ts files (916 classes)
 
 src/
-  config/index.ts        # tstogd.json loader (with `exclude` glob patterns), registry resolver
+  config/index.ts        # tstogd.json loader (with `exclude` glob patterns, `disableGodotLint`), registry resolver
   converter/
     ts-to-gd/            # transformer.ts (AST visitor), emitter.ts (line/col + sourcemap), index.ts
     gd-to-ts/index.ts    # convertGdToTs() with typed AST, scope tracking, GodotClassRegistry
@@ -70,13 +70,14 @@ tests/
 ## CLI Commands (binary: `ts2gd`)
 
 - `ts2gd init` — Interactive project initialization (tstogd.json, tsconfig.json, eslint.config.js, npm install, .gdignore)
-- `ts2gd convert <files...>` — Convert TS to GD (`-o`, `--source-map`, `--root-dir`, `--tsconfig`, `--emit-on-error`)
-- `ts2gd convert-gd <files...>` — Convert GD to TS (`-o`, `--registry`, `--no-helpers`, `--no-signal-handler-helper`, `--no-operator-fix-helper`, `--no-explicit-convert-helper`, `--no-ready-field-types-helper`, `--no-extends-type-helper`, `--unsafe-use-any`, `--emit-on-error`)
+- `ts2gd convert <files...>` — Convert TS to GD (`-o`, `--root-dir`, `--tsconfig`, `--emit-on-error`). Source maps always generated.
+- `ts2gd convert-gd <files...>` — Convert GD to TS (`-o`, `--registry`, `--no-helpers`, `--no-signal-handler-helper`, `--no-operator-fix-helper`, `--no-explicit-convert-helper`, `--no-ready-field-types-helper`, `--no-extends-type-helper`, `--no-nullable-return-helper`, `--unsafe-use-any`, `--emit-on-error`)
 - `ts2gd lint <files...>` — Lint TS files (`--root-dir`, `--tsconfig`)
-- `ts2gd watch` — Watch and auto-convert (`--root-dir`, `--output-dir`, `--source-map`, `--tsconfig`, `--class-typings`)
+- `ts2gd watch` — Watch and auto-convert (`--root-dir`, `--output-dir`, `--tsconfig`, `--class-typings`). Source maps always generated.
 - `ts2gd generate-typings` — Generate typings from Godot docs (`--docs-dir`, `--typings-dir`, `--patch-dir`, `--version`)
 - `ts2gd generate-class-typings <files...>` — Generate global class .d.ts (`-o`, `--root-dir`, `--tsconfig`)
 - `ts2gd generate-addon-typings` — Generate typings for GDScript addons in `addons/` (`-o`, `--root-dir`)
+- `ts2gd open-editor` — Open a .gd file in an external editor as the corresponding .ts file (`-f`, `-e`, `-l`, `-c`, `-p`). For Godot external editor integration.
 
 ### Typings usage by consumer projects
 
@@ -125,10 +126,12 @@ tests/
 - [x] Godot class registry (916 classes, inheritance chain, global functions, per-class `variantConverts` from single-param "from" constructors, from `vendor/godot` XML docs). Constructor types (`deriveConstructorTypes()` in `godot-registry.ts`) and value types are derived from parsed XML at generation time — not hardcoded. Operator overload types derived from `registry.hasOperators()` (no hardcoded `OPERATOR_OVERLOAD_TYPES` list)
 - [x] Converter diagnostics + ESLint plugin (`ts2gd/convert` rule, flat config ESLint >= 9)
   - Runs full TS→GD conversion + optional Godot validation per file, reports converter diagnostics and Godot errors inline
+  - Godot path resolved automatically via `resolveGodotPath()` (no `godotPath` rule option needed). Controlled by `disableGodotLint` in `tstogd.json`
+  - Source maps always generated (no `sourceMap` rule option needed)
   - `x in y` validation: `emitBinaryExpression` checks the RHS type via `checker.getTypeAtLocation()`. Reports an error if the type is an array (`checker.isArrayType`/`isTupleType`), a number, a boolean, or a Godot variant type (derived from `resolveRegistry().getData().constructors` minus `GD_IN_ALLOWED_CONTAINER_TYPES` = `{Dictionary}`). Registry-derived sets are lazily cached at module scope; `Packed*Array` entries (detected by `startsWith('Packed')` + `endsWith('Array')`) get a dedicated "the array type `X`" label vs "the value type `X`" for non-packed variants. Only `Dictionary`/object-literal types and `String` are valid RHS targets.
 - [x] Watch mode + CLI + Cache (watches .ts, .tscn, .tres, assets, project.godot)
-- [x] Godot validation (CLI --check-only, source map remapping to TS positions, autoload false-positive filtering for Godot bug #80319)
-- [x] GD-to-TS conversion helpers system (pluggable, individually toggleable via `--no-helpers` / `--no-signal-handler-helper` / `--no-operator-fix-helper` / `--no-explicit-convert-helper` / `--no-ready-field-types-helper` / `--no-extends-type-helper`)
+- [x] Godot validation (CLI --check-only, source map remapping to TS positions, autoload false-positive filtering for Godot bug #80319). Tests skip when Godot is not available on the system.
+- [x] GD-to-TS conversion helpers system (pluggable, individually toggleable via `--no-helpers` / `--no-signal-handler-helper` / `--no-operator-fix-helper` / `--no-explicit-convert-helper` / `--no-ready-field-types-helper` / `--no-extends-type-helper` / `--no-nullable-return-helper`)
   - Signal handler helper: infers parameter types from .tscn signal connections
   - Operator fix helper: TS-based post-processing that fixes operator type errors (TS2365/2362/2363) by wrapping in `gd.ops.X()`
   - Explicit convert helper: TS-based post-processing that fixes variant-type assignment errors (TS2345/2322/2739/2740/2741) by inserting explicit `gd.as(value, Target)` conversions. Uses `variantConverts` metadata in `godot-class-registry.json` (populated from single-param "from" constructors in Godot XML). Runs in the same multi-pass loop as operator fix with overlap deduplication. Handles return statements (wraps returned expression, not the `return` keyword) and property access assignments (redirects LHS error to RHS expression).
@@ -141,6 +144,12 @@ tests/
     Fields that already have `!` or `?` are skipped. "GDScript primitive" check uses `GD_BUILTIN_PRIMITIVE_TYPES` (int/float/bool/String/etc.) plus `registry.isConstructor()` (Vector2, Color, Packed*Array, Array, Dictionary, StringName, NodePath, Callable, Signal, etc. — everything in the registry's `constructors` list). `unsafeUseAny` is plumbed through `TsHelperOptions.unsafeUseAny` → `collectReadyFieldTypeFixes(..., unsafeUseAny)` from the CLI `--unsafe-use-any` flag.
   - Unsafe non-null helper (enabled via `--unsafe-use-any`): TS2531/18047/18048/18046 "possibly null/undefined" → inserts `!` after expression. TS2322/2345 where root cause is null in union type → inserts `!` after RHS/argument. TS7034 "variable implicitly has type `any[]`" → adds `: any[]` annotation.
   - Extends type helper: TS-based post-processing that fixes TS7006 (implicit any) on parameters of overridden methods. Walks the class's base type chain via `checker.getBaseTypes()` to find an inherited method with the same name, then copies parameter types by index using the SYNTACTIC type text from the parent's `.d.ts` (preserving aliases like `float`/`int` rather than collapsing them to `number`).
+  - Nullable return helper: TS-based post-processing that fixes TS2322 "Type 'null' is not assignable to type 'X'" on `return null` statements. Detects return statements with null in functions that have an explicit return type annotation, and adds `| null` to the return type. Skips functions whose return type already contains `null`. Toggled via `--no-nullable-return-helper`.
+- [x] Logical value conversion (`||`/`&&` as non-boolean value):
+  - TS-to-GD: `emitBinaryExpression` detects `||`/`&&` used outside boolean context (if/while condition, negation, nested logical, `bool()` call, expression statement). When the result type is not boolean (via `checker.getTypeAtLocation()` + `TypeFlags.BooleanLike`), emits an error suggesting `bool()` wrapper or ternary.
+  - GD-to-TS: `emitBinaryOp` detects `or`/`and` in value contexts (assignment RHS, variable initializer, function argument, return statement) and auto-wraps in `bool()`. Skipped when the expression is inherently boolean (composed of comparisons/logical ops/boolean literals) via `isGdBoolExpression()`.
+  - ESLint: `ts2gd/convert` rule provides an auto-fix for the non-boolean value error that wraps the expression in `bool()`.
+- [x] Open-editor CLI command: maps .gd files to .ts files via `tstogd.json` `gdDir`/`tsDir` path mapping, spawns external editor with placeholder substitution (`{tsFile}`, `{line}`, `{col}`, `{file}`). Designed for Godot's external text editor integration.
 - [ ] Source map integration with Godot LSP (map LSP errors back to TS in IDE)
 
 ## Conversion Rules (TS ↔ GDScript)
@@ -154,7 +163,7 @@ tests/
 | `number` | `float` | `int`/`float` type aliases preserved |
 | `undefined` | restricted | Use `null` instead |
 | `===` / `!==` | `==` / `!=` | |
-| `&&` / `\|\|` / `!` | `and` / `or` / `not` | |
+| `&&` / `\|\|` / `!` | `and` / `or` / `not` | GD returns `bool`, not operand. Non-boolean value use: TS→GD errors, GD→TS wraps in `bool()` |
 | `for (x of arr)` | `for x in arr` | |
 | `switch (val) { case X: ... }` | `match val:` | Simple matches (literal/expression/wildcard patterns, no bindings/guards/array/dict) use native TS `switch`. GD→TS auto-detects via `isSimpleMatchStatement()` |
 | `gd.match(val, [...])` | `match val:` | Advanced patterns (bindings, guards, arrays, dicts). Arrow `do: () => {}` preserves `this`; also supports `do()` method syntax |
@@ -241,5 +250,6 @@ tests/
 - `NodePath` is its own variant type with a dedicated interface and constructor (not mapped to `string`). Has `[__variant_converts]` for `gd.as()` support
 - Operator overload types: `OPERATOR_OVERLOAD_TYPES` hardcoded set removed; now uses `registry.hasOperators(typeName)` to derive from the registry at runtime
 - `tstogd.json` `exclude` option: renamed from deprecated `ignore`. Glob patterns for files/folders to exclude from all CLI commands
+- `tstogd.json` config: `godotVersion`, `registryPath`, `gdDir`, `sourceMap` removed. Added `disableGodotLint` (boolean, default false) to disable Godot executable validation in lint/ESLint. Source maps are always generated.
 </content>
 </invoke>

@@ -93,8 +93,6 @@ interface InitConfig {
   tsDir: string;
   gdDir: string;
   typingsDir: string;
-  sourceMap: boolean;
-  godotVersion: string;
 }
 
 async function stepTstogdJson(
@@ -106,22 +104,17 @@ async function stepTstogdJson(
     tsDir: 'ts',
     gdDir: '.',
     typingsDir: 'ts/_typings',
-    sourceMap: false,
-    godotVersion: 'latest',
   };
 
   if (existsSync(configPath)) {
     console.log('\n✓ tstogd.json already exists.');
     console.log('  See README.md for available configuration options.\n');
-    // Parse existing config to use in later steps
     try {
       const existing = JSON.parse(readFileSync(configPath, 'utf-8'));
       return {
         tsDir: existing.tsDir ?? defaults.tsDir,
         gdDir: existing.gdDir ?? defaults.gdDir,
         typingsDir: existing.typingsDir ?? defaults.typingsDir,
-        sourceMap: existing.sourceMap ?? defaults.sourceMap,
-        godotVersion: existing.godotVersion ?? defaults.godotVersion,
       };
     } catch {
       return defaults;
@@ -133,20 +126,16 @@ async function stepTstogdJson(
   const tsDir = await ask(rl, 'TypeScript source directory', defaults.tsDir);
   const gdDir = await ask(rl, 'GDScript output directory', defaults.gdDir);
   const typingsDir = await ask(rl, 'Typings output directory', defaults.typingsDir);
-  const sourceMap = await askYesNo(rl, 'Generate source maps?', false);
-  const godotVersion = await ask(rl, 'Godot version', defaults.godotVersion);
 
   const config: Record<string, unknown> = {};
   config.tsDir = tsDir;
   if (gdDir !== tsDir) config.gdDir = gdDir;
   config.typingsDir = typingsDir;
-  if (sourceMap) config.sourceMap = true;
-  if (godotVersion !== 'latest') config.godotVersion = godotVersion;
 
   writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
   console.log('\n  ✓ Created tstogd.json');
 
-  return { tsDir, gdDir, typingsDir, sourceMap, godotVersion };
+  return { tsDir, gdDir, typingsDir };
 }
 
 // ─── Step: tsconfig.json ─────────────────────────────────────

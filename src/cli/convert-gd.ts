@@ -59,7 +59,6 @@ export function registerConvertGdCommand(program: Command): void {
           rootDir: opts.rootDir,
           tsDir: opts.tsDir,
           gdDir: opts.gdDir,
-          registryPath: opts.registry,
         },
       });
 
@@ -78,7 +77,7 @@ export function registerConvertGdCommand(program: Command): void {
 
       debugLog(`Converting ${resolvedFiles.length} file(s)...`);
 
-      const registry = resolveRegistry({ registryPath: cfg.registryPath });
+      const registry = resolveRegistry({ registryPath: opts.registry });
       const tsOutputFiles: string[] = [];
       const collectedErrors: string[] = [];
 

@@ -3,7 +3,7 @@ import { resolve, relative, dirname, join } from 'path';
 import { tmpdir } from 'os';
 import { convertTsToGd } from '../../converter/ts-to-gd/index.ts';
 import { validateGdFilesSync } from '../../godot-validate/index.ts';
-import { resolveConfig } from '../../config/index.ts';
+import { resolveConfig, resolveGodotPath } from '../../config/index.ts';
 import type { TransformDiagnostic } from '../../converter/common/index.ts';
 
 // ESLint rule definition — uses `any` for ESLint types to avoid hard dep on @types/eslint
@@ -14,9 +14,7 @@ interface RuleOptions {
   rootDir?: string;
   tsDir?: string;
   tsconfig?: string;
-  godotPath?: string;
   projectRoot?: string;
-  sourceMap?: boolean;
 }
 
 const convertRule: RuleModule = {
@@ -33,9 +31,7 @@ const convertRule: RuleModule = {
           rootDir: { type: 'string' },
           tsDir: { type: 'string' },
           tsconfig: { type: 'string' },
-          godotPath: { type: 'string' },
           projectRoot: { type: 'string' },
-          sourceMap: { type: 'boolean' },
         },
         additionalProperties: false,
       },
@@ -67,8 +63,6 @@ const convertRule: RuleModule = {
             rootDir: options.rootDir,
             tsDir: options.tsDir,
             tsconfig: options.tsconfig,
-            sourceMap: options.sourceMap,
-            godotPath: options.godotPath,
           },
         });
 
@@ -83,11 +77,12 @@ const convertRule: RuleModule = {
         // Step 2: Report converter diagnostics
         const hasErrors = reportDiagnostics(context, result.diagnostics);
 
-        // Step 3: If no converter errors and godotPath configured, run Godot validation
-        if (!hasErrors && options.godotPath) {
+        // Step 3: If no converter errors and Godot lint not disabled, run Godot validation
+        if (!hasErrors && !cfg.disableGodotLint) {
           const projectRoot = options.projectRoot
             ? resolve(options.projectRoot)
             : cfg.rootDir;
+          const godotPath = resolveGodotPath({ godotPath: cfg.godotPath });
 
           runGodotValidation(context, {
             gdCode: result.code,
@@ -95,7 +90,7 @@ const convertRule: RuleModule = {
             tsFilePath: filename,
             tsDirOrRootDir: cfg.tsDir,
             projectRoot,
-            godotPath: options.godotPath,
+            godotPath,
           });
         }
       },

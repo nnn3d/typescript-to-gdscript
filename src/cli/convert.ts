@@ -15,7 +15,6 @@ export function registerConvertCommand(program: Command): void {
     .option('-o, --output-dir <dir>', 'Output directory (alias for --gd-dir)')
     .option('--ts-dir <dir>', 'TypeScript source directory')
     .option('--gd-dir <dir>', 'GDScript output directory')
-    .option('--source-map', 'Generate source maps', false)
     .option('--root-dir <dir>', 'Root directory', '.')
     .option('--tsconfig <path>', 'Path to tsconfig.json')
     .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
@@ -26,7 +25,6 @@ export function registerConvertCommand(program: Command): void {
           tsDir: opts.tsDir,
           gdDir: opts.gdDir,
           tsconfig: opts.tsconfig,
-          sourceMap: opts.sourceMap,
         },
       });
 
@@ -51,7 +49,7 @@ export function registerConvertCommand(program: Command): void {
           filePath,
           rootDir: cfg.tsDir,
           tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
-          sourceMap: cfg.sourceMap,
+          sourceMap: true,
         });
 
         for (const diag of result.diagnostics) {

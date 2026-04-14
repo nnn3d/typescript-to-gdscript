@@ -19,7 +19,17 @@ import { tmpdir } from 'os';
 
 const execFileAsync = promisify(execFile);
 const TMP_DIR = join(tmpdir(), '__tmp__' + Math.random().toString(36));
-const GODOT_PATH = resolve(__dirname, '../../vendor/godot.exe');
+import { resolveGodotPath } from '../../src/config/index.ts';
+import { execFileSync } from 'child_process';
+
+const GODOT_PATH = resolveGodotPath();
+let godotAvailable = false;
+try {
+  execFileSync(GODOT_PATH, ['--version'], { stdio: 'ignore' });
+  godotAvailable = true;
+} catch {
+  godotAvailable = false;
+}
 
 afterEach(() => {
   rmSync(TMP_DIR, { recursive: true, force: true });
@@ -414,7 +424,7 @@ try {
   console.error('godot is not found!');
 }
 
-describe('Godot CLI integration', () => {
+describe.skipIf(!godotAvailable)('Godot CLI integration', () => {
   function setupGodotProject(): string {
     const projectDir = join(TMP_DIR, 'godot-project');
     mkdirSync(projectDir, { recursive: true });

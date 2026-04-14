@@ -7,30 +7,24 @@ import { GodotClassRegistry } from '../typings/godot-registry.ts';
 // ─── Config Types ─────────────────────────────────────────────
 
 export interface TsToGdConfig {
-  /** Godot version to use for typings (e.g. "4.6"). If omitted, uses "latest". */
-  godotVersion?: string;
-  /** Path to a custom godot-class-registry.json. Overrides godotVersion. */
-  registryPath?: string;
   /** Root directory (base for relative paths). Defaults to config file directory or CWD. */
   rootDir?: string;
   /** TypeScript source directory (relative to rootDir or absolute). Defaults to rootDir. */
   tsDir?: string;
-  /** GDScript output directory (relative to rootDir or absolute). Defaults to tsDir. */
-  gdDir?: string;
   /** Directory for all generated typings (globals.d.ts, scene-typings.d.ts). Relative to rootDir. Defaults to "_gdtots". */
   typingsDir?: string;
   /** Directory to scan for .tscn scene files (relative to rootDir). Defaults to rootDir. */
   scenesDir?: string;
   /** Path to tsconfig.json */
   tsconfig?: string;
-  /** Generate source maps */
-  sourceMap?: boolean;
   /** Path to Godot executable for GDScript validation */
   godotPath?: string;
   /** Glob patterns for files/folders to exclude from all conversions and typings generation. */
   exclude?: string[];
   /** Path to project.godot file (relative to rootDir). Defaults to "project.godot". */
   projectFile?: string;
+  /** Disable Godot executable validation (linting, ESLint). When false (default), an error is raised if Godot is not found. */
+  disableGodotLint?: boolean;
 }
 
 // ─── Resolved Config ─────────────────────────────────────────
@@ -43,14 +37,13 @@ export interface ResolvedConfig {
   typingsDir: string;
   scenesDir: string;
   tsconfig?: string;
-  sourceMap?: boolean;
-  godotVersion?: string;
-  registryPath?: string;
   godotPath?: string;
   /** Glob patterns for files/folders to ignore. */
   ignore: string[];
   /** Absolute path to project.godot file. */
   projectFile: string;
+  /** Disable Godot executable validation. */
+  disableGodotLint: boolean;
 }
 
 /**
@@ -58,9 +51,17 @@ export interface ResolvedConfig {
  * CLI flags can override any field via the `overrides` parameter.
  * Returns fully resolved config with absolute paths.
  */
+/** CLI-only overrides that don't come from tstogd.json */
+export interface ConfigOverrides extends Partial<TsToGdConfig> {
+  /** GDScript output directory (CLI-only, not stored in tstogd.json) */
+  gdDir?: string;
+  /** Generate source maps (CLI-only flag, always true for lint/eslint) */
+  sourceMap?: boolean;
+}
+
 export function resolveConfig(options?: {
   configDir?: string;
-  overrides?: Partial<TsToGdConfig>;
+  overrides?: ConfigOverrides;
 }): ResolvedConfig {
   const configDir = options?.configDir ?? process.cwd();
   const config = loadConfig(configDir);
@@ -74,7 +75,7 @@ export function resolveConfig(options?: {
   const tsDir = resolve(rootDir, overrides.tsDir ?? config?.tsDir ?? '.');
   const gdDir = resolve(
     rootDir,
-    overrides.gdDir ?? config?.gdDir ?? '.',
+    overrides.gdDir ?? '.',
   );
   const typingsDir = resolve(
     rootDir,
@@ -101,10 +102,8 @@ export function resolveConfig(options?: {
     projectFile,
     tsconfig: overrides.tsconfig ?? config?.tsconfig
       ?? (existsSync(join(rootDir, 'tsconfig.json')) ? join(rootDir, 'tsconfig.json') : undefined),
-    sourceMap: overrides.sourceMap ?? config?.sourceMap,
-    godotVersion: overrides.godotVersion ?? config?.godotVersion,
-    registryPath: overrides.registryPath ?? config?.registryPath,
     godotPath: overrides.godotPath ?? config?.godotPath,
+    disableGodotLint: config?.disableGodotLint ?? false,
   };
 }
 
@@ -216,15 +215,7 @@ export function resolveRegistry(
     return GodotClassRegistry.fromJsonFile(resolve(options.registryPath));
   }
 
-  // 2-3. From tstogd.json
-  const config = loadConfig(options?.configDir);
-  if (config?.registryPath) {
-    const configDir = options?.configDir ?? process.cwd();
-    return GodotClassRegistry.fromJsonFile(
-      resolve(configDir, config.registryPath),
-    );
-  }
-  // 3. Bundled registry
+  // 2. Bundled registry
   const bundledPath = getBundledRegistryPath();
   if (bundledPath) return GodotClassRegistry.fromJsonFile(bundledPath);
 

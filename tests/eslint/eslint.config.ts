@@ -27,7 +27,6 @@ export default defineConfig([
         'error',
         {
           rootDir: FIXTURES_DIR,
-          godotPath: resolve(__dirname, '../../vendor/godot.exe'),
           projectRoot: FIXTURES_DIR,
         },
       ],

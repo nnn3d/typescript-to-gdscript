@@ -45,9 +45,10 @@ export function registerLintCommand(program: Command): void {
         return;
       }
 
-      const godotPath = cfg.godotPath
-        ? resolveGodotPath({ godotPath: cfg.godotPath })
-        : undefined;
+      let godotPath: string | undefined;
+      if (!cfg.disableGodotLint) {
+        godotPath = resolveGodotPath({ godotPath: cfg.godotPath });
+      }
       const projectRoot = opts.projectRoot
         ? resolve(opts.projectRoot)
         : cfg.rootDir;

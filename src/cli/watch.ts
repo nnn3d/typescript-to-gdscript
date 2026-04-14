@@ -11,7 +11,6 @@ export function registerWatchCommand(program: Command): void {
     .option('--ts-dir <dir>', 'TypeScript source directory to watch')
     .option('--gd-dir <dir>', 'GDScript output directory')
     .option('--output-dir <dir>', 'Output directory (alias for --gd-dir)')
-    .option('--source-map', 'Generate source maps', false)
     .option('--tsconfig <path>', 'Path to tsconfig.json')
     .option(
       '--typings-dir <path>',
@@ -30,7 +29,6 @@ export function registerWatchCommand(program: Command): void {
           gdDir: opts.gdDir,
           typingsDir: opts.typingsDir,
           tsconfig: opts.tsconfig,
-          sourceMap: opts.sourceMap,
           godotPath: opts.godotPath,
         },
       });
@@ -44,7 +42,7 @@ export function registerWatchCommand(program: Command): void {
         gdDir: cfg.gdDir,
         outputDir: cfg.gdDir,
         tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
-        sourceMap: cfg.sourceMap,
+        sourceMap: true,
         typingsDir: cfg.typingsDir,
         scenesDir: cfg.scenesDir,
         ignore: cfg.ignore,

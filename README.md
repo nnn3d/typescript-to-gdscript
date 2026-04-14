@@ -39,25 +39,21 @@ Create a `tstogd.json` in your project root to configure the converter:
 
 ```json
 {
-  "godotVersion": "4.6",
   "rootDir": "src",
   "outputDir": "scripts",
-  "sourceMap": true,
   "tsconfig": "tsconfig.json",
   "exclude": ["test/**", "**/*.test.ts"]
 }
 ```
 
-| Field          | Type      | Description                                                              |
-| -------------- | --------- | ------------------------------------------------------------------------ |
-| `godotVersion` | `string`  | Godot version for typings lookup (e.g. `"4.6"`). Defaults to `"latest"`. |
-| `registryPath` | `string`  | Path to a custom `godot-class-registry.json`. Overrides `godotVersion`.  |
-| `rootDir`      | `string`  | Root directory for TS source files.                                      |
-| `outputDir`    | `string`  | Output directory for GDScript files.                                     |
-| `typingsDir`   | `string`  | Directory for all generated typings (`globals.d.ts`, `scene-typings.d.ts`). Relative to `rootDir`. Defaults to `"_gdtots"`. |
-| `sourceMap`    | `boolean` | Generate source maps.                                                    |
-| `tsconfig`     | `string`  | Path to `tsconfig.json`.                                                 |
-| `exclude`      | `string[]` | Glob patterns (from project root) for files/folders to exclude from all CLI commands (e.g. `["test/**", "**/*.test.ts"]`). Uses [minimatch](https://github.com/isaacs/minimatch) syntax. |
+| Field              | Type       | Description                                                              |
+| ------------------ | ---------- | ------------------------------------------------------------------------ |
+| `rootDir`          | `string`   | Root directory for TS source files.                                      |
+| `outputDir`        | `string`   | Output directory for GDScript files.                                     |
+| `typingsDir`       | `string`   | Directory for all generated typings (`globals.d.ts`, `scene-typings.d.ts`). Relative to `rootDir`. Defaults to `"_gdtots"`. |
+| `tsconfig`         | `string`   | Path to `tsconfig.json`.                                                 |
+| `exclude`          | `string[]` | Glob patterns (from project root) for files/folders to exclude from all CLI commands (e.g. `["test/**", "**/*.test.ts"]`). Uses [minimatch](https://github.com/isaacs/minimatch) syntax. |
+| `disableGodotLint` | `boolean`  | Disable Godot executable validation in lint and ESLint. Defaults to `false`. |
 
 ## CLI Commands
 
@@ -73,7 +69,7 @@ ts2gd init
 
 The command will:
 
-1. **Create `tstogd.json`** — asks for TypeScript source directory, GDScript output directory, typings directory, source maps, and Godot version
+1. **Create `tstogd.json`** — asks for TypeScript source directory, GDScript output directory, and typings directory
 2. **Create `tsconfig.json`** — from a template with proper settings for Godot development (`noLib`, strict mode, typings reference)
 3. **Create `eslint.config.js`** — from a template with the ts2gd ESLint plugin configured
 4. **Install npm packages** — TypeScript, ESLint, and @typescript-eslint/parser as dev dependencies
@@ -86,13 +82,14 @@ If any of these files already exist, the command will skip them and remind you t
 Convert TypeScript files to GDScript.
 
 ```bash
-ts2gd convert src/Player.ts -o scripts/ --source-map
+ts2gd convert src/Player.ts -o scripts/
 ```
+
+Source maps are always generated alongside the output `.gd` files.
 
 Options:
 
 - `-o, --output-dir <dir>` — Output directory
-- `--source-map` — Generate source maps
 - `--root-dir <dir>` — Root directory (default: `.`)
 - `--tsconfig <path>` — Path to tsconfig.json
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `# ERROR:` comments)
@@ -108,8 +105,7 @@ ts2gd convert-gd addons/plugin/Plugin.gd -o src/
 Registry resolution order:
 
 1. `--registry` CLI flag (explicit path to `godot-class-registry.json`)
-2. `registryPath` from `tstogd.json` in CWD
-3. Bundled `typings/godot-class-registry.json`
+2. Bundled `typings/godot-class-registry.json`
 
 Options:
 
@@ -121,6 +117,7 @@ Options:
 - `--no-explicit-convert-helper` — Disable TS-based variant-type auto-fix (explicit `gd.as` insertion)
 - `--no-ready-field-types-helper` — Disable TS-based class property auto-fix (adds `!` and infers types from `_ready()` assignments)
 - `--no-extends-type-helper` — Disable TS-based override-method parameter auto-fix (copies parameter types from parent class)
+- `--no-nullable-return-helper` — Disable nullable return type auto-fix (adds `| null` to return types)
 - `--unsafe-use-any` — Less strict but less error-prone conversion mode. Currently affects:
   - `gd.getset` fallback type: uses `any` instead of `unknown` when neither a GDScript type annotation nor a typeof-able value expression is available.
   - Ready field types helper: non-primitive TS2564 fields that aren't assigned in `_ready()` get `!` (definite-assignment) instead of `?` (optional) — avoids downstream `X | undefined` errors at usage sites at the cost of losing the runtime safety check.
@@ -158,6 +155,24 @@ GD-to-TS conversion includes optional helpers that enhance the output:
   }
   ```
   Methods that don't override anything (`custom_method(arg)`) are left untouched.
+
+- **Nullable return helper** (default: enabled) — Detects TS2322 "Type 'null' is not assignable to type 'X'" on `return null` statements where the function has an explicit return type annotation. Adds `| null` to the return type. Example:
+
+  ```typescript
+  class Player extends Node2D {
+    find_target(): Node2D {   // TS2322 on `return null`
+      return null;
+    }
+  }
+  ```
+  becomes:
+  ```typescript
+  class Player extends Node2D {
+    find_target(): Node2D | null {
+      return null;
+    }
+  }
+  ```
 
 - **Ready field types helper** (default: enabled) — Detects TS7008 ("Member implicitly has an any type") and TS2564 ("Property has no initializer") on class properties:
   - **TS2564** (`field: Type;`) — if assigned in `_ready()`, adds `!` (definite-assignment). If not assigned in `_ready()` but the type is a GDScript primitive (`int`, `float`, `bool`, `String`, `Vector2`, `Color`, any value type with a guaranteed default), still adds `!`. Otherwise marks the field optional with `?` — or with `!` when `--unsafe-use-any` is passed.
@@ -199,14 +214,15 @@ GD-to-TS conversion includes optional helpers that enhance the output:
 Watch TypeScript files and auto-convert on change.
 
 ```bash
-ts2gd watch --root-dir src --output-dir scripts --source-map
+ts2gd watch --root-dir src --output-dir scripts
 ```
+
+Source maps are always generated alongside the output `.gd` files.
 
 Options:
 
 - `--root-dir <dir>` — Root directory to watch (default: `.`)
 - `--output-dir <dir>` — Output directory for GDScript files
-- `--source-map` — Generate source maps
 - `--tsconfig <path>` — Path to tsconfig.json
 - `--typings-dir <path>` — Directory for all generated typings (globals.d.ts, scene-typings.d.ts)
 
@@ -256,6 +272,47 @@ Generate a global `.d.ts` file declaring all named classes from your TS source f
 ```bash
 ts2gd generate-class-typings src/**/*.ts -o globals.d.ts
 ```
+
+### `ts2gd open-editor`
+
+Open a GDScript file in an external editor as the corresponding TypeScript file. Designed for Godot's external text editor integration -- when you double-click a script in Godot, it opens the `.ts` source instead of the generated `.gd` file.
+
+```bash
+tstogd open-editor -f {file} -l {line} -c {col} -p {project} -e "code --goto {tsFile}:{line}:{col}"
+```
+
+Options:
+
+- `-f, --file <path>` -- GDScript file path (absolute or `res://`)
+- `-e, --editor-cmd <cmd>` -- Editor command template with default godot placeholders and `{tsFile}`
+- `-p, --project <dir>` -- Godot project directory (where `tstogd.json` is)
+
+How it works:
+
+1. Loads `tstogd.json` from the project directory
+2. Maps the `.gd` file to `.ts` file using `gdDir` -> `tsDir` path mapping
+3. Replaces `{tsFile}` (and other placeholders) in the editor command
+4. Spawns the editor process
+
+#### Godot configuration
+
+In Godot, go to **Editor Settings → Text Editor → External** and configure:
+
+- **Use External Editor**: `On`
+- **Exec Path**: `tstogd` (or `npx tstogd`, or full path to the binary)
+- **Exec Flags**: `open-editor -f "{file}" -p "{project}" -e "code --goto {tsFile}:{line}:{col}"`
+
+> **Note:** Use double quotes around `{file}` and `{project}` to handle paths with spaces. Do **not** use single quotes — they become literal characters on Windows.
+
+Also enable **Editor Settings → Text Editor → Behavior → Auto Reload Scripts on External Change**. When you edit TypeScript files and the converter regenerates the `.gd` output, Godot needs to pick up the changes without manually refocusing or reopening each script. With this option enabled, Godot automatically reloads any `.gd` file that was modified on disk, so your changes take effect immediately when you switch back to the editor.
+
+#### Editor command examples
+
+| Editor   | `-e` flag                                      |
+| -------- | ---------------------------------------------- |
+| VS Code  | `-e "code --goto {tsFile}:{line}:{col}"`       |
+| WebStorm | `-e "webstorm --line {line} --column {col} {tsFile}"` |
+| Vim      | `-e "vim +{line} {tsFile}"`                    |
 
 ## TypeScript Helpers (`gd` namespace)
 
@@ -549,6 +606,28 @@ TypeScript `constructor()` maps to GDScript `_init()`.
 - TS `this.method()` → GD `method()` (for own/inherited methods)
 - TS `this.property` → GD `property` or `self.property`
 
+### Logical operators (`||` / `&&`)
+
+GDScript `or`/`and` return `bool`, unlike JavaScript/TypeScript where `||`/`&&` return one of the operands. The converter handles this difference in both directions:
+
+**TS-to-GD**: When `||`/`&&` is used as a non-boolean value (assigned, passed as argument, returned), the converter reports an error with two suggested fixes:
+- Wrap in `bool()` to accept the boolean result: `let x = bool(a || b)`
+- Use a ternary for value coalescing: `let x = a ? a : b`
+
+The error is suppressed when the expression is in a boolean context (if/while condition, negation, nested in another logical operator, or already wrapped in `bool()`).
+
+**GD-to-TS**: When `or`/`and` is used as a value in GDScript, the converter auto-wraps the expression in `bool()` to preserve correct semantics:
+```
+# GDScript
+var x = a or b
+# becomes TypeScript
+let x = bool(a || b)
+```
+
+The `bool()` wrapper is skipped when the expression is already boolean (composed of comparisons, logical operators, or boolean literals).
+
+**ESLint auto-fix**: The `ts2gd/convert` ESLint rule provides an auto-fix for the non-boolean value error that wraps the expression in `bool()`.
+
 ## Typings
 
 Typings are stored in a flat `typings/` folder (no version subdirectories):
@@ -683,7 +762,6 @@ export default [
         'error',
         {
           rootDir: '.',
-          godotPath: 'godot', // optional: enables Godot validation
           projectRoot: '.', // optional: Godot project root (must contain project.godot)
         },
       ],
@@ -706,7 +784,7 @@ Converts each TS file to GDScript and reports errors at two levels:
    - Top-level statements outside classes
    - `x in y` where `y` is a value-type primitive (Vector2, Color, Transform2D, etc.), an array (`Array<T>`, `T[]`, `Packed*Array`), a number, or a boolean — GDScript only supports `in` on `Dictionary` and `String`
 
-2. **Godot validation errors** (when `godotPath` is configured) — errors detected by the Godot compiler:
+2. **Godot validation errors** (when Godot is available) — errors detected by the Godot compiler:
    - Type mismatches
    - Unknown functions/methods
    - Parse errors in generated GDScript
@@ -718,9 +796,9 @@ Converts each TS file to GDScript and reports errors at two levels:
 | `rootDir`     | `string`  | Root directory for the project                      |
 | `tsDir`       | `string`  | TypeScript source directory                         |
 | `tsconfig`    | `string`  | Path to tsconfig.json                               |
-| `godotPath`   | `string`  | Path to Godot executable (enables Godot validation) |
 | `projectRoot` | `string`  | Godot project root (must contain `project.godot`)   |
-| `sourceMap`   | `boolean` | Generate source maps for error remapping            |
+
+Godot validation is enabled automatically when the Godot executable is found on the system (resolved via `resolveGodotPath()`). To disable it, set `disableGodotLint: true` in `tstogd.json`. Source maps are always generated for error remapping.
 
 
 ## Development
@@ -730,6 +808,27 @@ yarn install
 yarn build
 yarn test:run
 ```
+
+### Test scripts
+
+Individual test suites can be run via npm scripts:
+
+| Script                | Description                        |
+| --------------------- | ---------------------------------- |
+| `yarn test:tstogd`    | TS-to-GD converter fixtures        |
+| `yarn test:gdtots`    | GD-to-TS converter fixtures        |
+| `yarn test:diag`      | Converter diagnostics              |
+| `yarn test:eslint`    | ESLint plugin                      |
+| `yarn test:scene-typings` | Scene typings generation       |
+| `yarn test:type-checks`   | Type check tests               |
+| `yarn test:class-typings` | Class typings generation       |
+| `yarn test:godot-docs`    | Godot docs typings generation  |
+| `yarn test:godot-registry` | Godot class registry          |
+| `yarn test:godot-validate` | Godot validation              |
+| `yarn test:sourcemap` | Source map position tests          |
+| `yarn test:gd-registry` | GD-to-TS registry tests         |
+| `yarn test:typecheck` | TypeScript type-level tests        |
+| `yarn test:cli`       | CLI integration tests              |
 
 ### Regenerating Godot typings
 
