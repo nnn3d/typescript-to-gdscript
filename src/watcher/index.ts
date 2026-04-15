@@ -41,6 +41,8 @@ export interface WatcherOptions {
   ignore?: string[];
   /** Path to project.godot file (for autoload singleton detection). */
   projectFile?: string;
+  /** Emit output files even when conversion errors occur. */
+  emitOnError?: boolean;
   /** Enable verbose debug logging. */
   debug?: boolean;
 }
@@ -249,7 +251,7 @@ export class Watcher {
 
     if (result.diagnostics.some((d) => d.severity === 'error')) {
       if (!this.initialScanDone) this.initialErrors++;
-      return;
+      if (!this.options.emitOnError) return;
     }
 
     // Write output
