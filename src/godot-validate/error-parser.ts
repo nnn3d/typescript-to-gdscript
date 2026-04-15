@@ -3,7 +3,7 @@
  */
 
 import { existsSync } from 'fs';
-import { resolve, join } from 'path';
+import { resolve, join, relative, isAbsolute } from 'path';
 import { parseAutoloads } from '../typings/scenes.ts';
 
 // ─── Types ───────────────────────────────────────────────────
@@ -58,9 +58,18 @@ export function isAutoloadFalsePositive(
  * Returns true if the error is a false positive caused by validating a
  * tmp copy of a GD file while the original still exists in the project.
  * Godot reports: 'Class "Foo" hides a global script class.'
+ * Only suppresses when the file is outside projectRoot (i.e., a temp copy).
  */
-export function isDuplicateClassFalsePositive(error: GodotRawError): boolean {
-  return /^Class ".*" hides a global script class/.test(error.message);
+export function isDuplicateClassFalsePositive(
+  error: GodotRawError,
+  projectRoot: string,
+): boolean {
+  if (!/^Class ".*" hides a global script class/.test(error.message)) return false;
+  // Only suppress for files outside the project (temp copies).
+  // If the file is inside the project, it's a real conflict.
+  // On Windows, relative() returns an absolute path when files are on different drives.
+  const rel = relative(projectRoot, error.file);
+  return rel.startsWith('..') || isAbsolute(rel);
 }
 
 // ─── Error Parsing ───────────────────────────────────────────

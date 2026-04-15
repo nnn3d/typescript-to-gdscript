@@ -72,13 +72,16 @@ export function resolveConfig(options?: {
   configDir?: string;
   overrides?: ConfigOverrides;
 }): ResolvedConfig {
-  const configDir = options?.configDir ?? process.cwd();
-  const config = loadConfig(configDir);
+  const searchDir = options?.configDir ?? process.cwd();
+  const loaded = loadConfig(searchDir);
+  const config = loaded?.config ?? null;
+  // Use the directory where tstogd.json was found (not the search start dir)
+  const baseDir = loaded?.configDir ?? searchDir;
   const overrides = options?.overrides ?? {};
 
   // Merge: CLI overrides > config > defaults
   const rootDir = resolve(
-    configDir,
+    baseDir,
     overrides.rootDir ?? config?.rootDir ?? '.',
   );
   const tsDir = resolve(rootDir, overrides.tsDir ?? config?.tsDir ?? '.');
@@ -151,12 +154,29 @@ const CONFIG_FILENAME = 'tstogd.json';
  * Loads tstogd.json from the given directory (defaults to CWD).
  * Returns null if not found.
  */
-export function loadConfig(dir?: string): TsToGdConfig | null {
-  const searchDir = dir ?? process.cwd();
-  const configPath = join(searchDir, CONFIG_FILENAME);
-  if (!existsSync(configPath)) return null;
-  const raw = readFileSync(configPath, 'utf-8');
-  return JSON.parse(raw) as TsToGdConfig;
+interface LoadConfigResult {
+  config: TsToGdConfig;
+  /** Absolute path to the directory containing tstogd.json */
+  configDir: string;
+}
+
+/**
+ * Loads tstogd.json by walking up from the given directory (defaults to CWD).
+ * Returns null if not found in any ancestor directory.
+ */
+export function loadConfig(dir?: string): LoadConfigResult | null {
+  let searchDir = resolve(dir ?? process.cwd());
+  for (;;) {
+    const configPath = join(searchDir, CONFIG_FILENAME);
+    if (existsSync(configPath)) {
+      const raw = readFileSync(configPath, 'utf-8');
+      return { config: JSON.parse(raw) as TsToGdConfig, configDir: searchDir };
+    }
+    const parent = dirname(searchDir);
+    if (parent === searchDir) break; // filesystem root
+    searchDir = parent;
+  }
+  return null;
 }
 
 // ─── Registry Resolution ──────────────────────────────────────
@@ -203,10 +223,9 @@ export interface ResolveGodotPathOptions {
 export function resolveGodotPath(options?: ResolveGodotPathOptions): string {
   if (options?.godotPath) return resolve(options.godotPath);
 
-  const config = loadConfig(options?.configDir);
-  if (config?.godotPath) {
-    const configDir = options?.configDir ?? process.cwd();
-    return resolve(configDir, config.godotPath);
+  const loaded = loadConfig(options?.configDir);
+  if (loaded?.config.godotPath) {
+    return resolve(loaded.configDir, loaded.config.godotPath);
   }
 
   if (process.env.GODOT_PATH) return process.env.GODOT_PATH;

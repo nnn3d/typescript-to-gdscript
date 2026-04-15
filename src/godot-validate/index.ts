@@ -128,7 +128,7 @@ export async function validateGdFiles(
       rawErrors = rawErrors.filter(
         (e) =>
           !isAutoloadFalsePositive(e, autoloadNames) &&
-          !isDuplicateClassFalsePositive(e),
+          !isDuplicateClassFalsePositive(e, options.projectRoot),
       );
 
       if (rawErrors.length === 0 && output.trim()) {
@@ -144,7 +144,8 @@ export async function validateGdFiles(
             }
           }
         }
-        if (!isFalsePositive && /Class ".*" hides a global script class/.test(output)) {
+        var isTmpFile = relToProject.startsWith('../');
+        if (!isFalsePositive && isTmpFile && /Class ".*" hides a global script class/.test(output)) {
           isFalsePositive = true;
         }
         if (!isFalsePositive) {
@@ -278,7 +279,7 @@ export function validateGdFilesSync(
       rawErrors = rawErrors.filter(
         (e) =>
           !isAutoloadFalsePositive(e, autoloadNames) &&
-          !isDuplicateClassFalsePositive(e),
+          !isDuplicateClassFalsePositive(e, options.projectRoot),
       );
 
       if (rawErrors.length === 0 && output.trim()) {
@@ -293,7 +294,8 @@ export function validateGdFilesSync(
             }
           }
         }
-        if (!isFalsePositive && /Class ".*" hides a global script class/.test(output)) {
+        var isTmpFile = relToProject.startsWith('../');
+        if (!isFalsePositive && isTmpFile && /Class ".*" hides a global script class/.test(output)) {
           isFalsePositive = true;
         }
         if (!isFalsePositive) {

@@ -32,6 +32,7 @@ import ts2gd from 'typescript-to-gdscript/eslint';
 export default [
   {
     files: ['{{tsDir}}/**/*.ts'],
+    ignores: ['{{typingsDir}}/**'],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
@@ -192,7 +193,10 @@ async function stepEslint(
   const create = await askYesNo(rl, 'Create eslint.config.js from template?');
   if (!create) return;
 
-  const content = ESLINT_CONFIG_TEMPLATE.replace('{{tsDir}}', config.tsDir);
+  const content = ESLINT_CONFIG_TEMPLATE.replace(
+    '{{tsDir}}',
+    config.tsDir,
+  ).replace('{{typingsDir}}', config.typingsDir);
   writeFileSync(join(cwd, 'eslint.config.js'), content);
   console.log('  ✓ Created eslint.config.js');
 

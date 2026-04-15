@@ -345,7 +345,7 @@ describe('isAutoloadFalsePositive', () => {
 });
 
 describe('isDuplicateClassFalsePositive', () => {
-  it('should detect "Class ... hides a global script class" error', () => {
+  it('should suppress for tmp files outside project root', () => {
     const error: GodotRawError = {
       file: '/tmp/tstogd/player.gd',
       line: 1,
@@ -353,7 +353,18 @@ describe('isDuplicateClassFalsePositive', () => {
       errorType: 'Parse Error',
       message: 'Class "Player" hides a global script class.',
     };
-    expect(isDuplicateClassFalsePositive(error)).toBe(true);
+    expect(isDuplicateClassFalsePositive(error, '/project')).toBe(true);
+  });
+
+  it('should NOT suppress for real files inside project root', () => {
+    const error: GodotRawError = {
+      file: '/project/scripts/player.gd',
+      line: 1,
+      column: 0,
+      errorType: 'Parse Error',
+      message: 'Class "Player" hides a global script class.',
+    };
+    expect(isDuplicateClassFalsePositive(error, '/project')).toBe(false);
   });
 
   it('should NOT filter unrelated Parse Errors', () => {
@@ -364,7 +375,7 @@ describe('isDuplicateClassFalsePositive', () => {
       errorType: 'Parse Error',
       message: 'Expected ":" after variable name.',
     };
-    expect(isDuplicateClassFalsePositive(error)).toBe(false);
+    expect(isDuplicateClassFalsePositive(error, '/project')).toBe(false);
   });
 });
 
