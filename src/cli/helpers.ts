@@ -12,6 +12,7 @@ import {
 import { join, resolve } from 'path';
 import { shouldIgnore } from '../config/index.ts';
 import { generateTypings, generateAddonTypings } from '../typings/scenes.ts';
+import { ProjectCache } from '../cache/index.ts';
 
 /** Reference to the program instance for debug flag access */
 let _debugEnabled = false;
@@ -136,10 +137,16 @@ export function generateAllTypings(cfg: {
   projectFile: string;
   tsconfig?: string;
   tsFiles?: string[];
+  cacheDir?: string;
+  sourcemapsDir?: string;
 }): void {
   const tsFiles =
     cfg.tsFiles ?? findTsFiles(cfg.tsDir, cfg.rootDir, cfg.ignore);
   if (tsFiles.length === 0) return;
+
+  const cache = cfg.cacheDir && cfg.sourcemapsDir
+    ? new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir)
+    : undefined;
 
   const writtenFiles = generateTypings({
     rootDir: cfg.rootDir,
@@ -151,12 +158,14 @@ export function generateAllTypings(cfg: {
     tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
     ignore: cfg.ignore,
     projectFile: cfg.projectFile,
+    cache,
   });
 
   const addonFiles = generateAddonTypings({
     rootDir: cfg.rootDir,
     outputDir: cfg.typingsDir,
     ignore: cfg.ignore,
+    cache,
   });
 
   debugLog(

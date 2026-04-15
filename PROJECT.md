@@ -12,7 +12,7 @@ Detailed project layout, implementation status, conversion rules, and edge cases
 - **Godot resource parsing**: tree-sitter-godot-resource v0.7.0 (.tscn, .tres, project.godot)
 - **AST type generation**: @asgerf/dts-tree-sitter v0.21.0 (generates typed AST interfaces from grammars)
 - **Source maps**: `source-map` npm package
-- **CLI**: commander, **Watch**: chokidar, **Cache**: SHA-256 file hashing
+- **CLI**: commander, **Watch**: chokidar, **Cache**: ProjectCache (SHA-256 hashing, source maps in cache dir)
 
 ## Project Structure
 
@@ -31,7 +31,7 @@ typings/                 # Godot typings (committed to git, used as TS lib)
   classes/               # Per-class .d.ts files (916 classes)
 
 src/
-  config/index.ts        # tstogd.json loader (with `exclude` glob patterns, `disableGodotLint`), registry resolver
+  config/index.ts        # tstogd.json loader (exclude, disableGodotLint, cacheDir, sourcemapsDir), registry resolver
   converter/
     ts-to-gd/            # transformer.ts (AST visitor), emitter.ts (line/col + sourcemap), index.ts
     gd-to-ts/index.ts    # convertGdToTs() with typed AST, scope tracking, GodotClassRegistry
@@ -52,7 +52,7 @@ src/
     non-nullable.json    # Non-nullable type override data
   eslint/                # plugin.ts + rules/convert.ts (ts2gd/convert rule)
   godot-validate/index.ts  # Godot CLI validation, error parsing, source map remapping
-  cache/index.ts         # FileCache with SHA-256
+  cache/index.ts         # ProjectCache: TS→GD, addon, typings caching + source maps in cache dir
   watcher/index.ts       # Watcher class using chokidar
   cli/index.ts           # Commander CLI
   types/gd-helpers.d.ts  # gd namespace type defs (original, copied to typings/gd-helpers.d.ts)
@@ -70,14 +70,15 @@ tests/
 ## CLI Commands (binary: `ts2gd`)
 
 - `ts2gd init` — Interactive project initialization (tstogd.json, tsconfig.json, eslint.config.js, npm install, .gdignore)
-- `ts2gd convert <files...>` — Convert TS to GD (`-o`, `--root-dir`, `--tsconfig`, `--emit-on-error`). Source maps always generated.
+- `ts2gd convert <files...>` — Convert TS to GD (`-o`, `--root-dir`, `--tsconfig`, `--no-cache`, `--emit-on-error`). Source maps stored in cache dir.
 - `ts2gd convert-gd <files...>` — Convert GD to TS (`-o`, `--registry`, `--no-helpers`, `--no-signal-handler-helper`, `--no-operator-fix-helper`, `--no-explicit-convert-helper`, `--no-ready-field-types-helper`, `--no-extends-type-helper`, `--no-nullable-return-helper`, `--unsafe-use-any`, `--emit-on-error`)
-- `ts2gd lint <files...>` — Lint TS files (`--root-dir`, `--tsconfig`)
-- `ts2gd watch` — Watch and auto-convert (`--root-dir`, `--output-dir`, `--tsconfig`, `--class-typings`). Source maps always generated.
+- `ts2gd lint <files...>` — Lint TS files (`--root-dir`, `--tsconfig`, `--godot-path`, `--project-root`, `--no-cache`). Uses cache to skip unchanged files.
+- `ts2gd watch` — Watch and auto-convert (`--root-dir`, `--output-dir`, `--tsconfig`, `--class-typings`). Source maps stored in cache dir.
 - `ts2gd generate-typings` — Generate typings from Godot docs (`--docs-dir`, `--typings-dir`, `--patch-dir`, `--version`)
 - `ts2gd generate-class-typings <files...>` — Generate global class .d.ts (`-o`, `--root-dir`, `--tsconfig`)
 - `ts2gd generate-addon-typings` — Generate typings for GDScript addons in `addons/` (`-o`, `--root-dir`)
-- `ts2gd open-editor` — Open a .gd file in an external editor as the corresponding .ts file (`-f`, `-e`, `-l`, `-c`, `-p`). For Godot external editor integration.
+- `ts2gd open-editor` — Open a .gd file in an external editor as the corresponding .ts file (`-f`, `-e`, `-l`, `-c`, `-p`). Remaps GD→TS line:col via cached source maps.
+- `ts2gd clear-cache` — Clear the conversion cache (removes `cacheDir`).
 
 ### Typings usage by consumer projects
 

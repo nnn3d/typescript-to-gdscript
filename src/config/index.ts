@@ -1,5 +1,6 @@
 import { readFileSync, existsSync } from 'fs';
-import { join, resolve, dirname, relative } from 'path';
+import { join, resolve, dirname, relative, basename } from 'path';
+import { tmpdir } from 'os';
 import { fileURLToPath } from 'url';
 import { minimatch } from 'minimatch';
 import { GodotClassRegistry } from '../typings/godot-registry.ts';
@@ -25,6 +26,10 @@ export interface TsToGdConfig {
   projectFile?: string;
   /** Disable Godot executable validation (linting, ESLint). When false (default), an error is raised if Godot is not found. */
   disableGodotLint?: boolean;
+  /** Cache directory. Default: `node_modules/.cache/typescript-to-gdscript` or temp dir. */
+  cacheDir?: string;
+  /** Source maps directory. Default: `${cacheDir}/sourcemaps`. */
+  sourcemapsDir?: string;
 }
 
 // ─── Resolved Config ─────────────────────────────────────────
@@ -44,6 +49,10 @@ export interface ResolvedConfig {
   projectFile: string;
   /** Disable Godot executable validation. */
   disableGodotLint: boolean;
+  /** Absolute path to cache directory. */
+  cacheDir: string;
+  /** Absolute path to source maps directory. */
+  sourcemapsDir: string;
 }
 
 /**
@@ -91,6 +100,17 @@ export function resolveConfig(options?: {
     rootDir,
     overrides.projectFile ?? config?.projectFile ?? 'project.godot',
   );
+  const cacheDir = resolve(
+    rootDir,
+    overrides.cacheDir ?? config?.cacheDir ??
+      (existsSync(join(rootDir, 'node_modules'))
+        ? join('node_modules', '.cache', 'typescript-to-gdscript')
+        : join(tmpdir(), 'typescript-to-gdscript', basename(rootDir))),
+  );
+  const sourcemapsDir = resolve(
+    rootDir,
+    overrides.sourcemapsDir ?? config?.sourcemapsDir ?? join(cacheDir, 'sourcemaps'),
+  );
 
   return {
     rootDir,
@@ -104,6 +124,8 @@ export function resolveConfig(options?: {
       ?? (existsSync(join(rootDir, 'tsconfig.json')) ? join(rootDir, 'tsconfig.json') : undefined),
     godotPath: overrides.godotPath ?? config?.godotPath,
     disableGodotLint: config?.disableGodotLint ?? false,
+    cacheDir,
+    sourcemapsDir,
   };
 }
 

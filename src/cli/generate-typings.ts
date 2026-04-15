@@ -2,6 +2,7 @@ import type { Command } from 'commander';
 import { resolve } from 'path';
 import { generateTypings } from '../typings/scenes.ts';
 import { resolveConfig } from '../config/index.ts';
+import { ProjectCache } from '../cache/index.ts';
 import { debugLog, resolveFiles } from './helpers.ts';
 
 export function registerGenerateTypingsCommand(program: Command): void {
@@ -41,6 +42,7 @@ export function registerGenerateTypingsCommand(program: Command): void {
       }
 
       const outputDir = opts.output ? resolve(opts.output) : cfg.typingsDir;
+      const cache = new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir);
 
       const writtenFiles = generateTypings({
         rootDir: cfg.rootDir,
@@ -52,6 +54,7 @@ export function registerGenerateTypingsCommand(program: Command): void {
         tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
         ignore: cfg.ignore,
         projectFile: cfg.projectFile,
+        cache,
       });
       debugLog(`Generated ${writtenFiles.length} typings files in ${outputDir}`);
     });

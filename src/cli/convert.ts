@@ -3,6 +3,7 @@ import { writeFileSync, mkdirSync } from 'fs';
 import { resolve, dirname, relative } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { resolveConfig } from '../config/index.ts';
+import { ProjectCache } from '../cache/index.ts';
 import { debugLog, resolveFiles, generateAllTypings } from './helpers.ts';
 
 export function registerConvertCommand(program: Command): void {
@@ -17,6 +18,7 @@ export function registerConvertCommand(program: Command): void {
     .option('--gd-dir <dir>', 'GDScript output directory')
     .option('--root-dir <dir>', 'Root directory', '.')
     .option('--tsconfig <path>', 'Path to tsconfig.json')
+    .option('--no-cache', 'Disable cache (force full reconversion)')
     .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
     .action((files: string[], opts) => {
       const cfg = resolveConfig({
@@ -41,10 +43,25 @@ export function registerConvertCommand(program: Command): void {
         return;
       }
 
+      const useCache = opts.cache !== false;
+      const cache = useCache ? new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir) : null;
+
       debugLog(`Converting ${resolvedFiles.length} file(s)...`);
 
       let hasErrors = false;
+      let skipped = 0;
+
       for (const filePath of resolvedFiles) {
+        const relPath = relative(cfg.tsDir, filePath);
+        const outputPath = resolve(cfg.gdDir, relPath.replace(/\.ts$/, '.gd'));
+
+        // Check cache — skip if fresh
+        if (cache?.isTsToGdFresh(filePath, outputPath)) {
+          debugLog(`Skipped (cache): ${outputPath}`);
+          skipped++;
+          continue;
+        }
+
         const result = convertTsToGd({
           filePath,
           rootDir: cfg.tsDir,
@@ -69,18 +86,23 @@ export function registerConvertCommand(program: Command): void {
           if (!opts.emitOnError) continue;
         }
 
-        const relPath = relative(cfg.tsDir, filePath);
-        const outputPath = resolve(cfg.gdDir, relPath.replace(/\.ts$/, '.gd'));
-
         mkdirSync(dirname(outputPath), { recursive: true });
         writeFileSync(outputPath, result.code);
         debugLog(`Written: ${outputPath}`);
 
-        if (result.sourceMap) {
-          const mapPath = outputPath + '.map';
-          writeFileSync(mapPath, result.sourceMap);
-          debugLog(`Written: ${mapPath}`);
-        }
+        // Update cache (writes source map to cache dir)
+        cache?.updateTsToGd(filePath, outputPath, result.sourceMap, cfg.rootDir);
+      }
+
+      if (skipped > 0) {
+        debugLog(`Skipped ${skipped} unchanged file(s)`);
+      }
+
+      // Clean stale entries and save
+      if (cache) {
+        const currentFiles = new Set(resolvedFiles.map((f) => f.replace(/\\/g, '/')));
+        cache.cleanStale(currentFiles);
+        cache.save();
       }
 
       generateAllTypings({

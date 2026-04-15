@@ -39,6 +39,7 @@ export function registerValidateGdCommand(program: Command): void {
         projectRoot,
         godotPath,
         sourceMapDir: opts.sourceMapDir ? resolve(opts.sourceMapDir) : undefined,
+        rootDir: projectRoot,
       });
 
       for (const diag of result.diagnostics) {

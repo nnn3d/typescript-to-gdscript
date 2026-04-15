@@ -22,6 +22,8 @@ import { resolve, relative } from 'path';
 import { existsSync } from 'fs';
 import { spawn } from 'child_process';
 import { resolveConfig } from '../config/index.ts';
+import { ProjectCache } from '../cache/index.ts';
+import { remapErrorSync } from '../godot-validate/source-map-remap.ts';
 
 export function registerOpenEditorCommand(program: Command): void {
   program
@@ -33,8 +35,10 @@ export function registerOpenEditorCommand(program: Command): void {
     .requiredOption('-f, --file <path>', 'GDScript file path (absolute or res://)')
     .requiredOption(
       '-e, --editor-cmd <cmd>',
-      'Editor command template. Use {tsFile} as placeholder for the mapped .ts path.',
+      'Editor command template. Placeholders: {tsFile}, {tsLine}, {tsCol}',
     )
+    .option('-l, --line <n>', 'GDScript line number (from Godot)', '1')
+    .option('-c, --col <n>', 'GDScript column number (from Godot)', '1')
     .option(
       '-p, --project <dir>',
       'Godot project directory (where tstogd.json is)',
@@ -76,12 +80,37 @@ export function registerOpenEditorCommand(program: Command): void {
         process.exit(1);
       }
 
-      // 3. Substitute {tsFile} in editor command (quoted for paths with spaces)
+      // 3. Remap GD line:col → TS line:col via cached source map
+      const gdLine = parseInt(opts.line as string, 10) || 1;
+      const gdCol = parseInt(opts.col as string, 10) || 1;
+      let tsLine = gdLine;
+      let tsCol = gdCol;
+
+      // Only remap if not at file start (Godot uses 1-based lines, 1-based cols)
+      if (gdLine > 1 || gdCol > 1) {
+        const cache = new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir);
+        const sourceMapJson = cache.getSourceMap(gdPath, cfg.rootDir);
+        if (sourceMapJson) {
+          const remapped = remapErrorSync(
+            { file: gdPath, line: gdLine, column: gdCol - 1, message: '', errorType: 'error' as const },
+            sourceMapJson,
+            tsPath,
+          );
+          if (remapped && remapped.line > 0) {
+            tsLine = remapped.line;
+            tsCol = (remapped.column ?? 0) + 1;
+          }
+        }
+      }
+
+      // 4. Substitute placeholders in editor command
       const quotedTsPath = tsPath.includes(' ') ? `"${tsPath}"` : tsPath;
       const editorCmd = (opts.editorCmd as string)
-        .replace(/\{tsFile\}/g, quotedTsPath);
+        .replaceAll(/\{tsFile\}/g, quotedTsPath)
+        .replaceAll(/\{tsLine\}/g, String(tsLine))
+        .replaceAll(/\{tsCol\}/g, String(tsCol));
 
-      // 4. Split command string and spawn editor
+      // 5. Split command string and spawn editor
       const parts = parseCommandString(editorCmd);
       if (parts.length === 0) {
         console.error('Empty editor command after substitution.');

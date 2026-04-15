@@ -4,7 +4,8 @@ import { resolve, dirname, relative } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { validateGdFilesSync } from '../godot-validate/index.ts';
 import { resolveConfig, resolveGodotPath } from '../config/index.ts';
-import { resolveFiles } from './helpers.ts';
+import { ProjectCache } from '../cache/index.ts';
+import { debugLog, resolveFiles } from './helpers.ts';
 import { tmpdir } from 'os';
 
 export function registerLintCommand(program: Command): void {
@@ -22,6 +23,7 @@ export function registerLintCommand(program: Command): void {
       'Path to Godot executable (enables GDScript validation)',
     )
     .option('--project-root <dir>', 'Godot project root for validation')
+    .option('--no-cache', 'Disable cache (force full re-lint)')
     .action((files: string[], opts) => {
       const cfg = resolveConfig({
         overrides: {
@@ -53,12 +55,43 @@ export function registerLintCommand(program: Command): void {
         ? resolve(opts.projectRoot)
         : cfg.rootDir;
 
+      const useCache = opts.cache !== false;
+      const cache = useCache ? new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir) : null;
+
       let totalErrors = 0;
       let totalWarnings = 0;
+      let skipped = 0;
 
       for (const filePath of resolvedFiles) {
         if (filePath.endsWith('.d.ts')) continue;
 
+        const relPath = relative(cfg.tsDir, filePath);
+        const gdPath = resolve(cfg.gdDir, relPath.replace(/\.ts$/, '.gd'));
+
+        // Cache check: if TS→GD conversion is fresh, skip re-conversion.
+        // The .gd file in gdDir is up-to-date, so we only re-run Godot validation.
+        if (cache?.isTsToGdFresh(filePath, gdPath)) {
+          skipped++;
+          if (godotPath && existsSync(gdPath)) {
+            const sourceMapJson = cache.getSourceMap(gdPath, cfg.rootDir);
+            const validateResult = validateGdFilesSync({
+              gdFiles: [{ path: gdPath, sourceMapJson, tsFilePath: filePath }],
+              projectRoot,
+              godotPath,
+            });
+            for (const diag of validateResult.diagnostics) {
+              const prefix = diag.severity === 'error' ? 'ERROR' : 'WARN';
+              if (diag.severity === 'error') totalErrors++;
+              else totalWarnings++;
+              console.error(
+                `[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`,
+              );
+            }
+          }
+          continue;
+        }
+
+        // Not cached — convert and report diagnostics
         const result = convertTsToGd({
           filePath,
           rootDir: cfg.tsDir,
@@ -83,7 +116,6 @@ export function registerLintCommand(program: Command): void {
         }
 
         if (!fileHasErrors && godotPath) {
-          const relPath = relative(cfg.tsDir, filePath);
           const gdRelPath = relPath.replace(/\.ts$/, '.gd');
           const gdAbsPath = resolve(tmpdir(), 'tstogd', gdRelPath);
           const gdDir = dirname(gdAbsPath);
@@ -125,6 +157,10 @@ export function registerLintCommand(program: Command): void {
             }
           }
         }
+      }
+
+      if (skipped > 0) {
+        debugLog(`Skipped ${skipped} unchanged file(s)`);
       }
 
       if (totalErrors > 0 || totalWarnings > 0) {

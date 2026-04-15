@@ -12,6 +12,7 @@ import { registerLintCommand } from './lint.ts';
 import { registerInitCommand } from './init.ts';
 import { registerGenerateAddonTypingsCommand } from './generate-addon-typings.ts';
 import { registerOpenEditorCommand } from './open-editor.ts';
+import { registerClearCacheCommand } from './clear-cache.ts';
 
 const program = new Command();
 
@@ -35,5 +36,6 @@ registerGenerateGdscriptGlobalTypingsCommand(program);
 registerLintCommand(program);
 registerInitCommand(program);
 registerOpenEditorCommand(program);
+registerClearCacheCommand(program);
 
 program.parse();

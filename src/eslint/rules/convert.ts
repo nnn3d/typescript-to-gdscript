@@ -4,6 +4,7 @@ import { tmpdir } from 'os';
 import { convertTsToGd } from '../../converter/ts-to-gd/index.ts';
 import { validateGdFilesSync } from '../../godot-validate/index.ts';
 import { resolveConfig, resolveGodotPath } from '../../config/index.ts';
+import { ProjectCache } from '../../cache/index.ts';
 import type { TransformDiagnostic } from '../../converter/common/index.ts';
 
 // ESLint rule definition — uses `any` for ESLint types to avoid hard dep on @types/eslint
@@ -65,6 +66,33 @@ const convertRule: RuleModule = {
             tsconfig: options.tsconfig,
           },
         });
+
+        // Cache check: if TS→GD conversion is fresh, skip re-conversion
+        const cache = new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir);
+        const relPath = relative(cfg.tsDir, filename);
+        const gdPath = resolve(cfg.gdDir, relPath.replace(/\.ts$/, '.gd'));
+
+        if (cache.isTsToGdFresh(filename, gdPath)) {
+          // Conversion clean, .gd is up-to-date — only re-run Godot validation
+          if (!cfg.disableGodotLint && existsSync(gdPath)) {
+            const projectRoot = options.projectRoot
+              ? resolve(options.projectRoot)
+              : cfg.rootDir;
+            const godotPath = resolveGodotPath({ godotPath: cfg.godotPath });
+            const sourceMapJson = cache.getSourceMap(gdPath, cfg.rootDir);
+
+            runGodotValidation(context, {
+              gdCode: '', // not used — gdPath exists
+              sourceMapJson,
+              tsFilePath: filename,
+              tsDirOrRootDir: cfg.tsDir,
+              projectRoot,
+              godotPath,
+              cachedGdPath: gdPath,
+            });
+          }
+          return;
+        }
 
         // Step 1: Convert TS to GD
         const result = convertTsToGd({
@@ -183,11 +211,30 @@ interface GodotValidationParams {
   tsDirOrRootDir: string;
   projectRoot: string;
   godotPath: string;
+  /** If set, use this existing .gd file instead of writing a temp one */
+  cachedGdPath?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function runGodotValidation(context: any, params: GodotValidationParams): void {
-  // Create temp GD file inside the project root so Godot can find it via res://
+  // If we have a cached GD file in the project, validate it directly
+  if (params.cachedGdPath) {
+    const validateResult = validateGdFilesSync({
+      gdFiles: [
+        {
+          path: params.cachedGdPath,
+          sourceMapJson: params.sourceMapJson,
+          tsFilePath: params.tsFilePath,
+        },
+      ],
+      projectRoot: params.projectRoot,
+      godotPath: params.godotPath,
+    });
+    reportGodotDiagnostics(context, validateResult.diagnostics);
+    return;
+  }
+
+  // Create temp GD file for Godot validation
   const relPath = relative(params.tsDirOrRootDir, params.tsFilePath);
   const gdRelPath = relPath.replace(/\.ts$/, '.gd');
   const gdAbsPath = resolve(tmpdir(), 'tstogd', gdRelPath);
@@ -208,32 +255,34 @@ function runGodotValidation(context: any, params: GodotValidationParams): void {
       projectRoot: params.projectRoot,
       godotPath: params.godotPath,
     });
-
-    for (const diag of validateResult.diagnostics) {
-      const loc =
-        diag.line > 0
-          ? {
-              start: { line: diag.line, column: diag.column },
-              end: { line: diag.line, column: diag.column + 1000 },
-            }
-          : undefined;
-
-      context.report({
-        messageId: 'godotError',
-        data: { message: diag.message },
-        ...(loc ? { loc } : { node: context.sourceCode.ast }),
-      });
-    }
+    reportGodotDiagnostics(context, validateResult.diagnostics);
   } finally {
-    // Clean up temp GD file
     try {
       if (existsSync(gdAbsPath)) rmSync(gdAbsPath);
-      // Also clean up .map file if it exists
       const mapPath = gdAbsPath + '.map';
       if (existsSync(mapPath)) rmSync(mapPath);
     } catch {
       // Ignore cleanup errors
     }
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function reportGodotDiagnostics(context: any, diagnostics: TransformDiagnostic[]): void {
+  for (const diag of diagnostics) {
+    const loc =
+      diag.line > 0
+        ? {
+            start: { line: diag.line, column: diag.column },
+            end: { line: diag.line, column: diag.column + 1000 },
+          }
+        : undefined;
+
+    context.report({
+      messageId: 'godotError',
+      data: { message: diag.message },
+      ...(loc ? { loc } : { node: context.sourceCode.ast }),
+    });
   }
 }
 

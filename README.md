@@ -54,6 +54,8 @@ Create a `tstogd.json` in your project root to configure the converter:
 | `tsconfig`         | `string`   | Path to `tsconfig.json`.                                                 |
 | `exclude`          | `string[]` | Glob patterns (from project root) for files/folders to exclude from all CLI commands (e.g. `["test/**", "**/*.test.ts"]`). Uses [minimatch](https://github.com/isaacs/minimatch) syntax. |
 | `disableGodotLint` | `boolean`  | Disable Godot executable validation in lint and ESLint. Defaults to `false`. |
+| `cacheDir`         | `string`   | Cache directory. Default: `node_modules/.cache/typescript-to-gdscript` (or OS temp dir). |
+| `sourcemapsDir`    | `string`   | Source maps directory. Default: `${cacheDir}/sourcemaps`. |
 
 ## CLI Commands
 
@@ -85,13 +87,15 @@ Convert TypeScript files to GDScript.
 ts2gd convert src/Player.ts -o scripts/
 ```
 
-Source maps are always generated alongside the output `.gd` files.
+Source maps are stored in the cache directory (not alongside `.gd` files).
+Unchanged files are skipped automatically via the cache.
 
 Options:
 
 - `-o, --output-dir <dir>` — Output directory
 - `--root-dir <dir>` — Root directory (default: `.`)
 - `--tsconfig <path>` — Path to tsconfig.json
+- `--no-cache` — Disable cache (force full reconversion)
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `# ERROR:` comments)
 
 ### `ts2gd convert-gd <files...>`
@@ -209,6 +213,23 @@ GD-to-TS conversion includes optional helpers that enhance the output:
   ```
   For simple identifier/property-access right-hand sides, the helper emits `typeof <expr>`; for other expressions (literals, `new` calls, etc.) it uses the TS type checker's inferred type string.
 
+### `ts2gd lint <files...>`
+
+Lint TypeScript files by converting to GDScript and reporting diagnostics. If no files given, lints all `.ts` files in `tsDir`.
+
+```bash
+ts2gd lint src/Player.ts
+```
+
+Options:
+
+- `--root-dir <dir>` — Root directory (default: `.`)
+- `--ts-dir <dir>` — TypeScript source directory
+- `--tsconfig <path>` — Path to tsconfig.json
+- `--godot-path <path>` — Path to Godot executable (enables GDScript validation)
+- `--project-root <dir>` — Godot project root for validation
+- `--no-cache` — Disable cache (force full re-lint)
+
 ### `ts2gd watch`
 
 Watch TypeScript files and auto-convert on change.
@@ -217,7 +238,7 @@ Watch TypeScript files and auto-convert on change.
 ts2gd watch --root-dir src --output-dir scripts
 ```
 
-Source maps are always generated alongside the output `.gd` files.
+Source maps are stored in the cache directory.
 
 Options:
 
@@ -284,15 +305,18 @@ tstogd open-editor -f {file} -l {line} -c {col} -p {project} -e "code --goto {ts
 Options:
 
 - `-f, --file <path>` -- GDScript file path (absolute or `res://`)
-- `-e, --editor-cmd <cmd>` -- Editor command template with default godot placeholders and `{tsFile}`
+- `-e, --editor-cmd <cmd>` -- Editor command template. Placeholders: `{tsFile}`, `{tsLine}`, `{tsCol}` (plus any Godot placeholders like `{line}`, `{col}`)
+- `-l, --line <n>` -- GDScript line number (from Godot, default: `1`)
+- `-c, --col <n>` -- GDScript column number (from Godot, default: `1`)
 - `-p, --project <dir>` -- Godot project directory (where `tstogd.json` is)
 
 How it works:
 
 1. Loads `tstogd.json` from the project directory
 2. Maps the `.gd` file to `.ts` file using `gdDir` -> `tsDir` path mapping
-3. Replaces `{tsFile}` (and other placeholders) in the editor command
-4. Spawns the editor process
+3. Remaps GD line:col to TS line:col using cached source maps (`{tsLine}`, `{tsCol}`)
+4. Replaces `{tsFile}`, `{tsLine}`, `{tsCol}` in the editor command
+5. Spawns the editor process
 
 #### Godot configuration
 
@@ -300,7 +324,7 @@ In Godot, go to **Editor Settings → Text Editor → External** and configure:
 
 - **Use External Editor**: `On`
 - **Exec Path**: `tstogd` (or `npx tstogd`, or full path to the binary)
-- **Exec Flags**: `open-editor -f "{file}" -p "{project}" -e "code --goto {tsFile}:{line}:{col}"`
+- **Exec Flags**: `open-editor -f "{file}" -l {line} -c {col} -p "{project}" -e "code --goto {tsFile}:{tsLine}:{tsCol}"`
 
 > **Note:** Use double quotes around `{file}` and `{project}` to handle paths with spaces. Do **not** use single quotes — they become literal characters on Windows.
 
@@ -308,11 +332,19 @@ Also enable **Editor Settings → Text Editor → Behavior → Auto Reload Scrip
 
 #### Editor command examples
 
-| Editor   | `-e` flag                                      |
-| -------- | ---------------------------------------------- |
-| VS Code  | `-e "code --goto {tsFile}:{line}:{col}"`       |
-| WebStorm | `-e "webstorm --line {line} --column {col} {tsFile}"` |
-| Vim      | `-e "vim +{line} {tsFile}"`                    |
+| Editor   | `-e` flag                                              |
+| -------- | ------------------------------------------------------ |
+| VS Code  | `-e "code --goto {tsFile}:{tsLine}:{tsCol}"`           |
+| WebStorm | `-e "webstorm --line {tsLine} --column {tsCol} {tsFile}"` |
+| Vim      | `-e "vim +{tsLine} {tsFile}"`                          |
+
+### `ts2gd clear-cache`
+
+Clear the conversion cache. Useful when cache becomes stale or after upgrading the converter.
+
+```bash
+ts2gd clear-cache
+```
 
 ## TypeScript Helpers (`gd` namespace)
 

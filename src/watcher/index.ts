@@ -6,7 +6,7 @@ import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
 import { generateTypings, generateAddonTypings, generateFileTypings } from '../typings/scenes.ts';
 import { shouldIgnore } from '../config/index.ts';
-import { FileCache } from '../cache/index.ts';
+import { ProjectCache } from '../cache/index.ts';
 import { writeFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 
@@ -44,7 +44,8 @@ export interface WatcherOptions {
 export class Watcher {
   private options: WatcherOptions;
   private fsWatcher: FSWatcher | null = null;
-  private cache: FileCache;
+  private cache: ProjectCache;
+  private sourcemapsDir: string;
   private tsFiles: Set<string> = new Set();
   private tsDir: string;
   private gdDir: string;
@@ -54,15 +55,9 @@ export class Watcher {
     this.options = options;
     this.tsDir = options.tsDir ?? options.rootDir;
     this.gdDir = options.gdDir ?? options.outputDir ?? this.tsDir;
-    // Derive a stable per-project cache dir under the OS temp directory
-    // (hash of the absolute root path ensures different projects don't collide).
-    const projectHash = createHash('sha256')
-      .update(resolve(options.rootDir))
-      .digest('hex')
-      .slice(0, 16);
-    this.cache = new FileCache(
-      options.cacheDir ?? join(tmpdir(), `ts2gd-cache-${projectHash}`),
-    );
+    const cacheDir = options.cacheDir ?? join(tmpdir(), `ts2gd-cache-${createHash('sha256').update(resolve(options.rootDir)).digest('hex').slice(0, 16)}`);
+    this.sourcemapsDir = join(cacheDir, 'sourcemaps');
+    this.cache = new ProjectCache(cacheDir, this.sourcemapsDir);
   }
 
   start(): void {
@@ -122,32 +117,25 @@ export class Watcher {
 
   private handleRemove(filePath: string): void {
     this.tsFiles.delete(filePath);
-    this.cache.remove(filePath);
+    // Stale entries are cleaned on next full build via cleanStale()
     this.cache.save();
   }
 
   private async convertFile(filePath: string): Promise<void> {
-    // Check cache
-    if (!this.cache.needsUpdate(filePath)) {
+    const relPath = relative(this.tsDir, filePath);
+    const outputPath = resolve(this.gdDir, relPath.replace(/\.ts$/, '.gd'));
+
+    // Check cache — skip if both source and output are unchanged
+    if (this.cache.isTsToGdFresh(filePath, outputPath)) {
       return;
     }
 
-    // Check if output was modified externally
-    if (this.cache.outputModified(filePath)) {
-      this.log(
-        filePath,
-        'WARNING: Output file was modified externally. Skipping.',
-        'warning',
-      );
-      return;
-    }
-
-    // Convert (diagnostics are produced by the converter itself)
+    // Convert
     const result = convertTsToGd({
       filePath,
       rootDir: this.tsDir,
       tsConfigPath: this.options.tsConfigPath,
-      sourceMap: this.options.sourceMap,
+      sourceMap: true,
     });
 
     for (const d of result.diagnostics) {
@@ -163,17 +151,11 @@ export class Watcher {
     }
 
     // Write output
-    const relPath = relative(this.tsDir, filePath);
-    const outputPath = resolve(this.gdDir, relPath.replace(/\.ts$/, '.gd'));
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, result.code);
 
-    if (result.sourceMap) {
-      writeFileSync(outputPath + '.map', result.sourceMap);
-    }
-
-    // Update cache
-    this.cache.update(filePath, outputPath);
+    // Update cache (writes source map to cache dir)
+    this.cache.updateTsToGd(filePath, outputPath, result.sourceMap, this.options.rootDir);
     this.cache.save();
 
     this.log(
@@ -189,6 +171,8 @@ export class Watcher {
         gdFiles: [outputPath],
         projectRoot,
         godotPath: this.options.godotPath,
+        sourceMapDir: this.sourcemapsDir,
+        rootDir: this.options.rootDir,
       });
       for (const d of validateResult.diagnostics) {
         this.log(
@@ -217,12 +201,19 @@ export class Watcher {
         tsConfigPath: this.options.tsConfigPath,
         ignore: this.options.ignore,
         projectFile: this.options.projectFile,
+        cache: this.cache,
       });
       generateAddonTypings({
         rootDir: this.options.rootDir,
         outputDir: typingsDir,
         ignore: this.options.ignore,
+        cache: this.cache,
       });
+
+      // Clean stale TS→GD entries on first build
+      const currentTsFiles = new Set([...this.tsFiles].map(f => f.replace(/\\/g, '/')));
+      this.cache.cleanStale(currentTsFiles);
+      this.cache.save();
       return;
     }
 
@@ -235,6 +226,7 @@ export class Watcher {
       scenesDir: this.options.scenesDir ?? this.options.rootDir,
       ignore: this.options.ignore,
       projectFile: this.options.projectFile,
+      cache: this.cache,
     });
   }
 

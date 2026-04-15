@@ -4,6 +4,7 @@ import { createTsProgram } from '../parser/typescript/index.ts';
 import { resolveRegistry } from '../config/index.ts';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
 import { findAddonGdFiles } from '../cli/helpers.ts';
+import { ProjectCache } from '../cache/index.ts';
 
 import { parseScene } from './scene-parser.ts';
 import {
@@ -60,6 +61,8 @@ export interface GenerateTypingsOptions {
   projectFile?: string;
   /** Path to godot-class-registry.json (for typed signal handler generation) */
   registryPath?: string;
+  /** Optional cache instance for skipping unchanged typings */
+  cache?: ProjectCache;
 }
 
 /**
@@ -71,8 +74,9 @@ export interface GenerateTypingsOptions {
  * Returns list of written file paths.
  */
 export function generateTypings(options: GenerateTypingsOptions): string[] {
-  const { rootDir, tsDir, outputDir, scenesDir, ignore = [] } = options;
+  const { rootDir, tsDir, outputDir, scenesDir, ignore = [], cache } = options;
   const writtenFiles: string[] = [];
+  const typingSources: string[] = []; // Track all sources for cleanStale
 
   mkdirSync(outputDir, { recursive: true });
 
@@ -95,13 +99,19 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
 
   // Track unique names per scene (need to scan raw parsed data)
   for (const sceneFile of sceneFiles) {
+    typingSources.push(sceneFile);
+    const actualResPath = absPathToResPath(sceneFile, rootDir);
+    const outputFile = sceneResPathToOutputFile(actualResPath);
+    const outputPath = resolve(outputDir, outputFile);
+
+    // Cache check: skip if scene file and .d.ts are unchanged
+    if (cache?.isTypingsFresh(sceneFile, outputPath)) {
+      writtenFiles.push(outputPath);
+      continue;
+    }
+
     const sceneData = parseScene(sceneFile);
     if (!sceneData) continue;
-
-    const sceneResPath = absPathToResPath(sceneFile, rootDir)
-      .replace(/\.ts$/, '.tscn'); // normalize
-    // Fix: use the actual .tscn extension from the file
-    const actualResPath = absPathToResPath(sceneFile, rootDir);
 
     // Collect unique name nodes from the parsed data
     const uniqueNames = new Set<string>();
@@ -114,16 +124,24 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
     }
 
     const content = generateSceneTypingContent(actualResPath, sceneData, uniqueNames);
-    const outputFile = sceneResPathToOutputFile(actualResPath);
-    const outputPath = resolve(outputDir, outputFile);
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, content);
     writtenFiles.push(outputPath);
+    cache?.updateTypings(sceneFile, outputPath);
   }
 
   // 3. Generate .gd.d.ts for each script
   for (const [scriptResPath, classInfo] of scriptClassMap) {
+    typingSources.push(classInfo.tsAbsPath);
     const outputFile = scriptResPathToOutputFile(scriptResPath);
+    const outputPath = resolve(outputDir, outputFile);
+
+    // Cache check: skip if TS source and .d.ts are unchanged
+    if (cache?.isTypingsFresh(classInfo.tsAbsPath, outputPath)) {
+      writtenFiles.push(outputPath);
+      continue;
+    }
+
     const tsImportPath = computeTsImport(outputDir, outputFile, classInfo.tsAbsPath);
     // Module path for declare module (uses .ts extension)
     const tsModulePath = tsImportPath.replace(/\.js$/, '.ts');
@@ -139,10 +157,10 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       classInfo.extendsNode,
     );
 
-    const outputPath = resolve(outputDir, outputFile);
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, content);
     writtenFiles.push(outputPath);
+    cache?.updateTypings(classInfo.tsAbsPath, outputPath);
   }
 
   // 4. Generate bundled _resources.d.ts for all asset files
@@ -190,6 +208,13 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
   writeFileSync(indexPath, indexContent);
   writtenFiles.push(indexPath);
 
+  // Clean stale typings entries and save cache
+  if (cache) {
+    const currentTypingSources = new Set(typingSources.map(f => f.replace(/\\/g, '/')));
+    cache.cleanStale(undefined, undefined, currentTypingSources);
+    cache.save();
+  }
+
   return writtenFiles;
 }
 
@@ -203,6 +228,8 @@ export interface GenerateFileTypingsOptions {
   scenesDir?: string;
   ignore?: string[];
   projectFile?: string;
+  /** Optional cache instance for skipping unchanged typings */
+  cache?: ProjectCache;
 }
 
 /**
@@ -215,7 +242,7 @@ export function generateFileTypings(
   allTsFiles: string[],
   options: GenerateFileTypingsOptions,
 ): string[] {
-  const { rootDir, tsDir, outputDir, ignore = [] } = options;
+  const { rootDir, tsDir, outputDir, ignore = [], cache } = options;
   const writtenFiles: string[] = [];
 
   mkdirSync(outputDir, { recursive: true });
@@ -262,6 +289,7 @@ export function generateFileTypings(
       mkdirSync(dirname(outputPath), { recursive: true });
       writeFileSync(outputPath, content);
       writtenFiles.push(outputPath);
+      cache?.updateTypings(classInfo.tsAbsPath, outputPath);
     }
   }
 
@@ -286,6 +314,7 @@ export function generateFileTypings(
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, content);
     writtenFiles.push(outputPath);
+    cache?.updateTypings(sceneFile, outputPath);
   }
 
   // Regenerate _resources.d.ts if any resource/asset changed
@@ -331,6 +360,8 @@ export function generateFileTypings(
     writtenFiles.push(indexPath);
   }
 
+  cache?.save();
+
   return writtenFiles;
 }
 
@@ -341,6 +372,8 @@ export interface GenerateAddonTypingsOptions {
   outputDir: string;
   ignore?: string[];
   registryPath?: string;
+  /** Optional cache instance for skipping unchanged addon files */
+  cache?: ProjectCache;
 }
 
 /**
@@ -349,12 +382,27 @@ export interface GenerateAddonTypingsOptions {
  * then generates .gd.d.ts scene typings for each addon script.
  */
 export function generateAddonTypings(options: GenerateAddonTypingsOptions): string[] {
-  const { rootDir, outputDir } = options;
+  const { rootDir, outputDir, cache } = options;
   const ignore = options.ignore ?? [];
   const writtenFiles: string[] = [];
 
   const addonGdFiles = findAddonGdFiles(rootDir, ignore);
   if (addonGdFiles.length === 0) return writtenFiles;
+
+  // Cache check: if ALL addon files are fresh, skip the entire pipeline.
+  // (Changing one addon can affect type resolution for others, so it's all-or-nothing.)
+  if (cache) {
+    const allFresh = addonGdFiles.every(gdPath => {
+      const relPath = relative(rootDir, gdPath).replace(/\\/g, '/');
+      const tsPath = resolve(outputDir, relPath.replace(/\.gd$/, '.ts'));
+      const dtsPath = resolve(
+        outputDir,
+        scriptResPathToOutputFile('res://' + relPath),
+      );
+      return cache.isAddonFresh(gdPath, tsPath, dtsPath);
+    });
+    if (allFresh) return writtenFiles;
+  }
 
   const registry = resolveRegistry({ registryPath: options.registryPath });
   const addonSources = addonGdFiles.map(f => ({
@@ -400,6 +448,23 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, content);
     writtenFiles.push(outputPath);
+  }
+
+  // Update addon cache entries after full pipeline
+  if (cache) {
+    for (const gdPath of addonGdFiles) {
+      const relPath = relative(rootDir, gdPath).replace(/\\/g, '/');
+      const tsPath = resolve(outputDir, relPath.replace(/\.gd$/, '.ts'));
+      const resPath = 'res://' + relPath;
+      const dtsFile = scriptResPathToOutputFile(resPath);
+      const dtsPath = resolve(outputDir, dtsFile);
+      if (existsSync(tsPath) && existsSync(dtsPath)) {
+        cache.updateAddon(gdPath, tsPath, dtsPath);
+      }
+    }
+    const currentAddonFiles = new Set(addonGdFiles.map(f => f.replace(/\\/g, '/')));
+    cache.cleanStale(undefined, currentAddonFiles);
+    cache.save();
   }
 
   return writtenFiles;
