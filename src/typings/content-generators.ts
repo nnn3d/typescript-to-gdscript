@@ -1,3 +1,5 @@
+import { existsSync } from 'fs';
+import { join, relative } from 'path';
 import type { ParseSceneResult } from './scene-parser.ts';
 import type { TreeNodeInfo } from './scene-tree.ts';
 import type { AutoloadEntry } from './scene-utils.ts';
@@ -9,6 +11,26 @@ import {
   scriptResPathToTreesInterfaceName,
   nodePathToTypeName,
 } from './scene-utils.ts';
+
+// ─── Helpers ────────────────────────────────────────────────
+
+/**
+ * Compute a relative path from outputDir to the package's typings/index.d.ts.
+ * Walks up from outputDir looking for node_modules. Returns undefined if not found.
+ */
+export function resolvePackageTypingsRef(outputDir: string): string | undefined {
+  let dir = outputDir;
+  for (let i = 0; i < 10; i++) {
+    const candidate = join(dir, 'node_modules', 'typescript-to-gdscript', 'typings', 'index.d.ts');
+    if (existsSync(candidate)) {
+      return relative(outputDir, candidate).replace(/\\/g, '/');
+    }
+    const parent = join(dir, '..');
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return undefined;
+}
 
 // ─── Content Generators ─────────────────────────────────────
 
@@ -436,9 +458,16 @@ export function generateResourceTypingContent(
  */
 export function generateIndexTypingContent(
   autoloads: AutoloadEntry[],
+  outputDir?: string,
 ): string {
   const lines: string[] = [];
-  lines.push('// AUTO-GENERATED — do not edit manually.\n');
+  lines.push('// AUTO-GENERATED — do not edit manually.');
+  // Reference the package typings so IDEs eagerly index all Godot classes for autocomplete.
+  if (outputDir) {
+    const ref = resolvePackageTypingsRef(outputDir);
+    if (ref) lines.push(`/// <reference path="${ref}" />`);
+  }
+  lines.push('');
 
   // Import autoload scripts (.gd autoloads need imports; .tscn autoloads use GodotSceneTrees)
   const gdAutoloads = autoloads.filter(a => a.resPath.endsWith('.gd'));

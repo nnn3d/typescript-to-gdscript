@@ -16,15 +16,25 @@ yarn add typescript-to-gdscript
 
 ### Godot Typings
 
-Add to your `tsconfig.json` to get autocomplete for Godot classes, `gd` helpers, and global types:
+Add to your `tsconfig.json` to get type-checking and IDE autocomplete for Godot classes, `gd` helpers, and global types:
 
 ```json
 {
   "compilerOptions": {
-    "types": ["typescript-to-gdscript/typings"]
-  }
+    "noLib": true,
+    "strict": true,
+    "noEmit": true,
+    "types": []
+  },
+  "include": [
+    "node_modules/typescript-to-gdscript/typings",
+    "src/**/*.ts",
+    "_typings/**/*.d.ts"
+  ]
 }
 ```
+
+> **Note:** `noLib: true` disables standard TypeScript libs since GDScript uses a different runtime. The `include` array must reference the package typings directory. Adjust `src` and `_typings` paths to match your `tsDir` and `typingsDir`. Run `ts2gd generate-typings` to populate the typings directory — the generated `_index.d.ts` includes a `/// <reference>` to the package typings so IDEs (WebStorm, Rider, VS Code) eagerly index all Godot classes for autocomplete.
 
 This provides:
 

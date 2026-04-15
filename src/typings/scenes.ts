@@ -216,7 +216,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
   const projectFile = options.projectFile ?? join(rootDir, 'project.godot');
   const autoloads = existsSync(projectFile) ? parseAutoloads(projectFile) : [];
 
-  const indexContent = generateIndexTypingContent(autoloads);
+  const indexContent = generateIndexTypingContent(autoloads, outputDir);
   const indexPath = resolve(outputDir, '_index.d.ts');
   writeFileSync(indexPath, indexContent);
   writtenFiles.push(indexPath);
@@ -367,7 +367,7 @@ export function generateFileTypings(
   if (changedProject.length > 0) {
     const projectFile = options.projectFile ?? join(rootDir, 'project.godot');
     const autoloads = existsSync(projectFile) ? parseAutoloads(projectFile) : [];
-    const indexContent = generateIndexTypingContent(autoloads);
+    const indexContent = generateIndexTypingContent(autoloads, outputDir);
     const indexPath = resolve(outputDir, '_index.d.ts');
     writeFileSync(indexPath, indexContent);
     writtenFiles.push(indexPath);
