@@ -23,6 +23,7 @@ export function registerLintCommand(program: Command): void {
       'Path to Godot executable (enables GDScript validation)',
     )
     .option('--project-root <dir>', 'Godot project root for validation')
+    .option('--godot-validate-on-error', 'Run Godot validation even when converter errors are present')
     .option('--no-cache', 'Disable cache (force full re-lint)')
     .action((files: string[], opts) => {
       const cfg = resolveConfig({
@@ -89,8 +90,8 @@ export function registerLintCommand(program: Command): void {
             }
           }
 
-          // Godot validation (only if no converter errors)
-          if (!fileHasErrors && godotPath && existsSync(gdPath)) {
+          // Godot validation (skip if converter errors, unless --godot-validate-on-error)
+          if ((!fileHasErrors || opts.godotValidateOnError) && godotPath && existsSync(gdPath)) {
             const sourceMapJson = cache.getSourceMap(filePath);
             const validateResult = validateGdFilesSync({
               gdFiles: [{ path: gdPath, sourceMapJson, tsFilePath: filePath }],
@@ -134,7 +135,7 @@ export function registerLintCommand(program: Command): void {
           );
         }
 
-        if (!fileHasErrors && godotPath) {
+        if ((!fileHasErrors || opts.godotValidateOnError) && godotPath) {
           const gdRelPath = relPath.replace(/\.ts$/, '.gd');
           const gdAbsPath = resolve(tmpdir(), 'tstogd', gdRelPath);
           const gdDir = dirname(gdAbsPath);
