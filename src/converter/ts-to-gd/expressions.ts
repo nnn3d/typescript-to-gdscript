@@ -296,11 +296,20 @@ export function emitCallExpression(
 
   // Check each argument for `undefined` in its type.
   // Skip literal `undefined` -- already caught by emitExpression's identifier check.
+  // Skip class field accesses -- their `undefined` maps to `null` in GDScript.
   const checker = t.ctx.checker;
   for (const arg of node.arguments) {
     if (ts.isIdentifier(arg) && arg.text === 'undefined') continue;
     const argType = checker.getTypeAtLocation(arg);
     if (typeContainsUndefined(argType)) {
+      // Class fields (PropertyDeclaration) are nullable in GDScript, not undefined
+      if (ts.isPropertyAccessExpression(arg)) {
+        const sym = checker.getSymbolAtLocation(arg.name);
+        const isClassField = sym?.getDeclarations()?.some(
+          (d) => ts.isPropertyDeclaration(d),
+        ) ?? false;
+        if (isClassField) continue;
+      }
       t.addDiagnostic(
         arg,
         'error',
