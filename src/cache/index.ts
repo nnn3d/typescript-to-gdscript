@@ -237,6 +237,9 @@ export class ProjectCache {
   /** Write cache manifest to disk. */
   save(): void {
     mkdirSync(this.cacheDir, { recursive: true });
+    // Ensure Godot ignores the cache directory
+    const gdignore = join(this.cacheDir, '.gdignore');
+    if (!existsSync(gdignore)) writeFileSync(gdignore, '');
     writeFileSync(this.cacheFile, JSON.stringify(this.data, null, 2));
   }
 
