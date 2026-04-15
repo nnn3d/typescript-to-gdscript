@@ -21,6 +21,10 @@ export function setDebugEnabled(enabled: boolean): void {
   _debugEnabled = enabled;
 }
 
+export function isDebugEnabled(): boolean {
+  return _debugEnabled;
+}
+
 /** Print a message only when --debug is enabled */
 export function debugLog(message: string): void {
   if (_debugEnabled) {
@@ -159,6 +163,7 @@ export function generateAllTypings(cfg: {
     ignore: cfg.ignore,
     projectFile: cfg.projectFile,
     cache,
+    onDebug: debugLog,
   });
 
   const addonFiles = generateAddonTypings({
@@ -166,6 +171,7 @@ export function generateAllTypings(cfg: {
     outputDir: cfg.typingsDir,
     ignore: cfg.ignore,
     cache,
+    onDebug: debugLog,
   });
 
   debugLog(

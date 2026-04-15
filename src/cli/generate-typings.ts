@@ -55,6 +55,7 @@ export function registerGenerateTypingsCommand(program: Command): void {
         ignore: cfg.ignore,
         projectFile: cfg.projectFile,
         cache,
+        onDebug: debugLog,
       });
       debugLog(`Generated ${writtenFiles.length} typings files in ${outputDir}`);
     });

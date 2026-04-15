@@ -28,6 +28,7 @@ export function registerGenerateAddonTypingsCommand(program: Command): void {
         outputDir,
         ignore: cfg.ignore,
         cache,
+        onDebug: debugLog,
       });
       debugLog(`Generated ${writtenFiles.length} addon typings files in ${outputDir}`);
     });

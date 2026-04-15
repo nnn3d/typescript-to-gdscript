@@ -6,6 +6,8 @@ export interface TsProgramOptions {
   rootDir: string;
   files: string[];
   tsConfigPath?: string;
+  /** Previous program for incremental reuse — TypeScript skips re-parsing unchanged files. */
+  oldProgram?: ts.Program;
 }
 
 export function createTsProgram(options: TsProgramOptions): ts.Program {
@@ -20,7 +22,10 @@ export function createTsProgram(options: TsProgramOptions): ts.Program {
       ts.sys,
       tsConfigDir,
     );
-    return ts.createProgram(parsedConfig.fileNames, parsedConfig.options);
+    return ts.createProgram(
+      parsedConfig.fileNames, parsedConfig.options,
+      /* host */ undefined, options.oldProgram,
+    );
   }
 
   const compilerOptions: ts.CompilerOptions = {
@@ -32,7 +37,10 @@ export function createTsProgram(options: TsProgramOptions): ts.Program {
     noEmit: true,
   };
 
-  return ts.createProgram(options.files, compilerOptions);
+  return ts.createProgram(
+    options.files, compilerOptions,
+    /* host */ undefined, options.oldProgram,
+  );
 }
 
 export function getTypeChecker(program: ts.Program): ts.TypeChecker {

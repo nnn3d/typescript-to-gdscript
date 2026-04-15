@@ -10,9 +10,6 @@ import {
   existsSync,
   mkdirSync,
   rmSync,
-  unlinkSync,
-  readdirSync,
-  statSync,
 } from 'fs';
 import { createHash } from 'crypto';
 import { join, dirname, relative } from 'path';
@@ -40,8 +37,6 @@ try {
 interface TsToGdEntry {
   tsHash: string;
   gdHash: string;
-  /** Relative path from sourcemapsDir to the .map file (for orphan cleanup) */
-  mapRelPath?: string;
 }
 
 interface AddonEntry {
@@ -86,7 +81,7 @@ export class ProjectCache {
         if (data.version === PACKAGE_VERSION) {
           return data;
         }
-        console.log(`[cache] Version changed (${data.version} → ${PACKAGE_VERSION}), clearing cache`);
+        console.log(`[cache] Version changed (${data.version} → ${PACKAGE_VERSION}), clearing cache.`);
         this.clearFiles();
       } catch {
         // Corrupted cache; start fresh
@@ -119,26 +114,34 @@ export class ProjectCache {
     rootDir: string,
   ): void {
     const key = this.normKey(tsPath);
-    const mapRelPath = sourceMap
-      ? relative(rootDir, gdPath).replace(/\\/g, '/') + '.map'
-      : undefined;
-    this.data.tsToGd[key] = {
-      tsHash: hashFile(tsPath),
-      gdHash: hashFile(gdPath),
-      ...(mapRelPath ? { mapRelPath } : {}),
-    };
+    const tsHash = hashFile(tsPath);
+    const gdHash = hashFile(gdPath);
+    this.data.tsToGd[key] = { tsHash, gdHash };
     if (sourceMap) {
-      this.writeSourceMap(gdPath, sourceMap, rootDir);
+      this.writeSourceMap(gdPath, sourceMap, rootDir, tsHash, gdHash);
     }
   }
 
-  /** Read a cached source map for a GD file. Returns JSON string or undefined. */
+  /**
+   * Read a cached source map for a GD file. Returns the raw source map JSON
+   * string (without the extra cache fields) or undefined if missing/stale.
+   * Staleness is checked by comparing the embedded gdHash against the current
+   * GD file on disk — if the file was modified, the map positions are invalid.
+   */
   getSourceMap(gdPath: string, rootDir: string): string | undefined {
     const mapPath = this.sourceMapPath(gdPath, rootDir);
-    if (existsSync(mapPath)) {
-      try { return readFileSync(mapPath, 'utf-8'); } catch { /* */ }
-    }
-    return undefined;
+    if (!existsSync(mapPath)) return undefined;
+    try {
+      const raw = readFileSync(mapPath, 'utf-8');
+      // Validate: if the GD file changed since the map was generated, it's stale.
+      // The _gdHash field is embedded in the JSON — parse only to check it.
+      // Return the raw string as-is; consumers ignore unknown fields per the spec.
+      const parsed = JSON.parse(raw);
+      if (parsed._gdHash && existsSync(gdPath) && hashFile(gdPath) !== parsed._gdHash) {
+        return undefined;
+      }
+      return raw;
+    } catch { return undefined; }
   }
 
   // ── Addons (GD→TS) ────────────────────────────────────────
@@ -202,25 +205,21 @@ export class ProjectCache {
   /**
    * Remove cache entries for files that no longer exist in the project.
    * Pass undefined to skip a section (e.g. convert only knows about TS files).
-   * Also removes orphaned source map files when currentTsFiles is provided.
+   * Source map files are NOT cleaned — they are self-validating via embedded
+   * hashes and will be ignored by getSourceMap() when stale.
    */
   cleanStale(
     currentTsFiles?: Set<string>,
     currentAddonFiles?: Set<string>,
     currentTypingSources?: Set<string>,
   ): void {
-    // Clean tsToGd entries first, then orphaned source maps.
-    // Order matters: cleanOrphanedSourceMaps reads the remaining entries
-    // to determine which .map files are still valid.
     if (currentTsFiles) {
       for (const key of Object.keys(this.data.tsToGd)) {
         if (!currentTsFiles.has(key)) {
           delete this.data.tsToGd[key];
         }
       }
-      this.cleanOrphanedSourceMaps();
     }
-    // Clean addons
     if (currentAddonFiles) {
       for (const key of Object.keys(this.data.addons)) {
         if (!currentAddonFiles.has(key)) {
@@ -228,7 +227,6 @@ export class ProjectCache {
         }
       }
     }
-    // Clean typings
     if (currentTypingSources) {
       for (const key of Object.keys(this.data.typings)) {
         if (!currentTypingSources.has(key)) {
@@ -236,30 +234,6 @@ export class ProjectCache {
         }
       }
     }
-  }
-
-  /**
-   * Remove source map files that don't correspond to any remaining tsToGd entry.
-   * Uses the `mapRelPath` stored in each entry to determine which files are valid.
-   */
-  private cleanOrphanedSourceMaps(): void {
-    if (!existsSync(this.sourcemapsDir)) return;
-    // Collect valid map relative paths from remaining tsToGd entries
-    const validMapPaths = new Set<string>();
-    for (const entry of Object.values(this.data.tsToGd)) {
-      if (entry.mapRelPath) {
-        validMapPaths.add(entry.mapRelPath);
-      }
-    }
-    try {
-      walkDir(this.sourcemapsDir, (filePath) => {
-        if (!filePath.endsWith('.map')) return;
-        const rel = relative(this.sourcemapsDir, filePath).replace(/\\/g, '/');
-        if (!validMapPaths.has(rel)) {
-          try { unlinkSync(filePath); } catch { /* */ }
-        }
-      });
-    } catch { /* ignore errors during cleanup */ }
   }
 
   // ── Persistence ────────────────────────────────────────────
@@ -289,10 +263,22 @@ export class ProjectCache {
     return join(this.sourcemapsDir, rel + '.map');
   }
 
-  private writeSourceMap(gdPath: string, sourceMap: string, rootDir: string): void {
+  private writeSourceMap(
+    gdPath: string, sourceMap: string, rootDir: string,
+    tsHash: string, gdHash: string,
+  ): void {
     const mapPath = this.sourceMapPath(gdPath, rootDir);
     mkdirSync(dirname(mapPath), { recursive: true });
-    writeFileSync(mapPath, sourceMap);
+    // Embed file hashes so the source map is self-validating
+    try {
+      const parsed = JSON.parse(sourceMap);
+      parsed._tsHash = tsHash;
+      parsed._gdHash = gdHash;
+      writeFileSync(mapPath, JSON.stringify(parsed));
+    } catch {
+      // If source map isn't valid JSON, write as-is
+      writeFileSync(mapPath, sourceMap);
+    }
   }
 
   // ── Key normalization ─────────────────────────────────────
@@ -308,18 +294,4 @@ export class ProjectCache {
 export function hashFile(filePath: string): string {
   const content = readFileSync(filePath);
   return createHash('md5').update(content).digest('hex').slice(0, 16);
-}
-
-/** Recursively walk a directory, calling `fn` for each file. */
-function walkDir(dir: string, fn: (filePath: string) => void): void {
-  for (const entry of readdirSync(dir)) {
-    const fullPath = join(dir, entry);
-    try {
-      if (statSync(fullPath).isDirectory()) {
-        walkDir(fullPath, fn);
-      } else {
-        fn(fullPath);
-      }
-    } catch { /* skip inaccessible */ }
-  }
 }

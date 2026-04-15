@@ -63,6 +63,8 @@ export interface GenerateTypingsOptions {
   registryPath?: string;
   /** Optional cache instance for skipping unchanged typings */
   cache?: ProjectCache;
+  /** Optional debug logger (e.g. for --debug CLI flag) */
+  onDebug?: (message: string) => void;
 }
 
 /**
@@ -74,9 +76,11 @@ export interface GenerateTypingsOptions {
  * Returns list of written file paths.
  */
 export function generateTypings(options: GenerateTypingsOptions): string[] {
-  const { rootDir, tsDir, outputDir, scenesDir, ignore = [], cache } = options;
+  const { rootDir, tsDir, outputDir, scenesDir, ignore = [], cache, onDebug } = options;
   const writtenFiles: string[] = [];
   const typingSources: string[] = []; // Track all sources for cleanStale
+  let written = 0;
+  let skipped = 0;
 
   mkdirSync(outputDir, { recursive: true });
 
@@ -106,6 +110,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
 
     // Cache check: skip if scene file and .d.ts are unchanged
     if (cache?.isTypingsFresh(sceneFile, outputPath)) {
+      skipped++;
       writtenFiles.push(outputPath);
       continue;
     }
@@ -127,6 +132,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, content);
     writtenFiles.push(outputPath);
+    written++;
     cache?.updateTypings(sceneFile, outputPath);
   }
 
@@ -138,6 +144,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
 
     // Cache check: skip if TS source and .d.ts are unchanged
     if (cache?.isTypingsFresh(classInfo.tsAbsPath, outputPath)) {
+      skipped++;
       writtenFiles.push(outputPath);
       continue;
     }
@@ -160,7 +167,13 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, content);
     writtenFiles.push(outputPath);
+    written++;
     cache?.updateTypings(classInfo.tsAbsPath, outputPath);
+  }
+
+  if (onDebug) {
+    if (skipped > 0) onDebug(`Typings: wrote ${written}, skipped ${skipped} unchanged`);
+    else onDebug(`Typings: wrote ${written} file(s)`);
   }
 
   // 4. Generate bundled _resources.d.ts for all asset files
@@ -374,6 +387,8 @@ export interface GenerateAddonTypingsOptions {
   registryPath?: string;
   /** Optional cache instance for skipping unchanged addon files */
   cache?: ProjectCache;
+  /** Optional debug logger (e.g. for --debug CLI flag) */
+  onDebug?: (message: string) => void;
 }
 
 /**
@@ -382,7 +397,7 @@ export interface GenerateAddonTypingsOptions {
  * then generates .gd.d.ts scene typings for each addon script.
  */
 export function generateAddonTypings(options: GenerateAddonTypingsOptions): string[] {
-  const { rootDir, outputDir, cache } = options;
+  const { rootDir, outputDir, cache, onDebug } = options;
   const ignore = options.ignore ?? [];
   const writtenFiles: string[] = [];
 
@@ -401,7 +416,10 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
       );
       return cache.isAddonFresh(gdPath, tsPath, dtsPath);
     });
-    if (allFresh) return writtenFiles;
+    if (allFresh) {
+      onDebug?.(`Addon typings: skipped ${addonGdFiles.length} unchanged file(s)`);
+      return writtenFiles;
+    }
   }
 
   const registry = resolveRegistry({ registryPath: options.registryPath });
@@ -466,6 +484,8 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
     cache.cleanStale(undefined, currentAddonFiles);
     cache.save();
   }
+
+  onDebug?.(`Addon typings: wrote ${writtenFiles.length} file(s)`);
 
   return writtenFiles;
 }

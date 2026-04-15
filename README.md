@@ -299,7 +299,7 @@ ts2gd generate-class-typings src/**/*.ts -o globals.d.ts
 Open a GDScript file in an external editor as the corresponding TypeScript file. Designed for Godot's external text editor integration -- when you double-click a script in Godot, it opens the `.ts` source instead of the generated `.gd` file.
 
 ```bash
-tstogd open-editor -f {file} -l {line} -c {col} -p {project} -e "code --goto {tsFile}:{line}:{col}"
+tstogd open-editor -f {file} -l {line} -c {col} -p {project} -e "code --goto {tsFile}:{tsLine}:{tsCol}"
 ```
 
 Options:
@@ -332,11 +332,11 @@ Also enable **Editor Settings → Text Editor → Behavior → Auto Reload Scrip
 
 #### Editor command examples
 
-| Editor   | `-e` flag                                              |
-| -------- | ------------------------------------------------------ |
-| VS Code  | `-e "code --goto {tsFile}:{tsLine}:{tsCol}"`           |
-| WebStorm | `-e "webstorm --line {tsLine} --column {tsCol} {tsFile}"` |
-| Vim      | `-e "vim +{tsLine} {tsFile}"`                          |
+| Editor  | `-e` flag                                              |
+|---------|--------------------------------------------------------|
+| VS Code | `-e "code --goto {tsFile}:{tsLine}:{tsCol}"`           |
+| Rider   | `-e "rider --line {tsLine} --column {tsCol} {tsFile}"` |
+| Vim     | `-e "vim +{tsLine} {tsFile}"`                          |
 
 ### `ts2gd clear-cache`
 

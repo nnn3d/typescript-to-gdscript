@@ -135,7 +135,13 @@ describe('source map storage', () => {
     const gd = writeFile(rootDir, 'a.gd', 'gd');
     const mapJson = '{"version":3,"mappings":"AAAA"}';
     cache.updateTsToGd(ts, gd, mapJson, rootDir);
-    expect(cache.getSourceMap(gd, rootDir)).toBe(mapJson);
+    const result = cache.getSourceMap(gd, rootDir);
+    // getSourceMap returns raw JSON (including embedded _tsHash/_gdHash);
+    // consumers ignore unknown fields per the source map spec
+    const parsed = JSON.parse(result!);
+    expect(parsed.version).toBe(3);
+    expect(parsed.mappings).toBe('AAAA');
+    expect(parsed._gdHash).toMatch(/^[0-9a-f]{16}$/);
   });
 
   it('returns undefined when no source map stored', () => {
@@ -148,6 +154,34 @@ describe('source map storage', () => {
     expect(cache.getSourceMap(gd, rootDir)).toBeUndefined();
   });
 
+  it('returns undefined when GD file was modified (stale map)', () => {
+    tmpDir = makeTmpDir();
+    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
+    const rootDir = join(tmpDir, 'project');
+    const ts = writeFile(rootDir, 'a.ts', 'ts');
+    const gd = writeFile(rootDir, 'a.gd', 'original gd');
+    cache.updateTsToGd(ts, gd, '{"version":3,"mappings":"AAAA"}', rootDir);
+    // Modify GD file → embedded gdHash won't match → stale
+    writeFileSync(gd, 'modified gd');
+    expect(cache.getSourceMap(gd, rootDir)).toBeUndefined();
+  });
+
+  it('embeds _tsHash and _gdHash in the .map file on disk', () => {
+    tmpDir = makeTmpDir();
+    const sourcemapsDir = join(tmpDir, 'maps');
+    const cache = new ProjectCache(join(tmpDir, 'cache'), sourcemapsDir);
+    const rootDir = join(tmpDir, 'project');
+    const ts = writeFile(rootDir, 'a.ts', 'ts content');
+    const gd = writeFile(rootDir, 'a.gd', 'gd content');
+    cache.updateTsToGd(ts, gd, '{"version":3}', rootDir);
+    const mapPath = join(sourcemapsDir, 'a.gd.map');
+    const raw = JSON.parse(readFileSync(mapPath, 'utf-8'));
+    expect(raw._tsHash).toMatch(/^[0-9a-f]{16}$/);
+    expect(raw._gdHash).toMatch(/^[0-9a-f]{16}$/);
+    expect(raw._tsHash).toBe(hashFile(ts));
+    expect(raw._gdHash).toBe(hashFile(gd));
+  });
+
   it('stores map at correct nested path in sourcemapsDir', () => {
     tmpDir = makeTmpDir();
     const sourcemapsDir = join(tmpDir, 'maps');
@@ -156,7 +190,6 @@ describe('source map storage', () => {
     const ts = writeFile(rootDir, 'sub/deep/a.ts', 'ts');
     const gd = writeFile(rootDir, 'sub/deep/a.gd', 'gd');
     cache.updateTsToGd(ts, gd, '{"mappings":""}', rootDir);
-    // Source map should be at sourcemapsDir/sub/deep/a.gd.map
     const expectedMapPath = join(sourcemapsDir, 'sub', 'deep', 'a.gd.map');
     expect(existsSync(expectedMapPath)).toBe(true);
   });
@@ -292,7 +325,11 @@ describe('persistence (save and reload)', () => {
     cache1.save();
 
     const cache2 = new ProjectCache(cacheDir, mapsDir);
-    expect(cache2.getSourceMap(gd, rootDir)).toBe(mapJson);
+    const result = cache2.getSourceMap(gd, rootDir);
+    expect(result).toBeDefined();
+    const parsed = JSON.parse(result!);
+    expect(parsed.version).toBe(3);
+    expect(parsed.sources).toEqual(['a.ts']);
   });
 
   it('addon entries survive save + reload', () => {
@@ -469,7 +506,7 @@ describe('cleanStale', () => {
     expect(cache.isAddonFresh(addonGd, addonTs, addonDts)).toBe(true);
   });
 
-  it('removes orphaned .map files from sourcemapsDir', () => {
+  it('does not delete stale .map files (they are self-validating)', () => {
     tmpDir = makeTmpDir();
     const sourcemapsDir = join(tmpDir, 'maps');
     const cache = new ProjectCache(join(tmpDir, 'cache'), sourcemapsDir);
@@ -480,35 +517,20 @@ describe('cleanStale', () => {
     const tsB = writeFile(rootDir, 'b.ts', 'b');
     const gdB = writeFile(rootDir, 'b.gd', 'b');
 
-    cache.updateTsToGd(tsA, gdA, '{"map":"a"}', rootDir);
-    cache.updateTsToGd(tsB, gdB, '{"map":"b"}', rootDir);
+    cache.updateTsToGd(tsA, gdA, '{"version":3}', rootDir);
+    cache.updateTsToGd(tsB, gdB, '{"version":3}', rootDir);
 
     const mapA = join(sourcemapsDir, 'a.gd.map');
     const mapB = join(sourcemapsDir, 'b.gd.map');
     expect(existsSync(mapA)).toBe(true);
     expect(existsSync(mapB)).toBe(true);
 
-    // Remove b.ts from current files → b's entry and map should be cleaned
+    // Remove b.ts from current files → entry cleaned, but .map stays on disk
     const currentFiles = new Set([tsA.replace(/\\/g, '/')]);
     cache.cleanStale(currentFiles);
 
     expect(existsSync(mapA)).toBe(true);
-    expect(existsSync(mapB)).toBe(false);
-  });
-
-  it('handles non-existent sourcemapsDir gracefully', () => {
-    tmpDir = makeTmpDir();
-    const cache = new ProjectCache(
-      join(tmpDir, 'cache'),
-      join(tmpDir, 'nonexistent-maps'),
-    );
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts');
-    const gd = writeFile(rootDir, 'a.gd', 'gd');
-    cache.updateTsToGd(ts, gd, undefined, rootDir);
-
-    // Should not throw
-    expect(() => cache.cleanStale(new Set())).not.toThrow();
+    expect(existsSync(mapB)).toBe(true); // still on disk, but getSourceMap validates via hash
   });
 });
 

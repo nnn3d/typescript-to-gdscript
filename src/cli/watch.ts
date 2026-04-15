@@ -2,6 +2,7 @@ import type { Command } from 'commander';
 import { resolve } from 'path';
 import { Watcher } from '../watcher/index.ts';
 import { resolveConfig, resolveGodotPath } from '../config/index.ts';
+import { isDebugEnabled } from './helpers.ts';
 
 export function registerWatchCommand(program: Command): void {
   program
@@ -45,10 +46,12 @@ export function registerWatchCommand(program: Command): void {
         sourceMap: true,
         typingsDir: cfg.typingsDir,
         scenesDir: cfg.scenesDir,
+        cacheDir: cfg.cacheDir,
         ignore: cfg.ignore,
         projectFile: cfg.projectFile,
         godotPath,
         projectRoot: opts.projectRoot ? resolve(opts.projectRoot) : undefined,
+        debug: isDebugEnabled(),
       });
 
       watcher.start();
