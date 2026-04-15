@@ -4,7 +4,7 @@
  */
 
 import { existsSync, readFileSync } from 'fs';
-import { resolve, basename, dirname, join, relative } from 'path';
+import { resolve, dirname } from 'path';
 import { SourceMapReader } from '../sourcemap/index.ts';
 import type { TransformDiagnostic } from '../converter/common/index.ts';
 import type { GodotRawError } from './error-parser.ts';
@@ -13,27 +13,13 @@ import type { GodotRawError } from './error-parser.ts';
 
 /**
  * Remaps a Godot error from GDScript positions to TypeScript positions
- * using source maps. Falls back to GD positions if no source map available.
- *
- * @param error - The raw Godot error
- * @param sourceMapDir - Directory containing .gd.map files (mirrors GD structure relative to rootDir)
- * @param rootDir - Project root used to compute relative paths within sourceMapDir
+ * using a source map file next to the .gd file (.gd.map fallback).
+ * Falls back to GD positions if no source map available.
  */
 export async function remapError(
   error: GodotRawError,
-  sourceMapDir?: string,
-  rootDir?: string,
 ): Promise<TransformDiagnostic> {
-  var mapPath: string;
-  if (sourceMapDir && rootDir) {
-    // Cache-based: source maps mirror GD directory structure relative to rootDir
-    var relGd = relative(rootDir, error.file).replace(/\\/g, '/');
-    mapPath = join(sourceMapDir, relGd + '.map');
-  } else if (sourceMapDir) {
-    mapPath = join(sourceMapDir, basename(error.file) + '.map');
-  } else {
-    mapPath = error.file + '.map';
-  }
+  var mapPath = error.file + '.map';
 
   if (existsSync(mapPath)) {
     try {

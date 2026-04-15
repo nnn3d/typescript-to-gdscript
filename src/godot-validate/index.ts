@@ -33,10 +33,6 @@ export interface GodotValidateOptions {
   projectRoot: string;
   /** Path to Godot executable */
   godotPath: string;
-  /** Directory containing .gd.map source map files (mirrors GD structure relative to rootDir) */
-  sourceMapDir?: string;
-  /** Root directory for computing relative paths within sourceMapDir */
-  rootDir?: string;
 }
 
 export interface GodotValidateResult {
@@ -166,7 +162,7 @@ export async function validateGdFiles(
       }
 
       for (var rawError of rawErrors) {
-        var diag = await remapError(rawError, options.sourceMapDir, options.rootDir);
+        var diag = await remapError(rawError);
         allDiagnostics.push(diag);
       }
     }

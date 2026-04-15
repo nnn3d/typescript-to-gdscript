@@ -42,7 +42,7 @@ export function registerGenerateTypingsCommand(program: Command): void {
       }
 
       const outputDir = opts.output ? resolve(opts.output) : cfg.typingsDir;
-      const cache = new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir);
+      const cache = new ProjectCache(cfg.cacheDir);
 
       const writtenFiles = generateTypings({
         rootDir: cfg.rootDir,

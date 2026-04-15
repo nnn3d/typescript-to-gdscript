@@ -9,7 +9,7 @@ import {
 import { join, dirname } from 'path';
 import { tmpdir } from 'os';
 import { randomBytes } from 'crypto';
-import { ProjectCache, hashFile } from '../../src/cache/index.ts';
+import { ProjectCache, hashFile, type CachedDiagnostic } from '../../src/cache/index.ts';
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -28,6 +28,9 @@ function writeFile(dir: string, name: string, content: string): string {
   writeFileSync(p, content);
   return p;
 }
+
+const EMPTY_MAP = '{"version":3,"mappings":""}';
+const DIAGS: CachedDiagnostic[] = [];
 
 // ─── Tests ──────────────────────────────────────────────────
 
@@ -70,7 +73,7 @@ describe('TS→GD freshness', () => {
 
   it('returns false for unknown entry', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
     const ts = writeFile(tmpDir, 'project/a.ts', 'ts');
     const gd = writeFile(tmpDir, 'project/a.gd', 'gd');
     expect(cache.isTsToGdFresh(ts, gd)).toBe(false);
@@ -78,120 +81,147 @@ describe('TS→GD freshness', () => {
 
   it('returns true after update with unchanged files', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts code');
-    const gd = writeFile(rootDir, 'a.gd', 'gd code');
-    cache.updateTsToGd(ts, gd, undefined, rootDir);
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'ts code');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd code');
+    cache.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS);
     expect(cache.isTsToGdFresh(ts, gd)).toBe(true);
   });
 
   it('returns false when TS source is modified', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'original ts');
-    const gd = writeFile(rootDir, 'a.gd', 'gd code');
-    cache.updateTsToGd(ts, gd, undefined, rootDir);
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'original ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd code');
+    cache.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS);
     writeFileSync(ts, 'modified ts');
     expect(cache.isTsToGdFresh(ts, gd)).toBe(false);
   });
 
   it('returns false when GD output is modified', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts code');
-    const gd = writeFile(rootDir, 'a.gd', 'original gd');
-    cache.updateTsToGd(ts, gd, undefined, rootDir);
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'ts code');
+    const gd = writeFile(tmpDir, 'a.gd', 'original gd');
+    cache.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS);
     writeFileSync(gd, 'modified gd');
     expect(cache.isTsToGdFresh(ts, gd)).toBe(false);
   });
 
   it('returns false when GD file is deleted', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts code');
-    const gd = writeFile(rootDir, 'a.gd', 'gd code');
-    cache.updateTsToGd(ts, gd, undefined, rootDir);
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'ts code');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd code');
+    cache.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS);
     rmSync(gd);
     expect(cache.isTsToGdFresh(ts, gd)).toBe(false);
   });
 });
 
-describe('source map storage', () => {
+describe('source map storage (inline in cache.json)', () => {
   let tmpDir: string;
   afterEach(() => {
     if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
   });
 
-  it('stores and retrieves source map JSON', () => {
+  it('stores and retrieves source map by TS path', () => {
     tmpDir = makeTmpDir();
-    const sourcemapsDir = join(tmpDir, 'maps');
-    const cache = new ProjectCache(join(tmpDir, 'cache'), sourcemapsDir);
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts');
-    const gd = writeFile(rootDir, 'a.gd', 'gd');
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
     const mapJson = '{"version":3,"mappings":"AAAA"}';
-    cache.updateTsToGd(ts, gd, mapJson, rootDir);
-    const result = cache.getSourceMap(gd, rootDir);
-    // getSourceMap returns raw JSON (including embedded _tsHash/_gdHash);
-    // consumers ignore unknown fields per the source map spec
+    cache.updateTsToGd(ts, gd, mapJson, DIAGS);
+    const result = cache.getSourceMap(ts);
     const parsed = JSON.parse(result!);
     expect(parsed.version).toBe(3);
     expect(parsed.mappings).toBe('AAAA');
-    expect(parsed._gdHash).toMatch(/^[0-9a-f]{16}$/);
   });
 
-  it('returns undefined when no source map stored', () => {
+  it('returns undefined for unknown entry', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts');
-    const gd = writeFile(rootDir, 'a.gd', 'gd');
-    cache.updateTsToGd(ts, gd, undefined, rootDir);
-    expect(cache.getSourceMap(gd, rootDir)).toBeUndefined();
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    expect(cache.getSourceMap('/nonexistent.ts')).toBeUndefined();
   });
 
-  it('returns undefined when GD file was modified (stale map)', () => {
+  it('strips sourcesContent from stored map', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts');
-    const gd = writeFile(rootDir, 'a.gd', 'original gd');
-    cache.updateTsToGd(ts, gd, '{"version":3,"mappings":"AAAA"}', rootDir);
-    // Modify GD file → embedded gdHash won't match → stale
-    writeFileSync(gd, 'modified gd');
-    expect(cache.getSourceMap(gd, rootDir)).toBeUndefined();
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
+    const mapWithContent = '{"version":3,"mappings":"","sourcesContent":["full source code"]}';
+    cache.updateTsToGd(ts, gd, mapWithContent, DIAGS);
+    const result = cache.getSourceMap(ts);
+    const parsed = JSON.parse(result!);
+    expect(parsed.sourcesContent).toBeUndefined();
+    expect(parsed.version).toBe(3);
   });
 
-  it('embeds _tsHash and _gdHash in the .map file on disk', () => {
+  it('strips _tsHash and _gdHash from stored map', () => {
     tmpDir = makeTmpDir();
-    const sourcemapsDir = join(tmpDir, 'maps');
-    const cache = new ProjectCache(join(tmpDir, 'cache'), sourcemapsDir);
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts content');
-    const gd = writeFile(rootDir, 'a.gd', 'gd content');
-    cache.updateTsToGd(ts, gd, '{"version":3}', rootDir);
-    const mapPath = join(sourcemapsDir, 'a.gd.map');
-    const raw = JSON.parse(readFileSync(mapPath, 'utf-8'));
-    expect(raw._tsHash).toMatch(/^[0-9a-f]{16}$/);
-    expect(raw._gdHash).toMatch(/^[0-9a-f]{16}$/);
-    expect(raw._tsHash).toBe(hashFile(ts));
-    expect(raw._gdHash).toBe(hashFile(gd));
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
+    const mapWithHashes = '{"version":3,"mappings":"","_tsHash":"abc","_gdHash":"def"}';
+    cache.updateTsToGd(ts, gd, mapWithHashes, DIAGS);
+    const result = cache.getSourceMap(ts);
+    const parsed = JSON.parse(result!);
+    expect(parsed._tsHash).toBeUndefined();
+    expect(parsed._gdHash).toBeUndefined();
+  });
+});
+
+describe('diagnostics caching', () => {
+  let tmpDir: string;
+  afterEach(() => {
+    if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
   });
 
-  it('stores map at correct nested path in sourcemapsDir', () => {
+  it('stores and retrieves diagnostics', () => {
     tmpDir = makeTmpDir();
-    const sourcemapsDir = join(tmpDir, 'maps');
-    const cache = new ProjectCache(join(tmpDir, 'cache'), sourcemapsDir);
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'sub/deep/a.ts', 'ts');
-    const gd = writeFile(rootDir, 'sub/deep/a.gd', 'gd');
-    cache.updateTsToGd(ts, gd, '{"mappings":""}', rootDir);
-    const expectedMapPath = join(sourcemapsDir, 'sub', 'deep', 'a.gd.map');
-    expect(existsSync(expectedMapPath)).toBe(true);
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
+    const diags: CachedDiagnostic[] = [
+      { message: 'test warning', severity: 'warning', file: ts, line: 5, column: 3 },
+    ];
+    cache.updateTsToGd(ts, gd, EMPTY_MAP, diags);
+    const result = cache.getDiagnostics(ts);
+    expect(result).toHaveLength(1);
+    expect(result![0].message).toBe('test warning');
+    expect(result![0].severity).toBe('warning');
+  });
+
+  it('returns undefined for unknown entry', () => {
+    tmpDir = makeTmpDir();
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    expect(cache.getDiagnostics('/nonexistent.ts')).toBeUndefined();
+  });
+
+  it('stores empty diagnostics array', () => {
+    tmpDir = makeTmpDir();
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
+    cache.updateTsToGd(ts, gd, EMPTY_MAP, []);
+    expect(cache.getDiagnostics(ts)).toEqual([]);
+  });
+
+  it('diagnostics survive save + reload', () => {
+    tmpDir = makeTmpDir();
+    const cacheDir = join(tmpDir, 'cache');
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
+    const diags: CachedDiagnostic[] = [
+      { message: 'persisted', severity: 'error', file: ts, line: 1, column: 0 },
+    ];
+
+    const cache1 = new ProjectCache(cacheDir);
+    cache1.updateTsToGd(ts, gd, EMPTY_MAP, diags);
+    cache1.save();
+
+    const cache2 = new ProjectCache(cacheDir);
+    expect(cache2.getDiagnostics(ts)).toEqual(diags);
   });
 });
 
@@ -203,7 +233,7 @@ describe('addon freshness', () => {
 
   it('returns false for unknown addon', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
     const gd = writeFile(tmpDir, 'addon.gd', 'gd');
     const ts = writeFile(tmpDir, 'addon.ts', 'ts');
     const dts = writeFile(tmpDir, 'addon.d.ts', 'dts');
@@ -212,7 +242,7 @@ describe('addon freshness', () => {
 
   it('returns true after update with unchanged files', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
     const gd = writeFile(tmpDir, 'addon.gd', 'gd code');
     const ts = writeFile(tmpDir, 'addon.ts', 'ts code');
     const dts = writeFile(tmpDir, 'addon.d.ts', 'dts code');
@@ -222,9 +252,8 @@ describe('addon freshness', () => {
 
   it('returns false when any of the three files changes', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
 
-    // Test GD change
     const gd = writeFile(tmpDir, 'a.gd', 'gd');
     const ts = writeFile(tmpDir, 'a.ts', 'ts');
     const dts = writeFile(tmpDir, 'a.d.ts', 'dts');
@@ -232,12 +261,10 @@ describe('addon freshness', () => {
     writeFileSync(gd, 'gd modified');
     expect(cache.isAddonFresh(gd, ts, dts)).toBe(false);
 
-    // Test TS change
-    cache.updateAddon(gd, ts, dts); // re-update with current content
+    cache.updateAddon(gd, ts, dts);
     writeFileSync(ts, 'ts modified');
     expect(cache.isAddonFresh(gd, ts, dts)).toBe(false);
 
-    // Test DTS change
     cache.updateAddon(gd, ts, dts);
     writeFileSync(dts, 'dts modified');
     expect(cache.isAddonFresh(gd, ts, dts)).toBe(false);
@@ -252,7 +279,7 @@ describe('typings freshness and invalidation', () => {
 
   it('returns false for unknown entry', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
     const src = writeFile(tmpDir, 'scene.tscn', 'tscn');
     const dts = writeFile(tmpDir, 'scene.d.ts', 'dts');
     expect(cache.isTypingsFresh(src, dts)).toBe(false);
@@ -260,7 +287,7 @@ describe('typings freshness and invalidation', () => {
 
   it('returns true after update with unchanged files', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
     const src = writeFile(tmpDir, 'scene.tscn', 'tscn content');
     const dts = writeFile(tmpDir, 'scene.d.ts', 'dts content');
     cache.updateTypings(src, dts);
@@ -269,7 +296,7 @@ describe('typings freshness and invalidation', () => {
 
   it('returns false when source changes', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
     const src = writeFile(tmpDir, 'scene.tscn', 'original');
     const dts = writeFile(tmpDir, 'scene.d.ts', 'dts');
     cache.updateTypings(src, dts);
@@ -279,7 +306,7 @@ describe('typings freshness and invalidation', () => {
 
   it('invalidateTypings removes the entry', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
     const src = writeFile(tmpDir, 'scene.tscn', 'tscn');
     const dts = writeFile(tmpDir, 'scene.d.ts', 'dts');
     cache.updateTypings(src, dts);
@@ -298,34 +325,30 @@ describe('persistence (save and reload)', () => {
   it('tsToGd entries survive save + reload', () => {
     tmpDir = makeTmpDir();
     const cacheDir = join(tmpDir, 'cache');
-    const mapsDir = join(tmpDir, 'maps');
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts code');
-    const gd = writeFile(rootDir, 'a.gd', 'gd code');
+    const ts = writeFile(tmpDir, 'a.ts', 'ts code');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd code');
 
-    const cache1 = new ProjectCache(cacheDir, mapsDir);
-    cache1.updateTsToGd(ts, gd, undefined, rootDir);
+    const cache1 = new ProjectCache(cacheDir);
+    cache1.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS);
     cache1.save();
 
-    const cache2 = new ProjectCache(cacheDir, mapsDir);
+    const cache2 = new ProjectCache(cacheDir);
     expect(cache2.isTsToGdFresh(ts, gd)).toBe(true);
   });
 
-  it('source maps survive reload (stored on disk)', () => {
+  it('source maps survive reload (stored in cache.json)', () => {
     tmpDir = makeTmpDir();
     const cacheDir = join(tmpDir, 'cache');
-    const mapsDir = join(tmpDir, 'maps');
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts');
-    const gd = writeFile(rootDir, 'a.gd', 'gd');
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
     const mapJson = '{"version":3,"sources":["a.ts"]}';
 
-    const cache1 = new ProjectCache(cacheDir, mapsDir);
-    cache1.updateTsToGd(ts, gd, mapJson, rootDir);
+    const cache1 = new ProjectCache(cacheDir);
+    cache1.updateTsToGd(ts, gd, mapJson, DIAGS);
     cache1.save();
 
-    const cache2 = new ProjectCache(cacheDir, mapsDir);
-    const result = cache2.getSourceMap(gd, rootDir);
+    const cache2 = new ProjectCache(cacheDir);
+    const result = cache2.getSourceMap(ts);
     expect(result).toBeDefined();
     const parsed = JSON.parse(result!);
     expect(parsed.version).toBe(3);
@@ -335,31 +358,29 @@ describe('persistence (save and reload)', () => {
   it('addon entries survive save + reload', () => {
     tmpDir = makeTmpDir();
     const cacheDir = join(tmpDir, 'cache');
-    const mapsDir = join(tmpDir, 'maps');
     const gd = writeFile(tmpDir, 'addon.gd', 'gd');
     const ts = writeFile(tmpDir, 'addon.ts', 'ts');
     const dts = writeFile(tmpDir, 'addon.d.ts', 'dts');
 
-    const cache1 = new ProjectCache(cacheDir, mapsDir);
+    const cache1 = new ProjectCache(cacheDir);
     cache1.updateAddon(gd, ts, dts);
     cache1.save();
 
-    const cache2 = new ProjectCache(cacheDir, mapsDir);
+    const cache2 = new ProjectCache(cacheDir);
     expect(cache2.isAddonFresh(gd, ts, dts)).toBe(true);
   });
 
   it('typings entries survive save + reload', () => {
     tmpDir = makeTmpDir();
     const cacheDir = join(tmpDir, 'cache');
-    const mapsDir = join(tmpDir, 'maps');
     const src = writeFile(tmpDir, 'scene.tscn', 'tscn');
     const dts = writeFile(tmpDir, 'scene.d.ts', 'dts');
 
-    const cache1 = new ProjectCache(cacheDir, mapsDir);
+    const cache1 = new ProjectCache(cacheDir);
     cache1.updateTypings(src, dts);
     cache1.save();
 
-    const cache2 = new ProjectCache(cacheDir, mapsDir);
+    const cache2 = new ProjectCache(cacheDir);
     expect(cache2.isTypingsFresh(src, dts)).toBe(true);
   });
 });
@@ -373,39 +394,33 @@ describe('version mismatch', () => {
   it('clears cache when cache.json has a different version', () => {
     tmpDir = makeTmpDir();
     const cacheDir = join(tmpDir, 'cache');
-    const mapsDir = join(tmpDir, 'maps');
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts');
-    const gd = writeFile(rootDir, 'a.gd', 'gd');
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
 
-    const cache1 = new ProjectCache(cacheDir, mapsDir);
-    cache1.updateTsToGd(ts, gd, undefined, rootDir);
+    const cache1 = new ProjectCache(cacheDir);
+    cache1.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS);
     cache1.save();
 
-    // Tamper with version
     const cacheFile = join(cacheDir, 'cache.json');
     const data = JSON.parse(readFileSync(cacheFile, 'utf-8'));
     data.version = '99.99.99';
     writeFileSync(cacheFile, JSON.stringify(data));
 
-    const cache2 = new ProjectCache(cacheDir, mapsDir);
+    const cache2 = new ProjectCache(cacheDir);
     expect(cache2.isTsToGdFresh(ts, gd)).toBe(false);
   });
 
   it('preserves cache when version matches', () => {
     tmpDir = makeTmpDir();
     const cacheDir = join(tmpDir, 'cache');
-    const mapsDir = join(tmpDir, 'maps');
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts');
-    const gd = writeFile(rootDir, 'a.gd', 'gd');
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
 
-    const cache1 = new ProjectCache(cacheDir, mapsDir);
-    cache1.updateTsToGd(ts, gd, undefined, rootDir);
+    const cache1 = new ProjectCache(cacheDir);
+    cache1.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS);
     cache1.save();
 
-    // Reload without tampering
-    const cache2 = new ProjectCache(cacheDir, mapsDir);
+    const cache2 = new ProjectCache(cacheDir);
     expect(cache2.isTsToGdFresh(ts, gd)).toBe(true);
   });
 });
@@ -422,7 +437,7 @@ describe('corrupted cache.json', () => {
     mkdirSync(cacheDir, { recursive: true });
     writeFileSync(join(cacheDir, 'cache.json'), 'not valid json{{');
 
-    const cache = new ProjectCache(cacheDir, join(tmpDir, 'maps'));
+    const cache = new ProjectCache(cacheDir);
     const ts = writeFile(tmpDir, 'a.ts', 'ts');
     const gd = writeFile(tmpDir, 'a.gd', 'gd');
     expect(cache.isTsToGdFresh(ts, gd)).toBe(false);
@@ -432,9 +447,8 @@ describe('corrupted cache.json', () => {
     tmpDir = makeTmpDir();
     const cacheDir = join(tmpDir, 'cache');
     mkdirSync(cacheDir, { recursive: true });
-    // No cache.json written
 
-    const cache = new ProjectCache(cacheDir, join(tmpDir, 'maps'));
+    const cache = new ProjectCache(cacheDir);
     const ts = writeFile(tmpDir, 'a.ts', 'ts');
     const gd = writeFile(tmpDir, 'a.gd', 'gd');
     expect(cache.isTsToGdFresh(ts, gd)).toBe(false);
@@ -449,17 +463,15 @@ describe('cleanStale', () => {
 
   it('removes entries not in current file set', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
-    const rootDir = join(tmpDir, 'project');
-    const tsA = writeFile(rootDir, 'a.ts', 'a');
-    const gdA = writeFile(rootDir, 'a.gd', 'a');
-    const tsB = writeFile(rootDir, 'b.ts', 'b');
-    const gdB = writeFile(rootDir, 'b.gd', 'b');
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const tsA = writeFile(tmpDir, 'a.ts', 'a');
+    const gdA = writeFile(tmpDir, 'a.gd', 'a');
+    const tsB = writeFile(tmpDir, 'b.ts', 'b');
+    const gdB = writeFile(tmpDir, 'b.gd', 'b');
 
-    cache.updateTsToGd(tsA, gdA, undefined, rootDir);
-    cache.updateTsToGd(tsB, gdB, undefined, rootDir);
+    cache.updateTsToGd(tsA, gdA, EMPTY_MAP, DIAGS);
+    cache.updateTsToGd(tsB, gdB, EMPTY_MAP, DIAGS);
 
-    // Only keep a.ts
     const currentFiles = new Set([tsA.replace(/\\/g, '/')]);
     cache.cleanStale(currentFiles);
 
@@ -469,17 +481,15 @@ describe('cleanStale', () => {
 
   it('undefined params skip that section (do not wipe)', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts');
-    const gd = writeFile(rootDir, 'a.gd', 'gd');
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
     const src = writeFile(tmpDir, 'scene.tscn', 'tscn');
     const dts = writeFile(tmpDir, 'scene.d.ts', 'dts');
 
-    cache.updateTsToGd(ts, gd, undefined, rootDir);
+    cache.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS);
     cache.updateTypings(src, dts);
 
-    // Pass all undefined — nothing should be cleaned
     cache.cleanStale(undefined, undefined, undefined);
 
     expect(cache.isTsToGdFresh(ts, gd)).toBe(true);
@@ -488,49 +498,20 @@ describe('cleanStale', () => {
 
   it('empty set removes all entries in that section', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts');
-    const gd = writeFile(rootDir, 'a.gd', 'gd');
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
     const addonGd = writeFile(tmpDir, 'addon.gd', 'gd');
     const addonTs = writeFile(tmpDir, 'addon.ts', 'ts');
     const addonDts = writeFile(tmpDir, 'addon.d.ts', 'dts');
 
-    cache.updateTsToGd(ts, gd, undefined, rootDir);
+    cache.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS);
     cache.updateAddon(addonGd, addonTs, addonDts);
 
-    // Empty set for tsToGd wipes it, undefined for addons preserves it
     cache.cleanStale(new Set(), undefined);
 
     expect(cache.isTsToGdFresh(ts, gd)).toBe(false);
     expect(cache.isAddonFresh(addonGd, addonTs, addonDts)).toBe(true);
-  });
-
-  it('does not delete stale .map files (they are self-validating)', () => {
-    tmpDir = makeTmpDir();
-    const sourcemapsDir = join(tmpDir, 'maps');
-    const cache = new ProjectCache(join(tmpDir, 'cache'), sourcemapsDir);
-    const rootDir = join(tmpDir, 'project');
-
-    const tsA = writeFile(rootDir, 'a.ts', 'a');
-    const gdA = writeFile(rootDir, 'a.gd', 'a');
-    const tsB = writeFile(rootDir, 'b.ts', 'b');
-    const gdB = writeFile(rootDir, 'b.gd', 'b');
-
-    cache.updateTsToGd(tsA, gdA, '{"version":3}', rootDir);
-    cache.updateTsToGd(tsB, gdB, '{"version":3}', rootDir);
-
-    const mapA = join(sourcemapsDir, 'a.gd.map');
-    const mapB = join(sourcemapsDir, 'b.gd.map');
-    expect(existsSync(mapA)).toBe(true);
-    expect(existsSync(mapB)).toBe(true);
-
-    // Remove b.ts from current files → entry cleaned, but .map stays on disk
-    const currentFiles = new Set([tsA.replace(/\\/g, '/')]);
-    cache.cleanStale(currentFiles);
-
-    expect(existsSync(mapA)).toBe(true);
-    expect(existsSync(mapB)).toBe(true); // still on disk, but getSourceMap validates via hash
   });
 });
 
@@ -542,14 +523,13 @@ describe('clear', () => {
 
   it('resets all in-memory data', () => {
     tmpDir = makeTmpDir();
-    const cache = new ProjectCache(join(tmpDir, 'cache'), join(tmpDir, 'maps'));
-    const rootDir = join(tmpDir, 'project');
-    const ts = writeFile(rootDir, 'a.ts', 'ts');
-    const gd = writeFile(rootDir, 'a.gd', 'gd');
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const ts = writeFile(tmpDir, 'a.ts', 'ts');
+    const gd = writeFile(tmpDir, 'a.gd', 'gd');
     const src = writeFile(tmpDir, 's.tscn', 'tscn');
     const dts = writeFile(tmpDir, 's.d.ts', 'dts');
 
-    cache.updateTsToGd(ts, gd, undefined, rootDir);
+    cache.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS);
     cache.updateTypings(src, dts);
     cache.save();
 
@@ -562,7 +542,7 @@ describe('clear', () => {
   it('removes cacheDir from disk', () => {
     tmpDir = makeTmpDir();
     const cacheDir = join(tmpDir, 'cache');
-    const cache = new ProjectCache(cacheDir, join(tmpDir, 'maps'));
+    const cache = new ProjectCache(cacheDir);
     cache.save();
     expect(existsSync(cacheDir)).toBe(true);
 

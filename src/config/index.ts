@@ -28,8 +28,6 @@ export interface TsToGdConfig {
   disableGodotLint?: boolean;
   /** Cache directory. Default: `node_modules/.cache/typescript-to-gdscript` or temp dir. */
   cacheDir?: string;
-  /** Source maps directory. Default: `${cacheDir}/sourcemaps`. */
-  sourcemapsDir?: string;
 }
 
 // ─── Resolved Config ─────────────────────────────────────────
@@ -51,8 +49,6 @@ export interface ResolvedConfig {
   disableGodotLint: boolean;
   /** Absolute path to cache directory. */
   cacheDir: string;
-  /** Absolute path to source maps directory. */
-  sourcemapsDir: string;
 }
 
 /**
@@ -110,11 +106,6 @@ export function resolveConfig(options?: {
         ? join('node_modules', '.cache', 'typescript-to-gdscript')
         : join(tmpdir(), 'typescript-to-gdscript', basename(rootDir))),
   );
-  const sourcemapsDir = resolve(
-    rootDir,
-    overrides.sourcemapsDir ?? config?.sourcemapsDir ?? join(cacheDir, 'sourcemaps'),
-  );
-
   return {
     rootDir,
     tsDir,
@@ -128,7 +119,6 @@ export function resolveConfig(options?: {
     godotPath: overrides.godotPath ?? config?.godotPath,
     disableGodotLint: config?.disableGodotLint ?? false,
     cacheDir,
-    sourcemapsDir,
   };
 }
 

@@ -19,10 +19,6 @@ export function registerValidateGdCommand(program: Command): void {
       'Godot project root (must contain project.godot)',
       '.',
     )
-    .option(
-      '--source-map-dir <dir>',
-      'Directory containing .gd.map source map files',
-    )
     .action(async (files: string[], opts) => {
       const godotPath = resolveGodotPath({ godotPath: opts.godotPath });
       const projectRoot = resolve(opts.projectRoot);
@@ -38,8 +34,6 @@ export function registerValidateGdCommand(program: Command): void {
         gdFiles,
         projectRoot,
         godotPath,
-        sourceMapDir: opts.sourceMapDir ? resolve(opts.sourceMapDir) : undefined,
-        rootDir: projectRoot,
       });
 
       for (const diag of result.diagnostics) {

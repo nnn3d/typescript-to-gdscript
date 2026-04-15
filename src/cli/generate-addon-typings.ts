@@ -21,7 +21,7 @@ export function registerGenerateAddonTypingsCommand(program: Command): void {
       });
 
       const outputDir = opts.output ? resolve(opts.output) : cfg.typingsDir;
-      const cache = new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir);
+      const cache = new ProjectCache(cfg.cacheDir);
 
       const writtenFiles = generateAddonTypings({
         rootDir: cfg.rootDir,

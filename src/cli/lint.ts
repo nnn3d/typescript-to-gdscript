@@ -56,7 +56,7 @@ export function registerLintCommand(program: Command): void {
         : cfg.rootDir;
 
       const useCache = opts.cache !== false;
-      const cache = useCache ? new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir) : null;
+      const cache = useCache ? new ProjectCache(cfg.cacheDir) : null;
 
       let totalErrors = 0;
       let totalWarnings = 0;
@@ -68,12 +68,30 @@ export function registerLintCommand(program: Command): void {
         const relPath = relative(cfg.tsDir, filePath);
         const gdPath = resolve(cfg.gdDir, relPath.replace(/\.ts$/, '.gd'));
 
-        // Cache check: if TS→GD conversion is fresh, skip re-conversion.
-        // The .gd file in gdDir is up-to-date, so we only re-run Godot validation.
+        // Cache check: if TS→GD conversion is fresh, report cached diagnostics
+        // and re-run Godot validation (without re-converting).
         if (cache?.isTsToGdFresh(filePath, gdPath)) {
           skipped++;
-          if (godotPath && existsSync(gdPath)) {
-            const sourceMapJson = cache.getSourceMap(gdPath, cfg.rootDir);
+          debugLog(`Cached: ${relPath}`);
+          let fileHasErrors = false;
+
+          // Report cached converter diagnostics
+          const cachedDiags = cache.getDiagnostics(filePath);
+          if (cachedDiags) {
+            for (const diag of cachedDiags) {
+              if (diag.severity === 'info') continue;
+              const prefix = diag.severity === 'error' ? 'ERROR' : 'WARN';
+              if (diag.severity === 'error') { totalErrors++; fileHasErrors = true; }
+              else totalWarnings++;
+              console.error(
+                `[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`,
+              );
+            }
+          }
+
+          // Godot validation (only if no converter errors)
+          if (!fileHasErrors && godotPath && existsSync(gdPath)) {
+            const sourceMapJson = cache.getSourceMap(filePath);
             const validateResult = validateGdFilesSync({
               gdFiles: [{ path: gdPath, sourceMapJson, tsFilePath: filePath }],
               projectRoot,
@@ -92,6 +110,7 @@ export function registerLintCommand(program: Command): void {
         }
 
         // Not cached — convert and report diagnostics
+        debugLog(`Converting: ${relPath}`);
         const result = convertTsToGd({
           filePath,
           rootDir: cfg.tsDir,

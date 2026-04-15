@@ -62,7 +62,6 @@ export class Watcher {
   private options: WatcherOptions;
   private fsWatcher: FSWatcher | null = null;
   private cache: ProjectCache;
-  private sourcemapsDir: string;
   private tsFiles: Set<string> = new Set();
   private tsDir: string;
   private gdDir: string;
@@ -87,8 +86,7 @@ export class Watcher {
     this.tsDir = options.tsDir ?? options.rootDir;
     this.gdDir = options.gdDir ?? options.outputDir ?? this.tsDir;
     const cacheDir = options.cacheDir ?? join(tmpdir(), `ts2gd-cache-${createHash('sha256').update(resolve(options.rootDir)).digest('hex').slice(0, 16)}`);
-    this.sourcemapsDir = join(cacheDir, 'sourcemaps');
-    this.cache = new ProjectCache(cacheDir, this.sourcemapsDir);
+    this.cache = new ProjectCache(cacheDir);
   }
 
   start(): void {
@@ -258,8 +256,10 @@ export class Watcher {
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, result.code);
 
-    // Update cache (writes source map to cache dir)
-    this.cache.updateTsToGd(filePath, outputPath, result.sourceMap, this.options.rootDir);
+    // Update cache with source map and diagnostics
+    if (result.sourceMap) {
+      this.cache.updateTsToGd(filePath, outputPath, result.sourceMap, result.diagnostics);
+    }
     this.cache.save();
 
     if (!this.initialScanDone) {
@@ -278,8 +278,6 @@ export class Watcher {
         gdFiles: [outputPath],
         projectRoot,
         godotPath: this.options.godotPath,
-        sourceMapDir: this.sourcemapsDir,
-        rootDir: this.options.rootDir,
       }).then((validateResult) => {
         for (const d of validateResult.diagnostics) {
           this.log(

@@ -142,14 +142,13 @@ export function generateAllTypings(cfg: {
   tsconfig?: string;
   tsFiles?: string[];
   cacheDir?: string;
-  sourcemapsDir?: string;
 }): void {
   const tsFiles =
     cfg.tsFiles ?? findTsFiles(cfg.tsDir, cfg.rootDir, cfg.ignore);
   if (tsFiles.length === 0) return;
 
-  const cache = cfg.cacheDir && cfg.sourcemapsDir
-    ? new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir)
+  const cache = cfg.cacheDir
+    ? new ProjectCache(cfg.cacheDir)
     : undefined;
 
   const writtenFiles = generateTypings({

@@ -64,8 +64,7 @@ Create a `tstogd.json` in your project root to configure the converter:
 | `tsconfig`         | `string`   | Path to `tsconfig.json`.                                                 |
 | `exclude`          | `string[]` | Glob patterns (from project root) for files/folders to exclude from all CLI commands (e.g. `["test/**", "**/*.test.ts"]`). Uses [minimatch](https://github.com/isaacs/minimatch) syntax. |
 | `disableGodotLint` | `boolean`  | Disable Godot executable validation in lint and ESLint. Defaults to `false`. |
-| `cacheDir`         | `string`   | Cache directory. Default: `node_modules/.cache/typescript-to-gdscript` (or OS temp dir). |
-| `sourcemapsDir`    | `string`   | Source maps directory. Default: `${cacheDir}/sourcemaps`. |
+| `cacheDir`         | `string`   | Cache directory (source maps and diagnostics stored inline). Default: `node_modules/.cache/typescript-to-gdscript` (or OS temp dir). |
 
 ## CLI Commands
 

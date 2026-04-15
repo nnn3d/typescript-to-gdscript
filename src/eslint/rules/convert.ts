@@ -67,22 +67,28 @@ const convertRule: RuleModule = {
           },
         });
 
-        // Cache check: if TS→GD conversion is fresh, skip re-conversion
-        const cache = new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir);
+        // Cache check: if TS→GD conversion is fresh, report cached diagnostics
+        const cache = new ProjectCache(cfg.cacheDir);
         const relPath = relative(cfg.tsDir, filename);
         const gdPath = resolve(cfg.gdDir, relPath.replace(/\.ts$/, '.gd'));
 
         if (cache.isTsToGdFresh(filename, gdPath)) {
-          // Conversion clean, .gd is up-to-date — only re-run Godot validation
-          if (!cfg.disableGodotLint && existsSync(gdPath)) {
+          // Report cached converter diagnostics
+          const cachedDiags = cache.getDiagnostics(filename);
+          const hasErrors = cachedDiags
+            ? reportDiagnostics(context, cachedDiags as TransformDiagnostic[])
+            : false;
+
+          // Re-run Godot validation (only if no converter errors)
+          if (!hasErrors && !cfg.disableGodotLint && existsSync(gdPath)) {
             const projectRoot = options.projectRoot
               ? resolve(options.projectRoot)
               : cfg.rootDir;
             const godotPath = resolveGodotPath({ godotPath: cfg.godotPath });
-            const sourceMapJson = cache.getSourceMap(gdPath, cfg.rootDir);
+            const sourceMapJson = cache.getSourceMap(filename);
 
             runGodotValidation(context, {
-              gdCode: '', // not used — gdPath exists
+              gdCode: '',
               sourceMapJson,
               tsFilePath: filename,
               tsDirOrRootDir: cfg.tsDir,

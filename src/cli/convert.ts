@@ -44,7 +44,7 @@ export function registerConvertCommand(program: Command): void {
       }
 
       const useCache = opts.cache !== false;
-      const cache = useCache ? new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir) : null;
+      const cache = useCache ? new ProjectCache(cfg.cacheDir) : null;
 
       debugLog(`Converting ${resolvedFiles.length} file(s)...`);
 
@@ -90,8 +90,10 @@ export function registerConvertCommand(program: Command): void {
         writeFileSync(outputPath, result.code);
         debugLog(`Written: ${outputPath}`);
 
-        // Update cache (writes source map to cache dir)
-        cache?.updateTsToGd(filePath, outputPath, result.sourceMap, cfg.rootDir);
+        // Update cache with source map and diagnostics
+        if (cache && result.sourceMap) {
+          cache.updateTsToGd(filePath, outputPath, result.sourceMap, result.diagnostics);
+        }
       }
 
       if (skipped > 0) {

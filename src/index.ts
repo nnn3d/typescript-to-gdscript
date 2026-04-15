@@ -17,7 +17,7 @@ export {
   generateGodotRegistry,
   parseGodotVersion,
 } from './typings/godot-registry.ts';
-export { ProjectCache } from './cache/index.ts';
+export { ProjectCache, type CachedDiagnostic } from './cache/index.ts';
 export { Watcher, type WatcherOptions } from './watcher/index.ts';
 export {
   resolveRegistry,

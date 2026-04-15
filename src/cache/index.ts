@@ -1,7 +1,7 @@
 /**
  * Project-level cache for TS→GD conversion, addon GD→TS, and typings generation.
- * Stores file hashes to skip redundant work. Source maps are stored in a
- * separate directory mirroring the GD file structure.
+ * All data lives in a single cache.json manifest — entries are atomic (written
+ * together, deleted together). Source maps and diagnostics are stored inline.
  */
 
 import {
@@ -12,7 +12,7 @@ import {
   rmSync,
 } from 'fs';
 import { createHash } from 'crypto';
-import { join, dirname, relative } from 'path';
+import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 // ─── Package version (for cache invalidation) ──────────────
@@ -34,9 +34,20 @@ try {
 
 // ─── Types ──────────────────────────────────────────────────
 
+export interface CachedDiagnostic {
+  message: string;
+  severity: string;
+  file: string;
+  line: number;
+  column: number;
+}
+
 interface TsToGdEntry {
   tsHash: string;
   gdHash: string;
+  diagnostics: CachedDiagnostic[];
+  /** Source map JSON (without sourcesContent to save space). */
+  sourceMap: string;
 }
 
 interface AddonEntry {
@@ -61,13 +72,11 @@ interface CacheManifest {
 
 export class ProjectCache {
   private cacheDir: string;
-  private sourcemapsDir: string;
   private cacheFile: string;
   private data: CacheManifest;
 
-  constructor(cacheDir: string, sourcemapsDir: string) {
+  constructor(cacheDir: string) {
     this.cacheDir = cacheDir;
-    this.sourcemapsDir = sourcemapsDir;
     this.cacheFile = join(cacheDir, 'cache.json');
     this.data = this.load();
   }
@@ -106,42 +115,31 @@ export class ProjectCache {
     } catch { return false; }
   }
 
-  /** Update TS→GD cache entry and write source map to cache. */
+  /** Update TS→GD cache entry with source map and diagnostics (atomic). */
   updateTsToGd(
     tsPath: string,
     gdPath: string,
-    sourceMap: string | undefined,
-    rootDir: string,
+    sourceMap: string,
+    diagnostics: CachedDiagnostic[],
   ): void {
     const key = this.normKey(tsPath);
-    const tsHash = hashFile(tsPath);
-    const gdHash = hashFile(gdPath);
-    this.data.tsToGd[key] = { tsHash, gdHash };
-    if (sourceMap) {
-      this.writeSourceMap(gdPath, sourceMap, rootDir, tsHash, gdHash);
-    }
+    this.data.tsToGd[key] = {
+      tsHash: hashFile(tsPath),
+      gdHash: hashFile(gdPath),
+      diagnostics,
+      sourceMap: stripSourceMapContent(sourceMap),
+    };
   }
 
-  /**
-   * Read a cached source map for a GD file. Returns the raw source map JSON
-   * string (without the extra cache fields) or undefined if missing/stale.
-   * Staleness is checked by comparing the embedded gdHash against the current
-   * GD file on disk — if the file was modified, the map positions are invalid.
-   */
-  getSourceMap(gdPath: string, rootDir: string): string | undefined {
-    const mapPath = this.sourceMapPath(gdPath, rootDir);
-    if (!existsSync(mapPath)) return undefined;
-    try {
-      const raw = readFileSync(mapPath, 'utf-8');
-      // Validate: if the GD file changed since the map was generated, it's stale.
-      // The _gdHash field is embedded in the JSON — parse only to check it.
-      // Return the raw string as-is; consumers ignore unknown fields per the spec.
-      const parsed = JSON.parse(raw);
-      if (parsed._gdHash && existsSync(gdPath) && hashFile(gdPath) !== parsed._gdHash) {
-        return undefined;
-      }
-      return raw;
-    } catch { return undefined; }
+  /** Read the cached source map for a TS file. */
+  getSourceMap(tsPath: string): string | undefined {
+    const entry = this.data.tsToGd[this.normKey(tsPath)];
+    return entry?.sourceMap;
+  }
+
+  /** Read cached diagnostics for a TS file. */
+  getDiagnostics(tsPath: string): CachedDiagnostic[] | undefined {
+    return this.data.tsToGd[this.normKey(tsPath)]?.diagnostics;
   }
 
   // ── Addons (GD→TS) ────────────────────────────────────────
@@ -205,8 +203,6 @@ export class ProjectCache {
   /**
    * Remove cache entries for files that no longer exist in the project.
    * Pass undefined to skip a section (e.g. convert only knows about TS files).
-   * Source map files are NOT cleaned — they are self-validating via embedded
-   * hashes and will be ignored by getSourceMap() when stale.
    */
   cleanStale(
     currentTsFiles?: Set<string>,
@@ -256,31 +252,6 @@ export class ProjectCache {
     }
   }
 
-  // ── Source map file helpers ────────────────────────────────
-
-  private sourceMapPath(gdPath: string, rootDir: string): string {
-    const rel = relative(rootDir, gdPath).replace(/\\/g, '/');
-    return join(this.sourcemapsDir, rel + '.map');
-  }
-
-  private writeSourceMap(
-    gdPath: string, sourceMap: string, rootDir: string,
-    tsHash: string, gdHash: string,
-  ): void {
-    const mapPath = this.sourceMapPath(gdPath, rootDir);
-    mkdirSync(dirname(mapPath), { recursive: true });
-    // Embed file hashes so the source map is self-validating
-    try {
-      const parsed = JSON.parse(sourceMap);
-      parsed._tsHash = tsHash;
-      parsed._gdHash = gdHash;
-      writeFileSync(mapPath, JSON.stringify(parsed));
-    } catch {
-      // If source map isn't valid JSON, write as-is
-      writeFileSync(mapPath, sourceMap);
-    }
-  }
-
   // ── Key normalization ─────────────────────────────────────
 
   private normKey(absPath: string): string {
@@ -294,4 +265,17 @@ export class ProjectCache {
 export function hashFile(filePath: string): string {
   const content = readFileSync(filePath);
   return createHash('md5').update(content).digest('hex').slice(0, 16);
+}
+
+/** Strip `sourcesContent` from a source map JSON string to save cache space. */
+function stripSourceMapContent(sourceMapJson: string): string {
+  try {
+    const parsed = JSON.parse(sourceMapJson);
+    delete parsed.sourcesContent;
+    delete parsed._tsHash;
+    delete parsed._gdHash;
+    return JSON.stringify(parsed);
+  } catch {
+    return sourceMapJson;
+  }
 }

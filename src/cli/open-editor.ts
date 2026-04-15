@@ -88,8 +88,8 @@ export function registerOpenEditorCommand(program: Command): void {
 
       // Only remap if not at file start (Godot uses 1-based lines, 1-based cols)
       if (gdLine > 1 || gdCol > 1) {
-        const cache = new ProjectCache(cfg.cacheDir, cfg.sourcemapsDir);
-        const sourceMapJson = cache.getSourceMap(gdPath, cfg.rootDir);
+        const cache = new ProjectCache(cfg.cacheDir);
+        const sourceMapJson = cache.getSourceMap(tsPath);
         if (sourceMapJson) {
           const remapped = remapErrorSync(
             { file: gdPath, line: gdLine, column: gdCol - 1, message: '', errorType: 'error' as const },
