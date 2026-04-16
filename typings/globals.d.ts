@@ -132,16 +132,6 @@ interface Promise<T> {
   ): Promise<T | TResult>;
 }
 
-interface PromiseConstructor {
-  new <T>(
-    executor: (
-      resolve: (value: T | PromiseLike<T>) => void,
-      reject: (reason?: any) => void,
-    ) => void,
-  ): Promise<T>;
-}
-declare var Promise: PromiseConstructor;
-
 // ─── Decorator context types (required for TS decorators) ───
 
 interface ClassDecoratorContext {
