@@ -3,7 +3,7 @@ class_name MyClass
 
 signal health_changed(from: int, to: int)
 signal mana_changed(arg1: int, arg2: int)
-signal stamina_changed(arg1: float, arg2: Variant, arg3: Variant)
+signal stamina_changed(arg1: float, arg2, arg3)
 signal game_over
 var health: int = 100
 

@@ -169,6 +169,7 @@ tests/
 | `this.` | `self.` | Always converted (never stripped) |
 | `let` / `const` | `var` | `var` restricted in TS |
 | `number` | `float` | `int`/`float` type aliases preserved |
+| `any` / `unknown` / non-class type alias | (annotation omitted) | GDScript's `Variant` is just "untyped", and the bare `var x` / `func f(x)` / `signal s(x)` forms already express that. `tsTypeNodeToGdType` returns `null` for `any`, `unknown`, and non-class `type` aliases; all call sites treat `null` as "no annotation". |
 | `undefined` | restricted | Use `null` instead |
 | `===` / `!==` | `==` / `!=` | |
 | `&&` / `\|\|` / `!` | `and` / `or` / `not` | GD returns `bool`, not operand. Non-boolean value use: TS→GD errors, GD→TS wraps in `bool()` |
@@ -178,9 +179,9 @@ tests/
 | `get X() {} / set X(v) {}` | `var X: get: ... set(v): ...` | Simple setget: native TS accessors ↔ inline GD get/set bodies. Missing get or set in GD is filled with a passthrough default in TS |
 | `X = gd.getset<T>({ value?, get, set })` | `var X[: T][ = v]: get: ... set(v): ...` OR `var X: get = fn, set = fn` | Complex setget (has default value or uses `get = fn, set = fn` ref form). Mixing inline + ref forms is an error; both `get` and `set` required |
 | `//` / `/** */` | `#` / `##` | |
-| `async fn(): Promise<T>` | `func fn() -> T` + body `await` | TS→GD strips `async`, drops `Promise<…>`. GD→TS adds `async` when the body has `await`, and wraps the return type in `Promise<…>` (since TS rejects a bare non-Promise return on `async`). Nested lambdas don't lift their `await` to the enclosing function — `containsAwait` stops at `Lambda` nodes so each lambda gets its own async scope. Same wrapping applies to lambda return types. |
+| `async fn(): Promise<T>` | `func fn() -> T` + body `await` | TS→GD strips `async` and unwraps `Promise<T>` → `T` in `tsTypeNodeToGdType` (`Promise<void>` / bare `Promise` → no return annotation). GD→TS adds `async` when the body has `await`, and wraps the return type in `Promise<…>` (since TS rejects a bare non-Promise return on `async`). Nested lambdas don't lift their `await` to the enclosing function — `containsAwait` stops at `Lambda` nodes so each lambda gets its own async scope. Same wrapping applies to lambda return types. |
 | `new Foo()` | `Foo.new()` | |
-| `gd.signal<[T]>()` | `signal name(param: T)` | |
+| `gd.signal<[T]>()` | `signal name(param: T)` | Tuple elements whose TS type resolves to nothing useful (`unknown` / `any` / type alias) emit untyped params (`signal stamina_changed(arg1: float, arg2, arg3)`) rather than `: Variant` — GDScript treats the absence of an annotation as `Variant`, and the bare form carries the same information with less noise. |
 | `gd.enum('A', 'B')` | `enum Name {A, B}` | |
 | `gd.ops.add(a, b)` | `a + b` | Typed operator overloads (also: sub, mul, div, rem, eq, ne, gt, gte, lt, lte, plus, minus) |
 | `gd.ops.rem(a, b)` | `a % b` | Remainder/modulo for non-number types (Vector2i, etc.) |

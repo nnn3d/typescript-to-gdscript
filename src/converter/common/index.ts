@@ -179,14 +179,25 @@ export function tsTypeNodeToGdType(
     if (name === 'int' || name === 'float') return name;
     if (name === 'TSOnly') return null;
     if (name === 'Signal') return 'Signal';
-    // Type aliases (non-class) → Variant (they don't exist in GDScript)
+    // `Promise<T>` is a TS-only async wrapper. GDScript's `await` resumes with
+    // the raw value, so for type purposes `Promise<T>` ≡ `T`. Unwrap and recurse.
+    // `Promise` (no arg) and `Promise<void>` degrade to no return type.
+    if (name === 'Promise') {
+      const arg = typeNode.typeArguments?.[0];
+      if (!arg) return null;
+      if (arg.kind === ts.SyntaxKind.VoidKeyword) return null;
+      return tsTypeNodeToGdType(arg, checker, sourceFile, className);
+    }
+    // Type aliases (non-class) → omit annotation. GDScript has no equivalent
+    // and `Variant` conveys nothing beyond "untyped", which the bare `var x`
+    // / `func f(x)` forms already express.
     const symbol = checker.getSymbolAtLocation(typeNode.typeName);
     if (symbol) {
       const declarations = symbol.getDeclarations();
       if (declarations && declarations.length > 0) {
         const decl = declarations[0]!;
         if (ts.isTypeAliasDeclaration(decl)) {
-          return 'Variant';
+          return null;
         }
       }
     }
@@ -200,8 +211,10 @@ export function tsTypeNodeToGdType(
   if (typeNode.kind === ts.SyntaxKind.BooleanKeyword) return 'bool';
   if (typeNode.kind === ts.SyntaxKind.VoidKeyword) return 'void';
   if (typeNode.kind === ts.SyntaxKind.NullKeyword) return 'null';
-  if (typeNode.kind === ts.SyntaxKind.UnknownKeyword) return 'Variant';
-  if (typeNode.kind === ts.SyntaxKind.AnyKeyword) return 'Variant';
+  // `unknown` / `any` → omit annotation. GD's `Variant` is just "untyped",
+  // and the no-annotation form is the idiomatic way to express that.
+  if (typeNode.kind === ts.SyntaxKind.UnknownKeyword) return null;
+  if (typeNode.kind === ts.SyntaxKind.AnyKeyword) return null;
 
   // Array type: T[] -> Array[T]
   if (ts.isArrayTypeNode(typeNode)) {

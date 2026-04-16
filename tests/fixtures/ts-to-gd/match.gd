@@ -1,7 +1,7 @@
 extends Node
 class_name Match
 
-var x: Variant
+var x
 var TYPE_FLOAT = "float"
 var TYPE_STRING = "string"
 var TYPE_ARRAY = "array"

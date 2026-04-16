@@ -28,7 +28,7 @@ var e: int:
 	set(value):
 		e = value
 
-var f: Variant = self.e:
+var f: int = self.e:
 	get:
 		return f
 

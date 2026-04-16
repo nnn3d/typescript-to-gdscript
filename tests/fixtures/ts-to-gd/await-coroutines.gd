@@ -13,3 +13,6 @@ func complex_async():
 func long_task() -> int:
 	await self.get_tree().create_timer(2.0).timeout
 	return 42
+
+func void_task():
+	await self.get_tree().create_timer(1.0).timeout

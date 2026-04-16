@@ -25,7 +25,11 @@ export function visitSignalDeclaration(
   const name = node.name.getText(t.ctx.sourceFile);
   const params = extractSignalParams(node, t);
   if (params.length > 0) {
-    const paramStr = params.map((p) => `${p.name}: ${p.type}`).join(', ');
+    // GD permits untyped signal params (`signal foo(arg)`) — omit the `:
+    // Variant` annotation when the TS type doesn't map to anything useful.
+    const paramStr = params
+      .map((p) => (p.type ? `${p.name}: ${p.type}` : p.name))
+      .join(', ');
     t.emitter.writeLine(`signal ${name}(${paramStr})`, pos.line, pos.col);
   } else {
     t.emitter.writeLine(`signal ${name}`, pos.line, pos.col);
@@ -35,14 +39,14 @@ export function visitSignalDeclaration(
 function extractSignalParams(
   node: ts.PropertyDeclaration,
   t: TransformerDelegate,
-): { name: string; type: string }[] {
+): { name: string; type?: string }[] {
   if (!node.initializer || !ts.isCallExpression(node.initializer)) return [];
   const call = node.initializer;
   if (!call.typeArguments || call.typeArguments.length === 0) return [];
   const typeArg = call.typeArguments[0]!;
   if (!ts.isTupleTypeNode(typeArg)) return [];
 
-  const params: { name: string; type: string }[] = [];
+  const params: { name: string; type?: string }[] = [];
   for (let i = 0; i < typeArg.elements.length; i++) {
     const element = typeArg.elements[i]!;
     let paramName: string;
@@ -57,7 +61,7 @@ function extractSignalParams(
     const gdType = tsTypeNodeToGdType(
       typeNode, t.ctx.checker, t.ctx.sourceFile, t.currentClassName,
     );
-    params.push({ name: paramName, type: gdType ?? 'Variant' });
+    params.push(gdType ? { name: paramName, type: gdType } : { name: paramName });
   }
   return params;
 }
