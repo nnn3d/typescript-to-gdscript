@@ -28,8 +28,14 @@ export function emitFunction(node: SyntaxNode, ctx: GdToTsContext, isAbstract = 
   ctx.currentMethodName = name;
   collectParamNames(paramsNode, ctx);
 
+  // Body `await` makes the function async in TS. Compute up front so the
+  // return type can be wrapped in `Promise<…>` — TS requires async functions
+  // to return a Promise. Abstract functions have no body, so they're never
+  // async here.
+  const isAsync = bodyNode ? containsAwait(bodyNode) : false;
+
   const params = paramsNode ? emitParams(paramsNode, ctx) : '';
-  const returnType = returnTypeNode ? emitReturnType(returnTypeNode, ctx) : '';
+  const returnType = returnTypeNode ? emitReturnType(returnTypeNode, ctx, isAsync) : '';
 
   // Root-level abstract (passed from emitSourceFile): native TS abstract keyword, no body
   if (isAbstract) {
@@ -56,8 +62,6 @@ export function emitFunction(node: SyntaxNode, ctx: GdToTsContext, isAbstract = 
   ctx.localVarTypes = savedLocalTypes;
   ctx.currentMethodName = savedMethodName;
 
-  // Check if the body contains await -> mark as async
-  const isAsync = bodyNode ? containsAwait(bodyNode) : false;
   const asyncPrefix = isAsync ? 'async ' : '';
 
   if (body) {
@@ -219,21 +223,35 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
   return params.join(', ');
 }
 
-export function emitReturnType(typeNode: SyntaxNode, ctx: GdToTsContext): string {
+/**
+ * Emit a TypeScript return-type annotation from a GDScript return type node.
+ *
+ * When `isAsync` is true the resolved type is wrapped in `Promise<…>` so the
+ * emitted signature is valid TS for an `async` method/lambda (TS rejects a
+ * bare non-Promise return type on an async function).
+ *
+ * Returns an empty string when no usable type was resolved — TS will then
+ * infer (e.g. `Promise<void>` for an async function with no annotation).
+ */
+export function emitReturnType(
+  typeNode: SyntaxNode,
+  ctx: GdToTsContext,
+  isAsync = false,
+): string {
+  let tsType: string | null;
   if (typeNode.type === SyntaxType.Type) {
     const inner = typeNode.namedChildren[0]?.text ?? typeNode.text;
-    if (ctx.classTypeNames.has(inner)) {
-      return `: ${ctx.className}.${inner}`;
-    }
-    const tsType = gdTypeToTs(inner);
-    return tsType ? `: ${tsType}` : '';
+    tsType = ctx.classTypeNames.has(inner)
+      ? `${ctx.className}.${inner}`
+      : gdTypeToTs(inner);
+  } else {
+    const raw = typeNode.text;
+    tsType = ctx.classTypeNames.has(raw)
+      ? `${ctx.className}.${raw}`
+      : gdTypeToTs(raw);
   }
-  const raw = typeNode.text;
-  if (ctx.classTypeNames.has(raw)) {
-    return `: ${ctx.className}.${raw}`;
-  }
-  const tsType = gdTypeToTs(raw);
-  return tsType ? `: ${tsType}` : '';
+  if (!tsType) return '';
+  return isAsync ? `: Promise<${tsType}>` : `: ${tsType}`;
 }
 
 // ─── Lambda ───────────────────────────────────────────────────
@@ -248,8 +266,13 @@ export function emitLambda(node: SyntaxNode, ctx: GdToTsContext): string {
   const savedLocalVarTypes = new Map(ctx.localVarTypes);
   collectParamNames(paramsNode, ctx);
 
+  // `await` inside a lambda body makes it an async arrow function; wrap the
+  // return type in `Promise<…>` for the same reason as for `emitFunction`.
+  const isAsync = bodyNode ? containsAwait(bodyNode) : false;
+  const asyncPrefix = isAsync ? 'async ' : '';
+
   const params = paramsNode ? emitParams(paramsNode, ctx) : '';
-  const returnType = returnTypeNode ? emitReturnType(returnTypeNode, ctx) : '';
+  const returnType = returnTypeNode ? emitReturnType(returnTypeNode, ctx, isAsync) : '';
 
   let result: string;
 
@@ -261,21 +284,21 @@ export function emitLambda(node: SyntaxNode, ctx: GdToTsContext): string {
       stmt.namedChildren.length > 0
     ) {
       const expr = stmt.namedChildren[0]!;
-      result = `(${params})${returnType} => ${emitExpr(expr, ctx)}`;
+      result = `${asyncPrefix}(${params})${returnType} => ${emitExpr(expr, ctx)}`;
     } else if (
       stmt.type === SyntaxType.ExpressionStatement &&
       stmt.namedChildren.length > 0
     ) {
       const expr = stmt.namedChildren[0]!;
-      result = `(${params})${returnType} => { ${emitExpr(expr, ctx)}; }`;
+      result = `${asyncPrefix}(${params})${returnType} => { ${emitExpr(expr, ctx)}; }`;
     } else {
       const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
-      result = `(${params})${returnType} => {\n${body}\n  }`;
+      result = `${asyncPrefix}(${params})${returnType} => {\n${body}\n  }`;
     }
   } else {
     // Multi-statement lambda
     const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
-    result = `(${params})${returnType} => {\n${body}\n  }`;
+    result = `${asyncPrefix}(${params})${returnType} => {\n${body}\n  }`;
   }
 
   // Restore scope

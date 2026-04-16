@@ -94,8 +94,15 @@ export const GD_IS_PRIMITIVE_TYPES = new Set(['int', 'float', 'bool', 'String'])
 
 // ─── Helpers ──────────────────────────────────────────────────
 
+/**
+ * True when `node` contains an `await` that belongs to the function/lambda
+ * owning `node`. Does NOT recurse into nested lambda bodies — a `func(): …:
+ * await …` inside the body defines its own async scope and shouldn't force
+ * the enclosing function to be async.
+ */
 export function containsAwait(node: SyntaxNode): boolean {
   if (node.type === SyntaxType.AwaitExpression) return true;
+  if (node.type === SyntaxType.Lambda) return false;
   for (const child of node.namedChildren) {
     if (containsAwait(child)) return true;
   }

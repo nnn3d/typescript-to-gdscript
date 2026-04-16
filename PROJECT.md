@@ -178,7 +178,7 @@ tests/
 | `get X() {} / set X(v) {}` | `var X: get: ... set(v): ...` | Simple setget: native TS accessors ↔ inline GD get/set bodies. Missing get or set in GD is filled with a passthrough default in TS |
 | `X = gd.getset<T>({ value?, get, set })` | `var X[: T][ = v]: get: ... set(v): ...` OR `var X: get = fn, set = fn` | Complex setget (has default value or uses `get = fn, set = fn` ref form). Mixing inline + ref forms is an error; both `get` and `set` required |
 | `//` / `/** */` | `#` / `##` | |
-| `async` | stripped | GDScript has no async |
+| `async fn(): Promise<T>` | `func fn() -> T` + body `await` | TS→GD strips `async`, drops `Promise<…>`. GD→TS adds `async` when the body has `await`, and wraps the return type in `Promise<…>` (since TS rejects a bare non-Promise return on `async`). Nested lambdas don't lift their `await` to the enclosing function — `containsAwait` stops at `Lambda` nodes so each lambda gets its own async scope. Same wrapping applies to lambda return types. |
 | `new Foo()` | `Foo.new()` | |
 | `gd.signal<[T]>()` | `signal name(param: T)` | |
 | `gd.enum('A', 'B')` | `enum Name {A, B}` | |
