@@ -510,3 +510,12 @@ type _GDGetInterfaceTree<
   Interface
 > = __GDGetInterfaceParentInternal<Interface, keyof Interface> extends never ? object : __GDGetInterfaceParentInternal<Interface, keyof Interface>
 
+/**
+ * Validates that a signal handler's parameters are compatible with the signal's type.
+ * Produces a type error if the handler doesn't accept the signal's arguments.
+ */
+type _GDSignalConnection<
+  TSignal extends Signal<any[]>,
+  THandler extends (...args: TSignal extends Signal<infer P> ? P : never) => void,
+> = { signal: TSignal; handler: THandler }
+

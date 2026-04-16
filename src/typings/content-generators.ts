@@ -1,6 +1,6 @@
 import { existsSync } from 'fs';
 import { join, relative } from 'path';
-import type { ParseSceneResult } from './scene-parser.ts';
+import type { ParseSceneResult, SceneConnection } from './scene-parser.ts';
 import type { TreeNodeInfo } from './scene-tree.ts';
 import type { AutoloadEntry } from './scene-utils.ts';
 import { buildNodeTree, collectDescendantPaths } from './scene-tree.ts';
@@ -41,6 +41,7 @@ export function generateSceneTypingContent(
   sceneResPath: string,
   sceneData: ParseSceneResult,
   uniqueNameNodes: Set<string>,
+  connections?: ResolvedConnection[],
 ): string {
   const lines: string[] = [];
   lines.push('// AUTO-GENERATED — do not edit manually.\n');
@@ -293,6 +294,20 @@ export function generateSceneTypingContent(
     }
   }
 
+  // Signal connections from [connection] entries
+  if (connections && connections.length > 0) {
+    lines.push(`  interface GodotConnections {`);
+    lines.push(`    "${sceneResPath}": {`);
+    for (const conn of connections) {
+      lines.push(`      "${conn.fromNode}.${conn.signal}": _GDSignalConnection<`);
+      lines.push(`        ${conn.fromType}["${conn.signal}"],`);
+      lines.push(`        GodotScripts["${conn.receiverScript}"]["${conn.method}"]`);
+      lines.push(`      >;`);
+    }
+    lines.push(`    };`);
+    lines.push(`  }`);
+  }
+
   lines.push(`}\n`);
   lines.push(`export {}`);
 
@@ -481,6 +496,7 @@ export function generateIndexTypingContent(
   lines.push(`  interface GodotScenes {}`);
   lines.push(`  interface GodotResources {}`);
   lines.push(`  interface GodotGroups {}`);
+  lines.push(`  interface GodotConnections {}`);
 
   // Autoload singletons
   if (autoloads.length > 0) {
@@ -498,3 +514,59 @@ export function generateIndexTypingContent(
 
   return lines.join('\n');
 }
+
+// ─── Connections Typings ────────────────────────────────────
+
+export interface ResolvedConnection {
+  sceneResPath: string;
+  /** Signal name (e.g. "pressed") */
+  signal: string;
+  /** Full emitter node path (e.g. "LevelDisplay/VBoxContainer2/MarginContainer/NextLevelButton") */
+  fromNode: string;
+  /** Godot type of the emitter node (e.g. "Button", "Timer") */
+  fromType: string;
+  /** Script res:// path of the receiver node */
+  receiverScript: string;
+  /** Handler method name (e.g. "_on_next_level_button_pressed") */
+  method: string;
+}
+
+/**
+ * Resolve raw scene connections into typed connection info.
+ * Matches each connection's receiver node to its attached script.
+ */
+export function resolveConnections(
+  sceneResPath: string,
+  sceneData: ParseSceneResult,
+): ResolvedConnection[] {
+  const result: ResolvedConnection[] = [];
+
+  // Build node path → script res:// path map
+  const nodeScripts = new Map<string, string>();
+  for (const script of sceneData.scripts) {
+    nodeScripts.set(script.nodePath, script.scriptResPath);
+  }
+  if (sceneData.rootScript) {
+    nodeScripts.set('.', sceneData.rootScript.scriptResPath);
+  }
+
+  for (const conn of sceneData.connections) {
+    const fromType = sceneData.nodeTypes.get(conn.fromPath);
+    if (!fromType) continue;
+
+    const receiverScript = nodeScripts.get(conn.toPath);
+    if (!receiverScript) continue;
+
+    result.push({
+      sceneResPath,
+      signal: conn.signal,
+      fromNode: conn.fromPath,
+      fromType,
+      receiverScript,
+      method: conn.method,
+    });
+  }
+
+  return result;
+}
+

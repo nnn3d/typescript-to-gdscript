@@ -95,4 +95,8 @@ export class Player extends BaseCharacter {
     let rootEnemy: Enemy = this.get_node('/root/Level/Enemy');
     let rootBg: Sprite2D = this.get_node('/root/Level/Background');
   }
+
+  // Signal handlers — connected in Player.tscn via [connection]
+  _on_attack_timer_timeout() {}
+  _on_hit_area_area_entered(area: Area2D) {}
 }

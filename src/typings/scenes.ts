@@ -11,6 +11,7 @@ import {
   generateSceneTypingContent,
   generateScriptTypingContent,
   generateIndexTypingContent,
+  resolveConnections,
 } from './content-generators.ts';
 import {
   absPathToResPath,
@@ -101,14 +102,13 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
   // 2. Find and process all .tscn files
   const sceneFiles = findSceneFiles(scenesDir, rootDir, ignore);
 
-  // Track unique names per scene (need to scan raw parsed data)
   for (const sceneFile of sceneFiles) {
     typingSources.push(sceneFile);
     const actualResPath = absPathToResPath(sceneFile, rootDir);
     const outputFile = sceneResPathToOutputFile(actualResPath);
     const outputPath = resolve(outputDir, outputFile);
 
-    // Cache check: skip if scene file and .d.ts are unchanged
+    // Cache check: skip typing generation if scene file and .d.ts are unchanged
     if (cache?.isTypingsFresh(sceneFile, outputPath)) {
       skipped++;
       writtenFiles.push(outputPath);
@@ -128,7 +128,8 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       }
     }
 
-    const content = generateSceneTypingContent(actualResPath, sceneData, uniqueNames);
+    const connections = resolveConnections(actualResPath, sceneData);
+    const content = generateSceneTypingContent(actualResPath, sceneData, uniqueNames, connections);
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, content);
     writtenFiles.push(outputPath);

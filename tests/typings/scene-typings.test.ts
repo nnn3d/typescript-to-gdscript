@@ -111,6 +111,30 @@ describe('Scene typings generation', () => {
     expect(playerScene).toContain('PackedScene<_GDTreeNode<_PlayerTscn_Tree>>');
   });
 
+  it('should generate GodotConnections for scenes with signal connections', () => {
+    generate();
+    const playerScene = readOutput('Player.tscn.d.ts');
+
+    // GodotConnections interface with scene key
+    expect(playerScene).toContain('interface GodotConnections {');
+    expect(playerScene).toContain('"res://Player.tscn": {');
+
+    // Connection entries use full node path as key and _GDSignalConnection type
+    expect(playerScene).toContain('"AttackTimer.timeout": _GDSignalConnection<');
+    expect(playerScene).toContain('Timer["timeout"]');
+    expect(playerScene).toContain('GodotScripts["res://Player.gd"]["_on_attack_timer_timeout"]');
+
+    expect(playerScene).toContain('"HitArea.area_entered": _GDSignalConnection<');
+    expect(playerScene).toContain('Area2D["area_entered"]');
+    expect(playerScene).toContain('GodotScripts["res://Player.gd"]["_on_hit_area_area_entered"]');
+  });
+
+  it('should not generate GodotConnections for scenes without connections', () => {
+    generate();
+    const enemyScene = readOutput('Enemy.tscn.d.ts');
+    expect(enemyScene).not.toContain('GodotConnections');
+  });
+
   it('should generate .gd.d.ts with module augmentation and typed overloads', () => {
     generate();
     const playerScript = readOutput('Player.gd.d.ts');
