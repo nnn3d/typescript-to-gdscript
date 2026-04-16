@@ -1,0 +1,4 @@
+[
+  { "message": "non-boolean value", "severity": 2 },
+  { "messageRegex": "\\bdefinitely_not_a_method\\b", "severity": 2 }
+]
