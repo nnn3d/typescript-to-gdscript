@@ -12,8 +12,24 @@ const __dirname = dirname(__filename);
 const FIXTURES_DIR = join(__dirname, 'fixtures');
 
 interface ExpectedMessage {
-  message: string;
+  /** Substring match. Ignored when `messageRegex` is set. */
+  message?: string;
+  /** JS regex source. When set, matched via `new RegExp(messageRegex).test(m.message)`. */
+  messageRegex?: string;
   severity: 1 | 2; // 1 = warning, 2 = error
+}
+
+function matchMessage(actual: string, exp: ExpectedMessage): boolean {
+  if (exp.messageRegex !== undefined) {
+    return new RegExp(exp.messageRegex).test(actual);
+  }
+  return exp.message !== undefined && actual.includes(exp.message);
+}
+
+function describeExpected(exp: ExpectedMessage): string {
+  return exp.messageRegex !== undefined
+    ? `/${exp.messageRegex}/`
+    : `"${exp.message}"`;
 }
 
 // Discover fixture pairs
@@ -72,12 +88,12 @@ describe('ESLint Plugin: Converter diagnostics', () => {
           const match = messages.find(
             (m) =>
               m.ruleId === 'ts2gd/convert' &&
-              m.message.includes(exp.message) &&
+              matchMessage(m.message, exp) &&
               m.severity === exp.severity,
           );
           expect(
             match,
-            `Expected message containing "${exp.message}" with severity ${exp.severity} in ${fixtureName}.\n` +
+            `Expected message matching ${describeExpected(exp)} with severity ${exp.severity} in ${fixtureName}.\n` +
               `Actual messages:\n` +
               messages
                 .map((m) => `  [${m.severity}] (${m.ruleId}) ${m.message}`)
@@ -123,12 +139,12 @@ describe('ESLint Plugin: Godot validation', () => {
         const match = messages.find(
           (m) =>
             m.ruleId === 'ts2gd/convert' &&
-            m.message.includes(exp.message) &&
+            matchMessage(m.message, exp) &&
             m.severity === exp.severity,
         );
         expect(
           match,
-          `Expected message containing "${exp.message}" with severity ${exp.severity} in ${fixtureName}.\n` +
+          `Expected message matching ${describeExpected(exp)} with severity ${exp.severity} in ${fixtureName}.\n` +
             `Actual messages:\n` +
             messages
               .map((m) => `  [${m.severity}] (${m.ruleId}) ${m.message}`)

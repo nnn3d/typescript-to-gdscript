@@ -9,6 +9,7 @@ import { validateGdFiles } from '../godot-validate/index.ts';
 import { generateTypings, generateAddonTypings, generateFileTypings } from '../typings/scenes.ts';
 import { shouldIgnore } from '../config/index.ts';
 import { ProjectCache } from '../cache/index.ts';
+import { isConversionErrorSeverity } from '../converter/common/index.ts';
 import { writeFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
 
@@ -244,14 +245,16 @@ export class Watcher {
     });
 
     for (const d of result.diagnostics) {
+      // Map type-error → warning for log colouring; watch treats type-errors as non-blocking.
+      const logSeverity = d.severity === 'type-error' ? 'warning' : d.severity;
       this.log(
         d.file,
         `[${d.severity}] ${d.message} (${d.line}:${d.column})`,
-        d.severity,
+        logSeverity,
       );
     }
 
-    if (result.diagnostics.some((d) => d.severity === 'error')) {
+    if (result.diagnostics.some((d) => isConversionErrorSeverity(d.severity))) {
       if (!this.initialScanDone) this.initialErrors++;
       if (!this.options.emitOnError) return;
     }

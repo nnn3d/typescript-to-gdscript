@@ -4,6 +4,7 @@ import { resolve, dirname, relative } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { resolveConfig } from '../config/index.ts';
 import { ProjectCache } from '../cache/index.ts';
+import { isConversionErrorSeverity } from '../converter/common/index.ts';
 import { debugLog, resolveFiles, generateAllTypings } from './helpers.ts';
 
 export function registerConvertCommand(program: Command): void {
@@ -70,18 +71,20 @@ export function registerConvertCommand(program: Command): void {
         });
 
         for (const diag of result.diagnostics) {
+          // Only conversion errors show as ERROR in convert output;
+          // type-errors and warnings both show as WARN (non-blocking).
           const prefix =
             diag.severity === 'error'
               ? 'ERROR'
-              : diag.severity === 'warning'
-                ? 'WARN'
-                : 'INFO';
+              : diag.severity === 'info'
+                ? 'INFO'
+                : 'WARN';
           console.error(
             `[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`,
           );
         }
 
-        if (result.diagnostics.some((d) => d.severity === 'error')) {
+        if (result.diagnostics.some((d) => isConversionErrorSeverity(d.severity))) {
           hasErrors = true;
           if (!opts.emitOnError) continue;
         }

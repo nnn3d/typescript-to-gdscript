@@ -2,5 +2,8 @@
   { "message": "`in` operator cannot be used with the value type `Vector2`", "severity": 2 },
   { "message": "`in` operator cannot be used with the value type `Color`", "severity": 2 },
   { "message": "`in` operator cannot be used with the value type `Transform2D`", "severity": 2 },
-  { "message": "`in` operator cannot be used with the array type `PackedColorArray`", "severity": 2 }
+  { "message": "`in` operator cannot be used with the array type `PackedColorArray`", "severity": 2 },
+  { "messageRegex": "Invalid operands.*\\bColor\\b", "severity": 2 },
+  { "messageRegex": "Invalid operands.*\\bTransform2D\\b", "severity": 2 },
+  { "messageRegex": "Invalid operands.*\\bPackedColorArray\\b", "severity": 2 }
 ]

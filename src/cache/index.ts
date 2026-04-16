@@ -14,6 +14,7 @@ import {
 import { createHash } from 'crypto';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import type { DiagnosticSeverity } from '../converter/common/index.ts';
 
 // ─── Package version (for cache invalidation) ──────────────
 
@@ -36,7 +37,7 @@ try {
 
 export interface CachedDiagnostic {
   message: string;
-  severity: string;
+  severity: DiagnosticSeverity;
   file: string;
   line: number;
   column: number;

@@ -312,7 +312,7 @@ export function emitCallExpression(
       }
       t.addDiagnostic(
         arg,
-        'error',
+        'type-error',
         `Argument '${arg.getText(t.ctx.sourceFile)}' may be 'undefined', ` +
           `which is not supported in GDScript. Use 'null' instead.`,
       );
@@ -501,7 +501,7 @@ export function emitBinaryExpression(
         const op = node.operatorToken.kind === ts.SyntaxKind.BarBarToken ? '||' : '&&';
         t.addDiagnostic(
           node,
-          'error',
+          'type-error',
           `\`${op}\` used as a non-boolean value. GDScript \`or\`/\`and\` return \`bool\`, ` +
             `not the operand. Wrap in \`bool()\` to accept bool result, or use a ternary ` +
             `(\`a ? a : b\`) for value coalescing.`,
@@ -543,7 +543,7 @@ function checkInOperatorRhs(
     if (banned) {
       t.addDiagnostic(
         node,
-        'error',
+        'type-error',
         `The \`in\` operator cannot be used with ${banned} in GDScript. ` +
           `Only Dictionary and String support \`in\`.`,
       );

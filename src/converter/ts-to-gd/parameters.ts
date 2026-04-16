@@ -11,7 +11,7 @@ export function checkTypeForUndefined(
   if (typeNode.kind === ts.SyntaxKind.UndefinedKeyword) {
     t.addDiagnostic(
       typeNode,
-      'error',
+      'type-error',
       '`undefined` type is not supported in GDScript; use `null` instead',
     );
   }
@@ -20,7 +20,7 @@ export function checkTypeForUndefined(
       if (u.kind === ts.SyntaxKind.UndefinedKeyword) {
         t.addDiagnostic(
           u,
-          'error',
+          'type-error',
           '`undefined` type is not supported in GDScript; use `null` instead',
         );
       }

@@ -20,7 +20,7 @@ afterEach(() => {
 
 interface ExpectedDiagnostic {
   message: string;
-  severity: 'error' | 'warning' | 'info';
+  severity: 'error' | 'type-error' | 'warning' | 'info';
 }
 
 function convert(code: string, filename: string) {
@@ -82,6 +82,20 @@ describe('Converter Diagnostics: Fixture-based tests', () => {
                 .join('\n'),
           ).toBeDefined();
         }
+      }
+
+      // When all expected diagnostics are non-conversion-errors (type-error,
+      // warning, info), the converter MUST still emit a non-trivial .gd code
+      // — type-errors do not block output.
+      const hasExpectedConversionError = expected.some(
+        (e) => e.severity === 'error',
+      );
+      if (!hasExpectedConversionError && expected.length > 0) {
+        expect(
+          result.code.trim().length,
+          `Expected non-empty .gd output for ${fixtureName} (only ` +
+            `non-blocking diagnostics expected), but got empty/whitespace code.`,
+        ).toBeGreaterThan(0);
       }
     });
   }

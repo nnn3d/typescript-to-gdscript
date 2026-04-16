@@ -31,12 +31,43 @@ export interface TransformContext {
   diagInfo: DiagnosticsTypeInfo;
 }
 
+/**
+ * Diagnostic severity levels.
+ *
+ * - `error` — conversion failure (invalid/unsupported syntax). Blocks .gd
+ *   output (unless `--emit-on-error`). Blocks Godot validation.
+ * - `type-error` — semantic/type issue, but GD emission produced valid output.
+ *   .gd IS written. Shown as warning by `convert`/`watch`, as error by
+ *   `lint`/ESLint. Godot validation still runs.
+ * - `warning` — non-blocking advisory. Shown as WARN everywhere.
+ * - `info` — debug-level; filtered out in most consumers.
+ */
+export type DiagnosticSeverity = 'error' | 'type-error' | 'warning' | 'info';
+
 export interface TransformDiagnostic {
   message: string;
-  severity: 'error' | 'warning' | 'info';
+  severity: DiagnosticSeverity;
   file: string;
   line: number;
   column: number;
+}
+
+/**
+ * True for severities that should surface as ESLint/lint errors (exit code 1).
+ * Both `error` and `type-error` are user-facing errors; only `error` blocks
+ * emission/Godot validation. Use {@link isConversionErrorSeverity} for that.
+ */
+export function isReportableErrorSeverity(sev: DiagnosticSeverity): boolean {
+  return sev === 'error' || sev === 'type-error';
+}
+
+/**
+ * True only for real conversion errors — the converter could not emit valid
+ * GDScript. These block `.gd` write (unless `--emit-on-error`) AND block
+ * Godot validation (unless `--godot-validate-on-error`).
+ */
+export function isConversionErrorSeverity(sev: DiagnosticSeverity): boolean {
+  return sev === 'error';
 }
 
 export interface TransformResult {

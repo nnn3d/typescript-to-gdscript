@@ -5,7 +5,11 @@ import { convertTsToGd } from '../../converter/ts-to-gd/index.ts';
 import { validateGdFilesSync } from '../../godot-validate/index.ts';
 import { resolveConfig, resolveGodotPath } from '../../config/index.ts';
 import { ProjectCache } from '../../cache/index.ts';
-import type { TransformDiagnostic } from '../../converter/common/index.ts';
+import {
+  type TransformDiagnostic,
+  isConversionErrorSeverity,
+  isReportableErrorSeverity,
+} from '../../converter/common/index.ts';
 
 // ESLint rule definition — uses `any` for ESLint types to avoid hard dep on @types/eslint
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -75,12 +79,14 @@ const convertRule: RuleModule = {
         if (cache.isTsToGdFresh(filename, gdPath)) {
           // Report cached converter diagnostics
           const cachedDiags = cache.getDiagnostics(filename);
-          const hasErrors = cachedDiags
+          // Only real conversion errors block Godot validation;
+          // type-errors still produced valid .gd and should be validated.
+          const hasConversionError = cachedDiags
             ? reportDiagnostics(context, cachedDiags as TransformDiagnostic[])
             : false;
 
           // Re-run Godot validation (only if no converter errors)
-          if (!hasErrors && !cfg.disableGodotLint && existsSync(gdPath)) {
+          if (!hasConversionError && !cfg.disableGodotLint && existsSync(gdPath)) {
             const projectRoot = options.projectRoot
               ? resolve(options.projectRoot)
               : cfg.rootDir;
@@ -109,10 +115,12 @@ const convertRule: RuleModule = {
         });
 
         // Step 2: Report converter diagnostics
-        const hasErrors = reportDiagnostics(context, result.diagnostics);
+        // Only real conversion errors block Godot validation;
+        // type-errors still produced valid .gd and should be validated.
+        const hasConversionError = reportDiagnostics(context, result.diagnostics);
 
         // Step 3: If no converter errors and Godot lint not disabled, run Godot validation
-        if (!hasErrors && !cfg.disableGodotLint) {
+        if (!hasConversionError && !cfg.disableGodotLint) {
           const projectRoot = options.projectRoot
             ? resolve(options.projectRoot)
             : cfg.rootDir;
@@ -132,21 +140,30 @@ const convertRule: RuleModule = {
   },
 };
 
+/**
+ * Report converter diagnostics to ESLint.
+ *
+ * Returns `true` only when there was a real **conversion error** (i.e. the
+ * converter could not produce valid GDScript). Type-errors are reported to
+ * ESLint as errors too (so `--max-warnings 0` / exit code behaviour is
+ * preserved), but they do NOT block Godot validation — the emitted `.gd` is
+ * syntactically valid and Godot can still lint it.
+ */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function reportDiagnostics(
   context: any,
   diagnostics: TransformDiagnostic[],
 ): boolean {
-  let hasErrors = false;
+  let hasConversionError = false;
 
   for (const diag of diagnostics) {
     if (diag.severity === 'info') continue;
 
-    const messageId =
-      diag.severity === 'error' ? 'convertError' : 'convertWarning';
-    const severity = diag.severity === 'error' ? 2 : 1;
+    const messageId = isReportableErrorSeverity(diag.severity)
+      ? 'convertError'
+      : 'convertWarning';
 
-    if (diag.severity === 'error') hasErrors = true;
+    if (isConversionErrorSeverity(diag.severity)) hasConversionError = true;
 
     // Only report diagnostics from the current file
     const diagFile = resolve(diag.file);
@@ -207,7 +224,7 @@ function reportDiagnostics(
     });
   }
 
-  return hasErrors;
+  return hasConversionError;
 }
 
 interface GodotValidationParams {

@@ -6,6 +6,10 @@ import { validateGdFilesSync } from '../godot-validate/index.ts';
 import { resolveConfig, resolveGodotPath } from '../config/index.ts';
 import { ProjectCache } from '../cache/index.ts';
 import { debugLog, resolveFiles } from './helpers.ts';
+import {
+  isConversionErrorSeverity,
+  isReportableErrorSeverity,
+} from '../converter/common/index.ts';
 import { tmpdir } from 'os';
 
 export function registerLintCommand(program: Command): void {
@@ -74,24 +78,33 @@ export function registerLintCommand(program: Command): void {
         if (cache?.isTsToGdFresh(filePath, gdPath)) {
           skipped++;
           debugLog(`Cached: ${relPath}`);
-          let fileHasErrors = false;
+          // Only real conversion errors block Godot validation;
+          // type-errors still produced a valid .gd, so Godot validation runs on them.
+          let fileHasConversionError = false;
 
           // Report cached converter diagnostics
           const cachedDiags = cache.getDiagnostics(filePath);
           if (cachedDiags) {
             for (const diag of cachedDiags) {
               if (diag.severity === 'info') continue;
-              const prefix = diag.severity === 'error' ? 'ERROR' : 'WARN';
-              if (diag.severity === 'error') { totalErrors++; fileHasErrors = true; }
-              else totalWarnings++;
+              if (isConversionErrorSeverity(diag.severity)) {
+                totalErrors++;
+                fileHasConversionError = true;
+              } else if (isReportableErrorSeverity(diag.severity)) {
+                totalErrors++;
+              } else {
+                totalWarnings++;
+              }
+              const prefix = isReportableErrorSeverity(diag.severity) ? 'ERROR' : 'WARN';
               console.error(
                 `[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`,
               );
             }
           }
 
-          // Godot validation (skip if converter errors, unless --godot-validate-on-error)
-          if ((!fileHasErrors || opts.godotValidateOnError) && godotPath && existsSync(gdPath)) {
+          // Godot validation — runs for type-errors (valid .gd); skipped only on real
+          // conversion errors unless --godot-validate-on-error is set.
+          if ((!fileHasConversionError || opts.godotValidateOnError) && godotPath && existsSync(gdPath)) {
             const sourceMapJson = cache.getSourceMap(filePath);
             const validateResult = validateGdFilesSync({
               gdFiles: [{ path: gdPath, sourceMapJson, tsFilePath: filePath }],
@@ -119,23 +132,29 @@ export function registerLintCommand(program: Command): void {
           sourceMap: true,
         });
 
-        let fileHasErrors = false;
+        // Only real conversion errors block Godot validation;
+        // type-errors still produced valid .gd, so Godot validation runs on them.
+        let fileHasConversionError = false;
 
         for (const diag of result.diagnostics) {
           if (diag.severity === 'info') continue;
-          const prefix = diag.severity === 'error' ? 'ERROR' : 'WARN';
-          if (diag.severity === 'error') {
+          if (isConversionErrorSeverity(diag.severity)) {
             totalErrors++;
-            fileHasErrors = true;
+            fileHasConversionError = true;
+          } else if (isReportableErrorSeverity(diag.severity)) {
+            totalErrors++;
           } else {
             totalWarnings++;
           }
+          const prefix = isReportableErrorSeverity(diag.severity) ? 'ERROR' : 'WARN';
           console.error(
             `[${prefix}] ${diag.file}:${diag.line}:${diag.column} - ${diag.message}`,
           );
         }
 
-        if ((!fileHasErrors || opts.godotValidateOnError) && godotPath) {
+        // Godot validation — runs for type-errors (valid .gd); skipped only on real
+        // conversion errors unless --godot-validate-on-error is set.
+        if ((!fileHasConversionError || opts.godotValidateOnError) && godotPath) {
           const gdRelPath = relPath.replace(/\.ts$/, '.gd');
           const gdAbsPath = resolve(tmpdir(), 'tstogd', gdRelPath);
           const gdDir = dirname(gdAbsPath);

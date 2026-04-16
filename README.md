@@ -816,15 +816,20 @@ export default [
 
 Converts each TS file to GDScript and reports errors at two levels:
 
-1. **Converter diagnostics** — unsupported TS features:
-   - `var` keyword (use `let` or `const`)
-   - `undefined` (use `null`)
-   - Optional chaining (`?.`), nullish coalescing (`??`, `??=`)
-   - Spread operator (`...`), destructuring
-   - `yield`, `for...in`
-   - Multiple classes per file
-   - Top-level statements outside classes
-   - `x in y` where `y` is a value-type primitive (Vector2, Color, Transform2D, etc.), an array (`Array<T>`, `T[]`, `Packed*Array`), a number, or a boolean — GDScript only supports `in` on `Dictionary` and `String`
+1. **Converter diagnostics** — two sub-categories:
+   - **Conversion errors** (block `.gd` output, block Godot validation): unsupported TS features where the converter cannot emit valid GDScript
+     - `var` keyword (use `let` or `const`)
+     - `undefined` keyword as a value (use `null`)
+     - Optional chaining (`?.`), nullish coalescing (`??`, `??=`)
+     - Spread operator (`...`), destructuring
+     - `yield`, `for...in`
+     - Multiple classes per file
+     - Top-level statements outside classes
+   - **Type errors** (`.gd` is still written; reported as ESLint errors, shown as warnings in `convert`/`watch`; Godot validation still runs): semantic/type issues where emission produced valid GD
+     - `undefined` in function parameter type annotations
+     - Argument that may be `undefined`
+     - `||`/`&&` used as a non-boolean value (auto-fixable — wraps in `bool()`)
+     - `x in y` where `y` is a value-type primitive (Vector2, Color, Transform2D, etc.), an array (`Array<T>`, `T[]`, `Packed*Array`), a number, or a boolean — GDScript only supports `in` on `Dictionary` and `String`
 
 2. **Godot validation errors** (when Godot is available) — errors detected by the Godot compiler:
    - Type mismatches
