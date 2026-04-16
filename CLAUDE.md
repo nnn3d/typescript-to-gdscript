@@ -51,6 +51,8 @@ This project converts TypeScript code to GDScript for the Godot game engine, wit
 
 8. **⚠️ Keep source files under 500 lines.** If a file grows beyond this, split it into logical modules. This ensures each file can be fully read in one pass, makes edits more targeted, and reduces risk of accidentally breaking unrelated code. Auto-generated files (e.g. tree-sitter `types.ts`) are exempt.
 
+9. **Always run tests and build after completing some task**
+
 ## Development Guidelines
 
 ### Philosophy
