@@ -45,6 +45,8 @@ export interface WatcherOptions {
   emitOnError?: boolean;
   /** Enable verbose debug logging. */
   debug?: boolean;
+  /** Absolute path to Godot engine typings (for /// reference in _index.d.ts) */
+  godotTypingsDir?: string;
 }
 
 /** File extensions that trigger typings regeneration (scenes, resources, assets). */
@@ -322,6 +324,7 @@ export class Watcher {
         projectFile: this.options.projectFile,
         cache: this.cache,
         onDebug,
+        godotTypingsDir: this.options.godotTypingsDir,
       });
       generateAddonTypings({
         rootDir: this.options.rootDir,

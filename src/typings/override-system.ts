@@ -19,10 +19,22 @@ export interface ParsedOverride {
 // ─── Override loading ────────────────────────────────────────────
 
 /**
- * Loads all override .d.ts files from a directory and parses them.
+ * Loads all override .d.ts files from multiple directories and merges them.
+ * Later directories override earlier ones (user overrides win over defaults).
  * Returns a map: TS declaration name → ParsedOverride.
  */
-export function loadOverrides(overrideDir: string): Map<string, ParsedOverride> {
+export function loadOverrides(overrideDirs: string[]): Map<string, ParsedOverride> {
+  const result = new Map<string, ParsedOverride>();
+  for (const dir of overrideDirs) {
+    for (const [name, parsed] of loadOverridesFromDir(dir)) {
+      result.set(name, parsed);
+    }
+  }
+  return result;
+}
+
+/** Single-directory loader used internally by {@link loadOverrides}. */
+function loadOverridesFromDir(overrideDir: string): Map<string, ParsedOverride> {
   const result = new Map<string, ParsedOverride>();
   if (!existsSync(overrideDir)) return result;
 
@@ -132,10 +144,22 @@ export function loadOverrides(overrideDir: string): Map<string, ParsedOverride> 
 }
 
 /**
- * Loads global function overrides from `_globals.d.ts` in the override directory.
+ * Loads global function overrides from `_globals.d.ts` across multiple directories.
+ * Later directories override earlier ones.
  * Returns a map: function name → full declaration text (JSDoc + all overloads).
  */
-export function loadGlobalOverrides(overrideDir: string): Map<string, string> {
+export function loadGlobalOverrides(overrideDirs: string[]): Map<string, string> {
+  const result = new Map<string, string>();
+  for (const dir of overrideDirs) {
+    for (const [name, decl] of loadGlobalOverridesFromDir(dir)) {
+      result.set(name, decl);
+    }
+  }
+  return result;
+}
+
+/** Single-directory loader used internally by {@link loadGlobalOverrides}. */
+function loadGlobalOverridesFromDir(overrideDir: string): Map<string, string> {
   const result = new Map<string, string>();
   const filePath = join(overrideDir, '_globals.d.ts');
   if (!existsSync(filePath)) return result;

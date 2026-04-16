@@ -15,21 +15,13 @@ import {
 // ─── Helpers ────────────────────────────────────────────────
 
 /**
- * Compute a relative path from outputDir to the package's typings/index.d.ts.
- * Walks up from outputDir looking for node_modules. Returns undefined if not found.
+ * Compute a relative `/// <reference path>` from outputDir to godotTypingsDir/index.d.ts.
+ * Returns undefined if the index.d.ts doesn't exist.
  */
-export function resolvePackageTypingsRef(outputDir: string): string | undefined {
-  let dir = outputDir;
-  for (let i = 0; i < 10; i++) {
-    const candidate = join(dir, 'node_modules', 'typescript-to-gdscript', 'typings', 'index.d.ts');
-    if (existsSync(candidate)) {
-      return relative(outputDir, candidate).replace(/\\/g, '/');
-    }
-    const parent = join(dir, '..');
-    if (parent === dir) break;
-    dir = parent;
-  }
-  return undefined;
+export function resolveGodotTypingsRef(outputDir: string, godotTypingsDir: string): string | undefined {
+  const indexPath = join(godotTypingsDir, 'index.d.ts');
+  if (!existsSync(indexPath)) return undefined;
+  return relative(outputDir, indexPath).replace(/\\/g, '/');
 }
 
 // ─── Content Generators ─────────────────────────────────────
@@ -474,12 +466,13 @@ export function generateResourceTypingContent(
 export function generateIndexTypingContent(
   autoloads: AutoloadEntry[],
   outputDir?: string,
+  godotTypingsDir?: string,
 ): string {
   const lines: string[] = [];
   lines.push('// AUTO-GENERATED — do not edit manually.');
-  // Reference the package typings so IDEs eagerly index all Godot classes for autocomplete.
-  if (outputDir) {
-    const ref = resolvePackageTypingsRef(outputDir);
+  // Reference the Godot engine typings so IDEs eagerly index all classes for autocomplete.
+  if (outputDir && godotTypingsDir) {
+    const ref = resolveGodotTypingsRef(outputDir, godotTypingsDir);
     if (ref) lines.push(`/// <reference path="${ref}" />`);
   }
   lines.push('');

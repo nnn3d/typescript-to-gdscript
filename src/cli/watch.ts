@@ -54,6 +54,7 @@ export function registerWatchCommand(program: Command): void {
         projectRoot: opts.projectRoot ? resolve(opts.projectRoot) : undefined,
         emitOnError: opts.emitOnError,
         debug: isDebugEnabled(),
+        godotTypingsDir: cfg.godotTypingsDir,
       });
 
       watcher.start();

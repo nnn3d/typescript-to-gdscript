@@ -142,6 +142,7 @@ export function generateAllTypings(cfg: {
   tsconfig?: string;
   tsFiles?: string[];
   cacheDir?: string;
+  godotTypingsDir?: string;
 }): void {
   const tsFiles =
     cfg.tsFiles ?? findTsFiles(cfg.tsDir, cfg.rootDir, cfg.ignore);
@@ -163,6 +164,7 @@ export function generateAllTypings(cfg: {
     projectFile: cfg.projectFile,
     cache,
     onDebug: debugLog,
+    godotTypingsDir: cfg.godotTypingsDir,
   });
 
   const addonFiles = generateAddonTypings({

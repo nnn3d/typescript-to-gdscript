@@ -28,6 +28,8 @@ export interface TsToGdConfig {
   disableGodotLint?: boolean;
   /** Cache directory. Default: `node_modules/.cache/typescript-to-gdscript` or temp dir. */
   cacheDir?: string;
+  /** Path to Godot engine typings (classes, gd-helpers, globals). Default: `node_modules/typescript-to-gdscript/typings`. */
+  godotTypingsDir?: string;
 }
 
 // ─── Resolved Config ─────────────────────────────────────────
@@ -49,6 +51,8 @@ export interface ResolvedConfig {
   disableGodotLint: boolean;
   /** Absolute path to cache directory. */
   cacheDir: string;
+  /** Absolute path to Godot engine typings directory. */
+  godotTypingsDir: string;
 }
 
 /**
@@ -106,6 +110,9 @@ export function resolveConfig(options?: {
         ? join('node_modules', '.cache', 'typescript-to-gdscript')
         : join(tmpdir(), 'typescript-to-gdscript', basename(rootDir))),
   );
+  const godotTypingsDir = config?.godotTypingsDir
+    ? resolve(baseDir, config.godotTypingsDir)
+    : findPackageTypingsDir(rootDir) ?? getPackageTypingsDir();
   return {
     rootDir,
     tsDir,
@@ -119,6 +126,7 @@ export function resolveConfig(options?: {
     godotPath: overrides.godotPath ?? config?.godotPath,
     disableGodotLint: config?.disableGodotLint ?? false,
     cacheDir,
+    godotTypingsDir,
   };
 }
 
@@ -172,8 +180,25 @@ export function loadConfig(dir?: string): LoadConfigResult | null {
 // ─── Registry Resolution ──────────────────────────────────────
 
 /**
+ * Walk up from rootDir looking for node_modules/typescript-to-gdscript/typings.
+ * Returns the path via node_modules (preserving symlink structure) or undefined.
+ */
+function findPackageTypingsDir(rootDir: string): string | undefined {
+  let dir = rootDir;
+  for (let i = 0; i < 10; i++) {
+    const candidate = join(dir, 'node_modules', 'typescript-to-gdscript', 'typings');
+    if (existsSync(join(candidate, 'index.d.ts'))) return candidate;
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  return undefined;
+}
+
+/**
  * Get the path to the package's bundled typings directory.
  * Works whether running from src/ (ts-node) or dist/ (compiled).
+ * Resolves symlinks — use findPackageTypingsDir() for node_modules paths.
  */
 function getPackageTypingsDir(): string {
   // This file is at src/config/index.ts or dist/config/index.js

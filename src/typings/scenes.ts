@@ -66,6 +66,8 @@ export interface GenerateTypingsOptions {
   cache?: ProjectCache;
   /** Optional debug logger (e.g. for --debug CLI flag) */
   onDebug?: (message: string) => void;
+  /** Absolute path to Godot engine typings (for /// reference in _index.d.ts) */
+  godotTypingsDir?: string;
 }
 
 /**
@@ -217,7 +219,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
   const projectFile = options.projectFile ?? join(rootDir, 'project.godot');
   const autoloads = existsSync(projectFile) ? parseAutoloads(projectFile) : [];
 
-  const indexContent = generateIndexTypingContent(autoloads, outputDir);
+  const indexContent = generateIndexTypingContent(autoloads, outputDir, options.godotTypingsDir);
   const indexPath = resolve(outputDir, '_index.d.ts');
   writeFileSync(indexPath, indexContent);
   writtenFiles.push(indexPath);
@@ -244,6 +246,8 @@ export interface GenerateFileTypingsOptions {
   projectFile?: string;
   /** Optional cache instance for skipping unchanged typings */
   cache?: ProjectCache;
+  /** Absolute path to Godot engine typings (for /// reference in _index.d.ts) */
+  godotTypingsDir?: string;
 }
 
 /**
@@ -368,7 +372,7 @@ export function generateFileTypings(
   if (changedProject.length > 0) {
     const projectFile = options.projectFile ?? join(rootDir, 'project.godot');
     const autoloads = existsSync(projectFile) ? parseAutoloads(projectFile) : [];
-    const indexContent = generateIndexTypingContent(autoloads, outputDir);
+    const indexContent = generateIndexTypingContent(autoloads, outputDir, options.godotTypingsDir);
     const indexPath = resolve(outputDir, '_index.d.ts');
     writeFileSync(indexPath, indexContent);
     writtenFiles.push(indexPath);

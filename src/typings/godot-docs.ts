@@ -59,8 +59,8 @@ export interface GodotDocsTypingsOptions {
   classDocsDir: string;
   /** Output directory for generated .d.ts files */
   outputDir: string;
-  /** Directory containing override .d.ts files to merge into generated output */
-  overrideDir?: string;
+  /** Override directories (.d.ts files + non-nullable.json) in priority order — later dirs override earlier. */
+  overrideDirs?: string[];
   /** Also generate the class registry JSON at this path */
   registryOutputPath?: string;
   /** Godot version label */
@@ -100,20 +100,13 @@ export function generateGodotDocsTypings(
   // Derive variant param conversion map for widening method parameter types
   setVariantParamConverts(deriveVariantParamConverts(classes));
 
-  // Load override .d.ts files
-  const overrides = options.overrideDir
-    ? loadOverrides(options.overrideDir)
-    : new Map();
-  const globalOverrides = options.overrideDir
-    ? loadGlobalOverrides(options.overrideDir)
-    : new Map();
+  // Load override .d.ts files (merged across all override dirs)
+  const overrideDirs = options.overrideDirs ?? [];
+  const overrides = loadOverrides(overrideDirs);
+  const globalOverrides = loadGlobalOverrides(overrideDirs);
 
-  // Load non-nullable member overrides from JSON
-  setNonNullableMembers(
-    options.overrideDir
-      ? loadNonNullableOverrides(options.overrideDir)
-      : new Map(),
-  );
+  // Load non-nullable member overrides from JSON (merged across all override dirs)
+  setNonNullableMembers(loadNonNullableOverrides(overrideDirs));
 
   // Report unmatched overrides (class name not found in Godot docs)
   // Special overrides that don't map to a Godot class directly
@@ -283,7 +276,7 @@ export function generateGodotDocsTypings(
       }
       // Array → ArrayConstructor with call signatures only (GDScript arrays can't use `new`)
       if (name === 'Array') {
-        const hasGenerics = override?.header.includes('<') ?? false;
+        const hasGenerics = override?.header?.includes('<') ?? false;
         const typeParam = hasGenerics ? '<T>' : '';
         fileLines.push('declare interface ArrayConstructor {');
         fileLines.push(`  ${typeParam}(): Array${typeParam};`);

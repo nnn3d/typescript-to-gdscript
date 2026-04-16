@@ -28,7 +28,7 @@
     "lint": "tsc --noEmit",
     "generate:ast-types": "dts-tree-sitter tree-sitter-gdscript > src/parser/gdscript/types.ts && node scripts/fix-tree-sitter-types.js src/parser/gdscript/types.ts",
     "generate:resource-ast-types": "dts-tree-sitter tree-sitter-godot-resource > src/parser/godot-resource/types.ts && node scripts/fix-tree-sitter-types.js src/parser/godot-resource/types.ts",
-    "generate:godot-typings": "tsx src/cli/index.ts generate-gdscript-global-typings --docs-dir vendor/godot/doc/classes --typings-dir typings",
+    "generate:godot-typings": "tsx src/cli/index.ts generate-gdscript-global-typings --docs-dir vendor/godot/doc/classes --output-dir typings",
     "test:tstogd": "vitest run tests/converter/ts-to-gd.test.ts",
     "test:gdtots": "vitest run tests/converter/gd-to-ts.test.ts",
     "test:diag": "vitest run tests/converter/converter-diag.test.ts",

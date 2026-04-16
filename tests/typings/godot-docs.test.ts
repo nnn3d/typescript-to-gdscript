@@ -16,7 +16,7 @@ describe('Godot Docs: typings generation', () => {
       generateGodotDocsTypings({
         classDocsDir: GODOT_DOCS_DIR,
         outputDir: tmpDir,
-        overrideDir: OVERRIDE_DIR,
+        overrideDirs: [OVERRIDE_DIR],
       });
 
       const generatedClassesDir = join(tmpDir, 'classes');

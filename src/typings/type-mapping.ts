@@ -272,17 +272,20 @@ export function deriveVariantParamConverts(
 }
 
 /**
- * Load `non-nullable/index.json` from the override directory.
+ * Load `non-nullable.json` from each override directory and merge.
+ * Later directories override earlier ones (user > defaults).
  * Returns a map of ClassName → Set of member names that should be non-nullable.
  */
-export function loadNonNullableOverrides(overrideDir: string): Map<string, Set<string>> {
+export function loadNonNullableOverrides(overrideDirs: string[]): Map<string, Set<string>> {
   const result = new Map<string, Set<string>>();
-  // non-nullable lives one level above the overrides/ directory
-  const filePath = join(overrideDir, '..', 'non-nullable', 'index.json');
-  if (!existsSync(filePath)) return result;
-  const data: Record<string, string[]> = JSON.parse(readFileSync(filePath, 'utf-8'));
-  for (const [cls, members] of Object.entries(data)) {
-    result.set(cls, new Set(members));
+  for (const dir of overrideDirs) {
+    const filePath = join(dir, 'non-nullable.json');
+    if (!existsSync(filePath)) continue;
+    const data: Record<string, string[]> = JSON.parse(readFileSync(filePath, 'utf-8'));
+    for (const [cls, members] of Object.entries(data)) {
+      // Later dirs fully replace the class entry (consistent with override merging)
+      result.set(cls, new Set(members));
+    }
   }
   return result;
 }

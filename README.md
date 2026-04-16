@@ -65,6 +65,7 @@ Create a `tstogd.json` in your project root to configure the converter:
 | `exclude`          | `string[]` | Glob patterns (from project root) for files/folders to exclude from all CLI commands (e.g. `["test/**", "**/*.test.ts"]`). Uses [minimatch](https://github.com/isaacs/minimatch) syntax. |
 | `disableGodotLint` | `boolean`  | Disable Godot executable validation in lint and ESLint. Defaults to `false`. |
 | `cacheDir`         | `string`   | Cache directory (source maps and diagnostics stored inline). Default: `node_modules/.cache/typescript-to-gdscript` (or OS temp dir). |
+| `godotTypingsDir`  | `string`   | Path to Godot engine typings (classes, gd-helpers, globals). Default: `node_modules/typescript-to-gdscript/typings`. |
 
 ## CLI Commands
 
@@ -256,20 +257,20 @@ Options:
 - `--tsconfig <path>` — Path to tsconfig.json
 - `--typings-dir <path>` — Directory for all generated typings (globals.d.ts, scene-typings.d.ts)
 
-### `ts2gd generate-typings`
+### `ts2gd generate-gdscript-global-typings`
 
-Generate TypeScript typings and class registry from Godot XML docs. Requires the `vendor/godot` git submodule.
+Generate TypeScript typings and class registry from Godot XML docs. Requires the `vendor/godot` git submodule. The Godot version is auto-detected from `vendor/godot/version.py`.
 
 ```bash
-ts2gd generate-typings --docs-dir vendor/godot/doc/classes
+ts2gd generate-gdscript-global-typings --docs-dir vendor/godot/doc/classes
 ```
 
 Options:
 
 - `--docs-dir <dir>` — Godot XML class documentation directory (required)
-- `--typings-dir <dir>` — Root typings directory (default: `typings`)
-- `--patch-dir <dir>` — Directory containing `.patch` files for manual type improvements
-- `--version <ver>` — Godot version label (auto-detected from `vendor/godot/version.py`)
+- `--output-dir <dir>` — Root typings output directory (default: `typings`)
+- `--override-dir <dir>` — User override directory for `.d.ts` files and `non-nullable.json` (combined with bundled defaults)
+- `--no-default-overrides` — Disable the bundled default overrides
 
 ### `ts2gd generate-addon-typings`
 

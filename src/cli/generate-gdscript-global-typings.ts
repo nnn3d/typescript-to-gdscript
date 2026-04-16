@@ -29,12 +29,6 @@ function getDefaultOverrideDir(): string {
   return resolve(thisDir, '..', 'typings', 'overrides');
 }
 
-/** Resolve the bundled src/typings/non-nullable/index.json next to this source file. */
-function getDefaultNonNullablePath(): string {
-  const thisDir = dirname(fileURLToPath(import.meta.url));
-  return resolve(thisDir, '..', 'typings', 'non-nullable', 'index.json');
-}
-
 export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): void {
   program
     .command('generate-gdscript-global-typings')
@@ -42,11 +36,14 @@ export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): 
       'Generate TypeScript typings and class registry from Godot docs',
     )
     .option('--docs-dir <dir>', 'Godot XML class documentation directory')
-    .option('--typings-dir <dir>', 'Root typings directory', 'typings')
-    .option('--override-dir <dir>', 'Directory containing override .d.ts files')
+    .option('--output-dir <dir>', 'Root typings output directory', 'typings')
     .option(
-      '--version <ver>',
-      'Godot version label (auto-detected from vendor/godot/version.py if omitted)',
+      '--override-dir <dir>',
+      'User override directory for .d.ts files and non-nullable.json (combined with bundled defaults unless --no-default-overrides is set)',
+    )
+    .option(
+      '--no-default-overrides',
+      'Disable the bundled default overrides',
     )
     .action((opts) => {
       if (!opts.docsDir) {
@@ -55,27 +52,34 @@ export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): 
       }
 
       const docsDir = resolve(opts.docsDir);
-      const typingsRoot = resolve(opts.typingsDir);
+      const typingsRoot = resolve(opts.outputDir);
       mkdirSync(typingsRoot, { recursive: true });
 
-      const version = opts.version ?? detectGodotVersion(docsDir);
-
+      const version = detectGodotVersion(docsDir);
       if (!version) {
         console.error(
-          'Could not detect Godot version. Use --version to specify it.',
+          'Could not detect Godot version from vendor/godot/version.py',
         );
         process.exit(1);
       }
 
+      // Resolve override directories. Order: defaults first, user last (later dirs win).
+      const overrideDirs: string[] = [];
+      if (opts.defaultOverrides !== false) {
+        const defaultDir = getDefaultOverrideDir();
+        if (existsSync(defaultDir)) overrideDirs.push(defaultDir);
+      }
+      if (opts.overrideDir) {
+        const userDir = resolve(opts.overrideDir);
+        if (existsSync(userDir)) overrideDirs.push(userDir);
+      }
+
       const registryPath = join(typingsRoot, 'godot-class-registry.json');
-      const overrideDir = opts.overrideDir
-        ? resolve(opts.overrideDir)
-        : getDefaultOverrideDir();
 
       generateGodotDocsTypings({
         classDocsDir: docsDir,
         outputDir: typingsRoot,
-        overrideDir: existsSync(overrideDir) ? overrideDir : undefined,
+        overrideDirs,
         registryOutputPath: registryPath,
         version,
       });
