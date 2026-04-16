@@ -21,7 +21,7 @@ let valueTypes = new Set<string>();
 /**
  * Per-class set of member names whose types should stay non-nullable even
  * though they would normally be nullable reference types.
- * Populated from `src/typings/non-nullable.json` by `generateGodotDocsTypings()`.
+ * Populated from `src/typings/non-nullable/index.json` by `generateGodotDocsTypings()`.
  */
 let nonNullableMembers = new Map<string, Set<string>>();
 
@@ -272,13 +272,13 @@ export function deriveVariantParamConverts(
 }
 
 /**
- * Load `non-nullable.json` from the override directory.
+ * Load `non-nullable/index.json` from the override directory.
  * Returns a map of ClassName → Set of member names that should be non-nullable.
  */
 export function loadNonNullableOverrides(overrideDir: string): Map<string, Set<string>> {
   const result = new Map<string, Set<string>>();
-  // non-nullable.json lives one level above the overrides/ directory
-  const filePath = join(overrideDir, '..', 'non-nullable.json');
+  // non-nullable lives one level above the overrides/ directory
+  const filePath = join(overrideDir, '..', 'non-nullable', 'index.json');
   if (!existsSync(filePath)) return result;
   const data: Record<string, string[]> = JSON.parse(readFileSync(filePath, 'utf-8'));
   for (const [cls, members] of Object.entries(data)) {

@@ -49,7 +49,8 @@ src/
     scenes.ts            # generateSceneTypings: parses .tscn/.tres for get_node/get_parent/GodotResources
     overrides/           # Manual type overrides applied during typings generation
       *.d.ts             # Per-class override files (node.d.ts, array.d.ts, etc.)
-    non-nullable.json    # Non-nullable type override data
+    non-nullable/
+      index.json         # Non-nullable type override data
   eslint/                # plugin.ts + rules/convert.ts (ts2gd/convert rule)
   godot-validate/index.ts  # Godot CLI validation, error parsing, source map remapping
   cache/index.ts         # ProjectCache: TS→GD, addon, typings caching + source maps in cache dir

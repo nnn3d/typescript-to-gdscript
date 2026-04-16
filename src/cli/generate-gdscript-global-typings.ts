@@ -29,10 +29,10 @@ function getDefaultOverrideDir(): string {
   return resolve(thisDir, '..', 'typings', 'overrides');
 }
 
-/** Resolve the bundled src/typings/non-nullable.json next to this source file. */
+/** Resolve the bundled src/typings/non-nullable/index.json next to this source file. */
 function getDefaultNonNullablePath(): string {
   const thisDir = dirname(fileURLToPath(import.meta.url));
-  return resolve(thisDir, '..', 'typings', 'non-nullable.json');
+  return resolve(thisDir, '..', 'typings', 'non-nullable', 'index.json');
 }
 
 export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): void {
