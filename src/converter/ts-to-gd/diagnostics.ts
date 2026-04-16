@@ -1,5 +1,8 @@
 import ts from 'typescript';
-import { resolveRegistry } from '../../config/index.ts';
+import type { GodotClassRegistry } from '../../typings/godot-registry.ts';
+import type { DiagnosticsTypeInfo } from '../common/index.ts';
+
+export type { DiagnosticsTypeInfo };
 
 /**
  * Container types that DO support the `in` operator in GDScript. Everything
@@ -19,16 +22,38 @@ const GD_PRIMITIVE_TYPES = new Set([
 ]);
 
 /**
+ * Build the diagnostics type info from a Godot class registry.
+ * If `registry` is undefined (registry unavailable), returns empty sets — callers
+ * fall back to primitive / TS-array checks only.
+ */
+export function buildDiagnosticsTypeInfo(
+  registry: GodotClassRegistry | undefined,
+): DiagnosticsTypeInfo {
+  const constructors = new Set<string>();
+  const packedArrayTypes = new Set<string>();
+  const bannedInTypes = new Set<string>();
+  if (registry) {
+    for (const name of registry.getData().constructors ?? []) {
+      constructors.add(name);
+      if (GD_IN_ALLOWED_CONTAINER_TYPES.has(name)) continue;
+      if (name.startsWith('Packed') && name.endsWith('Array')) {
+        packedArrayTypes.add(name);
+      } else {
+        bannedInTypes.add(name);
+      }
+    }
+  }
+  return { constructors, packedArrayTypes, bannedInTypes };
+}
+
+/**
  * Returns true if a GDScript type is a "class type" -- i.e. not a primitive and
  * not a variant/value type (Vector2, Color, etc.). Only class types need an
  * explicit type annotation when used as optional null-default parameters.
  */
-export function isGdClassType(gdType: string): boolean {
+export function isGdClassType(gdType: string, diagInfo: DiagnosticsTypeInfo): boolean {
   if (GD_PRIMITIVE_TYPES.has(gdType)) return false;
-  try {
-    const registry = resolveRegistry();
-    if (registry.isConstructor(gdType)) return false;
-  } catch { /* registry unavailable */ }
+  if (diagInfo.constructors.has(gdType)) return false;
   return true;
 }
 
@@ -36,48 +61,9 @@ export function isGdClassType(gdType: string): boolean {
  * Returns true if a GDScript type is a variant/value type (Vector2, Color, etc.)
  * -- i.e. a registry constructor but not a primitive.
  */
-export function isGdVariantType(gdType: string): boolean {
+export function isGdVariantType(gdType: string, diagInfo: DiagnosticsTypeInfo): boolean {
   if (GD_PRIMITIVE_TYPES.has(gdType)) return false;
-  try {
-    const registry = resolveRegistry();
-    return registry.isConstructor(gdType);
-  } catch { return false; }
-}
-
-/**
- * Packed array type names are recognized as "array" in error messages.
- * Derived from the registry's `constructors` list, filtered to entries that
- * start with `Packed` (Godot's naming convention for packed arrays).
- */
-let cachedPackedArrayTypes: Set<string> | null = null;
-/**
- * Non-container variant types banned from `in` RHS -- the set of registry
- * constructors minus `GD_IN_ALLOWED_CONTAINER_TYPES`, excluding `Packed*Array`
- * entries (those get a dedicated "the array type `X`" label).
- */
-let cachedBannedValueTypes: Set<string> | null = null;
-
-export function ensureBannedTypeSets(): void {
-  if (cachedBannedValueTypes && cachedPackedArrayTypes) return;
-  const banned = new Set<string>();
-  const packed = new Set<string>();
-  try {
-    const registry = resolveRegistry();
-    const constructors = registry.getData().constructors ?? [];
-    for (const name of constructors) {
-      if (GD_IN_ALLOWED_CONTAINER_TYPES.has(name)) continue;
-      if (name.startsWith('Packed') && name.endsWith('Array')) {
-        packed.add(name);
-      } else {
-        banned.add(name);
-      }
-    }
-  } catch {
-    // Registry unavailable -- sets stay empty; only `isArrayType`/primitive
-    // checks will fire.
-  }
-  cachedBannedValueTypes = banned;
-  cachedPackedArrayTypes = packed;
+  return diagInfo.constructors.has(gdType);
 }
 
 /**
@@ -87,18 +73,18 @@ export function ensureBannedTypeSets(): void {
 export function classifyInRhsType(
   type: ts.Type,
   checker: ts.TypeChecker,
+  diagInfo: DiagnosticsTypeInfo,
 ): string | null {
   // Check symbol name first for allowed/banned types
-  ensureBannedTypeSets();
   const symbol = type.getSymbol() ?? type.aliasSymbol;
   const name = symbol?.getName();
   if (name) {
     // Array, Dictionary support `in` -- allow them
     if (GD_IN_ALLOWED_CONTAINER_TYPES.has(name)) return null;
-    if (cachedBannedValueTypes!.has(name)) {
+    if (diagInfo.bannedInTypes.has(name)) {
       return `the value type \`${name}\``;
     }
-    if (cachedPackedArrayTypes!.has(name)) {
+    if (diagInfo.packedArrayTypes.has(name)) {
       return `the array type \`${name}\``;
     }
   }

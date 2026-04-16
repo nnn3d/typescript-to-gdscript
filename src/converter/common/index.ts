@@ -1,6 +1,19 @@
 import ts from 'typescript';
 
 /**
+ * Pre-derived lookup sets for `in`-operator diagnostics and variant/class type
+ * checks. Built once per converter run from the Godot class registry.
+ */
+export interface DiagnosticsTypeInfo {
+  /** All variant/value type constructors (Vector2, Color, Packed*Array, Dictionary, ...). */
+  constructors: Set<string>;
+  /** Subset of {@link constructors} whose names match `Packed*Array`. */
+  packedArrayTypes: Set<string>;
+  /** Constructors banned from `in` RHS (excludes allowed containers and packed arrays). */
+  bannedInTypes: Set<string>;
+}
+
+/**
  * Context passed through the transformation pipeline.
  */
 export interface TransformContext {
@@ -14,6 +27,8 @@ export interface TransformContext {
   filePath: string;
   /** Diagnostics / warnings collected during transformation */
   diagnostics: TransformDiagnostic[];
+  /** Pre-derived sets of Godot variant types (for `in`-operator and param diagnostics). */
+  diagInfo: DiagnosticsTypeInfo;
 }
 
 export interface TransformDiagnostic {

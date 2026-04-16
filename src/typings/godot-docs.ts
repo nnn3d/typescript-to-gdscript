@@ -15,17 +15,14 @@ import {
 } from './godot-registry.ts';
 import {
   godotTypeToTs,
-  setKnownClasses,
-  setValueTypes,
-  setNonNullableMembers,
-  setVariantParamConverts,
-  getValueTypes,
   deriveValueTypes,
   deriveVariantParamConverts,
   loadNonNullableOverrides,
+  emptyTypeContext,
   sanitizeClassName,
   INTERFACE_CLASSES,
   CLASS_NAME_CONFLICTS,
+  type TypeContext,
 } from './type-mapping.ts';
 import {
   generateClassDeclaration,
@@ -90,23 +87,24 @@ export function generateGodotDocsTypings(
     gdscriptCls = parseClassXml(xmlContent);
   }
 
-  // Populate known class names for type resolution
-  setKnownClasses(new Set([...classes.keys()].filter((n) => !n.startsWith('@'))));
-
-  // Derive value types (classes with copy constructor) — used for nullable detection
-  // and for routing classes to generateValueTypeDeclaration vs generateClassDeclaration.
-  setValueTypes(deriveValueTypes(classes));
-
-  // Derive variant param conversion map for widening method parameter types
-  setVariantParamConverts(deriveVariantParamConverts(classes));
+  // Build the type context used throughout generation (replaces module-level state).
+  // Bootstrap order matters: deriveValueTypes calls godotTypeToTs (which reads
+  // ctx.knownClasses), so we pass a minimal ctx with only knownClasses populated.
+  const knownClasses = new Set(
+    [...classes.keys()].filter((n) => !n.startsWith('@')),
+  );
+  const bootstrapCtx: TypeContext = { ...emptyTypeContext(), knownClasses };
+  const overrideDirs = options.overrideDirs ?? [];
+  const typeCtx: TypeContext = {
+    knownClasses,
+    valueTypes: deriveValueTypes(classes, bootstrapCtx),
+    variantParamConverts: deriveVariantParamConverts(classes),
+    nonNullableMembers: loadNonNullableOverrides(overrideDirs),
+  };
 
   // Load override .d.ts files (merged across all override dirs)
-  const overrideDirs = options.overrideDirs ?? [];
   const overrides = loadOverrides(overrideDirs);
   const globalOverrides = loadGlobalOverrides(overrideDirs);
-
-  // Load non-nullable member overrides from JSON (merged across all override dirs)
-  setNonNullableMembers(loadNonNullableOverrides(overrideDirs));
 
   // Report unmatched overrides (class name not found in Godot docs)
   // Special overrides that don't map to a Godot class directly
@@ -169,7 +167,7 @@ export function generateGodotDocsTypings(
     }
   }
 
-  const valueTypes = getValueTypes();
+  const valueTypes = typeCtx.valueTypes;
 
   // Sort class names for deterministic output
   const sortedNames = [...classes.keys()].sort();
@@ -177,10 +175,10 @@ export function generateGodotDocsTypings(
   for (const name of sortedNames) {
     const cls = classes.get(name)!;
     if (name === '@GlobalScope') {
-      let globalsContent = generateGlobalScopeDeclaration(cls);
+      let globalsContent = generateGlobalScopeDeclaration(cls, typeCtx);
       // Append @GDScript built-in constants, functions, and annotation decorators
       if (gdscriptCls) {
-        globalsContent += generateGDScriptDeclaration(gdscriptCls);
+        globalsContent += generateGDScriptDeclaration(gdscriptCls, typeCtx);
       }
       globalsContent = applyGlobalOverrides(globalsContent, globalOverrides);
       const content = header + '\n' + globalsContent + '\n';
@@ -210,7 +208,7 @@ export function generateGodotDocsTypings(
     if (interfaceName) {
       const fileLines: string[] = [];
 
-      var declaration = generateInterfaceDeclaration(cls, interfaceName);
+      var declaration = generateInterfaceDeclaration(cls, interfaceName, typeCtx);
 
       // Apply overrides if available (by TS interface name)
       const override = overrides.get(interfaceName);
@@ -245,13 +243,13 @@ export function generateGodotDocsTypings(
         } else {
           fileLines.push(`type Dictionary = Object;`);
         }
-        fileLines.push(generateConstructorInterface(cls, 'Dictionary', 'Dictionary'));
+        fileLines.push(generateConstructorInterface(cls, 'Dictionary', 'Dictionary', typeCtx));
         fileLines.push('declare var Object: typeof GodotObject;');
       }
       // Callable → Function, keep Callable alias + constructor + CallableFunction/NewableFunction
       if (name === 'Callable') {
         fileLines.push(`type Callable = Function;`);
-        fileLines.push(generateConstructorInterface(cls, 'Callable', 'Callable'));
+        fileLines.push(generateConstructorInterface(cls, 'Callable', 'Callable', typeCtx));
         const cfOverride = overrides.get('CallableFunction');
         if (cfOverride) {
           const cfHeader = cfOverride.header!.replace(
@@ -286,7 +284,7 @@ export function generateGodotDocsTypings(
           if (ctor.parameters.length !== 1) continue;
           const param = ctor.parameters[0]!;
           if (param.name !== 'from' && !param.name.startsWith('from')) continue;
-          const paramType = godotTypeToTs(param.type);
+          const paramType = godotTypeToTs(param.type, typeCtx);
           // Skip the `from: Array` variant (redundant with `(): Array`)
           if (paramType.startsWith('Array')) continue;
           fileLines.push(`  ${typeParam}(from_: ${paramType}): Array${typeParam};`);
@@ -306,7 +304,7 @@ export function generateGodotDocsTypings(
 
     // Value types: emitted as interface + constructor function (no `new`)
     if (valueTypes.has(name)) {
-      var valueDecl = generateValueTypeDeclaration(cls, allDictMembers);
+      var valueDecl = generateValueTypeDeclaration(cls, allDictMembers, typeCtx);
 
       // Apply overrides if available
       const className = sanitizeClassName(name);
@@ -349,6 +347,7 @@ export function generateGodotDocsTypings(
 
     var classDecl = generateClassDeclaration(
       cls,
+      typeCtx,
       name === 'Object' ? dictOnlyOverrides : undefined,
       inheritedMemberNames,
     );
@@ -389,7 +388,7 @@ export function generateGodotDocsTypings(
   }
 
   // Generate Number interface extension with int/float operator overloads
-  const numberOps = generateNumberOperatorOverloads(classes);
+  const numberOps = generateNumberOperatorOverloads(classes, typeCtx);
   if (numberOps) {
     const fileName = '_number-ops.d.ts';
     writeFileSync(join(classesDir, fileName), header + '\n' + numberOps + '\n');

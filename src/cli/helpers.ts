@@ -14,7 +14,15 @@ import { shouldIgnore } from '../config/index.ts';
 import { generateTypings, generateAddonTypings } from '../typings/scenes.ts';
 import { ProjectCache } from '../cache/index.ts';
 
-/** Reference to the program instance for debug flag access */
+/**
+ * CLI-scoped debug flag. Set once at CLI startup by the `preAction` hook in
+ * `src/cli/index.ts` and read by `debugLog()` and `isDebugEnabled()`.
+ *
+ * This is intentional module state — it is NOT a library-level singleton. The
+ * flag is local to the short-lived CLI process; library code (`generateTypings`,
+ * `Watcher`, etc.) accepts an explicit `onDebug` callback instead of reading
+ * this flag, so test isolation is not affected.
+ */
 let _debugEnabled = false;
 
 export function setDebugEnabled(enabled: boolean): void {
@@ -25,7 +33,7 @@ export function isDebugEnabled(): boolean {
   return _debugEnabled;
 }
 
-/** Print a message only when --debug is enabled */
+/** Print a message only when --debug is enabled. CLI-scoped (see {@link _debugEnabled}). */
 export function debugLog(message: string): void {
   if (_debugEnabled) {
     console.log(message);

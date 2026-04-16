@@ -1,7 +1,9 @@
 import ts from 'typescript';
 import { createTsProgram } from '../../parser/typescript/index.ts';
+import { resolveRegistry } from '../../config/index.ts';
 import type { TransformResult } from '../common/index.ts';
 import { TsToGdTransformer } from './transformer.ts';
+import { buildDiagnosticsTypeInfo } from './diagnostics.ts';
 
 export interface ConvertOptions {
   /** Path to the TypeScript file */
@@ -41,6 +43,11 @@ export function convertTsToGd(options: ConvertOptions): TransformResult {
     };
   }
 
+  // Registry is optional — if unavailable, diagnostics fall back to primitive checks only.
+  let registry;
+  try { registry = resolveRegistry(); } catch { /* registry unavailable */ }
+  const diagInfo = buildDiagnosticsTypeInfo(registry);
+
   const transformer = new TsToGdTransformer(
     {
       program,
@@ -48,6 +55,7 @@ export function convertTsToGd(options: ConvertOptions): TransformResult {
       sourceFile,
       filePath: options.filePath,
       diagnostics: [],
+      diagInfo,
     },
     {
       sourceMap: options.sourceMap ?? false,

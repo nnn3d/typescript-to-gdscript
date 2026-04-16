@@ -3,8 +3,8 @@ import {
   godotTypeToTs,
   isNullableGodotType,
   widenParamType,
-  getNonNullableMembers,
   sanitizeClassName,
+  type TypeContext,
 } from './type-mapping.ts';
 
 // ─── Name sanitization helpers ───────────────────────────────────
@@ -124,6 +124,7 @@ export function emitJsDoc(
 
 export function emitMethodSignature(
   method: GodotMethodXml,
+  ctx: TypeContext,
   nonNullMembers?: Set<string>,
 ): string[] {
   const lines: string[] = [];
@@ -134,7 +135,7 @@ export function emitMethodSignature(
   // Once we see an optional param, all subsequent must be optional too
   let seenOptional = false;
   const params: string[] = method.parameters.map((p) => {
-    const tsType = widenParamType(p.type);
+    const tsType = widenParamType(p.type, ctx);
     if (p.defaultValue !== undefined) seenOptional = true;
     const optional = seenOptional ? '?' : '';
     return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
@@ -143,8 +144,8 @@ export function emitMethodSignature(
     params.push('...args: any[]');
   }
 
-  const returnType = godotTypeToTs(method.returnType);
-  const nullable = isNullableGodotType(method.returnType) && !nonNullMembers?.has(method.name)
+  const returnType = godotTypeToTs(method.returnType, ctx);
+  const nullable = isNullableGodotType(method.returnType, ctx) && !nonNullMembers?.has(method.name)
     ? ' | null' : '';
   const staticPrefix = method.isStatic ? 'static ' : '';
   const methodName = needsQuoting(method.name)
@@ -183,7 +184,7 @@ export const OPERATOR_SYMBOL_MAP: Record<string, string> = {
  * This union-of-entries pattern enables extracting the set of valid right-hand
  * types and per-overload return type inference via distributive conditional types.
  */
-export function emitOperatorOverloads(operators: GodotOperatorXml[]): string[] {
+export function emitOperatorOverloads(operators: GodotOperatorXml[], ctx: TypeContext): string[] {
   const lines: string[] = [];
 
   // Group operators by symbol name
@@ -204,12 +205,12 @@ export function emitOperatorOverloads(operators: GodotOperatorXml[]): string[] {
     const isUnary = ops[0]!.operator.startsWith('unary');
 
     if (isUnary) {
-      const returnType = godotTypeToTs(ops[0]!.returnType);
+      const returnType = godotTypeToTs(ops[0]!.returnType, ctx);
       lines.push(`  [${symbolName}]: { ret: ${returnType} };`);
     } else {
       const entries = ops.map((op) => {
-        const rightType = godotTypeToTs(op.rightType ?? 'Variant');
-        const returnType = godotTypeToTs(op.returnType);
+        const rightType = godotTypeToTs(op.rightType ?? 'Variant', ctx);
+        const returnType = godotTypeToTs(op.returnType, ctx);
         return `{ right: ${rightType}; ret: ${returnType} }`;
       });
       lines.push(`  [${symbolName}]: ${entries.join(' | ')};`);
@@ -226,6 +227,7 @@ export function emitOperatorOverloads(operators: GodotOperatorXml[]): string[] {
  */
 export function generateClassDeclaration(
   cls: GodotClassXml,
+  ctx: TypeContext,
   dictOnlyOverrides?: Set<string>,
   /** All explicit method names from ancestor classes (to avoid setter/getter conflicts) */
   inheritedMethodNames?: Set<string>,
@@ -240,7 +242,7 @@ export function generateClassDeclaration(
   lines.push(`declare class ${className}${extendsClause} {`);
 
   // Non-nullable member overrides for this class
-  const nonNullMembers = getNonNullableMembers().get(cls.name) ?? new Set<string>();
+  const nonNullMembers = ctx.nonNullableMembers.get(cls.name) ?? new Set<string>();
 
   // Properties
   const methodNames = new Set(cls.methods.map((m) => m.name));
@@ -248,8 +250,8 @@ export function generateClassDeclaration(
   const propNames = new Set(cls.properties.map((p) => p.name));
   for (const prop of cls.properties) {
     lines.push(...emitJsDoc(prop.description));
-    const tsType = godotTypeToTs(prop.type);
-    const nullable = isNullableGodotType(prop.type) && !nonNullMembers.has(prop.name) ? ' | null' : '';
+    const tsType = godotTypeToTs(prop.type, ctx);
+    const nullable = isNullableGodotType(prop.type, ctx) && !nonNullMembers.has(prop.name) ? ' | null' : '';
     const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
     lines.push(`  ${propName}: ${tsType}${nullable};`);
   }
@@ -258,9 +260,9 @@ export function generateClassDeclaration(
   // Skip if the name conflicts with an explicit method in this class or ancestors,
   // or with a property name (TS doesn't allow property + method with same name).
   for (const prop of cls.properties) {
-    const tsType = godotTypeToTs(prop.type);
-    const setterType = widenParamType(prop.type);
-    const nullable = isNullableGodotType(prop.type) && !nonNullMembers.has(prop.name) ? ' | null' : '';
+    const tsType = godotTypeToTs(prop.type, ctx);
+    const setterType = widenParamType(prop.type, ctx);
+    const nullable = isNullableGodotType(prop.type, ctx) && !nonNullMembers.has(prop.name) ? ' | null' : '';
     if (
       prop.setter &&
       !methodNames.has(prop.setter) &&
@@ -285,7 +287,7 @@ export function generateClassDeclaration(
 
   // Methods
   for (const method of cls.methods) {
-    lines.push(...emitMethodSignature(method, nonNullMembers));
+    lines.push(...emitMethodSignature(method, ctx, nonNullMembers));
   }
 
   // Signals
@@ -293,7 +295,7 @@ export function generateClassDeclaration(
     lines.push('');
     for (const sig of cls.signals) {
       lines.push(...emitJsDoc(sig.description));
-      const paramTypes = sig.parameters.map((p) => godotTypeToTs(p.type));
+      const paramTypes = sig.parameters.map((p) => godotTypeToTs(p.type, ctx));
       const sigName = needsQuoting(sig.name) ? `'${sig.name}'` : sig.name;
       lines.push(`  ${sigName}: Signal<[${paramTypes.join(', ')}]>;`);
     }
@@ -326,7 +328,7 @@ export function generateClassDeclaration(
 
   // Operator overloads
   if (cls.operators.length > 0) {
-    lines.push(...emitOperatorOverloads(cls.operators));
+    lines.push(...emitOperatorOverloads(cls.operators, ctx));
   }
 
   // For GodotObject: override Dictionary-only methods from Object interface with never
@@ -359,7 +361,8 @@ export function generateClassDeclaration(
  */
 export function generateValueTypeDeclaration(
   cls: GodotClassXml,
-  dictMembers?: Set<string>,
+  dictMembers: Set<string> | undefined,
+  ctx: TypeContext,
 ): string {
   const lines: string[] = [];
   const className = sanitizeClassName(cls.name);
@@ -375,7 +378,7 @@ export function generateValueTypeDeclaration(
   let itemType: string | null = null;
   for (const method of cls.methods) {
     if (method.name === 'append' && method.parameters.length === 1) {
-      itemType = godotTypeToTs(method.parameters[0]!.type);
+      itemType = godotTypeToTs(method.parameters[0]!.type, ctx);
       break;
     }
   }
@@ -385,7 +388,7 @@ export function generateValueTypeDeclaration(
       const param = ctor.parameters[0]!;
       if (param.name === 'from' || param.name.startsWith('from')) {
         // Keep Array<unknown> as-is — element type is exposed via [Symbol.iterator]
-        variantConvertTypes.push(godotTypeToTs(param.type));
+        variantConvertTypes.push(godotTypeToTs(param.type, ctx));
       }
     }
   }
@@ -397,7 +400,7 @@ export function generateValueTypeDeclaration(
   // Properties
   for (const prop of cls.properties) {
     lines.push(...emitJsDoc(prop.description));
-    const tsType = godotTypeToTs(prop.type);
+    const tsType = godotTypeToTs(prop.type, ctx);
     const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
     lines.push(`  ${propName}: ${tsType};`);
   }
@@ -409,12 +412,12 @@ export function generateValueTypeDeclaration(
   // Instance methods (non-static only)
   for (const method of cls.methods) {
     if (method.isStatic) continue;
-    lines.push(...emitMethodSignature(method));
+    lines.push(...emitMethodSignature(method, ctx));
   }
 
   // Operator overloads
   if (cls.operators.length > 0) {
-    lines.push(...emitOperatorOverloads(cls.operators));
+    lines.push(...emitOperatorOverloads(cls.operators, ctx));
   }
 
   // Variant convert types: enables `gd.as(value, ClassName)` type narrowing
@@ -449,7 +452,7 @@ export function generateValueTypeDeclaration(
   lines.push('}');
   lines.push('');
 
-  lines.push(generateConstructorInterface(cls, className));
+  lines.push(generateConstructorInterface(cls, className, undefined, ctx));
 
   return lines.join('\n');
 }
@@ -466,7 +469,8 @@ export function generateValueTypeDeclaration(
 export function generateConstructorInterface(
   cls: GodotClassXml,
   className: string,
-  returnType?: string,
+  returnType: string | undefined,
+  ctx: TypeContext,
 ): string {
   const ret = returnType ?? className;
   const lines: string[] = [];
@@ -479,7 +483,7 @@ export function generateConstructorInterface(
     lines.push(...emitJsDoc(ctor.description));
     let seenOptional = false;
     const params = ctor.parameters.map((p) => {
-      const tsType = godotTypeToTs(p.type);
+      const tsType = godotTypeToTs(p.type, ctx);
       if (p.defaultValue !== undefined) seenOptional = true;
       const optional = seenOptional ? '?' : '';
       return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
@@ -495,7 +499,7 @@ export function generateConstructorInterface(
   // Static methods
   for (const method of cls.methods) {
     if (!method.isStatic) continue;
-    const sig = emitMethodSignature(method);
+    const sig = emitMethodSignature(method, ctx);
     lines.push(...sig.map((l) => l.replace('  static ', '  ')));
   }
 
@@ -535,6 +539,7 @@ export function generateConstructorInterface(
 export function generateInterfaceDeclaration(
   cls: GodotClassXml,
   tsName: string,
+  ctx: TypeContext,
 ): string {
   const lines: string[] = [];
 
@@ -544,7 +549,7 @@ export function generateInterfaceDeclaration(
     if (ctor.parameters.length === 1) {
       const param = ctor.parameters[0]!;
       if (param.name === 'from' || param.name.startsWith('from')) {
-        variantConvertTypes.push(godotTypeToTs(param.type));
+        variantConvertTypes.push(godotTypeToTs(param.type, ctx));
       }
     }
   }
@@ -557,14 +562,14 @@ export function generateInterfaceDeclaration(
   const ifMethodNames = new Set(cls.methods.map((m) => m.name));
   for (const prop of cls.properties) {
     lines.push(...emitJsDoc(prop.description));
-    const tsType = godotTypeToTs(prop.type);
+    const tsType = godotTypeToTs(prop.type, ctx);
     const propName = needsQuoting(prop.name) ? `'${prop.name}'` : prop.name;
     lines.push(`  ${propName}: ${tsType};`);
   }
 
   // Property setter/getter methods
   for (const prop of cls.properties) {
-    const tsType = godotTypeToTs(prop.type);
+    const tsType = godotTypeToTs(prop.type, ctx);
     if (prop.setter && !ifMethodNames.has(prop.setter)) {
       lines.push(`  ${prop.setter}(value: ${tsType}): void;`);
     }
@@ -583,7 +588,7 @@ export function generateInterfaceDeclaration(
     lines.push(...emitJsDoc(method.description));
     let seenOptional = false;
     const params: string[] = method.parameters.map((p) => {
-      const tsType = godotTypeToTs(p.type);
+      const tsType = godotTypeToTs(p.type, ctx);
       if (p.defaultValue !== undefined) seenOptional = true;
       const optional = seenOptional ? '?' : '';
       const paramName = TS_RESERVED.has(p.name) ? `${p.name}_` : p.name;
@@ -592,7 +597,7 @@ export function generateInterfaceDeclaration(
     if (method.isVararg) {
       params.push('...args: any[]');
     }
-    const returnType = godotTypeToTs(method.returnType);
+    const returnType = godotTypeToTs(method.returnType, ctx);
     const methodName = needsQuoting(method.name)
       ? `'${method.name}'`
       : method.name;
@@ -607,7 +612,7 @@ export function generateInterfaceDeclaration(
 
   // Operator overloads
   if (cls.operators.length > 0) {
-    lines.push(...emitOperatorOverloads(cls.operators));
+    lines.push(...emitOperatorOverloads(cls.operators, ctx));
   }
 
   // Variant convert types (for Array, Dictionary, etc.)

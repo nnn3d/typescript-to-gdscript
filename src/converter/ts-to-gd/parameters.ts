@@ -109,7 +109,7 @@ export function emitParameters(
       const needsNullDefault =
         (p.questionToken && !p.initializer) || isNullDefault;
       if (needsNullDefault) {
-        if (gdType && isGdClassType(gdType)) {
+        if (gdType && isGdClassType(gdType, t.ctx.diagInfo)) {
           return `${name}: ${gdType} = null`;
         }
         return `${name} = null`;
@@ -120,7 +120,7 @@ export function emitParameters(
         : '';
       // Omit type annotation for variant/constructor types with non-null defaults
       // (GDScript infers type from the constructor call, e.g. Vector2.DOWN -> Vector2)
-      const omitType = gdType && p.initializer && !isNullDefault && isGdVariantType(gdType);
+      const omitType = gdType && p.initializer && !isNullDefault && isGdVariantType(gdType, t.ctx.diagInfo);
       const typeAnnotation = gdType && !omitType ? `: ${gdType}` : '';
       return `${name}${typeAnnotation}${defaultValue}`;
     })

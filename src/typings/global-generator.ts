@@ -1,5 +1,5 @@
 import type { GodotClassXml } from './godot-registry.ts';
-import { godotTypeToTs, INTERFACE_CLASSES } from './type-mapping.ts';
+import { godotTypeToTs, INTERFACE_CLASSES, type TypeContext } from './type-mapping.ts';
 import {
   emitJsDoc,
   sanitizeParamName,
@@ -18,7 +18,7 @@ export const SKIP_CLASSES = new Set(['int', 'float', 'bool', 'Nil']);
 /**
  * Generates global scope declarations (top-level functions, constants, enums).
  */
-export function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
+export function generateGlobalScopeDeclaration(cls: GodotClassXml, ctx: TypeContext): string {
   const lines: string[] = [];
   lines.push('// @GlobalScope — global functions and constants');
   lines.push('');
@@ -28,7 +28,7 @@ export function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
     lines.push(...emitJsDoc(method.description, ''));
     let seenOptional = false;
     const params = method.parameters.map((p) => {
-      const tsType = godotTypeToTs(p.type);
+      const tsType = godotTypeToTs(p.type, ctx);
       if (p.defaultValue !== undefined) seenOptional = true;
       const optional = seenOptional ? '?' : '';
       return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
@@ -36,7 +36,7 @@ export function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
     if (method.isVararg) {
       params.push('...args: any[]');
     }
-    const returnType = godotTypeToTs(method.returnType);
+    const returnType = godotTypeToTs(method.returnType, ctx);
     lines.push(
       `declare function ${sanitizeFunctionName(method.name)}(${params.join(', ')}): ${returnType};`,
     );
@@ -79,7 +79,7 @@ export function generateGlobalScopeDeclaration(cls: GodotClassXml): string {
  * Generates TypeScript declarations from @GDScript.xml:
  * constants, methods, and annotation decorators.
  */
-export function generateGDScriptDeclaration(cls: GodotClassXml): string {
+export function generateGDScriptDeclaration(cls: GodotClassXml, ctx: TypeContext): string {
   const lines: string[] = [];
   lines.push('');
   lines.push('// @GDScript — built-in constants, functions, and annotations');
@@ -102,7 +102,7 @@ export function generateGDScriptDeclaration(cls: GodotClassXml): string {
       lines.push(...emitJsDoc(method.description, ''));
       let seenOptional = false;
       const params = method.parameters.map((p) => {
-        const tsType = godotTypeToTs(p.type);
+        const tsType = godotTypeToTs(p.type, ctx);
         if (p.defaultValue !== undefined) seenOptional = true;
         const optional = seenOptional ? '?' : '';
         return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
@@ -110,7 +110,7 @@ export function generateGDScriptDeclaration(cls: GodotClassXml): string {
       if (method.isVararg) {
         params.push('...args: any[]');
       }
-      const returnType = godotTypeToTs(method.returnType);
+      const returnType = godotTypeToTs(method.returnType, ctx);
       lines.push(
         `declare function ${sanitizeFunctionName(method.name)}(${params.join(', ')}): ${returnType};`,
       );
@@ -136,7 +136,7 @@ export function generateGDScriptDeclaration(cls: GodotClassXml): string {
         // Parameterized decorator: factory function returning decorator
         let seenOptional = false;
         const params = ann.parameters.map((p) => {
-          const tsType = godotTypeToTs(p.type);
+          const tsType = godotTypeToTs(p.type, ctx);
           if (p.defaultValue !== undefined) seenOptional = true;
           const optional = seenOptional ? '?' : '';
           return `${sanitizeParamName(p.name)}${optional}: ${tsType}`;
@@ -163,6 +163,7 @@ export function generateGDScriptDeclaration(cls: GodotClassXml): string {
  */
 export function generateNumberOperatorOverloads(
   classes: Map<string, GodotClassXml>,
+  ctx: TypeContext,
 ): string | null {
   const intCls = classes.get('int');
   const floatCls = classes.get('float');
@@ -185,11 +186,11 @@ export function generateNumberOperatorOverloads(
       }
       const group = grouped.get(symbolName)!;
 
-      const returnType = godotTypeToTs(op.returnType);
+      const returnType = godotTypeToTs(op.returnType, ctx);
       if (group.isUnary) {
         group.entries.add(`{ ret: ${returnType} }`);
       } else {
-        const rightType = godotTypeToTs(op.rightType ?? 'Variant');
+        const rightType = godotTypeToTs(op.rightType ?? 'Variant', ctx);
         group.entries.add(`{ right: ${rightType}; ret: ${returnType} }`);
       }
     }

@@ -539,7 +539,7 @@ function checkInOperatorRhs(
     : [type];
 
   for (const bt of baseTypes) {
-    const banned = classifyInRhsType(bt, checker);
+    const banned = classifyInRhsType(bt, checker, t.ctx.diagInfo);
     if (banned) {
       t.addDiagnostic(
         node,
