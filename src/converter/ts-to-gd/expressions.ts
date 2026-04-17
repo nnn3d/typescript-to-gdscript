@@ -281,6 +281,70 @@ export function emitPropertyAccess(
 
 // ---- Call Expressions ----
 
+/**
+ * Return the first non-transparent ancestor of `node` — i.e. walk through
+ * parenthesis, non-null assertions, and type assertions which don't change
+ * runtime semantics. Used to decide whether a value is actually "consumed"
+ * vs merely wrapped.
+ */
+function effectiveParent(node: ts.Node): ts.Node | undefined {
+  let parent: ts.Node | undefined = node.parent;
+  while (
+    parent &&
+    (ts.isParenthesizedExpression(parent) ||
+      ts.isNonNullExpression(parent) ||
+      ts.isAsExpression(parent) ||
+      ts.isTypeAssertionExpression(parent))
+  ) {
+    parent = parent.parent;
+  }
+  return parent;
+}
+
+/**
+ * True when `type` is a TypeScript `Promise<T>` (or a union/intersection that
+ * contains one). In GDScript there is no Promise; an unawaited coroutine
+ * yields a `GDScriptFunctionState` at runtime, not the resolved value.
+ */
+function isPromiseType(type: ts.Type): boolean {
+  if (type.isUnionOrIntersection()) {
+    return type.types.some((t) => isPromiseType(t));
+  }
+  const symbol = type.aliasSymbol ?? type.getSymbol();
+  return symbol?.getName() === 'Promise';
+}
+
+/**
+ * Report a `type-error` when a call that returns `Promise<T>` is used as a
+ * value without `await`. Calls used as statements (value discarded) and
+ * calls directly awaited are fine.
+ *
+ * Only checks call expressions — other producers of Promise values (e.g.
+ * reading a Promise-typed variable) are rare, and the error at the call
+ * site that originally created the Promise covers the common path.
+ */
+function checkPromiseUsedAsValue(
+  t: TransformerDelegate,
+  node: ts.CallExpression,
+): void {
+  const returnType = t.ctx.checker.getTypeAtLocation(node);
+  if (!isPromiseType(returnType)) return;
+  const parent = effectiveParent(node);
+  if (!parent) return;
+  // `await fn()` — the whole point of the Promise, clearly fine.
+  if (ts.isAwaitExpression(parent)) return;
+  // `fn();` on its own line — value is discarded, same as not caring about
+  // the coroutine's result in GD. Allowed.
+  if (ts.isExpressionStatement(parent)) return;
+  t.addDiagnostic(
+    node,
+    'type-error',
+    'Promise value used without `await`. In GDScript an unawaited coroutine ' +
+      'resolves to a `GDScriptFunctionState`, not the value — this will fail ' +
+      'at runtime. Prefix with `await`, or discard the call as a statement.',
+  );
+}
+
 export function emitCallExpression(
   t: TransformerDelegate,
   node: ts.CallExpression,
@@ -293,6 +357,8 @@ export function emitCallExpression(
       'Optional chaining (`?.`) is not supported in GDScript',
     );
   }
+
+  checkPromiseUsedAsValue(t, node);
 
   // Check each argument for `undefined` in its type.
   // Skip literal `undefined` -- already caught by emitExpression's identifier check.

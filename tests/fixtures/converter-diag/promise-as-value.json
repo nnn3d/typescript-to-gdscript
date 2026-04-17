@@ -1,0 +1,5 @@
+[
+  { "message": "Promise value used without `await`", "severity": "type-error" },
+  { "message": "Promise value used without `await`", "severity": "type-error" },
+  { "message": "Promise value used without `await`", "severity": "type-error" }
+]

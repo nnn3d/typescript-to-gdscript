@@ -830,6 +830,7 @@ Converts each TS file to GDScript and reports errors at two levels:
      - Argument that may be `undefined`
      - `||`/`&&` used as a non-boolean value (auto-fixable — wraps in `bool()`)
      - `x in y` where `y` is a value-type primitive (Vector2, Color, Transform2D, etc.), an array (`Array<T>`, `T[]`, `Packed*Array`), a number, or a boolean — GDScript only supports `in` on `Dictionary` and `String`
+     - Call returning `Promise<T>` used as a value without `await` (assigned to a variable, passed as an argument, returned, etc.) — GDScript has no Promise; an unawaited coroutine resolves to a `GDScriptFunctionState` at runtime, not the value. Discarding the call as a statement (`fn();`) or awaiting it (`await fn()`) is fine.
 
 2. **Godot validation errors** (when Godot is available) — errors detected by the Godot compiler:
    - Type mismatches
