@@ -340,6 +340,16 @@ In Godot, go to **Editor Settings → Text Editor → External** and configure:
 
 Also enable **Editor Settings → Text Editor → Behavior → Auto Reload Scripts on External Change**. When you edit TypeScript files and the converter regenerates the `.gd` output, Godot needs to pick up the changes without manually refocusing or reopening each script. With this option enabled, Godot automatically reloads any `.gd` file that was modified on disk, so your changes take effect immediately when you switch back to the editor.
 
+#### Debug with external editor
+
+Godot has a **separate** toggle for whether runtime errors (stack traces in the Debugger panel) open in the external editor vs the built-in script editor. The "Use External Editor" setting in *Editor Settings → Text Editor → External* only controls double-click-to-open from the FileSystem dock — it does **not** cover debugger stack-frame clicks.
+
+To also route debugger errors to your external editor, switch to the **Script** tab at the top of the Godot editor and look for the option there — the Script workspace has its own menu bar. From [godotengine/godot#65554](https://github.com/godotengine/godot/issues/65554):
+
+> if you select the Script tab, that has its own menu bar, where you can find the option as described.
+
+If the toggle is off, clicking a stack frame silently does nothing — `ts2gd open-editor` is never invoked, so you won't see the editor open and there'll be no entry in the debug log. See related Godot issues: [#65554](https://github.com/godotengine/godot/issues/65554), [#84294](https://github.com/godotengine/godot/issues/84294), [#95198](https://github.com/godotengine/godot/issues/95198).
+
 #### Editor command examples
 
 | Editor  | `-e` flag                                              |
