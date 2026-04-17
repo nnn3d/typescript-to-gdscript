@@ -1,7 +1,9 @@
-import { writeFileSync, mkdirSync, rmSync, existsSync } from 'fs';
+import { writeFileSync, mkdirSync, rmSync, existsSync, statSync } from 'fs';
 import { resolve, relative, dirname, join } from 'path';
 import { tmpdir } from 'os';
+import type ts from 'typescript';
 import { convertTsToGd } from '../../converter/ts-to-gd/index.ts';
+import { createTsProgram } from '../../parser/typescript/index.ts';
 import { validateGdFilesSync } from '../../godot-validate/index.ts';
 import { resolveConfig, resolveGodotPath } from '../../config/index.ts';
 import { ProjectCache } from '../../cache/index.ts';
@@ -10,6 +12,50 @@ import {
   isConversionErrorSeverity,
   isReportableErrorSeverity,
 } from '../../converter/common/index.ts';
+
+// ─── Long-lived ts.Program cache ─────────────────────────────
+//
+// In a long-running ESLint process (IDE / LSP), rebuilding a fresh ts.Program
+// on every lint invocation is the dominant cost — for a Godot project the
+// generated typings alone are ~1000 .d.ts files. Passing the previous
+// Program as `oldProgram` lets TypeScript reuse SourceFile instances for
+// files whose content hasn't changed, so only edited files get re-parsed.
+//
+// Keyed by resolved tsconfig path; invalidated when the tsconfig's own
+// mtime changes (e.g. the user edits includes/excludes or compilerOptions).
+
+interface CachedProgram {
+  program: ts.Program;
+  /** Mtime of the tsconfig file at the time the cache entry was built. */
+  tsConfigMtimeMs: number;
+}
+
+const programCache = new Map<string, CachedProgram>();
+
+function getOrCreateProgram(
+  tsConfigPath: string,
+  rootDir: string,
+): ts.Program {
+  const key = resolve(tsConfigPath);
+  const currentMtime = statSync(key).mtimeMs;
+
+  const cached = programCache.get(key);
+  if (cached && cached.tsConfigMtimeMs !== currentMtime) {
+    // tsconfig itself changed (include/exclude/compilerOptions edit) — drop
+    // the cache. File-level changes are handled below via `oldProgram` reuse.
+    programCache.delete(key);
+  }
+
+  const prev = programCache.get(key);
+  const program = createTsProgram({
+    rootDir,
+    files: [],
+    tsConfigPath: key,
+    oldProgram: prev?.program,
+  });
+  programCache.set(key, { program, tsConfigMtimeMs: currentMtime });
+  return program;
+}
 
 // ESLint rule definition — uses `any` for ESLint types to avoid hard dep on @types/eslint
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -106,12 +152,21 @@ const convertRule: RuleModule = {
           return;
         }
 
-        // Step 1: Convert TS to GD
+        // Step 1: Convert TS to GD.
+        // Reuse a module-level ts.Program when a tsconfig is available so
+        // long-lived ESLint processes (IDE / LSP) don't re-parse every .d.ts
+        // on each lint. Falls back to the per-call Program when no tsconfig
+        // is set (rare: only standalone TS files).
+        const resolvedTsConfig = cfg.tsconfig ? resolve(cfg.tsconfig) : undefined;
+        const program = resolvedTsConfig
+          ? getOrCreateProgram(resolvedTsConfig, cfg.tsDir)
+          : undefined;
         const result = convertTsToGd({
           filePath: filename,
           rootDir: cfg.tsDir,
-          tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
+          tsConfigPath: resolvedTsConfig,
           sourceMap: true, // Always generate source map for Godot error remapping
+          program,
         });
 
         // Step 2: Report converter diagnostics
