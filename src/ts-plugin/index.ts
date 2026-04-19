@@ -82,6 +82,17 @@ function init({ typescript: ts }: PluginInit) {
     let cache: ProjectCache | null = null;
     try {
       cfg = resolveConfig({ configDir: projectDir });
+      /**
+       * When set in the plugin's `compilerOptions.plugins` entry, this
+       * overrides `disableGodotLint` from `tstogd.json` for THIS editor
+       * session only. Useful when a developer wants to silence the async
+       * Godot pass in their IDE without changing the project-wide config
+       * the CLI/watcher still honor. Pass `false` to force-enable Godot
+       * even if the project config disables it.
+       */
+      if (typeof pluginConfig.disableGodotLint === 'boolean') {
+        cfg = { ...cfg, disableGodotLint: pluginConfig.disableGodotLint };
+      }
       cache = new ProjectCache(cfg.cacheDir, { watch: true });
       log(
         `resolved config for ${projectDir}: tsDir=${cfg.tsDir} gdDir=${cfg.gdDir} cacheDir=${cfg.cacheDir}`,

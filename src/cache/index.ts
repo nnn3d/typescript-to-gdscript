@@ -569,8 +569,8 @@ export class ProjectCache {
     } catch {
       // Last resort: direct write (not atomic but preserves previous semantics).
       try {
-        writeFileSync(this.cacheFile, readFileSync(tmpFile));
         rmSync(tmpFile, { force: true });
+        writeFileSync(this.cacheFile, readFileSync(tmpFile));
       } catch {
         /* give up */
       }
@@ -630,27 +630,12 @@ export class ProjectCache {
     try {
       await fsp.rename(tmpFile, this.cacheFile);
     } catch {
-      // Windows rename-over-open-handle retry loop (mirrors save()).
-      let retries = 5;
-      let succeeded = false;
-      while (retries-- > 0) {
-        try {
-          await fsp.rename(tmpFile, this.cacheFile);
-          succeeded = true;
-          break;
-        } catch {
-          /* try again */
-        }
-      }
-      if (!succeeded) {
-        // Last resort: non-atomic copy. Preserves save()'s behavior.
-        try {
-          const content = await fsp.readFile(tmpFile);
-          await fsp.writeFile(this.cacheFile, content);
-          await fsp.rm(tmpFile, { force: true });
-        } catch {
-          /* give up */
-        }
+      // Last resort: non-atomic copy. Preserves save()'s behavior.
+      try {
+        await fsp.rm(tmpFile, { force: true });
+        await fsp.writeFile(this.cacheFile, json);
+      } catch {
+        /* give up */
       }
     }
     // Capture mtime via the same promise chain — no `statSync` here,

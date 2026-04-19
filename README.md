@@ -813,6 +813,25 @@ Add to your project's `tsconfig.json`:
 }
 ```
 
+#### Plugin options
+
+| Option              | Type      | Description                                                                                                                                              |
+| ------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `debug`             | `boolean` | Emit verbose `[tstogd-plugin] TRACE` lines to the tsserver log. Off by default.                                                                          |
+| `disableGodotLint`  | `boolean` | Per-editor override for `tstogd.json`'s `disableGodotLint`. Set `true` to skip the async Godot pass in the IDE only; set `false` to force-enable it.     |
+
+Example — silence the Godot pass in the IDE without changing project-wide config:
+
+```json
+{
+  "compilerOptions": {
+    "plugins": [
+      { "name": "typescript-to-gdscript/ts-plugin", "disableGodotLint": true }
+    ]
+  }
+}
+```
+
 Tell the IDE to use the workspace's TypeScript — plugins only load through `tsserver` spawned by the workspace `typescript` package, not the IDE's bundled one:
 
 - **WebStorm**: *Settings → Languages & Frameworks → TypeScript* — set "TypeScript" to `node_modules/typescript` (typically auto-detected), ensure "TypeScript Language Service" is ON, then restart the TS service (File → Invalidate Caches → Just Restart is the blunt way).

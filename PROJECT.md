@@ -274,5 +274,6 @@ tests/
 - Operator overload types: `OPERATOR_OVERLOAD_TYPES` hardcoded set removed; now uses `registry.hasOperators(typeName)` to derive from the registry at runtime
 - `tstogd.json` `exclude` option: renamed from deprecated `ignore`. Glob patterns for files/folders to exclude from all CLI commands
 - `tstogd.json` config: `godotVersion`, `registryPath`, `gdDir`, `sourceMap` removed. Added `disableGodotLint` (boolean, default false) to disable Godot executable validation in `lint` and in the ts-plugin. Source maps are always generated.
+- ts-plugin options (in `compilerOptions.plugins[]`): `debug` (boolean, default false) — verbose tsserver-log tracing; `disableGodotLint` (boolean, optional) — per-editor override for `tstogd.json`'s `disableGodotLint`. Defined explicitly takes precedence over the project config; omitting the key leaves the project config in effect.
 </content>
 </invoke>
