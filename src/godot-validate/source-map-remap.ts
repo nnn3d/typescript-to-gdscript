@@ -12,25 +12,50 @@ import type { GodotRawError } from './error-parser.ts';
 // ─── Async Remap (uses SourceMapReader) ──────────────────────
 
 /**
- * Remaps a Godot error from GDScript positions to TypeScript positions
- * using a source map file next to the .gd file (.gd.map fallback).
- * Falls back to GD positions if no source map available.
+ * Remaps a Godot error from GDScript positions to TypeScript positions.
+ *
+ * Source-map input priority:
+ *   1. `sourceMapJson` parameter (inline — preferred: caller already has
+ *      the JSON in memory, e.g. straight from a converter run or a
+ *      `ProjectCache` entry — no disk read needed).
+ *   2. `<error.file>.map` sidecar on disk (fallback for callers that
+ *      only point at the `.gd`).
+ *
+ * When `tsFilePath` is provided, it overrides the resolved source path
+ * from the source map — useful when the map's `sources` entry is
+ * relative to a throwaway location (e.g. a cache/scratch dir) but we
+ * already know the real `.ts` we're validating.
+ *
+ * Falls back to GD positions if no source map is available.
  */
 export async function remapError(
   error: GodotRawError,
+  sourceMapJson?: string,
+  tsFilePath?: string,
 ): Promise<TransformDiagnostic> {
-  var mapPath = error.file + '.map';
+  let rawMap: string | undefined = sourceMapJson;
+  let mapPath: string | undefined;
 
-  if (existsSync(mapPath)) {
+  if (!rawMap) {
+    mapPath = error.file + '.map';
+    if (existsSync(mapPath)) {
+      try {
+        rawMap = readFileSync(mapPath, 'utf-8');
+      } catch {
+        rawMap = undefined;
+      }
+    }
+  }
+
+  if (rawMap) {
     try {
-      var rawMap = readFileSync(mapPath, 'utf-8');
-      var reader = await SourceMapReader.fromJSON(rawMap);
-      var original = reader.originalPositionFor(error.line, error.column);
+      const reader = await SourceMapReader.fromJSON(rawMap);
+      let original = reader.originalPositionFor(error.line, error.column);
 
       // If column 0 has no mapping (e.g. indentation), find the first mapping on this line
       if (!original.source || original.line == null) {
-        var allMappings = reader.allMappings();
-        var lineMapping = allMappings.find(
+        const allMappings = reader.allMappings();
+        const lineMapping = allMappings.find(
           (m) => m.generatedLine === error.line,
         );
         if (
@@ -49,10 +74,23 @@ export async function remapError(
       reader.destroy();
 
       if (original.source && original.line != null) {
+        // When `tsFilePath` is supplied, trust the caller over the
+        // sourcemap's `source` entry. Otherwise resolve `source`
+        // relative to wherever the sourcemap lives on disk (fallback
+        // path) — or, for inline maps with no disk anchor, leave it
+        // as-is (caller is responsible for providing `tsFilePath`).
+        let file: string;
+        if (tsFilePath) {
+          file = tsFilePath;
+        } else if (mapPath) {
+          file = resolve(dirname(mapPath), original.source);
+        } else {
+          file = original.source;
+        }
         return {
           message: `[Godot ${error.errorType}] ${error.message}`,
           severity: 'error',
-          file: resolve(dirname(mapPath), original.source),
+          file,
           line: original.line,
           column: original.column ?? 0,
         };
@@ -65,7 +103,7 @@ export async function remapError(
   return {
     message: `[Godot ${error.errorType}] ${error.message}`,
     severity: 'error',
-    file: error.file,
+    file: tsFilePath ?? error.file,
     line: error.line,
     column: error.column,
   };
@@ -77,22 +115,22 @@ export const VLQ_CHARS =
   'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
 
 export function decodeVlq(encoded: string): number[] {
-  var result: number[] = [];
-  var shift = 0;
-  var value = 0;
+  const result: number[] = [];
+  let shift = 0;
+  let value = 0;
 
-  for (var i = 0; i < encoded.length; i++) {
-    var digit = VLQ_CHARS.indexOf(encoded[i]!);
+  for (let i = 0; i < encoded.length; i++) {
+    let digit = VLQ_CHARS.indexOf(encoded[i]!);
     if (digit === -1) continue;
 
-    var cont = digit & 32;
+    const cont = digit & 32;
     digit &= 31;
     value += digit << shift;
 
     if (cont) {
       shift += 5;
     } else {
-      var negate = value & 1;
+      const negate = value & 1;
       value >>= 1;
       result.push(negate ? -value : value);
       shift = 0;
@@ -119,24 +157,24 @@ export function parseSourceMapMappings(rawMap: string): {
   mappings: LineMapping[];
   sources: string[];
 } {
-  var map = JSON.parse(rawMap);
-  var sources: string[] = map.sources ?? [];
-  var segments: string[] = (map.mappings ?? '').split(';');
-  var mappings: LineMapping[] = [];
+  const map = JSON.parse(rawMap);
+  const sources: string[] = map.sources ?? [];
+  const segments: string[] = (map.mappings ?? '').split(';');
+  const mappings: LineMapping[] = [];
 
-  var genCol = 0;
-  var srcIdx = 0;
-  var origLine = 0;
-  var origCol = 0;
+  let genCol = 0;
+  let srcIdx = 0;
+  let origLine = 0;
+  let origCol = 0;
 
-  for (var lineIdx = 0; lineIdx < segments.length; lineIdx++) {
+  for (let lineIdx = 0; lineIdx < segments.length; lineIdx++) {
     genCol = 0; // Reset column for each generated line
-    var seg = segments[lineIdx]!;
+    const seg = segments[lineIdx]!;
     if (!seg) continue;
 
-    var parts = seg.split(',');
-    for (var part of parts) {
-      var decoded = decodeVlq(part);
+    const parts = seg.split(',');
+    for (const part of parts) {
+      const decoded = decodeVlq(part);
       if (decoded.length < 4) continue;
 
       genCol += decoded[0]!;
@@ -168,16 +206,16 @@ export function remapErrorSync(
 ): TransformDiagnostic {
   if (sourceMapJson) {
     try {
-      var { mappings } = parseSourceMapMappings(sourceMapJson);
+      const { mappings } = parseSourceMapMappings(sourceMapJson);
 
       // Find the first mapping on the error line
-      var lineMapping = mappings.find((m) => m.generatedLine === error.line);
+      const lineMapping = mappings.find((m) => m.generatedLine === error.line);
       // Try exact match first
-      var exactMapping = mappings.find(
+      const exactMapping = mappings.find(
         (m) =>
           m.generatedLine === error.line && m.generatedColumn <= error.column,
       );
-      var bestMapping = exactMapping ?? lineMapping;
+      const bestMapping = exactMapping ?? lineMapping;
 
       if (bestMapping) {
         return {

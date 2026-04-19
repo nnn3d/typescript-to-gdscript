@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "exports": {
     ".": "./dist/index.js",
-    "./eslint": "./dist/eslint/plugin.js"
+    "./ts-plugin": "./dist/ts-plugin/index.js"
   },
   "packageManager": "yarn@1.22.22",
   "typesVersions": {
@@ -32,7 +32,7 @@
     "test:tstogd": "vitest run tests/converter/ts-to-gd.test.ts",
     "test:gdtots": "vitest run tests/converter/gd-to-ts.test.ts",
     "test:diag": "vitest run tests/converter/converter-diag.test.ts",
-    "test:eslint": "vitest run tests/eslint/eslint.test.ts",
+    "test:ts-plugin": "vitest run tests/ts-plugin/ts-plugin.test.ts",
     "test:scene-typings": "vitest run tests/typings/scene-typings.test.ts",
     "test:type-checks": "vitest run tests/typings/type-checks.test.ts",
     "test:class-typings": "vitest run tests/typings/class-typings.test.ts",
@@ -72,20 +72,10 @@
     "tree-sitter-godot-resource": "^0.7.0",
     "typescript": "^5.9.0"
   },
-  "peerDependencies": {
-    "eslint": ">=9.0.0"
-  },
-  "peerDependenciesMeta": {
-    "eslint": {
-      "optional": true
-    }
-  },
   "devDependencies": {
     "@asgerf/dts-tree-sitter": "^0.21.0",
     "@types/glob": "^9.0.0",
     "@types/node": "^22.0.0",
-    "@typescript-eslint/parser": "^8.57.1",
-    "eslint": "^10.0.3",
     "jiti": "^2.6.1",
     "prettier": "^3.8.1",
     "tsx": "^4.21.0",

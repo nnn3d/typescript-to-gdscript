@@ -30,9 +30,9 @@ export interface GodotRawError {
  * (--check-only --script doesn't load autoloads).
  */
 export function getAutoloadNames(projectRoot: string): Set<string> {
-  var projectFile = join(projectRoot, 'project.godot');
+  const projectFile = join(projectRoot, 'project.godot');
   if (!existsSync(projectFile)) return new Set();
-  var autoloads = parseAutoloads(projectFile);
+  const autoloads = parseAutoloads(projectFile);
   return new Set(autoloads.map((a) => a.name));
 }
 
@@ -47,9 +47,9 @@ export function isAutoloadFalsePositive(
   if (autoloadNames.size === 0) return false;
   // Format 1: "Identifier not found: GameManager"
   // Format 2: "Identifier "Globals" not declared in the current scope."
-  var match1 = error.message.match(/^Identifier not found: (\w+)/);
+  const match1 = error.message.match(/^Identifier not found: (\w+)/);
   if (match1 && autoloadNames.has(match1[1]!)) return true;
-  var match2 = error.message.match(/^Identifier "(\w+)" not declared/);
+  const match2 = error.message.match(/^Identifier "(\w+)" not declared/);
   if (match2 && autoloadNames.has(match2[1]!)) return true;
   return false;
 }
@@ -58,18 +58,52 @@ export function isAutoloadFalsePositive(
  * Returns true if the error is a false positive caused by validating a
  * tmp copy of a GD file while the original still exists in the project.
  * Godot reports: 'Class "Foo" hides a global script class.'
- * Only suppresses when the file is outside projectRoot (i.e., a temp copy).
+ *
+ * Suppresses when the file is EITHER:
+ *   - outside `projectRoot` (a temp copy on a different path, e.g. a
+ *     CLI scratch dir under `os.tmpdir()`), OR
+ *   - inside `cacheDir` (the `<cacheDir>/gd-output/…` mirror). The
+ *     cache dir may live under the project tree when the user
+ *     configures it there, so the outside-project check alone doesn't
+ *     catch it.
+ *
+ * `cacheDir` is resolved upfront by the caller from the project's
+ * `tstogd.json` — we don't walk the filesystem per-error.
+ *
+ * Any remaining match is a real conflict between two first-class files
+ * inside the project and must surface to the user.
  */
 export function isDuplicateClassFalsePositive(
   error: GodotRawError,
   projectRoot: string,
+  cacheDir?: string,
 ): boolean {
   if (!/^Class ".*" hides a global script class/.test(error.message)) return false;
-  // Only suppress for files outside the project (temp copies).
-  // If the file is inside the project, it's a real conflict.
-  // On Windows, relative() returns an absolute path when files are on different drives.
-  const rel = relative(projectRoot, error.file);
-  return rel.startsWith('..') || isAbsolute(rel);
+  return isUnderScratchDir(error.file, projectRoot, cacheDir);
+}
+
+/**
+ * True when `filePath` lives outside `projectRoot` (a temp dir) OR
+ * inside `cacheDir` (the ProjectCache's gd-output mirror). Shared by
+ * the parsed-error filter and the unparsed-output fallback so both
+ * paths agree on what counts as a throwaway mirror.
+ */
+export function isUnderScratchDir(
+  filePath: string,
+  projectRoot: string,
+  cacheDir?: string,
+): boolean {
+  // Outside-project check. On Windows, `relative()` returns an
+  // absolute path when the two paths are on different drives.
+  const relProj = relative(projectRoot, filePath);
+  if (relProj.startsWith('..') || isAbsolute(relProj)) return true;
+  // Inside the configured cache dir (if any).
+  if (cacheDir) {
+    const relCache = relative(cacheDir, filePath);
+    if (relCache === '' ) return true;
+    if (!relCache.startsWith('..') && !isAbsolute(relCache)) return true;
+  }
+  return false;
 }
 
 // ─── Error Parsing ───────────────────────────────────────────
@@ -79,8 +113,8 @@ export function isDuplicateClassFalsePositive(
  */
 export function resolveResPath(resPath: string, projectRoot: string): string {
   // res://scripts/player.gd -> scripts/player.gd
-  var relative = resPath.replace(/^res:\/\//, '');
-  return resolve(projectRoot, relative);
+  const rel = resPath.replace(/^res:\/\//, '');
+  return resolve(projectRoot, rel);
 }
 
 /**
@@ -91,15 +125,15 @@ export function parseGodotErrors(
   stderr: string,
   projectRoot: string,
 ): GodotRawError[] {
-  var errors: GodotRawError[] = [];
-  var lines = stderr.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+  const errors: GodotRawError[] = [];
+  const lines = stderr.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
 
-  for (var i = 0; i < lines.length; i++) {
-    var line = lines[i]!;
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]!;
 
     // Format 1: "res://path.gd:15 - Parse Error: message"
     // Format 1b: "res://path.gd:15:3 - Parse Error: message"
-    var resMatch = line.match(
+    const resMatch = line.match(
       /^\s*res:\/\/(.+?):(\d+)(?::(\d+))?\s*-\s*((?:Parse|Compile|Script)\s+Error):\s*(.+)$/,
     );
     if (resMatch) {
@@ -115,14 +149,14 @@ export function parseGodotErrors(
 
     // Format 2: "SCRIPT ERROR: Parse Error: message"
     // followed by "   at: res://path.gd:15" or "   at: GDScript::reload (res://path.gd:15)"
-    var scriptErrorMatch = line.match(
+    const scriptErrorMatch = line.match(
       /^\s*SCRIPT ERROR:\s*((?:Parse|Compile|Script)\s+Error):\s*(.+)$/,
     );
     if (scriptErrorMatch) {
-      var nextLine = lines[i + 1];
+      const nextLine = lines[i + 1];
       if (nextLine) {
         // Match "at: res://file.gd:15" and "at: GDScript::reload (res://file.gd:15)"
-        var atMatch = nextLine.match(
+        const atMatch = nextLine.match(
           /^\s*at:\s*(?:\S+\s+\()?res:\/\/(.+?):(\d+)(?::(\d+))?\)?/,
         );
         if (atMatch) {
@@ -137,7 +171,7 @@ export function parseGodotErrors(
           continue;
         }
         // Match absolute path: "at: GDScript::reload (C:\path\file.gd:15)" or "at: C:\path\file.gd:15"
-        var atAbsMatch = nextLine.match(
+        const atAbsMatch = nextLine.match(
           /^\s*at:\s*(?:\S+\s+\()?(.+\.gd):(\d+)(?::(\d+))?\)?/,
         );
         if (atAbsMatch) {
@@ -162,7 +196,7 @@ export function parseGodotErrors(
     }
 
     // Format 3: Absolute/relative path "path/file.gd:15 - Parse Error: message"
-    var absMatch = line.match(
+    const absMatch = line.match(
       /^\s*(.+\.gd):(\d+)(?::(\d+))?\s*-\s*((?:Parse|Compile|Script)\s+Error):\s*(.+)$/,
     );
     if (absMatch) {

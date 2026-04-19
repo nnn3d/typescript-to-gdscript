@@ -1,6 +1,6 @@
 /**
- * `ts2gd init` — Interactive project initialization.
- * Walks through config creation, tsconfig, eslint, npm install, and .gdignore setup.
+ * `tstogd init` — Interactive project initialization.
+ * Walks through config creation, tsconfig, npm install, and .gdignore setup.
  */
 
 import type { Command } from 'commander';
@@ -12,6 +12,10 @@ import { execSync } from 'child_process';
 
 // ─── Embedded Templates ──────────────────────────────────────
 
+// The ts-plugin entry in `compilerOptions.plugins` is what gives the
+// IDE live converter + Godot diagnostics (squiggles on save) and
+// bridges go-to-def / find-usages between the generated shadow classes
+// in `*.gd.d.ts` and their real TypeScript sources.
 const TSCONFIG_TEMPLATE = `{
   "compilerOptions": {
     "target": "esnext",
@@ -20,49 +24,14 @@ const TSCONFIG_TEMPLATE = `{
     "noLib": true,
     "strict": true,
     "noEmit": true,
-    "types": []
+    "types": [],
+    "plugins": [
+      { "name": "typescript-to-gdscript/ts-plugin" }
+    ]
   },
   "include": ["node_modules/typescript-to-gdscript/typings", "{{tsDir}}/**/*.ts", "{{typingsDir}}/**/*.d.ts"]
 }
 `;
-
-const ESLINT_CONFIG_TEMPLATE = `import tsParser from '@typescript-eslint/parser';
-import ts2gd from 'typescript-to-gdscript/eslint';
-
-export default [
-  {
-    files: ['{{tsDir}}/**/*.ts'],
-    ignores: ['{{typingsDir}}/**'],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        ecmaVersion: 2022,
-        sourceType: 'module',
-      },
-    },
-    plugins: {
-      ts2gd: ts2gd,
-    },
-    rules: {
-      'ts2gd/convert': 'error',
-    },
-  },
-];
-`;
-
-// ─── ESLint Config Detection ─────────────────────────────────
-
-const ESLINT_CONFIG_FILES = [
-  'eslint.config.js',
-  'eslint.config.mjs',
-  'eslint.config.cjs',
-  'eslint.config.ts',
-  'eslint.config.mts',
-  'eslint.config.cts',
-  '.eslintrc.js',
-  '.eslintrc.json',
-  '.eslintrc.yml',
-];
 
 // ─── Prompt Helpers ──────────────────────────────────────────
 
@@ -170,39 +139,6 @@ async function stepTsconfig(
   const installTs = await askYesNo(rl, 'Install TypeScript?');
   if (installTs) {
     packagesToInstall.push('typescript');
-  }
-}
-
-// ─── Step: ESLint Config ─────────────────────────────────────
-
-async function stepEslint(
-  rl: readline.Interface,
-  cwd: string,
-  config: InitConfig,
-  packagesToInstall: string[],
-): Promise<void> {
-  const hasConfig = ESLINT_CONFIG_FILES.some(f => existsSync(join(cwd, f)));
-
-  if (hasConfig) {
-    console.log('\n✓ ESLint config already exists.');
-    console.log('  See README.md for ts2gd ESLint plugin setup.\n');
-    return;
-  }
-
-  console.log('');
-  const create = await askYesNo(rl, 'Create eslint.config.js from template?');
-  if (!create) return;
-
-  const content = ESLINT_CONFIG_TEMPLATE.replace(
-    '{{tsDir}}',
-    config.tsDir,
-  ).replace('{{typingsDir}}', config.typingsDir);
-  writeFileSync(join(cwd, 'eslint.config.js'), content);
-  console.log('  ✓ Created eslint.config.js');
-
-  const installEslint = await askYesNo(rl, 'Install ESLint and @typescript-eslint/parser?');
-  if (installEslint) {
-    packagesToInstall.push('eslint', '@typescript-eslint/parser');
   }
 }
 
@@ -319,16 +255,13 @@ export async function runInit(): Promise<void> {
     // Step 2: tsconfig.json
     await stepTsconfig(rl, cwd, config, packagesToInstall);
 
-    // Step 3: ESLint config
-    await stepEslint(rl, cwd, config, packagesToInstall);
-
-    // Step 4: Install packages
+    // Step 3: Install packages
     await stepInstallPackages(rl, cwd, packagesToInstall);
 
-    // Step 5: .gdignore in node_modules
+    // Step 4: .gdignore in node_modules
     await stepGdignore(rl, cwd);
 
-    // Step 6: .gitignore
+    // Step 5: .gitignore
     await stepGitignore(rl, cwd);
 
     // Done
@@ -336,8 +269,8 @@ export async function runInit(): Promise<void> {
     console.log('');
     console.log('Next steps:');
     console.log('  1. Create TypeScript files in your source directory');
-    console.log('  2. Run `ts2gd convert` to convert TS → GDScript');
-    console.log('  3. Run `ts2gd watch` for auto-conversion on save');
+    console.log('  2. Run `tstogd convert` to convert TS → GDScript');
+    console.log('  3. Run `tstogd watch` for auto-conversion on save');
     console.log('  4. See README.md for full documentation');
     console.log('');
   } finally {

@@ -1,8 +1,4 @@
 export {
-  generateClassTypings,
-  type ClassTypingsOptions,
-} from './classes.ts';
-export {
   generateTypings,
   parseAutoloads,
   resolveSignalHandlers,

@@ -12,7 +12,7 @@ Detailed project layout, implementation status, conversion rules, and edge cases
 - **Godot resource parsing**: tree-sitter-godot-resource v0.7.0 (.tscn, .tres, project.godot)
 - **AST type generation**: @asgerf/dts-tree-sitter v0.21.0 (generates typed AST interfaces from grammars)
 - **Source maps**: `source-map` npm package
-- **CLI**: commander, **Watch**: chokidar, **Cache**: ProjectCache (SHA-256 hashing, source maps in cache dir)
+- **CLI**: commander, **Watch**: chokidar, **Cache**: ProjectCache (MD5-based content hashing, inline source maps + diagnostics in `cache.json`, `.gd` mirror at `<cacheDir>/gd-output/`, atomic tmp-rename writes)
 
 ## Project Structure
 
@@ -45,15 +45,19 @@ src/
   typings/
     godot-registry.ts    # GodotClassRegistry + XML parsing + version detection
     godot-docs.ts        # generateGodotDocsTypings: per-class .d.ts + registry JSON
-    classes.ts           # generateClassTypings: scans TS files, outputs global .d.ts
-    scenes.ts            # generateSceneTypings: parses .tscn/.tres for get_node/get_parent/GodotResources
+    scenes.ts            # generateTypings: parses .tscn/.tres for get_node/get_parent/GodotResources + emits per-script `.gd.d.ts` with `declare global { class <Name> extends ScriptClass { … } }` (shadow class — a `@see import(…)` JSDoc links each shadow back to its real .ts source)
+    content-generators.ts  # `generateScriptTypingContent`: renders the `.gd.d.ts` body (shadow class + namespace for enums / inner classes). Reads per-class info from `scanTsFilesForClasses` (scene-utils.ts).
+    scene-utils.ts       # `ScriptInfo` + `scanTsFilesForClasses` (walks TS source files, collects className, enums, inner classes, extendsNode classification for `get_node` overload emission)
     overrides/           # Manual type overrides applied during typings generation
       *.d.ts             # Per-class override files (node.d.ts, array.d.ts, etc.)
     non-nullable/
       index.json         # Non-nullable type override data
-  eslint/                # plugin.ts + rules/convert.ts (ts2gd/convert rule)
-  godot-validate/index.ts  # Godot CLI validation, error parsing, source map remapping
-  cache/index.ts         # ProjectCache: TS→GD, addon, typings caching + source maps in cache dir
+  ts-plugin/             # TS language service plugin (runs inside tsserver). Surfaces converter + Godot diagnostics as `ts.Diagnostic`s:
+    index.ts             #   Glue: `init()`/`create()`, one-time config+cache setup, pass-through LS proxy, install lint overlay
+    lint.ts              #   Lint overlay — tier-1 reads ProjectCache diagnostics, tier-2 live-converts in tsserver's Program; fires async Godot validation via `validateGdFiles({ signal, cacheDir })`, chains off `saveAsync().finally()` so Godot runs after persistence. Memoizes per-(file,version) in an `LRU`.
+    lru.ts               #   Minimal `Map`-backed LRU<V> with optional `onEvict` hook — used by lint's `liveCache`/`pendingGodot`
+  godot-validate/index.ts  # Godot CLI validation, error parsing, source map remapping (async + sync variants share input shape)
+  cache/index.ts         # ProjectCache: TS→GD, addon, typings caching. Stores `.gd` mirror in `<cacheDir>/gd-output/` + inline source maps + diagnostics + atomic cache.json writes (tmp + rename, Windows-retry)
   watcher/index.ts       # Watcher class using chokidar
   cli/index.ts           # Commander CLI
   types/gd-helpers.d.ts  # gd namespace type defs (original, copied to typings/gd-helpers.d.ts)
@@ -64,22 +68,23 @@ tests/
   converter/             # ts-to-gd.test.ts, gd-to-ts.test.ts, converter-diag.test.ts
   typings/               # godot-registry, gd-to-ts-registry, class-typings, scene-typings, godot-docs, type-checks
   sourcemap/             # ts-to-gd-sourcemap.test.ts (9 position checks)
-  eslint/                # eslint.test.ts + fixtures/
+  ts-plugin/             # ts-plugin.test.ts + harness.ts — real `ts.LanguageService` wrapped with the plugin; exercises fixture parity, cache write-through, async Godot pipeline. `lru.test.ts` unit-tests the LRU independently of the LS
+  fixtures/plugin/       # Shared `.ts` / `.json` fixtures consumed by the ts-plugin tests (converter diagnostic expectations)
   godot-validate/        # godot-validate.test.ts
 ```
 
-## CLI Commands (binary: `ts2gd`)
+## CLI Commands (binary: `tstogd`)
 
-- `ts2gd init` — Interactive project initialization (tstogd.json, tsconfig.json, eslint.config.js, npm install, .gdignore)
-- `ts2gd convert <files...>` — Convert TS to GD (`-o`, `--root-dir`, `--tsconfig`, `--no-cache`, `--emit-on-error`). Source maps stored in cache dir.
-- `ts2gd convert-gd <files...>` — Convert GD to TS (`-o`, `--registry`, `--no-helpers`, `--no-signal-handler-helper`, `--no-operator-fix-helper`, `--no-explicit-convert-helper`, `--no-ready-field-types-helper`, `--no-extends-type-helper`, `--no-nullable-return-helper`, `--unsafe-use-any`, `--emit-on-error`)
-- `ts2gd lint <files...>` — Lint TS files (`--root-dir`, `--tsconfig`, `--godot-path`, `--project-root`, `--no-cache`). Uses cache to skip unchanged files.
-- `ts2gd watch` — Watch and auto-convert (`--root-dir`, `--output-dir`, `--tsconfig`, `--class-typings`). Source maps stored in cache dir.
-- `ts2gd generate-typings` — Generate typings from Godot docs (`--docs-dir`, `--typings-dir`, `--patch-dir`, `--version`)
-- `ts2gd generate-class-typings <files...>` — Generate global class .d.ts (`-o`, `--root-dir`, `--tsconfig`)
-- `ts2gd generate-addon-typings` — Generate typings for GDScript addons in `addons/` (`-o`, `--root-dir`)
-- `ts2gd open-editor` — Open a .gd file in an external editor as the corresponding .ts file (`-f`, `-e`, `-l`, `-c`, `-p`). Remaps GD→TS line:col via cached source maps.
-- `ts2gd clear-cache` — Clear the conversion cache (removes `cacheDir`).
+- `tstogd init` — Interactive project initialization (tstogd.json, tsconfig.json with ts-plugin enabled, npm install, .gdignore)
+- `tstogd convert <files...>` — Convert TS to GD (`-o`, `--root-dir`, `--tsconfig`, `--no-cache`, `--emit-on-error`). Source maps stored in cache dir.
+- `tstogd convert-gd <files...>` — Convert GD to TS (`-o`, `--registry`, `--no-helpers`, `--no-signal-handler-helper`, `--no-operator-fix-helper`, `--no-explicit-convert-helper`, `--no-ready-field-types-helper`, `--no-extends-type-helper`, `--no-nullable-return-helper`, `--unsafe-use-any`, `--emit-on-error`)
+- `tstogd lint <files...>` — Lint TS files (`--root-dir`, `--tsconfig`, `--godot-path`, `--project-root`, `--no-cache`). Uses cache to skip unchanged files.
+- `tstogd watch` — Watch and auto-convert (`--root-dir`, `--output-dir`, `--tsconfig`, `--class-typings`). Source maps stored in cache dir.
+- `tstogd generate-typings` — Generate typings from Godot docs (`--docs-dir`, `--typings-dir`, `--patch-dir`, `--version`)
+- `tstogd generate-class-typings <files...>` — Generate global class .d.ts (`-o`, `--root-dir`, `--tsconfig`)
+- `tstogd generate-addon-typings` — Generate typings for GDScript addons in `addons/` (`-o`, `--root-dir`)
+- `tstogd open-editor` — Open a .gd file in an external editor as the corresponding .ts file (`-f`, `-e`, `-l`, `-c`, `-p`). Remaps GD→TS line:col via cached source maps.
+- `tstogd clear-cache` — Clear the conversion cache (removes `cacheDir`).
 
 ### Typings usage by consumer projects
 
@@ -126,19 +131,28 @@ tests/
   - `StringName` emitted as `type StringName = String` (identical API in GDScript)
   - `NodePath` has its own variant type interface + constructor (not mapped to `string`)
 - [x] Godot class registry (916 classes, inheritance chain, global functions, per-class `variantConverts` from single-param "from" constructors, from `vendor/godot` XML docs). Constructor types (`deriveConstructorTypes()` in `godot-registry.ts`) and value types are derived from parsed XML at generation time — not hardcoded. Operator overload types derived from `registry.hasOperators()` (no hardcoded `OPERATOR_OVERLOAD_TYPES` list)
-- [x] Converter diagnostics + ESLint plugin (`ts2gd/convert` rule, flat config ESLint >= 9)
-  - Runs full TS→GD conversion + optional Godot validation per file, reports converter diagnostics and Godot errors inline
-  - Godot path resolved automatically via `resolveGodotPath()` (no `godotPath` rule option needed). Controlled by `disableGodotLint` in `tstogd.json`
-  - Source maps always generated (no `sourceMap` rule option needed)
-  - **Module-level `ts.Program` cache** in `src/eslint/rules/convert.ts` (`programCache`, `getOrCreateProgram`) — keyed by resolved tsconfig path, value `{ program, tsConfigMtimeMs }`. Each invocation rebuilds via `createTsProgram({ ..., oldProgram: cached.program })`, which lets TypeScript reuse `SourceFile` instances for unchanged files so only edited files are re-parsed. The entry is dropped when the tsconfig's own mtime changes (edits to include/exclude/compilerOptions). Big win for long-lived ESLint in the IDE — the first lint pays the full parse cost of the Godot typings (~1000 .d.ts), subsequent lints skip it. No effect on CLI `ts2gd lint` (its own per-invocation Program is scoped to the single lint run).
+- [x] Converter diagnostic system — surfaced to the CLI (`lint` / `convert` / `watch`) and to the IDE via the TS language service plugin
   - **Diagnostic severities** (`TransformDiagnostic.severity`): `'error' | 'type-error' | 'warning' | 'info'`:
     - `error` — conversion failure (invalid/unsupported syntax, e.g. `undefined` keyword as a value, optional chaining, spread, `yield`, destructuring, `for…in`, `gd.getset()`/`gd.dict()` syntax errors). Blocks `.gd` output (unless `--emit-on-error`). Blocks Godot validation.
-    - `type-error` — semantic/type issue, but GD emission produced valid output. `.gd` IS written. Shown as WARN in `convert`/`watch`, as ERROR in `lint`/ESLint. Godot validation still runs on the generated `.gd`. Used for: `undefined` in parameter type annotations, argument that may be `undefined`, `||`/`&&` used as a non-boolean value, `in` operator with banned RHS type, **call returning `Promise<T>` used as a value without `await`** (checked in `emitCallExpression` via `checkPromiseUsedAsValue` → `isPromiseType` walks union/intersection members; "value use" = parent after skipping `(…)` / `!` / `as T` / `<T>…` is neither `AwaitExpression` nor `ExpressionStatement` — so `await fn()` and bare `fn();` are OK).
+    - `type-error` — semantic/type issue, but GD emission produced valid output. `.gd` IS written. Shown as WARN in `convert`/`watch`, as ERROR in `lint` and the ts-plugin. Godot validation still runs on the generated `.gd`. Used for: `undefined` in parameter type annotations, argument that may be `undefined`, `||`/`&&` used as a non-boolean value, `in` operator with banned RHS type, **call returning `Promise<T>` used as a value without `await`** (checked in `emitCallExpression` via `checkPromiseUsedAsValue` → `isPromiseType` walks union/intersection members; "value use" = parent after skipping `(…)` / `!` / `as T` / `<T>…` is neither `AwaitExpression` nor `ExpressionStatement` — so `await fn()` and bare `fn();` are OK).
     - `warning` — non-blocking advisory. Shown as WARN everywhere.
     - `info` — debug-level; filtered out in most consumers.
-  - Classification helpers in `src/converter/common/index.ts`: `isConversionErrorSeverity(sev)` — only `'error'`, used by convert/watch to decide whether to block `.gd` write, and by lint/ESLint to decide whether to skip Godot validation. `isReportableErrorSeverity(sev)` — `'error' | 'type-error'`, used for lint/ESLint exit-code and WARN-vs-ERROR prefix in lint CLI output.
+  - Classification helpers in `src/converter/common/index.ts`: `isConversionErrorSeverity(sev)` — only `'error'`, used by convert/watch to decide whether to block `.gd` write, and by lint/plugin to decide whether to skip Godot validation. `isReportableErrorSeverity(sev)` — `'error' | 'type-error'`, used for lint exit-code and WARN-vs-ERROR prefix in lint CLI output.
   - `x in y` validation: `emitBinaryExpression` checks the RHS type via `checker.getTypeAtLocation()`. Reports a `type-error` if the type is an array (`checker.isArrayType`/`isTupleType`), a number, a boolean, or a Godot variant type (derived from `resolveRegistry().getData().constructors` minus `GD_IN_ALLOWED_CONTAINER_TYPES` = `{Dictionary}`). Registry-derived sets are lazily cached at module scope; `Packed*Array` entries (detected by `startsWith('Packed')` + `endsWith('Array')`) get a dedicated "the array type `X`" label vs "the value type `X`" for non-packed variants. Only `Dictionary`/object-literal types and `String` are valid RHS targets.
+- [x] TypeScript language service plugin. Built via the main `tsc` to `dist/ts-plugin/`, exposed via subpath export `typescript-to-gdscript/ts-plugin`; users enable with `{"name": "typescript-to-gdscript/ts-plugin"}` in `compilerOptions.plugins`. Sole responsibility is **surfacing converter + Godot diagnostics as IDE `ts.Diagnostic`s**. Source modules (all under the 500-LOC cap):
+  - **`src/ts-plugin/index.ts`** — glue. `init()`/`create()` resolves `tstogd.json` ONCE via `info.project.getCurrentDirectory()`, opens ONE `ProjectCache` in `watch: true` mode, builds the pass-through LS proxy (canonical `Object.keys(ls)` + `apply(ls, args)` copy loop), and installs the lint overlay. Gated on successful config+cache init — if `tstogd.json` is missing or the cache can't open, the plugin still proxies the inner LS unchanged (no-op).
+  - **`src/ts-plugin/lint.ts`** — `createLintOverlay({ ts, info, ls, cfg, cache, log, trace })` returns `{ getSemanticDiagnostics }`. Two tiers:
+    - **Tier 2 (live convert)**: reuses tsserver's `ts.Program` (warm SourceFile + TypeChecker for the dirty buffer), runs `convertTsToGd({ program })` directly — no fork, no IPC, no temp files. Keyed by `sourceFile.version` (falls back to `hashContent(sf.getFullText())` for raw `createProgram` contexts). Converter diagnostics map to `ts.Diagnostic` with `source: 'tstogd'`, code `90000` (error/warning/info) or `90001` (type-error). Memoized per (fileName, version) in an `LRU<LiveEntry>(1000)` — entries self-bump on hit, oldest evicted on overflow.
+    - **Async Godot** via `maybeStartGodotValidation`: reuses the `<cacheDir>/gd-output/<hash>-<name>.gd` mirror the `updateTsToGd` call just wrote — no separate scratch file. Calls `validateGdFiles({ gdFiles: [{ path, sourceMapJson, tsFilePath }], projectRoot, godotPath, cacheDir, signal })`; the inline source map means no `.gd.map` sidecar either. Per-file `AbortController` cancels a stale validation when a newer version arrives — the signal is plumbed into `execFileAsync`, so the Godot child process is killed and parsing/remapping is skipped on abort. Entries in `pendingGodot` self-clean on settle (guarded by `=== ctrl` to avoid race-clearing a superseding request). Skipped when the converter produced `severity: 'error'` (would duplicate parse errors) or when `disableGodotLint` is set.
+    - **Persistent-cache write-through**: after every live convert, calls `cache.updateTsToGd(tsPath, gdPath, sourceMap, diagnostics, { tsContent: sf.getFullText(), gdContent: result.code })`. Persistence uses `cache.saveAsync()` (fire-and-forget) so the tsserver event loop isn't blocked by the cache.json write. Godot validation is chained STRICTLY after the save settles via `.saveAsync().catch(log).finally(() => maybeStartGodotValidation(…))` — Godot runs regardless of save outcome (the mirror `.gd` was written synchronously inside `updateTsToGd`).
+    - **Tier 1 (cached fallback)**: when live convert produced nothing, `cachedDiagnosticsFor` reads the existing `ProjectCache` entry (fresh on disk OR fresh in `gd-output/`) and surfaces those diagnostics.
+  - **`src/ts-plugin/lru.ts`** — minimal `Map`-backed `LRU<V>` with `max` cap + optional `onEvict(key, value)` hook fired on overflow and on `clear()`. `get()` / re-`set()` bump to newest; `delete()` does NOT fire `onEvict`. Used by `liveCache` / `pendingGodot` in lint. Tested in `tests/ts-plugin/lru.test.ts` (13 tests).
+  - **Note on navigation**: an earlier iteration also provided go-to-definition / find-references overlays that bridged the `*.gd.d.ts` shadow classes back to their real source. Real-world testing showed WebStorm handles symbol navigation entirely through its own native indexer — tsserver never receives `definition` / `references` commands from WebStorm, so the overrides had no effect there. In VS Code they worked, but maintaining an editor-specific feature wasn't worth the surface area. The navigation overlay was removed. Users in WebStorm see Ctrl+B land on the generated `.gd.d.ts`; from there the `@see import("…")` JSDoc points at the real source for a one-hop follow-up.
 - [x] Watch mode + CLI + Cache (watches .ts, .tscn, .tres, assets, project.godot)
+  - **Cache-folder `.gd` mirror** at `<cacheDir>/gd-output/<md5(tsPath):16>-<basename>.gd` — every `updateTsToGd({ gdContent })` call writes the generated bytes here. `hasFreshCachedGd(tsPath)` verifies the mirror's content hash matches `entry.gdHash` before promotion. `promoteCachedGd(tsPath, targetGdPath)` performs an atomic `rename()` (falls back to copy + delete across devices), consumes the mirror, and keeps `isTsToGdFresh` green (`tsHash`/`gdHash` unchanged).
+  - `convert` CLI and `watcher` both probe in order: (1) `isTsToGdFresh` → skip; (2) `hasFreshCachedGd` → `promoteCachedGd` → skip; (3) else convert fresh and populate both real `.gd` and `gd-output/` mirror. The promote path is what lets the IDE plugin's work be reused by batch commands without double-converting.
+  - Atomic `cache.json` write: `.tmp-<pid>-<ts>` + `rename`, with a 5-attempt Windows retry loop and a final `write-then-unlink` fallback. Last-writer-wins between concurrent writers (plugin + watcher) is safe because entries are idempotent per-input.
+  - `cleanStale` removes orphan `.gd` files from `gd-output/` when their source TS entry is evicted.
 - [x] Godot validation (CLI --check-only, source map remapping to TS positions, autoload false-positive filtering for Godot bug #80319). Tests skip when Godot is not available on the system.
 - [x] GD-to-TS conversion helpers system (pluggable, individually toggleable via `--no-helpers` / `--no-signal-handler-helper` / `--no-operator-fix-helper` / `--no-explicit-convert-helper` / `--no-ready-field-types-helper` / `--no-extends-type-helper` / `--no-nullable-return-helper`)
   - Signal handler helper: infers parameter types from .tscn signal connections
@@ -155,9 +169,8 @@ tests/
   - Extends type helper: TS-based post-processing that fixes TS7006 (implicit any) on parameters of overridden methods. Walks the class's base type chain via `checker.getBaseTypes()` to find an inherited method with the same name, then copies parameter types by index using the SYNTACTIC type text from the parent's `.d.ts` (preserving aliases like `float`/`int` rather than collapsing them to `number`).
   - Nullable return helper: TS-based post-processing that fixes TS2322 "Type 'null' is not assignable to type 'X'" on `return null` statements. Detects return statements with null in functions that have an explicit return type annotation, and adds `| null` to the return type. Skips functions whose return type already contains `null`. Toggled via `--no-nullable-return-helper`.
 - [x] Logical value conversion (`||`/`&&` as non-boolean value):
-  - TS-to-GD: `emitBinaryExpression` detects `||`/`&&` used outside boolean context (if/while condition, negation, nested logical, `bool()` call, expression statement). When the result type is not boolean (via `checker.getTypeAtLocation()` + `TypeFlags.BooleanLike`), emits a `type-error` suggesting `bool()` wrapper or ternary (GD still emits `or`/`and`, so `.gd` is written; `lint`/ESLint fails, `convert`/`watch` warns).
+  - TS-to-GD: `emitBinaryExpression` detects `||`/`&&` used outside boolean context (if/while condition, negation, nested logical, `bool()` call, expression statement). When the result type is not boolean (via `checker.getTypeAtLocation()` + `TypeFlags.BooleanLike`), emits a `type-error` suggesting `bool()` wrapper or ternary (GD still emits `or`/`and`, so `.gd` is written; `lint` fails, `convert`/`watch` warns).
   - GD-to-TS: `emitBinaryOp` detects `or`/`and` in value contexts (assignment RHS, variable initializer, function argument, return statement) and auto-wraps in `bool()`. Skipped when the expression is inherently boolean (composed of comparisons/logical ops/boolean literals) via `isGdBoolExpression()`.
-  - ESLint: `ts2gd/convert` rule provides an auto-fix for the non-boolean value error that wraps the expression in `bool()`.
 - [x] Open-editor CLI command: maps .gd files to .ts files via `tstogd.json` `gdDir`/`tsDir` path mapping, spawns external editor with placeholder substitution (`{tsFile}`, `{line}`, `{col}`, `{file}`). Designed for Godot's external text editor integration.
 - [ ] Source map integration with Godot LSP (map LSP errors back to TS in IDE)
 
@@ -260,6 +273,6 @@ tests/
 - `NodePath` is its own variant type with a dedicated interface and constructor (not mapped to `string`). Has `[__variant_converts]` for `gd.as()` support
 - Operator overload types: `OPERATOR_OVERLOAD_TYPES` hardcoded set removed; now uses `registry.hasOperators(typeName)` to derive from the registry at runtime
 - `tstogd.json` `exclude` option: renamed from deprecated `ignore`. Glob patterns for files/folders to exclude from all CLI commands
-- `tstogd.json` config: `godotVersion`, `registryPath`, `gdDir`, `sourceMap` removed. Added `disableGodotLint` (boolean, default false) to disable Godot executable validation in lint/ESLint. Source maps are always generated.
+- `tstogd.json` config: `godotVersion`, `registryPath`, `gdDir`, `sourceMap` removed. Added `disableGodotLint` (boolean, default false) to disable Godot executable validation in `lint` and in the ts-plugin. Source maps are always generated.
 </content>
 </invoke>

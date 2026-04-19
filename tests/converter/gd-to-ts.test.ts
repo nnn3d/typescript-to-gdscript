@@ -195,7 +195,7 @@ async function makeTsHelperTmp(
   const { mkdirSync, writeFileSync, rmSync } = await import('fs');
   const tmpDir = join(
     tmpdir(),
-    `ts2gd-helper-${label}-${randomBytes(4).toString('hex')}`,
+    `tstogd-helper-${label}-${randomBytes(4).toString('hex')}`,
   );
   mkdirSync(tmpDir, { recursive: true });
   const typingsDir = join(__dirname, '..', '..', 'typings');

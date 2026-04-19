@@ -63,6 +63,18 @@ export function registerConvertCommand(program: Command): void {
           continue;
         }
 
+        // If the plugin's child (or an earlier run) already produced the
+        // right `.gd` for the current source in the cache folder, promote
+        // it with a rename — no re-conversion needed.
+        if (cache && cache.hasFreshCachedGd(filePath)) {
+          const promoted = cache.promoteCachedGd(filePath, outputPath);
+          if (promoted && cache.isTsToGdFresh(filePath, outputPath)) {
+            debugLog(`Promoted (cache-folder): ${outputPath}`);
+            skipped++;
+            continue;
+          }
+        }
+
         const result = convertTsToGd({
           filePath,
           rootDir: cfg.tsDir,
@@ -93,9 +105,13 @@ export function registerConvertCommand(program: Command): void {
         writeFileSync(outputPath, result.code);
         debugLog(`Written: ${outputPath}`);
 
-        // Update cache with source map and diagnostics
+        // Update cache. `gdContent` populates `<cacheDir>/gd-output/` so a
+        // future `convert`/`watch` run (or the plugin) can reuse the exact
+        // bytes via `promoteCachedGd` instead of re-converting.
         if (cache && result.sourceMap) {
-          cache.updateTsToGd(filePath, outputPath, result.sourceMap, result.diagnostics);
+          cache.updateTsToGd(filePath, outputPath, result.sourceMap, result.diagnostics, {
+            gdContent: result.code,
+          });
         }
       }
 

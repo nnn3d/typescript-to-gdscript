@@ -2,4 +2,4 @@
 config_version=5
 
 [application]
-config/name="ESLint Test"
+config/name="tstogd Plugin Test"

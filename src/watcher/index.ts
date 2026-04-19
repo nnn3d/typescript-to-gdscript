@@ -61,7 +61,7 @@ const RESOURCE_EXTENSIONS = new Set([
 const WATCHED_EXTENSIONS = new Set(['.ts', ...RESOURCE_EXTENSIONS]);
 
 /** Debounce delay (ms) — wait for rapid file changes to settle before converting. */
-const DEBOUNCE_MS = 150;
+const DEBOUNCE_MS = 50;
 
 export class Watcher {
   private options: WatcherOptions;
@@ -86,12 +86,17 @@ export class Watcher {
   private initialSkipped = 0;
   private initialErrors = 0;
 
+  private cacheDir: string;
+
   constructor(options: WatcherOptions) {
     this.options = options;
     this.tsDir = options.tsDir ?? options.rootDir;
     this.gdDir = options.gdDir ?? options.outputDir ?? this.tsDir;
-    const cacheDir = options.cacheDir ?? join(tmpdir(), `ts2gd-cache-${createHash('sha256').update(resolve(options.rootDir)).digest('hex').slice(0, 16)}`);
-    this.cache = new ProjectCache(cacheDir);
+    this.cacheDir = options.cacheDir ?? join(tmpdir(), `tstogd-cache-${createHash('sha256').update(resolve(options.rootDir)).digest('hex').slice(0, 16)}`);
+    // `watch: true` keeps the manifest in sync with writes from the
+    // parallel ts-plugin (inside tsserver). Without it, both sides hold
+    // independent in-memory snapshots and their views of the cache drift.
+    this.cache = new ProjectCache(this.cacheDir, { watch: true });
   }
 
   start(): void {
@@ -138,10 +143,11 @@ export class Watcher {
       });
   }
 
-  stop(): void {
+  async stop(): Promise<void> {
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
-    this.fsWatcher?.close();
+    await this.fsWatcher?.close();
     this.cache.save();
+    await this.cache.close();
     console.log('Watcher stopped.');
   }
 
@@ -213,6 +219,19 @@ export class Watcher {
         this.log(filePath, 'Unchanged (cached)', 'debug');
         continue;
       }
+
+      // Promote from cache-folder if a previous plugin/convert run already
+      // produced the right bytes for the current source — saves a full
+      // re-conversion + Godot validation.
+      if (this.cache.hasFreshCachedGd(filePath)) {
+        const promoted = this.cache.promoteCachedGd(filePath, outputPath);
+        if (promoted && this.cache.isTsToGdFresh(filePath, outputPath)) {
+          if (!this.initialScanDone) this.initialSkipped++;
+          this.log(filePath, 'Promoted (cache-folder)', 'debug');
+          continue;
+        }
+      }
+
       toConvert.push({ filePath, outputPath });
     }
 
@@ -263,9 +282,12 @@ export class Watcher {
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, result.code);
 
-    // Update cache with source map and diagnostics
+    // Update cache. `gdContent` populates `<cacheDir>/gd-output/` so a
+    // later run (or the plugin) can reuse the exact bytes via promote.
     if (result.sourceMap) {
-      this.cache.updateTsToGd(filePath, outputPath, result.sourceMap, result.diagnostics);
+      this.cache.updateTsToGd(filePath, outputPath, result.sourceMap, result.diagnostics, {
+        gdContent: result.code,
+      });
     }
     this.cache.save();
 
@@ -285,6 +307,7 @@ export class Watcher {
         gdFiles: [outputPath],
         projectRoot,
         godotPath: this.options.godotPath,
+        cacheDir: this.cacheDir,
       }).then((validateResult) => {
         for (const d of validateResult.diagnostics) {
           this.log(

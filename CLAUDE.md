@@ -28,7 +28,7 @@ This project converts TypeScript code to GDScript for the Godot game engine, wit
    - `PROJECT.md` — internal architecture, structure, edge cases
    - `CLAUDE.md` — this file, rules only
 
-6. **⚠️ ALL temporary directories MUST live under the OS temp dir** (`os.tmpdir()` from Node's `node:os` module). Never create tmp dirs inside the project tree (e.g. `.tmp-*` in tests, `.ts2gd-cache` at the repo root, etc.). Use `join(tmpdir(), 'ts2gd-<label>-<random>')` or similar. This applies to:
+6. **⚠️ ALL temporary directories MUST live under the OS temp dir** (`os.tmpdir()` from Node's `node:os` module). Never create tmp dirs inside the project tree (e.g. `.tmp-*` in tests, `.tstogd-cache` at the repo root, etc.). Use `join(tmpdir(), 'tstogd-<label>-<random>')` or similar. This applies to:
    - Test fixtures that need scratch files
    - Cache directories
    - Any intermediate file written by the converter/helpers
@@ -135,9 +135,11 @@ This project converts TypeScript code to GDScript for the Godot game engine, wit
 ## Quick Reference
 
 - **Package manager**: yarn (v1)
+- **Node**: 22+ (required — older versions can't `require()` ESM plugins)
+- **Godot**: required on `PATH` (or set `godotPath` / `GODOT_PATH`) to run the test suite. Tests that use the Godot CLI integration are **not** skipped when Godot is missing — they fail loudly.
 - **Run tests**: `npx vitest run`
 - **Regenerate Godot typings**: `yarn generate:godot-typings`
-- **CLI entry**: `src/cli/index.ts` (binary `ts2gd`)
+- **CLI entry**: `src/cli/index.ts` (binary `tstogd`)
 - **Main converters**: `src/converter/ts-to-gd/`, `src/converter/gd-to-ts/`
 - **Typings generation**: `src/typings/scenes.ts` (scene/script typings), `src/typings/godot-docs.ts` (Godot class typings from XML)
 

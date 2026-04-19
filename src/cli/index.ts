@@ -17,7 +17,7 @@ import { registerClearCacheCommand } from './clear-cache.ts';
 const program = new Command();
 
 program
-  .name('ts2gd')
+  .name('tstogd')
   .description('Convert TypeScript to GDScript and back')
   .version('0.1.0')
   .option('--debug', 'Show debug/info messages', false)

@@ -15,7 +15,7 @@ const TSX = resolve(__dirname, '../../node_modules/.bin/tsx');
 function makeTmpDir(): string {
   const dir = join(
     tmpdir(),
-    `ts2gd-cli-test-${randomBytes(4).toString('hex')}`,
+    `tstogd-cli-test-${randomBytes(4).toString('hex')}`,
   );
   mkdirSync(dir, { recursive: true });
   return dir;

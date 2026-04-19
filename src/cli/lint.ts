@@ -110,6 +110,7 @@ export function registerLintCommand(program: Command): void {
               gdFiles: [{ path: gdPath, sourceMapJson, tsFilePath: filePath }],
               projectRoot,
               godotPath,
+              cacheDir: cfg.cacheDir,
             });
             for (const diag of validateResult.diagnostics) {
               const prefix = diag.severity === 'error' ? 'ERROR' : 'WARN';
@@ -173,6 +174,7 @@ export function registerLintCommand(program: Command): void {
               ],
               projectRoot,
               godotPath,
+              cacheDir: cfg.cacheDir,
             });
 
             for (const diag of validateResult.diagnostics) {

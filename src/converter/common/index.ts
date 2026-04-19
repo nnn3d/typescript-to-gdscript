@@ -38,7 +38,7 @@ export interface TransformContext {
  *   output (unless `--emit-on-error`). Blocks Godot validation.
  * - `type-error` — semantic/type issue, but GD emission produced valid output.
  *   .gd IS written. Shown as warning by `convert`/`watch`, as error by
- *   `lint`/ESLint. Godot validation still runs.
+ *   `lint` and the ts-plugin. Godot validation still runs.
  * - `warning` — non-blocking advisory. Shown as WARN everywhere.
  * - `info` — debug-level; filtered out in most consumers.
  */
@@ -53,7 +53,7 @@ export interface TransformDiagnostic {
 }
 
 /**
- * True for severities that should surface as ESLint/lint errors (exit code 1).
+ * True for severities that should surface as lint / ts-plugin errors (exit code 1 for CLI lint, red squiggle in the IDE).
  * Both `error` and `type-error` are user-facing errors; only `error` blocks
  * emission/Godot validation. Use {@link isConversionErrorSeverity} for that.
  */

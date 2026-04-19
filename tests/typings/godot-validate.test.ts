@@ -20,16 +20,8 @@ import { tmpdir } from 'os';
 const execFileAsync = promisify(execFile);
 const TMP_DIR = join(tmpdir(), '__tmp__' + Math.random().toString(36));
 import { resolveGodotPath } from '../../src/config/index.ts';
-import { execFileSync } from 'child_process';
 
 const GODOT_PATH = resolveGodotPath();
-let godotAvailable = false;
-try {
-  execFileSync(GODOT_PATH, ['--version'], { stdio: 'ignore' });
-  godotAvailable = true;
-} catch {
-  godotAvailable = false;
-}
 
 afterEach(() => {
   rmSync(TMP_DIR, { recursive: true, force: true });
@@ -428,14 +420,11 @@ describe('getAutoloadNames', () => {
 });
 
 // ─── Real Godot CLI integration tests ─────────────────────────
+//
+// Godot is a hard prerequisite for the suite — no skipping. If the
+// binary isn't resolvable, tests fail with the spawn error.
 
-try {
-  await execFileAsync('godot', ['--version'], { timeout: 10000 });
-} catch {
-  console.error('godot is not found!');
-}
-
-describe.skipIf(!godotAvailable)('Godot CLI integration', () => {
+describe('Godot CLI integration', () => {
   function setupGodotProject(): string {
     const projectDir = join(TMP_DIR, 'godot-project');
     mkdirSync(projectDir, { recursive: true });

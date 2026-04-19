@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "Physical subdir used by tsserver's legacy plugin resolver. tsserver does NOT honor the parent's `exports` map, so it looks for `typescript-to-gdscript/ts-plugin/package.json` directly. This file redirects it to the actual compiled plugin in the parent's `dist/`.",
+  "type": "commonjs",
+  "main": "./index.js",
+  "types": "../dist/ts-plugin/index.d.ts"
+}

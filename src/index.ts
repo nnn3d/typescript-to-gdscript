@@ -9,7 +9,6 @@ export {
 export { GDScriptParser } from './parser/gdscript/index.ts';
 export { createTsProgram } from './parser/typescript/index.ts';
 export { SourceMapper } from './sourcemap/index.ts';
-export { generateClassTypings } from './typings/classes.ts';
 export { generateTypings } from './typings/scenes.ts';
 export { generateGodotDocsTypings } from './typings/godot-docs.ts';
 export {
@@ -32,4 +31,3 @@ export type {
   TransformDiagnostic,
   TransformContext,
 } from './converter/common/index.ts';
-export { default as eslintPlugin } from './eslint/plugin.ts';

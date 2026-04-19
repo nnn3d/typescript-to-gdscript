@@ -1,6 +1,6 @@
 # typescript-to-gdscript
 
-Convert TypeScript to GDScript for the Godot game engine, with source maps, ESLint integration, and type-safe helpers.
+Convert TypeScript to GDScript for the Godot game engine, with source maps, a TypeScript language service plugin for live IDE diagnostics, and type-safe helpers.
 
 ## Philosophy
 
@@ -34,7 +34,7 @@ Add to your `tsconfig.json` to get type-checking and IDE autocomplete for Godot 
 }
 ```
 
-> **Note:** `noLib: true` disables standard TypeScript libs since GDScript uses a different runtime. The `include` array must reference the package typings directory. Adjust `src` and `_typings` paths to match your `tsDir` and `typingsDir`. Run `ts2gd generate-typings` to populate the typings directory — the generated `_index.d.ts` includes a `/// <reference>` to the package typings so IDEs (WebStorm, Rider, VS Code) eagerly index all Godot classes for autocomplete.
+> **Note:** `noLib: true` disables standard TypeScript libs since GDScript uses a different runtime. The `include` array must reference the package typings directory. Adjust `src` and `_typings` paths to match your `tsDir` and `typingsDir`. Run `tstogd generate-typings` to populate the typings directory — the generated `_index.d.ts` includes a `/// <reference>` to the package typings so IDEs (WebStorm, Rider, VS Code) eagerly index all Godot classes for autocomplete.
 
 This provides:
 
@@ -63,38 +63,37 @@ Create a `tstogd.json` in your project root to configure the converter:
 | `typingsDir`       | `string`   | Directory for all generated typings (`globals.d.ts`, `scene-typings.d.ts`). Relative to `rootDir`. Defaults to `"_gdtots"`. |
 | `tsconfig`         | `string`   | Path to `tsconfig.json`.                                                 |
 | `exclude`          | `string[]` | Glob patterns (from project root) for files/folders to exclude from all CLI commands (e.g. `["test/**", "**/*.test.ts"]`). Uses [minimatch](https://github.com/isaacs/minimatch) syntax. |
-| `disableGodotLint` | `boolean`  | Disable Godot executable validation in lint and ESLint. Defaults to `false`. |
+| `disableGodotLint` | `boolean`  | Disable Godot executable validation in lint and the ts-plugin. Defaults to `false`. |
 | `cacheDir`         | `string`   | Cache directory (source maps and diagnostics stored inline). Default: `node_modules/.cache/typescript-to-gdscript` (or OS temp dir). |
 | `godotTypingsDir`  | `string`   | Path to Godot engine typings (classes, gd-helpers, globals). Default: `node_modules/typescript-to-gdscript/typings`. |
 
 ## CLI Commands
 
-The CLI binary is `ts2gd`.
+The CLI binary is `tstogd`.
 
-### `ts2gd init`
+### `tstogd init`
 
 Initialize a Godot project for typescript-to-gdscript. Walks through an interactive setup:
 
 ```bash
-ts2gd init
+tstogd init
 ```
 
 The command will:
 
 1. **Create `tstogd.json`** — asks for TypeScript source directory, GDScript output directory, and typings directory
-2. **Create `tsconfig.json`** — from a template with proper settings for Godot development (`noLib`, strict mode, typings reference)
-3. **Create `eslint.config.js`** — from a template with the ts2gd ESLint plugin configured
-4. **Install npm packages** — TypeScript, ESLint, and @typescript-eslint/parser as dev dependencies
-5. **Create `node_modules/.gdignore`** — to exclude node_modules from Godot's file scanner
+2. **Create `tsconfig.json`** — from a template with proper settings for Godot development (`noLib`, strict mode, typings reference, `typescript-to-gdscript/ts-plugin` enabled under `compilerOptions.plugins` for live IDE diagnostics)
+3. **Install npm packages** — TypeScript as a dev dependency
+4. **Create `node_modules/.gdignore`** — to exclude node_modules from Godot's file scanner
 
 If any of these files already exist, the command will skip them and remind you to check the README for configuration options.
 
-### `ts2gd convert <files...>`
+### `tstogd convert <files...>`
 
 Convert TypeScript files to GDScript.
 
 ```bash
-ts2gd convert src/Player.ts -o scripts/
+tstogd convert src/Player.ts -o scripts/
 ```
 
 Source maps are stored in the cache directory (not alongside `.gd` files).
@@ -108,12 +107,12 @@ Options:
 - `--no-cache` — Disable cache (force full reconversion)
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `# ERROR:` comments)
 
-### `ts2gd convert-gd <files...>`
+### `tstogd convert-gd <files...>`
 
 Convert GDScript files to TypeScript. Uses the Godot class registry to resolve inherited members for correct `this.` prefix insertion.
 
 ```bash
-ts2gd convert-gd addons/plugin/Plugin.gd -o src/
+tstogd convert-gd addons/plugin/Plugin.gd -o src/
 ```
 
 Registry resolution order:
@@ -223,12 +222,12 @@ GD-to-TS conversion includes optional helpers that enhance the output:
   ```
   For simple identifier/property-access right-hand sides, the helper emits `typeof <expr>`; for other expressions (literals, `new` calls, etc.) it uses the TS type checker's inferred type string.
 
-### `ts2gd lint <files...>`
+### `tstogd lint <files...>`
 
 Lint TypeScript files by converting to GDScript and reporting diagnostics. If no files given, lints all `.ts` files in `tsDir`.
 
 ```bash
-ts2gd lint src/Player.ts
+tstogd lint src/Player.ts
 ```
 
 Options:
@@ -240,12 +239,12 @@ Options:
 - `--project-root <dir>` — Godot project root for validation
 - `--no-cache` — Disable cache (force full re-lint)
 
-### `ts2gd watch`
+### `tstogd watch`
 
 Watch TypeScript files and auto-convert on change.
 
 ```bash
-ts2gd watch --root-dir src --output-dir scripts
+tstogd watch --root-dir src --output-dir scripts
 ```
 
 Source maps are stored in the cache directory.
@@ -257,12 +256,12 @@ Options:
 - `--tsconfig <path>` — Path to tsconfig.json
 - `--typings-dir <path>` — Directory for all generated typings (globals.d.ts, scene-typings.d.ts)
 
-### `ts2gd generate-gdscript-global-typings`
+### `tstogd generate-gdscript-global-typings`
 
 Generate TypeScript typings and class registry from Godot XML docs. Requires the `vendor/godot` git submodule. The Godot version is auto-detected from `vendor/godot/version.py`.
 
 ```bash
-ts2gd generate-gdscript-global-typings --docs-dir vendor/godot/doc/classes
+tstogd generate-gdscript-global-typings --docs-dir vendor/godot/doc/classes
 ```
 
 Options:
@@ -272,12 +271,12 @@ Options:
 - `--override-dir <dir>` — User override directory for `.d.ts` files and `non-nullable.json` (combined with bundled defaults)
 - `--no-default-overrides` — Disable the bundled default overrides
 
-### `ts2gd generate-addon-typings`
+### `tstogd generate-addon-typings`
 
 Generate TypeScript typings for GDScript addon files in `addons/`. Converts each `.gd` file to `.ts` (via GD-to-TS), then generates `.gd.d.ts` scene typings with global class declarations, `GodotScripts`/`GodotResources` entries, and namespace enums.
 
 ```bash
-ts2gd generate-addon-typings
+tstogd generate-addon-typings
 ```
 
 Options:
@@ -296,15 +295,15 @@ ts/_typings/
 
 This command is automatically called by `convert-gd` and `watch` (on first run). It can also be run standalone.
 
-### `ts2gd generate-class-typings <files...>`
+### `tstogd generate-class-typings <files...>`
 
 Generate a global `.d.ts` file declaring all named classes from your TS source files, making them available globally (like in GDScript).
 
 ```bash
-ts2gd generate-class-typings src/**/*.ts -o globals.d.ts
+tstogd generate-class-typings src/**/*.ts -o globals.d.ts
 ```
 
-### `ts2gd open-editor`
+### `tstogd open-editor`
 
 Open a GDScript file in an external editor as the corresponding TypeScript file. Designed for Godot's external text editor integration -- when you double-click a script in Godot, it opens the `.ts` source instead of the generated `.gd` file.
 
@@ -348,7 +347,7 @@ To also route debugger errors to your external editor, switch to the **Script** 
 
 > if you select the Script tab, that has its own menu bar, where you can find the option as described.
 
-If the toggle is off, clicking a stack frame silently does nothing — `ts2gd open-editor` is never invoked, so you won't see the editor open and there'll be no entry in the debug log. See related Godot issues: [#65554](https://github.com/godotengine/godot/issues/65554), [#84294](https://github.com/godotengine/godot/issues/84294), [#95198](https://github.com/godotengine/godot/issues/95198).
+If the toggle is off, clicking a stack frame silently does nothing — `tstogd open-editor` is never invoked, so you won't see the editor open and there'll be no entry in the debug log. See related Godot issues: [#65554](https://github.com/godotengine/godot/issues/65554), [#84294](https://github.com/godotengine/godot/issues/84294), [#95198](https://github.com/godotengine/godot/issues/95198).
 
 #### Editor command examples
 
@@ -358,12 +357,12 @@ If the toggle is off, clicking a stack frame silently does nothing — `ts2gd op
 | Rider   | `-e "rider --line {tsLine} --column {tsCol} {tsFile}"` |
 | Vim     | `-e "vim +{tsLine} {tsFile}"`                          |
 
-### `ts2gd clear-cache`
+### `tstogd clear-cache`
 
 Clear the conversion cache. Useful when cache becomes stale or after upgrading the converter.
 
 ```bash
-ts2gd clear-cache
+tstogd clear-cache
 ```
 
 ## TypeScript Helpers (`gd` namespace)
@@ -678,8 +677,6 @@ let x = bool(a || b)
 
 The `bool()` wrapper is skipped when the expression is already boolean (composed of comparisons, logical operators, or boolean literals).
 
-**ESLint auto-fix**: The `ts2gd/convert` ESLint rule provides an auto-fix for the non-boolean value error that wraps the expression in `bool()`.
-
 ## Typings
 
 Typings are stored in a flat `typings/` folder (no version subdirectories):
@@ -715,7 +712,7 @@ The scene typings generator creates per-file `.d.ts` declarations that provide t
 ### Generate scene typings
 
 ```bash
-ts2gd generate-typings
+tstogd generate-typings
 ```
 
 This generates in your `typingsDir`:
@@ -778,85 +775,71 @@ Add `helpers` to `tstogd.json` to control GD-to-TS conversion helpers:
 }
 ```
 
-## ESLint Plugin
+## TypeScript Language Service Plugin
 
-The ESLint plugin reports converter diagnostics (unsupported TS features) and optionally Godot validation errors inline in your editor.
+typescript-to-gdscript ships a TypeScript language service plugin that runs inside your IDE's tsserver and surfaces converter + Godot diagnostics as real TypeScript squiggles — including on **unsaved** buffer contents.
 
-### Setup
+### Converter diagnostics surfaced
 
-Install ESLint and the TypeScript parser:
-
-```bash
-yarn add --dev eslint @typescript-eslint/parser
-```
-
-Create `eslint.config.js` (ESLint flat config):
-
-```javascript
-import ts2gd from 'typescript-to-gdscript/eslint';
-import tsParser from '@typescript-eslint/parser';
-
-export default [
-  {
-    files: ['src/**/*.ts'],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        ecmaVersion: 2022,
-        sourceType: 'module',
-      },
-    },
-    plugins: {
-      ts2gd,
-    },
-    rules: {
-      'ts2gd/convert': [
-        'error',
-        {
-          rootDir: '.',
-          projectRoot: '.', // optional: Godot project root (must contain project.godot)
-        },
-      ],
-    },
-  },
-];
-```
-
-### Rule: `ts2gd/convert`
-
-Converts each TS file to GDScript and reports errors at two levels:
-
-1. **Converter diagnostics** — two sub-categories:
-   - **Conversion errors** (block `.gd` output, block Godot validation): unsupported TS features where the converter cannot emit valid GDScript
-     - `var` keyword (use `let` or `const`)
-     - `undefined` keyword as a value (use `null`)
-     - Optional chaining (`?.`), nullish coalescing (`??`, `??=`)
-     - Spread operator (`...`), destructuring
-     - `yield`, `for...in`
-     - Multiple classes per file
-     - Top-level statements outside classes
-   - **Type errors** (`.gd` is still written; reported as ESLint errors, shown as warnings in `convert`/`watch`; Godot validation still runs): semantic/type issues where emission produced valid GD
-     - `undefined` in function parameter type annotations
-     - Argument that may be `undefined`
-     - `||`/`&&` used as a non-boolean value (auto-fixable — wraps in `bool()`)
-     - `x in y` where `y` is a value-type primitive (Vector2, Color, Transform2D, etc.), an array (`Array<T>`, `T[]`, `Packed*Array`), a number, or a boolean — GDScript only supports `in` on `Dictionary` and `String`
-     - Call returning `Promise<T>` used as a value without `await` (assigned to a variable, passed as an argument, returned, etc.) — GDScript has no Promise; an unawaited coroutine resolves to a `GDScriptFunctionState` at runtime, not the value. Discarding the call as a statement (`fn();`) or awaiting it (`await fn()`) is fine.
-
-2. **Godot validation errors** (when Godot is available) — errors detected by the Godot compiler:
-   - Type mismatches
-   - Unknown functions/methods
-   - Parse errors in generated GDScript
-
-### Rule options
-
-| Option        | Type      | Description                                         |
-| ------------- | --------- | --------------------------------------------------- |
-| `rootDir`     | `string`  | Root directory for the project                      |
-| `tsDir`       | `string`  | TypeScript source directory                         |
-| `tsconfig`    | `string`  | Path to tsconfig.json                               |
-| `projectRoot` | `string`  | Godot project root (must contain `project.godot`)   |
+- **Conversion errors** — unsupported TS features; `.gd` is NOT emitted:
+  - `var` keyword (use `let` or `const`)
+  - `undefined` keyword as a value (use `null`)
+  - Optional chaining (`?.`), nullish coalescing (`??`, `??=`)
+  - Spread operator (`...`), destructuring
+  - `yield`, `for...in`
+  - Multiple classes per file
+  - Top-level statements outside classes
+- **Type errors** — `.gd` is still emitted, but the plugin reports them inline:
+  - `undefined` in function parameter type annotations
+  - Argument that may be `undefined`
+  - `||`/`&&` used as a non-boolean value
+  - `x in y` where `y` is a value-type primitive (Vector2, Color, Transform2D, etc.), an array (`Array<T>`, `T[]`, `Packed*Array`), a number, or a boolean — GDScript only supports `in` on `Dictionary` and `String`
+  - Call returning `Promise<T>` used as a value without `await` (assigned, passed as argument, returned, etc.) — GDScript has no Promise; an unawaited coroutine resolves to a `GDScriptFunctionState` at runtime
+- **Godot validation errors** (when Godot is available on `PATH`) — type mismatches, unknown functions/methods, parse errors in the generated GDScript. These fire asynchronously ~300–500ms after the converter diagnostics and are merged into the IDE's diagnostic list via an internal tsserver refresh.
 
 Godot validation is enabled automatically when the Godot executable is found on the system (resolved via `resolveGodotPath()`). To disable it, set `disableGodotLint: true` in `tstogd.json`. Source maps are always generated for error remapping.
+
+### Enable it
+
+Add to your project's `tsconfig.json`:
+
+```json
+{
+  "compilerOptions": {
+    "plugins": [
+      { "name": "typescript-to-gdscript/ts-plugin" }
+    ]
+  }
+}
+```
+
+Tell the IDE to use the workspace's TypeScript — plugins only load through `tsserver` spawned by the workspace `typescript` package, not the IDE's bundled one:
+
+- **WebStorm**: *Settings → Languages & Frameworks → TypeScript* — set "TypeScript" to `node_modules/typescript` (typically auto-detected), ensure "TypeScript Language Service" is ON, then restart the TS service (File → Invalidate Caches → Just Restart is the blunt way).
+- **VS Code**: Open any `.ts` file, Command Palette → `TypeScript: Select TypeScript Version...` → `Use Workspace Version`.
+
+Verify: the plugin logs `[tstogd-plugin] plugin loaded` on startup. WebStorm → `Help → Show Log in Explorer/Finder → idea.log`; VS Code → `Output panel → TypeScript`.
+
+### What it does
+
+1. **Inline diagnostics on the current buffer.** On every `getSemanticDiagnostics` query, the plugin runs `convertTsToGd` in-process using tsserver's own `ts.Program` (no fork, no IPC — just reuses the warm program + type checker). Converter diagnostics (conversion errors, type-errors, `||`/`&&` as value, `Promise` as value, etc.) appear as `ts.Diagnostic`s with `source: 'tstogd'` and codes in the `90000–90099` range.
+
+2. **Godot validation in the background.** After conversion, the plugin kicks off `validateGdFiles` asynchronously against a scratch `.gd` written under `<projectRoot>/.tstogd-plugin-scratch/`. When Godot finishes (~300–500ms later), the plugin merges its diagnostics and calls `refreshDiagnostics()` on the project — your IDE updates without you doing anything.
+
+3. **Cancellation.** Typing another character while Godot is still running aborts the stale validation (both the subprocess and the superseded result) — no stale squiggles from a version you've already moved past.
+
+4. **Persistent-cache write-through.** Every live conversion updates the shared `ProjectCache` (keyed by buffer hash). When you save, `tstogd watch` / `tstogd convert` detects that the cache already holds the right bytes and promotes them with a single `rename()` — no double conversion.
+
+> **Note on navigation:** an earlier version of the plugin also redirected Go-to-Definition / Find-Usages between the generated `*.gd.d.ts` shadow classes and their real TypeScript sources. That feature was removed because WebStorm handles symbol navigation entirely through its own native indexer (it doesn't forward `definition` / `references` to tsserver), so the overrides had no effect there. In WebStorm, Ctrl+B on a generated class lands on its `*.gd.d.ts`; the `@see import("…")` JSDoc emitted alongside each shadow class takes you to the real source on the next Ctrl+B.
+
+### Plugin diagnostic codes
+
+| Code    | Meaning                                |
+| ------- | -------------------------------------- |
+| `90000` | converter `error` / `warning` / `info` |
+| `90001` | converter `type-error`                 |
+
+All plugin-originated diagnostics have `source: 'tstogd'`, so you can filter them in IDE settings if needed.
 
 
 ## Development
@@ -867,6 +850,11 @@ yarn build
 yarn test:run
 ```
 
+### Prerequisites
+
+- **Node.js 22+** — the plugin uses `require(esm)` semantics (no top-level await in the plugin itself, but earlier Node versions refuse ESM via `require`).
+- **Godot** on `PATH`, or reachable via `godotPath` / `GODOT_PATH` — required to run the test suite. Tests that exercise the Godot CLI integration (converter-round-trip validation, ts-plugin async Godot diagnostics, etc.) fail loudly when Godot is not resolvable; they are **not** skipped. If you need to develop without Godot installed, run just the subset of scripts that don't touch it (`yarn test:tstogd`, `yarn test:gdtots`, `yarn test:diag`, `yarn test:sourcemap`, `yarn test:godot-registry`, `yarn test:typecheck`, `yarn test:cli`) — the rest will fail with a spawn error.
+
 ### Test scripts
 
 Individual test suites can be run via npm scripts:
@@ -876,7 +864,7 @@ Individual test suites can be run via npm scripts:
 | `yarn test:tstogd`    | TS-to-GD converter fixtures        |
 | `yarn test:gdtots`    | GD-to-TS converter fixtures        |
 | `yarn test:diag`      | Converter diagnostics              |
-| `yarn test:eslint`    | ESLint plugin                      |
+| `yarn test:ts-plugin` | TypeScript language service plugin |
 | `yarn test:scene-typings` | Scene typings generation       |
 | `yarn test:type-checks`   | Type check tests               |
 | `yarn test:class-typings` | Class typings generation       |

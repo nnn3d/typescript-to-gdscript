@@ -60,8 +60,7 @@ export function registerWatchCommand(program: Command): void {
       watcher.start();
 
       process.on('SIGINT', () => {
-        watcher.stop();
-        process.exit(0);
+        watcher.stop().finally(() => process.exit(0));
       });
     });
 }
