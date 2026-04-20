@@ -30,6 +30,30 @@ export interface TsToGdConfig {
   cacheDir?: string;
   /** Path to Godot engine typings (classes, gd-helpers, globals). Default: `node_modules/typescript-to-gdscript/typings`. */
   godotTypingsDir?: string;
+  /** Converter behavior tweaks. */
+  converterOptions?: ConverterOptions;
+}
+
+/**
+ * Knobs that change how the converter and typings generator emit code.
+ * All fields are optional; omitted fields fall back to the defaults
+ * documented per-field below.
+ */
+export interface ConverterOptions {
+  /**
+   * When true, every non-anonymous TypeScript class is emitted into the
+   * global TS scope (`declare global { class X extends ScriptClass }`),
+   * matching pre-refactor behavior. When false (default), classes are
+   * module-scoped and consumers must `import` them — this drives the
+   * TS\u2192GD converter to emit `const X = preload("res://\u2026")` for
+   * renamed/anonymous imports and to skip-emit imports of globally
+   * available GD classes.
+   *
+   * Addons (GD\u2192TS conversion) always generate global types regardless
+   * of this flag — addons are consumed as a unit and need to be visible
+   * without explicit imports.
+   */
+  generateGlobalClassTypes?: boolean;
 }
 
 // ─── Resolved Config ─────────────────────────────────────────
@@ -53,6 +77,16 @@ export interface ResolvedConfig {
   cacheDir: string;
   /** Absolute path to Godot engine typings directory. */
   godotTypingsDir: string;
+  /**
+   * Resolved converter knobs. Always present (defaults filled in by
+   * `resolveConfig`); see `ConverterOptions` for per-field semantics.
+   */
+  converterOptions: ResolvedConverterOptions;
+}
+
+/** Same shape as `ConverterOptions` but with all fields required. */
+export interface ResolvedConverterOptions {
+  generateGlobalClassTypes: boolean;
 }
 
 /**
@@ -127,6 +161,12 @@ export function resolveConfig(options?: {
     disableGodotLint: config?.disableGodotLint ?? false,
     cacheDir,
     godotTypingsDir,
+    converterOptions: {
+      generateGlobalClassTypes:
+        overrides.converterOptions?.generateGlobalClassTypes ??
+        config?.converterOptions?.generateGlobalClassTypes ??
+        false,
+    },
   };
 }
 

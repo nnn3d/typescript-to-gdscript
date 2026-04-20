@@ -10,6 +10,24 @@ export interface ConvertOptions {
   filePath: string;
   /** Root directory of the project */
   rootDir: string;
+  /**
+   * TypeScript source root (where consumer `.ts` files live). Used to
+   * compute the mirrored `.gd` path for imported classes when emitting
+   * `const X = preload("res://…")` and `extends "res://…"`. Defaults to
+   * `rootDir` (TS and GD trees share the same root).
+   */
+  tsDir?: string;
+  /**
+   * GDScript output root. Combined with `tsDir` to mirror the relative
+   * tree structure when computing import paths. Defaults to `rootDir`.
+   */
+  gdDir?: string;
+  /**
+   * Godot project root — `res://` paths in emitted `preload(...)` and
+   * `extends "res://..."` are taken relative to this directory. Defaults
+   * to `rootDir`.
+   */
+  projectRoot?: string;
   /** Path to tsconfig.json */
   tsConfigPath?: string;
   /** Whether to generate source maps */
@@ -56,6 +74,9 @@ export function convertTsToGd(options: ConvertOptions): TransformResult {
       filePath: options.filePath,
       diagnostics: [],
       diagInfo,
+      tsDir: options.tsDir ?? options.rootDir,
+      gdDir: options.gdDir ?? options.rootDir,
+      projectRoot: options.projectRoot ?? options.rootDir,
     },
     {
       sourceMap: options.sourceMap ?? false,

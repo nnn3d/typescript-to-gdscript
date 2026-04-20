@@ -1,4 +1,4 @@
-export class __CLASS__ extends Node {
+export class _Anonym extends Node {
   static MAX_HEALTH = 100;
   static Mode = gd.enum('EASY', 'HARD');
 
@@ -10,7 +10,7 @@ export class __CLASS__ extends Node {
     return bool(this.MAX_HEALTH || this.MAX_HEALTH);
   }
 
-  set_mode(m: __CLASS__.Mode, c: __CLASS__.Config) {
-    let mode: __CLASS__.Mode = this.Mode.EASY;
+  set_mode(m: _Anonym.Mode, c: _Anonym.Config) {
+    let mode: _Anonym.Mode = this.Mode.EASY;
   }
 }

@@ -1,13 +1,13 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { __CLASS__ as ScriptClass } from "../Anonym2.js";
+import type { __CLASS__ as ScriptClass } from "../Anonym2";
+
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
 
 type ScriptTree = _GDGetInterfaceTree<__Anonym2Gd__Trees>;
 type ScriptPaths = _GDGetTreePaths<ScriptTree>;
 
-type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
-
-declare module "../Anonym2.ts" {
+declare module "../Anonym2" {
   interface __CLASS__ extends StaticProps {
     get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;
     get_node<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<ScriptTree, P>;
@@ -24,23 +24,15 @@ declare module "../Anonym2.ts" {
   }
 }
 
-declare class _Script extends ScriptClass {
-  get_node(path: string): Node | null;
-  get_node_or_null(path: string): Node | null;
-  has_node(path: string): boolean;
-  get_child(idx: int, include_internal?: boolean): Node;
-  get_parent<N extends Node = Node>(): N;
-}
-
 declare global {
   interface __Anonym2Gd__Trees {}
 
   interface GodotScripts {
-    "res://Anonym2.gd": _Script;
+    "res://Anonym2.gd": ScriptClass;
   }
 
   interface GodotResources {
-    "res://Anonym2.gd": typeof _Script;
+    "res://Anonym2.gd": typeof ScriptClass;
   }
 }
 

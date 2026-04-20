@@ -68,6 +68,14 @@ export interface GenerateTypingsOptions {
   onDebug?: (message: string) => void;
   /** Absolute path to Godot engine typings (for /// reference in _index.d.ts) */
   godotTypingsDir?: string;
+  /**
+   * When true, non-anonymous classes are emitted into `declare global`
+   * so consumers can use them without an explicit `import`. When false
+   * (the project default), the same classes are emitted as module-scoped
+   * declarations and consumers must import them — matching the
+   * anonymous-class pattern. Addons override this to true unconditionally.
+   */
+  generateGlobalClassTypes?: boolean;
 }
 
 /**
@@ -80,6 +88,8 @@ export interface GenerateTypingsOptions {
  */
 export function generateTypings(options: GenerateTypingsOptions): string[] {
   const { rootDir, tsDir, outputDir, scenesDir, ignore = [], cache, onDebug } = options;
+  // Default false — matches `ResolvedConfig.converterOptions` default.
+  const generateGlobal = options.generateGlobalClassTypes ?? false;
   const writtenFiles: string[] = [];
   const typingSources: string[] = []; // Track all sources for cleanStale
   let written = 0;
@@ -153,8 +163,11 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
     }
 
     const tsImportPath = computeTsImport(outputDir, outputFile, classInfo.tsAbsPath);
-    // Module path for declare module (uses .ts extension)
-    const tsModulePath = tsImportPath.replace(/\.js$/, '.ts');
+    // `declare module "<path>"` matches the user's TS module specifier
+    // exactly. Under `moduleResolution: "classic"` (project default),
+    // user code writes `import "./foo"` (no extension) \u2014 so the
+    // augmentation target needs to be the same bare form.
+    const tsModulePath = tsImportPath;
 
     const content = generateScriptTypingContent(
       scriptResPath,
@@ -165,6 +178,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       classInfo.enums,
       classInfo.innerClasses,
       classInfo.extendsNode,
+      generateGlobal,
     );
 
     mkdirSync(dirname(outputPath), { recursive: true });
@@ -248,6 +262,8 @@ export interface GenerateFileTypingsOptions {
   cache?: ProjectCache;
   /** Absolute path to Godot engine typings (for /// reference in _index.d.ts) */
   godotTypingsDir?: string;
+  /** See `GenerateTypingsOptions.generateGlobalClassTypes`. */
+  generateGlobalClassTypes?: boolean;
 }
 
 /**
@@ -291,7 +307,7 @@ export function generateFileTypings(
     for (const [scriptResPath, classInfo] of scriptClassMap) {
       const outputFile = scriptResPathToOutputFile(scriptResPath);
       const tsImportPath = computeTsImport(outputDir, outputFile, classInfo.tsAbsPath);
-      const tsModulePath = tsImportPath.replace(/\.js$/, '.ts');
+      const tsModulePath = tsImportPath;
 
       const content = generateScriptTypingContent(
         scriptResPath,
@@ -301,6 +317,8 @@ export function generateFileTypings(
         tsModulePath,
         classInfo.enums,
         classInfo.innerClasses,
+        classInfo.extendsNode,
+        options.generateGlobalClassTypes ?? false,
       );
 
       const outputPath = resolve(outputDir, outputFile);
@@ -450,11 +468,14 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
   const addonProgram = createTsProgram({ rootDir: outputDir, files: addonTsPaths });
   scanTsFilesForClasses(addonProgram, addonTsPaths, outputDir, scriptClassMap, registry);
 
-  // Pass 3: Generate .gd.d.ts for each addon script
+  // Pass 3: Generate .gd.d.ts for each addon script. Addons always opt
+  // into `declare global` so their classes are usable in the consuming
+  // project without explicit imports — that's the contract addons rely
+  // on, regardless of the project's `generateGlobalClassTypes` setting.
   for (const [scriptResPath, classInfo] of scriptClassMap) {
     const outputFile = scriptResPathToOutputFile(scriptResPath);
     const tsImportPath = computeTsImport(outputDir, outputFile, classInfo.tsAbsPath);
-    const tsModulePath = tsImportPath.replace(/\.js$/, '.ts');
+    const tsModulePath = tsImportPath;
 
     const content = generateScriptTypingContent(
       scriptResPath,
@@ -465,6 +486,7 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
       classInfo.enums,
       classInfo.innerClasses,
       classInfo.extendsNode,
+      true,
     );
 
     const outputPath = resolve(outputDir, outputFile);

@@ -178,7 +178,14 @@ tests/
 
 | TypeScript | GDScript | Notes |
 |---|---|---|
-| `export class Foo extends Bar {}` | `extends Bar` / `class_name Foo` | One class per file, `export` stripped |
+| `export class Foo extends Bar {}` | `extends Bar` / `class_name Foo` | One class per file, `export` stripped. `class_name` is suppressed when the TS class name starts with `_` (anonymous convention). `G_`-prefixed names emit verbatim — the `G_` escape from GD→TS is a one-way fallback, not a reversible alias |
+| `export class _MyFile extends Node {}` | `extends Node` (no `class_name`) | Anonymous-class convention: TS class name `_FilenameInUpperCamel` matches the file basename. GD→TS synthesizes the same name when a `.gd` file has no `class_name` |
+| `import { Foo } from './foo.ts'` | _(skipped)_ | Non-anonymous + non-renamed → already global in GD via `class_name Foo` |
+| `import { Foo as Bar } from './foo.ts'` | `const Bar = preload("res://foo.gd")` | Renamed import → preload const so the local alias resolves |
+| `import { _Anon } from './anon.ts'` | `const _Anon = preload("res://anon.gd")` | Anonymous class → always preloaded since it has no `class_name` |
+| `extends _Anon` (where `_Anon` is an imported anonymous class) | `extends "res://anon.gd"` | Inheriting an anonymous script requires the path form |
+| `import type { … } from '…'` | _(skipped)_ | Type-only imports erased per TS semantics |
+| `import X from '…'` / `import * as X from '…'` | error | Unsupported — no GDScript equivalent |
 | `constructor()` | `_init()` | |
 | `this.` | `self.` | Always converted (never stripped) |
 | `let` / `const` | `var` | `var` restricted in TS |
@@ -275,5 +282,9 @@ tests/
 - `tstogd.json` `exclude` option: renamed from deprecated `ignore`. Glob patterns for files/folders to exclude from all CLI commands
 - `tstogd.json` config: `godotVersion`, `registryPath`, `gdDir`, `sourceMap` removed. Added `disableGodotLint` (boolean, default false) to disable Godot executable validation in `lint` and in the ts-plugin. Source maps are always generated.
 - ts-plugin options (in `compilerOptions.plugins[]`): `debug` (boolean, default false) — verbose tsserver-log tracing; `disableGodotLint` (boolean, optional) — per-editor override for `tstogd.json`'s `disableGodotLint`. Defined explicitly takes precedence over the project config; omitting the key leaves the project config in effect.
+- `tstogd.json` `converterOptions.generateGlobalClassTypes` (boolean, default `false`) toggles the typings-generator layout for non-anonymous classes. `false` → module-scoped (`export class Foo` requires `import`); `true` → `declare global { class Foo extends ScriptClass }` (legacy / pre-refactor). Anonymous classes are always module-scoped. Addons override this to `true` unconditionally — addon consumers expect bare-name access.
+- Anonymous-class naming convention: `_FilenameInUpperCamel` (single leading underscore). Helpers `gdFilenameToAnonymousClassName`, `isAnonymousClassName`, `escapeUnderscoreClassName` live in `src/converter/common/index.ts`. The legacy `__CLASS__` sentinel is gone — the GD→TS converter derives the name from `ctx.filePath` and the typings generator emits the actual `_FilenameClass` literal everywhere it used to emit `__CLASS__`. A real GD `class_name _Foo` is escaped to `G_Foo` on the TS side so the underscore-prefix marker stays unambiguous; the escape is **one-way** — TS→GD treats `G_Foo` as a normal class name and emits `class_name G_Foo` verbatim. Once a project has migrated past the initial GD→TS conversion, `G_Foo` is the canonical identifier on both sides and there is no further round-tripping to track.
+- Import processing (`src/converter/ts-to-gd/imports.ts`): runs once per file at the top of `transform()`. Builds a `Map<localName, ImportEntry>` keyed by the TS-side identifier; only entries that need a `const X = preload(...)` line OR are candidates for an `extends "res://..."` rewrite are stored. The map is consulted by `visitClassDeclaration` for the extends rewrite and for field-name conflict detection (a field named the same as an imported local hard-errors on the field's source line). `res://` paths are computed as `relative(projectRoot, gdDir/<rel(tsDir, importTarget.ts)>.gd)` — i.e. the TS tree is mirrored under `gdDir`, then made relative to the Godot project root.
+- TS→GD converter `ConvertOptions` gained `tsDir`, `gdDir`, `projectRoot` (all default to `rootDir`). `TransformContext` carries the same three fields for the import-resolution code path.
 </content>
 </invoke>

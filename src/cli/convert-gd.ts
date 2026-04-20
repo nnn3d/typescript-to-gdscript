@@ -2,6 +2,7 @@ import type { Command } from 'commander';
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { resolve, dirname, relative } from 'path';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
+import { injectMissingImportsForProject } from '../converter/gd-to-ts/inject-imports.ts';
 import { runTsHelpers } from '../converter/gd-to-ts/ts-helpers.ts';
 import { collectAllSignalHandlers, findSceneFiles } from '../typings/scenes.ts';
 import { resolveConfig, resolveRegistry } from '../config/index.ts';
@@ -97,6 +98,11 @@ export function registerConvertGdCommand(program: Command): void {
         filePath: f,
       }));
 
+      // Tracks every successfully-written file so the import-injection
+      // post-pass below knows which `.ts` to rewrite and which `.gd`
+      // each one corresponds to (for self-import skipping).
+      const convertedFiles: Array<{ tsPath: string; gdPath: string }> = [];
+
       let hasErrors = false;
       for (const { source, filePath } of projectSources) {
         const scriptResPath = `res://${relative(cfg.rootDir, filePath).replace(/\\/g, '/')}`;
@@ -136,7 +142,23 @@ export function registerConvertGdCommand(program: Command): void {
         writeFileSync(outputPath, result.code);
         console.log(`Writing ${relative(process.cwd(), outputPath)}`);
         tsOutputFiles.push(outputPath);
+        convertedFiles.push({ tsPath: outputPath, gdPath: filePath });
       }
+
+      // Inject `import { Foo } from "./foo.js"` lines for every
+      // unresolved user-class identifier in the freshly-written `.ts`
+      // files. Runs BEFORE typings + TS helpers so the helpers see a
+      // fully-imported file. No-op when the project opts into the
+      // legacy `generateGlobalClassTypes: true` layout.
+      injectMissingImportsForProject(
+        convertedFiles,
+        projectSources,
+        registry,
+        {
+          generateGlobalClassTypes: cfg.converterOptions.generateGlobalClassTypes,
+          tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
+        },
+      );
 
       // Generate class typings + scene typings + addon typings from the converted TS files
       generateAllTypings({

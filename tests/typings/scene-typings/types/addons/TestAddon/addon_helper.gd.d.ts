@@ -1,17 +1,20 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { __CLASS__ as ScriptClass } from "./addon_helper.js";
+import type { _AddonHelper as ScriptClass } from "./addon_helper";
 
-declare class _Script extends ScriptClass {
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
+
+declare module "./addon_helper" {
+  interface _AddonHelper extends StaticProps {}
 }
 
 declare global {
   interface GodotScripts {
-    "res://addons/TestAddon/addon_helper.gd": _Script;
+    "res://addons/TestAddon/addon_helper.gd": ScriptClass;
   }
 
   interface GodotResources {
-    "res://addons/TestAddon/addon_helper.gd": typeof _Script;
+    "res://addons/TestAddon/addon_helper.gd": typeof ScriptClass;
   }
 }
 

@@ -8,6 +8,17 @@ export interface UserClassInfo {
   members: Set<string>;
   /** Known types of member variables (for gd.ops detection across inheritance) */
   memberTypes: Map<string, string>;
+  /**
+   * Absolute path of the `.gd` source where this class is declared.
+   * Used to compute import specifiers when the GD→TS converter needs
+   * to emit `import { Foo } from './foo.js'` for cross-file
+   * references in the new module-scoped typings layout (i.e. when the
+   * project's `generateGlobalClassTypes` is `false`).
+   *
+   * Optional for back-compat: parsed via `parseGdClassInfo` callers
+   * that don't yet thread the file path through.
+   */
+  filePath?: string;
 }
 
 export interface GdToTsContext {
@@ -28,7 +39,12 @@ export interface GdToTsContext {
   userClasses: Map<string, UserClassInfo>;
   /** Current method name (for super() → super.method() resolution) */
   currentMethodName?: string;
-  /** The class name (or '__CLASS__' for anonymous) */
+  /**
+   * The TS-side class name. For named GD `class_name X`, this is `X`
+   * (or `G_X` if the GD name began with an underscore — see
+   * `escapeUnderscoreClassName`). For anonymous GD scripts (no
+   * `class_name`), it is `_FilenameInUpperCamel`.
+   */
   className: string;
   /** Static member names (const + static var) — accessed via ClassName, not this */
   staticMembers: Set<string>;

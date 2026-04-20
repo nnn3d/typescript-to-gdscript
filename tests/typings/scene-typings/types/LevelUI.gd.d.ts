@@ -1,13 +1,13 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { LevelUI as ScriptClass } from "../LevelUI.js";
+import type { LevelUI as ScriptClass } from "../LevelUI";
+
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
 
 type ScriptTree = _GDGetInterfaceTree<__LevelUIGd__Trees>;
 type ScriptPaths = _GDGetTreePaths<ScriptTree>;
 
-type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
-
-declare module "../LevelUI.ts" {
+declare module "../LevelUI" {
   interface LevelUI extends StaticProps {
     get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;
     get_node<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<ScriptTree, P>;
@@ -27,7 +27,7 @@ declare module "../LevelUI.ts" {
 declare global {
   interface __LevelUIGd__Trees {}
 
-  /** @see import("../LevelUI.ts") */
+  /** @see import("../LevelUI") */
   class LevelUI extends ScriptClass {
     get_node(path: string): Node | null;
     get_node_or_null(path: string): Node | null;

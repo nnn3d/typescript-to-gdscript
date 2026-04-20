@@ -275,6 +275,9 @@ export function createLintOverlay(deps: LintOverlayDeps): LintOverlay {
       result = convertTsToGd({
         filePath: fileName,
         rootDir: cfg.tsDir,
+        tsDir: cfg.tsDir,
+        gdDir: cfg.gdDir,
+        projectRoot: cfg.rootDir,
         sourceMap: true,
         program,
       });

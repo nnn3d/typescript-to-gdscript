@@ -4,7 +4,11 @@ import type {
   TransformResult,
   TransformDiagnostic,
 } from '../common/index.ts';
-import { tsTypeNodeToGdType } from '../common/index.ts';
+import {
+  tsTypeNodeToGdType,
+  isAnonymousClassName,
+} from '../common/index.ts';
+import { processImports, type ImportEntry } from './imports.ts';
 import { GDScriptEmitter } from './emitter.ts';
 import type { TransformerDelegate } from './transformer-types.ts';
 import {
@@ -59,6 +63,19 @@ export class TsToGdTransformer implements TransformerDelegate {
    * inside `get X`/`set X` would cause infinite recursion in GDScript).
    */
   private _currentAccessorName: string | null = null;
+  /**
+   * Local-name → import entry, populated once at the start of
+   * `transform()` and reused across `visitClassDeclaration` (extends
+   * rewrite) and field-conflict checks. Empty when the file has no
+   * preload-worthy imports — see `processImports` for the inclusion
+   * rules.
+   */
+  private _importMap: Map<string, ImportEntry> = new Map();
+  /**
+   * Pre-rendered `const X = preload("res://…")` lines emitted between
+   * `class_name` and the class body. Order preserved from source.
+   */
+  private _importConsts: string[] = [];
 
   get currentClassName(): string {
     return this._currentClassName;
@@ -86,6 +103,16 @@ export class TsToGdTransformer implements TransformerDelegate {
   transform(): TransformResult {
     if (this.opts.sourceMap) {
       this.emitter.setSourceContent(this.ctx.sourceFile.getFullText());
+    }
+
+    // Build the import map BEFORE visiting any statements so the
+    // class-emit path can consult it for `extends`-rewrites and the
+    // member-emit path can flag field-name conflicts.
+    const imports = processImports(this.ctx.sourceFile, this.ctx);
+    this._importMap = imports.importMap;
+    this._importConsts = imports.consts;
+    for (const err of imports.errors) {
+      this.ctx.diagnostics.push(err);
     }
 
     this.visitSourceFile(this.ctx.sourceFile);
@@ -295,7 +322,10 @@ export class TsToGdTransformer implements TransformerDelegate {
       this.emitter.writeLine('@abstract', pos.line, pos.col);
     }
 
-    // extends
+    // extends — rewritten to `extends "res://…"` when the base type
+    // resolves to an imported anonymous class (which has no
+    // `class_name`, so a string-literal path is the only valid form).
+    // For non-anonymous and same-file extends, emit the bare identifier.
     if (node.heritageClauses) {
       for (const clause of node.heritageClauses) {
         if (
@@ -303,20 +333,70 @@ export class TsToGdTransformer implements TransformerDelegate {
           clause.types.length > 0
         ) {
           const baseType = clause.types[0]!;
-          this.emitter.writeLine(
-            `extends ${baseType.expression.getText(this.ctx.sourceFile)}`,
-            pos.line,
-            pos.col,
-          );
+          const baseText = baseType.expression.getText(this.ctx.sourceFile);
+          const importedAnon = this._importMap.get(baseText);
+          const extendsClause =
+            importedAnon && importedAnon.isAnonymous
+              ? `extends "${importedAnon.resPath}"`
+              : `extends ${baseText}`;
+          this.emitter.writeLine(extendsClause, pos.line, pos.col);
         }
       }
     }
 
-    // class_name (skip for __CLASS__ -- anonymous class)
+    // class_name emission rules under the new naming convention:
+    //   - `_FilenameInUpperCamel`  → anonymous; do NOT emit `class_name`
+    //   - everything else          → emit `class_name <name>` verbatim
+    //
+    // `G_` is the one-way escape applied during GD→TS conversion as a
+    // fallback for the rare GD `class_name _Foo` that would otherwise
+    // collide with the anonymous-class convention on the TS side. It
+    // is NOT undone on TS→GD — once the user has `G_Foo` in their TS
+    // source, that becomes the canonical name everywhere (the emitted
+    // GD has `class_name G_Foo`). Treating it as a normal identifier
+    // keeps the round-trip predictable: whatever TS shows is what the
+    // user reads in the .gd file too.
     const className = node.name?.getText(this.ctx.sourceFile) ?? '';
     this._currentClassName = className;
-    if (className && className !== '__CLASS__') {
-      this.emitter.writeLine(`class_name ${className}`, pos.line, pos.col);
+    if (className && !isAnonymousClassName(className)) {
+      this.emitter.writeLine(
+        `class_name ${className}`,
+        pos.line,
+        pos.col,
+      );
+    }
+
+    // `const X = preload("res://…")` lines for renamed and anonymous
+    // imports. Emitted between `class_name`/`extends` and the class
+    // body — the conventional spot for top-level `const` in GDScript.
+    if (this._importConsts.length > 0) {
+      this.emitter.writeEmptyLine();
+      for (const line of this._importConsts) {
+        this.emitter.writeLine(line, pos.line, pos.col);
+      }
+    }
+
+    // Hard-error any class field whose name collides with an imported
+    // local (renamed class or anonymous class). The `const X = preload`
+    // we just emitted would conflict with `var X` in GD — so it's
+    // better to surface this as a structured diagnostic anchored at
+    // the offending field's source location than to let GD spit out
+    // a confusing parse error.
+    for (const member of node.members) {
+      if (
+        (ts.isPropertyDeclaration(member) || ts.isMethodDeclaration(member)) &&
+        member.name &&
+        ts.isIdentifier(member.name)
+      ) {
+        const name = member.name.text;
+        if (this._importMap.has(name)) {
+          this.addDiagnostic(
+            member.name,
+            'error',
+            `Field/method name "${name}" conflicts with an imported class of the same name. Rename the field or the import alias.`,
+          );
+        }
+      }
     }
 
     this.emitter.writeEmptyLine();

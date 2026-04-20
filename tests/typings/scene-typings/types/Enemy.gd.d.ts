@@ -1,13 +1,13 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { __CLASS__ as ScriptClass } from "../Enemy.js";
+import type { __CLASS__ as ScriptClass } from "../Enemy";
+
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
 
 type ScriptTree = _GDGetInterfaceTree<__EnemyGd__Trees>;
 type ScriptPaths = _GDGetTreePaths<ScriptTree>;
 
-type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
-
-declare module "../Enemy.ts" {
+declare module "../Enemy" {
   interface __CLASS__ extends StaticProps {
     get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;
     get_node<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<ScriptTree, P>;
@@ -24,23 +24,15 @@ declare module "../Enemy.ts" {
   }
 }
 
-declare class _Script extends ScriptClass {
-  get_node(path: string): Node | null;
-  get_node_or_null(path: string): Node | null;
-  has_node(path: string): boolean;
-  get_child(idx: int, include_internal?: boolean): Node;
-  get_parent<N extends Node = Node>(): N;
-}
-
 declare global {
   interface __EnemyGd__Trees {}
 
   interface GodotScripts {
-    "res://Enemy.gd": _Script;
+    "res://Enemy.gd": ScriptClass;
   }
 
   interface GodotResources {
-    "res://Enemy.gd": typeof _Script;
+    "res://Enemy.gd": typeof ScriptClass;
   }
 }
 

@@ -1,4 +1,4 @@
-export class __CLASS__ extends Area2D {
+export class _SignalHandlers extends Area2D {
   _on_area_entered(area: Area2D) {
     print(area);
   }

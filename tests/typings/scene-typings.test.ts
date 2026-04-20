@@ -21,6 +21,11 @@ function generate() {
     outputDir: TYPES_DIR,
     scenesDir: SCENE_DIR,
     projectFile: PROJECT_FILE,
+    // The scene-typings fixtures (Player, Level, BaseCharacter, …) all
+    // reference each other by bare class name, which assumes the
+    // `declare global` typings layout. Treat this whole test set as
+    // the canonical exercise of `generateGlobalClassTypes: true`.
+    generateGlobalClassTypes: true,
   });
 }
 
@@ -53,9 +58,13 @@ describe('Scene typings generation', () => {
     expect(all).toContain('class Level extends ScriptClass');
     expect(all).toContain('class BaseCharacter extends ScriptClass');
 
-    // __CLASS__ scripts should use _Script pattern (not global class) in .d.ts files
-    expect(all).not.toMatch(/class __CLASS__/);
-    expect(all).toContain('declare class _Script extends ScriptClass');
+    // Anonymous scripts (legacy `__CLASS__` literal still in fixtures
+    // — `_`-prefixed, so the new convention treats it as anonymous)
+    // should NOT be declared globally and should NOT synthesize a
+    // local `_Script` handle anymore — GodotScripts maps directly to
+    // the imported `ScriptClass` alias.
+    expect(all).not.toMatch(/class __CLASS__ extends ScriptClass/);
+    expect(all).not.toContain('declare class _Script extends ScriptClass');
 
     // All scripts import as ScriptClass
     expect(all).toContain('__CLASS__ as ScriptClass');
@@ -147,7 +156,7 @@ describe('Scene typings generation', () => {
     expect(playerScript).toContain("type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;");
 
     // Module augmentation with typed overloads using pre-computed ScriptPaths
-    expect(playerScript).toContain('declare module "../Player.ts"');
+    expect(playerScript).toContain('declare module "../Player"');
     expect(playerScript).toContain('interface Player extends StaticProps {');
     expect(playerScript).toContain('get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;');
     expect(playerScript).toContain('get_node_or_null<P extends string & ScriptPaths>(path: P): _GDGetNodeOrNull<ScriptTree, P>;');
@@ -164,7 +173,7 @@ describe('Scene typings generation', () => {
     expect(playerScript).toContain('"res://Player.gd": typeof Player;');
   });
 
-  it('should handle anonymous scripts with _Script pattern', () => {
+  it('should handle anonymous scripts module-scoped with no synthesized local class', () => {
     generate();
     const anonymScript = readOutput('Anonym.gd.d.ts');
 
@@ -174,12 +183,13 @@ describe('Scene typings generation', () => {
     // Module augmentation targets __CLASS__ interface (extends StaticProps for static fields on instances)
     expect(anonymScript).toContain('interface __CLASS__ extends StaticProps {');
 
-    // _Script class at module level (not in declare global)
-    expect(anonymScript).toContain('declare class _Script extends ScriptClass {');
+    // No synthesized `_Script` local handle anymore — GodotScripts /
+    // GodotResources reference the imported `ScriptClass` alias directly.
+    expect(anonymScript).not.toContain('declare class _Script extends ScriptClass');
 
-    // GodotScripts maps to _Script
-    expect(anonymScript).toContain('"res://Anonym.gd": _Script;');
-    expect(anonymScript).toContain('"res://Anonym.gd": typeof _Script;');
+    // GodotScripts/Resources map to the imported alias
+    expect(anonymScript).toContain('"res://Anonym.gd": ScriptClass;');
+    expect(anonymScript).toContain('"res://Anonym.gd": typeof ScriptClass;');
 
     // No global class for anonymous scripts
     expect(anonymScript).not.toMatch(/class Anonym extends/);
@@ -252,11 +262,13 @@ describe('Scene typings generation', () => {
     expect(all).toContain('"res://Player.tscn": PackedScene<_GDTreeNode<_PlayerTscn_Tree>>');
     expect(all).toContain('"res://Level.tscn": PackedScene<_GDTreeNode<_LevelTscn_Tree>>');
 
-    // Script GodotResources entries (typeof for constructor type)
+    // Script GodotResources entries (typeof for constructor type).
+    // Named globals point at the bare class; anonymous scripts now
+    // point at the imported `ScriptClass` alias directly (was `_Script`).
     expect(all).toContain('"res://Player.gd": typeof Player;');
     expect(all).toContain('"res://Ball.gd": typeof Ball;');
-    expect(all).toContain('"res://Anonym.gd": typeof _Script;');
-    expect(all).toContain('"res://GameManager.gd": typeof _Script;');
+    expect(all).toContain('"res://Anonym.gd": typeof ScriptClass;');
+    expect(all).toContain('"res://GameManager.gd": typeof ScriptClass;');
 
     // GodotScripts entries
     expect(all).toContain('"res://Player.gd": Player;');
@@ -298,10 +310,12 @@ describe('Scene typings generation', () => {
     expect(addonScript).toContain('"res://addons/TestAddon/test_addon.gd": TestAddon;');
     expect(addonScript).toContain('"res://addons/TestAddon/test_addon.gd": typeof TestAddon;');
 
-    // Anonymous addon class should use _Script pattern
+    // Anonymous addon class — module-scoped, GodotScripts/Resources
+    // entries point at the imported `ScriptClass` alias directly. No
+    // synthesized `_Script` local handle.
     const helperScript = readOutput('addons/TestAddon/addon_helper.gd.d.ts');
-    expect(helperScript).toContain('declare class _Script extends ScriptClass');
-    expect(helperScript).toContain('"res://addons/TestAddon/addon_helper.gd": _Script;');
+    expect(helperScript).not.toContain('declare class _Script extends ScriptClass');
+    expect(helperScript).toContain('"res://addons/TestAddon/addon_helper.gd": ScriptClass;');
 
     // Converted .ts should contain valid class with gd.enum
     const addonTs = readOutput('addons/TestAddon/test_addon.ts');

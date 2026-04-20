@@ -1,4 +1,4 @@
-export class __CLASS__ extends EnemyBase {
+export class _InheritUser extends EnemyBase {
   velocity_target = -100;
   toggle = true;
 

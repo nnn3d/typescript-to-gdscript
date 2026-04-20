@@ -1,13 +1,13 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Player as ScriptClass } from "../Player.js";
+import type { Player as ScriptClass } from "../Player";
+
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
 
 type ScriptTree = _GDGetInterfaceTree<__PlayerGd__Trees>;
 type ScriptPaths = _GDGetTreePaths<ScriptTree>;
 
-type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
-
-declare module "../Player.ts" {
+declare module "../Player" {
   interface Player extends StaticProps {
     get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;
     get_node<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<ScriptTree, P>;
@@ -27,7 +27,7 @@ declare module "../Player.ts" {
 declare global {
   interface __PlayerGd__Trees {}
 
-  /** @see import("../Player.ts") */
+  /** @see import("../Player") */
   class Player extends ScriptClass {
     get_node(path: string): Node | null;
     get_node_or_null(path: string): Node | null;

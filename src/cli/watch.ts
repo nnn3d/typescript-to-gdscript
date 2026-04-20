@@ -55,6 +55,7 @@ export function registerWatchCommand(program: Command): void {
         emitOnError: opts.emitOnError,
         debug: isDebugEnabled(),
         godotTypingsDir: cfg.godotTypingsDir,
+        generateGlobalClassTypes: cfg.converterOptions.generateGlobalClassTypes,
       });
 
       watcher.start();

@@ -78,6 +78,9 @@ export function registerConvertCommand(program: Command): void {
         const result = convertTsToGd({
           filePath,
           rootDir: cfg.tsDir,
+          tsDir: cfg.tsDir,
+          gdDir: cfg.gdDir,
+          projectRoot: cfg.rootDir,
           tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
           sourceMap: true,
         });

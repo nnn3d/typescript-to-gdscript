@@ -1,13 +1,13 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { Level3 as ScriptClass } from "../Level3.js";
+import type { Level3 as ScriptClass } from "../Level3";
+
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
 
 type ScriptTree = _GDGetInterfaceTree<__Level3Gd__Trees>;
 type ScriptPaths = _GDGetTreePaths<ScriptTree>;
 
-type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
-
-declare module "../Level3.ts" {
+declare module "../Level3" {
   interface Level3 extends StaticProps {
     get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;
     get_node<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<ScriptTree, P>;
@@ -27,7 +27,7 @@ declare module "../Level3.ts" {
 declare global {
   interface __Level3Gd__Trees {}
 
-  /** @see import("../Level3.ts") */
+  /** @see import("../Level3") */
   class Level3 extends ScriptClass {
     get_node(path: string): Node | null;
     get_node_or_null(path: string): Node | null;

@@ -1,13 +1,13 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { BaseCharacter as ScriptClass } from "../BaseCharacter.js";
+import type { BaseCharacter as ScriptClass } from "../BaseCharacter";
+
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
 
 type ScriptTree = _GDGetInterfaceTree<__BaseCharacterGd__Trees>;
 type ScriptPaths = _GDGetTreePaths<ScriptTree>;
 
-type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
-
-declare module "../BaseCharacter.ts" {
+declare module "../BaseCharacter" {
   interface BaseCharacter extends StaticProps {
     get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;
     get_node<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<ScriptTree, P>;
@@ -27,7 +27,7 @@ declare module "../BaseCharacter.ts" {
 declare global {
   interface __BaseCharacterGd__Trees {}
 
-  /** @see import("../BaseCharacter.ts") */
+  /** @see import("../BaseCharacter") */
   class BaseCharacter extends ScriptClass {
     get_node(path: string): Node | null;
     get_node_or_null(path: string): Node | null;

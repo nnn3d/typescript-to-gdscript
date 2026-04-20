@@ -29,6 +29,80 @@ export interface TransformContext {
   diagnostics: TransformDiagnostic[];
   /** Pre-derived sets of Godot variant types (for `in`-operator and param diagnostics). */
   diagInfo: DiagnosticsTypeInfo;
+  /**
+   * TypeScript source root. Used by import-resolution code to mirror
+   * relative paths into the GDScript output tree.
+   */
+  tsDir: string;
+  /** GDScript output root — sibling of {@link tsDir}. */
+  gdDir: string;
+  /**
+   * Godot project root. `res://` paths emitted by `preload(...)` and
+   * `extends "res://..."` are taken relative to this directory.
+   */
+  projectRoot: string;
+}
+
+// ─── Anonymous class naming ─────────────────────────────────
+
+/**
+ * Derive the TS class name for a `.gd` file that has no `class_name`
+ * declaration. The convention: the leading underscore marks the class as
+ * "module-scoped / anonymous in GD", and the body is the file's basename
+ * converted to UpperCamelCase. Same on both conversion directions, so
+ * round-tripping is stable.
+ *
+ * Examples:
+ *   - `some_class.gd`  → `_SomeClass`
+ *   - `Anonym.gd`      → `_Anonym`
+ *   - `enemy.gd`       → `_Enemy`
+ *   - `nested/foo.gd`  → `_Foo`  (path is ignored — only basename matters)
+ */
+export function gdFilenameToAnonymousClassName(filePath: string): string {
+  // Strip directories (handle both / and \) and the .gd extension.
+  const base = filePath.replace(/\\/g, '/').split('/').pop() ?? filePath;
+  const stem = base.replace(/\.gd$/i, '');
+  return '_' + toUpperCamelCase(stem);
+}
+
+/**
+ * Convert a snake_case / kebab-case / dot.separated identifier to
+ * UpperCamelCase. Already-PascalCase names pass through unchanged
+ * (preserves embedded acronyms). Leading non-alphanumeric chars and
+ * an empty result are coerced to `Anonym` so callers always get a
+ * usable identifier.
+ */
+function toUpperCamelCase(name: string): string {
+  // Split on any run of non-alphanumeric chars. Empty parts dropped.
+  const parts = name.split(/[^a-zA-Z0-9]+/).filter((p) => p.length > 0);
+  if (parts.length === 0) return 'Anonym';
+  // For each part, uppercase the first char and keep the rest as-is —
+  // that way `MyClass` stays `MyClass` (don't lowercase mid-word).
+  return parts.map((p) => p[0]!.toUpperCase() + p.slice(1)).join('');
+}
+
+/**
+ * True when a class name follows the "anonymous" convention — single
+ * leading underscore that is NOT the `G_` global-class escape. Used
+ * everywhere we need to decide whether to emit `class_name` (in TS→GD)
+ * or `declare global` (in typings generation).
+ */
+export function isAnonymousClassName(name: string): boolean {
+  return name.startsWith('_') && !name.startsWith('G_');
+}
+
+/**
+ * One-way fallback applied during GD→TS conversion only: a GD
+ * `class_name _Foo` would collide with the anonymous-class convention
+ * (where `_`-prefixed TS names mean "no `class_name` in GD"), so the
+ * TS shadow class is renamed to `G_Foo`. The TS→GD direction does NOT
+ * un-escape — `G_Foo` in TS source emits `class_name G_Foo` in the
+ * generated `.gd` verbatim. The escape happens at most once, when
+ * generating addon shadows or running `convert-gd`; afterwards `G_Foo`
+ * is the canonical identifier on both sides.
+ */
+export function escapeUnderscoreClassName(gdClassName: string): string {
+  return gdClassName.startsWith('_') ? 'G_' + gdClassName.slice(1) : gdClassName;
 }
 
 /**
@@ -172,7 +246,8 @@ export function tsTypeNodeToGdType(
   // Check for literal type names like `int` and `float`
   if (ts.isTypeReferenceNode(typeNode)) {
     let name = typeNode.typeName.getText(sourceFile);
-    // Strip own class name prefix: MyClass.State → State, __CLASS__.State → State
+    // Strip own class name prefix: `MyClass.State` → `State`. Same for
+    // anonymous classes (`_FilenameClass.State` → `State`).
     if (className && name.startsWith(className + '.')) {
       name = name.slice(className.length + 1);
     }
@@ -232,10 +307,29 @@ export function tsTypeNodeToGdType(
     return 'Callable';
   }
 
-  // Union/intersection -> omit
-  if (ts.isUnionTypeNode(typeNode) || ts.isIntersectionTypeNode(typeNode)) {
+  // Union types: GDScript has no union syntax, but every typed
+  // variable in GD already accepts `null` implicitly, so a TS union of
+  // the form `T | null` (or `null | T`) collapses cleanly to `T`.
+  // Anything more complex than that \u2014 multiple non-null members,
+  // intersections, etc. \u2014 has no GD equivalent and is omitted.
+  if (ts.isUnionTypeNode(typeNode)) {
+    const nonNull = typeNode.types.filter((t) => !isNullLiteralTypeNode(t));
+    if (nonNull.length === 1 && nonNull.length !== typeNode.types.length) {
+      return tsTypeNodeToGdType(nonNull[0]!, checker, sourceFile, className);
+    }
+    return null;
+  }
+  if (ts.isIntersectionTypeNode(typeNode)) {
     return null;
   }
 
   return null;
+}
+
+/** True for the `null` keyword wrapped in a `LiteralTypeNode`. */
+function isNullLiteralTypeNode(node: ts.TypeNode): boolean {
+  return (
+    ts.isLiteralTypeNode(node) &&
+    node.literal.kind === ts.SyntaxKind.NullKeyword
+  );
 }

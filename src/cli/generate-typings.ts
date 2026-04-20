@@ -57,6 +57,7 @@ export function registerGenerateTypingsCommand(program: Command): void {
         cache,
         onDebug: debugLog,
         godotTypingsDir: cfg.godotTypingsDir,
+        generateGlobalClassTypes: cfg.converterOptions.generateGlobalClassTypes,
       });
       debugLog(`Generated ${writtenFiles.length} typings files in ${outputDir}`);
     });

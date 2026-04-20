@@ -1,5 +1,9 @@
 import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
 import {
+  gdFilenameToAnonymousClassName,
+  escapeUnderscoreClassName,
+} from '../common/index.ts';
+import {
   type GdToTsContext,
   resolveAllInheritedMembers,
   resolveInheritedMemberTypes,
@@ -36,7 +40,11 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
           : typeNode.text;
       }
     } else if (child.type === SyntaxType.ClassNameStatement) {
-      className = child.childForFieldName('name')?.text ?? '';
+      // Apply the `_Foo` → `G_Foo` escape so a real GD `class_name _Foo`
+      // doesn't collide with the anonymous-class convention on the TS
+      // side (where `_`-prefixed names mean "no class_name in GD").
+      const raw = child.childForFieldName('name')?.text ?? '';
+      className = escapeUnderscoreClassName(raw);
     } else if (
       child.type === SyntaxType.FunctionDefinition ||
       child.type === SyntaxType.ConstructorDefinition
@@ -103,8 +111,11 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
     }
   }
 
-  // Set class name in context for static member resolution
-  ctx.className = className || '__CLASS__';
+  // Set class name in context for static member resolution. When the GD
+  // file has no `class_name`, derive an anonymous TS-side name from the
+  // file's basename — that gives every script a stable identifier
+  // without tying it to the now-removed `__CLASS__` sentinel.
+  ctx.className = className || gdFilenameToAnonymousClassName(ctx.filePath);
 
   // Add inherited members from registry and user classes
   if (extendsClass) {
@@ -322,7 +333,10 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
 
   const extendsClause = extendsClass ? ` extends ${extendsClass}` : '';
   const abstractKeyword = isAbstractClass ? 'abstract ' : '';
-  const classHeader = `export ${abstractKeyword}class ${className || '__CLASS__'}${extendsClause} {`;
+  // `ctx.className` is already set above with either the escaped real
+  // class_name or the filename-derived `_FooBar` form, so reuse it
+  // rather than re-deriving the fallback here.
+  const classHeader = `export ${abstractKeyword}class ${ctx.className}${extendsClause} {`;
   return [classHeader, ...memberLines, '}', ''].join('\n');
 }
 

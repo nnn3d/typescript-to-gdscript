@@ -151,6 +151,8 @@ export function generateAllTypings(cfg: {
   tsFiles?: string[];
   cacheDir?: string;
   godotTypingsDir?: string;
+  /** See `ConverterOptions.generateGlobalClassTypes`. */
+  converterOptions?: { generateGlobalClassTypes?: boolean };
 }): void {
   const tsFiles =
     cfg.tsFiles ?? findTsFiles(cfg.tsDir, cfg.rootDir, cfg.ignore);
@@ -173,6 +175,7 @@ export function generateAllTypings(cfg: {
     cache,
     onDebug: debugLog,
     godotTypingsDir: cfg.godotTypingsDir,
+    generateGlobalClassTypes: cfg.converterOptions?.generateGlobalClassTypes,
   });
 
   const addonFiles = generateAddonTypings({

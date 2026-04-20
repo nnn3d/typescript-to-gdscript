@@ -98,14 +98,29 @@ export interface GdToTsOptions {
    * typeof-able value expression). Less strict but more error-prone.
    */
   unsafeUseAny?: boolean;
+  /**
+   * @deprecated The single-file `convertGdToTs` no longer auto-emits
+   * imports \u2014 that's done by {@link import('./inject-imports.ts').injectMissingImports}
+   * at the batch level (see `cli/convert-gd.ts`). The field is kept on
+   * the options shape for API back-compat but is currently ignored.
+   * The `injectMissingImports` post-pass takes its own
+   * `generateGlobalClassTypes` flag.
+   */
+  generateGlobalClassTypes?: boolean;
 }
 
 /**
  * Extracts class info (class_name, extends, own members) from a GD source without full conversion.
+ *
+ * `filePath` is optional but recommended — it's stored on the resulting
+ * {@link UserClassInfo} and consumed by the GD→TS converter when it
+ * needs to emit cross-file `import { Foo } from './foo.js'` lines (the
+ * module-scoped layout used when `generateGlobalClassTypes` is `false`).
  */
 export function parseGdClassInfo(
   source: string,
   registry?: GodotClassRegistry,
+  filePath?: string,
 ): UserClassInfo | null {
   const parser = new GDScriptParser();
   const root = parser.parse(fixCommentIndentation(source));
@@ -124,6 +139,10 @@ export function parseGdClassInfo(
           : typeNode.text;
       }
     } else if (child.type === SyntaxType.ClassNameStatement) {
+      // `parseGdClassInfo` builds the user-class index keyed on the GD
+      // identifier as written in the .gd source — keep it un-escaped
+      // here so cross-file `extends Foo` lookups resolve regardless of
+      // whether the parent has a `_`-prefix.
       className = child.childForFieldName('name')?.text ?? '';
     } else if (
       child.type === SyntaxType.FunctionDefinition ||
@@ -158,20 +177,22 @@ export function parseGdClassInfo(
   }
 
   if (!className) return null;
-  return { name: className, extends: extendsClass, members, memberTypes };
+  return { name: className, extends: extendsClass, members, memberTypes, filePath };
 }
 
 export function convertGdToTs(options: GdToTsOptions): TransformResult {
-  // Build user class index from project sources
+  // Build user class index from project sources. `filePath` flows
+  // through so the import-emission post-pass can compute relative
+  // import specifiers when `generateGlobalClassTypes` is disabled.
   const userClasses = new Map<string, UserClassInfo>();
   if (options.projectSources) {
     for (const ps of options.projectSources) {
-      const info = parseGdClassInfo(ps.source, options.registry);
+      const info = parseGdClassInfo(ps.source, options.registry, ps.filePath);
       if (info) userClasses.set(info.name, info);
     }
   }
   // Also parse the current file so it's available for inner class extends resolution
-  const selfInfo = parseGdClassInfo(options.source, options.registry);
+  const selfInfo = parseGdClassInfo(options.source, options.registry, options.filePath);
   if (selfInfo) userClasses.set(selfInfo.name, selfInfo);
 
   const parser = new GDScriptParser();
@@ -196,6 +217,16 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
   };
 
   const code = emitSourceFile(root, ctx);
+
+  // NOTE: cross-file `import { Foo } from './foo.js'` lines are NOT
+  // emitted here. They're added by `injectMissingImports` (in
+  // `./inject-imports.ts`) at the batch level, after every `.gd` in
+  // the project has been converted and written to disk. That pass
+  // builds a real TS program and uses unresolved-name diagnostics
+  // (TS code 2304/2503) to decide what to import — much more precise
+  // than a per-file regex. Single-file callers like `generateAddonTypings`
+  // pass `generateGlobalClassTypes: true`, which makes the inject pass
+  // a no-op anyway, so no change is needed there.
 
   return {
     code,

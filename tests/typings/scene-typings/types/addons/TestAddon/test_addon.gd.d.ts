@@ -1,13 +1,13 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { TestAddon as ScriptClass } from "./test_addon.js";
+import type { TestAddon as ScriptClass } from "./test_addon";
+
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
 
 type ScriptTree = _GDGetInterfaceTree<__addons_TestAddon_test_addonGd__Trees>;
 type ScriptPaths = _GDGetTreePaths<ScriptTree>;
 
-type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
-
-declare module "./test_addon.ts" {
+declare module "./test_addon" {
   interface TestAddon extends StaticProps {
     get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;
     get_node<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<ScriptTree, P>;
@@ -27,7 +27,7 @@ declare module "./test_addon.ts" {
 declare global {
   interface __addons_TestAddon_test_addonGd__Trees {}
 
-  /** @see import("./test_addon.ts") */
+  /** @see import("./test_addon") */
   class TestAddon extends ScriptClass {
     get_node(path: string): Node | null;
     get_node_or_null(path: string): Node | null;

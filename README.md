@@ -66,6 +66,29 @@ Create a `tstogd.json` in your project root to configure the converter:
 | `disableGodotLint` | `boolean`  | Disable Godot executable validation in lint and the ts-plugin. Defaults to `false`. |
 | `cacheDir`         | `string`   | Cache directory (source maps and diagnostics stored inline). Default: `node_modules/.cache/typescript-to-gdscript` (or OS temp dir). |
 | `godotTypingsDir`  | `string`   | Path to Godot engine typings (classes, gd-helpers, globals). Default: `node_modules/typescript-to-gdscript/typings`. |
+| `converterOptions` | `object`   | Converter behavior tweaks. Currently: `{ "generateGlobalClassTypes": boolean }` — when `true`, non-anonymous classes are emitted into `declare global` so consumers can use them without `import`. When `false` (default), classes are module-scoped and must be imported. Addons always emit globals regardless of this flag. |
+
+### Anonymous classes (`_FilenameClass` convention)
+
+A `.gd` file with no `class_name` declaration has no global identifier in Godot. On the TS side this project models such files with a class whose name starts with `_` and matches the file's basename in UpperCamelCase — `some_class.gd` → `_SomeClass`, `Anonym.gd` → `_Anonym`. The leading underscore is the marker; if a real GD file declares `class_name _Foo`, the TS shadow is escaped to `G_Foo` so the underscore-prefix convention stays unambiguous.
+
+A TS class named `_Foo` produces a `.gd` file with no `class_name`. The `G_` escape is **one-way** — applied during GD→TS conversion as a fallback, but TS→GD treats `G_Foo` as a regular class name and emits `class_name G_Foo` verbatim. After the initial migration `G_Foo` is the canonical identifier on both sides; there's no hidden reversible alias to keep track of.
+
+#### Imports → preload consts
+
+When the TS→GD converter sees an `import` statement, it emits one of the following:
+
+| TS import                                       | GD output                                            | Why                                                 |
+| ----------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------- |
+| `import { Foo } from './foo.ts'` (no rename)    | _(nothing — skipped)_                                | `Foo` is global in GD via `class_name Foo`          |
+| `import { Foo as Bar } from './foo.ts'`         | `const Bar = preload("res://foo.gd")`                | Local alias must point at the script               |
+| `import { _Anon } from './anon.ts'`             | `const _Anon = preload("res://anon.gd")`             | Anonymous class — only reachable via path           |
+| `extends _Anon` (after the import above)        | `extends "res://anon.gd"`                            | GDScript form for inheriting an anonymous script    |
+| `import type { … } from '…'`                    | _(nothing — type-only, erased)_                      |                                                     |
+| `import Foo from '…'` (default)                 | **error**                                            | No GDScript equivalent                              |
+| `import * as ns from '…'` (namespace)           | **error**                                            | No GDScript equivalent                              |
+
+The converter also raises a hard error when a class field's name collides with an imported local — the emitted `const` would shadow the field.
 
 ## CLI Commands
 

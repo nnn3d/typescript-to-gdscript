@@ -4,6 +4,7 @@ import { join, relative, dirname, resolve } from 'path';
 import { parseScene, resourceParser, getSectionAttr } from './scene-parser.ts';
 import type { GodotClassRegistry } from './godot-registry.ts';
 import { SyntaxType } from '../parser/godot-resource/types.ts';
+import { isAnonymousClassName } from '../converter/common/index.ts';
 
 // ─── Interfaces ────────────────────────────────────────────
 
@@ -106,12 +107,20 @@ export function resourceResPathToOutputFile(resPath: string): string {
   return resPath.replace(/^res:\/\//, '') + '.d.ts';
 }
 
-/** Compute a relative import path from an output file to a TS source file */
+/**
+ * Compute a relative import path from an output file to a TS source
+ * file. The project default is `moduleResolution: "classic"` (set by
+ * the `tstogd init` template), which resolves bare-name specifiers
+ * via the `.ts` extension search order \u2014 so we strip the trailing
+ * `.ts` and emit no extension at all. Callers that need the original
+ * `.ts` form (for `declare module "<path>"`) can re-append it; see
+ * `tsModulePath` in `src/typings/scenes.ts`.
+ */
 export function computeTsImport(outputDir: string, fromOutputFile: string, tsAbsPath: string): string {
   const fromAbsDir = resolve(outputDir, dirname(fromOutputFile));
   let rel = relative(fromAbsDir, tsAbsPath).replace(/\\/g, '/');
   if (!rel.startsWith('.')) rel = './' + rel;
-  return rel.replace(/\.ts$/, '.js');
+  return rel.replace(/\.ts$/, '');
 }
 
 /** Convert an absolute file path to a res:// path relative to rootDir */
@@ -552,7 +561,11 @@ export function scanTsFilesForClasses(
 
       scriptClassMap.set(scriptResPath, {
         className,
-        isAnonymous: className === '__CLASS__',
+        // New convention: anonymous = leading `_` (excluding the `G_`
+        // escape used for real GD `class_name _Foo`). The legacy
+        // `__CLASS__` sentinel is gone — generated TS files now use
+        // `_FilenameInUpperCamel` instead.
+        isAnonymous: isAnonymousClassName(className),
         tsAbsPath: filePath,
         enums,
         innerClasses,

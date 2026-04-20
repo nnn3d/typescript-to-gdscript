@@ -318,21 +318,44 @@ export function generateScriptTypingContent(
   enums: Array<{ name: string; members: Array<{ name: string; value: number }> }>,
   innerClasses: Array<{ name: string; extendsName?: string }>,
   extendsNode: boolean = true,
+  /**
+   * When true (default — preserves the legacy behavior used by addons
+   * and by projects that opt into `generateGlobalClassTypes: true`), a
+   * non-anonymous class is emitted into `declare global` so consumers
+   * can use it without an explicit `import`. When false, the class
+   * follows the same module-scoped layout as anonymous classes —
+   * consumers must import it from the original `.ts` source.
+   *
+   * Anonymous classes ignore this flag (they're always module-scoped).
+   */
+  generateGlobal: boolean = true,
 ): string {
   const lines: string[] = [];
   lines.push('// AUTO-GENERATED — do not edit manually.\n');
 
   const treesInterface = scriptResPathToTreesInterfaceName(scriptResPath);
-  const importName = isAnonymous ? '__CLASS__' : className;
+  // The TS file's exported class is now always named per the converter
+  // convention (`_FilenameInUpperCamel` for anonymous, the bare or
+  // `G_`-escaped class_name for named) — no `__CLASS__` sentinel to
+  // special-case anymore.
+  const importName = className;
 
   // Import
   lines.push(`import type { ${importName} as ScriptClass } from "${tsImportPath}";\n`);
 
+  // `StaticProps` exposes the user's class's static fields as instance
+  // members (so `this.MAX_HEALTH` resolves on a live instance). This
+  // mirrors GDScript's behavior \u2014 statics are reachable from `self`
+  // \u2014 and applies to EVERY class, regardless of whether it extends
+  // Node. The Node-specific typed `get_node`/`get_parent` overloads
+  // below are conditional on `extendsNode`.
+  lines.push(`type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;\n`);
+
   if (extendsNode) {
-    // ScriptTree + ScriptPaths (pre-computed) + StaticProps + module augmentation
+    // ScriptTree / ScriptPaths only feed the typed Node tree-method
+    // overloads, so they live in the Node-only block.
     lines.push(`type ScriptTree = _GDGetInterfaceTree<${treesInterface}>;`);
     lines.push(`type ScriptPaths = _GDGetTreePaths<ScriptTree>;\n`);
-    lines.push(`type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;\n`);
 
     lines.push(`declare module "${tsModulePath}" {`);
     lines.push(`  interface ${importName} extends StaticProps {`);
@@ -350,24 +373,50 @@ export function generateScriptTypingContent(
     lines.push(`    get_parent<N extends Node = Node>(): N;`);
     lines.push(`  }`);
     lines.push(`}\n`);
+  } else {
+    // Non-Node base (RefCounted, Resource, etc.): we still need the
+    // `extends StaticProps` augmentation to surface static fields on
+    // instances, just without the Node tree-method overloads.
+    lines.push(`declare module "${tsModulePath}" {`);
+    lines.push(`  interface ${importName} extends StaticProps {}`);
+    lines.push(`}\n`);
   }
 
-  // Class declaration
-  if (isAnonymous) {
-    // Module-level _Script class (not in declare global)
-    lines.push(`declare class _Script extends ScriptClass {`);
-    if (extendsNode) {
-      lines.push(`  get_node(path: string): Node | null;`);
-      lines.push(`  get_node_or_null(path: string): Node | null;`);
-      lines.push(`  has_node(path: string): boolean;`);
-      lines.push(`  get_child(idx: int, include_internal?: boolean): Node;`);
-      lines.push(`  get_parent<N extends Node = Node>(): N;`);
+  // Class declaration. Anonymous classes ALWAYS use the module-scoped
+  // path. Non-anonymous classes use the module-scoped path too unless
+  // `generateGlobal` is on, in which case they go into `declare global`
+  // (legacy / opt-in / addon behavior).
+  const useModuleScope = isAnonymous || !generateGlobal;
+  if (useModuleScope) {
+    // For named classes the GodotScripts/GodotResources entries should
+    // reference the user's actual class (so consumers' code that does
+    // `let p: Player = scene.instantiate()` resolves correctly). For
+    // anonymous classes there's no user-side global to point at, so we
+    // synthesize a local `_Script` handle.
+    const scriptsHandle = `ScriptClass`;
+    // Realization with shadowing typed tree methods
+    /*
+    const scriptsHandle = isAnonymous
+      ? '_Script'
+      : `import("${tsModulePath}").${importName}`;
+    if (isAnonymous) {
+      lines.push(`declare class _Script extends ScriptClass {`);
+      if (extendsNode) {
+        lines.push(`  get_node(path: string): Node | null;`);
+        lines.push(`  get_node_or_null(path: string): Node | null;`);
+        lines.push(`  has_node(path: string): boolean;`);
+        lines.push(`  get_child(idx: int, include_internal?: boolean): Node;`);
+        lines.push(`  get_parent<N extends Node = Node>(): N;`);
+      }
+      lines.push(`}\n`);
     }
-    lines.push(`}\n`);
-    // Namespace for enum types and inner class types (merged with __CLASS__ via module augmentation)
+     */
+    // Namespace for enum types and inner class types — merged with the
+    // user's TS class (whose name is `${importName}`) via module
+    // augmentation.
     if (enums.length > 0 || innerClasses.length > 0) {
       lines.push(`declare module "${tsModulePath}" {`);
-      lines.push(`  namespace __CLASS__ {`);
+      lines.push(`  namespace ${importName} {`);
       for (const e of enums) {
         lines.push(`    type ${e.name} = number & { readonly __brand: '${e.name}' };`);
       }
@@ -376,9 +425,9 @@ export function generateScriptTypingContent(
       }
       lines.push(`  }`);
       if (enums.length > 0) {
-        lines.push(`  interface __CLASS__ {`);
+        lines.push(`  interface ${importName} {`);
         for (const e of enums) {
-          const memberTypes = e.members.map(m => `${m.name}: __CLASS__.${e.name}`).join('; ');
+          const memberTypes = e.members.map(m => `${m.name}: ${importName}.${e.name}`).join('; ');
           lines.push(`    ${e.name}: { ${memberTypes} };`);
         }
         lines.push(`  }`);
@@ -391,10 +440,10 @@ export function generateScriptTypingContent(
       lines.push(`  interface ${treesInterface} {}\n`);
     }
     lines.push(`  interface GodotScripts {`);
-    lines.push(`    "${scriptResPath}": _Script;`);
+    lines.push(`    "${scriptResPath}": ${scriptsHandle};`);
     lines.push(`  }\n`);
     lines.push(`  interface GodotResources {`);
-    lines.push(`    "${scriptResPath}": typeof _Script;`);
+    lines.push(`    "${scriptResPath}": typeof ${scriptsHandle};`);
     lines.push(`  }`);
     lines.push(`}`);
   } else {
@@ -404,6 +453,9 @@ export function generateScriptTypingContent(
       lines.push(`  interface ${treesInterface} {}\n`);
     }
     lines.push(`  /** @see import("${tsModulePath}") */`);
+    // lines.push(`  type ${className} = ScriptClass;`)
+    // lines.push(`  const ${className}: typeof ScriptClass;`)
+    // Realization with shadowing typed tree methods
     lines.push(`  class ${className} extends ScriptClass {`);
     if (extendsNode) {
       lines.push(`    get_node(path: string): Node | null;`);

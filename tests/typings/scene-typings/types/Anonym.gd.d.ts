@@ -1,13 +1,13 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { __CLASS__ as ScriptClass } from "../Anonym.js";
+import type { __CLASS__ as ScriptClass } from "../Anonym";
+
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
 
 type ScriptTree = _GDGetInterfaceTree<__AnonymGd__Trees>;
 type ScriptPaths = _GDGetTreePaths<ScriptTree>;
 
-type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
-
-declare module "../Anonym.ts" {
+declare module "../Anonym" {
   interface __CLASS__ extends StaticProps {
     get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;
     get_node<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<ScriptTree, P>;
@@ -24,15 +24,7 @@ declare module "../Anonym.ts" {
   }
 }
 
-declare class _Script extends ScriptClass {
-  get_node(path: string): Node | null;
-  get_node_or_null(path: string): Node | null;
-  has_node(path: string): boolean;
-  get_child(idx: int, include_internal?: boolean): Node;
-  get_parent<N extends Node = Node>(): N;
-}
-
-declare module "../Anonym.ts" {
+declare module "../Anonym" {
   namespace __CLASS__ {
     type TEST_ENUM = number & { readonly __brand: 'TEST_ENUM' };
     type Inventory = InstanceType<typeof ScriptClass.Inventory>;
@@ -46,11 +38,11 @@ declare global {
   interface __AnonymGd__Trees {}
 
   interface GodotScripts {
-    "res://Anonym.gd": _Script;
+    "res://Anonym.gd": ScriptClass;
   }
 
   interface GodotResources {
-    "res://Anonym.gd": typeof _Script;
+    "res://Anonym.gd": typeof ScriptClass;
   }
 }
 

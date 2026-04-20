@@ -48,6 +48,8 @@ export interface WatcherOptions {
   debug?: boolean;
   /** Absolute path to Godot engine typings (for /// reference in _index.d.ts) */
   godotTypingsDir?: string;
+  /** See `ConverterOptions.generateGlobalClassTypes` (default false). */
+  generateGlobalClassTypes?: boolean;
 }
 
 /** File extensions that trigger typings regeneration (scenes, resources, assets). */
@@ -259,6 +261,9 @@ export class Watcher {
     const result = convertTsToGd({
       filePath,
       rootDir: this.tsDir,
+      tsDir: this.tsDir,
+      gdDir: this.gdDir,
+      projectRoot: this.options.projectRoot ?? this.options.rootDir,
       sourceMap: true,
       program,
     });
@@ -351,6 +356,7 @@ export class Watcher {
         cache: this.cache,
         onDebug,
         godotTypingsDir: this.options.godotTypingsDir,
+        generateGlobalClassTypes: this.options.generateGlobalClassTypes,
       });
       generateAddonTypings({
         rootDir: this.options.rootDir,
@@ -372,6 +378,7 @@ export class Watcher {
       ignore: this.options.ignore,
       projectFile: this.options.projectFile,
       cache: this.cache,
+      generateGlobalClassTypes: this.options.generateGlobalClassTypes,
     });
   }
 

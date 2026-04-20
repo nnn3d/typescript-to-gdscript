@@ -1,13 +1,13 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { ALevel as ScriptClass } from "../ALevel.js";
+import type { ALevel as ScriptClass } from "../ALevel";
+
+type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
 
 type ScriptTree = _GDGetInterfaceTree<__ALevelGd__Trees>;
 type ScriptPaths = _GDGetTreePaths<ScriptTree>;
 
-type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
-
-declare module "../ALevel.ts" {
+declare module "../ALevel" {
   interface ALevel extends StaticProps {
     get_node<P extends string & ScriptPaths>(path: P): _GDGetNode<ScriptTree, P>;
     get_node<P extends '/root' | `/root/${string}`>(path: P): _GDGetRootNode<ScriptTree, P>;
@@ -27,7 +27,7 @@ declare module "../ALevel.ts" {
 declare global {
   interface __ALevelGd__Trees {}
 
-  /** @see import("../ALevel.ts") */
+  /** @see import("../ALevel") */
   class ALevel extends ScriptClass {
     get_node(path: string): Node | null;
     get_node_or_null(path: string): Node | null;
