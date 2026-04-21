@@ -35,13 +35,6 @@ declare global {
     get_child(idx: int, include_internal?: boolean): Node;
     get_parent<N extends Node = Node>(): N;
   }
-  namespace TestAddon {
-    const enum AddonState {
-      IDLE = 0,
-      RUNNING = 1,
-      STOPPED = 2,
-    }
-  }
 
   interface GodotScripts {
     "res://addons/TestAddon/test_addon.gd": TestAddon;

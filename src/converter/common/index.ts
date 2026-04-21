@@ -88,7 +88,7 @@ function toUpperCamelCase(name: string): string {
  * or `declare global` (in typings generation).
  */
 export function isAnonymousClassName(name: string): boolean {
-  return name.startsWith('_') && !name.startsWith('G_');
+  return name.startsWith('_');
 }
 
 /**
@@ -310,8 +310,8 @@ export function tsTypeNodeToGdType(
   // Union types: GDScript has no union syntax, but every typed
   // variable in GD already accepts `null` implicitly, so a TS union of
   // the form `T | null` (or `null | T`) collapses cleanly to `T`.
-  // Anything more complex than that \u2014 multiple non-null members,
-  // intersections, etc. \u2014 has no GD equivalent and is omitted.
+  // Anything more complex than that — multiple non-null members,
+  // intersections, etc. — has no GD equivalent and is omitted.
   if (ts.isUnionTypeNode(typeNode)) {
     const nonNull = typeNode.types.filter((t) => !isNullLiteralTypeNode(t));
     if (nonNull.length === 1 && nonNull.length !== typeNode.types.length) {

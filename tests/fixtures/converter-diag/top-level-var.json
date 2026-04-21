@@ -1,1 +1,1 @@
-[{ "message": "Top-level statement", "severity": "error" }]
+[{ "message": "File-scope `const`/`let`/`var`", "severity": "error" }]

@@ -29,7 +29,7 @@ describe('Source Map: TS-to-GD mappings', () => {
     // TS source:
     // Line 1: class MyNode extends Node2D {
     // Line 2: }
-    const code = `class MyNode extends Node2D {\n}\n`;
+    const code = `export class MyNode extends Node2D {\n}\n`;
     const filePath = join(TMP_DIR, 'test.ts');
     const program = createProgram(filePath, code);
 
@@ -66,7 +66,7 @@ describe('Source Map: TS-to-GD mappings', () => {
     // Line 6:   }
     // Line 7: }
     const code = [
-      'class Vars extends Node {',
+      'export class Vars extends Node {',
       '  health: int = 100;',
       '  speed: float = 10.5;',
       '  _ready() {',
@@ -130,7 +130,7 @@ describe('Source Map: TS-to-GD mappings', () => {
     // Line 8:   }
     // Line 9: }
     const code = [
-      'class CF extends Node {',
+      'export class CF extends Node {',
       '  run() {',
       '    if (true) {',
       '      return 1;',
@@ -193,7 +193,7 @@ describe('Source Map: TS-to-GD mappings', () => {
     // Line 5:   speed: float = 5.0;
     // Line 6: }
     const code = [
-      'class CM extends Node {',
+      'export class CM extends Node {',
       '  // A single-line comment',
       '  health: int = 100;',
       '  /** A doc comment */',
@@ -256,7 +256,7 @@ describe('Source Map: TS-to-GD mappings', () => {
     // Line 9:   }
     // Line 10: }
     const code = [
-      'class Loops extends Node {',
+      'export class Loops extends Node {',
       '  run() {',
       '    for (let item of items) {',
       '      process(item);',
@@ -312,7 +312,7 @@ describe('Source Map: TS-to-GD mappings', () => {
   });
 
   it('should include source content in the source map', async () => {
-    const code = `class Simple extends Node {\n}\n`;
+    const code = `export class Simple extends Node {\n}\n`;
     const filePath = join(TMP_DIR, 'simple.ts');
     const program = createProgram(filePath, code);
 
@@ -329,7 +329,7 @@ describe('Source Map: TS-to-GD mappings', () => {
   });
 
   it('should have no source map when sourceMap option is false', () => {
-    const code = `class NoMap extends Node {\n}\n`;
+    const code = `export class NoMap extends Node {\n}\n`;
     const filePath = join(TMP_DIR, 'nomap.ts');
     const program = createProgram(filePath, code);
 
@@ -349,7 +349,7 @@ describe('Source Map: TS-to-GD mappings', () => {
     // Line 2:   value: int = 42;
     // Line 3: }
     const code = [
-      'class Bi extends RefCounted {',
+      'export class Bi extends RefCounted {',
       '  value: int = 42;',
       '}',
       '',
@@ -380,7 +380,7 @@ describe('Source Map: TS-to-GD mappings', () => {
 
   it('should map all entries and cover every GD output line with a statement', async () => {
     const code = [
-      'class Full extends Node {', // Line 1
+      'export class Full extends Node {', // Line 1
       '  hp: int = 10;', // Line 2
       '  run() {', // Line 3
       '    let x: int = 1;', // Line 4

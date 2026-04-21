@@ -1,12 +1,12 @@
 /**
- * Anonymous class naming convention \u2014 unit tests for the helpers in
- * `src/converter/common/index.ts` and the GD\u2192TS / TS\u2192GD round-trip
+ * Anonymous class naming convention — unit tests for the helpers in
+ * `src/converter/common/index.ts` and the GD→TS / TS→GD round-trip
  * behavior they enable.
  *
- *   - `gdFilenameToAnonymousClassName('some_class.gd')` \u2192 `'_SomeClass'`
- *   - `class_name _Foo` in GD source              \u2192 `class G_Foo` in TS
- *   - `class G_Foo` in TS source                  \u2192 `class_name _Foo` in GD
- *   - `class _Foo` in TS source (anonymous)       \u2192 GD with NO `class_name`
+ *   - `gdFilenameToAnonymousClassName('some_class.gd')` → `'_SomeClass'`
+ *   - `class_name _Foo` in GD source              → `class G_Foo` in TS
+ *   - `class G_Foo` in TS source                  → `class_name _Foo` in GD
+ *   - `class _Foo` in TS source (anonymous)       → GD with NO `class_name`
  */
 
 import { describe, it, expect } from 'vitest';
@@ -66,7 +66,7 @@ describe('isAnonymousClassName', () => {
   });
 });
 
-describe('escapeUnderscoreClassName (one-way GD\u2192TS fallback)', () => {
+describe('escapeUnderscoreClassName (one-way GD→TS fallback)', () => {
   it('prefixes `G_` for `_`-prefixed GD class names', () => {
     expect(escapeUnderscoreClassName('_Foo')).toBe('G_Foo');
   });
@@ -76,7 +76,7 @@ describe('escapeUnderscoreClassName (one-way GD\u2192TS fallback)', () => {
   });
 });
 
-describe('GD\u2192TS naming \u2014 emitter integration', () => {
+describe('GD→TS naming — emitter integration', () => {
   it('synthesizes `_FilenameClass` for a `.gd` with no `class_name`', () => {
     const registry = resolveRegistry();
     const result = convertGdToTs({
@@ -98,7 +98,7 @@ describe('GD\u2192TS naming \u2014 emitter integration', () => {
   });
 });
 
-describe('TS\u2192GD naming \u2014 emitter integration', () => {
+describe('TS→GD naming — emitter integration', () => {
   // Each test writes a tiny project under tmpdir so the TS program can
   // resolve the file naturally.
   function withTempProject<T>(fn: (project: { dir: string; write(rel: string, content: string): string }) => T): T {
@@ -131,7 +131,7 @@ describe('TS\u2192GD naming \u2014 emitter integration', () => {
     });
   });
 
-  it('emits `G_Foo` verbatim (the escape is not undone on TS\u2192GD)', () => {
+  it('emits `G_Foo` verbatim (the escape is not undone on TS→GD)', () => {
     withTempProject((p) => {
       const tsPath = p.write(
         'foo.ts',

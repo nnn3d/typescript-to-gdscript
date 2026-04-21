@@ -28,23 +28,6 @@ class SignalTest extends Node {
   }
 }
 
-// ─── gd.enum ────────────────────────────────────────────────
-
-class EnumTest extends Node {
-  // Enum creates a Record<T, number>
-  MY_ENUM = gd.enum('VALUE_1', 'VALUE_2', ['VALUE_3', -1]);
-
-  test_enum() {
-    // Access enum values as numbers
-    let x: number = this.MY_ENUM.VALUE_1;
-    let y: number = this.MY_ENUM.VALUE_2;
-    let z: number = this.MY_ENUM.VALUE_3;
-
-    // @ts-expect-error — non-existent enum value
-    let w = this.MY_ENUM.NONEXISTENT;
-  }
-}
-
 // ─── gd.as ──────────────────────────────────────────────────
 
 class AsTest extends Node {

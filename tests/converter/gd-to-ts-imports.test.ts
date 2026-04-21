@@ -1,5 +1,5 @@
 /**
- * GD\u2192TS auto-import tests \u2014 mirrors the CLI's convert + inject
+ * GD→TS auto-import tests — mirrors the CLI's convert + inject
  * pipeline (`convert-gd` writes each `.gd` to disk as `.ts`, then
  * runs `injectMissingImportsForProject` to prepend the imports the
  * TS program reports as missing).
@@ -9,7 +9,7 @@
  *
  * The temp-project layout deliberately keeps `.gd` and `.ts` in
  * separate sibling subdirs (`gd/`, `ts/`) so the import-specifier
- * math has to consult the gd\u2192ts mapping in `injectMissingImports`.
+ * math has to consult the gd→ts mapping in `injectMissingImports`.
  * Earlier versions silently produced `../gd/foo` specifiers when
  * gdDir != tsDir; the divergent layout locks the fix in.
  */
@@ -85,7 +85,7 @@ function runPipeline(specs: SourceSpec[], flag = false): PipelineResult {
   return { read: (relPath) => readFileSync(tsByRel.get(relPath)!, 'utf-8') };
 }
 
-describe('GD\u2192TS auto-imports (convert + inject pipeline)', () => {
+describe('GD→TS auto-imports (convert + inject pipeline)', () => {
   it('emits an import line for a class referenced via `extends`', () => {
     const r = runPipeline([
       { relPath: 'base.gd', source: 'class_name Base\nextends Node\n' },
@@ -165,7 +165,7 @@ describe('GD\u2192TS auto-imports (convert + inject pipeline)', () => {
     const banana = lines.findIndex((l) => l.includes('import { Banana'));
     expect(apple).toBeGreaterThanOrEqual(0);
     expect(banana).toBeGreaterThanOrEqual(0);
-    // Alphabetical \u2014 matches `injectMissingImports`'s `localeCompare`.
+    // Alphabetical — matches `injectMissingImports`'s `localeCompare`.
     expect(apple).toBeLessThan(banana);
   });
 
@@ -190,7 +190,7 @@ describe('GD\u2192TS auto-imports (convert + inject pipeline)', () => {
   });
 });
 
-describe('GD\u2192TS auto-imports (legacy / addon layout)', () => {
+describe('GD→TS auto-imports (legacy / addon layout)', () => {
   it('emits no import lines when generateGlobalClassTypes is true', () => {
     const r = runPipeline(
       [
@@ -201,8 +201,8 @@ describe('GD\u2192TS auto-imports (legacy / addon layout)', () => {
     );
     const code = r.read('derived.gd');
     expect(code).not.toMatch(/^import /m);
-    // Sanity \u2014 `extends Base` still emitted; the legacy layout relies
-    // on `declare global { class Base \u2026 }` from the typings layer.
+    // Sanity — `extends Base` still emitted; the legacy layout relies
+    // on `declare global { class Base … }` from the typings layer.
     expect(code).toContain('extends Base');
   });
 });

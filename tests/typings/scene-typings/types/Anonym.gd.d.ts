@@ -27,7 +27,6 @@ declare module "../Anonym" {
 declare module "../Anonym" {
   namespace __CLASS__ {
     type TEST_ENUM = number & { readonly __brand: 'TEST_ENUM' };
-    type Inventory = InstanceType<typeof ScriptClass.Inventory>;
   }
   interface __CLASS__ {
     TEST_ENUM: { TEST: __CLASS__.TEST_ENUM; TEST2: __CLASS__.TEST_ENUM };

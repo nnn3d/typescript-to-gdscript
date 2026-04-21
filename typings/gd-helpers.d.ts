@@ -109,17 +109,6 @@ declare const gd: {
   }) => T;
 
   /**
-   * Create an enum. Transforms to `enum Name {...}` in GDScript.
-   * @example
-   * MY_ENUM = gd.enum('VALUE_1', 'VALUE_2', ['VALUE_3', -1])
-   * // becomes: enum MyEnum {VALUE_1, VALUE_2, VALUE_3 = -1}
-   */
-  readonly enum: <const T extends string>(
-    ...args: (T | [T, number])[]
-  ) => Record<T, number>;
-  // `enum` is reserved in TS, so use `enum_` in declaration but map to `enum` in user code
-
-  /**
    * Create a Dictionary with non-string keys. Transforms to `{key: value, ...}` in GDScript.
    * Keys must be identifiers (variables) or string/number literals — expressions are not allowed.
    * @example

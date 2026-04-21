@@ -109,6 +109,33 @@ export function containsAwait(node: SyntaxNode): boolean {
   return false;
 }
 
+/**
+ * Qualify a GD type reference against the current enclosing class's
+ * type names. Handles both bare (`Inner`) and qualified
+ * (`Config.Inner`) forms — if the FIRST segment matches a class-level
+ * type name (enum or inner class declared directly in the current
+ * class body), prepend the current class name so the type is
+ * addressable through TypeScript's namespace+class merge.
+ *
+ *   Inner                 (inside Config, Inner ∈ Config types)    → Config.Inner
+ *   Config.Inner          (inside _Anonym, Config ∈ _Anonym types) → _Anonym.Config.Inner
+ *   Node                  (not in class types)                      → null
+ *
+ * Returns `null` when the type is not a class-level reference so
+ * callers can fall back to `gdTypeToTs` / primitive mapping.
+ */
+export function qualifyClassType(
+  raw: string,
+  classTypeNames: Set<string>,
+  enclosingClassName: string,
+): string | null {
+  const firstSegment = raw.split('.')[0] ?? raw;
+  if (classTypeNames.has(firstSegment)) {
+    return `${enclosingClassName}.${raw}`;
+  }
+  return null;
+}
+
 export function gdTypeToTs(gdType: string): string | null {
   switch (gdType) {
     case 'int':

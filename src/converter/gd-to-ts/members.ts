@@ -1,6 +1,11 @@
 import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
 import type { GdToTsContext } from './context.ts';
-import { gdTypeToTs, extractGdTypeName, inferExprType } from './type-inference.ts';
+import {
+  gdTypeToTs,
+  extractGdTypeName,
+  inferExprType,
+  qualifyClassType,
+} from './type-inference.ts';
 import { emitExpr } from './expressions.ts';
 import { emitBody } from './statements.ts';
 
@@ -86,30 +91,17 @@ export function emitSignalParamTypes(paramsNode: SyntaxNode): string {
 // ─── Enums ────────────────────────────────────────────────────
 
 export function emitEnum(node: SyntaxNode, ctx: GdToTsContext): string {
-  const nameNode = node.childForFieldName('name');
+  // Named GD enums are lifted to file scope by the source emitter
+  // (see `emitFileScopeEnum` / `emitFileScopeClass`); this function
+  // only handles ANONYMOUS GD enums (no name) which have no clean
+  // file-scope TS form and stay as a series of static constants
+  // inside the class body.
   const bodyNode = node.childForFieldName('body');
   if (!bodyNode) return '';
 
   const enumerators = bodyNode.namedChildren.filter((c) =>
     c.type === SyntaxType.Enumerator,
   );
-
-  if (nameNode) {
-    // Named enum -> gd.enum(...)
-    const values: string[] = [];
-    for (const e of enumerators) {
-      const eName = e.childForFieldName('left')?.text;
-      const eValue = e.childForFieldName('right');
-      if (eName) {
-        if (eValue) {
-          values.push(`['${eName}', ${eValue.text}]`);
-        } else {
-          values.push(`'${eName}'`);
-        }
-      }
-    }
-    return `  static ${nameNode.text} = gd.enum(${values.join(', ')});`;
-  }
 
   // Anonymous enum -> static constants
   const lines: string[] = [];
@@ -466,17 +458,17 @@ export function emitTypeAnnotation(typeNode: SyntaxNode, ctx: GdToTsContext): st
   }
   if (typeNode.type === SyntaxType.Type) {
     const inner = typeNode.namedChildren[0]?.text ?? typeNode.text;
-    // Qualify class-level enum/inner class types: State → ClassName.State
-    if (ctx.classTypeNames.has(inner)) {
-      return `: ${ctx.className}.${inner}`;
-    }
+    // Qualify class-level enum/inner class types. Handles both bare
+    // (`State` → `ClassName.State`) and qualified
+    // (`Config.Inner` → `_Anonym.Config.Inner`) forms.
+    const qualified = qualifyClassType(inner, ctx.classTypeNames, ctx.className);
+    if (qualified) return `: ${qualified}`;
     const tsType = gdTypeToTs(inner);
     return tsType ? `: ${tsType}` : '';
   }
   const raw = typeNode.text;
-  if (ctx.classTypeNames.has(raw)) {
-    return `: ${ctx.className}.${raw}`;
-  }
+  const qualified = qualifyClassType(raw, ctx.classTypeNames, ctx.className);
+  if (qualified) return `: ${qualified}`;
   const tsType = gdTypeToTs(raw);
   return tsType ? `: ${tsType}` : '';
 }

@@ -73,7 +73,7 @@ describe('Watcher + cache: updated-file re-conversion', () => {
       writeFileSync(
         tsPath,
         [
-          'class Foo extends Object {',
+          'export class Foo extends Object {',
           '  hello(): number {',
           '    return 1;',
           '  }',
@@ -107,7 +107,7 @@ describe('Watcher + cache: updated-file re-conversion', () => {
       writeFileSync(
         tsPath,
         [
-          'class Foo extends Object {',
+          'export class Foo extends Object {',
           '  hello(): number {',
           '    return 42;',
           '  }',
@@ -145,7 +145,7 @@ describe('Watcher + cache: updated-file re-conversion', () => {
       const tsPath = join(tsDir, 'Foo.ts');
       writeFileSync(
         tsPath,
-        ['class Foo extends Object {', '  v: number = 1;', '}'].join('\n'),
+        ['export class Foo extends Object {', '  v: number = 1;', '}'].join('\n'),
       );
 
       watcher = new Watcher({

@@ -1,0 +1,3 @@
+[
+  { "message": "conflicts with a file-scope declaration", "severity": "error" }
+]

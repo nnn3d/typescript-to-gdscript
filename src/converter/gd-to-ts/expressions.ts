@@ -17,9 +17,13 @@ export function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
     if (node.text === 'null') return 'null';
     if (node.text === 'true') return 'true';
     if (node.text === 'false') return 'false';
-    // If identifier is a known class member AND not a local variable, prefix with this/ClassName
+    // If identifier is a known class member AND not a local variable,
+    // prefix with `this.` (instance) or `ClassName.` (static — const /
+    // static var / enum / inner class / static func). Matches GDScript's
+    // convention of accessing statics via the class name.
     if (ctx.classMembers.has(node.text) && !ctx.localVars.has(node.text)) {
-      return `this.${node.text}`;
+      const prefix = ctx.staticMembers.has(node.text) ? ctx.className : 'this';
+      return `${prefix}.${node.text}`;
     }
     // Global enum constant → qualified name (e.g. KEY_F21 → Key.KEY_F21)
     const enumQualified = ctx.globalEnumMap.get(node.text);
@@ -256,15 +260,28 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
   for (let i = 0; i < children.length; i++) {
     const child = children[i]!;
 
-    // `self` at the start of an attribute chain becomes `this` (or ClassName for static members)
+    // `self` at the start of an attribute chain becomes:
+    //   - `ClassName` if the NEXT part is a static member
+    //     (static var / const / enum / inner class / static func) —
+    //     matches GDScript's convention of accessing statics via the
+    //     class name, and avoids TS type-check surprises from
+    //     accessing a static through `this`.
+    //   - `this` otherwise (regular instance member).
     if (i === 0 && child.type === SyntaxType.Identifier && child.text === 'self') {
-      // Look ahead to see if the next part is a static member
       const nextChild = children[i + 1];
       const nextName =
         nextChild && nextChild.type === SyntaxType.Identifier
           ? nextChild.text
-          : '';
-      parts.push('this');
+          : nextChild && nextChild.type === SyntaxType.AttributeCall
+            ? nextChild.namedChildren.find(
+                (c) => c.type === SyntaxType.Identifier,
+              )?.text ?? ''
+            : '';
+      if (nextName && ctx.staticMembers.has(nextName)) {
+        parts.push(ctx.className);
+      } else {
+        parts.push('this');
+      }
       selfSeen = true;
       continue;
     }
@@ -301,9 +318,13 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
     }
   }
 
-  // If the first part is a known class member, not shadowed by a local variable, and no self was used, prefix with this
+  // If the first part is a known class member, not shadowed by a
+  // local variable, and no self was used, prefix with `this` (instance
+  // member) or `ClassName` (static member — matches GDScript's
+  // convention of accessing statics via the class name).
   if (!selfSeen && parts.length >= 1 && ctx.classMembers.has(parts[0]!) && !ctx.localVars.has(parts[0]!)) {
-    parts.unshift('this');
+    const prefix = ctx.staticMembers.has(parts[0]!) ? ctx.className : 'this';
+    parts.unshift(prefix);
   }
 
   return parts.join('.');

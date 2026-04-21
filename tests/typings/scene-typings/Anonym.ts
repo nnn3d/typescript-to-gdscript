@@ -1,10 +1,16 @@
+import {
+  TEST_ENUM as PlayerTestEnum,
+  Inventory as PlayerInventory,
+} from './Player.ts';
+
+export enum TEST_ENUM { TEST, TEST2 }
+
+export class Inventory extends RefCounted {
+  capacity: int = 10;
+}
+
 export class __CLASS__ extends Node {
   static PlayerScript: typeof Player = preload('res://Player.gd');
-
-  static TEST_ENUM = gd.enum('TEST', 'TEST2');
-  static Inventory = class extends RefCounted {
-    capacity: int = 10;
-  };
 
   do_from_anonym() {
     // get_node_or_null normally returns T | null, but scene overload returns Sprite2D directly
@@ -19,18 +25,18 @@ export class __CLASS__ extends Node {
 
     let levels: Level = parent.get_parent();
 
-    // Namespace enum type from generated .gd.d.ts (branded number for anonymous classes)
-    let enumTyped: __CLASS__.TEST_ENUM = this.TEST_ENUM.TEST;
-    // @ts-expect-error — branded type prevents plain number assignment
-    let enumTypedError: __CLASS__.TEST_ENUM = 42;
-    let enumParam = (e: __CLASS__.TEST_ENUM) => e;
+    // File-scope enum: bare reference inside the script's own file.
+    // (`this.X` works only with the plugin loaded.)
+    let enumTyped: TEST_ENUM = TEST_ENUM.TEST;
+    let enumParam = (e: TEST_ENUM) => e;
 
-    let enumPlayerTyped: Player.TEST_ENUM = Player.TEST_ENUM.TEST;
-    let classPlayerTyped = (e: Player.Inventory): number => e.capacity;
+    // Cross-file file-scope enum / class: imported under aliases above.
+    let enumPlayerTyped: PlayerTestEnum = PlayerTestEnum.TEST;
+    let classPlayerTyped = (e: PlayerInventory): number => e.capacity;
     let classPlayerStatic: string = this.PlayerScript.NAME;
 
-    // Namespace inner class type from generated .gd.d.ts
-    let inventory: __CLASS__.Inventory = new this.Inventory();
+    // File-scope inner class: bare name inside the script's own file.
+    let inventory: Inventory = new Inventory();
     let cap: int = inventory.capacity;
   }
 }

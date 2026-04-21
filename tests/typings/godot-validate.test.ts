@@ -182,7 +182,7 @@ describe('remapError', () => {
   }
 
   it('should remap GD error to TS position via source map', async () => {
-    const tsCode = `class Player extends Node2D {\n  test_method() {\n    let x: int = 42;\n  }\n}\n`;
+    const tsCode = `export class Player extends Node2D {\n  test_method() {\n    let x: int = 42;\n  }\n}\n`;
     const tsPath = join(TMP_DIR, 'player.ts');
     const gdPath = join(TMP_DIR, 'player.gd');
     const mapPath = gdPath + '.map';
@@ -239,7 +239,7 @@ describe('remapError', () => {
   });
 
   it('should use sourceMapDir when provided', async () => {
-    const tsCode = `class Enemy extends Node {\n  attack() {\n    let damage: int = 10;\n  }\n}\n`;
+    const tsCode = `export class Enemy extends Node {\n  attack() {\n    let damage: int = 10;\n  }\n}\n`;
     const tsPath = join(TMP_DIR, 'enemy.ts');
     const gdPath = join(TMP_DIR, 'output', 'enemy.gd');
     const mapDir = join(TMP_DIR, 'maps');
@@ -588,7 +588,7 @@ describe('Godot CLI integration', () => {
     // and verify the line maps back.
     const tsCode =
       [
-        'class RemapTest extends Node {',
+        'export class RemapTest extends Node {',
         '  empty() {',
         '    // empty fn',
         '  }',

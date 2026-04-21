@@ -787,7 +787,8 @@ export function emitLambdaBody(
   if (!ts.isBlock(node.body)) return;
   t.emitter.indent();
   if (node.body.statements.length === 0) {
-    t.emitter.writeLine('pass');
+    const pos = t.getLineAndCol(node.body);
+    t.emitter.writeLine('pass', pos.line, pos.col);
   } else {
     t.visitBlock(node.body);
   }

@@ -4,12 +4,13 @@ import type { __CLASS__ as AnonymNested } from './nested/Anonym.ts';
 import type { __CLASS__ as GameManagerType } from './GameManager.ts';
 import type { __CLASS__ as Enemy } from './Enemy.ts';
 
-export class Player extends BaseCharacter {
-  static TEST_ENUM = gd.enum('TEST', 'TEST2');
-  static Inventory = class extends RefCounted {
-    capacity: int = 10;
-  };
+export enum TEST_ENUM { TEST, TEST2 }
 
+export class Inventory extends RefCounted {
+  capacity: int = 10;
+}
+
+export class Player extends BaseCharacter {
   static NAME = 'Player';
 
   AnonymScript: typeof Anonym = load('res://Anonym.gd');
@@ -77,14 +78,17 @@ export class Player extends BaseCharacter {
     // Unknown index falls back to Node
     let childUnknown: Node = this.get_child(99);
 
-    const thisEnum: number = this.TEST_ENUM.TEST;
+    // File-scope enum: typed via the file-scope binding. The
+    // `this.X` instance access works only when the ts-plugin is
+    // loaded (it injects the per-file augmentation). Without the
+    // plugin, the bare TEST_ENUM is in scope here as a regular TS
+    // file-scope enum.
+    const thisEnum: number = TEST_ENUM.TEST;
+    let enumTyped: TEST_ENUM = TEST_ENUM.TEST;
+    let enumParam = (e: TEST_ENUM) => e;
 
-    // Namespace enum type from generated .gd.d.ts
-    let enumTyped: Player.TEST_ENUM = Player.TEST_ENUM.TEST;
-    let enumParam = (e: Player.TEST_ENUM) => e;
-
-    // Namespace inner class type from generated .gd.d.ts
-    let inventory: Player.Inventory = new this.Inventory();
+    // File-scope inner class: same story \u2014 use the bare name.
+    let inventory: Inventory = new Inventory();
     let cap: int = inventory.capacity;
 
     // Autoload scene singleton — UIManager is a scene autoload, typed as tree node

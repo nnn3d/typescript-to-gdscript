@@ -14,7 +14,8 @@ import type { TransformerDelegate } from './transformer-types.ts';
 
 export function visitBlock(t: TransformerDelegate, block: ts.Block): void {
   if (block.statements.length === 0) {
-    t.emitter.writeLine('pass');
+    const pos = t.getLineAndCol(block);
+    t.emitter.writeLine('pass', pos.line, pos.col);
     return;
   }
   for (const stmt of block.statements) {
@@ -197,7 +198,8 @@ export function visitIfStatement(
         visitElseChain(t, node.elseStatement.elseStatement);
       }
     } else {
-      t.emitter.writeLine('else:');
+      const elsePos = t.getLineAndCol(node.elseStatement);
+      t.emitter.writeLine('else:', elsePos.line, elsePos.col);
       t.emitter.indent();
       visitStatementBody(t, node.elseStatement);
       t.emitter.dedent();
@@ -220,7 +222,8 @@ function visitElseChain(t: TransformerDelegate, node: ts.Statement): void {
       visitElseChain(t, node.elseStatement);
     }
   } else {
-    t.emitter.writeLine('else:');
+    const pos = t.getLineAndCol(node);
+    t.emitter.writeLine('else:', pos.line, pos.col);
     t.emitter.indent();
     visitStatementBody(t, node);
     t.emitter.dedent();
@@ -271,7 +274,8 @@ export function visitForStatement(
   t.emitter.indent();
   visitStatementBody(t, node.statement);
   if (node.incrementor) {
-    t.emitter.writeLine(t.emitExpression(node.incrementor));
+    const incPos = t.getLineAndCol(node.incrementor);
+    t.emitter.writeLine(t.emitExpression(node.incrementor), incPos.line, incPos.col);
   }
   t.emitter.dedent();
 }
@@ -308,12 +312,13 @@ export function visitSwitchStatement(
   t.emitter.indent();
 
   for (const clause of node.caseBlock.clauses) {
+    const clausePos = t.getLineAndCol(clause);
     if (ts.isCaseClause(clause)) {
-      t.emitter.writeLine(`${t.emitExpression(clause.expression)}:`);
+      t.emitter.writeLine(`${t.emitExpression(clause.expression)}:`, clausePos.line, clausePos.col);
       t.emitter.indent();
       const stmts = clause.statements.filter((s) => !ts.isBreakStatement(s));
       if (stmts.length === 0) {
-        t.emitter.writeLine('pass');
+        t.emitter.writeLine('pass', clausePos.line, clausePos.col);
       } else {
         for (const stmt of stmts) {
           visitStatement(t, stmt);
@@ -321,11 +326,11 @@ export function visitSwitchStatement(
       }
       t.emitter.dedent();
     } else {
-      t.emitter.writeLine('_:');
+      t.emitter.writeLine('_:', clausePos.line, clausePos.col);
       t.emitter.indent();
       const stmts = clause.statements.filter((s) => !ts.isBreakStatement(s));
       if (stmts.length === 0) {
-        t.emitter.writeLine('pass');
+        t.emitter.writeLine('pass', clausePos.line, clausePos.col);
       } else {
         for (const stmt of stmts) {
           visitStatement(t, stmt);
@@ -346,7 +351,8 @@ export function visitStatementBody(
 ): void {
   if (ts.isBlock(node)) {
     if (node.statements.length === 0) {
-      t.emitter.writeLine('pass');
+      const pos = t.getLineAndCol(node);
+      t.emitter.writeLine('pass', pos.line, pos.col);
     } else {
       for (const stmt of node.statements) {
         t.emitLeadingComments(stmt);

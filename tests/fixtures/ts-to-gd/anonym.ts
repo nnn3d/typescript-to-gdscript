@@ -1,10 +1,23 @@
+export namespace __CLASS__ {
+  export enum Mode { EASY, HARD }
+
+  export namespace Config {
+    export enum HARD { A, B}
+
+    export namespace Inner {
+      const TYPE = 'inner'
+    }
+    export class Inner {
+      static VAL = 10;
+    }
+  }
+  export class Config extends RefCounted {
+    difficulty: int = 0;
+  }
+}
+
 export class __CLASS__ extends Node {
   static MAX_HEALTH = 100;
-  static Mode = gd.enum("EASY", "HARD");
-
-  static Config = class extends RefCounted {
-    difficulty: int = 0;
-  };
 
   get_health() {
     return __CLASS__.MAX_HEALTH;

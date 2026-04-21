@@ -268,8 +268,14 @@ export function createLintOverlay(deps: LintOverlayDeps): LintOverlay {
       trace(`memo MISS ${fileName} (no entry) current=${version}`);
     }
 
-    // Convert in-process using tsserver's Program. This reuses every
-    // already-parsed SourceFile and the warm TypeChecker — cheap.
+    // Convert in-process using tsserver's warm program. The converter
+    // sees the file exactly as the user wrote it — no snapshot
+    // transformation — and the GDScript output is produced directly
+    // from that AST. `this.X` references (for lifts that land as
+    // script-class members via the user's explicit
+    // `export namespace Foo { ... }` paired with `export class Foo`)
+    // resolve via TypeScript's native namespace + class merging, which
+    // the program already has evaluated.
     let result: ReturnType<typeof convertTsToGd>;
     try {
       result = convertTsToGd({
@@ -331,6 +337,9 @@ export function createLintOverlay(deps: LintOverlayDeps): LintOverlay {
     // kick-off — the mirror .gd was written synchronously inside
     // `updateTsToGd`, so Godot has what it needs either way.
     try {
+      // The plugin no longer wraps the host's getScriptSnapshot, so
+      // the SourceFile text IS the user's source — direct
+      // `sf.getFullText()` match the on-disk hash.
       const bufferText = sf.getFullText();
       const relPath = relative(cfg.tsDir, fileName);
       const gdPath = resolve(cfg.gdDir, relPath.replace(/\.ts$/, '.gd'));

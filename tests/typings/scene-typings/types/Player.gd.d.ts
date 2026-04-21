@@ -40,7 +40,6 @@ declare global {
       TEST = 0,
       TEST2 = 1,
     }
-    type Inventory = InstanceType<typeof ScriptClass.Inventory>;
   }
 
   interface GodotScripts {

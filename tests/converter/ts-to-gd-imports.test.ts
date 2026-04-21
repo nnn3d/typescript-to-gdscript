@@ -1,5 +1,5 @@
 /**
- * TS\u2192GD import-processing tests.
+ * TS→GD import-processing tests.
  *
  * Each test sets up a small in-memory project (a temp dir under
  * `os.tmpdir()`), populates it with the source files the scenario
@@ -80,7 +80,7 @@ function normalize(code: string): string {
     .trim();
 }
 
-describe('TS\u2192GD imports \u2014 happy path', () => {
+describe('TS→GD imports — happy path', () => {
   it('skips non-anonymous + non-renamed imports (already global in GD)', () => {
     project.write('foo.ts', 'export class Foo extends Node {}\n');
     project.write(
@@ -138,7 +138,7 @@ describe('TS\u2192GD imports \u2014 happy path', () => {
     );
   });
 
-  it('rewrites `extends` of an anonymous import to `extends "res://\u2026"`', () => {
+  it('rewrites `extends` of an anonymous import to `extends "res://…"`', () => {
     project.write('base.ts', 'export class _Base extends Node {}\n');
     project.write(
       'derived.ts',
@@ -197,7 +197,7 @@ describe('TS\u2192GD imports \u2014 happy path', () => {
   });
 });
 
-describe('TS\u2192GD imports \u2014 errors', () => {
+describe('TS→GD imports — errors', () => {
   it('errors when a class field name collides with an imported local', () => {
     project.write('foo.ts', 'export class _Foo extends Node {}\n');
     project.write(

@@ -100,7 +100,7 @@ export interface GdToTsOptions {
   unsafeUseAny?: boolean;
   /**
    * @deprecated The single-file `convertGdToTs` no longer auto-emits
-   * imports \u2014 that's done by {@link import('./inject-imports.ts').injectMissingImports}
+   * imports — that's done by {@link import('./inject-imports.ts').injectMissingImports}
    * at the batch level (see `cli/convert-gd.ts`). The field is kept on
    * the options shape for API back-compat but is currently ignored.
    * The `injectMissingImports` post-pass takes its own

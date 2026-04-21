@@ -4,12 +4,12 @@
  * The `generateGlobalClassTypes` flag flips how non-anonymous classes
  * are exposed in the generated `.gd.d.ts` files:
  *
- *   - `false` (project default) \u2014 emitted as a module-scoped
+ *   - `false` (project default) — emitted as a module-scoped
  *     declaration; consumers must `import { Foo }`. The `.gd.d.ts`
  *     references the user's class via the imported `ScriptClass` alias
  *     for the `GodotScripts` / `GodotResources` mappings.
  *
- *   - `true` (legacy / addon-required) \u2014 emitted as
+ *   - `true` (legacy / addon-required) — emitted as
  *     `class Foo extends ScriptClass` inside `declare global`, so the
  *     class is usable without an explicit import.
  *
@@ -140,7 +140,7 @@ describe('Typings: named class, global mode (legacy / addon)', () => {
     expect(dts).toContain('"res://foo.gd": Foo;');
     expect(dts).toContain('"res://foo.gd": typeof Foo;');
     // No `ScriptClass` alias appears in the GodotScripts mappings under
-    // the legacy layout \u2014 the bare class name is what's exported.
+    // the legacy layout — the bare class name is what's exported.
     expect(dts).not.toContain('"res://foo.gd": ScriptClass;');
   });
 });
@@ -160,7 +160,7 @@ describe('Typings: StaticProps augmentation regardless of base class', () => {
     const dts = project.generate(false, 'bag');
 
     // The augmentation must be present so `this.MAX` resolves on
-    // instances \u2014 even without any of the Node tree-method overloads.
+    // instances — even without any of the Node tree-method overloads.
     expect(dts).toContain('type StaticProps = Omit<typeof ScriptClass');
     expect(dts).toMatch(/declare module "[^"]+" \{[\s\S]*interface Bag extends StaticProps/);
     // No Node-specific overloads when the base class isn't a Node.
@@ -169,7 +169,7 @@ describe('Typings: StaticProps augmentation regardless of base class', () => {
 });
 
 describe('Typings: anonymous class (always module-scoped)', () => {
-  // Whichever value of the flag is passed, the layout is identical \u2014
+  // Whichever value of the flag is passed, the layout is identical —
   // `_Anon` is anonymous by convention and never gets a `declare global`
   // class declaration.
   for (const flag of [false, true]) {

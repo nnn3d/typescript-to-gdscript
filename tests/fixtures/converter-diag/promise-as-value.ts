@@ -1,4 +1,4 @@
-class Foo extends Node {
+export class Foo extends Node {
   async produce(): Promise<number> {
     return 1;
   }

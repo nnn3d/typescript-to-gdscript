@@ -1,11 +1,11 @@
 /**
- * Batch-level import injection for GD\u2192TS conversion.
+ * Batch-level import injection for GD→TS conversion.
  *
  * Runs AFTER every `.gd` source has been converted and written to
  * disk. Builds a real TS program over the generated `.ts` files,
  * pulls semantic diagnostics, and prepends `import { Foo } from "./foo.js"`
  * lines for every unresolved identifier that maps to a known user
- * class. Much more precise than the previous per-file regex \u2014 names
+ * class. Much more precise than the previous per-file regex — names
  * appearing only inside comments or string literals don't trigger
  * a TS 2304/2503 diagnostic, so they don't produce phantom imports.
  *
@@ -42,7 +42,7 @@ export interface InjectMissingImportsOptions {
   generateGlobalClassTypes: boolean;
   /**
    * Optional `tsconfig.json` to drive the diagnostic program. When
-   * unset a minimal default config (ES2022 / NodeNext-ish) is used \u2014
+   * unset a minimal default config (ES2022 / NodeNext-ish) is used —
    * sufficient for identifier-resolution diagnostics, which don't
    * depend on strictness or target.
    */
@@ -74,9 +74,9 @@ export function injectMissingImports(
     tsConfigPath: options.tsConfigPath,
   });
 
-  // Build a `gdPath \u2192 tsPath` lookup so we can resolve a missing
+  // Build a `gdPath → tsPath` lookup so we can resolve a missing
   // user class's *actual* on-disk TS file (not just the gd path with
-  // its extension swapped). Crucial when `cfg.gdDir != cfg.tsDir` \u2014
+  // its extension swapped). Crucial when `cfg.gdDir != cfg.tsDir` —
   // the gd and ts trees diverge and the TS file lives in `tsDir`,
   // not next to the gd source. Falls back to the extension-swap for
   // user classes whose `.gd` was outside the converted batch (rare,
@@ -94,7 +94,7 @@ export function injectMissingImports(
     const missing = collectMissingClassNames(diags, userClasses, file);
     if (missing.size === 0) continue;
 
-    // Stable alphabetical order \u2014 matches the prior regex-based
+    // Stable alphabetical order — matches the prior regex-based
     // implementation and keeps diffs predictable across runs.
     const sortedNames = Array.from(missing).sort();
     const importLines = sortedNames.map((name) => {
@@ -133,7 +133,7 @@ export function injectMissingImportsForProject(
   injectMissingImports(files, userClasses, options);
 }
 
-// \u2500\u2500\u2500 Helpers \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
+// ─── Helpers ────────────────────────────────────────────────
 
 function collectMissingClassNames(
   diags: readonly ts.Diagnostic[],
@@ -152,7 +152,7 @@ function collectMissingClassNames(
     if (!m) continue;
     const name = m[1]!;
     const info = userClasses.get(name);
-    if (!info?.filePath) continue;          // unknown class \u2014 not ours to fix
+    if (!info?.filePath) continue;          // unknown class — not ours to fix
     if (sameFile(info.filePath, file.gdPath)) continue; // self
     out.add(name);
   }
@@ -164,7 +164,7 @@ function collectMissingClassNames(
  * `targetTs` from `currentTs`. Project default is
  * `moduleResolution: "classic"` (set by the `tstogd init` template),
  * which resolves bare-name specifiers via the `.ts` extension search
- * order \u2014 so we strip the trailing `.ts` and emit no extension at all.
+ * order — so we strip the trailing `.ts` and emit no extension at all.
  * `relative()` returns a bare filename for siblings, so we also force
  * a leading `./` to keep TypeScript from treating the specifier as
  * a non-relative module.

@@ -18,6 +18,7 @@
  *     duplicate persist).
  */
 
+import ts from 'typescript';
 import { describe, it, expect, afterEach } from 'vitest';
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
 import { basename, join } from 'path';
@@ -183,6 +184,91 @@ describe('ts-plugin: passthrough', () => {
     ]);
     const diags = p.ls.getSemanticDiagnostics(p.abs('other/Outside.ts'));
     expect(fixtureDiagnostics(diags)).toEqual([]);
+  });
+});
+
+// ─── Namespace+class merge resolution ────────────────────────
+//
+// Users express class-level enums / inner classes via an explicit
+// `export namespace Foo { ... } export class Foo` pair — TypeScript's
+// native declaration merging makes `Foo.X` resolve cross-file and
+// `this.X` resolve on instance (matching GDScript's `self.X`). No
+// plugin-side snapshot transform — these tests verify the in-scope
+// files get the expected TS resolution AND that out-of-scope files
+// aren't affected.
+
+describe('ts-plugin: namespace+class merge resolution', () => {
+  let p: HarnessProject | undefined;
+  afterEach(() => { p?.dispose(); p = undefined; });
+
+  /**
+   * Drop tstogd diagnostics + diagnostics that only exist because the
+   * harness's stub library lacks `Node` etc. We're asserting on what
+   * the TypeScript checker produces for the merge pattern, not on the
+   * dummy globals the harness ships with.
+   */
+  function tsErrorCodes(diags: readonly ts.Diagnostic[]): number[] {
+    return diags
+      .filter((d) => d.source !== 'tstogd' && d.category === ts.DiagnosticCategory.Error)
+      .map((d) => d.code);
+  }
+
+  it('explicit `export namespace Foo` paired with `export class Foo` resolves Foo.X', () => {
+    p = makeProject([
+      {
+        path: 'src/globals.d.ts',
+        content: 'declare class Node {} declare type int = number;\n',
+      },
+      {
+        path: 'src/Foo.ts',
+        content: [
+          'export namespace Foo {',
+          '  export const MAX = 100;',
+          '  export enum State { IDLE, RUNNING }',
+          '  export class Inner { value: int = 0; }',
+          '}',
+          '',
+          'export class Foo extends Node {',
+          '  hp: int = Foo.MAX;',
+          '  state: Foo.State = Foo.State.IDLE;',
+          '  inv: Foo.Inner = new Foo.Inner();',
+          '}',
+        ].join('\n'),
+      },
+    ]);
+
+    const diags = p.ls.getSemanticDiagnostics(p.abs('src/Foo.ts'));
+    const codes = tsErrorCodes(diags);
+    expect(
+      codes.includes(2339),
+      `Expected no TS2339 (property doesn't exist) — got codes ${codes.join(',')} ` +
+        `with messages:\n` +
+        diags
+          .filter((d) => d.code === 2339)
+          .map((d) => `  TS${d.code}: ${messageTextOf(d)}`)
+          .join('\n'),
+    ).toBe(false);
+  });
+
+  it('files outside scope (other/Outside.ts) still surface real errors', () => {
+    // The plugin's diagnostic filter only touches in-scope files
+    // (under `tsDir`). Out-of-scope .ts files pass through the inner
+    // LS unchanged — `Outside.MISSING` remains a genuine TS2339.
+    p = makeProject([
+      {
+        path: 'other/Outside.ts',
+        content: [
+          'class Outside {',
+          '  static method() { return Outside.MISSING; }',
+          '}',
+          'export {};',
+        ].join('\n'),
+      },
+    ]);
+
+    const diags = p.ls.getSemanticDiagnostics(p.abs('other/Outside.ts'));
+    const codes = diags.map((d) => d.code);
+    expect(codes).toContain(2339);
   });
 });
 

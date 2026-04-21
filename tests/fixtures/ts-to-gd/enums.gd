@@ -1,8 +1,9 @@
 extends Node
 class_name MyClass
 
-enum Direction {UP, DOWN, LEFT, RIGHT}
-enum State {IDLE, WALKING, RUNNING = 5}
+enum Direction { UP, DOWN, LEFT, RIGHT }
+
+enum State { IDLE, WALKING, RUNNING = 5 }
 
 class Weapon extends Node:
 	var damage: int = 10

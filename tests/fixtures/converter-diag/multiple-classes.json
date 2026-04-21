@@ -1,1 +1,1 @@
-[{ "message": "Only one class", "severity": "error" }]
+[{ "message": "Only one `export class` is allowed per file", "severity": "error" }]

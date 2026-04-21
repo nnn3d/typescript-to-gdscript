@@ -4,27 +4,17 @@ import type {
   TransformResult,
   TransformDiagnostic,
 } from '../common/index.ts';
-import {
-  tsTypeNodeToGdType,
-  isAnonymousClassName,
-} from '../common/index.ts';
 import { processImports, type ImportEntry } from './imports.ts';
 import { GDScriptEmitter } from './emitter.ts';
 import type { TransformerDelegate } from './transformer-types.ts';
 import {
-  isSignalProperty,
-  isEnumProperty,
-  visitSignalDeclaration,
-  visitEnumDeclaration,
-  visitPropertyDeclaration,
-  visitAccessorPair,
-  visitGdGetsetProperty as visitGdGetsetImpl,
-  visitInnerClassDeclaration as visitInnerClassImpl,
-  visitConstructor as visitConstructorImpl,
-  visitMethodDeclaration as visitMethodImpl,
-  getDecorators as getDecoratorsImpl,
-  toPascalCase,
-} from './class-members.ts';
+  emitClassHeader,
+  emitClassMembers,
+} from './class-body.ts';
+import {
+  collectLiftedNames,
+  emitFileScopeNamespace,
+} from './file-scope.ts';
 import { emitParameters as emitParametersImpl } from './parameters.ts';
 import {
   visitBlock as visitBlockImpl,
@@ -47,9 +37,19 @@ export interface TransformerOptions {
 /**
  * Transforms a TypeScript AST into GDScript code.
  *
- * The class acts as the orchestrator: it owns the emitter and context,
- * implements TransformerDelegate, and delegates expression/statement/parameter
- * handling to dedicated module functions.
+ * The class acts as the orchestrator: it owns the emitter and
+ * context, implements `TransformerDelegate`, and dispatches each
+ * top-level statement to the appropriate module emitter.
+ *
+ * Major responsibilities split across modules:
+ *   - `class-body.ts`   — `emitClassHeader` + `emitClassMembers`
+ *   - `file-scope.ts`   — `emitFileScopeNamespace` + the four
+ *                          lifting emitters (const / enum / class /
+ *                          namespace body) + `collectLiftedNames`
+ *   - `class-members.ts` — per-member emitters (signal / enum /
+ *                          property / method / ctor / accessor)
+ *   - `expressions.ts` / `statements.ts` / `parameters.ts` —
+ *                          expression, statement, and parameter emitters
  */
 export class TsToGdTransformer implements TransformerDelegate {
   readonly ctx: TransformContext;
@@ -65,7 +65,7 @@ export class TsToGdTransformer implements TransformerDelegate {
   private _currentAccessorName: string | null = null;
   /**
    * Local-name → import entry, populated once at the start of
-   * `transform()` and reused across `visitClassDeclaration` (extends
+   * `transform()` and reused across `emitClassHeader` (extends
    * rewrite) and field-conflict checks. Empty when the file has no
    * preload-worthy imports — see `processImports` for the inclusion
    * rules.
@@ -76,6 +76,15 @@ export class TsToGdTransformer implements TransformerDelegate {
    * `class_name` and the class body. Order preserved from source.
    */
   private _importConsts: string[] = [];
+  /**
+   * Names that lift into the script class body — file-scope `const`,
+   * `enum`, `class`, and the same names re-exposed via a paired
+   * `namespace`. Class fields/methods that collide with any of these
+   * trigger a hard error during `emitClassHeader`. Populated once
+   * per file in `visitSourceFile` before any emission begins so the
+   * collision check can run before the first body line is written.
+   */
+  private _liftedNames: Set<string> = new Set();
 
   get currentClassName(): string {
     return this._currentClassName;
@@ -269,387 +278,136 @@ export class TsToGdTransformer implements TransformerDelegate {
   }
 
   // ---- Source File ----
+  //
+  // Conversion model: the GDScript file IS the script class. The file's
+  // header (`extends`, `class_name`, import-driven `const … = preload(…)`
+  // lines) gets emitted once at the very top of the GD output —
+  // regardless of where the user's `class Foo {}` appears in the TS
+  // source. Then we walk the file's top-level statements in source
+  // order, dispatching each to the right emitter; the script class
+  // statement triggers a walk of its body members.
+  //
+  // File-scope statements OUTSIDE an `export namespace Foo { ... }`
+  // block error with a migration-guidance message — users expressing
+  // class-level consts / enums / inner classes must wrap them in the
+  // script-class-paired namespace. Inside the namespace, the
+  // `file-scope.ts` emitters take over.
 
   private visitSourceFile(sf: ts.SourceFile): void {
-    // Check single class per file
+    // Identify the script class — it's the single `export class` in
+    // the file. Non-exported file-scope classes are inner-class lifts
+    // (handled inside the namespace dispatch in `file-scope.ts`), not
+    // duplicate script-class candidates.
     const classDecls = sf.statements.filter(ts.isClassDeclaration);
-    if (classDecls.length > 1) {
-      for (const cls of classDecls.slice(1)) {
+    const exportedClasses = classDecls.filter((c) =>
+      c.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword),
+    );
+    if (exportedClasses.length > 1) {
+      for (const cls of exportedClasses.slice(1)) {
         this.addDiagnostic(
           cls,
           'error',
-          'Only one class per file is allowed (GDScript file structure)',
+          'Only one `export class` is allowed per file (it becomes the script class). Other file-scope classes must NOT be exported — they lift into the script class as inner classes.',
         );
       }
     }
+    const scriptClass = exportedClasses[0];
+    if (!scriptClass) {
+      // No exported class — nothing to convert. The file may only
+      // re-export types/interfaces, or it may genuinely be empty.
+      // We don't error here because some files (e.g. type-only modules)
+      // are intentionally class-less; the typings layer flags missing
+      // script classes when they're actually consumed.
+      return;
+    }
 
+    // Pre-walk: collect every name that lifts into the script class
+    // body (file-scope const/enum/class + direct namespace exports).
+    // Used by `emitClassHeader` to flag any class field/method whose
+    // name collides with one of these.
+    this._liftedNames = collectLiftedNames(sf, scriptClass);
+
+    // Leading comments on the script class — e.g. `@gd.eval: @tool`
+    // magic comments — must surface BEFORE the header (`@tool`
+    // precedes `extends`/`class_name` in idiomatic GDScript). Emitted
+    // once here; `emitClassMembers` does NOT re-emit them.
+    this.emitLeadingComments(scriptClass);
+
+    // Emit the class header up front. Imports were processed in
+    // `transform()` and surface here as `_importConsts` lines. The
+    // header emitter returns the resolved class name so we can
+    // update `_currentClassName` — downstream type lookups
+    // (`Foo.X` qualifier resolution) read it off the delegate.
+    this._currentClassName = emitClassHeader(scriptClass, this, {
+      importMap: this._importMap,
+      liftedNames: this._liftedNames,
+      importConsts: this._importConsts,
+    });
+
+    // Top-down dispatch over file statements. The script class
+    // statement triggers body emission; file-scope lifts inside the
+    // script-class-paired namespace flow through `emitFileScopeNamespace`.
     for (const statement of sf.statements) {
-      if (ts.isClassDeclaration(statement)) {
-        this.emitLeadingComments(statement);
-        this.visitClassDeclaration(statement);
-      } else if (ts.isImportDeclaration(statement)) {
-        // Imports are type-only in this model; skip
-      } else if (
+      if (ts.isImportDeclaration(statement)) continue;
+      if (
         ts.isTypeAliasDeclaration(statement) ||
         ts.isInterfaceDeclaration(statement)
       ) {
-        // Type declarations are TS-only; skip
-      } else if (
+        continue;
+      }
+      if (
         ts.isExportDeclaration(statement) ||
         ts.isExportAssignment(statement)
       ) {
-        // Exports are TS-only; skip
-      } else {
+        continue;
+      }
+      if (ts.isClassDeclaration(statement)) {
+        if (statement === scriptClass) {
+          emitClassMembers(statement, this);
+        } else {
+          // File-scope (non-script) classes are no longer supported
+          // outside a namespace. Wrap them in an
+          // `export namespace ScriptClass { ... }` block so the
+          // member dispatch lifts them as GDScript inner classes.
+          const name = statement.name?.text ?? '<anonymous>';
+          this.addDiagnostic(
+            statement,
+            'error',
+            `File-scope class '${name}' is not supported. Move it inside an \`export namespace ${scriptClass.name?.text ?? 'ScriptClass'} { ... }\` block — its members will lift into the GDScript script class as an inner class.`,
+          );
+        }
+        continue;
+      }
+      if (ts.isVariableStatement(statement)) {
+        const declNames = statement.declarationList.declarations
+          .map((d) => (d.name && ts.isIdentifier(d.name) ? d.name.text : '?'))
+          .join(', ');
         this.addDiagnostic(
           statement,
           'error',
-          `Top-level statement outside class is not supported: ${ts.SyntaxKind[statement.kind]}`,
+          `File-scope \`const\`/\`let\`/\`var\` (${declNames}) is not supported. Move it inside an \`export namespace ${scriptClass.name?.text ?? 'ScriptClass'} { export const ... }\` block to lift into the GDScript script class as a class const.`,
         );
+        continue;
       }
-    }
-  }
-
-  // ---- Class Declaration ----
-
-  private visitClassDeclaration(node: ts.ClassDeclaration): void {
-    const pos = this.getLineAndCol(node);
-
-    // abstract class -> @abstract annotation before extends/class_name
-    const isAbstract = node.modifiers?.some(
-      (m) => m.kind === ts.SyntaxKind.AbstractKeyword,
-    );
-    if (isAbstract) {
-      this.emitter.writeLine('@abstract', pos.line, pos.col);
-    }
-
-    // extends — rewritten to `extends "res://…"` when the base type
-    // resolves to an imported anonymous class (which has no
-    // `class_name`, so a string-literal path is the only valid form).
-    // For non-anonymous and same-file extends, emit the bare identifier.
-    if (node.heritageClauses) {
-      for (const clause of node.heritageClauses) {
-        if (
-          clause.token === ts.SyntaxKind.ExtendsKeyword &&
-          clause.types.length > 0
-        ) {
-          const baseType = clause.types[0]!;
-          const baseText = baseType.expression.getText(this.ctx.sourceFile);
-          const importedAnon = this._importMap.get(baseText);
-          const extendsClause =
-            importedAnon && importedAnon.isAnonymous
-              ? `extends "${importedAnon.resPath}"`
-              : `extends ${baseText}`;
-          this.emitter.writeLine(extendsClause, pos.line, pos.col);
-        }
+      if (ts.isEnumDeclaration(statement)) {
+        this.addDiagnostic(
+          statement,
+          'error',
+          `File-scope \`enum ${statement.name.text}\` is not supported. Move it inside an \`export namespace ${scriptClass.name?.text ?? 'ScriptClass'} { export enum ${statement.name.text} { ... } }\` block to lift into the GDScript script class as an enum.`,
+        );
+        continue;
       }
-    }
-
-    // class_name emission rules under the new naming convention:
-    //   - `_FilenameInUpperCamel`  → anonymous; do NOT emit `class_name`
-    //   - everything else          → emit `class_name <name>` verbatim
-    //
-    // `G_` is the one-way escape applied during GD→TS conversion as a
-    // fallback for the rare GD `class_name _Foo` that would otherwise
-    // collide with the anonymous-class convention on the TS side. It
-    // is NOT undone on TS→GD — once the user has `G_Foo` in their TS
-    // source, that becomes the canonical name everywhere (the emitted
-    // GD has `class_name G_Foo`). Treating it as a normal identifier
-    // keeps the round-trip predictable: whatever TS shows is what the
-    // user reads in the .gd file too.
-    const className = node.name?.getText(this.ctx.sourceFile) ?? '';
-    this._currentClassName = className;
-    if (className && !isAnonymousClassName(className)) {
-      this.emitter.writeLine(
-        `class_name ${className}`,
-        pos.line,
-        pos.col,
+      if (ts.isModuleDeclaration(statement)) {
+        // TS namespace at file scope. Must pair with the script class
+        // by name — its members lift into the script class body.
+        emitFileScopeNamespace(statement, scriptClass, this, this._importMap);
+        continue;
+      }
+      this.addDiagnostic(
+        statement,
+        'error',
+        `Top-level statement outside class is not supported: ${ts.SyntaxKind[statement.kind]}`,
       );
     }
-
-    // `const X = preload("res://…")` lines for renamed and anonymous
-    // imports. Emitted between `class_name`/`extends` and the class
-    // body — the conventional spot for top-level `const` in GDScript.
-    if (this._importConsts.length > 0) {
-      this.emitter.writeEmptyLine();
-      for (const line of this._importConsts) {
-        this.emitter.writeLine(line, pos.line, pos.col);
-      }
-    }
-
-    // Hard-error any class field whose name collides with an imported
-    // local (renamed class or anonymous class). The `const X = preload`
-    // we just emitted would conflict with `var X` in GD — so it's
-    // better to surface this as a structured diagnostic anchored at
-    // the offending field's source location than to let GD spit out
-    // a confusing parse error.
-    for (const member of node.members) {
-      if (
-        (ts.isPropertyDeclaration(member) || ts.isMethodDeclaration(member)) &&
-        member.name &&
-        ts.isIdentifier(member.name)
-      ) {
-        const name = member.name.text;
-        if (this._importMap.has(name)) {
-          this.addDiagnostic(
-            member.name,
-            'error',
-            `Field/method name "${name}" conflicts with an imported class of the same name. Rename the field or the import alias.`,
-          );
-        }
-      }
-    }
-
-    this.emitter.writeEmptyLine();
-
-    // Emit members preserving declaration order.
-    // All members (signals, enums, properties, methods, inner classes, constructor)
-    // are emitted in their original interleaved order.
-    type OrderedMember =
-      | { kind: 'signal'; node: ts.PropertyDeclaration }
-      | { kind: 'enum'; node: ts.PropertyDeclaration }
-      | { kind: 'property'; node: ts.PropertyDeclaration }
-      | { kind: 'method'; node: ts.MethodDeclaration }
-      | { kind: 'constructor'; node: ts.ConstructorDeclaration }
-      | { kind: 'innerClass'; node: ts.PropertyDeclaration }
-      | {
-          kind: 'accessor';
-          name: string;
-          get?: ts.GetAccessorDeclaration;
-          set?: ts.SetAccessorDeclaration;
-          node: ts.Node;
-        };
-    const orderedMembers: OrderedMember[] = [];
-
-    for (const member of node.members) {
-      if (ts.isPropertyDeclaration(member)) {
-        if (this.isSignalProperty(member)) {
-          orderedMembers.push({ kind: 'signal', node: member });
-        } else if (this.isEnumProperty(member)) {
-          orderedMembers.push({ kind: 'enum', node: member });
-        } else if (
-          member.initializer &&
-          ts.isClassExpression(member.initializer)
-        ) {
-          orderedMembers.push({ kind: 'innerClass', node: member });
-        } else {
-          orderedMembers.push({ kind: 'property', node: member });
-        }
-      } else if (ts.isMethodDeclaration(member)) {
-        orderedMembers.push({ kind: 'method', node: member });
-      } else if (ts.isConstructorDeclaration(member)) {
-        orderedMembers.push({ kind: 'constructor', node: member });
-      } else if (
-        ts.isGetAccessorDeclaration(member) ||
-        ts.isSetAccessorDeclaration(member)
-      ) {
-        // Pair `get X` and `set X` with the same name into one entry so they
-        // emit as a single GDScript `var X: get: ... set(v): ...` block.
-        const name =
-          member.name && ts.isIdentifier(member.name)
-            ? member.name.text
-            : undefined;
-        if (!name) continue;
-        const existing = orderedMembers.find(
-          (e) => e.kind === 'accessor' && e.name === name,
-        ) as
-          | {
-              kind: 'accessor';
-              name: string;
-              get?: ts.GetAccessorDeclaration;
-              set?: ts.SetAccessorDeclaration;
-              node: ts.Node;
-            }
-          | undefined;
-        if (existing) {
-          if (ts.isGetAccessorDeclaration(member)) existing.get = member;
-          else existing.set = member;
-        } else {
-          orderedMembers.push({
-            kind: 'accessor',
-            name,
-            get: ts.isGetAccessorDeclaration(member) ? member : undefined,
-            set: ts.isSetAccessorDeclaration(member) ? member : undefined,
-            node: member,
-          } as OrderedMember);
-        }
-      }
-    }
-
-    // Emit members in original declaration order
-    let lastEmittedTrailingBlank = false;
-    let lastWasFunc = false;
-    for (let i = 0; i < orderedMembers.length; i++) {
-      const entry = orderedMembers[i]!;
-      const isLast = i === orderedMembers.length - 1;
-
-      // A "function-like" entry -- methods, constructors, accessors, and
-      // properties initialized via `gd.getset` -- should be surrounded by
-      // blank lines for readability.
-      const isGdGetsetProp =
-        entry.kind === 'property' &&
-        entry.node.initializer !== undefined &&
-        this.isGdHelperCall(entry.node.initializer, 'getset');
-      const isFunc =
-        entry.kind === 'method' ||
-        entry.kind === 'constructor' ||
-        entry.kind === 'accessor' ||
-        isGdGetsetProp;
-      if (
-        i > 0 &&
-        !lastEmittedTrailingBlank &&
-        (isFunc || lastWasFunc || entry.kind === 'innerClass')
-      ) {
-        this.emitter.writeEmptyLine();
-      }
-
-      lastEmittedTrailingBlank = false;
-
-      switch (entry.kind) {
-        case 'signal':
-          this.emitLeadingComments(entry.node);
-          this.visitSignalDeclaration(entry.node);
-          break;
-        case 'enum':
-          this.emitLeadingComments(entry.node);
-          this.visitEnumDeclaration(entry.node);
-          break;
-        case 'property':
-          this.emitLeadingComments(entry.node);
-          this.visitPropertyDeclaration(entry.node);
-          if (isGdGetsetProp && !isLast) {
-            this.emitter.writeEmptyLine();
-            lastEmittedTrailingBlank = true;
-          }
-          break;
-        case 'method':
-          this.emitLeadingComments(entry.node);
-          this.visitMethodDeclaration(entry.node);
-          if (!isLast) {
-            this.emitter.writeEmptyLine();
-            lastEmittedTrailingBlank = true;
-          }
-          break;
-        case 'constructor':
-          this.emitLeadingComments(entry.node);
-          this.visitConstructor(entry.node);
-          if (!isLast) {
-            this.emitter.writeEmptyLine();
-            lastEmittedTrailingBlank = true;
-          }
-          break;
-        case 'innerClass':
-          this.emitLeadingComments(entry.node);
-          this.visitPropertyDeclaration(entry.node);
-          if (!isLast) {
-            this.emitter.writeEmptyLine();
-            lastEmittedTrailingBlank = true;
-          }
-          break;
-        case 'accessor':
-          this.visitAccessorPair(entry.name, entry.get, entry.set);
-          if (!isLast) {
-            this.emitter.writeEmptyLine();
-            lastEmittedTrailingBlank = true;
-          }
-          break;
-      }
-
-      lastWasFunc = isFunc;
-    }
-
-    // Emit trailing comments before the class closing brace
-    const closeBrace = node.getLastToken();
-    if (closeBrace) {
-      const sourceText = this.ctx.sourceFile.getFullText();
-      const ranges = ts.getLeadingCommentRanges(sourceText, closeBrace.getFullStart());
-      if (ranges && ranges.length > 0) {
-        this.emitter.writeEmptyLine();
-        this.emitLeadingComments(closeBrace);
-      }
-    }
-  }
-
-  // ---- Inline Comments ----
-
-  private emitInlineComments(node: ts.Node): void {
-    const sourceText = this.ctx.sourceFile.getFullText();
-    const ranges = ts.getTrailingCommentRanges(sourceText, node.getEnd());
-    if (!ranges) return;
-
-    for (const range of ranges) {
-      const commentText = sourceText.slice(range.pos, range.end);
-      const { line, character } =
-        this.ctx.sourceFile.getLineAndCharacterOfPosition(range.pos);
-      if (range.kind === ts.SyntaxKind.SingleLineCommentTrivia) {
-        const content = commentText.replace(/^\/\/\s?/, '');
-        this.emitter.writeLine(`# ${content}`, line + 1, character);
-      }
-    }
-  }
-
-  // ---- Class Members (delegated to class-members.ts) ----
-
-  private isSignalProperty(node: ts.PropertyDeclaration): boolean {
-    return isSignalProperty(node, this);
-  }
-
-  private visitSignalDeclaration(node: ts.PropertyDeclaration): void {
-    visitSignalDeclaration(node, this);
-  }
-
-  private isEnumProperty(node: ts.PropertyDeclaration): boolean {
-    return isEnumProperty(node, this);
-  }
-
-  private visitEnumDeclaration(node: ts.PropertyDeclaration): void {
-    visitEnumDeclaration(node, this);
-  }
-
-  private visitPropertyDeclaration(node: ts.PropertyDeclaration): void {
-    visitPropertyDeclaration(node, this);
-  }
-
-  private visitAccessorPair(
-    name: string,
-    getNode: ts.GetAccessorDeclaration | undefined,
-    setNode: ts.SetAccessorDeclaration | undefined,
-  ): void {
-    visitAccessorPair(name, getNode, setNode, this);
-  }
-
-  private visitGdGetsetProperty(
-    name: string, node: ts.PropertyDeclaration, call: ts.CallExpression,
-  ): void {
-    visitGdGetsetImpl(name, node, call, this);
-  }
-
-  private visitInnerClassDeclaration(
-    name: string, classExpr: ts.ClassExpression, property: ts.PropertyDeclaration,
-  ): void {
-    visitInnerClassImpl(name, classExpr, property, this);
-  }
-
-  // ---- Constructor -> _init ----
-
-  private visitConstructor(node: ts.ConstructorDeclaration): void {
-    visitConstructorImpl(node, this);
-  }
-
-  // ---- Methods ----
-
-  private visitMethodDeclaration(node: ts.MethodDeclaration): void {
-    visitMethodImpl(node, this);
-  }
-
-  // ---- Decorators ----
-
-  private getDecorators(node: ts.HasDecorators): string[] {
-    return getDecoratorsImpl(node, this);
-  }
-
-  // ---- Helpers ----
-
-  private toPascalCase(str: string): string {
-    return toPascalCase(str);
   }
 }

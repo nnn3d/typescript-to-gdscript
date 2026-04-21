@@ -45,11 +45,11 @@ export interface ConverterOptions {
    * global TS scope (`declare global { class X extends ScriptClass }`),
    * matching pre-refactor behavior. When false (default), classes are
    * module-scoped and consumers must `import` them — this drives the
-   * TS\u2192GD converter to emit `const X = preload("res://\u2026")` for
+   * TS→GD converter to emit `const X = preload("res://…")` for
    * renamed/anonymous imports and to skip-emit imports of globally
    * available GD classes.
    *
-   * Addons (GD\u2192TS conversion) always generate global types regardless
+   * Addons (GD→TS conversion) always generate global types regardless
    * of this flag — addons are consumed as a unit and need to be visible
    * without explicit imports.
    */

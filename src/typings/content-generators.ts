@@ -345,8 +345,8 @@ export function generateScriptTypingContent(
 
   // `StaticProps` exposes the user's class's static fields as instance
   // members (so `this.MAX_HEALTH` resolves on a live instance). This
-  // mirrors GDScript's behavior \u2014 statics are reachable from `self`
-  // \u2014 and applies to EVERY class, regardless of whether it extends
+  // mirrors GDScript's behavior — statics are reachable from `self`
+  // — and applies to EVERY class, regardless of whether it extends
   // Node. The Node-specific typed `get_node`/`get_parent` overloads
   // below are conditional on `extendsNode`.
   lines.push(`type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;\n`);
@@ -421,7 +421,11 @@ export function generateScriptTypingContent(
         lines.push(`    type ${e.name} = number & { readonly __brand: '${e.name}' };`);
       }
       for (const ic of innerClasses) {
-        lines.push(`    type ${ic.name} = InstanceType<typeof ScriptClass.${ic.name}>;`);
+        // File-scope `class X { ... }` lifts into the GD class as an
+        // inner class. In TS the class lives at file scope, so we
+        // alias via the type-only `import` to expose it under the
+        // `Foo.X` namespace name (matches what users wrote pre-Phase-1).
+        lines.push(`    type ${ic.name} = import("${tsModulePath}").${ic.name};`);
       }
       lines.push(`  }`);
       if (enums.length > 0) {
@@ -476,7 +480,11 @@ export function generateScriptTypingContent(
         lines.push(`    }`);
       }
       for (const ic of innerClasses) {
-        lines.push(`    type ${ic.name} = InstanceType<typeof ScriptClass.${ic.name}>;`);
+        // File-scope `class X { ... }` lifts into the GD class as an
+        // inner class. In TS the class lives at file scope, so we
+        // alias via the type-only `import` to expose it under the
+        // `Foo.X` namespace name (matches what users wrote pre-Phase-1).
+        lines.push(`    type ${ic.name} = import("${tsModulePath}").${ic.name};`);
       }
       lines.push(`  }`);
     }

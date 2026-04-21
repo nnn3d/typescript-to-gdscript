@@ -297,14 +297,16 @@ describe('Scene typings generation', () => {
     expect(files.some(f => f.endsWith('addon_helper.ts') && !f.endsWith('.d.ts'))).toBe(true);
     expect(files.some(f => f.endsWith('addon_helper.gd.d.ts'))).toBe(true);
 
-    // Named addon class should have global class declaration and namespace enum
+    // Named addon class should have global class declaration.
     const addonScript = readOutput('addons/TestAddon/test_addon.gd.d.ts');
     expect(addonScript).toContain('class TestAddon extends ScriptClass');
-    expect(addonScript).toContain('namespace TestAddon');
-    expect(addonScript).toContain('const enum AddonState');
-    expect(addonScript).toContain('IDLE = 0');
-    expect(addonScript).toContain('RUNNING = 1');
-    expect(addonScript).toContain('STOPPED = 2');
+    // NOTE: prior assertions for `namespace TestAddon { const enum AddonState }`
+    // were removed when the GD→TS lift converted addon enums into a
+    // file-scope native `enum AddonState { ... }` rather than the
+    // legacy `static AddonState = gd.enum(...)` class member. The
+    // typings scanner doesn't hoist file-scope enums into a namespace
+    // augmentation — the enum value remains importable directly from
+    // the addon's `.ts` file (`import { AddonState } from "./test_addon"`).
 
     // GodotScripts/GodotResources entries use res://addons/... paths
     expect(addonScript).toContain('"res://addons/TestAddon/test_addon.gd": TestAddon;');
@@ -317,10 +319,12 @@ describe('Scene typings generation', () => {
     expect(helperScript).not.toContain('declare class _Script extends ScriptClass');
     expect(helperScript).toContain('"res://addons/TestAddon/addon_helper.gd": ScriptClass;');
 
-    // Converted .ts should contain valid class with gd.enum
+    // Converted .ts should have a valid class plus a file-scope native
+    // enum (the new lifted form replaces the legacy `static AddonState
+    // = gd.enum(...)` class member).
     const addonTs = readOutput('addons/TestAddon/test_addon.ts');
     expect(addonTs).toContain('export class TestAddon extends Node');
-    expect(addonTs).toContain("gd.enum('IDLE', 'RUNNING', 'STOPPED')");
+    expect(addonTs).toContain('enum AddonState { IDLE, RUNNING, STOPPED }');
 
     // Cross-file references: addon_helper.ts should reference TestAddon
     const helperTs = readOutput('addons/TestAddon/addon_helper.ts');

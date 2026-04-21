@@ -39,24 +39,21 @@ export class GDScriptEmitter {
    * @param originalColumn Original source column (0-based), for source map
    */
   write(text: string, originalLine?: number, originalColumn?: number): void {
-    const lines = text.split('\n');
-
     if (
       originalLine !== undefined &&
       originalColumn !== undefined &&
       this.sourceMapper
     ) {
-      for (let lineNum = 0; lineNum < lines.length; lineNum++) {
-        this.sourceMapper.addMapping({
-          source: this.sourceFile,
-          originalLine: originalLine,
-          originalColumn: originalColumn,
-          generatedLine: this.currentLine + lineNum,
-          generatedColumn: this.currentColumn + lineNum,
-        });
-      }
+      this.sourceMapper.addMapping({
+        source: this.sourceFile,
+        originalLine,
+        originalColumn,
+        generatedLine: this.currentLine,
+        generatedColumn: this.currentColumn,
+      });
     }
 
+    const lines = text.split('\n');
     this.output.push(text);
     this.currentLine += lines.length - 1;
     this.currentColumn =
@@ -65,14 +62,14 @@ export class GDScriptEmitter {
         : this.currentColumn + lines.at(0)!.length;
   }
 
-  /** Write text followed by a newline */
+  /** Write text followed by a newline, with mapping at column 0 (line start). */
   writeLine(
     text: string,
-    originalLine?: number,
-    originalColumn?: number,
+    originalLine: number,
+    originalColumn: number,
   ): void {
-    this.writeIndent();
-    this.write(text, originalLine, originalColumn);
+    const indent = this.indentStr.repeat(this.indentLevel);
+    this.write(indent + text, originalLine, originalColumn);
     this.write('\n');
   }
 

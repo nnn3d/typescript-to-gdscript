@@ -6,6 +6,7 @@
 import ts from 'typescript';
 import { tsTypeNodeToGdType } from '../common/index.ts';
 import type { TransformerDelegate } from './transformer-types.ts';
+import { visitGdGetsetProperty } from './gd-getset.ts';
 
 // ── Signals ──────────────────────────────────────────────────
 
@@ -80,28 +81,22 @@ export function visitEnumDeclaration(
   node: ts.PropertyDeclaration,
   t: TransformerDelegate,
 ): void {
+  // The legacy `static X = gd.enum(...)` form is no longer supported.
+  // Use a native TS `enum X { ... }` declaration at file scope —
+  // it lifts into the script class as a GDScript `enum` via the
+  // file-scope-decl pipeline (Phase 1).
   const pos = t.getLineAndCol(node);
   const name = node.name.getText(t.ctx.sourceFile);
-  if (!node.initializer || !ts.isCallExpression(node.initializer)) return;
-
-  const args = node.initializer.arguments;
-  const enumValues: string[] = [];
-  for (const arg of args) {
-    if (ts.isStringLiteral(arg)) {
-      enumValues.push(arg.text);
-    } else if (ts.isArrayLiteralExpression(arg)) {
-      const elements = arg.elements;
-      if (elements.length >= 2 && ts.isStringLiteral(elements[0]!)) {
-        enumValues.push(
-          `${elements[0]!.text} = ${elements[1]!.getText(t.ctx.sourceFile)}`,
-        );
-      }
-    }
-  }
-  t.emitter.writeLine(
-    `enum ${toPascalCase(name)} {${enumValues.join(', ')}}`,
-    pos.line, pos.col,
-  );
+  t.ctx.diagnostics.push({
+    message:
+      `'static ${name} = gd.enum(...)' is no longer supported. ` +
+      `Use a native TS \`enum ${toPascalCase(name)} { ... }\` at file scope ` +
+      `(outside the script class) — it lifts into the GDScript class as an enum.`,
+    severity: 'error',
+    file: t.ctx.filePath,
+    line: pos.line,
+    column: pos.col,
+  });
 }
 
 // ── Properties ───────────────────────────────────────────────
@@ -113,9 +108,20 @@ export function visitPropertyDeclaration(
   const pos = t.getLineAndCol(node);
   const name = node.name.getText(t.ctx.sourceFile);
 
-  // Inner class
+  // Inner class via the legacy `static X = class { ... }` form is no
+  // longer supported. Use a file-scope `class X { ... }` declaration
+  // instead — it lifts into the script class as an inner class via
+  // the file-scope-decl pipeline (Phase 1).
   if (node.initializer && ts.isClassExpression(node.initializer)) {
-    visitInnerClassDeclaration(name, node.initializer, node, t);
+    t.ctx.diagnostics.push({
+      message:
+        `Inline 'static ${name} = class { ... }' is no longer supported. ` +
+        `Move the class to file scope: \`class ${name} { ... }\` outside the script class.`,
+      severity: 'error',
+      file: t.ctx.filePath,
+      line: pos.line,
+      column: pos.col,
+    });
     return;
   }
 
@@ -194,285 +200,36 @@ export function visitAccessorPair(
   t.setCurrentAccessorName(name);
 
   if (getNode?.body) {
-    t.emitter.writeLine('get:');
+    const getPos = t.getLineAndCol(getNode);
+    t.emitter.writeLine('get:', getPos.line, getPos.col);
     t.emitter.indent();
     for (const stmt of getNode.body.statements) t.visitStatement(stmt);
     t.emitter.dedent();
   } else {
-    t.emitter.writeLine('get:');
+    t.emitter.writeLine('get:', pos.line, pos.col);
     t.emitter.indent();
-    t.emitter.writeLine(`return ${name}`);
+    t.emitter.writeLine(`return ${name}`, pos.line, pos.col);
     t.emitter.dedent();
   }
 
   if (setNode?.body) {
+    const setPos = t.getLineAndCol(setNode);
     const paramName =
       setNode.parameters[0] && ts.isIdentifier(setNode.parameters[0].name)
         ? setNode.parameters[0].name.text
         : 'value';
-    t.emitter.writeLine(`set(${paramName}):`);
+    t.emitter.writeLine(`set(${paramName}):`, setPos.line, setPos.col);
     t.emitter.indent();
     for (const stmt of setNode.body.statements) t.visitStatement(stmt);
     t.emitter.dedent();
   } else {
-    t.emitter.writeLine('set(value):');
+    t.emitter.writeLine('set(value):', pos.line, pos.col);
     t.emitter.indent();
-    t.emitter.writeLine(`${name} = value`);
+    t.emitter.writeLine(`${name} = value`, pos.line, pos.col);
     t.emitter.dedent();
   }
 
   t.setCurrentAccessorName(savedAccessorName);
-  t.emitter.dedent();
-}
-
-// ── gd.getset() ──────────────────────────────────────────────
-
-export function visitGdGetsetProperty(
-  name: string,
-  node: ts.PropertyDeclaration,
-  call: ts.CallExpression,
-  t: TransformerDelegate,
-): void {
-  const pos = t.getLineAndCol(node);
-
-  if (call.arguments.length !== 1 || !ts.isObjectLiteralExpression(call.arguments[0]!)) {
-    t.addDiagnostic(call, 'error',
-      '`gd.getset()` requires a single object literal argument with `get` and `set` properties.');
-    return;
-  }
-  const objArg = call.arguments[0] as ts.ObjectLiteralExpression;
-
-  let valueExpr: ts.Expression | undefined;
-  let getExpr: ts.Expression | undefined;
-  let setExpr: ts.Expression | undefined;
-  let hasGetKey = false;
-  let hasSetKey = false;
-
-  for (const prop of objArg.properties) {
-    if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) continue;
-    const key = prop.name.text;
-    if (key === 'value') valueExpr = prop.initializer;
-    else if (key === 'get') { hasGetKey = true; getExpr = prop.initializer; }
-    else if (key === 'set') { hasSetKey = true; setExpr = prop.initializer; }
-  }
-
-  if (!hasGetKey || !hasSetKey) {
-    t.addDiagnostic(call, 'error',
-      '`gd.getset()` requires both `get` and `set` properties (use `null` for the default).');
-    return;
-  }
-
-  const getIsNull = getExpr !== undefined && getExpr.kind === ts.SyntaxKind.NullKeyword;
-  const setIsNull = setExpr !== undefined && setExpr.kind === ts.SyntaxKind.NullKeyword;
-
-  if (getIsNull && setIsNull) {
-    t.addDiagnostic(call, 'error',
-      '`gd.getset()`: at least one of `get` or `set` must be non-null.');
-    return;
-  }
-
-  const getIsInline = !getIsNull && getExpr !== undefined &&
-    (ts.isArrowFunction(getExpr) || ts.isFunctionExpression(getExpr));
-  const setIsInline = !setIsNull && setExpr !== undefined &&
-    (ts.isArrowFunction(setExpr) || ts.isFunctionExpression(setExpr));
-  const getIsRef = !getIsNull && !getIsInline;
-  const setIsRef = !setIsNull && !setIsInline;
-
-  if ((getIsInline && setIsRef) || (getIsRef && setIsInline)) {
-    t.addDiagnostic(call, 'error',
-      '`gd.getset()`: cannot mix inline `get`/`set` bodies with function-reference form.');
-    return;
-  }
-
-  const usingRefForm = getIsRef || setIsRef;
-
-  if (usingRefForm && valueExpr) {
-    t.addDiagnostic(call, 'error',
-      '`gd.getset()`: `value` default cannot be used with function-reference `get`/`set`.');
-    return;
-  }
-
-  // Resolve type annotation
-  let gdType = resolveGetsetType(call, node, setExpr, setIsNull, valueExpr, t);
-  const typePart = gdType ? `: ${gdType}` : '';
-  const valuePart = valueExpr ? ` = ${t.emitExpression(valueExpr)}` : '';
-
-  if (usingRefForm) {
-    const parts: string[] = [];
-    if (getIsRef) {
-      const fn = extractFunctionRefName(getExpr!);
-      if (!fn) {
-        t.addDiagnostic(call, 'error',
-          '`gd.getset()`: function-reference form requires `this.fn_name` expressions.');
-        return;
-      }
-      parts.push(`get = ${fn}`);
-    }
-    if (setIsRef) {
-      const fn = extractFunctionRefName(setExpr!);
-      if (!fn) {
-        t.addDiagnostic(call, 'error',
-          '`gd.getset()`: function-reference form requires `this.fn_name` expressions.');
-        return;
-      }
-      parts.push(`set = ${fn}`);
-    }
-    t.emitter.writeLine(`var ${name}${typePart}${valuePart}:`, pos.line, pos.col);
-    t.emitter.indent();
-    t.emitter.writeLine(parts.join(', '));
-    t.emitter.dedent();
-    return;
-  }
-
-  // Inline form
-  t.emitter.writeLine(`var ${name}${typePart}${valuePart}:`, pos.line, pos.col);
-  t.emitter.indent();
-
-  const savedAccessorName = t.currentAccessorName;
-  t.setCurrentAccessorName(name);
-
-  if (getIsInline) {
-    const getFn = getExpr as ts.ArrowFunction | ts.FunctionExpression;
-    t.emitter.writeLine('get:');
-    t.emitter.indent();
-    if (ts.isBlock(getFn.body)) {
-      for (const stmt of getFn.body.statements) t.visitStatement(stmt);
-    } else {
-      t.emitter.writeLine(`return ${t.emitExpression(getFn.body)}`);
-    }
-    t.emitter.dedent();
-  }
-
-  if (setIsInline) {
-    const setFn = setExpr as ts.ArrowFunction | ts.FunctionExpression;
-    const paramName =
-      setFn.parameters[0] && ts.isIdentifier(setFn.parameters[0].name)
-        ? setFn.parameters[0].name.text
-        : 'value';
-    t.emitter.writeLine(`set(${paramName}):`);
-    t.emitter.indent();
-    if (ts.isBlock(setFn.body)) {
-      for (const stmt of setFn.body.statements) t.visitStatement(stmt);
-    } else {
-      t.emitter.writeLine(t.emitExpression(setFn.body));
-    }
-    t.emitter.dedent();
-  }
-
-  t.setCurrentAccessorName(savedAccessorName);
-  t.emitter.dedent();
-}
-
-/** Resolve type for gd.getset: generic arg > property annotation > set param > value inference */
-function resolveGetsetType(
-  call: ts.CallExpression,
-  node: ts.PropertyDeclaration,
-  setExpr: ts.Expression | undefined,
-  setIsNull: boolean,
-  valueExpr: ts.Expression | undefined,
-  t: TransformerDelegate,
-): string | null {
-  let gdType: string | null = null;
-
-  if (call.typeArguments && call.typeArguments.length > 0) {
-    gdType = tsTypeNodeToGdType(
-      call.typeArguments[0]!, t.ctx.checker, t.ctx.sourceFile, t.currentClassName,
-    );
-  }
-  if (!gdType && node.type) {
-    gdType = tsTypeNodeToGdType(
-      node.type, t.ctx.checker, t.ctx.sourceFile, t.currentClassName,
-    );
-  }
-  if (!gdType && setExpr && !setIsNull) {
-    const setType = t.ctx.checker.getTypeAtLocation(setExpr);
-    const sigs = setType.getCallSignatures();
-    if (sigs.length > 0 && sigs[0]!.parameters.length > 0) {
-      const param = sigs[0]!.parameters[0]!;
-      const paramDecl = param.valueDeclaration;
-      if (paramDecl) {
-        const paramType = t.ctx.checker.getTypeOfSymbolAtLocation(param, paramDecl);
-        let cleaned = t.ctx.checker.typeToString(paramType, node, ts.TypeFormatFlags.NoTruncation)
-          .replace(/\s*\|\s*null$/, '').replace(/\s*\|\s*undefined$/, '').trim();
-        if (cleaned === 'number') cleaned = 'float';
-        else if (cleaned === 'string') cleaned = 'String';
-        else if (cleaned === 'boolean') cleaned = 'bool';
-        if (cleaned && !['any', 'unknown', 'error', '{}'].includes(cleaned)) gdType = cleaned;
-      }
-    }
-  }
-  if (!gdType && valueExpr) {
-    if (ts.isNumericLiteral(valueExpr)) {
-      const raw = valueExpr.getText(t.ctx.sourceFile);
-      gdType = raw.includes('.') ? 'float' : 'int';
-    } else {
-      const inferred = t.ctx.checker.getTypeAtLocation(valueExpr);
-      const widened = t.ctx.checker.getBaseTypeOfLiteralType(inferred);
-      let cleaned = t.ctx.checker.typeToString(widened, node, ts.TypeFormatFlags.NoTruncation)
-        .replace(/\s*\|\s*null$/, '').replace(/\s*\|\s*undefined$/, '').trim();
-      if (cleaned === 'number') cleaned = 'float';
-      else if (cleaned === 'string') cleaned = 'String';
-      else if (cleaned === 'boolean') cleaned = 'bool';
-      if (cleaned && !['any', 'unknown', 'error', '{}'].includes(cleaned)) gdType = cleaned;
-    }
-  }
-  return gdType;
-}
-
-function extractFunctionRefName(expr: ts.Expression): string | null {
-  if (
-    ts.isPropertyAccessExpression(expr) &&
-    expr.expression.kind === ts.SyntaxKind.ThisKeyword &&
-    ts.isIdentifier(expr.name)
-  ) return expr.name.text;
-  if (ts.isIdentifier(expr)) return expr.text;
-  return null;
-}
-
-// ── Inner Class ──────────────────────────────────────────────
-
-export function visitInnerClassDeclaration(
-  name: string,
-  classExpr: ts.ClassExpression,
-  property: ts.PropertyDeclaration,
-  t: TransformerDelegate,
-): void {
-  const pos = t.getLineAndCol(property);
-
-  const decorators = getDecorators(property, t);
-  for (const dec of decorators) t.emitter.writeLine(dec, pos.line, pos.col);
-
-  let extendsClause = '';
-  if (classExpr.heritageClauses) {
-    for (const clause of classExpr.heritageClauses) {
-      if (clause.token === ts.SyntaxKind.ExtendsKeyword && clause.types.length > 0) {
-        extendsClause = ` extends ${clause.types[0]!.expression.getText(t.ctx.sourceFile)}`;
-      }
-    }
-  }
-
-  t.emitter.writeLine(`class ${name}${extendsClause}:`, pos.line, pos.col);
-  t.emitter.indent();
-
-  let hasMembers = false;
-  for (const member of classExpr.members) {
-    if (ts.isMethodDeclaration(member)) {
-      if (hasMembers) t.emitter.writeEmptyLine();
-      visitMethodDeclaration(member, t);
-      hasMembers = true;
-    } else if (ts.isPropertyDeclaration(member)) {
-      if (isSignalProperty(member, t)) visitSignalDeclaration(member, t);
-      else if (isEnumProperty(member, t)) visitEnumDeclaration(member, t);
-      else visitPropertyDeclaration(member, t);
-      hasMembers = true;
-    } else if (ts.isConstructorDeclaration(member)) {
-      if (hasMembers) t.emitter.writeEmptyLine();
-      visitConstructor(member, t);
-      hasMembers = true;
-    }
-  }
-
-  if (!hasMembers) t.emitter.writeLine('pass');
   t.emitter.dedent();
 }
 
@@ -489,7 +246,7 @@ export function visitConstructor(
   if (node.body) {
     t.visitBlock(node.body);
   } else {
-    t.emitter.writeLine('pass');
+    t.emitter.writeLine('pass', pos.line, pos.col);
   }
   t.emitter.dedent();
 }
@@ -530,7 +287,7 @@ export function visitMethodDeclaration(
   if (node.body) {
     t.visitBlock(node.body);
   } else {
-    t.emitter.writeLine('pass');
+    t.emitter.writeLine('pass', pos.line, pos.col);
   }
   t.emitter.dedent();
 }

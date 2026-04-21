@@ -373,15 +373,16 @@ function emitGdMatchCase(
     }
   }
 
+  const casePos = t.getLineAndCol(obj);
   if (matchManyExpr && ts.isArrayLiteralExpression(matchManyExpr)) {
     // Multiple patterns: 1, 2, 3:
     const patterns = matchManyExpr.elements.map((e) =>
       emitMatchPatternExpr(t, e),
     );
-    t.emitter.writeLine(`${patterns.join(', ')}:`);
+    t.emitter.writeLine(`${patterns.join(', ')}:`, casePos.line, casePos.col);
   } else if (matchExpr) {
     const pattern = emitMatchPatternExpr(t, matchExpr);
-    t.emitter.writeLine(`${pattern}:`);
+    t.emitter.writeLine(`${pattern}:`, casePos.line, casePos.col);
   } else {
     return;
   }
@@ -390,14 +391,14 @@ function emitGdMatchCase(
   if (doBody) {
     const stmts = doBody.statements;
     if (stmts.length === 0) {
-      t.emitter.writeLine('pass');
+      t.emitter.writeLine('pass', casePos.line, casePos.col);
     } else {
       for (const stmt of stmts) {
         visitStatement(t, stmt);
       }
     }
   } else {
-    t.emitter.writeLine('pass');
+    t.emitter.writeLine('pass', casePos.line, casePos.col);
   }
   t.emitter.dedent();
 }
@@ -448,6 +449,7 @@ function emitGdMatchArrowCase(
 
   if (!matchExpr) return;
 
+  const arrowPos = t.getLineAndCol(arrow);
   // Build the pattern, replacing binding names with `var name`
   const bindingSet = new Set(bindings);
   const pattern = emitMatchPatternExpr(t, matchExpr, bindingSet);
@@ -455,23 +457,24 @@ function emitGdMatchArrowCase(
   if (whenExpr) {
     t.emitter.writeLine(
       `${pattern} when ${t.emitExpression(whenExpr)}:`,
+      arrowPos.line, arrowPos.col,
     );
   } else {
-    t.emitter.writeLine(`${pattern}:`);
+    t.emitter.writeLine(`${pattern}:`, arrowPos.line, arrowPos.col);
   }
 
   t.emitter.indent();
   if (doBody) {
     const stmts = doBody.statements;
     if (stmts.length === 0) {
-      t.emitter.writeLine('pass');
+      t.emitter.writeLine('pass', arrowPos.line, arrowPos.col);
     } else {
       for (const stmt of stmts) {
         visitStatement(t, stmt);
       }
     }
   } else {
-    t.emitter.writeLine('pass');
+    t.emitter.writeLine('pass', arrowPos.line, arrowPos.col);
   }
   t.emitter.dedent();
 }

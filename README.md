@@ -401,11 +401,17 @@ class Player extends CharacterBody2D {
 
 ### Enums
 
+Use a native TS `enum` at file scope — it lifts into the GDScript class as `enum Name { ... }`:
+
 ```typescript
-class Enemy extends Node2D {
-  State = gd.enum('IDLE', 'PATROL', ['ATTACK', 2]);
+enum State { IDLE, PATROL, ATTACK = 2 }
+
+export class Enemy extends Node2D {
+  current: State = State.IDLE;
 }
 ```
+
+The legacy `static X = gd.enum('A', 'B')` form is no longer supported.
 
 ### Math operations
 
@@ -841,6 +847,7 @@ Add to your project's `tsconfig.json`:
 | Option              | Type      | Description                                                                                                                                              |
 | ------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `debug`             | `boolean` | Emit verbose `[tstogd-plugin] TRACE` lines to the tsserver log. Off by default.                                                                          |
+| `debugLog`          | `string`  | File path. When set, plugin log + trace lines are appended there in addition to the tsserver log — easier than fishing trace lines out of `tsserver.log`. |
 | `disableGodotLint`  | `boolean` | Per-editor override for `tstogd.json`'s `disableGodotLint`. Set `true` to skip the async Godot pass in the IDE only; set `false` to force-enable it.     |
 
 Example — silence the Godot pass in the IDE without changing project-wide config:
@@ -866,11 +873,15 @@ Verify: the plugin logs `[tstogd-plugin] plugin loaded` on startup. WebStorm →
 
 1. **Inline diagnostics on the current buffer.** On every `getSemanticDiagnostics` query, the plugin runs `convertTsToGd` in-process using tsserver's own `ts.Program` (no fork, no IPC — just reuses the warm program + type checker). Converter diagnostics (conversion errors, type-errors, `||`/`&&` as value, `Promise` as value, etc.) appear as `ts.Diagnostic`s with `source: 'tstogd'` and codes in the `90000–90099` range.
 
-2. **Godot validation in the background.** After conversion, the plugin kicks off `validateGdFiles` asynchronously against a scratch `.gd` written under `<projectRoot>/.tstogd-plugin-scratch/`. When Godot finishes (~300–500ms later), the plugin merges its diagnostics and calls `refreshDiagnostics()` on the project — your IDE updates without you doing anything.
+2. **Augmentation-noise filtering.** When you use the `export namespace Foo { ... }` + `export class Foo` pattern (the way enums and inner classes are expressed in TypeScript for this project), TypeScript generates a few spurious diagnostic codes from the namespace+class merge. The plugin silently drops these for all in-scope files so you never see them in the IDE:
+   - `TS2434` / `TS2435` — "Namespace must precede the class declaration"
+   - `TS2449` — "Class used before its declaration"
 
-3. **Cancellation.** Typing another character while Godot is still running aborts the stale validation (both the subprocess and the superseded result) — no stale squiggles from a version you've already moved past.
+3. **Godot validation in the background.** After conversion, the plugin kicks off `validateGdFiles` asynchronously against the cache-folder `.gd` mirror. When Godot finishes (~300–500ms later), the plugin merges its diagnostics and calls `refreshDiagnostics()` on the project — your IDE updates without you doing anything.
 
-4. **Persistent-cache write-through.** Every live conversion updates the shared `ProjectCache` (keyed by buffer hash). When you save, `tstogd watch` / `tstogd convert` detects that the cache already holds the right bytes and promotes them with a single `rename()` — no double conversion.
+4. **Cancellation.** Typing another character while Godot is still running aborts the stale validation (both the subprocess and the superseded result) — no stale squiggles from a version you've already moved past.
+
+5. **Persistent-cache write-through.** Every live conversion updates the shared `ProjectCache` (keyed by buffer hash). When you save, `tstogd watch` / `tstogd convert` detects that the cache already holds the right bytes and promotes them with a single `rename()` — no double conversion.
 
 > **Note on navigation:** an earlier version of the plugin also redirected Go-to-Definition / Find-Usages between the generated `*.gd.d.ts` shadow classes and their real TypeScript sources. That feature was removed because WebStorm handles symbol navigation entirely through its own native indexer (it doesn't forward `definition` / `references` to tsserver), so the overrides had no effect there. In WebStorm, Ctrl+B on a generated class lands on its `*.gd.d.ts`; the `@see import("…")` JSDoc emitted alongside each shadow class takes you to the real source on the next Ctrl+B.
 

@@ -1,3 +1,27 @@
+/**
+ * Top-level GD→TS source-file emitter.
+ *
+ * Produces:
+ *   1. An optional `export namespace <ClassName> { ... }` block
+ *      containing lifted file-scope decls (consts, named enums,
+ *      inner classes). See `file-scope-emitter.ts` for the
+ *      individual emitters.
+ *   2. The `export class <ClassName> extends <Base> { ... }` that
+ *      corresponds to the GD script class. Class members (vars,
+ *      methods, signals, anonymous enums) stay inside this block.
+ *
+ * The two-block layout relies on TypeScript's native namespace+class
+ * merging so `ClassName.X` resolves cross-file, and — for consts,
+ * enums, and inner classes — forward TS→GD converts back into the
+ * script class body cleanly.
+ *
+ * Per-class state (member index, static classification, inferred
+ * types, class-level type names) is collected into a `ClassScope`
+ * via `buildClassScope` and installed on `ctx` via `withClassScope`
+ * — both from `class-scope.ts` — giving a single, exception-safe
+ * point for scope management.
+ */
+
 import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
 import {
   gdFilenameToAnonymousClassName,
@@ -8,36 +32,134 @@ import {
   resolveAllInheritedMembers,
   resolveInheritedMemberTypes,
 } from './context.ts';
-import { extractGdTypeName, inferExprType } from './type-inference.ts';
+import { buildClassScope, withClassScope } from './class-scope.ts';
 import { emitFunction, emitConstructor } from './functions.ts';
 import {
   emitClassVariable,
-  emitConstStatement,
   emitSignal,
   emitEnum,
   emitComment,
   emitBlockComment,
   emitAnnotationAsDecorator,
-  getAnnotations,
 } from './members.ts';
+import {
+  emitFileScopeConst,
+  emitFileScopeEnum,
+  emitFileScopeClass,
+} from './file-scope-emitter.ts';
 
 // ─── Source File ─────────────────────────────────────────────
 
 export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
-  const lines: string[] = [];
+  // First — resolve the script class's identity (name, extends,
+  // abstract-ness) from the file's header statements. These drive
+  // both the `ClassScope` we're about to build AND the eventual
+  // `export class ...` header line.
+  const header = scanScriptClassHeader(root);
+  const className =
+    header.className || gdFilenameToAnonymousClassName(ctx.filePath);
+
+  // Build the scope from the file's top-level statements. Non-member
+  // children (extends / class_name / annotations / comments) are
+  // ignored by the collector, so passing the full list is safe.
+  const scope = buildClassScope(className, root.namedChildren, ctx);
+  if (header.extendsClass) {
+    const inherited = resolveAllInheritedMembers(
+      header.extendsClass,
+      ctx.userClasses,
+      ctx.registry,
+    );
+    for (const name of inherited) scope.classMembers.add(name);
+    resolveInheritedMemberTypes(
+      header.extendsClass,
+      ctx.userClasses,
+      scope.classMemberTypes,
+    );
+  }
+
+  // Everything that emits member / lifted-decl lines needs to see
+  // THIS class's scope on `ctx`. The wrapper installs the scope on
+  // entry and guarantees restore on exit via try/finally.
+  const { memberLines, fileScopeLines } = withClassScope(ctx, scope, () =>
+    emitScriptClassBody(root, ctx, header),
+  );
+
+  // Godot defaults to `RefCounted` when a class has no explicit
+  // `extends` statement. Make it explicit on the TS side so the
+  // generated `.d.ts` typings carry correct inherited-member info —
+  // otherwise consumers would see `class Foo {}` and lose access to
+  // `RefCounted`'s methods (`reference`, `unreference`, etc.).
+  const resolvedExtends = header.extendsClass || 'RefCounted';
+  const extendsClause = ` extends ${resolvedExtends}`;
+  const abstractKeyword = header.isAbstractClass ? 'abstract ' : '';
+  const classHeader = `export ${abstractKeyword}class ${className}${extendsClause} {`;
+
+  // Assembly: lifted decls (consts, named enums, inner classes)
+  // wrapped in `export namespace ${className} { ... }` paired with
+  // the script class. The namespace block satisfies TS declaration
+  // merging — `Foo.X` resolves cross-file, `this.X` resolves on the
+  // instance — without any plugin help. The TS→GD converter pulls
+  // the namespace members back into the script class body.
+  //
+  // The file-scope emitters (`emitFileScopeConst`, `emitFileScopeEnum`,
+  // `emitFileScopeClass`) already return `export`-prefixed forms;
+  // we just need to indent them by 2 inside the namespace block.
+  const out: string[] = [];
+  if (fileScopeLines.length > 0) {
+    out.push(`export namespace ${className} {`);
+    for (const line of fileScopeLines) {
+      const indented = line
+        .split('\n')
+        .map((l) => (l.length > 0 ? '  ' + l : l))
+        .join('\n');
+      out.push(indented);
+    }
+    out.push('}');
+    out.push('');
+  }
+  out.push(classHeader, ...memberLines, '}', '');
+  return out.join('\n');
+}
+
+// ─── Header scan ──────────────────────────────────────────────
+
+interface ScriptClassHeader {
+  /** Raw TS-side class name (after `_Foo` → `G_Foo` escape). Empty when GD has no `class_name`. */
+  className: string;
+  /** Base class from `extends <X>`. Empty when no explicit extends. */
+  extendsClass: string;
+  /** True when `@abstract` sits above `extends` / `class_name`. */
+  isAbstractClass: boolean;
+  /** Indices of `@abstract` annotations at root that should be skipped during emission. */
+  rootAbstractAnnotationIndices: Set<number>;
+  /** Indices of functions that have a preceding `@abstract` — rendered as `abstract method() {}`. */
+  abstractFunctionIndices: Set<number>;
+  /** Indices of inner classes that have a preceding `@abstract` — rendered as `export abstract class ...`. */
+  abstractClassIndices: Set<number>;
+}
+
+/**
+ * Single pass over the file root collecting everything needed to
+ * compose the eventual script class header: name, extends, abstract
+ * flags. Pure — doesn't touch `ctx`.
+ */
+function scanScriptClassHeader(root: SyntaxNode): ScriptClassHeader {
   let className = '';
   let extendsClass = '';
-  const topComments: string[] = [];
-  const memberLines: string[] = [];
+  let isAbstractClass = false;
+  const rootAbstractAnnotationIndices = new Set<number>();
+  const abstractFunctionIndices = new Set<number>();
+  const abstractClassIndices = new Set<number>();
 
-  // First pass: collect class name, extends, and member names
-  for (const child of root.namedChildren) {
+  for (let i = 0; i < root.namedChildren.length; i++) {
+    const child = root.namedChildren[i]!;
     if (child.type === SyntaxType.ExtendsStatement) {
       const typeNode = child.namedChildren[0];
       if (typeNode) {
-        extendsClass = typeNode.type === SyntaxType.Type
-          ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
-          : typeNode.text;
+        extendsClass =
+          typeNode.type === SyntaxType.Type
+            ? typeNode.namedChildren[0]?.text ?? typeNode.text
+            : typeNode.text;
       }
     } else if (child.type === SyntaxType.ClassNameStatement) {
       // Apply the `_Foo` → `G_Foo` escape so a real GD `class_name _Foo`
@@ -46,111 +168,9 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
       const raw = child.childForFieldName('name')?.text ?? '';
       className = escapeUnderscoreClassName(raw);
     } else if (
-      child.type === SyntaxType.FunctionDefinition ||
-      child.type === SyntaxType.ConstructorDefinition
-    ) {
-      const name = child.childForFieldName('name')?.text ?? '_init';
-      ctx.classMembers.add(name === '_init' ? 'constructor' : name);
-    } else if (
-      child.type === SyntaxType.VariableStatement ||
-      child.type === SyntaxType.ExportVariableStatement ||
-      child.type === SyntaxType.OnreadyVariableStatement
-    ) {
-      const name = child.childForFieldName('name')?.text;
-      if (name) {
-        ctx.classMembers.add(name);
-        const isStatic = child.childForFieldName('static') !== null;
-        if (isStatic) ctx.staticMembers.add(name);
-        const typeNode = child.childForFieldName('type');
-        const valueNode = child.childForFieldName('value');
-        const inferredType = typeNode
-          ? extractGdTypeName(typeNode)
-          : valueNode
-            ? inferExprType(valueNode, ctx)
-            : null;
-        if (inferredType) ctx.classMemberTypes.set(name, inferredType);
-      }
-    } else if (child.type === SyntaxType.SignalStatement) {
-      const name = child.childForFieldName('name')?.text;
-      if (name) ctx.classMembers.add(name);
-    } else if (child.type === SyntaxType.ConstStatement) {
-      const name = child.childForFieldName('name')?.text;
-      if (name) {
-        ctx.classMembers.add(name);
-        ctx.staticMembers.add(name);
-      }
-    } else if (child.type === SyntaxType.EnumDefinition) {
-      const nameNode = child.childForFieldName('name');
-      if (nameNode) {
-        // Named enum → static member + class type name
-        ctx.classMembers.add(nameNode.text);
-        ctx.staticMembers.add(nameNode.text);
-        ctx.classTypeNames.add(nameNode.text);
-      } else {
-        // Anonymous enum → each enumerator is a static constant
-        const bodyNode = child.childForFieldName('body');
-        if (bodyNode) {
-          for (const e of bodyNode.namedChildren) {
-            if (e.type === SyntaxType.Enumerator) {
-              const eName = e.childForFieldName('left')?.text;
-              if (eName) {
-                ctx.classMembers.add(eName);
-                ctx.staticMembers.add(eName);
-              }
-            }
-          }
-        }
-      }
-    } else if (child.type === SyntaxType.ClassDefinition) {
-      const name = child.childForFieldName('name')?.text;
-      if (name) {
-        ctx.classMembers.add(name);
-        ctx.staticMembers.add(name);
-        ctx.classTypeNames.add(name);
-      }
-    }
-  }
-
-  // Set class name in context for static member resolution. When the GD
-  // file has no `class_name`, derive an anonymous TS-side name from the
-  // file's basename — that gives every script a stable identifier
-  // without tying it to the now-removed `__CLASS__` sentinel.
-  ctx.className = className || gdFilenameToAnonymousClassName(ctx.filePath);
-
-  // Add inherited members from registry and user classes
-  if (extendsClass) {
-    const inherited = resolveAllInheritedMembers(
-      extendsClass,
-      ctx.userClasses,
-      ctx.registry,
-    );
-    for (const name of inherited) {
-      ctx.classMembers.add(name);
-    }
-    // Also inherit member types from user classes
-    resolveInheritedMemberTypes(
-      extendsClass,
-      ctx.userClasses,
-      ctx.classMemberTypes,
-    );
-  }
-
-  // Check for @abstract annotation at root level (sibling of extends/class_name)
-  let isAbstractClass = false;
-  // Track indices of @abstract annotation nodes at root level (to skip in second pass)
-  const rootAbstractAnnotationIndices = new Set<number>();
-  // Track indices of function_definition nodes that have a preceding @abstract annotation
-  const abstractFunctionIndices = new Set<number>();
-  // Track indices of class_definition nodes that have a preceding @abstract annotation
-  const abstractClassIndices = new Set<number>();
-
-  for (let i = 0; i < root.namedChildren.length; i++) {
-    const child = root.namedChildren[i]!;
-    if (
       child.type === SyntaxType.Annotation &&
       child.text === '@abstract'
     ) {
-      // Check what follows this annotation
       const next = root.namedChildren[i + 1];
       if (
         next &&
@@ -169,7 +189,30 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
     }
   }
 
-  // Second pass: emit everything
+  return {
+    className,
+    extendsClass,
+    isAbstractClass,
+    rootAbstractAnnotationIndices,
+    abstractFunctionIndices,
+    abstractClassIndices,
+  };
+}
+
+// ─── Script class body emission ───────────────────────────────
+//
+// MUST run inside `withClassScope(...)` so `ctx.classMembers`,
+// `ctx.staticMembers`, etc. point at the script class's scope during
+// emission.
+
+function emitScriptClassBody(
+  root: SyntaxNode,
+  ctx: GdToTsContext,
+  header: ScriptClassHeader,
+): { memberLines: string[]; fileScopeLines: string[] } {
+  const memberLines: string[] = [];
+  const fileScopeLines: string[] = [];
+
   let lastWasFunction = false;
   let hasNonFunctionMembers = false;
   let pendingAnnotations: string[] = [];
@@ -192,7 +235,7 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
     // Skip root-level @abstract annotations (handled via isAbstractClass / abstractFunctions)
     if (
       child.type === SyntaxType.Annotation &&
-      rootAbstractAnnotationIndices.has(ci)
+      header.rootAbstractAnnotationIndices.has(ci)
     ) {
       continue;
     }
@@ -204,7 +247,6 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
     }
 
     if (child.type === SyntaxType.Comment) {
-      // Comments before class body become top-level comments inside class
       memberLines.push(emitComment(child));
       hasNonFunctionMembers = true;
       lastWasFunction = false;
@@ -214,7 +256,10 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
     // Triple-quoted string as standalone expression → block comment
     if (child.type === SyntaxType.ExpressionStatement) {
       const expr = child.namedChildren[0];
-      if (expr?.type === SyntaxType.String && (expr.text.startsWith('"""') || expr.text.startsWith("'''"))) {
+      if (
+        expr?.type === SyntaxType.String &&
+        (expr.text.startsWith('"""') || expr.text.startsWith("'''"))
+      ) {
         memberLines.push(emitBlockComment(expr.text, '  '));
         hasNonFunctionMembers = true;
         lastWasFunction = false;
@@ -234,7 +279,7 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
     }
 
     if (child.type === SyntaxType.FunctionDefinition) {
-      const isAbstract = abstractFunctionIndices.has(ci);
+      const isAbstract = header.abstractFunctionIndices.has(ci);
       flushPendingAnnotations();
       memberLines.push(emitFunction(child, ctx, isAbstract));
       memberLines.push('');
@@ -276,10 +321,11 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
     }
 
     if (child.type === SyntaxType.ConstStatement) {
+      // GD class-body `const X = ...` lifts to TS file scope. The
+      // forward TS→GD converter pulls file-scope const back into the
+      // class body, so this is the symmetric reverse.
       flushPendingAnnotations();
-      memberLines.push(emitConstStatement(child, ctx));
-      hasNonFunctionMembers = true;
-      lastWasFunction = false;
+      fileScopeLines.push(emitFileScopeConst(child, ctx));
       continue;
     }
 
@@ -292,24 +338,30 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
     }
 
     if (child.type === SyntaxType.EnumDefinition) {
+      // Named GD enums lift to a file-scope native TS `enum X { ... }`.
+      // Anonymous GD enums (no name) stay inside the class body as
+      // a series of static constants — there's no clean file-scope
+      // form for them in TS.
       flushPendingAnnotations();
-      memberLines.push(emitEnum(child, ctx));
-      hasNonFunctionMembers = true;
-      lastWasFunction = false;
+      const named = child.childForFieldName('name') !== null;
+      if (named) {
+        fileScopeLines.push(emitFileScopeEnum(child, ctx));
+      } else {
+        memberLines.push(emitEnum(child, ctx));
+        hasNonFunctionMembers = true;
+        lastWasFunction = false;
+      }
       continue;
     }
 
     if (child.type === SyntaxType.ClassDefinition) {
-      // Add blank line before inner class if there were non-function members
-      // (functions already add trailing blank lines)
-      if (hasNonFunctionMembers && !lastWasFunction) {
-        memberLines.push('');
-      }
+      // GD inner class lifts to a TS file-scope `class X { ... }`
+      // (no `export` — only the script class is exported per file).
+      // Forward TS→GD pulls file-scope classes back into the script
+      // class body as inner classes.
       flushPendingAnnotations();
-      const isAbstractInner = abstractClassIndices.has(ci);
-      memberLines.push(emitInnerClass(child, ctx, isAbstractInner));
-      hasNonFunctionMembers = true;
-      lastWasFunction = false;
+      const isAbstractInner = header.abstractClassIndices.has(ci);
+      fileScopeLines.push(emitFileScopeClass(child, ctx, isAbstractInner));
       continue;
     }
 
@@ -320,7 +372,9 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
       line: child.startPosition.row + 1,
       column: child.startPosition.column,
     });
-    memberLines.push(`  /* ERROR: Unhandled top-level node: ${child.type} */ ${child.text.split('\n')[0]}`);
+    memberLines.push(
+      `  /* ERROR: Unhandled top-level node: ${child.type} */ ${child.text.split('\n')[0]}`,
+    );
   }
 
   // Remove trailing empty lines from members
@@ -331,132 +385,5 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
     memberLines.pop();
   }
 
-  const extendsClause = extendsClass ? ` extends ${extendsClass}` : '';
-  const abstractKeyword = isAbstractClass ? 'abstract ' : '';
-  // `ctx.className` is already set above with either the escaped real
-  // class_name or the filename-derived `_FooBar` form, so reuse it
-  // rather than re-deriving the fallback here.
-  const classHeader = `export ${abstractKeyword}class ${ctx.className}${extendsClause} {`;
-  return [classHeader, ...memberLines, '}', ''].join('\n');
-}
-
-// ─── Inner Class ──────────────────────────────────────────────
-
-export function emitInnerClass(node: SyntaxNode, ctx: GdToTsContext, isAbstractFromParent = false): string {
-  const nameNode = node.childForFieldName('name');
-  const className = nameNode?.text ?? 'InnerClass';
-
-  // Check for @abstract annotation as child of class_definition, or passed from parent scope
-  const annotations = getAnnotations(node);
-  const isAbstractInner = isAbstractFromParent || annotations.some((ann) => ann.text === '@abstract');
-
-  // Find extends
-  let extendsClass = '';
-  const bodyNode = node.childForFieldName('body');
-
-  for (const child of node.namedChildren) {
-    if (child.type === SyntaxType.ExtendsStatement) {
-      const typeNode = child.namedChildren[0];
-      if (typeNode) {
-        extendsClass = typeNode.type === SyntaxType.Type
-          ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
-          : typeNode.text;
-      }
-    }
-  }
-
-  // Save outer context and create inner class context
-  const savedMembers = ctx.classMembers;
-  const savedLocals = ctx.localVars;
-  const savedLocalTypes = ctx.localVarTypes;
-  const savedMemberTypes = ctx.classMemberTypes;
-  ctx.classMembers = new Set();
-  ctx.localVars = new Set();
-  ctx.localVarTypes = new Map();
-  ctx.classMemberTypes = new Map();
-
-  // First pass: collect member names from inner class body
-  if (bodyNode) {
-    for (const child of bodyNode.namedChildren) {
-      if (
-        child.type === SyntaxType.FunctionDefinition ||
-        child.type === SyntaxType.ConstructorDefinition
-      ) {
-        const name = child.childForFieldName('name')?.text ?? '_init';
-        ctx.classMembers.add(name === '_init' ? 'constructor' : name);
-      } else if (
-        child.type === SyntaxType.VariableStatement ||
-        child.type === SyntaxType.ExportVariableStatement
-      ) {
-        const name = child.childForFieldName('name')?.text;
-        if (name) ctx.classMembers.add(name);
-      } else if (child.type === SyntaxType.SignalStatement) {
-        const name = child.childForFieldName('name')?.text;
-        if (name) ctx.classMembers.add(name);
-      } else if (child.type === SyntaxType.EnumDefinition) {
-        const name = child.childForFieldName('name')?.text;
-        if (name) {
-          ctx.classMembers.add(name);
-          ctx.staticMembers.add(name);
-        }
-      }
-    }
-  }
-
-  // Add inherited members from registry and user classes for inner class
-  if (extendsClass) {
-    const inherited = resolveAllInheritedMembers(
-      extendsClass,
-      ctx.userClasses,
-      ctx.registry,
-    );
-    for (const name of inherited) {
-      ctx.classMembers.add(name);
-    }
-  }
-
-  // Second pass: emit members
-  const memberLines: string[] = [];
-  if (bodyNode) {
-    for (const child of bodyNode.namedChildren) {
-      if (child.type === SyntaxType.FunctionDefinition) {
-        memberLines.push(emitFunction(child, ctx));
-        continue;
-      }
-      if (child.type === SyntaxType.ConstructorDefinition) {
-        memberLines.push(emitConstructor(child, ctx));
-        continue;
-      }
-      if (
-        child.type === SyntaxType.VariableStatement ||
-        child.type === SyntaxType.ExportVariableStatement
-      ) {
-        memberLines.push(emitClassVariable(child, ctx));
-        continue;
-      }
-      if (child.type === SyntaxType.EnumDefinition) {
-        memberLines.push(emitEnum(child, ctx));
-        continue;
-      }
-    }
-  }
-
-  // Restore outer context
-  ctx.classMembers = savedMembers;
-  ctx.localVars = savedLocals;
-  ctx.localVarTypes = savedLocalTypes;
-  ctx.classMemberTypes = savedMemberTypes;
-
-  const extendsClause = extendsClass ? ` extends ${extendsClass}` : '';
-
-  // Add extra 2-space indent to all output lines (members may contain multi-line strings)
-  const indentedMembers = memberLines
-    .join('\n')
-    .split('\n')
-    .map((line) => (line === '' ? '' : `  ${line}`))
-    .join('\n')
-    .replace(/\n+$/, '');
-
-  const abstractDecorator = isAbstractInner ? '  @abstract\n' : '';
-  return `${abstractDecorator}  static ${className} = class${extendsClause} {\n${indentedMembers}\n  }`;
+  return { memberLines, fileScopeLines };
 }

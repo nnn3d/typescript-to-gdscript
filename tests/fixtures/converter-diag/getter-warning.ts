@@ -1,3 +1,3 @@
-class Foo extends Node {
+export class Foo extends Node {
   get value(): int { return 0; }
 }

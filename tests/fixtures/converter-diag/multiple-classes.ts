@@ -1,2 +1,2 @@
-class Foo extends Node {}
-class Bar extends Node {}
+export class Foo extends Node {}
+export class Bar extends Node {}

@@ -111,7 +111,7 @@ export function resourceResPathToOutputFile(resPath: string): string {
  * Compute a relative import path from an output file to a TS source
  * file. The project default is `moduleResolution: "classic"` (set by
  * the `tstogd init` template), which resolves bare-name specifiers
- * via the `.ts` extension search order \u2014 so we strip the trailing
+ * via the `.ts` extension search order — so we strip the trailing
  * `.ts` and emit no extension at all. Callers that need the original
  * `.ts` form (for `declare module "<path>"`) can re-append it; see
  * `tsModulePath` in `src/typings/scenes.ts`.
@@ -485,10 +485,6 @@ function registryExtendsNode(name: string, registry: GodotClassRegistry): boolea
   return false;
 }
 
-/**
- * Scan TypeScript source files for class declarations, extracting enums and inner classes.
- * Populates the scriptClassMap with ScriptInfo entries keyed by res:// path.
- */
 export function scanTsFilesForClasses(
   program: ts.Program,
   files: string[],
@@ -502,59 +498,60 @@ export function scanTsFilesForClasses(
     const sourceFile = program.getSourceFile(filePath);
     if (!sourceFile) continue;
 
+    // Walk file-scope statements ONCE per file to collect enums and
+    // non-exported classes (the new file-scope forms that lift into
+    // the script class). The legacy `static X = gd.enum(...)` /
+    // `static X = class {}` forms are converter errors and not
+    // detected here.
+    const fileScopeEnums: EnumInfo[] = [];
+    const fileScopeInnerClasses: InnerClassInfo[] = [];
+    for (const stmt of sourceFile.statements) {
+      if (ts.isEnumDeclaration(stmt)) {
+        const members: EnumMemberInfo[] = [];
+        let autoValue = 0;
+        for (const m of stmt.members) {
+          if (!m.name || !ts.isIdentifier(m.name)) continue;
+          if (m.initializer && ts.isNumericLiteral(m.initializer)) {
+            const val = parseInt(m.initializer.text, 10);
+            members.push({ name: m.name.text, value: val });
+            autoValue = val + 1;
+          } else {
+            members.push({ name: m.name.text, value: autoValue++ });
+          }
+        }
+        if (members.length > 0) {
+          fileScopeEnums.push({ name: stmt.name.text, members });
+        }
+        continue;
+      }
+      if (ts.isClassDeclaration(stmt) && stmt.name) {
+        const isExported = stmt.modifiers?.some(
+          (m) => m.kind === ts.SyntaxKind.ExportKeyword,
+        );
+        if (isExported) continue; // script class \u2014 collected separately
+        let extendsName: string | undefined;
+        if (stmt.heritageClauses) {
+          for (const clause of stmt.heritageClauses) {
+            if (clause.token === ts.SyntaxKind.ExtendsKeyword && clause.types.length > 0) {
+              extendsName = clause.types[0]!.expression.getText(sourceFile);
+            }
+          }
+        }
+        fileScopeInnerClasses.push({ name: stmt.name.text, extendsName });
+      }
+    }
+
     for (const statement of sourceFile.statements) {
       if (!ts.isClassDeclaration(statement) || !statement.name) continue;
       const className = statement.name.text;
 
-      const enums: EnumInfo[] = [];
-      const innerClasses: InnerClassInfo[] = [];
-
-      // Scan class members for gd.enum() and inner classes
-      for (const member of statement.members) {
-        if (!ts.isPropertyDeclaration(member) || !member.name || !ts.isIdentifier(member.name)) continue;
-        const memberName = member.name.text;
-        const init = member.initializer;
-        if (!init) continue;
-
-        // Detect gd.enum('A', 'B', ['C', 10])
-        if (ts.isCallExpression(init) && ts.isPropertyAccessExpression(init.expression)) {
-          const obj = init.expression.expression;
-          const method = init.expression.name.text;
-          if (ts.isIdentifier(obj) && obj.text === 'gd' && method === 'enum') {
-            const members: EnumMemberInfo[] = [];
-            let autoValue = 0;
-            for (const arg of init.arguments) {
-              if (ts.isStringLiteral(arg)) {
-                members.push({ name: arg.text, value: autoValue++ });
-              } else if (ts.isArrayLiteralExpression(arg) && arg.elements.length >= 2) {
-                const nameElem = arg.elements[0]!;
-                const valueElem = arg.elements[1]!;
-                if (ts.isStringLiteral(nameElem) && ts.isNumericLiteral(valueElem)) {
-                  const val = parseInt(valueElem.text, 10);
-                  members.push({ name: nameElem.text, value: val });
-                  autoValue = val + 1;
-                }
-              }
-            }
-            if (members.length > 0) {
-              enums.push({ name: memberName, members });
-            }
-          }
-        }
-
-        // Detect static InnerClass = class extends BaseClass { ... }
-        if (ts.isClassExpression(init)) {
-          let extendsName: string | undefined;
-          if (init.heritageClauses) {
-            for (const clause of init.heritageClauses) {
-              if (clause.token === ts.SyntaxKind.ExtendsKeyword && clause.types.length > 0) {
-                extendsName = clause.types[0]!.expression.getText(sourceFile);
-              }
-            }
-          }
-          innerClasses.push({ name: memberName, extendsName });
-        }
-      }
+      // Attach the file-scope collections to every class entry. Files
+      // with multiple `class` declarations share the same file-scope
+      // lifts (only the script class actually owns them, but the
+      // typings generator uses these to emit `namespace ClassName {
+      // type EnumName = ...; type InnerClassName = ... }`).
+      const enums = fileScopeEnums;
+      const innerClasses = fileScopeInnerClasses;
 
       const relPath = relative(baseDir, filePath).replace(/\\/g, '/');
       const scriptResPath = 'res://' + relPath.replace(/\.ts$/, '.gd');

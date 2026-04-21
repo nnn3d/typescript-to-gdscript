@@ -1,6 +1,11 @@
 import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
 import type { GdToTsContext } from './context.ts';
-import { gdTypeToTs, containsAwait, extractGdTypeName } from './type-inference.ts';
+import {
+  gdTypeToTs,
+  containsAwait,
+  extractGdTypeName,
+  qualifyClassType,
+} from './type-inference.ts';
 import { getAnnotations } from './members.ts';
 import { emitBody } from './statements.ts';
 import { emitExpr } from './expressions.ts';
@@ -37,24 +42,17 @@ export function emitFunction(node: SyntaxNode, ctx: GdToTsContext, isAbstract = 
   const params = paramsNode ? emitParams(paramsNode, ctx) : '';
   const returnType = returnTypeNode ? emitReturnType(returnTypeNode, ctx, isAsync) : '';
 
-  // Root-level abstract (passed from emitSourceFile): native TS abstract keyword, no body
-  if (isAbstract) {
+  // GDScript `@abstract func` — emit as TS native `abstract method(): T;`
+  // (no body) regardless of whether the abstract flag came from the
+  // outer emitSourceFile pass (top-level) or from a child `@abstract`
+  // annotation (inner class). Native abstract round-trips cleanly:
+  // forward TS→GD turns `abstract method(): T;` back into
+  // `@abstract func method() -> T`.
+  if (isAbstract || childAbstract) {
     ctx.localVars = savedLocals;
     ctx.localVarTypes = savedLocalTypes;
     ctx.currentMethodName = savedMethodName;
     return `  abstract ${name}(${params})${returnType};`;
-  }
-
-  // Child annotation @abstract (inner class): use @abstract decorator
-  if (childAbstract) {
-    const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
-    ctx.localVars = savedLocals;
-    ctx.localVarTypes = savedLocalTypes;
-    ctx.currentMethodName = savedMethodName;
-    if (body) {
-      return `  @abstract\n  ${name}(${params})${returnType} {\n${body}\n  }`;
-    }
-    return `  @abstract\n  ${name}(${params})${returnType} {\n  }`;
   }
 
   const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
@@ -159,7 +157,9 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
         '';
       const typeNode = child.childForFieldName('type');
       const rawType = typeNode?.text ?? '';
-      const tsType = ctx.classTypeNames.has(rawType) ? `${ctx.className}.${rawType}` : (typeNode ? gdTypeToTs(rawType) : null);
+      const tsType =
+        qualifyClassType(rawType, ctx.classTypeNames, ctx.className) ??
+        (typeNode ? gdTypeToTs(rawType) : null);
       params.push(tsType ? `${name}: ${tsType}` : name);
       paramIndex++;
     } else if (child.type === SyntaxType.DefaultParameter) {
@@ -184,7 +184,9 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       const typeNode = child.childForFieldName('type');
       const value = child.childForFieldName('value');
       const rawType = typeNode?.text ?? '';
-      const tsType = ctx.classTypeNames.has(rawType) ? `${ctx.className}.${rawType}` : (typeNode ? gdTypeToTs(rawType) : null);
+      const tsType =
+        qualifyClassType(rawType, ctx.classTypeNames, ctx.className) ??
+        (typeNode ? gdTypeToTs(rawType) : null);
       const valueText = value?.text?.trim() ?? '';
       // `param: Type = null` → `param: Type | null = null`
       if (valueText === 'null') {
@@ -241,14 +243,14 @@ export function emitReturnType(
   let tsType: string | null;
   if (typeNode.type === SyntaxType.Type) {
     const inner = typeNode.namedChildren[0]?.text ?? typeNode.text;
-    tsType = ctx.classTypeNames.has(inner)
-      ? `${ctx.className}.${inner}`
-      : gdTypeToTs(inner);
+    tsType =
+      qualifyClassType(inner, ctx.classTypeNames, ctx.className) ??
+      gdTypeToTs(inner);
   } else {
     const raw = typeNode.text;
-    tsType = ctx.classTypeNames.has(raw)
-      ? `${ctx.className}.${raw}`
-      : gdTypeToTs(raw);
+    tsType =
+      qualifyClassType(raw, ctx.classTypeNames, ctx.className) ??
+      gdTypeToTs(raw);
   }
   if (!tsType) return '';
   return isAsync ? `: Promise<${tsType}>` : `: ${tsType}`;

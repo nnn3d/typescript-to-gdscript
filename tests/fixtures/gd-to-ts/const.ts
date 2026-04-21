@@ -1,7 +1,9 @@
-export class ConstClass extends Node {
-  static readonly MAX_HP = 100;
+export namespace ConstClass {
+  export const MAX_HP = 100;
+}
 
+export class ConstClass extends Node {
   get_health() {
-    return this.MAX_HP;
+    return ConstClass.MAX_HP;
   }
 }

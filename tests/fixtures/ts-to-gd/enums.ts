@@ -1,11 +1,13 @@
-export class MyClass extends Node {
-  static Direction = gd.enum("UP", "DOWN", "LEFT", "RIGHT");
-  static State = gd.enum("IDLE", "WALKING", ["RUNNING", 5]);
+export namespace MyClass {
+  export enum Direction { UP, DOWN, LEFT, RIGHT }
+  export enum State { IDLE, WALKING, RUNNING = 5 }
 
-  static Weapon = class extends Node {
+  export class Weapon extends Node {
     damage: int = 10;
-  };
+  }
+}
 
+export class MyClass extends Node {
   current_direction: int = 0;
   current_state: int = 0;
 

@@ -1,16 +1,35 @@
+export namespace _Anonym {
+  export enum Mode { EASY, HARD }
+  export namespace Config {
+    export enum HARD { A, B }
+    export namespace Inner {
+      export const TYPE = 'inner';
+    }
+    export class Inner extends RefCounted {
+      static VAL = 10;
+    }
+  }
+  export class Config extends RefCounted {
+    difficulty: int = 0;
+    set_inner(i: Config.Inner) {
+      let d = Config.Inner.TYPE;
+    }
+  }
+  export class Second extends RefCounted {
+    set_second(i: Config.HARD) {
+      let d = Config.Inner.TYPE;
+    }
+  }
+}
+
 export class _Anonym extends Node {
   static MAX_HEALTH = 100;
-  static Mode = gd.enum('EASY', 'HARD');
-
-  static Config = class extends RefCounted {
-    difficulty: int = 0;
-  }
 
   get_health() {
-    return bool(this.MAX_HEALTH || this.MAX_HEALTH);
+    return _Anonym.MAX_HEALTH;
   }
 
-  set_mode(m: _Anonym.Mode, c: _Anonym.Config) {
-    let mode: _Anonym.Mode = this.Mode.EASY;
+  set_mode(m: _Anonym.Mode, c: _Anonym.Config, i: _Anonym.Config.Inner) {
+    let mode: _Anonym.Mode = _Anonym.Mode.EASY;
   }
 }

@@ -19,7 +19,7 @@ import { execSync } from 'child_process';
 // `module: esnext` + `moduleResolution: classic` lets users (and the
 // auto-generated typings/imports) write extension-less specifiers like
 // `import { Foo } from "./foo"`. NodeNext's mandatory `.js` extension
-// rule made the generated GD\u2192TS imports awkward (the actual on-disk
+// rule made the generated GD→TS imports awkward (the actual on-disk
 // file is `.ts`, not `.js`), so the project standardizes on classic
 // resolution for the simpler look.
 const TSCONFIG_TEMPLATE = `{

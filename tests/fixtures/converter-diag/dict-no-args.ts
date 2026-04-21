@@ -1,4 +1,4 @@
-class Foo extends Node {
+export class Foo extends Node {
   test() {
     let d = gd.dict();
   }
