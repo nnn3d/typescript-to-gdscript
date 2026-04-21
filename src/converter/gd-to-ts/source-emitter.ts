@@ -370,7 +370,7 @@ function emitScriptClassBody(
       severity: 'error',
       file: ctx.filePath,
       line: child.startPosition.row + 1,
-      column: child.startPosition.column,
+      column: child.startPosition.column + 1,
     });
     memberLines.push(
       `  /* ERROR: Unhandled top-level node: ${child.type} */ ${child.text.split('\n')[0]}`,

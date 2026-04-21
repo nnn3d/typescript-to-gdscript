@@ -1,0 +1,5 @@
+[
+  { "message": "Promise.then is not supported", "severity": "type-error" },
+  { "message": "Promise.catch is not supported", "severity": "type-error" },
+  { "message": "Promise.finally is not supported", "severity": "type-error" }
+]

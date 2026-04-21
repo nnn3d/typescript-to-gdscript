@@ -93,7 +93,7 @@ export function emitBody(node: SyntaxNode, ctx: GdToTsContext, depth: number): s
       severity: 'error',
       file: ctx.filePath,
       line: child.startPosition.row + 1,
-      column: child.startPosition.column,
+      column: child.startPosition.column + 1,
     });
     lines.push(`${indent}/* ERROR: Unhandled GDScript statement: ${child.type} */ ${child.text.split('\n')[0]}`);
   }

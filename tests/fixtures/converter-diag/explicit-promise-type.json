@@ -1,0 +1,3 @@
+[
+  { "message": "Explicit `Promise<T>` type is forbidden", "severity": "type-error" }
+]

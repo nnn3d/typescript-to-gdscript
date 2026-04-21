@@ -72,12 +72,19 @@ export function emitClassHeader(
   // resolves to an imported anonymous class (which has no
   // `class_name`, so a string-literal path is the only valid form).
   // For non-anonymous and same-file extends, emit the bare identifier.
+  //
+  // When no `extends` clause is present, GDScript silently defaults to
+  // `RefCounted`. That works but is implicit — flag as a `type-error`
+  // so editors/lint surface a nudge toward explicit declaration
+  // without blocking GD output.
+  let hasExtends = false;
   if (node.heritageClauses) {
     for (const clause of node.heritageClauses) {
       if (
         clause.token === ts.SyntaxKind.ExtendsKeyword &&
         clause.types.length > 0
       ) {
+        hasExtends = true;
         const baseType = clause.types[0]!;
         const baseText = baseType.expression.getText(t.ctx.sourceFile);
         const importedAnon = ctx.importMap.get(baseText);
@@ -88,6 +95,14 @@ export function emitClassHeader(
         t.emitter.writeLine(extendsClause, pos.line, pos.col);
       }
     }
+  }
+  if (!hasExtends) {
+    t.addDiagnostic(
+      node.name ?? node,
+      'type-error',
+      'Class has no `extends` clause. GDScript defaults to `RefCounted` — ' +
+        'declare `extends RefCounted` explicitly.',
+    );
   }
 
   // class_name emission rules under the naming convention:

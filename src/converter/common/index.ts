@@ -122,7 +122,16 @@ export interface TransformDiagnostic {
   message: string;
   severity: DiagnosticSeverity;
   file: string;
+  /** 1-based line number (matches editor/CLI `line:col` convention). */
   line: number;
+  /**
+   * 1-based column number. Producers that obtain a 0-based character
+   * index (TypeScript `getLineAndCharacterOfPosition`, tree-sitter
+   * `startPosition.column`) MUST add `+1` before storing here.
+   * Consumers that need a 0-based offset (e.g. TypeScript
+   * `getPositionOfLineAndCharacter` in the ts-plugin) subtract `1`
+   * on the way out.
+   */
   column: number;
 }
 

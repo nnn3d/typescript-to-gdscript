@@ -228,7 +228,7 @@ function emitSetgetVariable(
         `function-reference syntax (\`get = fn_name, set = fn_name\`).`,
       severity: 'error',
       line: setgetNode.startPosition.row + 1,
-      column: setgetNode.startPosition.column,
+      column: setgetNode.startPosition.column + 1,
       file: ctx.filePath,
     });
   }

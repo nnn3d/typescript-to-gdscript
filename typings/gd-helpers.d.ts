@@ -309,3 +309,46 @@ declare const gd: {
     ): UnaryOpResult<typeof __ops_minus, T>;
   };
 };
+
+// ─── Promise — GDScript coroutine rules ─────────────────────────
+//
+// GDScript has no `Promise` type. `async`/`await` map directly to
+// GDScript's coroutine `await`. The chained callback API
+// (`.then` / `.catch` / `.finally`) has no equivalent — the
+// converter emits a `type-error` diagnostic if any of these are
+// called on a Promise value.
+//
+// We also flag them at the TypeScript level via `@deprecated` JSDoc
+// overloads. Declaration merging keeps the original lib signatures
+// intact (so `await` and internal async/await desugaring still
+// work), but IDEs show a strikethrough + deprecation warning on
+// `.then` / `.catch` / `.finally` calls — immediate feedback as the
+// user types, before the converter even runs.
+//
+// This file is a script-mode `.d.ts` (no imports/exports), so the
+// `interface Promise<T>` declaration merges with the global Promise
+// directly — no `declare global` wrapper needed (which would only
+// be valid in module-mode files).
+interface Promise<T> {
+  /**
+   * @deprecated GDScript has no Promise. Use `await` instead —
+   * the unwrapped value is what `await fn()` returns directly.
+   */
+  then<TResult1 = T, TResult2 = never>(
+    onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null,
+    onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null,
+  ): Promise<TResult1 | TResult2>;
+  /**
+   * @deprecated GDScript has no Promise. Wrap `await` in
+   * `try { … } catch (e) { … }` — GDScript propagates thrown
+   * errors through the coroutine chain.
+   */
+  catch<TResult = never>(
+    onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null,
+  ): Promise<T | TResult>;
+  /**
+   * @deprecated GDScript has no `finally` equivalent for
+   * coroutines. Run cleanup code after `await` completes instead.
+   */
+  finally(onfinally?: (() => void) | undefined | null): Promise<T>;
+}

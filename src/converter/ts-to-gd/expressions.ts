@@ -211,6 +211,172 @@ export function emitExpression(t: TransformerDelegate, node: ts.Expression): str
 
 // ---- Property Access ----
 
+/**
+ * Promise method names that can't map to GDScript. `.then` / `.catch`
+ * / `.finally` would need callback-based desugaring, but GD's
+ * coroutine model works the other way round — the whole point of
+ * `await` is that you don't need `.then`. Flag any access of these
+ * method names on a Promise-typed object as a `type-error`; the
+ * emitted GD would be broken (`.then` doesn't exist on GD's
+ * `GDScriptFunctionState`), but leaving GD output intact keeps
+ * downstream lint/Godot passes informative.
+ */
+const PROMISE_FORBIDDEN_METHODS = new Set<string>(['then', 'catch', 'finally']);
+
+/**
+ * True when `node` is the direct `.type` slot of a function-like
+ * declaration that carries the `async` modifier. This is the ONLY
+ * position where an explicit `Promise<T>` annotation is meaningful
+ * in this project — async functions/methods/arrows desugar to GD
+ * coroutines, and the `Promise<T>` wrapper is stripped by
+ * `tsTypeNodeToGdType` before emit.
+ *
+ * Anything else — variable annotations, parameter types, non-async
+ * return types, nested generics, type aliases, generic constraints
+ * — is explicit Promise usage that has no GD counterpart.
+ *
+ * The four kinds below are the ONLY function-like declarations that
+ * can carry an `async` modifier in TypeScript. Getters/setters, the
+ * constructor, `MethodSignature`, `FunctionTypeNode`, and call/
+ * construct signatures cannot be async — a `Promise<T>` return on
+ * any of those correctly falls through and gets flagged. Do NOT
+ * expand this list.
+ */
+function isAsyncFunctionReturnTypeSlot(node: ts.TypeReferenceNode): boolean {
+  const parent = node.parent;
+  if (!parent) return false;
+  const isFunctionLikeReturnSlot =
+    (ts.isFunctionDeclaration(parent) ||
+      ts.isMethodDeclaration(parent) ||
+      ts.isArrowFunction(parent) ||
+      ts.isFunctionExpression(parent)) &&
+    parent.type === node;
+  if (!isFunctionLikeReturnSlot) return false;
+  const modifiers = ts.canHaveModifiers(parent)
+    ? ts.getModifiers(parent)
+    : undefined;
+  return (
+    modifiers?.some((m) => m.kind === ts.SyntaxKind.AsyncKeyword) ?? false
+  );
+}
+
+/**
+ * Type-reference names that represent "a thing you await" at the TS
+ * type level. Both have no GD counterpart:
+ *   - `Promise<T>` — the standard lib type. `await` unwraps it.
+ *   - `PromiseLike<T>` — the structural minimum (`.then` only). TS's
+ *                       `await` accepts either interchangeably.
+ * Users rarely write `PromiseLike` explicitly, but when they do the
+ * intent is identical ("this is awaitable") and GDScript has no way
+ * to express it.
+ */
+const FORBIDDEN_PROMISE_TYPE_NAMES = new Set<string>([
+  'Promise',
+  'PromiseLike',
+]);
+
+/**
+ * Pre-pass: forbid EXPLICIT `Promise<T>` / `PromiseLike<T>` type
+ * annotations anywhere except as the return type of an `async`
+ * function / method / arrow.
+ *
+ * Walks the whole source file once so variable annotations,
+ * parameter types, non-async return types, type aliases, generic
+ * constraints, and nested positions (e.g. `Array<Promise<T>>`) are
+ * all caught in a single place — no per-call-site sprinkling.
+ *
+ * Only flags USER-WRITTEN annotations (TypeReferenceNodes with a
+ * forbidden name). Inferred Promise types from `async` functions
+ * aren't touched here — those are handled by
+ * `tsTypeNodeToGdType` stripping `Promise<T>` → `T` on emission,
+ * and by `checkPromiseUsedAsValue` for value-position misuse.
+ *
+ * A symbol-level check (via `checker.getSymbolAtLocation`) runs
+ * only when the name-based gate already matched, so the cost is
+ * bounded by the number of Promise-named references in the file
+ * (typically 0–5). It filters out user-shadowed names like
+ * `class Promise {}` that aren't actually the global Promise.
+ */
+export function checkExplicitPromiseTypes(t: TransformerDelegate): void {
+  const walk = (node: ts.Node): void => {
+    if (
+      ts.isTypeReferenceNode(node) &&
+      ts.isIdentifier(node.typeName) &&
+      FORBIDDEN_PROMISE_TYPE_NAMES.has(node.typeName.text) &&
+      !isAsyncFunctionReturnTypeSlot(node) &&
+      resolvesToBuiltinAwaitable(t, node.typeName)
+    ) {
+      const typeName = node.typeName.text;
+      t.addDiagnostic(
+        node,
+        'type-error',
+        `Explicit \`${typeName}<T>\` type is forbidden except as the return type of ` +
+          'an `async` function / method / arrow. GDScript has no Promise — ' +
+          'remove the annotation, or wrap the callsite in an `async` function ' +
+          'whose `Promise<T>` return is auto-unwrapped on emit.',
+      );
+      // Still recurse into type arguments — `Promise<Promise<T>>` must
+      // flag the INNER one too (nested Promises are invalid anywhere,
+      // including inside an otherwise-allowed async return slot).
+    }
+    ts.forEachChild(node, walk);
+  };
+  walk(t.ctx.sourceFile);
+}
+
+/**
+ * True when the identifier resolves to the built-in `Promise` /
+ * `PromiseLike` type from TypeScript's lib, NOT a user-defined
+ * symbol that happens to share the name. Defense-in-depth for the
+ * rare case of `class Promise {}` shadowing the global — without
+ * this filter the name-only check would mis-flag uses of the
+ * shadow.
+ *
+ * When the symbol can't be resolved (no type-checker, or an
+ * unresolvable name), defaults to `true` — safer to over-flag than
+ * to silently let a real Promise reference through.
+ */
+function resolvesToBuiltinAwaitable(
+  t: TransformerDelegate,
+  identifier: ts.Identifier,
+): boolean {
+  const symbol = t.ctx.checker.getSymbolAtLocation(identifier);
+  if (!symbol) return true;
+  // The global Promise / PromiseLike declarations live in lib files
+  // whose names contain ".d.ts". A user class shadowing them would
+  // be declared in a user `.ts` file. Checking the declaration's
+  // source-file name is cheap and avoids comparing against the
+  // global symbol directly (which requires a global-scope lookup
+  // and more plumbing).
+  const decls = symbol.getDeclarations();
+  if (!decls || decls.length === 0) return true;
+  return decls.some((d) => {
+    const fileName = d.getSourceFile().fileName;
+    return fileName.includes('/lib.') || fileName.includes('\\lib.');
+  });
+}
+
+function checkPromiseMethodAccess(
+  t: TransformerDelegate,
+  node: ts.PropertyAccessExpression,
+): void {
+  if (!PROMISE_FORBIDDEN_METHODS.has(node.name.text)) return;
+  const objType = t.ctx.checker.getTypeAtLocation(node.expression);
+  if (!isPromiseType(objType)) return;
+  const method = node.name.text;
+  const hint =
+    method === 'catch'
+      ? 'wrap `await` in `try { … } catch (e) { … }` — GDScript propagates thrown errors through the coroutine chain'
+      : method === 'finally'
+        ? 'run cleanup after `await` completes — GDScript has no `finally` equivalent for coroutines'
+        : 'use `await` and normal control flow — the unwrapped value is what you get from `await fn()`';
+  t.addDiagnostic(
+    node.name,
+    'type-error',
+    `Promise.${method} is not supported in GDScript. GDScript has no Promise type — ${hint}.`,
+  );
+}
+
 export function emitPropertyAccess(
   t: TransformerDelegate,
   node: ts.PropertyAccessExpression,
@@ -223,6 +389,8 @@ export function emitPropertyAccess(
       'Optional chaining (`?.`) is not supported in GDScript',
     );
   }
+
+  checkPromiseMethodAccess(t, node);
   // Inside a get/set accessor body, `this.<accessorName>` refers to the
   // GDScript backing field, which must be emitted as a bare identifier
   // (emitting `self.<name>` would recursively call the accessor).

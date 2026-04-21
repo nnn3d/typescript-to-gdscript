@@ -85,18 +85,14 @@ export function visitEnumDeclaration(
   // Use a native TS `enum X { ... }` declaration at file scope —
   // it lifts into the script class as a GDScript `enum` via the
   // file-scope-decl pipeline (Phase 1).
-  const pos = t.getLineAndCol(node);
   const name = node.name.getText(t.ctx.sourceFile);
-  t.ctx.diagnostics.push({
-    message:
-      `'static ${name} = gd.enum(...)' is no longer supported. ` +
+  t.addDiagnostic(
+    node,
+    'error',
+    `'static ${name} = gd.enum(...)' is no longer supported. ` +
       `Use a native TS \`enum ${toPascalCase(name)} { ... }\` at file scope ` +
       `(outside the script class) — it lifts into the GDScript class as an enum.`,
-    severity: 'error',
-    file: t.ctx.filePath,
-    line: pos.line,
-    column: pos.col,
-  });
+  );
 }
 
 // ── Properties ───────────────────────────────────────────────
@@ -113,15 +109,12 @@ export function visitPropertyDeclaration(
   // instead — it lifts into the script class as an inner class via
   // the file-scope-decl pipeline (Phase 1).
   if (node.initializer && ts.isClassExpression(node.initializer)) {
-    t.ctx.diagnostics.push({
-      message:
-        `Inline 'static ${name} = class { ... }' is no longer supported. ` +
+    t.addDiagnostic(
+      node,
+      'error',
+      `Inline 'static ${name} = class { ... }' is no longer supported. ` +
         `Move the class to file scope: \`class ${name} { ... }\` outside the script class.`,
-      severity: 'error',
-      file: t.ctx.filePath,
-      line: pos.line,
-      column: pos.col,
-    });
+    );
     return;
   }
 

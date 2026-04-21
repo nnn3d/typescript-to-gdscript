@@ -203,12 +203,14 @@ export function emitFileScopeClass(
     (m) => m.kind === ts.SyntaxKind.AbstractKeyword,
   );
   let extendsClause = '';
+  let hasExtends = false;
   if (node.heritageClauses) {
     for (const clause of node.heritageClauses) {
       if (
         clause.token === ts.SyntaxKind.ExtendsKeyword &&
         clause.types.length > 0
       ) {
+        hasExtends = true;
         const baseType = clause.types[0]!;
         const baseText = baseType.expression.getText(t.ctx.sourceFile);
         // Same import-aware extends-rewrite as the script class:
@@ -221,6 +223,15 @@ export function emitFileScopeClass(
             : ` extends ${baseText}`;
       }
     }
+  }
+  if (!hasExtends) {
+    t.addDiagnostic(
+      node.name ?? node,
+      'type-error',
+      'Class has no `extends` clause. GDScript defaults to `RefCounted` — ' +
+        'declare `extends RefCounted` explicitly (or use a different base like ' +
+        '`Node`, `Resource`, etc.) so the intent is clear in both languages.',
+    );
   }
 
   // Blank line before the inner class — matches the section spacing
@@ -356,6 +367,20 @@ export function emitFileScopeNamespace(
 }
 
 /**
+ * True when `stmt` carries the `export` modifier keyword. Used to
+ * flag namespace members that would otherwise be invisible to
+ * TypeScript declaration merging — the GDScript lift still happens,
+ * but the TS side wouldn't resolve the name, so lint surfaces this
+ * for the user to fix.
+ */
+function hasExportModifier(stmt: ts.Statement): boolean {
+  const modifiers = ts.canHaveModifiers(stmt)
+    ? ts.getModifiers(stmt)
+    : undefined;
+  return modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false;
+}
+
+/**
  * Collect statements from all namespace declarations in `statements`
  * grouped by namespace name. When the user writes multiple
  * `namespace Foo { ... }` blocks in the same scope (TypeScript's
@@ -423,6 +448,30 @@ function emitNamespaceBody(
       ts.isInterfaceDeclaration(stmt)
     ) {
       continue;
+    }
+    // Non-exported namespace members aren't visible outside the
+    // namespace via TS's native namespace+class merge — e.g.
+    // `const X = 1` (no `export`) inside `namespace Foo` can't be
+    // accessed as `Foo.X`. Since the GDScript lift DOES expose the
+    // member at class scope (which corresponds to `ClassName.X` in
+    // TS), the lack of `export` creates an asymmetry that'd surface
+    // as "Property X does not exist on type Foo" in TS. Flag it so
+    // the user fixes the source rather than hunting mysterious type
+    // errors downstream.
+    if (
+      ts.isVariableStatement(stmt) ||
+      ts.isEnumDeclaration(stmt) ||
+      ts.isClassDeclaration(stmt) ||
+      ts.isModuleDeclaration(stmt)
+    ) {
+      if (!hasExportModifier(stmt)) {
+        t.addDiagnostic(
+          stmt,
+          'type-error',
+          'Namespace members must be `export`ed to resolve via TypeScript declaration merging. ' +
+            'Add the `export` keyword to this declaration so it is accessible as `ClassName.<name>`.',
+        );
+      }
     }
     if (ts.isVariableStatement(stmt)) {
       emitFileScopeVariable(stmt, t, { leadingBlank });

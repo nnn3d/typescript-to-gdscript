@@ -21,6 +21,16 @@ afterEach(() => {
 interface ExpectedDiagnostic {
   message: string;
   severity: 'error' | 'type-error' | 'warning' | 'info';
+  /**
+   * Optional 1-based line/column to assert on the matched diagnostic.
+   * When present, the entry requires an EXACT location match in
+   * addition to the message/severity substring match. Use sparingly —
+   * most fixtures care only about message content. Primary use case
+   * is regression coverage for position-preserving fixes (e.g. the
+   * column off-by-one +1 convention on `TransformDiagnostic`).
+   */
+  line?: number;
+  column?: number;
 }
 
 function convert(code: string, filename: string) {
@@ -70,15 +80,28 @@ describe('Converter Diagnostics: Fixture-based tests', () => {
         for (const exp of expected) {
           const match = diagnostics.find(
             (d) =>
-              d.message.includes(exp.message) && d.severity === exp.severity,
+              d.message.includes(exp.message) &&
+              d.severity === exp.severity &&
+              (exp.line === undefined || d.line === exp.line) &&
+              (exp.column === undefined || d.column === exp.column),
           );
+          // Location hint: when line/column were specified but nothing
+          // matched, callers almost always want to know "did any
+          // diagnostic match message+severity but miss on location?"
+          // — a plain "not found" error hides that distinction.
+          const locationPart =
+            exp.line !== undefined || exp.column !== undefined
+              ? ` at ${exp.line ?? '?'}:${exp.column ?? '?'}`
+              : '';
           expect(
             match,
             `Expected diagnostic with message containing "${exp.message}" ` +
-              `and severity "${exp.severity}" in ${fixtureName}.\n` +
+              `and severity "${exp.severity}"${locationPart} in ${fixtureName}.\n` +
               `Actual diagnostics:\n` +
               diagnostics
-                .map((d) => `  [${d.severity}] ${d.message}`)
+                .map(
+                  (d) => `  [${d.severity}] ${d.line}:${d.column} ${d.message}`,
+                )
                 .join('\n'),
           ).toBeDefined();
         }

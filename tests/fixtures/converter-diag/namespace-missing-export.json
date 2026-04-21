@@ -1,0 +1,3 @@
+[
+  { "message": "must be `export`ed", "severity": "type-error" }
+]

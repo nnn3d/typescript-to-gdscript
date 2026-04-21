@@ -28,6 +28,7 @@ import {
   isBlockLambda as isBlockLambdaImpl,
   emitLambdaBody as emitLambdaBodyImpl,
   emitMultiLineDict as emitMultiLineDictImpl,
+  checkExplicitPromiseTypes,
 } from './expressions.ts';
 
 export interface TransformerOptions {
@@ -123,6 +124,12 @@ export class TsToGdTransformer implements TransformerDelegate {
     for (const err of imports.errors) {
       this.ctx.diagnostics.push(err);
     }
+
+    // Whole-file type-annotation checks that need to see every user
+    // type reference — runs once, before emission, so the diagnostics
+    // list is populated irrespective of which statements actually
+    // reach the emitter.
+    checkExplicitPromiseTypes(this);
 
     this.visitSourceFile(this.ctx.sourceFile);
 
@@ -241,12 +248,18 @@ export class TsToGdTransformer implements TransformerDelegate {
     message: string,
   ): void {
     const { line, col } = this.getLineAndCol(node);
+    // `col` is 0-based (source-map-native — the emitter below feeds
+    // it into a source-map entry as-is). `TransformDiagnostic.column`
+    // is 1-based per its documented convention (matches the CLI's
+    // `line:col` display and what IDEs/editors expect). Add 1 on
+    // the way into the diagnostic, leaving the source-map write
+    // below untouched.
     this.ctx.diagnostics.push({
       message,
       severity,
       file: this.ctx.filePath,
       line,
-      column: col,
+      column: col + 1,
     });
     // Emit inline error comment in output for --emit-on-error visibility
     if (severity === 'error') {
@@ -259,6 +272,13 @@ export class TsToGdTransformer implements TransformerDelegate {
       this.ctx.sourceFile.getLineAndCharacterOfPosition(
         node.getStart(this.ctx.sourceFile),
       );
+    // `line` is 1-based to match `TransformDiagnostic`'s line
+    // convention and the GDScriptEmitter's line numbering; `col`
+    // stays 0-based because the source-map spec is 0-based and the
+    // emitter feeds this directly into source-map entries.
+    // `addDiagnostic` does the `+1` when lifting to a diagnostic
+    // (whose `column` IS 1-based — see `TransformDiagnostic` in
+    // `common/index.ts`).
     return { line: line + 1, col: character };
   }
 

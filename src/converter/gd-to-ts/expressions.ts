@@ -207,7 +207,7 @@ export function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
     severity: 'error',
     file: ctx.filePath,
     line: node.startPosition.row + 1,
-    column: node.startPosition.column,
+    column: node.startPosition.column + 1,
   });
   return `/* ERROR: Unhandled GDScript expression: ${node.type} */ ${node.text}`;
 }

@@ -222,6 +222,6 @@ function diagOf(
     severity: 'error',
     file: ctx.filePath,
     line: line + 1,
-    column: character,
+    column: character + 1,
   };
 }
