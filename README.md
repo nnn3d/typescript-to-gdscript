@@ -74,6 +74,10 @@ A `.gd` file with no `class_name` declaration has no global identifier in Godot.
 
 A TS class named `_Foo` produces a `.gd` file with no `class_name`. The `G_` escape is **one-way** — applied during GD→TS conversion as a fallback, but TS→GD treats `G_Foo` as a regular class name and emits `class_name G_Foo` verbatim. After the initial migration `G_Foo` is the canonical identifier on both sides; there's no hidden reversible alias to keep track of.
 
+**Addons override the filename rule.** When `generate-addon-typings` runs, anonymous addon scripts (no `class_name`) are emitted with the sentinel name `_$CLASS$_` instead of `_FilenameClass`. `$` is not a valid GDScript identifier character, so the sentinel can never collide with a real GD class. Each addon's `.ts` is its own ES module, so multiple addons exporting `_$CLASS$_` don't collide either — consumers reach the class through the `import type { _$CLASS$_ as ScriptClass }` alias in the generated `.gd.d.ts`, never by global name.
+
+**Addons also preserve `_`-prefixed `class_name` verbatim.** With `_$CLASS$_` claiming the "anonymous" slot for addons, real `class_name _Foo` declarations are unambiguous and the `_Foo` → `G_Foo` escape is bypassed in addon mode. Addon class names are external — third-party-owned, globally registered, referenced by consumer code under that exact name — so a rename would silently break things. `_Foo` lands in `declare global` as a normal global class. The escape still applies in non-addon GD→TS runs.
+
 #### Imports → preload consts
 
 When the TS→GD converter sees an `import` statement, it emits one of the following:

@@ -48,6 +48,22 @@ export interface TransformContext {
 // ─── Anonymous class naming ─────────────────────────────────
 
 /**
+ * Sentinel TS class name used for anonymous addon scripts (a `.gd`
+ * file under `addons/` with no `class_name` declaration). `$` is not
+ * a valid GDScript identifier character, so this name can never
+ * collide with a real GD class. Each addon `.ts` is its own ES
+ * module, so multiple files exporting `_$CLASS$_` don't collide
+ * either — consumers of the addon's `.gd.d.ts` see the class via the
+ * `import type { _$CLASS$_ as ScriptClass }` alias.
+ *
+ * Non-addon anonymous classes use {@link gdFilenameToAnonymousClassName}
+ * instead — the filename-derived form is friendlier when users actually
+ * read the generated TS source. Addons are auto-generated and read
+ * mostly through their `.gd.d.ts` shadows, so the sentinel is fine.
+ */
+export const ANONYMOUS_ADDON_CLASS_NAME = '_$CLASS$_';
+
+/**
  * Derive the TS class name for a `.gd` file that has no `class_name`
  * declaration. The convention: the leading underscore marks the class as
  * "module-scoped / anonymous in GD", and the body is the file's basename

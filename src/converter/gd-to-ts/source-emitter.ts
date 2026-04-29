@@ -24,6 +24,7 @@
 
 import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
 import {
+  ANONYMOUS_ADDON_CLASS_NAME,
   gdFilenameToAnonymousClassName,
   escapeUnderscoreClassName,
 } from '../common/index.ts';
@@ -56,8 +57,28 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
   // both the `ClassScope` we're about to build AND the eventual
   // `export class ...` header line.
   const header = scanScriptClassHeader(root);
-  const className =
-    header.className || gdFilenameToAnonymousClassName(ctx.filePath);
+  // Resolve the TS-side class name. Three cases:
+  //   1. No `class_name` in GD:
+  //        - addon mode → the `_$CLASS$_` sentinel (`$` is not a valid
+  //          GD identifier char, so it can't collide with any real GD
+  //          class; each addon `.ts` is its own ES module so multiple
+  //          files exporting the sentinel don't collide either).
+  //        - non-addon → filename-derived `_FilenameInUpperCamel`.
+  //   2. Named class in non-addon mode: a `_`-prefix collides with the
+  //      anonymous convention, so escape it to `G_Foo`.
+  //   3. Named class in addon mode: preserve verbatim. The `_$CLASS$_`
+  //      sentinel already owns the "anonymous" slot, so `_Foo` is
+  //      unambiguous as a real class_name. Addon class names are
+  //      global and the user can't change them — renaming would break
+  //      consumer references.
+  const rawName = header.className;
+  const className = !rawName
+    ? ctx.isAddon
+      ? ANONYMOUS_ADDON_CLASS_NAME
+      : gdFilenameToAnonymousClassName(ctx.filePath)
+    : ctx.isAddon
+      ? rawName
+      : escapeUnderscoreClassName(rawName);
 
   // Build the scope from the file's top-level statements. Non-member
   // children (extends / class_name / annotations / comments) are
@@ -162,11 +183,15 @@ function scanScriptClassHeader(root: SyntaxNode): ScriptClassHeader {
             : typeNode.text;
       }
     } else if (child.type === SyntaxType.ClassNameStatement) {
-      // Apply the `_Foo` → `G_Foo` escape so a real GD `class_name _Foo`
-      // doesn't collide with the anonymous-class convention on the TS
-      // side (where `_`-prefixed names mean "no class_name in GD").
-      const raw = child.childForFieldName('name')?.text ?? '';
-      className = escapeUnderscoreClassName(raw);
+      // Capture the raw `class_name` text. The escape decision is made
+      // by the caller (which has the `isAddon` flag in `ctx`): in
+      // non-addon mode `_Foo` collides with the anonymous-class
+      // convention and gets escaped to `G_Foo`; in addon mode the
+      // sentinel `_$CLASS$_` already owns the "anonymous" namespace,
+      // so `_Foo` is unambiguous as a real class_name and is preserved
+      // verbatim — addon class names are global and the user can't
+      // change them, so renaming would break consumer references.
+      className = child.childForFieldName('name')?.text ?? '';
     } else if (
       child.type === SyntaxType.Annotation &&
       child.text === '@abstract'

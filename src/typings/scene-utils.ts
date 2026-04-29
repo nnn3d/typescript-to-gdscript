@@ -4,7 +4,10 @@ import { join, relative, dirname, resolve } from 'path';
 import { parseScene, resourceParser, getSectionAttr } from './scene-parser.ts';
 import type { GodotClassRegistry } from './godot-registry.ts';
 import { SyntaxType } from '../parser/godot-resource/types.ts';
-import { isAnonymousClassName } from '../converter/common/index.ts';
+import {
+  ANONYMOUS_ADDON_CLASS_NAME,
+  isAnonymousClassName,
+} from '../converter/common/index.ts';
 
 // ─── Interfaces ────────────────────────────────────────────
 
@@ -491,6 +494,15 @@ export function scanTsFilesForClasses(
   baseDir: string,
   scriptClassMap: Map<string, ScriptInfo>,
   registry?: GodotClassRegistry,
+  /**
+   * When `true`, the addon-specific anonymity rule applies: only the
+   * sentinel `_$CLASS$_` counts as anonymous. Other `_`-prefixed names
+   * (e.g. `class_name _Foo` in a third-party addon) are treated as
+   * NAMED classes and emitted into `declare global`. Outside addon
+   * mode the legacy rule still applies — any `_`-prefixed name is
+   * anonymous (filename-derived).
+   */
+  isAddon: boolean = false,
 ): void {
   const checker = program.getTypeChecker();
 
@@ -558,11 +570,18 @@ export function scanTsFilesForClasses(
 
       scriptClassMap.set(scriptResPath, {
         className,
-        // New convention: anonymous = leading `_` (excluding the `G_`
-        // escape used for real GD `class_name _Foo`). The legacy
-        // `__CLASS__` sentinel is gone — generated TS files now use
-        // `_FilenameInUpperCamel` instead.
-        isAnonymous: isAnonymousClassName(className),
+        // Anonymity rule:
+        //   - Non-addon: `_`-prefix marks anonymous (filename-derived
+        //     `_FilenameInUpperCamel`). The legacy `__CLASS__`
+        //     sentinel is gone.
+        //   - Addon: only the literal `_$CLASS$_` sentinel is
+        //     anonymous. Real `class_name _Foo` survives verbatim and
+        //     is emitted as a global named class — addon class names
+        //     are external and consumers reference them by their real
+        //     name, so the `G_` escape is bypassed in addon mode.
+        isAnonymous: isAddon
+          ? className === ANONYMOUS_ADDON_CLASS_NAME
+          : isAnonymousClassName(className),
         tsAbsPath: filePath,
         enums,
         innerClasses,
