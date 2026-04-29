@@ -33,6 +33,7 @@ import {
   visitAccessorPair,
   visitConstructor,
   visitMethodDeclaration,
+  getDecorators,
 } from './class-members.ts';
 
 /**
@@ -59,6 +60,14 @@ export function emitClassHeader(
   ctx: ClassHeaderCtx,
 ): string {
   const pos = t.getLineAndCol(node);
+
+  // Class-level decorators (e.g. `@tool`, `@icon("res://x.svg")`) emit
+  // as GDScript class-level annotations BEFORE `extends` / `class_name`.
+  // Mirror of the GD→TS direction, where root-level annotations above
+  // the header are pulled into TS class-decorator position.
+  for (const dec of getDecorators(node, t)) {
+    t.emitter.writeLine(dec, pos.line, pos.col);
+  }
 
   // abstract class -> @abstract annotation before extends/class_name
   const isAbstract = node.modifiers?.some(

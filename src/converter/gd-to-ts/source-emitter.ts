@@ -92,6 +92,12 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
   const resolvedExtends = header.extendsClass || 'RefCounted';
   const extendsClause = ` extends ${resolvedExtends}`;
   const abstractKeyword = header.isAbstractClass ? 'abstract ' : '';
+  // Class-level annotations (`@tool`, `@icon`, …) emit on their own
+  // lines directly above the class declaration as TS decorators —
+  // mirrors how field decorators sit above their property.
+  const classDecoratorLines = header.classLevelAnnotationNodes.map((node) =>
+    emitAnnotationAsDecorator(node, ctx),
+  );
   const classHeader = `export ${abstractKeyword}class ${className}${extendsClause} {`;
 
   // Assembly: lifted decls (consts, named enums, inner classes)
@@ -115,9 +121,13 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
       out.push(indented);
     }
     out.push('}');
-    out.push('');
+    // Blank line between the namespace block and the class — but
+    // only when there are no class-level decorators. Decorators bind
+    // tightly to the next class declaration in idiomatic TS, so the
+    // blank line goes ABOVE the decorator stack instead.
+    if (classDecoratorLines.length === 0) out.push('');
   }
-  out.push(classHeader, ...memberLines, '}', '');
+  out.push(...classDecoratorLines, classHeader, ...memberLines, '}', '');
   return out.join('\n');
 }
 
@@ -160,18 +170,42 @@ interface ScriptClassHeader {
   extendsClass: string;
   /** True when `@abstract` sits above `extends` / `class_name`. */
   isAbstractClass: boolean;
-  /** Indices of `@abstract` annotations at root that should be skipped during emission. */
+  /**
+   * Indices of root-level annotations consumed by the header — both
+   * `@abstract` (handled via `isAbstractClass` / abstract-function
+   * tracking) and class-level annotations like `@tool` / `@icon` that
+   * appear above `extends` / `class_name`. Skipped during member
+   * emission so they don't get re-emitted as field decorators.
+   */
   rootAbstractAnnotationIndices: Set<number>;
   /** Indices of functions that have a preceding `@abstract` — rendered as `abstract method() {}`. */
   abstractFunctionIndices: Set<number>;
   /** Indices of inner classes that have a preceding `@abstract` — rendered as `export abstract class ...`. */
   abstractClassIndices: Set<number>;
+  /**
+   * Class-level annotation nodes (e.g. `@tool`, `@icon("res://x.svg")`)
+   * that sit above `extends` / `class_name` and apply to the script
+   * class itself. Rendered by the caller via `emitAnnotationAsDecorator`
+   * and emitted on their own lines BEFORE the `export class` header,
+   * mirroring TypeScript's class decorator syntax.
+   */
+  classLevelAnnotationNodes: SyntaxNode[];
 }
 
 /**
  * Single pass over the file root collecting everything needed to
  * compose the eventual script class header: name, extends, abstract
- * flags. Pure — doesn't touch `ctx`.
+ * flags, and any class-level annotations (`@tool`, `@icon`, …) that
+ * sit above the header statements. Pure — doesn't touch `ctx`.
+ *
+ * Class-level annotations are identified positionally: any
+ * `Annotation` child whose NEXT non-annotation neighbour at root is
+ * an `ExtendsStatement` or `ClassNameStatement`. `@abstract` follows
+ * its own dedicated path (it influences `isAbstractClass`); other
+ * annotations get added to `classLevelAnnotationNodes` for the caller
+ * to render. The neighbour-walk skips intermediate annotations so a
+ * stack like `@tool` / `@icon(...)` / `extends Node` all qualify as
+ * class-level, not just the one immediately preceding `extends`.
  */
 function scanScriptClassHeader(root: SyntaxNode): ScriptClassHeader {
   let className = '';
@@ -180,6 +214,7 @@ function scanScriptClassHeader(root: SyntaxNode): ScriptClassHeader {
   const rootAbstractAnnotationIndices = new Set<number>();
   const abstractFunctionIndices = new Set<number>();
   const abstractClassIndices = new Set<number>();
+  const classLevelAnnotationNodes: SyntaxNode[] = [];
 
   for (let i = 0; i < root.namedChildren.length; i++) {
     const child = root.namedChildren[i]!;
@@ -201,23 +236,50 @@ function scanScriptClassHeader(root: SyntaxNode): ScriptClassHeader {
       // verbatim — addon class names are global and the user can't
       // change them, so renaming would break consumer references.
       className = child.childForFieldName('name')?.text ?? '';
-    } else if (
-      child.type === SyntaxType.Annotation &&
-      child.text === '@abstract'
-    ) {
-      const next = root.namedChildren[i + 1];
-      if (
-        next &&
-        (next.type === SyntaxType.ExtendsStatement ||
-          next.type === SyntaxType.ClassNameStatement)
-      ) {
-        isAbstractClass = true;
-        rootAbstractAnnotationIndices.add(i);
-      } else if (next && next.type === SyntaxType.FunctionDefinition) {
-        abstractFunctionIndices.add(i + 1);
-        rootAbstractAnnotationIndices.add(i);
-      } else if (next && next.type === SyntaxType.ClassDefinition) {
-        abstractClassIndices.add(i + 1);
+    } else if (child.type === SyntaxType.Annotation) {
+      // Find the next "real" node: skip both annotations (other
+      // members of an annotation stack) AND comments (a `# note`
+      // between `@tool` and `extends` shouldn't cause `@tool` to be
+      // misclassified as field-level). If that node is a header
+      // statement, this annotation applies to the class itself; if
+      // there's no following node at all, the annotation is trailing
+      // — also treat as class-level so it isn't silently dropped.
+      const next = nextNonAnnotationOrComment(root, i);
+      const targetsClass =
+        !next ||
+        next.type === SyntaxType.ExtendsStatement ||
+        next.type === SyntaxType.ClassNameStatement;
+
+      if (child.text === '@abstract') {
+        // Use the same `next` lookup as non-abstract class
+        // annotations — `@abstract` followed by `@tool` followed by
+        // `extends` should still mark the class abstract, mirroring
+        // GDScript's tolerance for arbitrary annotation ordering
+        // above the header.
+        if (
+          next?.type === SyntaxType.ExtendsStatement ||
+          next?.type === SyntaxType.ClassNameStatement
+        ) {
+          isAbstractClass = true;
+          rootAbstractAnnotationIndices.add(i);
+        } else if (next?.type === SyntaxType.FunctionDefinition) {
+          // Function-level @abstract: the immediate-next is still an
+          // annotation in stacked cases, so resolve by index past any
+          // intervening annotations.
+          const targetIndex = indexOfNextNonAnnotationOrComment(root, i);
+          if (targetIndex !== -1) abstractFunctionIndices.add(targetIndex);
+          rootAbstractAnnotationIndices.add(i);
+        } else if (next?.type === SyntaxType.ClassDefinition) {
+          const targetIndex = indexOfNextNonAnnotationOrComment(root, i);
+          if (targetIndex !== -1) abstractClassIndices.add(targetIndex);
+          rootAbstractAnnotationIndices.add(i);
+        }
+      } else if (targetsClass) {
+        // E.g. `@tool` / `@icon("res://...")` above `extends Node`,
+        // or a trailing annotation with no member after it. Mark as
+        // consumed-by-header AND remember the node so the caller can
+        // render it as a TS class decorator.
+        classLevelAnnotationNodes.push(child);
         rootAbstractAnnotationIndices.add(i);
       }
     }
@@ -230,7 +292,48 @@ function scanScriptClassHeader(root: SyntaxNode): ScriptClassHeader {
     rootAbstractAnnotationIndices,
     abstractFunctionIndices,
     abstractClassIndices,
+    classLevelAnnotationNodes,
   };
+}
+
+/**
+ * Return the next root-level child after `start` that is neither an
+ * `Annotation` nor a `Comment`, or `null` if none exists. Used to
+ * look past stacks of annotations (`@tool` / `@icon`) and any
+ * intervening comments when classifying which declaration an
+ * annotation actually decorates. Comments are skipped because they
+ * don't change the GDScript parser's view of "what does this
+ * annotation attach to" — `@tool` / `# comment` / `extends Node`
+ * still has `@tool` attached to the script class.
+ */
+function nextNonAnnotationOrComment(
+  root: SyntaxNode,
+  start: number,
+): SyntaxNode | null {
+  const j = indexOfNextNonAnnotationOrComment(root, start);
+  return j === -1 ? null : root.namedChildren[j]!;
+}
+
+/**
+ * Index variant of {@link nextNonAnnotationOrComment} for callers
+ * that need to mark the target by position (e.g.
+ * `abstractFunctionIndices` / `abstractClassIndices`). Returns `-1`
+ * when no qualifying child exists.
+ */
+function indexOfNextNonAnnotationOrComment(
+  root: SyntaxNode,
+  start: number,
+): number {
+  for (let j = start + 1; j < root.namedChildren.length; j++) {
+    const candidate = root.namedChildren[j]!;
+    if (
+      candidate.type !== SyntaxType.Annotation &&
+      candidate.type !== SyntaxType.Comment
+    ) {
+      return j;
+    }
+  }
+  return -1;
 }
 
 // ─── Script class body emission ───────────────────────────────
@@ -410,6 +513,15 @@ function emitScriptClassBody(
       `  /* ERROR: Unhandled top-level node: ${child.type} */ ${child.text.split('\n')[0]}`,
     );
   }
+
+  // Defensive flush: any annotation that didn't claim a target via
+  // the loop above (no member followed it, and the header-scan
+  // didn't pull it in as class-level) gets emitted at the end so it
+  // is never silently dropped. Header-scan already routes
+  // trailing-only annotations to the class header, so reaching this
+  // path means an annotation appeared between members in an
+  // unrecognised position — surface it rather than swallowing it.
+  flushPendingAnnotations();
 
   // Remove trailing empty lines from members
   while (

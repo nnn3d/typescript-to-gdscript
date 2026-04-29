@@ -1,5 +1,8 @@
+@tool
 extends Node
 class_name Annotations
+
+const v = 0
 
 @export_group("group")
 @export var health: int = 100

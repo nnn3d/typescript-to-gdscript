@@ -1,3 +1,7 @@
+export namespace Annotations {
+  export const v = 0;
+}
+@tool
 export class Annotations extends Node {
   @export_group("group")
   @exports

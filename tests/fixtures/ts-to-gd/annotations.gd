@@ -1,5 +1,8 @@
+@tool
 extends Node2D
 class_name MyClass
+
+const v = 0
 
 @export_group("group")
 @export

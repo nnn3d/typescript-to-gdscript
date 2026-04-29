@@ -1,3 +1,7 @@
+export namespace MyClass {
+  export const v = 0;
+}
+@tool
 export class MyClass extends Node2D {
   @export_group("group")
   @exports
