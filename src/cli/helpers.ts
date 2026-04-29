@@ -184,6 +184,7 @@ export function generateAllTypings(cfg: {
     ignore: cfg.ignore,
     cache,
     onDebug: debugLog,
+    tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
   });
 
   debugLog(

@@ -48,6 +48,8 @@ export interface ClassScope {
    * (enum names + inner class names). Used by `qualifyClassType`.
    */
   classTypeNames: Set<string>;
+  /** Subset of {@link classTypeNames} that are enums (not inner classes). */
+  classEnumNames: Set<string>;
 }
 
 /**
@@ -77,6 +79,7 @@ export function buildClassScope(
     staticMembers: new Set(),
     classMemberTypes: new Map(),
     classTypeNames: new Set(),
+    classEnumNames: new Set(),
   };
 
   // Temporarily install `scope.classMemberTypes` so `inferExprType`
@@ -166,6 +169,7 @@ function collectMember(
       scope.classMembers.add(nameNode.text);
       scope.staticMembers.add(nameNode.text);
       scope.classTypeNames.add(nameNode.text);
+      scope.classEnumNames.add(nameNode.text);
     } else {
       // Anonymous enum → each enumerator is a static constant in
       // its own right (GDScript flattens them into the class namespace).
@@ -214,6 +218,7 @@ export function withClassScope<T>(
     staticMembers: ctx.staticMembers,
     classMemberTypes: ctx.classMemberTypes,
     classTypeNames: ctx.classTypeNames,
+    classEnumNames: ctx.classEnumNames,
     localVars: ctx.localVars,
     localVarTypes: ctx.localVarTypes,
   };
@@ -222,6 +227,7 @@ export function withClassScope<T>(
   ctx.staticMembers = scope.staticMembers;
   ctx.classMemberTypes = scope.classMemberTypes;
   ctx.classTypeNames = scope.classTypeNames;
+  ctx.classEnumNames = scope.classEnumNames;
   ctx.localVars = new Set();
   ctx.localVarTypes = new Map();
   try {
@@ -232,6 +238,7 @@ export function withClassScope<T>(
     ctx.staticMembers = saved.staticMembers;
     ctx.classMemberTypes = saved.classMemberTypes;
     ctx.classTypeNames = saved.classTypeNames;
+    ctx.classEnumNames = saved.classEnumNames;
     ctx.localVars = saved.localVars;
     ctx.localVarTypes = saved.localVarTypes;
   }

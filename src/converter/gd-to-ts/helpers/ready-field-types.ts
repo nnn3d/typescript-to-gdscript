@@ -122,6 +122,16 @@ export function isGdPrimitiveType(
 }
 
 /**
+ * True when the TS checker resolves the annotation to an enum (or enum
+ * literal). Enum-typed fields default to `0` at runtime in GDScript, so
+ * they're effectively initialized just like primitives.
+ */
+function isEnumLikeType(typeNode: ts.TypeNode, checker: ts.TypeChecker): boolean {
+  const type = checker.getTypeAtLocation(typeNode);
+  return !!(type.flags & ts.TypeFlags.EnumLike);
+}
+
+/**
  * Collect TS7008/TS2564 errors on class properties that are assigned in
  * `_ready()` and produce fixes:
  * - For both error codes, only fields assigned in `_ready()` are considered.
@@ -190,20 +200,25 @@ export function collectReadyFieldTypeFixes(
       if (diag.code === 2564) {
         // Property has a type but no initializer.
         //  - Assigned in _ready  -> `!` (definite-assignment assertion)
-        //  - GDScript primitive type (int, float, Vector2, Color, etc.) -> `!`
-        //    (these always have a non-null default value at runtime)
-        //  - Otherwise -> `?` (mark as optional), or `!` when
-        //    `--unsafe-use-any` is set (fewer `X | undefined` errors downstream)
+        //  - GDScript primitive / value type / enum -> `!` (non-null runtime default)
+        //  - Otherwise -> skip (the nullable helper handles non-primitive
+        //    unassigned fields by rewriting them to `field: T | null = null`;
+        //    any that remain here lack a type the nullable helper recognized
+        //    as reference, so we can't make a safe decision).
         if (rhs) {
           insertText = '!';
         } else {
           const declaredType = propDecl.type
             ? propDecl.type.getText(sourceFile)
             : '';
-          if (isGdPrimitiveType(declaredType, registry)) {
+          const primitive = isGdPrimitiveType(declaredType, registry);
+          const enumLike = propDecl.type
+            ? isEnumLikeType(propDecl.type, checker)
+            : false;
+          if (primitive || enumLike) {
             insertText = '!';
           } else {
-            insertText = unsafeUseAny ? '!' : '?';
+            continue;
           }
         }
       } else {

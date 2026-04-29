@@ -9,6 +9,45 @@ import {
 import { getAnnotations } from './members.ts';
 import { emitBody } from './statements.ts';
 import { emitExpr } from './expressions.ts';
+import { isReferenceType } from '../common/index.ts';
+
+/**
+ * Widen a TS type for an IN position (function parameter, setter value,
+ * signal tuple element). Appends ` | null` when `rawType` is a Godot
+ * reference type and the TS text does not already include `null`.
+ *
+ * Godot permits null at every class-typed parameter; widening here makes
+ * callers free to pass null just as GDScript callers are.
+ */
+/**
+ * Match `null` as a standalone TS type token — `| null`, `null |`, or bare
+ * `null`. Deliberately NOT a plain `.includes('null')` so identifiers like
+ * `MyNullable` don't falsely suppress widening.
+ */
+function typeTextIncludesNull(text: string): boolean {
+  return /(^|[\s|])null(\s*\||$)/.test(text);
+}
+
+export function widenInType(
+  rawType: string,
+  tsType: string | null,
+  ctx: GdToTsContext,
+): string | null {
+  if (!tsType) return tsType;
+  if (typeTextIncludesNull(tsType)) return tsType;
+  const firstSeg = rawType.split('.')[0] ?? rawType;
+  // Skip enum references (numeric in TS).
+  if (ctx.classEnumNames.has(firstSeg)) return tsType;
+  if (ctx.registry.isGlobalEnum(firstSeg)) return tsType;
+  // Dotted references: inner-class access (`Config.Inner`) when the first
+  // segment is a user class, vs Godot class enum (`Node.ProcessMode`)
+  // otherwise. Widen inner-class references; skip Godot class enums.
+  if (rawType.includes('.')) {
+    return ctx.classTypeNames.has(firstSeg) ? `${tsType} | null` : tsType;
+  }
+  if (!isReferenceType(rawType, ctx.registry)) return tsType;
+  return `${tsType} | null`;
+}
 
 // ─── Functions ────────────────────────────────────────────────
 
@@ -145,7 +184,7 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       // Untyped param — use signal handler type if available
       if (handlerInfo && paramIndex < handlerInfo.params.length) {
         const sigParam = handlerInfo.params[paramIndex]!;
-        const tsType = gdTypeToTs(sigParam.gdType);
+        const tsType = widenInType(sigParam.gdType, gdTypeToTs(sigParam.gdType), ctx);
         params.push(tsType ? `${child.text}: ${tsType}` : child.text);
       } else {
         params.push(child.text);
@@ -157,9 +196,10 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
         '';
       const typeNode = child.childForFieldName('type');
       const rawType = typeNode?.text ?? '';
-      const tsType =
+      const baseType =
         qualifyClassType(rawType, ctx.classTypeNames, ctx.className) ??
         (typeNode ? gdTypeToTs(rawType) : null);
+      const tsType = widenInType(rawType, baseType, ctx);
       params.push(tsType ? `${name}: ${tsType}` : name);
       paramIndex++;
     } else if (child.type === SyntaxType.DefaultParameter) {
@@ -184,15 +224,18 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       const typeNode = child.childForFieldName('type');
       const value = child.childForFieldName('value');
       const rawType = typeNode?.text ?? '';
-      const tsType =
+      const baseType =
         qualifyClassType(rawType, ctx.classTypeNames, ctx.className) ??
         (typeNode ? gdTypeToTs(rawType) : null);
       const valueText = value?.text?.trim() ?? '';
-      // `param: Type = null` → `param: Type | null = null`
+      // `param: Type = null` → `param: Type | null = null` (all types get
+      // widened — see existing tests). For non-null defaults, widen only
+      // reference types (IN rule).
       if (valueText === 'null') {
-        const typeStr = tsType ? `: ${tsType} | null` : ': unknown';
+        const typeStr = baseType ? `: ${baseType} | null` : ': unknown';
         params.push(`${name}${typeStr} = null`);
       } else {
+        const tsType = widenInType(rawType, baseType, ctx);
         const valueStr = value ? emitExpr(value, ctx) : '';
         const typeStr = tsType ? `: ${tsType}` : '';
         params.push(`${name}${typeStr} = ${valueStr}`);

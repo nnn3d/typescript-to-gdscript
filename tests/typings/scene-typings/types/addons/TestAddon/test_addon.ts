@@ -5,7 +5,7 @@ export namespace TestAddon {
 }
 
 export class TestAddon extends Node {
-  state: TestAddon.AddonState;
+  state!: TestAddon.AddonState;
 
   start() {
     this.state = TestAddon.AddonState.RUNNING;

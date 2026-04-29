@@ -54,6 +54,12 @@ export interface GdToTsContext {
   globalEnumMap: Map<string, string>;
   /** Class-level enum and inner class names (for type qualification: State → ClassName.State) */
   classTypeNames: Set<string>;
+  /**
+   * Subset of {@link classTypeNames} that are enums (not inner classes).
+   * Used by IN-position widening to skip enums (which are numeric in TS)
+   * while still widening reference-typed inner-class parameters.
+   */
+  classEnumNames: Set<string>;
   /** Use `any` instead of `unknown` as the fallback for unresolvable types */
   unsafeUseAny: boolean;
 }

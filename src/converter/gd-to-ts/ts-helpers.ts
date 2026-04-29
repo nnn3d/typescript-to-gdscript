@@ -20,7 +20,7 @@ import {
   collectUnsafeAnyFieldFixes,
   collectUnsafeNonNullFixes,
 } from './helpers/unsafe-helpers.ts';
-import { collectNullableReturnFixes } from './helpers/nullable-return.ts';
+import { collectNullableFixes } from './helpers/nullable.ts';
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -31,7 +31,7 @@ export interface TsHelperOptions {
   rootDir: string;
   /** Path to tsconfig.json */
   tsConfigPath?: string;
-  /** Godot class registry (required for explicitConvert helper) */
+  /** Godot class registry (required for explicitConvert / nullable helpers) */
   registry?: GodotClassRegistry;
   /**
    * Use `!` (definite-assignment) instead of `?` (optional) for non-primitive
@@ -39,19 +39,13 @@ export interface TsHelperOptions {
    * downstream `X | undefined` errors at usage sites.
    */
   unsafeUseAny?: boolean;
-  /** Which helpers to run (all default to true) */
-  helpers?: {
-    /** Fix operator type errors by wrapping in gd.ops.X() */
-    operatorFix?: boolean;
-    /** Fix variant-type assignment errors by inserting explicit `gd.as(value, Target)` conversions */
-    explicitConvert?: boolean;
-    /** Fix TS7008/TS2564 on class properties by adding `!` and inferring type from `_ready()` assignments */
-    readyFieldTypes?: boolean;
-    /** Fix TS7006 implicit-any parameters on overridden methods by copying types from the parent class */
-    extendsType?: boolean;
-    /** Add `| null` to return types when function body returns null */
-    nullableReturn?: boolean;
-  };
+  /**
+   * Addon mode: widen ALL reference-typed OUT positions to `T | null`
+   * (fields, returns, locals, getters) instead of using the TS2322
+   * fallback. Use when generating typings for external addon code whose
+   * internals we can't type-check for null flow.
+   */
+  addonMode?: boolean;
 }
 
 export interface TsHelperResult {
@@ -91,30 +85,23 @@ function applyFixes(source: string, fixes: SourceFix[]): string {
  * Run TS-based post-processing helpers on converted files.
  * Call AFTER conversion and typings generation.
  */
+/**
+ * A named fix collector. The name is used in the pass log so users can see
+ * which helper produced which fixes; e.g. `pass 1 — 5 fix(es) applied
+ * (nullable: 3, operator-fix: 2)`.
+ */
+type NamedCollector = {
+  name: string;
+  collect: (program: ts.Program, filePaths: Set<string>) => Map<string, SourceFix[]>;
+};
+
 export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
-  const { files, rootDir, tsConfigPath, registry, helpers = {} } = options;
+  const { files, rootDir, tsConfigPath, registry } = options;
   const unsafeUseAny = !!options.unsafeUseAny;
+  const addonMode = !!options.addonMode;
   const result: TsHelperResult = { fixedFiles: [], diagnostics: [] };
 
   if (files.length === 0) return result;
-
-  const operatorFixEnabled = helpers.operatorFix !== false;
-  const explicitConvertEnabled = helpers.explicitConvert !== false && !!registry;
-  const readyFieldTypesEnabled = helpers.readyFieldTypes !== false;
-  const extendsTypeEnabled = helpers.extendsType !== false;
-  const nullableReturnEnabled = helpers.nullableReturn !== false;
-  const unsafeAnyFallbackEnabled = unsafeUseAny;
-
-  if (
-    !operatorFixEnabled &&
-    !explicitConvertEnabled &&
-    !readyFieldTypesEnabled &&
-    !extendsTypeEnabled &&
-    !nullableReturnEnabled &&
-    !unsafeAnyFallbackEnabled
-  ) {
-    return result;
-  }
 
   const MAX_FIX_PASSES = 10;
   const allFixedFiles = new Set<string>();
@@ -125,7 +112,7 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
 
   /** Run a set of fix collectors in a multi-pass loop until convergence. */
   const runFixLoop = (
-    collectors: Array<(program: ts.Program, filePaths: Set<string>) => Map<string, SourceFix[]>>,
+    collectors: NamedCollector[],
     label?: string,
   ) => {
     for (let pass = 0; pass < MAX_FIX_PASSES; pass++) {
@@ -139,22 +126,27 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
         }
       }
 
-      // Merge fixes from all collectors in this pass
-      const mergedFixes = new Map<string, SourceFix[]>();
-      for (const collect of collectors) {
+      // Merge fixes from all collectors in this pass, tagging each with the
+      // producing collector's name so the pass log can attribute applied
+      // fixes back to their helper.
+      type TaggedFix = SourceFix & { __helper: string };
+      const mergedFixes = new Map<string, TaggedFix[]>();
+      for (const { name, collect } of collectors) {
         const from = collect(program, filePaths);
         for (const [file, fs] of from) {
+          const tagged = fs.map((f) => ({ ...f, __helper: name }));
           const existing = mergedFixes.get(file) ?? [];
-          mergedFixes.set(file, [...existing, ...fs]);
+          mergedFixes.set(file, [...existing, ...tagged]);
         }
       }
 
       let fixedInPass = 0;
+      const perHelper = new Map<string, number>();
       for (const [fileName, fixes] of mergedFixes) {
         if (fixes.length === 0) continue;
 
         // Drop overlapping fixes within a single pass -- keep innermost/earliest.
-        const dedupedFixes: SourceFix[] = [];
+        const dedupedFixes: TaggedFix[] = [];
         const used: Array<{ start: number; end: number }> = [];
         for (const f of fixes) {
           const overlap = used.some(
@@ -174,59 +166,65 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
         writeFileSync(fileName, fixed);
         allFixedFiles.add(fileName);
         fixedInPass += dedupedFixes.length;
+        for (const f of dedupedFixes) {
+          perHelper.set(f.__helper, (perHelper.get(f.__helper) ?? 0) + 1);
+        }
       }
 
       if (fixedInPass === 0) break;
       if (label) {
-        console.log(`  [ts-helpers] ${label}: pass ${pass + 1} — ${fixedInPass} fix(es) applied`);
+        const breakdown = [...perHelper.entries()]
+          .sort((a, b) => b[1] - a[1])
+          .map(([name, n]) => `${name}: ${n}`)
+          .join(', ');
+        console.log(
+          `  [ts-helpers] ${label}: pass ${pass + 1} — ${fixedInPass} fix(es) applied (${breakdown})`,
+        );
       }
     }
   };
 
   // Phase 1: primary helpers (converge first so the unsafe fallback only
   // fires on fields/params the other helpers couldn't resolve).
-  const primaryCollectors: Array<(program: ts.Program, filePaths: Set<string>) => Map<string, SourceFix[]>> = [];
-  if (operatorFixEnabled) {
-    primaryCollectors.push((program, filePaths) =>
-      collectOperatorFixes(program, filePaths),
-    );
-  }
-  if (explicitConvertEnabled) {
-    primaryCollectors.push((program, filePaths) =>
-      collectExplicitConvertFixes(program, filePaths, registry!),
-    );
-  }
-  if (readyFieldTypesEnabled) {
-    primaryCollectors.push((program, filePaths) =>
-      collectReadyFieldTypeFixes(program, filePaths, registry, unsafeUseAny),
-    );
-  }
-  if (extendsTypeEnabled) {
-    primaryCollectors.push((program, filePaths) =>
-      collectExtendsTypeFixes(program, filePaths),
-    );
-  }
-  if (helpers.nullableReturn !== false) {
-    primaryCollectors.push((program, filePaths) =>
-      collectNullableReturnFixes(program, filePaths),
-    );
-  }
-  if (primaryCollectors.length > 0) {
-    console.log('[ts-helpers] Running primary helpers...');
-    runFixLoop(primaryCollectors, 'primary');
-  }
+  // Order matters: nullable runs BEFORE ready-field-types so Phase A
+  // widens unassigned reference fields before ready-field-types inspects them;
+  // it runs AFTER operator-fix / explicit-convert so their diagnostics don't
+  // pollute the TS2322 signal used by Phase C.
+  const primaryCollectors: NamedCollector[] = [
+    { name: 'operator-fix', collect: (program, filePaths) => collectOperatorFixes(program, filePaths) },
+    ...(registry
+      ? [{
+          name: 'explicit-convert',
+          collect: (program: ts.Program, filePaths: Set<string>) =>
+            collectExplicitConvertFixes(program, filePaths, registry),
+        }]
+      : []),
+    ...(registry
+      ? [{
+          name: 'nullable',
+          collect: (program: ts.Program, filePaths: Set<string>) =>
+            collectNullableFixes(program, filePaths, registry, { addonMode }),
+        }]
+      : []),
+    { name: 'ready-field-types', collect: (program, filePaths) => collectReadyFieldTypeFixes(program, filePaths, registry, unsafeUseAny) },
+    { name: 'extends-type', collect: (program, filePaths) => collectExtendsTypeFixes(program, filePaths) },
+  ];
+  console.log('[ts-helpers] Running primary helpers...');
+  runFixLoop(primaryCollectors, 'primary');
 
   // Phase 2 (unsafe mode only): type any remaining untyped fields/params as `any`,
   // then suppress "possibly null" errors with `!` assertions.
-  if (unsafeAnyFallbackEnabled) {
+  if (unsafeUseAny) {
     console.log('[ts-helpers] Running unsafe-any fallback...');
-    runFixLoop([
-      (program, filePaths) => collectUnsafeAnyFieldFixes(program, filePaths),
-    ], 'unsafe-any');
+    runFixLoop(
+      [{ name: 'unsafe-any-field', collect: (program, filePaths) => collectUnsafeAnyFieldFixes(program, filePaths) }],
+      'unsafe-any',
+    );
     console.log('[ts-helpers] Running unsafe non-null assertions...');
-    runFixLoop([
-      (program, filePaths) => collectUnsafeNonNullFixes(program, filePaths),
-    ], 'non-null');
+    runFixLoop(
+      [{ name: 'unsafe-non-null', collect: (program, filePaths) => collectUnsafeNonNullFixes(program, filePaths) }],
+      'non-null',
+    );
   }
 
   result.fixedFiles = [...allFixedFiles];

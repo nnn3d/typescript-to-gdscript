@@ -147,19 +147,13 @@ Options:
 
 - `-o, --output-dir <dir>` — Output directory
 - `--registry <path>` — Path to `godot-class-registry.json`
-- `--no-helpers` — Disable all GD-to-TS conversion helpers
-- `--no-signal-handler-helper` — Disable signal handler type inference from `.tscn` connections
-- `--no-operator-fix-helper` — Disable TS-based operator type error auto-fix
-- `--no-explicit-convert-helper` — Disable TS-based variant-type auto-fix (explicit `gd.as` insertion)
-- `--no-ready-field-types-helper` — Disable TS-based class property auto-fix (adds `!` and infers types from `_ready()` assignments)
-- `--no-extends-type-helper` — Disable TS-based override-method parameter auto-fix (copies parameter types from parent class)
-- `--no-nullable-return-helper` — Disable nullable return type auto-fix (adds `| null` to return types)
 - `--unsafe-use-any` — Less strict but less error-prone conversion mode. Currently affects:
   - `gd.getset` fallback type: uses `any` instead of `unknown` when neither a GDScript type annotation nor a typeof-able value expression is available.
-  - Ready field types helper: non-primitive TS2564 fields that aren't assigned in `_ready()` get `!` (definite-assignment) instead of `?` (optional) — avoids downstream `X | undefined` errors at usage sites at the cost of losing the runtime safety check.
   - Unsafe non-null assertions: TS2531/18047/18048/18046 "possibly null/undefined" errors get `!` inserted after the expression. TS2322/2345 where the root cause is a null union type get `!` after the RHS/argument.
   - TS7034 "variable implicitly has type `any[]`" gets `: any[]` annotation added.
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `/* ERROR: ... */` comments)
+
+The full set of conversion helpers (see next section) always runs; there is no per-helper disable flag.
 
 #### Conversion Helpers
 
@@ -192,26 +186,45 @@ GD-to-TS conversion includes optional helpers that enhance the output:
   ```
   Methods that don't override anything (`custom_method(arg)`) are left untouched.
 
-- **Nullable return helper** (default: enabled) — Detects TS2322 "Type 'null' is not assignable to type 'X'" on `return null` statements where the function has an explicit return type annotation. Adds `| null` to the return type. Example:
+- **Nullable helper** — Applies `T | null` widening and narrowing in two directions:
 
+  - **At emit time (IN positions)**: reference-typed function/method/lambda parameters, setter value parameters, and `gd.signal<[…]>()` generics start as `T | null` because Godot lets callers pass null to any class-typed argument. Accessor pairs (GD `setget` → TS `get`/`set`) emit the same type on both sides so reads and writes stay symmetric. Value types (Vector2, Color, PackedByteArray, …), primitives, and enum references are left strict.
+  - **After conversion (OUT positions)**: a post-processing pass handles return types, field annotations, getter returns, and local-variable annotations. Unassigned reference-typed fields are rewritten to `field: T | null = null` (both modes). Return types and assigned fields/locals start **strict** and get widened to `T | null` only when the TypeScript type-checker proves null flows through (TS2322). Addon mode additionally widens assigned fields and local-variable annotations up-front, since their full body isn't available to the type-checker the same way user code is.
+  - **After widening (IN fallback)**: parameters that were emitted as `T | null` get narrowed back to `T` when the function body dereferences them without a null-check (triggering TS2531 / TS18047 "possibly null" diagnostics). Runs after the OUT widening pass so return types settle before parameter narrowing kicks in — a return type's null status often depends on its parameters. Setter value params of accessor pairs are skipped to keep getter/setter nullability in sync.
+
+  Example:
   ```typescript
   class Player extends Node2D {
-    find_target(): Node2D {   // TS2322 on `return null`
-      return null;
+    target: Node;                    // TS2564 + unassigned + reference
+    find_target(node: Node2D) { ... } // IN position: reference
+    dereference(node: Node2D) { node.queue_free(); } // body uses as non-null
+    set_target(v: Node2D) { ... }     // IN position: reference
+    signal_fired = gd.signal<[Node]>();
+
+    do_something() {
+      let found: Node = this.get_node("Foo");
+      if (!found) found = null;       // TS2322
     }
   }
   ```
   becomes:
   ```typescript
   class Player extends Node2D {
-    find_target(): Node2D | null {
-      return null;
+    target: Node | null = null;              // Phase A
+    find_target(node: Node2D | null) { ... } // emit-time (body doesn't deref)
+    dereference(node: Node2D) { node.queue_free(); } // Phase D narrowed back
+    set_target(v: Node2D | null) { ... }     // emit-time
+    signal_fired = gd.signal<[Node | null]>(); // emit-time
+
+    do_something() {
+      let found: Node | null = this.get_node("Foo"); // Phase C
+      if (!found) found = null;
     }
   }
   ```
 
-- **Ready field types helper** (default: enabled) — Detects TS7008 ("Member implicitly has an any type") and TS2564 ("Property has no initializer") on class properties:
-  - **TS2564** (`field: Type;`) — if assigned in `_ready()`, adds `!` (definite-assignment). If not assigned in `_ready()` but the type is a GDScript primitive (`int`, `float`, `bool`, `String`, `Vector2`, `Color`, any value type with a guaranteed default), still adds `!`. Otherwise marks the field optional with `?` — or with `!` when `--unsafe-use-any` is passed.
+- **Ready field types helper** — Detects TS7008 ("Member implicitly has an any type") and TS2564 ("Property has no initializer") on class properties:
+  - **TS2564** (`field: Type;`) — if assigned in `_ready()`, adds `!` (definite-assignment). If not assigned in `_ready()` but the type is a GDScript primitive or value type (`int`, `float`, `bool`, `String`, `Vector2`, `Color`, any value type with a guaranteed default), still adds `!`. Non-primitive unassigned fields are handled by the nullable helper (see above).
   - **TS7008** (`field;`) — if assigned in `_ready()`, adds `!: <inferred type>` (type taken from the `_ready()` expression). Otherwise left untouched (no type to infer from).
 
   Example:
@@ -221,7 +234,7 @@ GD-to-TS conversion includes optional helpers that enhance the output:
     time: float;                   // TS2564, assigned in _ready
     progress_bar;                  // TS7008, assigned in _ready
     score: int;                    // TS2564, NOT assigned, but primitive
-    target: Node2D;                // TS2564, NOT assigned, not primitive
+    target: Node2D;                // TS2564, NOT assigned, nullable helper widens
 
     _ready() {
       this.time = 0.0;
@@ -235,7 +248,7 @@ GD-to-TS conversion includes optional helpers that enhance the output:
     time!: float;                                    // assigned → `!`
     progress_bar!: typeof this.game_ui.progress_bar; // assigned → `!: <inferred>`
     score!: int;                                     // primitive → `!`
-    target?: Node2D;                                 // non-primitive → `?`
+    target: Node2D | null = null;                    // nullable helper widens
 
     _ready() {
       this.time = 0.0;

@@ -81,6 +81,7 @@ export class GodotClassRegistry {
 
   private bareAnnotationsSet: Set<string>;
   private operatorTypesSet: Set<string>;
+  private globalEnumNamesSet: Set<string>;
 
   constructor(data: GodotRegistryData) {
     this.data = data;
@@ -89,6 +90,9 @@ export class GodotClassRegistry {
     this.singletonsSet = new Set((data.singletons ?? []).map((s) => s.name));
     this.bareAnnotationsSet = new Set(data.bareAnnotations ?? []);
     this.operatorTypesSet = new Set(data.operatorTypes ?? []);
+    this.globalEnumNamesSet = new Set(
+      (data.globalEnums ?? []).map((e) => e.name),
+    );
   }
 
   static fromJsonFile(jsonPath: string): GodotClassRegistry {
@@ -169,6 +173,11 @@ export class GodotClassRegistry {
   /** Check if a class has operator overloads (needs gd.ops.* wrappers) */
   hasOperators(name: string): boolean {
     return this.operatorTypesSet.has(name);
+  }
+
+  /** Check if a name is a Godot global enum type (e.g. Key, MouseButton). */
+  isGlobalEnum(name: string): boolean {
+    return this.globalEnumNamesSet.has(name);
   }
 
   /** Get the inheritance chain for a class (including itself) */

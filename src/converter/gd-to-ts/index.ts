@@ -213,6 +213,7 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
     signalHandlers: options.signalHandlers ?? new Map(),
     globalEnumMap: buildGlobalEnumMap(options.registry),
     classTypeNames: new Set(),
+    classEnumNames: new Set(),
     unsafeUseAny: options.unsafeUseAny ?? false,
   };
 

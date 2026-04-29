@@ -8,6 +8,7 @@ import {
 } from './type-inference.ts';
 import { emitExpr } from './expressions.ts';
 import { emitBody } from './statements.ts';
+import { widenInType } from './functions.ts';
 
 // ─── Comments ─────────────────────────────────────────────────
 
@@ -67,20 +68,25 @@ export function emitSignal(node: SyntaxNode, ctx: GdToTsContext): string {
   const paramsNode = node.childForFieldName('parameters');
 
   if (paramsNode && paramsNode.namedChildren.length > 0) {
-    const types = emitSignalParamTypes(paramsNode);
+    const types = emitSignalParamTypes(paramsNode, ctx);
     return `  ${name} = gd.signal<[${types}]>();`;
   }
 
   return `  ${name} = gd.signal();`;
 }
 
-export function emitSignalParamTypes(paramsNode: SyntaxNode): string {
+export function emitSignalParamTypes(
+  paramsNode: SyntaxNode,
+  ctx: GdToTsContext,
+): string {
   const types: string[] = [];
   for (const child of paramsNode.namedChildren) {
     if (child.type === SyntaxType.TypedParameter) {
       const typeNode = child.childForFieldName('type');
-      const tsType = typeNode ? gdTypeToTs(typeNode.text) : 'any';
-      types.push(tsType ?? 'any');
+      const rawType = typeNode?.text ?? '';
+      const baseType = typeNode ? gdTypeToTs(rawType) : 'any';
+      const widened = widenInType(rawType, baseType, ctx);
+      types.push(widened ?? 'any');
     } else if (child.type === SyntaxType.Identifier) {
       types.push('any');
     }
@@ -253,10 +259,17 @@ function emitSetgetVariable(
   }
 
   if (!useGdGetset) {
-    // Simple case: emit TS get/set accessors
+    // Simple case: emit TS get/set accessors. Getter return and setter
+    // value are emitted with the SAME type — they represent the same
+    // property and mismatched nullability (getter strict, setter nullish,
+    // or vice versa) produces confusing semantics at call sites. For
+    // reference types, both sides default to `T | null`; Phase D skips
+    // setter value params to preserve this symmetry.
+    const rawType = typeNode ? extractGdTypeName(typeNode) ?? '' : '';
+    const accessorType = widenInType(rawType, tsType, ctx) ?? tsType;
     return emitTsAccessors(
       name,
-      tsType,
+      accessorType,
       getNode,
       setNode,
       decorators,
@@ -297,7 +310,8 @@ function emitTsAccessors(
   const bodyIndent = '    ';
   const lines: string[] = [];
 
-  // Emit getter
+  // Getter and setter share `tsType` so the property's read and write
+  // contracts stay in sync (both nullish for reference types by default).
   lines.push(`${decorators}${indent}${staticPrefix}get ${name}(): ${tsType} {`);
   if (getNode?.type === SyntaxType.GetBody) {
     const body = getNode.childForFieldName('body');
@@ -309,7 +323,6 @@ function emitTsAccessors(
   lines.push(`${indent}}`);
   lines.push('');
 
-  // Emit setter
   lines.push(`${indent}${staticPrefix}set ${name}(value: ${tsType}) {`);
   if (setNode?.type === SyntaxType.SetBody) {
     const body = setNode.childForFieldName('body');
@@ -326,7 +339,6 @@ function emitTsAccessors(
     const bodyStr = body ? emitBody(body, ctx, 2) : '';
     ctx.localVars = savedLocals;
     if (paramName !== 'value') {
-      // Rewrite the parameter name at the signature level to match
       lines[lines.length - 1] =
         `${indent}${staticPrefix}set ${name}(${paramName}: ${tsType}) {`;
     }

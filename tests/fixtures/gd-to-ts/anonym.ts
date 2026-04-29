@@ -11,7 +11,7 @@ export namespace _Anonym {
   }
   export class Config extends RefCounted {
     difficulty: int = 0;
-    set_inner(i: Config.Inner) {
+    set_inner(i: Config.Inner | null) {
       let d = Config.Inner.TYPE;
     }
   }
@@ -29,7 +29,7 @@ export class _Anonym extends Node {
     return _Anonym.MAX_HEALTH;
   }
 
-  set_mode(m: _Anonym.Mode, c: _Anonym.Config, i: _Anonym.Config.Inner) {
+  set_mode(m: _Anonym.Mode, c: _Anonym.Config | null, i: _Anonym.Config.Inner | null) {
     let mode: _Anonym.Mode = _Anonym.Mode.EASY;
   }
 }

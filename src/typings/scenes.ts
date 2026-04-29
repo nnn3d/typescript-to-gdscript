@@ -3,6 +3,7 @@ import { join, relative, extname, dirname, resolve } from 'path';
 import { createTsProgram } from '../parser/typescript/index.ts';
 import { resolveRegistry } from '../config/index.ts';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
+import { runTsHelpers } from '../converter/gd-to-ts/ts-helpers.ts';
 import { findAddonGdFiles } from '../cli/helpers.ts';
 import { ProjectCache } from '../cache/index.ts';
 
@@ -412,6 +413,13 @@ export interface GenerateAddonTypingsOptions {
   cache?: ProjectCache;
   /** Optional debug logger (e.g. for --debug CLI flag) */
   onDebug?: (message: string) => void;
+  /**
+   * Path to the project's tsconfig.json. Forwarded to the nullable helper so
+   * its TS program can resolve Godot typings — otherwise references to
+   * `Node`, `Resource`, etc. collapse to `any` and Phase C's TS2322 signal
+   * never fires for Godot-class returns in addon code.
+   */
+  tsConfigPath?: string;
 }
 
 /**
@@ -451,16 +459,41 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
     filePath: f,
   }));
 
-  // Pass 1: Convert all addon .gd -> .ts, write to outputDir
+  // Pass 1: Convert all addon .gd -> .ts, write to outputDir.
+  // Addon .ts files start without `@ts-nocheck` so the nullable helper's
+  // type checker can see the annotations. The header is prepended after
+  // the helper pass finishes.
   const addonTsPaths: string[] = [];
   for (const { source, filePath } of addonSources) {
     const result = convertGdToTs({ source, filePath, registry, projectSources: addonSources });
     const relPath = relative(rootDir, filePath).replace(/\\/g, '/');
     const outputTsPath = resolve(outputDir, relPath.replace(/\.gd$/, '.ts'));
     mkdirSync(dirname(outputTsPath), { recursive: true });
-    writeFileSync(outputTsPath, '// @ts-nocheck — auto-generated from GDScript addon\n' + result.code);
+    writeFileSync(outputTsPath, result.code);
     writtenFiles.push(outputTsPath);
     addonTsPaths.push(outputTsPath);
+  }
+
+  // Pass 1b: Run the nullable helper in addon mode. Phase B widens reference-
+  // typed field/local annotations; Phase C widens function returns only when
+  // TS2322 proves null flows through; Phase D narrows parameters back to
+  // strict when the body uses them as non-null. Addon consumers see signatures
+  // matching the addon's actual null behaviour.
+
+  if (addonTsPaths.length > 0) {
+    runTsHelpers({
+      files: addonTsPaths,
+      rootDir: outputDir,
+      tsConfigPath: options.tsConfigPath,
+      registry,
+      addonMode: true,
+    });
+  }
+
+  // Prepend the `@ts-nocheck` header now that helper mutations are done.
+  for (const p of addonTsPaths) {
+    const body = readFileSync(p, 'utf-8');
+    writeFileSync(p, '// @ts-nocheck — auto-generated from GDScript addon\n' + body);
   }
 
   // Pass 2: Create TS program from addon .ts files, scan for classes

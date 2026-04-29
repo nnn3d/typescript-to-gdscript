@@ -18,7 +18,7 @@ export class Enums extends Node {
     return bool(Enums.Direction.UP || Enums.Status.IDLE || Enums.UNIT_NEUTRAL);
   }
 
-  test_typed_params(s: Enums.Status, w: Enums.Weapon) {
+  test_typed_params(s: Enums.Status, w: Enums.Weapon | null) {
   }
 
   test_typed_vars() {

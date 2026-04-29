@@ -53,6 +53,8 @@ This project converts TypeScript code to GDScript for the Godot game engine, wit
 
 9. **Always run tests and build after completing some task**
 
+10. **⚠️ Use Claude plans, not standalone `.md` design/spec files.** When brainstorming or planning an implementation, write the output as a Claude plan (via `EnterPlanMode` → plan file under `~/.claude/plans/`). Do not create `.md` design/spec files in the project tree (e.g. `docs/superpowers/specs/*.md`). Claude plans are visible in the Claude app and are the canonical place for planning artifacts. If a spec `.md` file already exists and the information has been captured in a Claude plan, delete the `.md` file.
+
 ## Development Guidelines
 
 ### Philosophy

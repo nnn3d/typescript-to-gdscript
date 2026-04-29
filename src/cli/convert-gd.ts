@@ -23,31 +23,6 @@ export function registerConvertGdCommand(program: Command): void {
       '--registry <path>',
       'Path to godot-class-registry.json (overrides tstogd.json and bundled)',
     )
-    .option('--no-helpers', 'Disable all GD-to-TS conversion helpers')
-    .option(
-      '--no-signal-handler-helper',
-      'Disable signal handler type inference from .tscn connections',
-    )
-    .option(
-      '--no-operator-fix-helper',
-      'Disable TS-based operator type error auto-fix (gd.ops wrapping)',
-    )
-    .option(
-      '--no-explicit-convert-helper',
-      'Disable TS-based variant-type auto-fix (inserts explicit gd.as conversions)',
-    )
-    .option(
-      '--no-ready-field-types-helper',
-      'Disable TS-based class property auto-fix (adds `!` and infers types from _ready assignments)',
-    )
-    .option(
-      '--no-extends-type-helper',
-      'Disable TS-based override-method parameter auto-fix (copies parameter types from parent class)',
-    )
-    .option(
-      '--no-nullable-return-helper',
-      'Disable TS-based nullable return auto-fix (adds `| null` to return types when function returns null)',
-    )
     .option(
       '--unsafe-use-any',
       'Use `any` instead of `unknown` as the fallback for unresolvable types (e.g. gd.getset without a GDScript type or typeof-able value). Less strict but more error-prone.',
@@ -86,9 +61,7 @@ export function registerConvertGdCommand(program: Command): void {
       const sceneFiles = findSceneFiles(cfg.scenesDir, cfg.rootDir, cfg.ignore);
 
       // Pre-collect all signal handlers once (instead of re-parsing scenes per file)
-      const signalHelperEnabled =
-        opts.helpers !== false && opts.signalHandlerHelper !== false;
-      const allSignalHandlers = signalHelperEnabled && sceneFiles.length > 0
+      const allSignalHandlers = sceneFiles.length > 0
         ? collectAllSignalHandlers(sceneFiles, registry)
         : undefined;
 
@@ -167,30 +140,13 @@ export function registerConvertGdCommand(program: Command): void {
       });
 
       // Run TS-based post-processing helpers.
-      // Commander converts `--no-foo-bar` flags into `opts.fooBar` (inverted),
-      // defaulting to `true` and set to `false` only when the flag is passed.
-      const helpersEnabled = opts.helpers !== false;
-      const operatorFixEnabled = helpersEnabled && opts.operatorFixHelper !== false;
-      const explicitConvertEnabled = helpersEnabled && opts.explicitConvertHelper !== false;
-      const readyFieldTypesEnabled = helpersEnabled && opts.readyFieldTypesHelper !== false;
-      const extendsTypeEnabled = helpersEnabled && opts.extendsTypeHelper !== false;
-      const nullableReturnEnabled = helpersEnabled && opts.nullableReturnHelper !== false;
-      const anyTsHelperEnabled =
-        operatorFixEnabled || explicitConvertEnabled || readyFieldTypesEnabled || extendsTypeEnabled || nullableReturnEnabled;
-      if (anyTsHelperEnabled && tsOutputFiles.length > 0) {
+      if (tsOutputFiles.length > 0) {
         const helperResult = runTsHelpers({
           files: tsOutputFiles,
           rootDir: cfg.rootDir,
           tsConfigPath: cfg.tsconfig,
           registry,
           unsafeUseAny: !!opts.unsafeUseAny,
-          helpers: {
-            operatorFix: operatorFixEnabled,
-            explicitConvert: explicitConvertEnabled,
-            readyFieldTypes: readyFieldTypesEnabled,
-            extendsType: extendsTypeEnabled,
-            nullableReturn: nullableReturnEnabled,
-          },
         });
         if (helperResult.fixedFiles.length > 0) {
           debugLog(`TS helpers: patched ${helperResult.fixedFiles.length} file(s)`);

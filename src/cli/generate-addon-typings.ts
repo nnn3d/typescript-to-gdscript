@@ -29,6 +29,7 @@ export function registerGenerateAddonTypingsCommand(program: Command): void {
         ignore: cfg.ignore,
         cache,
         onDebug: debugLog,
+        tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
       });
       debugLog(`Generated ${writtenFiles.length} addon typings files in ${outputDir}`);
     });
