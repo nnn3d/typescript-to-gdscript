@@ -215,6 +215,7 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
     classTypeNames: new Set(),
     classEnumNames: new Set(),
     unsafeUseAny: options.unsafeUseAny ?? false,
+    isAddon: options.isAddon ?? false,
   };
 
   const code = emitSourceFile(root, ctx);

@@ -465,7 +465,7 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
   // the helper pass finishes.
   const addonTsPaths: string[] = [];
   for (const { source, filePath } of addonSources) {
-    const result = convertGdToTs({ source, filePath, registry, projectSources: addonSources });
+    const result = convertGdToTs({ source, filePath, registry, projectSources: addonSources, isAddon: true });
     const relPath = relative(rootDir, filePath).replace(/\\/g, '/');
     const outputTsPath = resolve(outputDir, relPath.replace(/\.gd$/, '.ts'));
     mkdirSync(dirname(outputTsPath), { recursive: true });
@@ -499,7 +499,7 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
   // Pass 2: Create TS program from addon .ts files, scan for classes
   const scriptClassMap = new Map<string, ScriptInfo>();
   const addonProgram = createTsProgram({ rootDir: outputDir, files: addonTsPaths });
-  scanTsFilesForClasses(addonProgram, addonTsPaths, outputDir, scriptClassMap, registry);
+  scanTsFilesForClasses(addonProgram, addonTsPaths, outputDir, scriptClassMap, registry, true);
 
   // Pass 3: Generate .gd.d.ts for each addon script. Addons always opt
   // into `declare global` so their classes are usable in the consuming

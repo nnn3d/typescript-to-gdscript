@@ -62,6 +62,14 @@ export interface GdToTsContext {
   classEnumNames: Set<string>;
   /** Use `any` instead of `unknown` as the fallback for unresolvable types */
   unsafeUseAny: boolean;
+  /**
+   * True when converting a file under `addons/`. Anonymous addon classes
+   * (no `class_name`) are emitted with the `_$CLASS$_` sentinel name
+   * (see `ANONYMOUS_ADDON_CLASS_NAME` in `../common/index.ts`) instead
+   * of the filename-derived `_FilenameInUpperCamel` used elsewhere.
+   * Named addon classes are unaffected.
+   */
+  isAddon: boolean;
 }
 
 /** Build a map of bare global enum constant names → qualified TS names (e.g. "KEY_F21" → "Key.KEY_F21") */

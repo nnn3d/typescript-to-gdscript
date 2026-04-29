@@ -314,10 +314,15 @@ describe('Scene typings generation', () => {
 
     // Anonymous addon class — module-scoped, GodotScripts/Resources
     // entries point at the imported `ScriptClass` alias directly. No
-    // synthesized `_Script` local handle.
+    // synthesized `_Script` local handle. The exported class itself
+    // uses the addon-specific `_$CLASS$_` sentinel (rather than the
+    // filename-derived `_AddonHelper`) so consumers never collide with
+    // a real GD class name (`$` is not a valid GD identifier char).
     const helperScript = readOutput('addons/TestAddon/addon_helper.gd.d.ts');
     expect(helperScript).not.toContain('declare class _Script extends ScriptClass');
     expect(helperScript).toContain('"res://addons/TestAddon/addon_helper.gd": ScriptClass;');
+    expect(helperScript).toContain('import type { _$CLASS$_ as ScriptClass } from "./addon_helper"');
+    expect(helperScript).toContain('interface _$CLASS$_ extends StaticProps');
 
     // Converted .ts should have a valid class plus a file-scope native
     // enum (the new lifted form replaces the legacy `static AddonState
@@ -326,9 +331,42 @@ describe('Scene typings generation', () => {
     expect(addonTs).toContain('export class TestAddon extends Node');
     expect(addonTs).toContain('enum AddonState { IDLE, RUNNING, STOPPED }');
 
-    // Cross-file references: addon_helper.ts should reference TestAddon
+    // The anonymous addon helper exports under the `_$CLASS$_` sentinel.
     const helperTs = readOutput('addons/TestAddon/addon_helper.ts');
+    expect(helperTs).toContain('export class _$CLASS$_ extends RefCounted');
+    expect(helperTs).not.toContain('export class _AddonHelper');
+    // Cross-file references: addon_helper.ts should reference TestAddon
     expect(helperTs).toContain('TestAddon');
+  });
+
+  it('preserves addon class_name with a leading underscore verbatim and treats it as global', () => {
+    // `class_name _Foo` in an addon is NOT anonymous — it has an
+    // explicit name. Addon class names are global and the user can't
+    // change them, so the GD→TS converter preserves them verbatim
+    // (no `G_` escape) — this is what made adding the `_$CLASS$_`
+    // anonymous-addon sentinel worthwhile in the first place: with
+    // anonymous now claiming a non-`_`-prefixed slot, real
+    // `_`-prefixed names are unambiguous and survive the round-trip
+    // intact. Outside addon mode the legacy `_Foo → G_Foo` escape
+    // still applies (covered by the converter unit tests).
+    const files = generateAddons();
+
+    expect(files.some(f => f.endsWith('underscore_addon.ts') && !f.endsWith('.d.ts'))).toBe(true);
+    expect(files.some(f => f.endsWith('underscore_addon.gd.d.ts'))).toBe(true);
+
+    const ts = readOutput('addons/TestAddon/underscore_addon.ts');
+    expect(ts).toContain('export class _Foo extends RefCounted');
+    expect(ts).not.toContain('G_Foo');
+    expect(ts).not.toContain('_$CLASS$_');
+
+    const dts = readOutput('addons/TestAddon/underscore_addon.gd.d.ts');
+    // Named class — uses the `declare global` path with the original
+    // `_Foo` name, NOT the module-scoped `ScriptClass` alias.
+    expect(dts).toMatch(
+      /declare global \{[\s\S]*\bclass _Foo extends ScriptClass/,
+    );
+    expect(dts).toContain('"res://addons/TestAddon/underscore_addon.gd": _Foo;');
+    expect(dts).toContain('"res://addons/TestAddon/underscore_addon.gd": typeof _Foo;');
   });
 
   it('should compile all .ts files with generated typings (typed get_node, get_parent, load, autoloads)', () => {

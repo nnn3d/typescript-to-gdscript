@@ -24,6 +24,7 @@
 
 import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
 import {
+  ANONYMOUS_ADDON_CLASS_NAME,
   gdFilenameToAnonymousClassName,
   escapeUnderscoreClassName,
 } from '../common/index.ts';
@@ -56,8 +57,7 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
   // both the `ClassScope` we're about to build AND the eventual
   // `export class ...` header line.
   const header = scanScriptClassHeader(root);
-  const className =
-    header.className || gdFilenameToAnonymousClassName(ctx.filePath);
+  const className = resolveTsClassName(header.className, ctx);
 
   // Build the scope from the file's top-level statements. Non-member
   // children (extends / class_name / annotations / comments) are
@@ -121,10 +121,40 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
   return out.join('\n');
 }
 
+/**
+ * Map a raw GD `class_name` (or empty for an anonymous script) to the
+ * TS-side class name. Four cases collapse onto two axes — has-name and
+ * is-addon:
+ *
+ *   |             | non-addon                          | addon                  |
+ *   |-------------|------------------------------------|------------------------|
+ *   | no name     | `_FilenameInUpperCamel`            | `_$CLASS$_` sentinel   |
+ *   | `class_name`| `escapeUnderscoreClassName(raw)`   | `raw` verbatim         |
+ *
+ * Why addons differ on both axes:
+ *   - Anonymous: `_$CLASS$_` uses `$` (invalid in GD identifiers) so
+ *     it can't collide with any real GD class. Each addon `.ts` is
+ *     its own ES module, so multiple files exporting the sentinel
+ *     don't collide either.
+ *   - Named with `_` prefix: addon class names are external — the
+ *     third-party owns them and consumers reference them by exact
+ *     name — so renaming `_Foo` to `G_Foo` would silently break
+ *     things. With `_$CLASS$_` claiming the "anonymous" slot, a real
+ *     `class_name _Foo` is unambiguous and the escape is unnecessary.
+ */
+function resolveTsClassName(rawName: string, ctx: GdToTsContext): string {
+  if (!rawName) {
+    return ctx.isAddon
+      ? ANONYMOUS_ADDON_CLASS_NAME
+      : gdFilenameToAnonymousClassName(ctx.filePath);
+  }
+  return ctx.isAddon ? rawName : escapeUnderscoreClassName(rawName);
+}
+
 // ─── Header scan ──────────────────────────────────────────────
 
 interface ScriptClassHeader {
-  /** Raw TS-side class name (after `_Foo` → `G_Foo` escape). Empty when GD has no `class_name`. */
+  /** Raw GD `class_name` text (verbatim from the AST). Empty when GD has no `class_name`. The `_Foo` → `G_Foo` escape and the addon-mode preserve-verbatim decision are made by the caller, which has `ctx.isAddon` in scope. */
   className: string;
   /** Base class from `extends <X>`. Empty when no explicit extends. */
   extendsClass: string;
@@ -162,11 +192,15 @@ function scanScriptClassHeader(root: SyntaxNode): ScriptClassHeader {
             : typeNode.text;
       }
     } else if (child.type === SyntaxType.ClassNameStatement) {
-      // Apply the `_Foo` → `G_Foo` escape so a real GD `class_name _Foo`
-      // doesn't collide with the anonymous-class convention on the TS
-      // side (where `_`-prefixed names mean "no class_name in GD").
-      const raw = child.childForFieldName('name')?.text ?? '';
-      className = escapeUnderscoreClassName(raw);
+      // Capture the raw `class_name` text. The escape decision is made
+      // by the caller (which has the `isAddon` flag in `ctx`): in
+      // non-addon mode `_Foo` collides with the anonymous-class
+      // convention and gets escaped to `G_Foo`; in addon mode the
+      // sentinel `_$CLASS$_` already owns the "anonymous" namespace,
+      // so `_Foo` is unambiguous as a real class_name and is preserved
+      // verbatim — addon class names are global and the user can't
+      // change them, so renaming would break consumer references.
+      className = child.childForFieldName('name')?.text ?? '';
     } else if (
       child.type === SyntaxType.Annotation &&
       child.text === '@abstract'

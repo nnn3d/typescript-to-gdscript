@@ -1,5 +1,5 @@
 // @ts-nocheck — auto-generated from GDScript addon
-export class _AddonHelper extends RefCounted {
+export class _$CLASS$_ extends RefCounted {
   addon_ref: TestAddon | null;
 
   do_helper() {

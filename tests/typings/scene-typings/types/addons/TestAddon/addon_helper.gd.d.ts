@@ -1,11 +1,11 @@
 // AUTO-GENERATED — do not edit manually.
 
-import type { _AddonHelper as ScriptClass } from "./addon_helper";
+import type { _$CLASS$_ as ScriptClass } from "./addon_helper";
 
 type StaticProps = Omit<typeof ScriptClass, 'prototype' | keyof Function>;
 
 declare module "./addon_helper" {
-  interface _AddonHelper extends StaticProps {}
+  interface _$CLASS$_ extends StaticProps {}
 }
 
 declare global {
