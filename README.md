@@ -262,26 +262,37 @@ GD-to-TS conversion includes optional helpers that enhance the output:
   ```
   For simple identifier/property-access right-hand sides, the helper emits `typeof <expr>`; for other expressions (literals, `new` calls, etc.) it uses the TS type checker's inferred type string.
 
-### `tstogd lint <files...>`
+### `tstogd convert` — diagnostic modes
 
-Lint TypeScript files by converting to GDScript and reporting diagnostics. If no files given, lints all `.ts` files in `tsDir`.
+After converting, `convert` runs a full three-source diagnostic check unless disabled:
 
-```bash
-tstogd lint src/Player.ts
-```
+| Source | Label | Notes |
+|--------|-------|-------|
+| TypeScript | `[TS:severity]` | Semantic + syntactic errors (requires `--tsconfig`; noise codes TS2434/2435/2449 suppressed) |
+| Converter | `[CONV:severity]` | Errors and warnings from the TS→GD transformer |
+| Godot | `[GD:severity]` | Full-project `godot --check-only` (requires `--godot-path` and `project.godot`) |
 
-Options:
+Extra flags:
 
-- `--root-dir <dir>` — Root directory (default: `.`)
-- `--ts-dir <dir>` — TypeScript source directory
-- `--tsconfig <path>` — Path to tsconfig.json
+- `--no-emit` — Dry-run: convert in memory, report stale `.gd` outputs, do not write files. Godot validates existing `.gd` files on disk. Note: for files flagged as stale, Godot errors are reported at `.gd` positions (no source-map remap to `.ts` — the in-memory map doesn't match what's on disk).
+- `--no-check` — Skip the post-convert diagnostic check entirely (write files only)
 - `--godot-path <path>` — Path to Godot executable (enables GDScript validation)
 - `--project-root <dir>` — Godot project root for validation
-- `--no-cache` — Disable cache (force full re-lint)
+
+```bash
+# Normal convert + full check
+tstogd convert
+
+# Dry-run: see all errors without writing
+tstogd convert --no-emit
+
+# Fast: convert only, no check
+tstogd convert --no-check
+```
 
 ### `tstogd watch`
 
-Watch TypeScript files and auto-convert on change.
+Watch TypeScript files and auto-convert on change. After each conversion batch settles (1.5s debounce), runs a full diagnostic check and clears the console before printing results.
 
 ```bash
 tstogd watch --root-dir src --output-dir scripts
@@ -295,6 +306,7 @@ Options:
 - `--output-dir <dir>` — Output directory for GDScript files
 - `--tsconfig <path>` — Path to tsconfig.json
 - `--typings-dir <path>` — Directory for all generated typings (globals.d.ts, scene-typings.d.ts)
+- `--no-check` — Disable the debounced full-project diagnostic check
 
 ### `tstogd generate-gdscript-global-typings`
 

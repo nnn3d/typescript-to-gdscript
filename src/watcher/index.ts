@@ -12,6 +12,11 @@ import { ProjectCache } from '../cache/index.ts';
 import { isConversionErrorSeverity } from '../converter/common/index.ts';
 import { writeFileSync, mkdirSync } from 'fs';
 import { dirname } from 'path';
+import {
+  collectProjectDiagnostics,
+  printDiagnostics,
+  summarizeDiagnostics,
+} from '../checker/index.ts';
 
 export interface WatcherOptions {
   /** Root directory (base for relative paths) */
@@ -50,6 +55,8 @@ export interface WatcherOptions {
   godotTypingsDir?: string;
   /** See `ConverterOptions.generateGlobalClassTypes` (default false). */
   generateGlobalClassTypes?: boolean;
+  /** When true, skip the debounced full-project diagnostic check. */
+  noCheck?: boolean;
 }
 
 /** File extensions that trigger typings regeneration (scenes, resources, assets). */
@@ -64,6 +71,9 @@ const WATCHED_EXTENSIONS = new Set(['.ts', ...RESOURCE_EXTENSIONS]);
 
 /** Debounce delay (ms) — wait for rapid file changes to settle before converting. */
 const DEBOUNCE_MS = 50;
+
+/** Debounce delay (ms) for the full-project diagnostic check after conversion. */
+const CHECK_DEBOUNCE_MS = 1000;
 
 export class Watcher {
   private options: WatcherOptions;
@@ -82,6 +92,9 @@ export class Watcher {
   private pendingTsFiles: Set<string> = new Set();
   private pendingNonTsFiles: string[] = [];
   private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // ── Debounced full-project check ──────────────────────────
+  private checkDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
   // ── Initial scan counters ─────────────────────────────────
   private initialConverted = 0;
@@ -147,6 +160,7 @@ export class Watcher {
 
   async stop(): Promise<void> {
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
+    if (this.checkDebounceTimer) clearTimeout(this.checkDebounceTimer);
     await this.fsWatcher?.close();
     this.cache.save();
     await this.cache.close();
@@ -205,6 +219,11 @@ export class Watcher {
     if (allChanged.length > 0) {
       this.regenerateTypingsFor(allChanged);
     }
+
+    // Always schedule the diagnostic check — even when no files needed
+    // re-conversion (warm-cache initial scan) the user still wants to
+    // see the project-wide error state.
+    this.scheduleCheck();
   }
 
   // ── Batch conversion with Program reuse ───────────────────
@@ -255,6 +274,61 @@ export class Watcher {
     for (const { filePath, outputPath } of toConvert) {
       this.convertSingleFile(filePath, outputPath, program);
     }
+  }
+
+  private scheduleCheck(): void {
+    if (this.options.noCheck) return;
+    if (this.checkDebounceTimer) clearTimeout(this.checkDebounceTimer);
+    this.debugLog(`Scheduling diagnostic check (${CHECK_DEBOUNCE_MS}ms debounce)`);
+    this.checkDebounceTimer = setTimeout(() => this.runCheck(), CHECK_DEBOUNCE_MS);
+  }
+
+  private runCheck(): void {
+    this.checkDebounceTimer = null;
+    const tsFiles = [...this.tsFiles].filter((f) => !f.endsWith('.d.ts'));
+    if (tsFiles.length === 0) {
+      this.debugLog('Diagnostic check skipped — no .ts files');
+      return;
+    }
+
+    const projectRoot = this.options.projectRoot ?? this.options.rootDir;
+    const checkStart = Date.now();
+    this.debugLog(`Diagnostic check starting (${tsFiles.length} file(s), program=${this.cachedProgram ? 'reused' : 'fresh'})`);
+
+    collectProjectDiagnostics({
+      tsDir: this.tsDir,
+      gdDir: this.gdDir,
+      projectRoot,
+      tsFiles,
+      tsConfigPath: this.options.tsConfigPath,
+      cache: this.cache,
+      godotPath: this.options.godotPath,
+      cacheDir: this.cacheDir,
+      noEmit: false,
+      // Reuse the program from the just-finished convertBatch — avoids
+      // re-parsing all .ts files. Falls back to a fresh program when null
+      // (e.g. when the only event was a removal that invalidated it).
+      program: this.cachedProgram ?? undefined,
+      onDebug: this.options.debug ? (msg) => this.debugLog(msg) : undefined,
+    }).then((result) => {
+      this.debugLog(`Diagnostic check finished in ${Date.now() - checkStart}ms`);
+      const summary = summarizeDiagnostics(result);
+
+      // Only clear the console when there's something to show — preserves the
+      // recent per-file conversion logs when the project is clean.
+      if (summary) {
+        process.stdout.write('\x1Bc');
+        printDiagnostics(result.tsDiagnostics, 'TS');
+        printDiagnostics(result.converterDiagnostics, 'CONV');
+        printDiagnostics(result.godotDiagnostics, 'GD');
+        console.log('[check] complete:');
+        console.log(summary);
+      } else {
+        console.log('[check] No issues found.');
+      }
+    }).catch((err: Error) => {
+      this.log('', `[check] Failed: ${err.message}`, 'warning');
+    });
   }
 
   private convertSingleFile(filePath: string, outputPath: string, program: ts.Program): void {

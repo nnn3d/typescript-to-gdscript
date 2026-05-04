@@ -129,8 +129,8 @@ export function escapeUnderscoreClassName(gdClassName: string): string {
  * - `error` — conversion failure (invalid/unsupported syntax). Blocks .gd
  *   output (unless `--emit-on-error`). Blocks Godot validation.
  * - `type-error` — semantic/type issue, but GD emission produced valid output.
- *   .gd IS written. Shown as warning by `convert`/`watch`, as error by
- *   `lint` and the ts-plugin. Godot validation still runs.
+ *   .gd IS written. Counted as an error by `convert`/`watch` and the ts-plugin.
+ *   Godot validation still runs.
  * - `warning` — non-blocking advisory. Shown as WARN everywhere.
  * - `info` — debug-level; filtered out in most consumers.
  */

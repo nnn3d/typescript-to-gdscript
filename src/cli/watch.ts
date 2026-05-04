@@ -23,6 +23,7 @@ export function registerWatchCommand(program: Command): void {
     )
     .option('--project-root <dir>', 'Godot project root for validation')
     .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
+    .option('--no-check', 'Disable the debounced full-project diagnostic check')
     .action((opts) => {
       const cfg = resolveConfig({
         overrides: {
@@ -53,6 +54,7 @@ export function registerWatchCommand(program: Command): void {
         godotPath,
         projectRoot: opts.projectRoot ? resolve(opts.projectRoot) : undefined,
         emitOnError: opts.emitOnError,
+        noCheck: opts.check === false,
         debug: isDebugEnabled(),
         godotTypingsDir: cfg.godotTypingsDir,
         generateGlobalClassTypes: cfg.converterOptions.generateGlobalClassTypes,

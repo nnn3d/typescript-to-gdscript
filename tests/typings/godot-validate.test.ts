@@ -3,6 +3,7 @@ import {
   parseGodotErrors,
   remapError,
   validateGdFiles,
+  validateGdProject,
   getAutoloadNames,
   isAutoloadFalsePositive,
   isDuplicateClassFalsePositive,
@@ -743,5 +744,26 @@ describe('Godot CLI integration', () => {
     expect(result.diagnostics.every((d) => d.file.includes('bad.gd'))).toBe(
       true,
     );
+  });
+});
+
+// ─── validateGdProject ───────────────────────────────────────
+
+describe('validateGdProject', () => {
+  it('returns warning when projectRoot has no project.godot', async () => {
+    const projectDir = join(TMP_DIR, 'no-project-godot');
+    mkdirSync(projectDir, { recursive: true });
+
+    const result = await validateGdProject({
+      projectRoot: projectDir,
+      godotPath: GODOT_PATH,
+      gdDir: projectDir,
+      sourceMapTable: new Map(),
+    });
+
+    expect(result.godotAvailable).toBe(true);
+    expect(result.diagnostics.length).toBe(1);
+    expect(result.diagnostics[0].severity).toBe('warning');
+    expect(result.diagnostics[0].message).toContain('project.godot');
   });
 });

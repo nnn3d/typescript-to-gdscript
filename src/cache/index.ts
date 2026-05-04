@@ -36,7 +36,7 @@ export interface ProjectCacheOptions {
    * reload — the current instance's own mtime is tracked and filtered.
    *
    * Default `false`. Leave off for short-lived callers (single
-   * `convert`/`lint` run) to avoid the small polling cost.
+   * `convert` run) to avoid the small polling cost.
    */
   watch?: boolean;
   /**

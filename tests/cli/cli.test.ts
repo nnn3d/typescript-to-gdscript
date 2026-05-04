@@ -90,8 +90,8 @@ describe('CLI: convert (TS → GD)', () => {
     ]);
     // Should exit with non-zero
     expect(result.exitCode).not.toBe(0);
-    // Should have error in stderr
-    expect(result.stderr).toContain('[ERROR]');
+    // Should have error in stderr (new format: [CONV:error])
+    expect(result.stderr).toContain('[CONV:error]');
     // Output file should NOT be created
     const outputPath = join(tmpDir, 'invalid.gd');
     expect(existsSync(outputPath)).toBe(false);

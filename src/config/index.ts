@@ -24,7 +24,7 @@ export interface TsToGdConfig {
   exclude?: string[];
   /** Path to project.godot file (relative to rootDir). Defaults to "project.godot". */
   projectFile?: string;
-  /** Disable Godot executable validation (CLI `lint` + the ts-plugin's async Godot pass). When false (default), an error is raised if Godot is not found. */
+  /** Disable Godot executable validation (CLI `convert` post-write check + the ts-plugin's async Godot pass). When false (default), an error is raised if Godot is not found. */
   disableGodotLint?: boolean;
   /** Cache directory. Default: `node_modules/.cache/typescript-to-gdscript` or temp dir. */
   cacheDir?: string;
