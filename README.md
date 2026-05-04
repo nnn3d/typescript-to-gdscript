@@ -88,6 +88,7 @@ When the TS→GD converter sees an `import` statement, it emits one of the follo
 | `import { Foo as Bar } from './foo.ts'`         | `const Bar = preload("res://foo.gd")`                | Local alias must point at the script               |
 | `import { _Anon } from './anon.ts'`             | `const _Anon = preload("res://anon.gd")`             | Anonymous class — only reachable via path           |
 | `extends _Anon` (after the import above)        | `extends "res://anon.gd"`                            | GDScript form for inheriting an anonymous script    |
+| `extends preload("res://some.gd")`              | `extends "res://some.gd"`                            | Direct path-extends form (round-trips both ways)    |
 | `import type { … } from '…'`                    | _(nothing — type-only, erased)_                      |                                                     |
 | `import Foo from '…'` (default)                 | **error**                                            | No GDScript equivalent                              |
 | `import * as ns from '…'` (namespace)           | **error**                                            | No GDScript equivalent                              |

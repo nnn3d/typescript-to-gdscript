@@ -185,6 +185,7 @@ tests/
 | `import { Foo as Bar } from './foo.ts'` | `const Bar = preload("res://foo.gd")` | Renamed import → preload const so the local alias resolves |
 | `import { _Anon } from './anon.ts'` | `const _Anon = preload("res://anon.gd")` | Anonymous class → always preloaded since it has no `class_name` |
 | `extends _Anon` (where `_Anon` is an imported anonymous class) | `extends "res://anon.gd"` | Inheriting an anonymous script requires the path form |
+| `extends preload("res://some.gd")` | `extends "res://some.gd"` | Direct path-extends form. TS→GD detects the `preload(...)` call shape in the heritage clause and unwraps to the bare GD string-literal extends; GD→TS reverses with `extends preload(...)` so the TS class still has a constructable base |
 | `import type { … } from '…'` | _(skipped)_ | Type-only imports erased per TS semantics |
 | `import X from '…'` / `import * as X from '…'` | error | Unsupported — no GDScript equivalent |
 | `constructor()` | `_init()` | |

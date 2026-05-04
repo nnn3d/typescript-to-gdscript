@@ -47,6 +47,7 @@ import {
   emitFileScopeConst,
   emitFileScopeEnum,
   emitFileScopeClass,
+  formatExtendsForTs,
 } from './file-scope-emitter.ts';
 
 // ─── Source File ─────────────────────────────────────────────
@@ -90,7 +91,7 @@ export function emitSourceFile(root: SyntaxNode, ctx: GdToTsContext): string {
   // otherwise consumers would see `class Foo {}` and lose access to
   // `RefCounted`'s methods (`reference`, `unreference`, etc.).
   const resolvedExtends = header.extendsClass || 'RefCounted';
-  const extendsClause = ` extends ${resolvedExtends}`;
+  const extendsClause = ` extends ${formatExtendsForTs(resolvedExtends)}`;
   const abstractKeyword = header.isAbstractClass ? 'abstract ' : '';
   // Class-level annotations (`@tool`, `@icon`, …) emit on their own
   // lines directly above the class declaration as TS decorators —

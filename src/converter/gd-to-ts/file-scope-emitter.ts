@@ -30,6 +30,26 @@ import {
 } from './members.ts';
 import { emitExpr } from './expressions.ts';
 
+// ─── extends helpers ─────────────────────────────────────────────
+
+/**
+ * Format a raw GD `extends` target for the TypeScript output.
+ *
+ * GDScript supports two forms:
+ *   - `extends Identifier`        → emit identifier verbatim.
+ *   - `extends "res://path.gd"`   → no TS-native equivalent; mirror via
+ *     `preload(...)` so the TS class still has a constructable base.
+ *
+ * The extracted-from-AST string keeps the surrounding quotes for the
+ * string form, so a leading `"` / `'` is the discriminator.
+ */
+export function formatExtendsForTs(extendsClass: string): string {
+  if (extendsClass.startsWith('"') || extendsClass.startsWith("'")) {
+    return `preload(${extendsClass})`;
+  }
+  return extendsClass;
+}
+
 // ─── File-scope `const` lift ─────────────────────────────────────
 
 export function emitFileScopeConst(
@@ -136,7 +156,7 @@ export function emitFileScopeClass(
   // in Godot — surface that explicitly in TS so the generated typings
   // carry the correct base-class member set.
   const resolvedExtends = extendsClass || 'RefCounted';
-  const extendsClause = ` extends ${resolvedExtends}`;
+  const extendsClause = ` extends ${formatExtendsForTs(resolvedExtends)}`;
   const abstractKeyword = isAbstract ? 'abstract ' : '';
   const body = memberLines.join('\n').replace(/\n+$/, '');
   const classDecl = body.length === 0

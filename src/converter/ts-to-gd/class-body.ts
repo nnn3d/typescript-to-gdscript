@@ -95,12 +95,29 @@ export function emitClassHeader(
       ) {
         hasExtends = true;
         const baseType = clause.types[0]!;
-        const baseText = baseType.expression.getText(t.ctx.sourceFile);
-        const importedAnon = ctx.importMap.get(baseText);
-        const extendsClause =
-          importedAnon && importedAnon.isAnonymous
-            ? `extends "${importedAnon.resPath}"`
-            : `extends ${baseText}`;
+        const expr = baseType.expression;
+        // `extends preload("res://some.gd")` → `extends "res://some.gd"`.
+        // GDScript supports a string-literal extends form for extending
+        // a script by file path (used for anonymous scripts that don't
+        // declare `class_name`). The TS-side mirror is `preload(...)`.
+        let extendsClause: string;
+        if (
+          ts.isCallExpression(expr) &&
+          ts.isIdentifier(expr.expression) &&
+          expr.expression.text === 'preload' &&
+          expr.arguments.length >= 1 &&
+          ts.isStringLiteralLike(expr.arguments[0]!)
+        ) {
+          const path = (expr.arguments[0] as ts.StringLiteralLike).text;
+          extendsClause = `extends "${path}"`;
+        } else {
+          const baseText = expr.getText(t.ctx.sourceFile);
+          const importedAnon = ctx.importMap.get(baseText);
+          extendsClause =
+            importedAnon && importedAnon.isAnonymous
+              ? `extends "${importedAnon.resPath}"`
+              : `extends ${baseText}`;
+        }
         t.emitter.writeLine(extendsClause, pos.line, pos.col);
       }
     }
