@@ -1,5 +1,5 @@
 import type { Command } from 'commander';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync, cpSync, copyFileSync } from 'fs';
 import { resolve, join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { generateGodotDocsTypings } from '../typings/godot-docs.ts';
@@ -27,6 +27,19 @@ function detectGodotVersion(docsDir: string): string | null {
 function getDefaultOverrideDir(): string {
   const thisDir = dirname(fileURLToPath(import.meta.url));
   return resolve(thisDir, '..', 'typings', 'overrides');
+}
+
+/**
+ * Resolve this package's bundled user-facing `typings/` directory —
+ * the folder that ships `globals/`, `index.d.ts`, and (when published)
+ * a pre-built `classes/`. From `src/cli/<this>.ts` and the built
+ * `dist/cli/<this>.js`, both `'..', '..', 'typings'` resolve to
+ * `<package_root>/typings`, so the same path works for source mode
+ * (`tsx`), local builds, and installed-as-dependency layouts.
+ */
+function getPackageTypingsDir(): string {
+  const thisDir = dirname(fileURLToPath(import.meta.url));
+  return resolve(thisDir, '..', '..', 'typings');
 }
 
 export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): void {
@@ -84,7 +97,38 @@ export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): 
         version,
       });
 
-      writeTypingsIndexDts(typingsRoot);
+      // Static globals (`globals/`, `index.d.ts`) ship with this
+      // package and are NOT regenerated from Godot docs. When the
+      // user is generating into their own consumer project, copy the
+      // bundled copies over so `tsc` can resolve `int`, `float`,
+      // `gd.signal`, the `noLib` global stubs, etc. Skip the copy
+      // when the destination IS this package's own bundled folder
+      // (e.g. `yarn generate:godot-typings` in the source tree) —
+      // the static files are already there and re-copying them onto
+      // themselves would be a no-op at best.
+      const pkgTypingsDir = getPackageTypingsDir();
+      const isSelfRefresh = resolve(typingsRoot) === resolve(pkgTypingsDir);
+      if (!isSelfRefresh) {
+        const srcGlobals = join(pkgTypingsDir, 'globals');
+        const srcIndex = join(pkgTypingsDir, 'index.d.ts');
+        if (existsSync(srcGlobals)) {
+          cpSync(srcGlobals, join(typingsRoot, 'globals'), { recursive: true });
+        }
+        if (existsSync(srcIndex)) {
+          copyFileSync(srcIndex, join(typingsRoot, 'index.d.ts'));
+        } else {
+          // Fallback for unusual layouts where the bundled
+          // `index.d.ts` is missing — synthesise one with the same
+          // references so the generated tree is still usable.
+          writeTypingsIndexDts(typingsRoot);
+        }
+      } else {
+        // Self-refresh: regenerate index.d.ts in place so the file
+        // stays in sync with the helper's reference list even when
+        // `globals/` was edited by hand.
+        writeTypingsIndexDts(typingsRoot);
+      }
+
       console.log(`Generated typings for Godot ${version} in ${typingsRoot}`);
     });
 }

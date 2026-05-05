@@ -746,14 +746,15 @@ Typings are stored in a flat `typings/` folder (no version subdirectories):
 
 ```
 typings/
-  index.d.ts                # Entry point (references globals.d.ts, gd-helpers.d.ts, classes/)
-  globals.d.ts              # Generated global class declarations
-  gd-helpers.d.ts           # gd namespace types (signal, enum_, as, ops, decorators)
+  index.d.ts                # Entry point (references globals/, classes/)
+  globals/                  # Static stubs that ship with the package (NOT regenerated from Godot docs)
+    globals.d.ts            # noLib stubs (Boolean, Number, RegExp, …) used when consumers set "noLib": true
+    gd-helpers.d.ts         # gd namespace types (signal, enum_, as, ops, decorators) + int/float/bool casts
   godot-class-registry.json # Class hierarchy JSON (916 classes)
   classes/                  # Per-class .d.ts files
 ```
 
-The `generate-typings` command outputs directly to `typings/` root.
+The `generate-gdscript-global-typings` command outputs the generated `classes/`, `godot-class-registry.json` to `--output-dir`. It also copies the bundled static `globals/` folder and `index.d.ts` from the installed package's `typings/` into `--output-dir` (skipped when `--output-dir` *is* the package's own bundled folder, e.g. when re-running `yarn generate:godot-typings` in the source tree).
 
 Value types (Vector2, Color, etc.), `Dictionary`, and `Callable` use call syntax constructors (no `new`). `Dictionary` and `Callable` constructors and static methods are generated from Godot XML docs via a shared `generateConstructorInterface()` utility.
 

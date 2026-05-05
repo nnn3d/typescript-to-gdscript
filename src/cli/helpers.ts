@@ -194,7 +194,15 @@ export function generateAllTypings(cfg: {
 
 /** Helper functions for generate-gdscript-global-typings command */
 
+/**
+ * Write the entry-point `index.d.ts` referencing the static `globals/`
+ * folder and the generated `classes/` folder. Used as a fallback when
+ * the static files cannot be located (e.g. running outside an
+ * installed package layout); the normal path is to copy the canonical
+ * `index.d.ts` from the package's bundled `typings/` so the file
+ * stays in sync with the bundled `globals/` folder.
+ */
 export function writeTypingsIndexDts(typingsDir: string): void {
-  const content = `/// <reference path="globals.d.ts" />\n/// <reference path="gd-helpers.d.ts" />\n/// <reference path="classes/index.d.ts" />\n`;
+  const content = `/// <reference path="globals/globals.d.ts" />\n/// <reference path="globals/gd-helpers.d.ts" />\n/// <reference path="classes/index.d.ts" />\n`;
   writeFileSync(join(typingsDir, 'index.d.ts'), content);
 }

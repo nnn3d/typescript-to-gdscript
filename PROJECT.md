@@ -24,9 +24,10 @@ scripts/
   fix-tree-sitter-types.js  # Post-processes @asgerf/dts-tree-sitter output for TS 5.9
 
 typings/                 # Godot typings (committed to git, used as TS lib)
-  index.d.ts             # Entry point: references globals.d.ts, gd-helpers.d.ts, classes/
-  globals.d.ts           # Generated global class declarations + scene typings
-  gd-helpers.d.ts        # gd namespace type defs (signal, enum_, as, ops, decorators)
+  index.d.ts             # Entry point: references globals/globals.d.ts, globals/gd-helpers.d.ts, classes/
+  globals/               # Static (hand-written, NOT regenerated from Godot docs) global stubs
+    globals.d.ts         # noLib stubs for Boolean/Number/RegExp/etc.
+    gd-helpers.d.ts      # gd namespace type defs (signal, enum_, as, ops, decorators) + int/float/bool casts
   godot-class-registry.json  # Class hierarchy JSON (916 classes)
   classes/               # Per-class .d.ts files (916 classes)
 
@@ -60,7 +61,6 @@ src/
   cache/index.ts         # ProjectCache: TS→GD, addon, typings caching. Stores `.gd` mirror in `<cacheDir>/gd-output/` + inline source maps + diagnostics + atomic cache.json writes (tmp + rename, Windows-retry)
   watcher/index.ts       # Watcher class using chokidar
   cli/index.ts           # Commander CLI
-  types/gd-helpers.d.ts  # gd namespace type defs (original, copied to typings/gd-helpers.d.ts)
 
 tests/
   fixtures/ts-to-gd/    # 21 paired .ts/.gd fixture files
