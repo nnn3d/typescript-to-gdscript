@@ -1,5 +1,5 @@
 import type { Command } from 'commander';
-import { readFileSync, writeFileSync, mkdirSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
 import { resolve, dirname, relative } from 'path';
 import { convertGdToTs } from '../converter/gd-to-ts/index.ts';
 import { injectMissingImportsForProject } from '../converter/gd-to-ts/inject-imports.ts';
@@ -8,11 +8,11 @@ import { collectAllSignalHandlers, findSceneFiles } from '../typings/scenes.ts';
 import { resolveConfig, resolveRegistry } from '../config/index.ts';
 import { debugLog, resolveFiles, generateAllTypings } from './helpers.ts';
 
-export function registerConvertGdCommand(program: Command): void {
+export function registerInitialConvertGdToTsCommand(program: Command): void {
   program
-    .command('convert-gd')
+    .command('initial-convert-gd-to-ts')
     .description(
-      'Convert GDScript file(s) to TypeScript. If no files given, converts all .gd files in gdDir.',
+      'One-shot bulk GD→TS conversion for the initial migration. Refuses to overwrite existing .ts files unless --force is passed.',
     )
     .argument('[files...]', 'GDScript files or glob patterns to convert')
     .option('-o, --output-dir <dir>', 'Output directory (alias for --ts-dir)')
@@ -29,6 +29,11 @@ export function registerConvertGdCommand(program: Command): void {
       false,
     )
     .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
+    .option(
+      '-f, --force',
+      'Overwrite existing TypeScript output files. Without this flag the command skips any `.gd` whose mirrored `.ts` already exists and exits non-zero so the migration cannot accidentally clobber hand-edited TS sources.',
+      false,
+    )
     .action((files: string[], opts) => {
       const cfg = resolveConfig({
         overrides: {
@@ -77,7 +82,25 @@ export function registerConvertGdCommand(program: Command): void {
       const convertedFiles: Array<{ tsPath: string; gdPath: string }> = [];
 
       let hasErrors = false;
+      // Tracks `.ts` outputs we skipped because they already exist on
+      // disk and the user did NOT pass `--force`. Reported as errors at
+      // the end of the run so the initial-migration command can never
+      // silently clobber hand-edited TypeScript.
+      const skippedExistingFiles: Array<{ tsPath: string; gdPath: string }> = [];
       for (const { source, filePath } of projectSources) {
+        const relPath = relative(cfg.gdDir, filePath);
+        const outputPath = resolve(cfg.tsDir, relPath.replace(/\.gd$/, '.ts'));
+
+        // Skip BEFORE conversion: don't waste work re-parsing, and don't
+        // surface diagnostics for a file we won't touch (those would be
+        // confusing — the user can't act on them without `--force`).
+        // Defer reporting until after the loop so the user sees a single
+        // clean summary instead of one error per file.
+        if (!opts.force && existsSync(outputPath)) {
+          skippedExistingFiles.push({ tsPath: outputPath, gdPath: filePath });
+          continue;
+        }
+
         const scriptResPath = `res://${relative(cfg.rootDir, filePath).replace(/\\/g, '/')}`;
         const signalHandlers = allSignalHandlers?.get(scriptResPath);
 
@@ -107,9 +130,6 @@ export function registerConvertGdCommand(program: Command): void {
           hasErrors = true;
           if (!opts.emitOnError) continue;
         }
-
-        const relPath = relative(cfg.gdDir, filePath);
-        const outputPath = resolve(cfg.tsDir, relPath.replace(/\.gd$/, '.ts'));
 
         mkdirSync(dirname(outputPath), { recursive: true });
         writeFileSync(outputPath, result.code);
@@ -161,6 +181,23 @@ export function registerConvertGdCommand(program: Command): void {
         }
       }
 
-      if (hasErrors) process.exit(1);
+      // Surface skipped-existing files as a single block at the end so
+      // the user can see the full list and the `--force` hint together.
+      if (skippedExistingFiles.length > 0) {
+        console.error('');
+        console.error(
+          `[ERROR] Refusing to overwrite ${skippedExistingFiles.length} existing TypeScript file(s):`,
+        );
+        for (const { tsPath, gdPath } of skippedExistingFiles) {
+          console.error(
+            `  ${relative(process.cwd(), tsPath)}  (from ${relative(process.cwd(), gdPath)})`,
+          );
+        }
+        console.error(
+          'Pass --force to overwrite existing files (this will clobber any hand-edited TypeScript).',
+        );
+      }
+
+      if (hasErrors || skippedExistingFiles.length > 0) process.exit(1);
     });
 }

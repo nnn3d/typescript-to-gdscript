@@ -1,6 +1,6 @@
 /**
  * GD→TS auto-import tests — mirrors the CLI's convert + inject
- * pipeline (`convert-gd` writes each `.gd` to disk as `.ts`, then
+ * pipeline (`initial-convert-gd-to-ts` writes each `.gd` to disk as `.ts`, then
  * runs `injectMissingImportsForProject` to prepend the imports the
  * TS program reports as missing).
  *

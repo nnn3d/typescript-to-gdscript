@@ -101,7 +101,7 @@ export interface GdToTsOptions {
   /**
    * @deprecated The single-file `convertGdToTs` no longer auto-emits
    * imports — that's done by {@link import('./inject-imports.ts').injectMissingImports}
-   * at the batch level (see `cli/convert-gd.ts`). The field is kept on
+   * at the batch level (driven by the `initial-convert-gd-to-ts` CLI command). The field is kept on
    * the options shape for API back-compat but is currently ignored.
    * The `injectMissingImports` post-pass takes its own
    * `generateGlobalClassTypes` flag.

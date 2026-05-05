@@ -77,7 +77,7 @@ tests/
 
 - `tstogd init` — Interactive project initialization (tstogd.json, tsconfig.json with ts-plugin enabled, npm install, .gdignore)
 - `tstogd convert <files...>` — Convert TS to GD, then run full 3-source diagnostic check (`[TS]`/`[CONV]`/`[GD]` prefixes). Flags: `-o`, `--root-dir`, `--tsconfig`, `--godot-path`, `--project-root`, `--no-cache`, `--emit-on-error`, `--no-emit` (dry-run + stale-check, no writes), `--no-check` (skip diagnostic pipeline). Source maps stored in cache dir. Requires `--tsconfig` for TS diagnostics; requires `--godot-path` + `project.godot` for Godot check.
-- `tstogd convert-gd <files...>` — Convert GD to TS (`-o`, `--registry`, `--unsafe-use-any`, `--emit-on-error`). All conversion helpers always run; no per-helper disable flag.
+- `tstogd initial-convert-gd-to-ts <files...>` — One-shot bulk GD→TS conversion for the initial migration of an existing GDScript project (`-o`, `--registry`, `--unsafe-use-any`, `--emit-on-error`, `-f, --force`). All conversion helpers always run; no per-helper disable flag. **Default-safe**: existing `.ts` outputs are NOT overwritten — the command lists each skipped path at the end of the run, prints a `Pass --force to overwrite` hint, and exits non-zero. `--force` clobbers existing `.ts` files.
 - `tstogd watch` — Watch and auto-convert (`--root-dir`, `--output-dir`, `--tsconfig`, `--class-typings`, `--no-check`). After each file-change batch settles (1500ms debounce), runs full diagnostic check + clears console. Source maps stored in cache dir.
 - `tstogd generate-typings` — Generate typings from Godot docs (`--docs-dir`, `--typings-dir`, `--patch-dir`, `--version`)
 - `tstogd generate-class-typings <files...>` — Generate global class .d.ts (`-o`, `--root-dir`, `--tsconfig`)

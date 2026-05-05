@@ -116,7 +116,7 @@ export function isAnonymousClassName(name: string): boolean {
  * TS shadow class is renamed to `G_Foo`. The TS→GD direction does NOT
  * un-escape — `G_Foo` in TS source emits `class_name G_Foo` in the
  * generated `.gd` verbatim. The escape happens at most once, when
- * generating addon shadows or running `convert-gd`; afterwards `G_Foo`
+ * generating addon shadows or running `initial-convert-gd-to-ts`; afterwards `G_Foo`
  * is the canonical identifier on both sides.
  */
 export function escapeUnderscoreClassName(gdClassName: string): string {

@@ -116,7 +116,7 @@ export function injectMissingImports(
  * Convenience wrapper: build the user-class index from a list of GD
  * sources (the same shape `convertGdToTs` consumes via
  * `projectSources`), then call {@link injectMissingImports}. Mirrors
- * what `cli/convert-gd.ts` needs to do for a full project run.
+ * what the `initial-convert-gd-to-ts` CLI command needs to do for a full project run.
  */
 export function injectMissingImportsForProject(
   files: ConvertedFile[],

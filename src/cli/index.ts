@@ -3,7 +3,7 @@
 import { Command } from 'commander';
 import { setDebugEnabled } from './helpers.ts';
 import { registerConvertCommand } from './convert.ts';
-import { registerConvertGdCommand } from './convert-gd.ts';
+import { registerInitialConvertGdToTsCommand } from './initial-convert-gd-to-ts.ts';
 import { registerValidateGdCommand } from './validate-gd.ts';
 import { registerWatchCommand } from './watch.ts';
 import { registerGenerateGdscriptGlobalTypingsCommand } from './generate-gdscript-global-typings.ts';
@@ -26,7 +26,7 @@ program
 
 // Register all commands
 registerConvertCommand(program);
-registerConvertGdCommand(program);
+registerInitialConvertGdToTsCommand(program);
 registerValidateGdCommand(program);
 registerWatchCommand(program);
 registerGenerateTypingsCommand(program);

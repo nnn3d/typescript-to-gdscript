@@ -135,12 +135,15 @@ Options:
 - `--no-cache` — Disable cache (force full reconversion)
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `# ERROR:` comments)
 
-### `tstogd convert-gd <files...>`
+### `tstogd initial-convert-gd-to-ts <files...>`
 
-Convert GDScript files to TypeScript. Uses the Godot class registry to resolve inherited members for correct `this.` prefix insertion.
+One-shot bulk conversion of GDScript files to TypeScript — intended for the **initial migration** of an existing GDScript project. Uses the Godot class registry to resolve inherited members for correct `this.` prefix insertion.
+
+By default the command **refuses to overwrite existing `.ts` files** so it can be re-run safely without clobbering any TypeScript you've hand-edited since the first migration. Skipped files are listed at the end of the run and the command exits non-zero. Pass `--force` to overwrite.
 
 ```bash
-tstogd convert-gd addons/plugin/Plugin.gd -o src/
+tstogd initial-convert-gd-to-ts addons/plugin/Plugin.gd -o src/
+tstogd initial-convert-gd-to-ts --force          # re-run from scratch, clobbering existing .ts
 ```
 
 Registry resolution order:
@@ -152,6 +155,7 @@ Options:
 
 - `-o, --output-dir <dir>` — Output directory
 - `--registry <path>` — Path to `godot-class-registry.json`
+- `-f, --force` — Overwrite existing TypeScript output files. Without this flag the command skips any `.gd` whose mirrored `.ts` already exists and exits non-zero.
 - `--unsafe-use-any` — Less strict but less error-prone conversion mode. Currently affects:
   - `gd.getset` fallback type: uses `any` instead of `unknown` when neither a GDScript type annotation nor a typeof-able value expression is available.
   - Unsafe non-null assertions: TS2531/18047/18048/18046 "possibly null/undefined" errors get `!` inserted after the expression. TS2322/2345 where the root cause is a null union type get `!` after the RHS/argument.
@@ -346,7 +350,7 @@ ts/_typings/
     my_script.gd.d.ts     ← typings (global class, GodotScripts, enums)
 ```
 
-This command is automatically called by `convert-gd` and `watch` (on first run). It can also be run standalone.
+This command is automatically called by `initial-convert-gd-to-ts` and `watch` (on first run). It can also be run standalone.
 
 ### `tstogd generate-class-typings <files...>`
 
@@ -649,7 +653,7 @@ f: typeof this.e = gd.getset({
 //           return f
 ```
 
-When the value expression is not typeof-able (a literal like `10`, a call, an operator expression, etc.) and there's no GDScript type annotation, the fallback is `unknown` by default, or `any` when `--unsafe-use-any` is passed to `convert-gd`.
+When the value expression is not typeof-able (a literal like `10`, a call, an operator expression, etc.) and there's no GDScript type annotation, the fallback is `unknown` by default, or `any` when `--unsafe-use-any` is passed to `initial-convert-gd-to-ts`.
 
 ### Type checking (`is`)
 
