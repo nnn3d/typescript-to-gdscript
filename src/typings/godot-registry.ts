@@ -235,7 +235,12 @@ export class GodotClassRegistry {
 // ─── Generation Entry Point ───────────────────────────────────
 
 export interface GenerateRegistryOptions {
-  classDocsDir: string;
+  /**
+   * Path(s) to Godot docs XML class reference directories. Accepts a
+   * single dir (legacy) or an array; later dirs override earlier ones
+   * for same-named classes. See {@link parseAllClassXmls} for details.
+   */
+  classDocsDir: string | string[];
   outputPath: string;
   version?: string;
 }

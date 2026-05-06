@@ -355,20 +355,34 @@ export function parseClassXml(xmlContent: string): GodotClassXml | null {
 }
 
 /**
- * Parses all Godot XML class docs from a directory.
+ * Parses all Godot XML class docs from one or more directories.
+ *
+ * Godot's docs are spread across several locations — `doc/classes/` for
+ * core classes plus `modules/<module>/doc_classes/` for per-module
+ * additions (notably `modules/gdscript/doc_classes/@GDScript.xml`).
+ * Pass an array to merge all of them into one class map.
+ *
+ * Merge order: directories are processed in the given order; later
+ * directories overwrite same-named classes from earlier ones. This
+ * mirrors the override-dir convention elsewhere in the codebase
+ * ("later wins") and lets a user point a custom dir at the end of
+ * the list to patch a single class without forking the whole tree.
  */
 export function parseAllClassXmls(
-  classDocsDir: string,
+  classDocsDir: string | string[],
 ): Map<string, GodotClassXml> {
-  const xmlFiles = readdirSync(classDocsDir).filter((f) => f.endsWith('.xml'));
+  const dirs = Array.isArray(classDocsDir) ? classDocsDir : [classDocsDir];
   const classes = new Map<string, GodotClassXml>();
 
-  for (const xmlFile of xmlFiles) {
-    const xmlPath = join(classDocsDir, xmlFile);
-    const xmlContent = readFileSync(xmlPath, 'utf-8');
-    const cls = parseClassXml(xmlContent);
-    if (cls) {
-      classes.set(cls.name, cls);
+  for (const dir of dirs) {
+    const xmlFiles = readdirSync(dir).filter((f) => f.endsWith('.xml'));
+    for (const xmlFile of xmlFiles) {
+      const xmlPath = join(dir, xmlFile);
+      const xmlContent = readFileSync(xmlPath, 'utf-8');
+      const cls = parseClassXml(xmlContent);
+      if (cls) {
+        classes.set(cls.name, cls);
+      }
     }
   }
 

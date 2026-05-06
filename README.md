@@ -317,13 +317,22 @@ Options:
 
 Generate TypeScript typings and class registry from Godot XML docs. Requires the `vendor/godot` git submodule. The Godot version is auto-detected from `vendor/godot/version.py`.
 
+`--docs-dir` is **variadic** — pass every XML directory whose classes you want included. Godot ships docs across several locations (`doc/classes/` for the core, `modules/<module>/doc_classes/` for per-module additions like `@GDScript.xml`); listing them all in one invocation merges them into a single typings tree. Later dirs override earlier ones for same-named classes.
+
 ```bash
+# Core classes only
 tstogd generate-gdscript-global-typings --docs-dir vendor/godot/doc/classes
+
+# Core + GDScript globals + custom module docs (variadic — list all dirs after the flag)
+tstogd generate-gdscript-global-typings --output-dir typings \
+  --docs-dir vendor/godot/doc/classes vendor/godot/modules/gdscript/doc_classes vendor/godot/modules/myaddon/doc_classes
 ```
+
+Tip: place `--docs-dir` *last* on the command line. Variadic options consume every following positional value until the next flag, so any options that come after will be wrongly absorbed.
 
 Options:
 
-- `--docs-dir <dir>` — Godot XML class documentation directory (required)
+- `--docs-dir <dirs...>` — Godot XML class documentation directories (required, one or more)
 - `--output-dir <dir>` — Root typings output directory (default: `typings`)
 - `--override-dir <dir>` — User override directory for `.d.ts` files and `non-nullable.json` (combined with bundled defaults)
 - `--no-default-overrides` — Disable the bundled default overrides

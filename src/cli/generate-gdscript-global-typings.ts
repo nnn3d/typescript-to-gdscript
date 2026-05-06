@@ -1,5 +1,5 @@
 import type { Command } from 'commander';
-import { existsSync, mkdirSync, cpSync, copyFileSync } from 'fs';
+import { existsSync, mkdirSync, cpSync, copyFileSync, statSync } from 'fs';
 import { resolve, join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { generateGodotDocsTypings } from '../typings/godot-docs.ts';
@@ -7,20 +7,52 @@ import { parseGodotVersion } from '../typings/godot-registry.ts';
 import { writeTypingsIndexDts } from './helpers.ts';
 
 /**
- * Detects Godot version from vendor/godot/version.py relative to the given godot docs dir.
+ * Print an error and exit non-zero. Typed `never` so TypeScript narrows
+ * subsequent code as if the call were a `throw` — eliminates the need
+ * for `as` casts after validation guards.
  */
-function detectGodotVersion(docsDir: string): string | null {
-  const candidates = [
-    join(docsDir, '..', '..', 'version.py'),
-    join(docsDir, '..', 'version.py'),
-  ];
-  for (const candidate of candidates) {
-    if (existsSync(candidate)) {
-      const ver = parseGodotVersion(candidate);
-      return ver.short;
+function fail(message: string): never {
+  console.error(message);
+  process.exit(1);
+}
+
+/**
+ * Detects Godot version from `version.py` near any of the given docs
+ * dirs. For each dir, candidates are tried in this order:
+ *
+ *   1. `<dir>/../../version.py` — covers the canonical
+ *      `vendor/godot/doc/classes/` layout (two levels up).
+ *   2. `<dir>/../version.py` — fallback for callers that already
+ *      pass a one-level-deep dir (e.g. `vendor/godot/some_subdir/`).
+ *
+ * If multiple dirs resolve to different versions, prints a warning
+ * and returns the first hit so we don't silently pick a value the
+ * caller may not expect.
+ */
+function detectGodotVersion(docsDirs: string[]): string | null {
+  const hits: Array<{ docsDir: string; versionFile: string; short: string }> = [];
+  for (const docsDir of docsDirs) {
+    const candidates = [
+      join(docsDir, '..', '..', 'version.py'),
+      join(docsDir, '..', 'version.py'),
+    ];
+    for (const candidate of candidates) {
+      if (existsSync(candidate)) {
+        const ver = parseGodotVersion(candidate);
+        hits.push({ docsDir, versionFile: candidate, short: ver.short });
+        break;
+      }
     }
   }
-  return null;
+  if (hits.length === 0) return null;
+
+  const distinct = [...new Set(hits.map((h) => h.short))];
+  if (distinct.length > 1) {
+    console.warn(
+      `[WARN] --docs-dir entries resolve to conflicting Godot versions (${distinct.join(', ')}). Using "${hits[0]!.short}" from ${hits[0]!.versionFile}. Make sure all docs dirs come from the same Godot tree.`,
+    );
+  }
+  return hits[0]!.short;
 }
 
 /** Resolve the bundled src/typings/overrides directory next to this source file. */
@@ -48,7 +80,10 @@ export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): 
     .description(
       'Generate TypeScript typings and class registry from Godot docs',
     )
-    .option('--docs-dir <dir>', 'Godot XML class documentation directory')
+    .option(
+      '--docs-dir <dirs...>',
+      'Godot XML class documentation directories. Accepts one or more paths — Godot ships docs across `doc/classes/` and `modules/<module>/doc_classes/` (notably `modules/gdscript/doc_classes/` for `@GDScript.xml`). Pass every dir whose XMLs you want included; later dirs override earlier ones for same-named classes.',
+    )
     .option('--output-dir <dir>', 'Root typings output directory', 'typings')
     .option(
       '--override-dir <dir>',
@@ -59,21 +94,47 @@ export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): 
       'Disable the bundled default overrides',
     )
     .action((opts) => {
-      if (!opts.docsDir) {
-        console.error('--docs-dir is required');
-        process.exit(1);
+      // Variadic options collect into an array; commander gives us
+      // either an array (when present), `undefined` (omitted), or
+      // `true` (flag passed without a value — invalid here).
+      const rawDocsDirs: unknown = opts.docsDir;
+      if (
+        !Array.isArray(rawDocsDirs) ||
+        rawDocsDirs.length === 0 ||
+        !rawDocsDirs.every((d) => typeof d === 'string')
+      ) {
+        fail('--docs-dir is required (one or more directories)');
+      }
+      const docsDirs = rawDocsDirs.map((d) => resolve(d));
+
+      // Validate each path early. Variadic options consume positional
+      // values until the next flag, so a stray non-dir argument (e.g.
+      // `--docs-dir doc1 doc2 typings` where `typings` was meant for
+      // `--output-dir`) would otherwise fail deep inside `readdirSync`
+      // with an opaque ENOENT. Surfacing it here points at the exact
+      // bad path AND nudges the user toward the "place --docs-dir
+      // last" convention.
+      for (const d of docsDirs) {
+        if (!existsSync(d)) {
+          fail(
+            `--docs-dir path does not exist: ${d}\n` +
+              `(hint: place --docs-dir LAST on the command line — variadic options ` +
+              `consume every following positional value until the next flag)`,
+          );
+        }
+        if (!statSync(d).isDirectory()) {
+          fail(`--docs-dir path is not a directory: ${d}`);
+        }
       }
 
-      const docsDir = resolve(opts.docsDir);
       const typingsRoot = resolve(opts.outputDir);
       mkdirSync(typingsRoot, { recursive: true });
 
-      const version = detectGodotVersion(docsDir);
+      const version = detectGodotVersion(docsDirs);
       if (!version) {
-        console.error(
-          'Could not detect Godot version from vendor/godot/version.py',
+        fail(
+          'Could not detect Godot version from vendor/godot/version.py near any of the given --docs-dir paths',
         );
-        process.exit(1);
       }
 
       // Resolve override directories. Order: defaults first, user last (later dirs win).
@@ -90,7 +151,7 @@ export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): 
       const registryPath = join(typingsRoot, 'godot-class-registry.json');
 
       generateGodotDocsTypings({
-        classDocsDir: docsDir,
+        classDocsDir: docsDirs,
         outputDir: typingsRoot,
         overrideDirs,
         registryOutputPath: registryPath,

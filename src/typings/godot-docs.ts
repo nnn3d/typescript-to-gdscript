@@ -52,8 +52,14 @@ export { godotTypeToTs } from './type-mapping.ts';
 // ─── Types ───────────────────────────────────────────────────────
 
 export interface GodotDocsTypingsOptions {
-  /** Path to Godot docs XML class reference directory */
-  classDocsDir: string;
+  /**
+   * Path(s) to Godot docs XML class reference directories. Accepts a
+   * single dir (legacy) or an array — Godot ships docs across several
+   * locations (`doc/classes/`, `modules/gdscript/doc_classes/`,
+   * `modules/<module>/doc_classes/`, …). Later dirs override earlier
+   * ones for same-named classes.
+   */
+  classDocsDir: string | string[];
   /** Output directory for generated .d.ts files */
   outputDir: string;
   /** Override directories (.d.ts files + non-nullable.json) in priority order — later dirs override earlier. */
@@ -76,15 +82,26 @@ export function generateGodotDocsTypings(
 ): GodotClassRegistry | null {
   const classes = parseAllClassXmls(options.classDocsDir);
 
-  // Load @GDScript.xml from modules/gdscript/doc_classes/ (sibling to doc/classes/)
-  let gdscriptCls: GodotClassXml | null = null;
-  const gdscriptXmlPath = join(
-    options.classDocsDir,
-    '../../modules/gdscript/doc_classes/@GDScript.xml',
-  );
-  if (existsSync(gdscriptXmlPath)) {
-    const xmlContent = readFileSync(gdscriptXmlPath, 'utf-8');
-    gdscriptCls = parseClassXml(xmlContent);
+  // `@GDScript.xml` lives in `modules/gdscript/doc_classes/` (a sibling
+  // of `doc/classes/`). Preferred path: caller already passes that dir
+  // in `classDocsDir` (multi-dir API), so the class is in the merged
+  // map. Fallback: legacy single-dir callers still get auto-detection
+  // via the sibling-of-first-dir path so existing scripts keep working.
+  let gdscriptCls: GodotClassXml | null = classes.get('@GDScript') ?? null;
+  if (!gdscriptCls) {
+    const firstDir = Array.isArray(options.classDocsDir)
+      ? options.classDocsDir[0]
+      : options.classDocsDir;
+    if (firstDir) {
+      const gdscriptXmlPath = join(
+        firstDir,
+        '../../modules/gdscript/doc_classes/@GDScript.xml',
+      );
+      if (existsSync(gdscriptXmlPath)) {
+        const xmlContent = readFileSync(gdscriptXmlPath, 'utf-8');
+        gdscriptCls = parseClassXml(xmlContent);
+      }
+    }
   }
 
   // Build the type context used throughout generation (replaces module-level state).
