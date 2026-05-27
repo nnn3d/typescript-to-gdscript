@@ -2,6 +2,21 @@
 
 Detailed project layout, implementation status, conversion rules, and edge cases. See CLAUDE.md for instructions/rules.
 
+## Documentation Layout
+
+User-facing docs are split between `README.md` and `docs/`:
+
+- `README.md` — quick-start: install, setup, essential CLI, transform rules, anonymous-class basics, imports → preload, `gd` helpers overview. Designed so a new user doesn't need to open `docs/` to ship a working project.
+- `docs/configuration.md` — full `tstogd.json` reference + addon `_$CLASS$_` sentinel and `G_Foo` escape
+- `docs/cli.md` — every CLI command and every flag (`init`, `convert`, `watch`, `clear-cache`, diagnostic modes); links to specialized commands in their own files
+- `docs/gd-helpers.md` — full `gd` namespace reference (semantics, rules, edge cases for every helper)
+- `docs/gd-to-ts-migration.md` — `initial-convert-gd-to-ts` + the 5 conversion helpers (signal handler, operator fix, explicit convert, extends type, nullable, ready field types)
+- `docs/typings.md` — `generate-typings`, `generate-gdscript-global-typings`, `generate-addon-typings`, `generate-class-typings` + typings tree layout + scene typings features + nullable reference types
+- `docs/ide-integration.md` — TypeScript language service plugin + `tstogd open-editor` + Godot external-editor configuration
+- `docs/development.md` — contributor info: prerequisites, test scripts, regenerating Godot typings
+
+When adding a new feature or CLI flag, update the corresponding `docs/*.md` file (and the README if the feature is user-essential).
+
 ## Tech Stack
 
 - **Package manager**: yarn (v1)
