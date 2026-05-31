@@ -377,7 +377,9 @@ function hasExportModifier(stmt: ts.Statement): boolean {
   const modifiers = ts.canHaveModifiers(stmt)
     ? ts.getModifiers(stmt)
     : undefined;
-  return modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false;
+  return (
+    modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword) ?? false
+  );
 }
 
 /**
@@ -443,10 +445,7 @@ function emitNamespaceBody(
   const consumedClassNames = new Set<string>();
 
   for (const stmt of statements) {
-    if (
-      ts.isTypeAliasDeclaration(stmt) ||
-      ts.isInterfaceDeclaration(stmt)
-    ) {
+    if (ts.isTypeAliasDeclaration(stmt) || ts.isInterfaceDeclaration(stmt)) {
       continue;
     }
     // Non-exported namespace members aren't visible outside the
@@ -555,9 +554,7 @@ export function collectLiftedNames(
   // Direct-member walk: only inspects the immediate children of the
   // given statement list. No recursion into nested namespaces — those
   // names lift into a DIFFERENT inner class, not this one.
-  const collectDirectMembers = (
-    statements: readonly ts.Statement[],
-  ): void => {
+  const collectDirectMembers = (statements: readonly ts.Statement[]): void => {
     for (const stmt of statements) {
       if (ts.isVariableStatement(stmt)) {
         for (const decl of stmt.declarationList.declarations) {

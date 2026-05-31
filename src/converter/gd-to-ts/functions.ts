@@ -51,7 +51,11 @@ export function widenInType(
 
 // ─── Functions ────────────────────────────────────────────────
 
-export function emitFunction(node: SyntaxNode, ctx: GdToTsContext, isAbstract = false): string {
+export function emitFunction(
+  node: SyntaxNode,
+  ctx: GdToTsContext,
+  isAbstract = false,
+): string {
   const name = node.childForFieldName('name')?.text ?? 'unknown';
   const paramsNode = node.childForFieldName('parameters');
   const returnTypeNode = node.childForFieldName('return_type');
@@ -59,9 +63,7 @@ export function emitFunction(node: SyntaxNode, ctx: GdToTsContext, isAbstract = 
 
   // Check for @abstract annotation as child (inner class context)
   const annotations = getAnnotations(node);
-  const childAbstract = annotations.some(
-    (ann) => ann.text === '@abstract',
-  );
+  const childAbstract = annotations.some((ann) => ann.text === '@abstract');
 
   // Create local scope for this function
   const savedLocals = ctx.localVars;
@@ -79,7 +81,9 @@ export function emitFunction(node: SyntaxNode, ctx: GdToTsContext, isAbstract = 
   const isAsync = bodyNode ? containsAwait(bodyNode) : false;
 
   const params = paramsNode ? emitParams(paramsNode, ctx) : '';
-  const returnType = returnTypeNode ? emitReturnType(returnTypeNode, ctx, isAsync) : '';
+  const returnType = returnTypeNode
+    ? emitReturnType(returnTypeNode, ctx, isAsync)
+    : '';
 
   // GDScript `@abstract func` — emit as TS native `abstract method(): T;`
   // (no body) regardless of whether the abstract flag came from the
@@ -142,8 +146,8 @@ export function collectParamNames(
       child.type === SyntaxType.DefaultParameter ||
       child.type === SyntaxType.TypedDefaultParameter
     ) {
-      const name = child.namedChildren.find((c) =>
-        c.type === SyntaxType.Identifier,
+      const name = child.namedChildren.find(
+        (c) => c.type === SyntaxType.Identifier,
       )?.text;
       if (name) {
         ctx.localVars.add(name);
@@ -184,7 +188,11 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       // Untyped param — use signal handler type if available
       if (handlerInfo && paramIndex < handlerInfo.params.length) {
         const sigParam = handlerInfo.params[paramIndex]!;
-        const tsType = widenInType(sigParam.gdType, gdTypeToTs(sigParam.gdType), ctx);
+        const tsType = widenInType(
+          sigParam.gdType,
+          gdTypeToTs(sigParam.gdType),
+          ctx,
+        );
         params.push(tsType ? `${child.text}: ${tsType}` : child.text);
       } else {
         params.push(child.text);
@@ -192,8 +200,8 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       paramIndex++;
     } else if (child.type === SyntaxType.TypedParameter) {
       const name =
-        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
-        '';
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+          ?.text ?? '';
       const typeNode = child.childForFieldName('type');
       const rawType = typeNode?.text ?? '';
       const baseType =
@@ -204,8 +212,8 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       paramIndex++;
     } else if (child.type === SyntaxType.DefaultParameter) {
       const name =
-        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
-        '';
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+          ?.text ?? '';
       const value = child.childForFieldName('value');
       const valueText = value?.text?.trim() ?? '';
       // `param = null` → `param: unknown = null` (or `any` with unsafe flag)
@@ -219,8 +227,8 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       paramIndex++;
     } else if (child.type === SyntaxType.TypedDefaultParameter) {
       const name =
-        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
-        '';
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+          ?.text ?? '';
       const typeNode = child.childForFieldName('type');
       const value = child.childForFieldName('value');
       const rawType = typeNode?.text ?? '';
@@ -317,7 +325,9 @@ export function emitLambda(node: SyntaxNode, ctx: GdToTsContext): string {
   const asyncPrefix = isAsync ? 'async ' : '';
 
   const params = paramsNode ? emitParams(paramsNode, ctx) : '';
-  const returnType = returnTypeNode ? emitReturnType(returnTypeNode, ctx, isAsync) : '';
+  const returnType = returnTypeNode
+    ? emitReturnType(returnTypeNode, ctx, isAsync)
+    : '';
 
   let result: string;
 

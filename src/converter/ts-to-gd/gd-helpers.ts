@@ -13,7 +13,8 @@ export function tryEmitGdAs(
   obj: ts.Expression,
   method: string,
 ): string | null {
-  if (!ts.isIdentifier(obj) || obj.text !== 'gd' || method !== 'as') return null;
+  if (!ts.isIdentifier(obj) || obj.text !== 'gd' || method !== 'as')
+    return null;
   if (node.arguments.length >= 2) {
     const value = t.emitExpression(node.arguments[0]!);
     const type = t.emitExpression(node.arguments[1]!);
@@ -32,7 +33,8 @@ export function tryEmitGdIs(
   obj: ts.Expression,
   method: string,
 ): string | null {
-  if (!ts.isIdentifier(obj) || obj.text !== 'gd' || method !== 'is') return null;
+  if (!ts.isIdentifier(obj) || obj.text !== 'gd' || method !== 'is')
+    return null;
   if (node.arguments.length >= 2) {
     const value = t.emitExpression(node.arguments[0]!);
     const type = t.emitExpression(node.arguments[1]!);
@@ -53,7 +55,8 @@ export function tryEmitGdDict(
   obj: ts.Expression,
   method: string,
 ): string | null {
-  if (!ts.isIdentifier(obj) || obj.text !== 'gd' || method !== 'dict') return null;
+  if (!ts.isIdentifier(obj) || obj.text !== 'gd' || method !== 'dict')
+    return null;
   return emitGdDict(t, node);
 }
 
@@ -138,7 +141,8 @@ export function tryEmitGdOps(
   if (!ts.isPropertyAccessExpression(outerObj)) return null;
   const gdObj = outerObj.expression;
   const opsNs = outerObj.name.text;
-  if (!ts.isIdentifier(gdObj) || gdObj.text !== 'gd' || opsNs !== 'ops') return null;
+  if (!ts.isIdentifier(gdObj) || gdObj.text !== 'gd' || opsNs !== 'ops')
+    return null;
   return emitOpsHelper(t, method, node.arguments);
 }
 
@@ -206,10 +210,18 @@ export function processGdEval(
   } else if (ts.isNoSubstitutionTemplateLiteral(arg)) {
     content = arg.text;
   } else if (ts.isTemplateExpression(arg)) {
-    t.addDiagnostic(node, 'warning', 'gd.eval with template expressions is not supported');
+    t.addDiagnostic(
+      node,
+      'warning',
+      'gd.eval with template expressions is not supported',
+    );
     return null;
   } else {
-    t.addDiagnostic(node, 'warning', 'gd.eval argument must be a string literal');
+    t.addDiagnostic(
+      node,
+      'warning',
+      'gd.eval argument must be a string literal',
+    );
     return null;
   }
 
@@ -234,7 +246,11 @@ export function processGdEval(
   const hasSpaces = nonEmpty.some((l) => /^ /.test(l));
 
   if (hasTabs && hasSpaces) {
-    t.addDiagnostic(node, 'error', 'gd.eval: mixed tabs and spaces indentation is not supported');
+    t.addDiagnostic(
+      node,
+      'error',
+      'gd.eval: mixed tabs and spaces indentation is not supported',
+    );
     return null;
   }
 
@@ -457,7 +473,8 @@ function emitGdMatchArrowCase(
   if (whenExpr) {
     t.emitter.writeLine(
       `${pattern} when ${t.emitExpression(whenExpr)}:`,
-      arrowPos.line, arrowPos.col,
+      arrowPos.line,
+      arrowPos.col,
     );
   } else {
     t.emitter.writeLine(`${pattern}:`, arrowPos.line, arrowPos.col);

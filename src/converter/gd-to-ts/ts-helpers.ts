@@ -74,7 +74,8 @@ function applyFixes(source: string, fixes: SourceFix[]): string {
   const sorted = [...fixes].sort((a, b) => b.start - a.start);
   let result = source;
   for (const fix of sorted) {
-    result = result.slice(0, fix.start) + fix.replacement + result.slice(fix.end);
+    result =
+      result.slice(0, fix.start) + fix.replacement + result.slice(fix.end);
   }
   return result;
 }
@@ -92,7 +93,10 @@ function applyFixes(source: string, fixes: SourceFix[]): string {
  */
 type NamedCollector = {
   name: string;
-  collect: (program: ts.Program, filePaths: Set<string>) => Map<string, SourceFix[]>;
+  collect: (
+    program: ts.Program,
+    filePaths: Set<string>,
+  ) => Map<string, SourceFix[]>;
 };
 
 export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
@@ -111,10 +115,7 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
   );
 
   /** Run a set of fix collectors in a multi-pass loop until convergence. */
-  const runFixLoop = (
-    collectors: NamedCollector[],
-    label?: string,
-  ) => {
+  const runFixLoop = (collectors: NamedCollector[], label?: string) => {
     for (let pass = 0; pass < MAX_FIX_PASSES; pass++) {
       const program = createTsProgram({ rootDir, files, tsConfigPath });
 
@@ -191,23 +192,38 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
   // it runs AFTER operator-fix / explicit-convert so their diagnostics don't
   // pollute the TS2322 signal used by Phase C.
   const primaryCollectors: NamedCollector[] = [
-    { name: 'operator-fix', collect: (program, filePaths) => collectOperatorFixes(program, filePaths) },
+    {
+      name: 'operator-fix',
+      collect: (program, filePaths) => collectOperatorFixes(program, filePaths),
+    },
     ...(registry
-      ? [{
-          name: 'explicit-convert',
-          collect: (program: ts.Program, filePaths: Set<string>) =>
-            collectExplicitConvertFixes(program, filePaths, registry),
-        }]
+      ? [
+          {
+            name: 'explicit-convert',
+            collect: (program: ts.Program, filePaths: Set<string>) =>
+              collectExplicitConvertFixes(program, filePaths, registry),
+          },
+        ]
       : []),
     ...(registry
-      ? [{
-          name: 'nullable',
-          collect: (program: ts.Program, filePaths: Set<string>) =>
-            collectNullableFixes(program, filePaths, registry, { addonMode }),
-        }]
+      ? [
+          {
+            name: 'nullable',
+            collect: (program: ts.Program, filePaths: Set<string>) =>
+              collectNullableFixes(program, filePaths, registry, { addonMode }),
+          },
+        ]
       : []),
-    { name: 'ready-field-types', collect: (program, filePaths) => collectReadyFieldTypeFixes(program, filePaths, registry, unsafeUseAny) },
-    { name: 'extends-type', collect: (program, filePaths) => collectExtendsTypeFixes(program, filePaths) },
+    {
+      name: 'ready-field-types',
+      collect: (program, filePaths) =>
+        collectReadyFieldTypeFixes(program, filePaths, registry, unsafeUseAny),
+    },
+    {
+      name: 'extends-type',
+      collect: (program, filePaths) =>
+        collectExtendsTypeFixes(program, filePaths),
+    },
   ];
   console.log('[ts-helpers] Running primary helpers...');
   runFixLoop(primaryCollectors, 'primary');
@@ -217,12 +233,24 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
   if (unsafeUseAny) {
     console.log('[ts-helpers] Running unsafe-any fallback...');
     runFixLoop(
-      [{ name: 'unsafe-any-field', collect: (program, filePaths) => collectUnsafeAnyFieldFixes(program, filePaths) }],
+      [
+        {
+          name: 'unsafe-any-field',
+          collect: (program, filePaths) =>
+            collectUnsafeAnyFieldFixes(program, filePaths),
+        },
+      ],
       'unsafe-any',
     );
     console.log('[ts-helpers] Running unsafe non-null assertions...');
     runFixLoop(
-      [{ name: 'unsafe-non-null', collect: (program, filePaths) => collectUnsafeNonNullFixes(program, filePaths) }],
+      [
+        {
+          name: 'unsafe-non-null',
+          collect: (program, filePaths) =>
+            collectUnsafeNonNullFixes(program, filePaths),
+        },
+      ],
       'non-null',
     );
   }

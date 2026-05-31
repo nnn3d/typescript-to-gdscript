@@ -34,9 +34,8 @@ export const TS_ASSIGNMENT_ERROR_CODES = new Set([
 export function extractAssignmentTypes(
   messageText: string | ts.DiagnosticMessageChain,
 ): { source: string; target: string } | null {
-  const text = typeof messageText === 'string'
-    ? messageText
-    : messageText.messageText;
+  const text =
+    typeof messageText === 'string' ? messageText : messageText.messageText;
 
   const notAssignable = text.match(
     /type '([^']+)' is not assignable to (?:parameter of )?type '([^']+)'/,
@@ -87,7 +86,12 @@ export function simplifyTypeName(type: string): string {
     .trim();
   // Normalize all array forms (including the empty-array literal type `[]`)
   // to bare "Array" for registry lookup.
-  if (t === '[]' || /\[\]$/.test(t) || /^Array</.test(t) || /^ReadonlyArray</.test(t)) {
+  if (
+    t === '[]' ||
+    /\[\]$/.test(t) ||
+    /^Array</.test(t) ||
+    /^ReadonlyArray</.test(t)
+  ) {
     return 'Array';
   }
   // Strip generic parameters from any other qualified type
@@ -105,7 +109,8 @@ export function findNodeAt(
 ): ts.Node | undefined {
   const end = pos + length;
   function visit(node: ts.Node): ts.Node | undefined {
-    if (node.getStart(sourceFile) > pos || node.getEnd() < end) return undefined;
+    if (node.getStart(sourceFile) > pos || node.getEnd() < end)
+      return undefined;
     for (const child of node.getChildren(sourceFile)) {
       const found = visit(child);
       if (found) return found;
@@ -167,7 +172,8 @@ export function collectExplicitConvertFixes(
         const parent = node.parent;
         if (
           ts.isIdentifier(node) &&
-          (ts.isVariableDeclaration(parent) || ts.isPropertyDeclaration(parent)) &&
+          (ts.isVariableDeclaration(parent) ||
+            ts.isPropertyDeclaration(parent)) &&
           parent.name === node &&
           parent.initializer
         ) {
@@ -180,10 +186,7 @@ export function collectExplicitConvertFixes(
         ) {
           // Assignment LHS -> use RHS
           node = parent.right;
-        } else if (
-          ts.isReturnStatement(parent) &&
-          parent.expression
-        ) {
+        } else if (ts.isReturnStatement(parent) && parent.expression) {
           // `return` keyword -> use returned expression
           node = parent.expression;
         }

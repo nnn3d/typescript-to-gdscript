@@ -23,8 +23,10 @@ export function createTsProgram(options: TsProgramOptions): ts.Program {
       tsConfigDir,
     );
     return ts.createProgram(
-      parsedConfig.fileNames, parsedConfig.options,
-      /* host */ undefined, options.oldProgram,
+      parsedConfig.fileNames,
+      parsedConfig.options,
+      /* host */ undefined,
+      options.oldProgram,
     );
   }
 
@@ -38,8 +40,10 @@ export function createTsProgram(options: TsProgramOptions): ts.Program {
   };
 
   return ts.createProgram(
-    options.files, compilerOptions,
-    /* host */ undefined, options.oldProgram,
+    options.files,
+    compilerOptions,
+    /* host */ undefined,
+    options.oldProgram,
   );
 }
 

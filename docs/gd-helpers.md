@@ -8,9 +8,9 @@
 
 ```typescript
 class Player extends CharacterBody2D {
-  health_changed = gd.signal<[from: int, to: int]>();   // named tuple → named args
-  mana_changed   = gd.signal<[int, int]>();             // unnamed → arg1, arg2
-  died           = gd.signal();                         // no args
+  health_changed = gd.signal<[from: int, to: int]>(); // named tuple → named args
+  mana_changed = gd.signal<[int, int]>(); // unnamed → arg1, arg2
+  died = gd.signal(); // no args
 }
 ```
 
@@ -27,13 +27,13 @@ this.health_changed.connect(this._on_health_changed);
 
 These live at the top level (not under `gd.*`) but are part of the helper surface:
 
-| Helper                | Behavior                                                                                 |
-| --------------------- | ---------------------------------------------------------------------------------------- |
-| `int(x)` / `float(x)` | GDScript primitive cast — truncates / converts to the named numeric type.                |
-| `bool(x)`             | Converts to GDScript `bool`. Also used to wrap `\|\|` / `&&` value-context expressions.  |
-| `String(x)`           | Converts to GDScript `String`.                                                           |
-| `StringName(s)`       | Constructs a GDScript `StringName`. Round-trips as `&"..."` shorthand.                   |
-| `NodePath(s)`         | Constructs a GDScript `NodePath`. Round-trips as `^"..."` shorthand.                     |
+| Helper                | Behavior                                                                                                                            |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `int(x)` / `float(x)` | GDScript primitive cast — truncates / converts to the named numeric type.                                                           |
+| `bool(x)`             | Converts to GDScript `bool`. Also used to wrap `\|\|` / `&&` value-context expressions.                                             |
+| `String(x)`           | Converts to GDScript `String`.                                                                                                      |
+| `StringName(s)`       | Constructs a GDScript `StringName`. Round-trips as `&"..."` shorthand.                                                              |
+| `NodePath(s)`         | Constructs a GDScript `NodePath`. Round-trips as `^"..."` shorthand.                                                                |
 | `TSOnly<T>`           | Type-level only — stripped at conversion. Use to mark types that have no GD counterpart and must not survive into the emitted code. |
 
 ## Typed dictionary literals (`gd.dict`)
@@ -43,15 +43,15 @@ A normal TypeScript object literal `{ "key": value }` converts to a GDScript dic
 `gd.dict()` accepts an array of `[key, value]` tuples and preserves the key expression exactly:
 
 ```typescript
-const key1 = "key";
+const key1 = 'key';
 const key2 = Vector2.DOWN;
 const key3 = new Node2D();
 
 let dict = gd.dict([
-  [key1, "value"],
-  [key2, "value"],
-  [key3, "value"],
-  ["string-key", "value"],
+  [key1, 'value'],
+  [key2, 'value'],
+  [key3, 'value'],
+  ['string-key', 'value'],
 ]);
 ```
 
@@ -91,11 +91,11 @@ let sprite = gd.as(get_node('Sprite'), Sprite2D);
 
 // Variant conversion between primitive value types (Vector2 ↔ Vector2i, Rect2 ↔ Rect2i, etc.)
 let v2: Vector2 = Vector2(1, 2);
-let v2i: Vector2i = gd.as(v2, Vector2i);  // Vector2 → Vector2i
+let v2i: Vector2i = gd.as(v2, Vector2i); // Vector2 → Vector2i
 
 // Array conversion (PackedColorArray ↔ Array, etc.)
 let packed: PackedColorArray = PackedColorArray();
-let arr: Array<Color> = gd.as(packed, Array);  // element type inferred from iterator
+let arr: Array<Color> = gd.as(packed, Array); // element type inferred from iterator
 ```
 
 Variant conversion is enabled via `[__variant_converts]` symbol on each value-type interface. The symbol's type is a union of types that the target's constructor accepts as single "from" parameters. For `Array`-like conversions, the element type is inferred via `[Symbol.iterator]: IterableIterator<T>` on the source interface.
@@ -164,13 +164,13 @@ Spaces after `@gd.eval:` are ignored, but tab characters are preserved as additi
 ```typescript
 switch (this.state) {
   case 1:
-    print("one");
+    print('one');
     break;
   case 2:
-    print("two");
+    print('two');
     break;
   default:
-    print("other");
+    print('other');
     break;
 }
 // ↔ match self.state:
@@ -189,15 +189,41 @@ Fall-through `case` labels map to multi-pattern `1, 2, 3:` on the GDScript side.
 ```typescript
 gd.match(this.x, [
   // Multiple patterns
-  { matchMany: [1, 2, 3], do: () => { print("1-3"); } },
+  {
+    matchMany: [1, 2, 3],
+    do: () => {
+      print('1-3');
+    },
+  },
   // Pattern binding with guard
-  (x, y) => ({ match: [x, y], when: y === x, do: () => { print("y = x"); } }),
+  (x, y) => ({
+    match: [x, y],
+    when: y === x,
+    do: () => {
+      print('y = x');
+    },
+  }),
   // Array open-ending
-  { match: [42, ...[]], do: () => { print("starts with 42"); } },
+  {
+    match: [42, ...[]],
+    do: () => {
+      print('starts with 42');
+    },
+  },
   // Dictionary pattern
-  (age) => ({ match: { name: "Dennis", age: age }, do: () => { print(age); } }),
+  (age) => ({
+    match: { name: 'Dennis', age: age },
+    do: () => {
+      print(age);
+    },
+  }),
   // Dictionary open-ending
-  { match: { key: "val", ...{} }, do: () => { print("has key"); } },
+  {
+    match: { key: 'val', ...{} },
+    do: () => {
+      print('has key');
+    },
+  },
 ]);
 ```
 
@@ -210,8 +236,12 @@ class GetsetExample extends Node {
   // ↔ var a: int:
   //       get: return a
   //       set(value): a = value
-  get a(): int { return this.a; }
-  set a(value: int) { this.a = value; }
+  get a(): int {
+    return this.a;
+  }
+  set a(value: int) {
+    this.a = value;
+  }
 }
 ```
 
@@ -226,8 +256,12 @@ class GetsetExample extends Node {
   //       set(value): b = value
   b: int = gd.getset({
     value: 10,
-    get: () => { return this.b; },
-    set: (value) => { this.b = value; },
+    get: () => {
+      return this.b;
+    },
+    set: (value) => {
+      this.b = value;
+    },
   });
 
   //   var c: int:
@@ -237,12 +271,15 @@ class GetsetExample extends Node {
     set: this.set_c,
   });
 
-  get_c(): int { return 10; }
+  get_c(): int {
+    return 10;
+  }
   set_c(v: int) {}
 }
 ```
 
 Rules:
+
 - `gd.getset()` requires **both** `get` and `set` keys (a converter error is raised otherwise). Either may be set to `null` to fall back to GDScript's default backing-field read/write — at least one must be non-null.
 - You **cannot mix** inline arrow-function bodies with function-reference form in a single `gd.getset()` call. Same restriction applies to GDScript — mixing inline `get:` bodies with `get = fn_name` is rejected.
 - A `value` default can only be combined with inline bodies, not with function-reference form.

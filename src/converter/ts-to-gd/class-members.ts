@@ -60,9 +60,14 @@ function extractSignalParams(
       typeNode = element;
     }
     const gdType = tsTypeNodeToGdType(
-      typeNode, t.ctx.checker, t.ctx.sourceFile, t.currentClassName,
+      typeNode,
+      t.ctx.checker,
+      t.ctx.sourceFile,
+      t.currentClassName,
     );
-    params.push(gdType ? { name: paramName, type: gdType } : { name: paramName });
+    params.push(
+      gdType ? { name: paramName, type: gdType } : { name: paramName },
+    );
   }
   return params;
 }
@@ -139,7 +144,10 @@ export function visitPropertyDeclaration(
   // block instead — that lifts into `const X = ...` inside the GD class.
 
   const gdType = tsTypeNodeToGdType(
-    node.type, t.ctx.checker, t.ctx.sourceFile, t.currentClassName,
+    node.type,
+    t.ctx.checker,
+    t.ctx.sourceFile,
+    t.currentClassName,
   );
 
   const staticPrefix = isStatic ? 'static ' : '';
@@ -174,11 +182,21 @@ export function visitAccessorPair(
   let gdType: string | null = null;
   if (getNode?.type) {
     gdType = tsTypeNodeToGdType(
-      getNode.type, t.ctx.checker, t.ctx.sourceFile, t.currentClassName,
+      getNode.type,
+      t.ctx.checker,
+      t.ctx.sourceFile,
+      t.currentClassName,
     );
-  } else if (setNode && setNode.parameters.length > 0 && setNode.parameters[0]!.type) {
+  } else if (
+    setNode &&
+    setNode.parameters.length > 0 &&
+    setNode.parameters[0]!.type
+  ) {
     gdType = tsTypeNodeToGdType(
-      setNode.parameters[0]!.type, t.ctx.checker, t.ctx.sourceFile, t.currentClassName,
+      setNode.parameters[0]!.type,
+      t.ctx.checker,
+      t.ctx.sourceFile,
+      t.currentClassName,
     );
   }
 
@@ -252,7 +270,10 @@ export function visitMethodDeclaration(
   const params = t.emitParameters(node.parameters);
 
   const returnType = tsTypeNodeToGdType(
-    node.type, t.ctx.checker, t.ctx.sourceFile, t.currentClassName,
+    node.type,
+    t.ctx.checker,
+    t.ctx.sourceFile,
+    t.currentClassName,
   );
   const returnAnnotation = returnType ? ` -> ${returnType}` : '';
 
@@ -271,7 +292,8 @@ export function visitMethodDeclaration(
 
   t.emitter.writeLine(
     `${staticPrefix}func ${name}(${params})${returnAnnotation}:`,
-    pos.line, pos.col,
+    pos.line,
+    pos.col,
   );
   t.emitter.indent();
   if (node.body) {
@@ -299,10 +321,15 @@ export function getDecorators(
   // is `@exports` (plural) — `export` is a TS reserved word so the
   // plural alias is rewritten to GDScript `@export`.
   for (const dec of decorators) {
-    if (ts.isCallExpression(dec.expression) && ts.isIdentifier(dec.expression.expression)) {
+    if (
+      ts.isCallExpression(dec.expression) &&
+      ts.isIdentifier(dec.expression.expression)
+    ) {
       let name = dec.expression.expression.text;
       if (name === 'exports') name = 'export';
-      const args = dec.expression.arguments.map((a) => t.emitExpression(a)).join(', ');
+      const args = dec.expression.arguments
+        .map((a) => t.emitExpression(a))
+        .join(', ');
       result.push(args ? `@${name}(${args})` : `@${name}`);
     } else if (ts.isIdentifier(dec.expression)) {
       let name = dec.expression.text;

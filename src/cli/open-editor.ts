@@ -30,9 +30,12 @@ export function registerOpenEditorCommand(program: Command): void {
     .command('open-editor')
     .description(
       'Open a GDScript file in an external editor as the corresponding TypeScript file. ' +
-        'Use as Godot\'s external text editor command.',
+        "Use as Godot's external text editor command.",
     )
-    .requiredOption('-f, --file <path>', 'GDScript file path (absolute or res://)')
+    .requiredOption(
+      '-f, --file <path>',
+      'GDScript file path (absolute or res://)',
+    )
     .requiredOption(
       '-e, --editor-cmd <cmd>',
       'Editor command template. Placeholders: {tsFile}, {tsLine}, {tsCol}',
@@ -44,9 +47,7 @@ export function registerOpenEditorCommand(program: Command): void {
       'Godot project directory (where tstogd.json is)',
     )
     .action((opts) => {
-      const projectDir = opts.project
-        ? resolve(opts.project)
-        : process.cwd();
+      const projectDir = opts.project ? resolve(opts.project) : process.cwd();
 
       // 1. Load config from project dir
       let cfg;
@@ -92,7 +93,13 @@ export function registerOpenEditorCommand(program: Command): void {
         const sourceMapJson = cache.getSourceMap(tsPath);
         if (sourceMapJson) {
           const remapped = remapErrorSync(
-            { file: gdPath, line: gdLine, column: gdCol - 1, message: '', errorType: 'error' as const },
+            {
+              file: gdPath,
+              line: gdLine,
+              column: gdCol - 1,
+              message: '',
+              errorType: 'error' as const,
+            },
             sourceMapJson,
             tsPath,
           );

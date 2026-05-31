@@ -16,10 +16,7 @@
  */
 
 import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
-import {
-  type GdToTsContext,
-  resolveAllInheritedMembers,
-} from './context.ts';
+import { type GdToTsContext, resolveAllInheritedMembers } from './context.ts';
 import { buildClassScope, withClassScope } from './class-scope.ts';
 import { emitFunction, emitConstructor } from './functions.ts';
 import {
@@ -127,7 +124,7 @@ export function emitFileScopeClass(
       if (typeNode) {
         extendsClass =
           typeNode.type === SyntaxType.Type
-            ? typeNode.namedChildren[0]?.text ?? typeNode.text
+            ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
             : typeNode.text;
       }
     }
@@ -159,9 +156,10 @@ export function emitFileScopeClass(
   const extendsClause = ` extends ${formatExtendsForTs(resolvedExtends)}`;
   const abstractKeyword = isAbstract ? 'abstract ' : '';
   const body = memberLines.join('\n').replace(/\n+$/, '');
-  const classDecl = body.length === 0
-    ? `export ${abstractKeyword}class ${className}${extendsClause} {}`
-    : `export ${abstractKeyword}class ${className}${extendsClause} {\n${body}\n}`;
+  const classDecl =
+    body.length === 0
+      ? `export ${abstractKeyword}class ${className}${extendsClause} {}`
+      : `export ${abstractKeyword}class ${className}${extendsClause} {\n${body}\n}`;
 
   // If anything lifted into the namespace, emit it ABOVE the class.
   // The TS namespace+class pattern merges declarations — namespace

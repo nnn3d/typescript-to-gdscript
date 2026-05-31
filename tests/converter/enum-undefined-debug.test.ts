@@ -24,7 +24,10 @@ function createProgram(filePath: string, code: string): ts.Program {
 function convert(code: string, filename = 'test.ts') {
   const filePath = join(TMP_DIR, filename);
   const program = createProgram(filePath, code);
-  return { filePath, result: convertTsToGd({ filePath, rootDir: TMP_DIR, program }) };
+  return {
+    filePath,
+    result: convertTsToGd({ filePath, rootDir: TMP_DIR, program }),
+  };
 }
 
 afterEach(() => {
@@ -55,7 +58,9 @@ describe('enum values should not trigger typeContainsUndefined', () => {
 
     const { result } = convert(code);
 
-    const typeErrors = result.diagnostics.filter((d) => d.severity === 'type-error');
+    const typeErrors = result.diagnostics.filter(
+      (d) => d.severity === 'type-error',
+    );
     expect(
       typeErrors.map((d) => d.message),
       'Enum values should not produce type-error diagnostics',
@@ -94,7 +99,9 @@ describe('enum values should not trigger typeContainsUndefined', () => {
     ].join('\n');
 
     const { result } = convert(code);
-    const typeErrors = result.diagnostics.filter((d) => d.severity === 'type-error');
+    const typeErrors = result.diagnostics.filter(
+      (d) => d.severity === 'type-error',
+    );
     expect(typeErrors).toEqual([]);
     expect(result.code).not.toContain('.get(');
   });

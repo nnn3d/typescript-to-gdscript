@@ -83,9 +83,16 @@ function typeTextIncludesNull(text: string): boolean {
 
 /** TS-side primitive / special type names that are never widenable. */
 const NON_REFERENCE_NAMES = new Set([
-  'void', 'never', 'any', 'unknown',
-  'number', 'boolean', 'string',
-  'int', 'float', 'bool',
+  'void',
+  'never',
+  'any',
+  'unknown',
+  'number',
+  'boolean',
+  'string',
+  'int',
+  'float',
+  'bool',
 ]);
 
 /**
@@ -118,7 +125,10 @@ function isTextReferenceType(
  * method / constructor body. Mirrors the logic used by
  * `ready-field-types`'s `findReadyAssignment`.
  */
-function hasAssignmentTo(body: ts.Block | undefined, propName: string): boolean {
+function hasAssignmentTo(
+  body: ts.Block | undefined,
+  propName: string,
+): boolean {
   if (!body) return false;
   let found = false;
   function visit(node: ts.Node): void {
@@ -150,7 +160,8 @@ function isPropertyAssigned(
 ): boolean {
   if (prop.initializer) return true;
   for (const m of cls.members) {
-    if (ts.isConstructorDeclaration(m) && hasAssignmentTo(m.body, propName)) return true;
+    if (ts.isConstructorDeclaration(m) && hasAssignmentTo(m.body, propName))
+      return true;
     if (
       ts.isMethodDeclaration(m) &&
       ts.isIdentifier(m.name) &&
@@ -196,7 +207,11 @@ function collectPhaseAFixes(
       // `<decorators> <modifiers> name: T | null = null;` without touching
       // anything else in the declaration.
       const typeEnd = member.type.getEnd();
-      fixes.push({ start: typeEnd, end: typeEnd, replacement: ' | null = null' });
+      fixes.push({
+        start: typeEnd,
+        end: typeEnd,
+        replacement: ' | null = null',
+      });
     }
   }
 
@@ -297,8 +312,10 @@ function findSourceExpression(node: ts.Node): ts.Expression | undefined {
   let current: ts.Node | undefined = node;
   while (current) {
     if (ts.isReturnStatement(current)) return current.expression;
-    if (ts.isVariableDeclaration(current) && current.initializer) return current.initializer;
-    if (ts.isPropertyDeclaration(current) && current.initializer) return current.initializer;
+    if (ts.isVariableDeclaration(current) && current.initializer)
+      return current.initializer;
+    if (ts.isPropertyDeclaration(current) && current.initializer)
+      return current.initializer;
     if (
       ts.isBinaryExpression(current) &&
       current.operatorToken.kind === ts.SyntaxKind.EqualsToken

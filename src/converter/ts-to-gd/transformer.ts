@@ -7,14 +7,8 @@ import type {
 import { processImports, type ImportEntry } from './imports.ts';
 import { GDScriptEmitter } from './emitter.ts';
 import type { TransformerDelegate } from './transformer-types.ts';
-import {
-  emitClassHeader,
-  emitClassMembers,
-} from './class-body.ts';
-import {
-  collectLiftedNames,
-  emitFileScopeNamespace,
-} from './file-scope.ts';
+import { emitClassHeader, emitClassMembers } from './class-body.ts';
+import { collectLiftedNames, emitFileScopeNamespace } from './file-scope.ts';
 import { emitParameters as emitParametersImpl } from './parameters.ts';
 import {
   visitBlock as visitBlockImpl,
@@ -201,11 +195,15 @@ export class TsToGdTransformer implements TransformerDelegate {
             .replace(/\s?\*\/$/, '');
           if (!content.includes('\n')) {
             // Single-line block comment
-            this.emitter.writeLine(`"""${content.trim()}"""`, origLine, origCol);
+            this.emitter.writeLine(
+              `"""${content.trim()}"""`,
+              origLine,
+              origCol,
+            );
           } else {
             // Multiline block comment -- strip indent matching the comment's own column
             const rawLines = content.split('\n');
-            const nonEmpty = rawLines.filter(l => l.trim() !== '');
+            const nonEmpty = rawLines.filter((l) => l.trim() !== '');
             // Strip indent equal to the comment's own column position
             const stripAmount = character;
             this.emitter.writeLine(`"""`, origLine, origCol);
@@ -213,7 +211,11 @@ export class TsToGdTransformer implements TransformerDelegate {
               // Strip up to stripAmount leading spaces/tabs
               let stripped = ln;
               let count = 0;
-              while (count < stripAmount && stripped.length > 0 && (stripped[0] === ' ' || stripped[0] === '\t')) {
+              while (
+                count < stripAmount &&
+                stripped.length > 0 &&
+                (stripped[0] === ' ' || stripped[0] === '\t')
+              ) {
                 stripped = stripped.slice(1);
                 count++;
               }
@@ -234,7 +236,9 @@ export class TsToGdTransformer implements TransformerDelegate {
     return escapeGdStringImpl(text);
   }
 
-  isBlockLambda(node: ts.Expression): node is ts.ArrowFunction | ts.FunctionExpression {
+  isBlockLambda(
+    node: ts.Expression,
+  ): node is ts.ArrowFunction | ts.FunctionExpression {
     return isBlockLambdaImpl(node);
   }
 

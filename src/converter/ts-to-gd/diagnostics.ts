@@ -14,12 +14,14 @@ export type { DiagnosticsTypeInfo };
  * `Packed*Array` types do NOT support `in`.
  * `String` supports `in` (substring check) but is mapped to `string` primitive.
  */
-const GD_IN_ALLOWED_CONTAINER_TYPES = new Set(['Dictionary', 'Array', 'ReadonlyArray']);
+const GD_IN_ALLOWED_CONTAINER_TYPES = new Set([
+  'Dictionary',
+  'Array',
+  'ReadonlyArray',
+]);
 
 /** GDScript primitive types that don't need type annotation on `= null` optional params. */
-const GD_PRIMITIVE_TYPES = new Set([
-  'int', 'float', 'bool', 'String', 'void',
-]);
+const GD_PRIMITIVE_TYPES = new Set(['int', 'float', 'bool', 'String', 'void']);
 
 /**
  * Build the diagnostics type info from a Godot class registry.
@@ -51,7 +53,10 @@ export function buildDiagnosticsTypeInfo(
  * not a variant/value type (Vector2, Color, etc.). Only class types need an
  * explicit type annotation when used as optional null-default parameters.
  */
-export function isGdClassType(gdType: string, diagInfo: DiagnosticsTypeInfo): boolean {
+export function isGdClassType(
+  gdType: string,
+  diagInfo: DiagnosticsTypeInfo,
+): boolean {
   if (GD_PRIMITIVE_TYPES.has(gdType)) return false;
   if (diagInfo.constructors.has(gdType)) return false;
   return true;
@@ -61,7 +66,10 @@ export function isGdClassType(gdType: string, diagInfo: DiagnosticsTypeInfo): bo
  * Returns true if a GDScript type is a variant/value type (Vector2, Color, etc.)
  * -- i.e. a registry constructor but not a primitive.
  */
-export function isGdVariantType(gdType: string, diagInfo: DiagnosticsTypeInfo): boolean {
+export function isGdVariantType(
+  gdType: string,
+  diagInfo: DiagnosticsTypeInfo,
+): boolean {
   if (GD_PRIMITIVE_TYPES.has(gdType)) return false;
   return diagInfo.constructors.has(gdType);
 }

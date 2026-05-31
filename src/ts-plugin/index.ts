@@ -80,7 +80,8 @@ function init({ typescript: ts }: PluginInit) {
      * tsserver's own logger receive the lines.
      */
     const debugLogPath: string | undefined =
-      typeof pluginConfig.debugLog === 'string' && pluginConfig.debugLog.length > 0
+      typeof pluginConfig.debugLog === 'string' &&
+      pluginConfig.debugLog.length > 0
         ? pluginConfig.debugLog
         : undefined;
     if (debugLogPath) {
@@ -103,15 +104,18 @@ function init({ typescript: ts }: PluginInit) {
       logger.info(formatted);
       writeDebug(formatted);
     };
-    const trace = debugEnabled || debugLogPath
-      ? (msg: string): void => {
-          const formatted = `[tstogd-plugin] TRACE ${msg}`;
-          if (debugEnabled) logger.info(formatted);
-          writeDebug(formatted);
-        }
-      : (_: string): void => {};
+    const trace =
+      debugEnabled || debugLogPath
+        ? (msg: string): void => {
+            const formatted = `[tstogd-plugin] TRACE ${msg}`;
+            if (debugEnabled) logger.info(formatted);
+            writeDebug(formatted);
+          }
+        : (_: string): void => {};
 
-    log(`plugin loaded (debug=${debugEnabled} debugLog=${debugLogPath ?? 'off'})`);
+    log(
+      `plugin loaded (debug=${debugEnabled} debugLog=${debugLogPath ?? 'off'})`,
+    );
 
     // ── One-time project setup ──────────────────────────────
     //
@@ -165,7 +169,11 @@ function init({ typescript: ts }: PluginInit) {
       if (!cfg) return false;
       if (!fileName.endsWith('.ts') || fileName.endsWith('.d.ts')) return false;
       const rel = relative(cfg.tsDir, fileName);
-      if (!rel || rel.startsWith('..') || resolve(cfg.tsDir, rel) !== resolve(fileName)) {
+      if (
+        !rel ||
+        rel.startsWith('..') ||
+        resolve(cfg.tsDir, rel) !== resolve(fileName)
+      ) {
         return false;
       }
       return true;
@@ -210,11 +218,17 @@ function init({ typescript: ts }: PluginInit) {
 
     proxy.getSyntacticDiagnostics = (fileName) => {
       const base = ls.getSyntacticDiagnostics(fileName);
-      return filterAugmentationDiagnostics(fileName, base) as tsModule.DiagnosticWithLocation[];
+      return filterAugmentationDiagnostics(
+        fileName,
+        base,
+      ) as tsModule.DiagnosticWithLocation[];
     };
     proxy.getSuggestionDiagnostics = (fileName) => {
       const base = ls.getSuggestionDiagnostics(fileName);
-      return filterAugmentationDiagnostics(fileName, base) as tsModule.DiagnosticWithLocation[];
+      return filterAugmentationDiagnostics(
+        fileName,
+        base,
+      ) as tsModule.DiagnosticWithLocation[];
     };
 
     // ── Lint overlay (tier 1 + tier 2 diagnostics) ──────────

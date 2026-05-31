@@ -2,13 +2,7 @@
  * Shared CLI helpers used by multiple commands.
  */
 
-import {
-  readdirSync,
-  statSync,
-  existsSync,
-  writeFileSync,
-  globSync,
-} from 'fs';
+import { readdirSync, statSync, existsSync, writeFileSync, globSync } from 'fs';
 import { join, resolve } from 'path';
 import { shouldIgnore } from '../config/index.ts';
 import { generateTypings, generateAddonTypings } from '../typings/scenes.ts';
@@ -41,11 +35,20 @@ export function debugLog(message: string): void {
 }
 
 /** Recursively find all .ts files (excluding .d.ts, node_modules, hidden dirs, and ignored patterns) */
-export function findTsFiles(dir: string, rootDir: string, ignore: string[]): string[] {
+export function findTsFiles(
+  dir: string,
+  rootDir: string,
+  ignore: string[],
+): string[] {
   const results: string[] = [];
   try {
     for (const entry of readdirSync(dir)) {
-      if (entry.startsWith('.') || entry === 'node_modules' || entry === 'addons') continue;
+      if (
+        entry.startsWith('.') ||
+        entry === 'node_modules' ||
+        entry === 'addons'
+      )
+        continue;
       const fullPath = join(dir, entry);
       if (shouldIgnore(fullPath, rootDir, ignore)) continue;
       if (statSync(fullPath).isDirectory()) {
@@ -61,11 +64,20 @@ export function findTsFiles(dir: string, rootDir: string, ignore: string[]): str
 }
 
 /** Recursively find all .gd files (excluding node_modules, hidden dirs, and ignored patterns) */
-export function findGdFiles(dir: string, rootDir: string, ignore: string[]): string[] {
+export function findGdFiles(
+  dir: string,
+  rootDir: string,
+  ignore: string[],
+): string[] {
   const results: string[] = [];
   try {
     for (const entry of readdirSync(dir)) {
-      if (entry.startsWith('.') || entry === 'node_modules' || entry === 'addons') continue;
+      if (
+        entry.startsWith('.') ||
+        entry === 'node_modules' ||
+        entry === 'addons'
+      )
+        continue;
       const fullPath = join(dir, entry);
       if (shouldIgnore(fullPath, rootDir, ignore)) continue;
       if (statSync(fullPath).isDirectory()) {
@@ -87,7 +99,11 @@ export function findAddonGdFiles(rootDir: string, ignore: string[]): string[] {
   return findGdFilesRecursive(addonsDir, rootDir, ignore);
 }
 
-function findGdFilesRecursive(dir: string, rootDir: string, ignore: string[]): string[] {
+function findGdFilesRecursive(
+  dir: string,
+  rootDir: string,
+  ignore: string[],
+): string[] {
   const results: string[] = [];
   try {
     for (const entry of readdirSync(dir)) {
@@ -158,9 +174,7 @@ export function generateAllTypings(cfg: {
     cfg.tsFiles ?? findTsFiles(cfg.tsDir, cfg.rootDir, cfg.ignore);
   if (tsFiles.length === 0) return;
 
-  const cache = cfg.cacheDir
-    ? new ProjectCache(cfg.cacheDir)
-    : undefined;
+  const cache = cfg.cacheDir ? new ProjectCache(cfg.cacheDir) : undefined;
 
   const writtenFiles = generateTypings({
     rootDir: cfg.rootDir,

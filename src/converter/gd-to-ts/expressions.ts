@@ -65,7 +65,9 @@ export function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
   }
 
   if (node.type === SyntaxType.StringName) {
-    const strChild = node.namedChildren.find((c) => c.type === SyntaxType.String);
+    const strChild = node.namedChildren.find(
+      (c) => c.type === SyntaxType.String,
+    );
     if (strChild) {
       // Extract the string content
       const content = strChild.text.slice(1, -1); // remove quotes
@@ -114,7 +116,9 @@ export function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
   }
 
   if (node.type === SyntaxType.Dictionary) {
-    const pairNodes = node.namedChildren.filter((c) => c.type === SyntaxType.Pair);
+    const pairNodes = node.namedChildren.filter(
+      (c) => c.type === SyntaxType.Pair,
+    );
     // Check if any key is an identifier (variable reference, not string/number literal)
     const hasIdentifierKey = pairNodes.some((p) => {
       const key = p.childForFieldName('left');
@@ -134,7 +138,12 @@ export function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
     // Check if any key is an expression (binary_operator, subscript, attribute, etc.)
     const hasExpressionKey = pairNodes.some((p) => {
       const key = p.childForFieldName('left');
-      return key && key.type !== SyntaxType.String && key.type !== SyntaxType.Integer && key.type !== SyntaxType.Float;
+      return (
+        key &&
+        key.type !== SyntaxType.String &&
+        key.type !== SyntaxType.Integer &&
+        key.type !== SyntaxType.Float
+      );
     });
     if (hasExpressionKey) {
       // Use computed property syntax for expression keys
@@ -144,7 +153,11 @@ export function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
         const keyStr = key ? emitExpr(key, ctx) : '';
         const valStr = value ? emitExpr(value, ctx) : '';
         // Wrap non-literal keys in [...]
-        const isLiteral = key && (key.type === SyntaxType.String || key.type === SyntaxType.Integer || key.type === SyntaxType.Float);
+        const isLiteral =
+          key &&
+          (key.type === SyntaxType.String ||
+            key.type === SyntaxType.Integer ||
+            key.type === SyntaxType.Float);
         return isLiteral ? `${keyStr}: ${valStr}` : `[${keyStr}]: ${valStr}`;
       });
       return `{\n${pairs.map((p) => `      ${p},`).join('\n')}\n    }`;
@@ -267,15 +280,19 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
     //     class name, and avoids TS type-check surprises from
     //     accessing a static through `this`.
     //   - `this` otherwise (regular instance member).
-    if (i === 0 && child.type === SyntaxType.Identifier && child.text === 'self') {
+    if (
+      i === 0 &&
+      child.type === SyntaxType.Identifier &&
+      child.text === 'self'
+    ) {
       const nextChild = children[i + 1];
       const nextName =
         nextChild && nextChild.type === SyntaxType.Identifier
           ? nextChild.text
           : nextChild && nextChild.type === SyntaxType.AttributeCall
-            ? nextChild.namedChildren.find(
+            ? (nextChild.namedChildren.find(
                 (c) => c.type === SyntaxType.Identifier,
-              )?.text ?? ''
+              )?.text ?? '')
             : '';
       if (nextName && ctx.staticMembers.has(nextName)) {
         parts.push(ctx.className);
@@ -289,8 +306,8 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
     if (child.type === SyntaxType.AttributeCall) {
       // method call on attribute: obj.method(args)
       const methodName =
-        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
-        '';
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+          ?.text ?? '';
       const argsNode = child.childForFieldName('arguments');
       const args = argsNode
         ? argsNode.namedChildren.map((a) => emitExpr(a, ctx)).join(', ')
@@ -305,8 +322,8 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
       }
     } else if (child.type === SyntaxType.AttributeSubscript) {
       const attrName =
-        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)?.text ??
-        '';
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+          ?.text ?? '';
       const argsNode = child.childForFieldName('arguments');
       const key = argsNode?.namedChildren[0];
       parts.push(`${attrName}[${key ? emitExpr(key, ctx) : ''}]`);
@@ -322,7 +339,12 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
   // local variable, and no self was used, prefix with `this` (instance
   // member) or `ClassName` (static member — matches GDScript's
   // convention of accessing statics via the class name).
-  if (!selfSeen && parts.length >= 1 && ctx.classMembers.has(parts[0]!) && !ctx.localVars.has(parts[0]!)) {
+  if (
+    !selfSeen &&
+    parts.length >= 1 &&
+    ctx.classMembers.has(parts[0]!) &&
+    !ctx.localVars.has(parts[0]!)
+  ) {
     const prefix = ctx.staticMembers.has(parts[0]!) ? ctx.className : 'this';
     parts.unshift(prefix);
   }
@@ -338,7 +360,9 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
  * Returns { path, suffix } where path is e.g. "%UniqueNode/Child" and suffix is
  * any trailing attribute chain (e.g. ".text" from `%"UniqueNode"/Child.text`), or null.
  */
-export function tryEmitUniqueNodePath(node: SyntaxNode): { path: string; suffix: string } | null {
+export function tryEmitUniqueNodePath(
+  node: SyntaxNode,
+): { path: string; suffix: string } | null {
   const opNode = node.childForFieldName('op');
   if (!opNode || opNode.text !== '/') return null;
 
@@ -380,7 +404,10 @@ export function tryEmitUniqueNodePath(node: SyntaxNode): { path: string; suffix:
       const pathPart = firstChild.text;
       // The rest of the attribute text after the first identifier
       const attrSuffix = right.text.slice(firstChild.text.length);
-      return { path: `${basePath}/${pathPart}`, suffix: baseSuffix + attrSuffix };
+      return {
+        path: `${basePath}/${pathPart}`,
+        suffix: baseSuffix + attrSuffix,
+      };
     }
   }
 
@@ -482,7 +509,11 @@ export function emitBinaryOp(node: SyntaxNode, ctx: GdToTsContext): string {
 
   // Wrap `or`/`and` in `bool()` when used as a value (assigned, argument, returned)
   // AND the expression is not already boolean (comparisons return bool naturally).
-  if ((opText === 'or' || opText === 'and') && isGdLogicalValueContext(node) && !isGdBoolExpression(node)) {
+  if (
+    (opText === 'or' || opText === 'and') &&
+    isGdLogicalValueContext(node) &&
+    !isGdBoolExpression(node)
+  ) {
     return `bool(${result})`;
   }
 
@@ -521,7 +552,16 @@ function isGdLogicalValueContext(node: SyntaxNode): boolean {
 }
 
 /** Comparison operators that always return bool. */
-const GD_COMPARISON_OPS = new Set(['==', '!=', '<', '>', '<=', '>=', 'is', 'in']);
+const GD_COMPARISON_OPS = new Set([
+  '==',
+  '!=',
+  '<',
+  '>',
+  '<=',
+  '>=',
+  'is',
+  'in',
+]);
 
 /**
  * Check if a GDScript expression is inherently boolean — composed entirely of

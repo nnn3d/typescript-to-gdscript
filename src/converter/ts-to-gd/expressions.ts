@@ -1,22 +1,26 @@
 import ts from 'typescript';
 import { tsTypeNodeToGdType } from '../common/index.ts';
 import { classifyInRhsType } from './diagnostics.ts';
-import { tryEmitGdAs, tryEmitGdIs, tryEmitGdDict, tryEmitGdOps } from './gd-helpers.ts';
+import {
+  tryEmitGdAs,
+  tryEmitGdIs,
+  tryEmitGdDict,
+  tryEmitGdOps,
+} from './gd-helpers.ts';
 import { typeContainsUndefined } from './parameters.ts';
 import type { TransformerDelegate } from './transformer-types.ts';
 
 // ---- Main Expression Emitter ----
 
-export function emitExpression(t: TransformerDelegate, node: ts.Expression): string {
+export function emitExpression(
+  t: TransformerDelegate,
+  node: ts.Expression,
+): string {
   // Identifiers
   if (ts.isIdentifier(node)) {
     const text = node.text;
     if (text === 'undefined') {
-      t.addDiagnostic(
-        node,
-        'error',
-        '`undefined` is restricted; use `null`',
-      );
+      t.addDiagnostic(node, 'error', '`undefined` is restricted; use `null`');
       return 'null';
     }
     if (text === 'null') return 'null';
@@ -117,9 +121,7 @@ export function emitExpression(t: TransformerDelegate, node: ts.Expression): str
 
   // Array literal
   if (ts.isArrayLiteralExpression(node)) {
-    const elements = node.elements
-      .map((e) => t.emitExpression(e))
-      .join(', ');
+    const elements = node.elements.map((e) => t.emitExpression(e)).join(', ');
     return `[${elements}]`;
   }
 
@@ -255,9 +257,7 @@ function isAsyncFunctionReturnTypeSlot(node: ts.TypeReferenceNode): boolean {
   const modifiers = ts.canHaveModifiers(parent)
     ? ts.getModifiers(parent)
     : undefined;
-  return (
-    modifiers?.some((m) => m.kind === ts.SyntaxKind.AsyncKeyword) ?? false
-  );
+  return modifiers?.some((m) => m.kind === ts.SyntaxKind.AsyncKeyword) ?? false;
 }
 
 /**
@@ -428,17 +428,19 @@ export function emitPropertyAccess(
       effectiveNode = parent;
       parent = parent.parent;
     }
-    const isChainedOrCalled = parent != null && (
-      (ts.isCallExpression(parent) && parent.expression === effectiveNode) ||
-      (ts.isPropertyAccessExpression(parent) && parent.expression === effectiveNode) ||
-      (ts.isElementAccessExpression(parent) && parent.expression === effectiveNode)
-    );
+    const isChainedOrCalled =
+      parent != null &&
+      ((ts.isCallExpression(parent) && parent.expression === effectiveNode) ||
+        (ts.isPropertyAccessExpression(parent) &&
+          parent.expression === effectiveNode) ||
+        (ts.isElementAccessExpression(parent) &&
+          parent.expression === effectiveNode));
     // Check if the property is a class field (declared via PropertyDeclaration in a class body).
     // PropertySignature (in interfaces/type literals) is NOT a class field.
     const symbol = t.ctx.checker.getSymbolAtLocation(node.name);
-    const isClassField = symbol?.getDeclarations()?.some(
-      (d) => ts.isPropertyDeclaration(d),
-    ) ?? false;
+    const isClassField =
+      symbol?.getDeclarations()?.some((d) => ts.isPropertyDeclaration(d)) ??
+      false;
     if (!isChainedOrCalled && !isClassField) {
       return `${obj}.get("${prop}")`;
     }
@@ -539,9 +541,9 @@ export function emitCallExpression(
       // Class fields (PropertyDeclaration) are nullable in GDScript, not undefined
       if (ts.isPropertyAccessExpression(arg)) {
         const sym = checker.getSymbolAtLocation(arg.name);
-        const isClassField = sym?.getDeclarations()?.some(
-          (d) => ts.isPropertyDeclaration(d),
-        ) ?? false;
+        const isClassField =
+          sym?.getDeclarations()?.some((d) => ts.isPropertyDeclaration(d)) ??
+          false;
         if (isClassField) continue;
       }
       t.addDiagnostic(
@@ -648,14 +650,19 @@ function isLogicalBoolContext(node: ts.BinaryExpression): boolean {
   if (ts.isForStatement(parent) && parent.condition === current) return true;
 
   // Negation: !expr
-  if (ts.isPrefixUnaryExpression(parent) && parent.operator === ts.SyntaxKind.ExclamationToken) return true;
+  if (
+    ts.isPrefixUnaryExpression(parent) &&
+    parent.operator === ts.SyntaxKind.ExclamationToken
+  )
+    return true;
 
   // Nested logical: part of another || or &&
   if (
     ts.isBinaryExpression(parent) &&
     (parent.operatorToken.kind === ts.SyntaxKind.BarBarToken ||
-     parent.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken)
-  ) return true;
+      parent.operatorToken.kind === ts.SyntaxKind.AmpersandAmpersandToken)
+  )
+    return true;
 
   // Wrapped in bool() call — walk up through ternary/parens to find it
   if (isInsideBoolCall(current)) return true;
@@ -683,7 +690,8 @@ function isInsideBoolCall(node: ts.Node): boolean {
       ts.isCallExpression(current) &&
       ts.isIdentifier(current.expression) &&
       current.expression.text === 'bool'
-    ) return true;
+    )
+      return true;
     // Anything else breaks the chain
     break;
   }
@@ -732,7 +740,8 @@ export function emitBinaryExpression(
       const resultType = t.ctx.checker.getTypeAtLocation(node);
       const isBoolResult = !!(resultType.flags & ts.TypeFlags.BooleanLike);
       if (!isBoolResult) {
-        const op = node.operatorToken.kind === ts.SyntaxKind.BarBarToken ? '||' : '&&';
+        const op =
+          node.operatorToken.kind === ts.SyntaxKind.BarBarToken ? '||' : '&&';
         t.addDiagnostic(
           node,
           'type-error',
@@ -767,8 +776,7 @@ function checkInOperatorRhs(
   const baseTypes = type.isUnion()
     ? type.types.filter(
         (u) =>
-          !(u.flags & ts.TypeFlags.Null) &&
-          !(u.flags & ts.TypeFlags.Undefined),
+          !(u.flags & ts.TypeFlags.Null) && !(u.flags & ts.TypeFlags.Undefined),
       )
     : [type];
 
@@ -970,9 +978,7 @@ export function emitMultiLineDict(
   t: TransformerDelegate,
   entries: string[],
 ): string {
-  const innerIndent = t.emitter.getIndentStr(
-    t.emitter.getIndentLevel() + 1,
-  );
+  const innerIndent = t.emitter.getIndentStr(t.emitter.getIndentLevel() + 1);
   const outerIndent = t.emitter.getIndentStr();
   const lines = entries.map((e) => `${innerIndent}${e},`);
   return `{\n${lines.join('\n')}\n${outerIndent}}`;

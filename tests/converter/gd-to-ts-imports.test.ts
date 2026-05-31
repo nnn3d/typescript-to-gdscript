@@ -52,7 +52,11 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  try { rmSync(projectDir, { recursive: true, force: true }); } catch { /* ignore */ }
+  try {
+    rmSync(projectDir, { recursive: true, force: true });
+  } catch {
+    /* ignore */
+  }
 });
 
 /**
@@ -71,7 +75,12 @@ function runPipeline(specs: SourceSpec[], flag = false): PipelineResult {
   const convertedFiles: Array<{ tsPath: string; gdPath: string }> = [];
   const tsByRel = new Map<string, string>();
   for (const { source, filePath } of projectSources) {
-    const result = convertGdToTs({ source, filePath, registry, projectSources });
+    const result = convertGdToTs({
+      source,
+      filePath,
+      registry,
+      projectSources,
+    });
     const relGd = filePath.slice(gdRoot.length + 1).replace(/\\/g, '/');
     const tsPath = join(tsRoot, relGd.replace(/\.gd$/, '.ts'));
     mkdirSync(dirname(tsPath), { recursive: true });
@@ -157,7 +166,8 @@ describe('GD→TS auto-imports (convert + inject pipeline)', () => {
       { relPath: 'banana.gd', source: 'class_name Banana\nextends Node\n' },
       {
         relPath: 'main.gd',
-        source: 'class_name Main\nextends Node\n\nvar a: Apple\nvar b: Banana\n',
+        source:
+          'class_name Main\nextends Node\n\nvar a: Apple\nvar b: Banana\n',
       },
     ]);
     const lines = r.read('main.gd').split('\n');

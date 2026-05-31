@@ -141,20 +141,29 @@ describe('GD to TS: Signal handler typing', () => {
 
     // Simulate signal handler info resolved from .tscn connections
     const signalHandlers = new Map([
-      ['_on_area_entered', {
-        params: [{ name: 'area', gdType: 'Area2D' }],
-      }],
-      ['_on_body_shape_entered', {
-        params: [
-          { name: 'body_rid', gdType: 'RID' },
-          { name: 'body', gdType: 'Node2D' },
-          { name: 'body_shape_index', gdType: 'int' },
-          { name: 'local_shape_index', gdType: 'int' },
-        ],
-      }],
-      ['_on_timer_timeout', {
-        params: [],
-      }],
+      [
+        '_on_area_entered',
+        {
+          params: [{ name: 'area', gdType: 'Area2D' }],
+        },
+      ],
+      [
+        '_on_body_shape_entered',
+        {
+          params: [
+            { name: 'body_rid', gdType: 'RID' },
+            { name: 'body', gdType: 'Node2D' },
+            { name: 'body_shape_index', gdType: 'int' },
+            { name: 'local_shape_index', gdType: 'int' },
+          ],
+        },
+      ],
+      [
+        '_on_timer_timeout',
+        {
+          params: [],
+        },
+      ],
     ]);
 
     const result = convertGdToTs({
@@ -178,16 +187,17 @@ describe('GD to TS: Signal handler typing', () => {
     ) {
       const actual = actualLines[i] ?? '(missing)';
       const expected = expectedLines[i] ?? '(missing)';
-      expect(actual, `Line ${i + 1} mismatch:\n  Expected: ${JSON.stringify(expected)}\n  Actual:   ${JSON.stringify(actual)}`).toBe(expected);
+      expect(
+        actual,
+        `Line ${i + 1} mismatch:\n  Expected: ${JSON.stringify(expected)}\n  Actual:   ${JSON.stringify(actual)}`,
+      ).toBe(expected);
     }
     expect(actualLines.length).toBe(expectedLines.length);
   });
 });
 
 // Shared helper: create a temp dir with tsconfig referencing Godot typings
-async function makeTsHelperTmp(
-  label: string,
-): Promise<{
+async function makeTsHelperTmp(label: string): Promise<{
   tmpDir: string;
   cleanup: () => void;
   writeFile: (name: string, content: string) => string;
@@ -227,10 +237,12 @@ async function makeTsHelperTmp(
 
 describe('GD to TS: Operator fix helper', () => {
   it('should fix operator type errors using gd.ops wrappers', async () => {
-    const { runTsHelpers } = await import('../../src/converter/gd-to-ts/ts-helpers.js');
+    const { runTsHelpers } =
+      await import('../../src/converter/gd-to-ts/ts-helpers.js');
     const { readFileSync: readFile } = await import('fs');
 
-    const { tmpDir, cleanup, writeFile } = await makeTsHelperTmp('operator-fix');
+    const { tmpDir, cleanup, writeFile } =
+      await makeTsHelperTmp('operator-fix');
     try {
       const tsContent = [
         'export class TestOps extends Node2D {',
@@ -268,7 +280,9 @@ describe('GD to TS: Operator fix helper', () => {
       expect(fixed).toContain('gd.ops.sub(mouse_pos, node.global_position)');
 
       // Compound assignments should be expanded
-      expect(fixed).toContain('this.position = gd.ops.add(this.position, Vector2(1, 1))');
+      expect(fixed).toContain(
+        'this.position = gd.ops.add(this.position, Vector2(1, 1))',
+      );
       expect(fixed).toContain('this.v1 = gd.ops.sub(this.v1, this.v2)');
 
       // Primitive operations should NOT be wrapped
@@ -281,11 +295,13 @@ describe('GD to TS: Operator fix helper', () => {
 
 describe('GD to TS: Explicit convert helper', () => {
   it('should wrap variant-type assignments in gd.as(value, Target)', async () => {
-    const { runTsHelpers } = await import('../../src/converter/gd-to-ts/ts-helpers.js');
+    const { runTsHelpers } =
+      await import('../../src/converter/gd-to-ts/ts-helpers.js');
     const { resolveRegistry } = await import('../../src/config/index.js');
     const { readFileSync: readFile } = await import('fs');
 
-    const { tmpDir, cleanup, writeFile } = await makeTsHelperTmp('explicit-convert');
+    const { tmpDir, cleanup, writeFile } =
+      await makeTsHelperTmp('explicit-convert');
     try {
       const tsContent = [
         'function wants_v2i(v: Vector2i): void {}',
@@ -331,11 +347,15 @@ describe('GD to TS: Explicit convert helper', () => {
       expect(fixed).toContain('wants_v2(gd.as(Vector2i.ZERO, Vector2))');
       expect(fixed).toContain('wants_packed(gd.as(colors, PackedColorArray))');
       // TS2739: missing properties (empty array → PackedVector2Array)
-      expect(fixed).toContain('const points: PackedVector2Array = gd.as([], PackedVector2Array)');
+      expect(fixed).toContain(
+        'const points: PackedVector2Array = gd.as([], PackedVector2Array)',
+      );
       expect(fixed).toContain('body.points = gd.as([], PackedVector2Array)');
       expect(fixed).not.toContain('gd.as(body.points, PackedVector2Array) =');
       // Return statement: wraps the expression, not the `return` keyword
-      expect(fixed).toContain('return gd.as(this.get_viewport_rect().size, Vector2i)');
+      expect(fixed).toContain(
+        'return gd.as(this.get_viewport_rect().size, Vector2i)',
+      );
       expect(fixed).not.toContain('gd.as(return');
       // Valid call unchanged
       expect(fixed).toContain('wants_v2(Vector2.UP);');
@@ -347,10 +367,12 @@ describe('GD to TS: Explicit convert helper', () => {
 
 describe('GD to TS: Extends type helper', () => {
   it('should copy parameter types from parent class for overridden methods', async () => {
-    const { runTsHelpers } = await import('../../src/converter/gd-to-ts/ts-helpers.js');
+    const { runTsHelpers } =
+      await import('../../src/converter/gd-to-ts/ts-helpers.js');
     const { readFileSync: readFile } = await import('fs');
 
-    const { tmpDir, cleanup, writeFile } = await makeTsHelperTmp('extends-type');
+    const { tmpDir, cleanup, writeFile } =
+      await makeTsHelperTmp('extends-type');
     try {
       // `_process(delta: float)` and `_input(event: InputEvent)` are both
       // inherited from Node on Node2D — overriding without types should be
@@ -395,4 +417,3 @@ describe('GD to TS: Extends type helper', () => {
     }
   });
 });
-

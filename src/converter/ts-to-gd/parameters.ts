@@ -75,11 +75,14 @@ export function emitParameters(
       const isNullDefault = p.initializer?.kind === ts.SyntaxKind.NullKeyword;
 
       // Check if the type is a union containing null (e.g. `Node | null`, `null | Node2D`)
-      const isNullableUnion = p.type && ts.isUnionTypeNode(p.type) &&
+      const isNullableUnion =
+        p.type &&
+        ts.isUnionTypeNode(p.type) &&
         p.type.types.some(
           (u) =>
             u.kind === ts.SyntaxKind.NullKeyword ||
-            (ts.isLiteralTypeNode(u) && u.literal.kind === ts.SyntaxKind.NullKeyword),
+            (ts.isLiteralTypeNode(u) &&
+              u.literal.kind === ts.SyntaxKind.NullKeyword),
         );
 
       // For nullable unions, strip `| null` and use the base type
@@ -88,18 +91,25 @@ export function emitParameters(
         const nonNullTypes = (p.type as ts.UnionTypeNode).types.filter(
           (u) =>
             u.kind !== ts.SyntaxKind.NullKeyword &&
-            !(ts.isLiteralTypeNode(u) && u.literal.kind === ts.SyntaxKind.NullKeyword),
+            !(
+              ts.isLiteralTypeNode(u) &&
+              u.literal.kind === ts.SyntaxKind.NullKeyword
+            ),
         );
         if (nonNullTypes.length === 1) {
           gdType = tsTypeNodeToGdType(
-            nonNullTypes[0]!, t.ctx.checker, t.ctx.sourceFile,
+            nonNullTypes[0]!,
+            t.ctx.checker,
+            t.ctx.sourceFile,
             t.currentClassName,
           );
         }
         // Multi-type union (e.g. Node | Node2D | null) -- can't express in GD
       } else {
         gdType = tsTypeNodeToGdType(
-          p.type, t.ctx.checker, t.ctx.sourceFile,
+          p.type,
+          t.ctx.checker,
+          t.ctx.sourceFile,
           t.currentClassName,
         );
       }
@@ -120,7 +130,11 @@ export function emitParameters(
         : '';
       // Omit type annotation for variant/constructor types with non-null defaults
       // (GDScript infers type from the constructor call, e.g. Vector2.DOWN -> Vector2)
-      const omitType = gdType && p.initializer && !isNullDefault && isGdVariantType(gdType, t.ctx.diagInfo);
+      const omitType =
+        gdType &&
+        p.initializer &&
+        !isNullDefault &&
+        isGdVariantType(gdType, t.ctx.diagInfo);
       const typeAnnotation = gdType && !omitType ? `: ${gdType}` : '';
       return `${name}${typeAnnotation}${defaultValue}`;
     })

@@ -18,7 +18,7 @@ typings/
   classes/                  # Per-class .d.ts files
 ```
 
-The `generate-gdscript-global-typings` command outputs the generated `classes/`, `godot-class-registry.json` to `--output-dir`. It also copies the bundled static `globals/` folder and `index.d.ts` from the installed package's `typings/` into `--output-dir` (skipped when `--output-dir` *is* the package's own bundled folder, e.g. when re-running `yarn generate:godot-typings` in the source tree).
+The `generate-gdscript-global-typings` command outputs the generated `classes/`, `godot-class-registry.json` to `--output-dir`. It also copies the bundled static `globals/` folder and `index.d.ts` from the installed package's `typings/` into `--output-dir` (skipped when `--output-dir` _is_ the package's own bundled folder, e.g. when re-running `yarn generate:godot-typings` in the source tree).
 
 Value types (Vector2, Color, etc.), `Dictionary`, and `Callable` use call syntax constructors (no `new`). `Dictionary` and `Callable` constructors and static methods are generated from Godot XML docs via a shared `generateConstructorInterface()` utility.
 
@@ -42,6 +42,7 @@ tstogd generate-typings
 ```
 
 This generates in your `typingsDir`:
+
 - **`.tscn.d.ts`** — Tree type structure for each scene (node types, parent/child relationships, flat paths)
 - **`.gd.d.ts`** — Module augmentation per script with typed `get_node()` overloads
 - **`_resources.d.ts`** — Bundled `GodotResources` entries for all asset files
@@ -51,14 +52,14 @@ This generates in your `typingsDir`:
 
 Each of the six project-wide interfaces gets a parallel `Godot<X>Name` alias defined as `keyof Godot<X>s`. The aliases live in `_index.d.ts` inside `declare global`, so they're available without an `import`.
 
-| Alias                          | Equivalent to                  | What its values look like                         |
-| ------------------------------ | ------------------------------ | ------------------------------------------------- |
-| `GodotResourceName`            | `keyof GodotResources`         | `"res://Player.tscn"`, `"res://Enemy.gd"`, `"res://icon.png"`, … |
-| `GodotSceneName`               | `keyof GodotScenes`            | `"res://Player.tscn"`, `"res://Level.tscn"`, …    |
-| `GodotSceneTreeName`           | `keyof GodotSceneTrees`        | Same set as `GodotSceneName` — pick this one if you want the tree type, not the root node |
-| `GodotScriptName`              | `keyof GodotScripts`           | `"res://Player.gd"`, `"res://Enemy.gd"`, …        |
-| `GodotGroupName`               | `keyof GodotGroups`            | `"enemies"`, `"entities"`, … (group identifiers from `.tscn`) |
-| `GodotConnectionSceneName`     | `keyof GodotConnections`       | Scene paths that have `[connection]` entries     |
+| Alias                      | Equivalent to            | What its values look like                                                                 |
+| -------------------------- | ------------------------ | ----------------------------------------------------------------------------------------- |
+| `GodotResourceName`        | `keyof GodotResources`   | `"res://Player.tscn"`, `"res://Enemy.gd"`, `"res://icon.png"`, …                          |
+| `GodotSceneName`           | `keyof GodotScenes`      | `"res://Player.tscn"`, `"res://Level.tscn"`, …                                            |
+| `GodotSceneTreeName`       | `keyof GodotSceneTrees`  | Same set as `GodotSceneName` — pick this one if you want the tree type, not the root node |
+| `GodotScriptName`          | `keyof GodotScripts`     | `"res://Player.gd"`, `"res://Enemy.gd"`, …                                                |
+| `GodotGroupName`           | `keyof GodotGroups`      | `"enemies"`, `"entities"`, … (group identifiers from `.tscn`)                             |
+| `GodotConnectionSceneName` | `keyof GodotConnections` | Scene paths that have `[connection]` entries                                              |
 
 `keyof` is resolved lazily, so each alias picks up new entries as more `.tscn.d.ts` / `.gd.d.ts` / `_resources.d.ts` files merge into the underlying interfaces. Typos in resource paths or group names become compile-time errors, and IDEs autocomplete the literal union as you type.
 
@@ -89,6 +90,7 @@ const enemies: GodotGroups["enemies"]["res://Level.tscn"] = /* ... */;
 ### Scene typings features
 
 - **Typed `get_node()`**: autocomplete for node paths, returns exact node types
+
   ```typescript
   let sprite: Sprite2D = this.get_node('Sprite2D');
   let label: Label = this.get_node('UI/ScoreLabel');
@@ -97,11 +99,13 @@ const enemies: GodotGroups["enemies"]["res://Level.tscn"] = /* ... */;
 - **Typed `get_node_or_null()`**: same as `get_node()` but always includes `| null`
 
 - **Absolute `/root/` paths**: type-inferred from the root scene tree
+
   ```typescript
   let player: Player = this.get_node('/root/Level/Player');
   ```
 
 - **Unique name nodes (`%Name`)**: accessible from any node in the scene
+
   ```typescript
   let health: ProgressBar = this.get_node('%HealthBar');
   ```
@@ -115,11 +119,14 @@ const enemies: GodotGroups["enemies"]["res://Level.tscn"] = /* ... */;
 - **Scene inheritance (`__node_extends`)**: extended scenes inherit base scene paths lazily
 
 - **Group typing**: `get_nodes_in_group()` returns typed arrays based on which nodes are in each group
+
   ```typescript
-  let enemies: Array<Player | Enemy> = this.get_tree().get_nodes_in_group('entities');
+  let enemies: Array<Player | Enemy> =
+    this.get_tree().get_nodes_in_group('entities');
   ```
 
 - **Autoload scenes**: scene autoloads typed as tree nodes with `get_node()` support
+
   ```typescript
   let bar: ProgressBar = UIManager.get_node('HealthBar');
   ```
@@ -160,7 +167,7 @@ Generate the bundled Godot **engine class** typings and class registry from Godo
 
 `--docs-dir` is **variadic** — pass every XML directory whose classes you want included. Godot ships docs across several locations (`doc/classes/` for the core, `modules/<module>/doc_classes/` for per-module additions like `@GDScript.xml`); listing them all in one invocation merges them into a single typings tree. Later dirs override earlier ones for same-named classes.
 
-Tip: place `--docs-dir` *last* on the command line. Variadic options consume every following positional value until the next flag, so any options that come after will be wrongly absorbed.
+Tip: place `--docs-dir` _last_ on the command line. Variadic options consume every following positional value until the next flag, so any options that come after will be wrongly absorbed.
 
 Options:
 
@@ -193,13 +200,13 @@ This writes `_godot-typings/classes/`, `_godot-typings/godot-class-registry.json
     "noLib": true,
     "strict": true,
     "noEmit": true,
-    "types": []
+    "types": [],
   },
   "include": [
-    "_godot-typings",        // ← your generated engine typings (was node_modules/typescript-to-gdscript/typings)
+    "_godot-typings", // ← your generated engine typings (was node_modules/typescript-to-gdscript/typings)
     "src/**/*.ts",
-    "src/_typings/**/*.d.ts"
-  ]
+    "src/_typings/**/*.d.ts",
+  ],
 }
 ```
 
@@ -238,7 +245,7 @@ tstogd generate-gdscript-global-typings \
   --docs-dir /path/to/your-godot/doc/classes
 ```
 
-Your directory is **combined with the bundled defaults** (defaults loaded first, your dir second). Pass `--no-default-overrides` to drop the bundled set entirely and use only yours. Conflicts resolve **by declaration name**: if both you and the bundled set override the same class `X`, your declaration of `X` replaces the bundled one *as a whole* (re-list any bundled members you still want). Classes you don't touch keep their bundled overrides. An override directory can contain two kinds of files:
+Your directory is **combined with the bundled defaults** (defaults loaded first, your dir second). Pass `--no-default-overrides` to drop the bundled set entirely and use only yours. Conflicts resolve **by declaration name**: if both you and the bundled set override the same class `X`, your declaration of `X` replaces the bundled one _as a whole_ (re-list any bundled members you still want). Classes you don't touch keep their bundled overrides. An override directory can contain two kinds of files:
 
 #### 1. `.d.ts` member overrides
 
@@ -264,7 +271,7 @@ This is exactly how the bundled defaults work — see [`src/typings/overrides/`]
 
 #### 2. `non-nullable.json` — opt members out of `T | null`
 
-By default every reference-typed return is widened to `T | null` (see [Nullable reference types](#nullable-reference-types)). When a method *never* returns null in practice, list it in `non-nullable.json` to keep its return type strict. The format is `ClassName → [methodName, …]`:
+By default every reference-typed return is widened to `T | null` (see [Nullable reference types](#nullable-reference-types)). When a method _never_ returns null in practice, list it in `non-nullable.json` to keep its return type strict. The format is `ClassName → [methodName, …]`:
 
 ```json
 {

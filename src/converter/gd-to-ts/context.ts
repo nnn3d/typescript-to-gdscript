@@ -49,7 +49,10 @@ export interface GdToTsContext {
   /** Static member names (const + static var) — accessed via ClassName, not this */
   staticMembers: Set<string>;
   /** Signal handler type info from .tscn connections (method name → param types) */
-  signalHandlers: Map<string, { params: Array<{ name: string; gdType: string }> }>;
+  signalHandlers: Map<
+    string,
+    { params: Array<{ name: string; gdType: string }> }
+  >;
   /** Global enum constant → qualified name (e.g. "KEY_F21" → "Key.KEY_F21") */
   globalEnumMap: Map<string, string>;
   /** Class-level enum and inner class names (for type qualification: State → ClassName.State) */
@@ -73,7 +76,9 @@ export interface GdToTsContext {
 }
 
 /** Build a map of bare global enum constant names → qualified TS names (e.g. "KEY_F21" → "Key.KEY_F21") */
-export function buildGlobalEnumMap(registry: GodotClassRegistry): Map<string, string> {
+export function buildGlobalEnumMap(
+  registry: GodotClassRegistry,
+): Map<string, string> {
   const map = new Map<string, string>();
   const data = registry.getData();
   for (const e of data.globalEnums) {

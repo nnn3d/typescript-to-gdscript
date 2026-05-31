@@ -1,9 +1,23 @@
-**/fixtures/**/*.ts
+# Dependencies & build output
 node_modules
 dist
+
+# Vendored Godot source
+vendor
+
+# Generated Godot typings (regenerated via `yarn generate:godot-typings`)
+typings
+
+# Auto-generated tree-sitter AST types
+src/parser/gdscript/types.ts
+src/parser/godot-resource/types.ts
+
+# Test fixtures are exact-match expected outputs — never reformat
+**/fixtures/**
+
+# Editor / tooling
 .idea
 .claude
-vendor
-./typings
-!./typings/_overrides
-!./typings/*.ts
+
+# Lockfile
+yarn.lock

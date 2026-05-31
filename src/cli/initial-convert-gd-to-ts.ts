@@ -27,7 +27,11 @@ export function registerInitialConvertGdToTsCommand(program: Command): void {
       'Use `any` instead of `unknown` as the fallback for unresolvable types (e.g. gd.getset without a GDScript type or typeof-able value). Less strict but more error-prone.',
       false,
     )
-    .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
+    .option(
+      '--emit-on-error',
+      'Emit output files even when conversion errors occur',
+      false,
+    )
     .option(
       '-f, --force',
       'Overwrite existing TypeScript output files. Without this flag the command skips any `.gd` whose mirrored `.ts` already exists and exits non-zero so the migration cannot accidentally clobber hand-edited TS sources.',
@@ -65,9 +69,10 @@ export function registerInitialConvertGdToTsCommand(program: Command): void {
       const sceneFiles = findSceneFiles(cfg.scenesDir, cfg.rootDir, cfg.ignore);
 
       // Pre-collect all signal handlers once (instead of re-parsing scenes per file)
-      const allSignalHandlers = sceneFiles.length > 0
-        ? collectAllSignalHandlers(sceneFiles, registry)
-        : undefined;
+      const allSignalHandlers =
+        sceneFiles.length > 0
+          ? collectAllSignalHandlers(sceneFiles, registry)
+          : undefined;
 
       // Build project sources for user-defined class inheritance resolution
       const projectSources = resolvedFiles.map((f) => ({
@@ -85,7 +90,8 @@ export function registerInitialConvertGdToTsCommand(program: Command): void {
       // disk and the user did NOT pass `--force`. Reported as errors at
       // the end of the run so the initial-migration command can never
       // silently clobber hand-edited TypeScript.
-      const skippedExistingFiles: Array<{ tsPath: string; gdPath: string }> = [];
+      const skippedExistingFiles: Array<{ tsPath: string; gdPath: string }> =
+        [];
       for (const { source, filePath } of projectSources) {
         const relPath = relative(cfg.gdDir, filePath);
         const outputPath = resolve(cfg.tsDir, relPath.replace(/\.gd$/, '.ts'));
@@ -142,15 +148,10 @@ export function registerInitialConvertGdToTsCommand(program: Command): void {
       // files. Runs BEFORE typings + TS helpers so the helpers see a
       // fully-imported file. No-op when the project opts into the
       // legacy `generateGlobalClassTypes: true` layout.
-      injectMissingImportsForProject(
-        convertedFiles,
-        projectSources,
-        registry,
-        {
-          generateGlobalClassTypes: cfg.converterOptions.generateGlobalClassTypes,
-          tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
-        },
-      );
+      injectMissingImportsForProject(convertedFiles, projectSources, registry, {
+        generateGlobalClassTypes: cfg.converterOptions.generateGlobalClassTypes,
+        tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
+      });
 
       // Generate class typings + scene typings + addon typings from the converted TS files
       generateAllTypings({
@@ -168,7 +169,9 @@ export function registerInitialConvertGdToTsCommand(program: Command): void {
           unsafeUseAny: !!opts.unsafeUseAny,
         });
         if (helperResult.fixedFiles.length > 0) {
-          debugLog(`TS helpers: patched ${helperResult.fixedFiles.length} file(s)`);
+          debugLog(
+            `TS helpers: patched ${helperResult.fixedFiles.length} file(s)`,
+          );
         }
       }
 

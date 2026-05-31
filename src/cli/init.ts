@@ -101,7 +101,11 @@ async function stepTstogdJson(
 
   const tsDir = await ask(rl, 'TypeScript source directory', defaults.tsDir);
   const gdDir = await ask(rl, 'GDScript output directory', defaults.gdDir);
-  const typingsDir = await ask(rl, 'Typings output directory', defaults.typingsDir);
+  const typingsDir = await ask(
+    rl,
+    'Typings output directory',
+    defaults.typingsDir,
+  );
 
   const config: Record<string, unknown> = {};
   config.tsDir = tsDir;
@@ -134,9 +138,10 @@ async function stepTsconfig(
   const create = await askYesNo(rl, 'Create tsconfig.json from template?');
   if (!create) return;
 
-  const content = TSCONFIG_TEMPLATE
-    .replace('{{tsDir}}', config.tsDir)
-    .replace('{{typingsDir}}', config.typingsDir);
+  const content = TSCONFIG_TEMPLATE.replace('{{tsDir}}', config.tsDir).replace(
+    '{{typingsDir}}',
+    config.typingsDir,
+  );
 
   writeFileSync(tsconfigPath, content);
   console.log('  ✓ Created tsconfig.json');
@@ -167,8 +172,13 @@ async function stepInstallPackages(
       console.log('  ⚠ Skipping package installation (no package.json).');
       return;
     }
-    const name = basename(cwd).replace(/[^a-z0-9-]/gi, '-').toLowerCase();
-    writeFileSync(pkgPath, JSON.stringify({ name, private: true, type: 'module' }, null, 2) + '\n');
+    const name = basename(cwd)
+      .replace(/[^a-z0-9-]/gi, '-')
+      .toLowerCase();
+    writeFileSync(
+      pkgPath,
+      JSON.stringify({ name, private: true, type: 'module' }, null, 2) + '\n',
+    );
     console.log('  ✓ Created package.json');
   }
 
@@ -202,7 +212,10 @@ async function stepGdignore(
   }
 
   console.log('');
-  const create = await askYesNo(rl, 'Create .gdignore in node_modules to exclude from Godot?');
+  const create = await askYesNo(
+    rl,
+    'Create .gdignore in node_modules to exclude from Godot?',
+  );
   if (!create) return;
 
   writeFileSync(gdignorePath, '');
@@ -220,9 +233,13 @@ async function stepGitignore(
   const content = hasGitignore ? readFileSync(gitignorePath, 'utf-8') : '';
 
   // Check if node_modules is already ignored
-  const lines = content.split('\n').map(l => l.trim());
-  const hasNodeModulesIgnore = lines.some(l =>
-    l === 'node_modules' || l === 'node_modules/' || l === '/node_modules' || l === '/node_modules/',
+  const lines = content.split('\n').map((l) => l.trim());
+  const hasNodeModulesIgnore = lines.some(
+    (l) =>
+      l === 'node_modules' ||
+      l === 'node_modules/' ||
+      l === '/node_modules' ||
+      l === '/node_modules/',
   );
 
   if (hasNodeModulesIgnore) return;
@@ -236,9 +253,10 @@ async function stepGitignore(
     : 'node_modules/\n';
 
   writeFileSync(gitignorePath, newContent);
-  console.log(hasGitignore
-    ? '  ✓ Added node_modules/ to .gitignore'
-    : '  ✓ Created .gitignore with node_modules/',
+  console.log(
+    hasGitignore
+      ? '  ✓ Added node_modules/ to .gitignore'
+      : '  ✓ Created .gitignore with node_modules/',
   );
 }
 

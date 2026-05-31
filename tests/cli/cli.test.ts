@@ -36,12 +36,16 @@ function runCliRaw(
     execFile(
       TSX,
       [CLI, ...args],
-      { cwd: process.cwd(), timeout: 30000, shell: process.platform === 'win32' },
+      {
+        cwd: process.cwd(),
+        timeout: 30000,
+        shell: process.platform === 'win32',
+      },
       (err, stdout, stderr) => {
         res({
           stdout: stdout ?? '',
           stderr: stderr ?? '',
-          exitCode: err ? (err as any).code ?? 1 : 0,
+          exitCode: err ? ((err as any).code ?? 1) : 0,
         });
       },
     );

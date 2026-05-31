@@ -10,18 +10,18 @@ The CLI binary is `tstogd`. A global `--debug` flag (placed before the subcomman
 
 ## Command index
 
-| Command | Purpose |
-| ------- | ------- |
-| [`init`](#tstogd-init) | Interactive project setup |
-| [`convert`](#tstogd-convert) | Convert TS → GD |
-| [`watch`](#tstogd-watch) | Watch TS files and auto-convert |
-| [`validate-gd`](#tstogd-validate-gd) | Run Godot CLI validation on `.gd` files, remap errors to TS |
-| [`clear-cache`](#tstogd-clear-cache) | Clear conversion cache |
-| [`initial-convert-gd-to-ts`](#tstogd-initial-convert-gd-to-ts) | One-shot bulk GD → TS migration |
-| [`generate-typings`](#tstogd-generate-typings) | Generate scene/script typings |
-| [`generate-gdscript-global-typings`](#tstogd-generate-gdscript-global-typings) | Generate Godot engine class typings from XML docs |
-| [`generate-addon-typings`](#tstogd-generate-addon-typings) | Generate typings for addon GDScript files |
-| [`open-editor`](#tstogd-open-editor) | Open `.gd` as its `.ts` source in an editor |
+| Command                                                                        | Purpose                                                     |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------- |
+| [`init`](#tstogd-init)                                                         | Interactive project setup                                   |
+| [`convert`](#tstogd-convert)                                                   | Convert TS → GD                                             |
+| [`watch`](#tstogd-watch)                                                       | Watch TS files and auto-convert                             |
+| [`validate-gd`](#tstogd-validate-gd)                                           | Run Godot CLI validation on `.gd` files, remap errors to TS |
+| [`clear-cache`](#tstogd-clear-cache)                                           | Clear conversion cache                                      |
+| [`initial-convert-gd-to-ts`](#tstogd-initial-convert-gd-to-ts)                 | One-shot bulk GD → TS migration                             |
+| [`generate-typings`](#tstogd-generate-typings)                                 | Generate scene/script typings                               |
+| [`generate-gdscript-global-typings`](#tstogd-generate-gdscript-global-typings) | Generate Godot engine class typings from XML docs           |
+| [`generate-addon-typings`](#tstogd-generate-addon-typings)                     | Generate typings for addon GDScript files                   |
+| [`open-editor`](#tstogd-open-editor)                                           | Open `.gd` as its `.ts` source in an editor                 |
 
 ## `tstogd init`
 
@@ -65,11 +65,11 @@ Options:
 
 After converting, `convert` runs a full three-source diagnostic check unless disabled:
 
-| Source | Label | Notes |
-|--------|-------|-------|
-| TypeScript | `[TS:severity]` | Semantic + syntactic errors (requires `--tsconfig`; noise codes TS2434/2435/2449 suppressed) |
-| Converter | `[CONV:severity]` | Errors and warnings from the TS→GD transformer |
-| Godot | `[GD:severity]` | Full-project `godot --check-only` (requires `--godot-path` and `project.godot`) |
+| Source     | Label             | Notes                                                                                        |
+| ---------- | ----------------- | -------------------------------------------------------------------------------------------- |
+| TypeScript | `[TS:severity]`   | Semantic + syntactic errors (requires `--tsconfig`; noise codes TS2434/2435/2449 suppressed) |
+| Converter  | `[CONV:severity]` | Errors and warnings from the TS→GD transformer                                               |
+| Godot      | `[GD:severity]`   | Full-project `godot --check-only` (requires `--godot-path` and `project.godot`)              |
 
 Extra flags:
 

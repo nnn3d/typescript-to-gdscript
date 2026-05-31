@@ -19,18 +19,28 @@ export function registerConvertCommand(program: Command): void {
     .command('convert')
     .description(
       'Convert TypeScript file(s) to GDScript. If no files given, converts all .ts files in tsDir. ' +
-      'After writing, runs full diagnostic check (TS + converter + Godot) unless --no-check is set.',
+        'After writing, runs full diagnostic check (TS + converter + Godot) unless --no-check is set.',
     )
     .argument('[files...]', 'TypeScript files or glob patterns to convert')
     .option('--ts-dir <dir>', 'TypeScript source directory')
     .option('--gd-dir <dir>', 'GDScript output directory')
     .option('--root-dir <dir>', 'Root directory', '.')
     .option('--tsconfig <path>', 'Path to tsconfig.json')
-    .option('--godot-path <path>', 'Path to Godot executable (enables GDScript validation)')
+    .option(
+      '--godot-path <path>',
+      'Path to Godot executable (enables GDScript validation)',
+    )
     .option('--project-root <dir>', 'Godot project root for validation')
     .option('--no-cache', 'Disable cache (force full reconversion)')
-    .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
-    .option('--no-emit', 'Dry-run: convert in memory, check for stale outputs, do not write files')
+    .option(
+      '--emit-on-error',
+      'Emit output files even when conversion errors occur',
+      false,
+    )
+    .option(
+      '--no-emit',
+      'Dry-run: convert in memory, check for stale outputs, do not write files',
+    )
     .option('--no-check', 'Skip the post-convert diagnostic check (TS + Godot)')
     .action(async (files: string[], opts) => {
       const cfg = resolveConfig({
@@ -62,7 +72,9 @@ export function registerConvertCommand(program: Command): void {
       const useCache = opts.cache !== false;
       const cache = useCache ? new ProjectCache(cfg.cacheDir) : null;
 
-      debugLog(`${noEmit ? 'Checking' : 'Converting'} ${resolvedFiles.length} file(s)...`);
+      debugLog(
+        `${noEmit ? 'Checking' : 'Converting'} ${resolvedFiles.length} file(s)...`,
+      );
 
       // Build the ts.Program once and share it across the write loop and the
       // post-convert checker — avoids re-parsing every .ts file twice.
@@ -80,7 +92,10 @@ export function registerConvertCommand(program: Command): void {
         // ── Write mode ───────────────────────────────────��─────
         for (const filePath of resolvedFiles) {
           const relPath = relative(cfg.tsDir, filePath);
-          const outputPath = resolve(cfg.gdDir, relPath.replace(/\.ts$/, '.gd'));
+          const outputPath = resolve(
+            cfg.gdDir,
+            relPath.replace(/\.ts$/, '.gd'),
+          );
 
           if (cache?.isTsToGdFresh(filePath, outputPath)) {
             debugLog(`Skipped (cache): ${outputPath}`);
@@ -120,7 +135,11 @@ export function registerConvertCommand(program: Command): void {
             }
           }
 
-          if (result.diagnostics.some((d) => isConversionErrorSeverity(d.severity))) {
+          if (
+            result.diagnostics.some((d) =>
+              isConversionErrorSeverity(d.severity),
+            )
+          ) {
             hasErrors = true;
             if (!opts.emitOnError) continue;
           }
@@ -130,16 +149,24 @@ export function registerConvertCommand(program: Command): void {
           debugLog(`Written: ${outputPath}`);
 
           if (cache && result.sourceMap) {
-            cache.updateTsToGd(filePath, outputPath, result.sourceMap, result.diagnostics, {
-              gdContent: result.code,
-            });
+            cache.updateTsToGd(
+              filePath,
+              outputPath,
+              result.sourceMap,
+              result.diagnostics,
+              {
+                gdContent: result.code,
+              },
+            );
           }
         }
 
         if (skipped > 0) debugLog(`Skipped ${skipped} unchanged file(s)`);
 
         if (cache) {
-          const currentFiles = new Set(resolvedFiles.map((f) => f.replace(/\\/g, '/')));
+          const currentFiles = new Set(
+            resolvedFiles.map((f) => f.replace(/\\/g, '/')),
+          );
           cache.cleanStale(currentFiles);
           cache.save();
         }
@@ -158,8 +185,12 @@ export function registerConvertCommand(program: Command): void {
             // godotPath unavailable — Godot check skipped
           }
         }
-        const projectRoot = opts.projectRoot ? resolve(opts.projectRoot) : cfg.rootDir;
-        debugLog(`Diagnostic check: godotPath=${godotPath ?? '(skipped)'}, tsConfig=${cfg.tsconfig ?? '(none)'}, projectRoot=${projectRoot}`);
+        const projectRoot = opts.projectRoot
+          ? resolve(opts.projectRoot)
+          : cfg.rootDir;
+        debugLog(
+          `Diagnostic check: godotPath=${godotPath ?? '(skipped)'}, tsConfig=${cfg.tsconfig ?? '(none)'}, projectRoot=${projectRoot}`,
+        );
 
         const checkResult = await collectProjectDiagnostics({
           tsDir: cfg.tsDir,

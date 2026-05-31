@@ -19,22 +19,22 @@ yarn test:run
 
 Individual test suites can be run via npm scripts:
 
-| Script                | Description                        |
-| --------------------- | ---------------------------------- |
-| `yarn test:tstogd`    | TS-to-GD converter fixtures        |
-| `yarn test:gdtots`    | GD-to-TS converter fixtures        |
-| `yarn test:diag`      | Converter diagnostics              |
-| `yarn test:ts-plugin` | TypeScript language service plugin |
-| `yarn test:scene-typings` | Scene typings generation       |
-| `yarn test:type-checks`   | Type check tests               |
-| `yarn test:class-typings` | Class typings generation       |
-| `yarn test:godot-docs`    | Godot docs typings generation  |
-| `yarn test:godot-registry` | Godot class registry          |
-| `yarn test:godot-validate` | Godot validation              |
-| `yarn test:sourcemap` | Source map position tests          |
-| `yarn test:gd-registry` | GD-to-TS registry tests         |
-| `yarn test:typecheck` | TypeScript type-level tests        |
-| `yarn test:cli`       | CLI integration tests              |
+| Script                     | Description                        |
+| -------------------------- | ---------------------------------- |
+| `yarn test:tstogd`         | TS-to-GD converter fixtures        |
+| `yarn test:gdtots`         | GD-to-TS converter fixtures        |
+| `yarn test:diag`           | Converter diagnostics              |
+| `yarn test:ts-plugin`      | TypeScript language service plugin |
+| `yarn test:scene-typings`  | Scene typings generation           |
+| `yarn test:type-checks`    | Type check tests                   |
+| `yarn test:class-typings`  | Class typings generation           |
+| `yarn test:godot-docs`     | Godot docs typings generation      |
+| `yarn test:godot-registry` | Godot class registry               |
+| `yarn test:godot-validate` | Godot validation                   |
+| `yarn test:sourcemap`      | Source map position tests          |
+| `yarn test:gd-registry`    | GD-to-TS registry tests            |
+| `yarn test:typecheck`      | TypeScript type-level tests        |
+| `yarn test:cli`            | CLI integration tests              |
 
 ## Regenerating Godot typings
 

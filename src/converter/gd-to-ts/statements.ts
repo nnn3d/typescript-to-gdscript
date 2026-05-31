@@ -1,11 +1,19 @@
 import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
 import type { GdToTsContext } from './context.ts';
 import { emitExpr } from './expressions.ts';
-import { emitBlockComment, emitCommentInline, emitLocalVariable } from './members.ts';
+import {
+  emitBlockComment,
+  emitCommentInline,
+  emitLocalVariable,
+} from './members.ts';
 
 // ─── Body / Statements ────────────────────────────────────────
 
-export function emitBody(node: SyntaxNode, ctx: GdToTsContext, depth: number): string {
+export function emitBody(
+  node: SyntaxNode,
+  ctx: GdToTsContext,
+  depth: number,
+): string {
   const indent = '  '.repeat(depth);
   const lines: string[] = [];
 
@@ -19,7 +27,10 @@ export function emitBody(node: SyntaxNode, ctx: GdToTsContext, depth: number): s
       const expr = child.namedChildren[0];
       if (expr) {
         // Triple-quoted string as standalone expression → block comment
-        if (expr.type === SyntaxType.String && (expr.text.startsWith('"""') || expr.text.startsWith("'''"))) {
+        if (
+          expr.type === SyntaxType.String &&
+          (expr.text.startsWith('"""') || expr.text.startsWith("'''"))
+        ) {
           lines.push(emitBlockComment(expr.text, indent));
           continue;
         }
@@ -95,7 +106,9 @@ export function emitBody(node: SyntaxNode, ctx: GdToTsContext, depth: number): s
       line: child.startPosition.row + 1,
       column: child.startPosition.column + 1,
     });
-    lines.push(`${indent}/* ERROR: Unhandled GDScript statement: ${child.type} */ ${child.text.split('\n')[0]}`);
+    lines.push(
+      `${indent}/* ERROR: Unhandled GDScript statement: ${child.type} */ ${child.text.split('\n')[0]}`,
+    );
   }
 
   return lines.join('\n');
@@ -153,7 +166,7 @@ function emitForStatement(
   // In `for x in a + b + c`, `+` is always array concatenation → gd.ops.add (recursive)
   function emitArrayConcat(node: SyntaxNode): string {
     if (node.type === SyntaxType.BinaryOperator) {
-      const opNode = node.children.find(c => !c.isNamed);
+      const opNode = node.children.find((c) => !c.isNamed);
       if (opNode?.text === '+') {
         const lhs = node.childForFieldName('left');
         const rhs = node.childForFieldName('right');
@@ -290,8 +303,8 @@ function emitMatchStatement(
       const patterns = section.namedChildren.filter(
         (c) => c.type !== SyntaxType.Body && c.type !== SyntaxType.PatternGuard,
       );
-      const guard = section.namedChildren.find((c) =>
-        c.type === SyntaxType.PatternGuard,
+      const guard = section.namedChildren.find(
+        (c) => c.type === SyntaxType.PatternGuard,
       );
 
       // Collect all pattern_binding names from all patterns
@@ -302,8 +315,7 @@ function emitMatchStatement(
 
       const hasBindings = bindings.length > 0;
       const hasGuard = !!guard;
-      const isMultiPattern =
-        patterns.length > 1 && !hasBindings && !hasGuard;
+      const isMultiPattern = patterns.length > 1 && !hasBindings && !hasGuard;
 
       // Add pattern bindings to local scope so they don't get this. prefix
       const savedLocals = new Set(ctx.localVars);
@@ -444,7 +456,10 @@ export function emitAssignment(node: SyntaxNode, ctx: GdToTsContext): string {
   return `${leftStr} = ${rightStr}`;
 }
 
-export function emitAugmentedAssignment(node: SyntaxNode, ctx: GdToTsContext): string {
+export function emitAugmentedAssignment(
+  node: SyntaxNode,
+  ctx: GdToTsContext,
+): string {
   const left = node.childForFieldName('left');
   const right = node.childForFieldName('right');
   const opNode = node.childForFieldName('op');

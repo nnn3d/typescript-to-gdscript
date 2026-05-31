@@ -21,12 +21,12 @@ export function emitBlockComment(text: string, indent: string): string {
   }
   // Multiline: strip common leading whitespace, then re-indent
   const rawLines = content.split('\n');
-  const nonEmptyLines = rawLines.filter(l => l.trim() !== '');
+  const nonEmptyLines = rawLines.filter((l) => l.trim() !== '');
   const minIndent = nonEmptyLines.reduce((min, l) => {
     const leading = l.match(/^(\s*)/)?.[1]?.length ?? 0;
     return Math.min(min, leading);
   }, Infinity);
-  const stripped = nonEmptyLines.map(l => l.slice(minIndent));
+  const stripped = nonEmptyLines.map((l) => l.slice(minIndent));
 
   const result: string[] = [];
   result.push(`${indent}/*`);
@@ -105,8 +105,8 @@ export function emitEnum(node: SyntaxNode, ctx: GdToTsContext): string {
   const bodyNode = node.childForFieldName('body');
   if (!bodyNode) return '';
 
-  const enumerators = bodyNode.namedChildren.filter((c) =>
-    c.type === SyntaxType.Enumerator,
+  const enumerators = bodyNode.namedChildren.filter(
+    (c) => c.type === SyntaxType.Enumerator,
   );
 
   // Anonymous enum -> static constants
@@ -126,7 +126,10 @@ export function emitEnum(node: SyntaxNode, ctx: GdToTsContext): string {
 
 // ─── Variables ────────────────────────────────────────────────
 
-export function emitClassVariable(node: SyntaxNode, ctx: GdToTsContext): string {
+export function emitClassVariable(
+  node: SyntaxNode,
+  ctx: GdToTsContext,
+): string {
   const annotations = getAnnotations(node);
   const isStatic = node.childForFieldName('static') !== null;
   const name = node.childForFieldName('name')?.text ?? '';
@@ -265,7 +268,7 @@ function emitSetgetVariable(
     // or vice versa) produces confusing semantics at call sites. For
     // reference types, both sides default to `T | null`; Phase D skips
     // setter value params to preserve this symmetry.
-    const rawType = typeNode ? extractGdTypeName(typeNode) ?? '' : '';
+    const rawType = typeNode ? (extractGdTypeName(typeNode) ?? '') : '';
     const accessorType = widenInType(rawType, tsType, ctx) ?? tsType;
     return emitTsAccessors(
       name,
@@ -417,7 +420,9 @@ function emitGdGetsetCall(
   // annotation breaks the cycle (TS knows the field's type independent of
   // the initializer) and also provides the contextual type for `gd.getset`,
   // so the explicit `<T>` generic is not emitted.
-  lines.push(`${decorators}${indent}${staticPrefix}${name}: ${tsType} = gd.getset({`);
+  lines.push(
+    `${decorators}${indent}${staticPrefix}${name}: ${tsType} = gd.getset({`,
+  );
   lines.push(...entries);
   lines.push(`${indent}});`);
 
@@ -458,7 +463,10 @@ export function emitLocalVariable(
 
 // ─── Type Annotations ─────────────────────────────────────────
 
-export function emitTypeAnnotation(typeNode: SyntaxNode, ctx: GdToTsContext): string {
+export function emitTypeAnnotation(
+  typeNode: SyntaxNode,
+  ctx: GdToTsContext,
+): string {
   if (typeNode.type === SyntaxType.InferredType) {
     return ''; // := inferred — omit type in TS
   }
@@ -467,7 +475,11 @@ export function emitTypeAnnotation(typeNode: SyntaxNode, ctx: GdToTsContext): st
     // Qualify class-level enum/inner class types. Handles both bare
     // (`State` → `ClassName.State`) and qualified
     // (`Config.Inner` → `_Anonym.Config.Inner`) forms.
-    const qualified = qualifyClassType(inner, ctx.classTypeNames, ctx.className);
+    const qualified = qualifyClassType(
+      inner,
+      ctx.classTypeNames,
+      ctx.className,
+    );
     if (qualified) return `: ${qualified}`;
     const tsType = gdTypeToTs(inner);
     return tsType ? `: ${tsType}` : '';
@@ -495,7 +507,10 @@ export function getAnnotations(node: SyntaxNode): SyntaxNode[] {
   return annotations;
 }
 
-export function emitAnnotationAsDecorator(node: SyntaxNode, ctx: GdToTsContext): string {
+export function emitAnnotationAsDecorator(
+  node: SyntaxNode,
+  ctx: GdToTsContext,
+): string {
   // Annotation text is like "@export" or "@onready" or "@export_range(0, 100)"
   const text = node.text;
   const match = text.match(/^@(\w+)(?:\((.+)\))?$/);

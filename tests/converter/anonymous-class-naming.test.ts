@@ -33,15 +33,19 @@ describe('gdFilenameToAnonymousClassName', () => {
 
   it('preserves PascalCase basenames', () => {
     expect(gdFilenameToAnonymousClassName('Anonym.gd')).toBe('_Anonym');
-    expect(gdFilenameToAnonymousClassName('MyHttpServer.gd')).toBe('_MyHttpServer');
+    expect(gdFilenameToAnonymousClassName('MyHttpServer.gd')).toBe(
+      '_MyHttpServer',
+    );
   });
 
   it('strips path components, keeps the basename', () => {
     expect(gdFilenameToAnonymousClassName('nested/foo.gd')).toBe('_Foo');
-    expect(gdFilenameToAnonymousClassName('a/b/c/some_file.gd')).toBe('_SomeFile');
-    expect(gdFilenameToAnonymousClassName('C:\\\\Users\\\\nnn3d\\\\foo.gd')).toBe(
-      '_Foo',
+    expect(gdFilenameToAnonymousClassName('a/b/c/some_file.gd')).toBe(
+      '_SomeFile',
     );
+    expect(
+      gdFilenameToAnonymousClassName('C:\\\\Users\\\\nnn3d\\\\foo.gd'),
+    ).toBe('_Foo');
   });
 
   it('falls back to "_Anonym" for nonsense input', () => {
@@ -101,8 +105,16 @@ describe('GD→TS naming — emitter integration', () => {
 describe('TS→GD naming — emitter integration', () => {
   // Each test writes a tiny project under tmpdir so the TS program can
   // resolve the file naturally.
-  function withTempProject<T>(fn: (project: { dir: string; write(rel: string, content: string): string }) => T): T {
-    const dir = join(tmpdir(), `tstogd-naming-test-${randomBytes(4).toString('hex')}`);
+  function withTempProject<T>(
+    fn: (project: {
+      dir: string;
+      write(rel: string, content: string): string;
+    }) => T,
+  ): T {
+    const dir = join(
+      tmpdir(),
+      `tstogd-naming-test-${randomBytes(4).toString('hex')}`,
+    );
     mkdirSync(dir, { recursive: true });
     writeFileSync(
       join(dir, 'globals.d.ts'),
@@ -118,7 +130,11 @@ describe('TS→GD naming — emitter integration', () => {
         },
       });
     } finally {
-      try { rmSync(dir, { recursive: true, force: true }); } catch { /* best-effort */ }
+      try {
+        rmSync(dir, { recursive: true, force: true });
+      } catch {
+        /* best-effort */
+      }
     }
   }
 
@@ -133,10 +149,7 @@ describe('TS→GD naming — emitter integration', () => {
 
   it('emits `G_Foo` verbatim (the escape is not undone on TS→GD)', () => {
     withTempProject((p) => {
-      const tsPath = p.write(
-        'foo.ts',
-        `export class G_Foo extends Node {}\n`,
-      );
+      const tsPath = p.write('foo.ts', `export class G_Foo extends Node {}\n`);
       const result = convertTsToGd({ filePath: tsPath, rootDir: p.dir });
       expect(result.code).toContain('class_name G_Foo');
       expect(result.code).not.toContain('class_name _Foo');

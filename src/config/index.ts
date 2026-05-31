@@ -116,15 +116,9 @@ export function resolveConfig(options?: {
   const overrides = options?.overrides ?? {};
 
   // Merge: CLI overrides > config > defaults
-  const rootDir = resolve(
-    baseDir,
-    overrides.rootDir ?? config?.rootDir ?? '.',
-  );
+  const rootDir = resolve(baseDir, overrides.rootDir ?? config?.rootDir ?? '.');
   const tsDir = resolve(rootDir, overrides.tsDir ?? config?.tsDir ?? 'src');
-  const gdDir = resolve(
-    rootDir,
-    overrides.gdDir ?? config?.gdDir ?? 'scripts',
-  );
+  const gdDir = resolve(rootDir, overrides.gdDir ?? config?.gdDir ?? 'scripts');
   const typingsDir = resolve(
     rootDir,
     overrides.typingsDir ?? config?.typingsDir ?? '_gdtots',
@@ -141,14 +135,15 @@ export function resolveConfig(options?: {
   );
   const cacheDir = resolve(
     rootDir,
-    overrides.cacheDir ?? config?.cacheDir ??
+    overrides.cacheDir ??
+      config?.cacheDir ??
       (existsSync(join(rootDir, 'node_modules'))
         ? join('node_modules', '.cache', 'typescript-to-gdscript')
         : join(tmpdir(), 'typescript-to-gdscript', basename(rootDir))),
   );
   const godotTypingsDir = config?.godotTypingsDir
     ? resolve(baseDir, config.godotTypingsDir)
-    : findPackageTypingsDir(rootDir) ?? getPackageTypingsDir();
+    : (findPackageTypingsDir(rootDir) ?? getPackageTypingsDir());
   return {
     rootDir,
     tsDir,
@@ -157,8 +152,12 @@ export function resolveConfig(options?: {
     scenesDir,
     ignore,
     projectFile,
-    tsconfig: overrides.tsconfig ?? config?.tsconfig
-      ?? (existsSync(join(rootDir, 'tsconfig.json')) ? join(rootDir, 'tsconfig.json') : undefined),
+    tsconfig:
+      overrides.tsconfig ??
+      config?.tsconfig ??
+      (existsSync(join(rootDir, 'tsconfig.json'))
+        ? join(rootDir, 'tsconfig.json')
+        : undefined),
     godotPath: overrides.godotPath ?? config?.godotPath,
     disableGodotLint: config?.disableGodotLint ?? false,
     cacheDir,
@@ -228,7 +227,12 @@ export function loadConfig(dir?: string): LoadConfigResult | null {
 function findPackageTypingsDir(rootDir: string): string | undefined {
   let dir = rootDir;
   for (let i = 0; i < 10; i++) {
-    const candidate = join(dir, 'node_modules', 'typescript-to-gdscript', 'typings');
+    const candidate = join(
+      dir,
+      'node_modules',
+      'typescript-to-gdscript',
+      'typings',
+    );
     if (existsSync(join(candidate, 'index.d.ts'))) return candidate;
     const parent = dirname(dir);
     if (parent === dir) break;

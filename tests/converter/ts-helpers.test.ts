@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync, readdirSync, writeFileSync, rmSync, mkdirSync } from 'fs';
+import {
+  readFileSync,
+  readdirSync,
+  writeFileSync,
+  rmSync,
+  mkdirSync,
+} from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { tmpdir } from 'os';
@@ -52,7 +58,10 @@ function normalize(code: string): string {
 }
 
 function makeScratchDir(label: string) {
-  const dir = join(tmpdir(), `tstogd-ts-helpers-${label}-${randomBytes(4).toString('hex')}`);
+  const dir = join(
+    tmpdir(),
+    `tstogd-ts-helpers-${label}-${randomBytes(4).toString('hex')}`,
+  );
   mkdirSync(dir, { recursive: true });
   writeFileSync(
     join(dir, 'tsconfig.json'),
@@ -120,16 +129,26 @@ function runFixture(mode: Mode, name: string): void {
 
     const actualLines = actual.split('\n');
     const expectedLines = expected.split('\n');
-    for (let i = 0; i < Math.max(actualLines.length, expectedLines.length); i++) {
+    for (
+      let i = 0;
+      i < Math.max(actualLines.length, expectedLines.length);
+      i++
+    ) {
       const a = actualLines[i] ?? '<missing>';
       const e = expectedLines[i] ?? '<missing>';
       if (a !== e) {
         const start = Math.max(0, i - 2);
-        const end = Math.min(Math.max(actualLines.length, expectedLines.length), i + 10);
+        const end = Math.min(
+          Math.max(actualLines.length, expectedLines.length),
+          i + 10,
+        );
         const render = (lines: string[]) =>
           lines
             .slice(start, end)
-            .map((l, j) => `  ${j + start === i ? '>' : ' '} ${j + start + 1}| ${l}`)
+            .map(
+              (l, j) =>
+                `  ${j + start === i ? '>' : ' '} ${j + start + 1}| ${l}`,
+            )
             .join('\n');
         expect.fail(
           `Line ${i + 1} mismatch in ${mode}/${name}:\n` +
@@ -146,8 +165,11 @@ function runFixture(mode: Mode, name: string): void {
   }
 }
 
-describe.each(['default', 'addon'] as const)(`TS helpers: %s mode fixtures`, (mode) => {
-  for (const name of discoverFixtures(mode)) {
-    it(`runs helpers on ${name}`, () => runFixture(mode, name));
-  }
-})
+describe.each(['default', 'addon'] as const)(
+  `TS helpers: %s mode fixtures`,
+  (mode) => {
+    for (const name of discoverFixtures(mode)) {
+      it(`runs helpers on ${name}`, () => runFixture(mode, name));
+    }
+  },
+);

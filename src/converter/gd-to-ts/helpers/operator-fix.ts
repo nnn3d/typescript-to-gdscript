@@ -23,19 +23,20 @@ export const TS_OP_TO_GD_OPS: Partial<Record<ts.SyntaxKind, string>> = {
 
 /** TS compound assignment operator -> gd.ops function name.
  *  `a += b` -> `a = gd.ops.add(a, b)` */
-export const TS_COMPOUND_OP_TO_GD_OPS: Partial<Record<ts.SyntaxKind, string>> = {
-  [ts.SyntaxKind.PlusEqualsToken]: 'add',
-  [ts.SyntaxKind.MinusEqualsToken]: 'sub',
-  [ts.SyntaxKind.AsteriskEqualsToken]: 'mul',
-  [ts.SyntaxKind.SlashEqualsToken]: 'div',
-  [ts.SyntaxKind.PercentEqualsToken]: 'rem',
-};
+export const TS_COMPOUND_OP_TO_GD_OPS: Partial<Record<ts.SyntaxKind, string>> =
+  {
+    [ts.SyntaxKind.PlusEqualsToken]: 'add',
+    [ts.SyntaxKind.MinusEqualsToken]: 'sub',
+    [ts.SyntaxKind.AsteriskEqualsToken]: 'mul',
+    [ts.SyntaxKind.SlashEqualsToken]: 'div',
+    [ts.SyntaxKind.PercentEqualsToken]: 'rem',
+  };
 
 /** TS error codes for operator type mismatches */
 export const TS_OPERATOR_ERROR_CODES = new Set([
-  2365,  // Operator 'X' cannot be applied to types 'Y' and 'Z'.
-  2362,  // The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
-  2363,  // The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+  2365, // Operator 'X' cannot be applied to types 'Y' and 'Z'.
+  2362, // The left-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
+  2363, // The right-hand side of an arithmetic operation must be of type 'any', 'number', 'bigint' or an enum type.
 ]);
 
 /** Find the innermost BinaryExpression at a given position */
@@ -44,7 +45,8 @@ export function findBinaryExpressionAt(
   pos: number,
 ): ts.BinaryExpression | undefined {
   function visit(node: ts.Node): ts.BinaryExpression | undefined {
-    if (node.getStart(sourceFile) > pos || node.getEnd() <= pos) return undefined;
+    if (node.getStart(sourceFile) > pos || node.getEnd() <= pos)
+      return undefined;
 
     // Check children first for deeper match
     for (const child of node.getChildren(sourceFile)) {
@@ -81,10 +83,11 @@ export function collectOperatorFixes(
     const fixedRanges: Array<{ start: number; end: number }> = [];
 
     function overlapsExisting(start: number, end: number): boolean {
-      return fixedRanges.some(r =>
-        (start >= r.start && start < r.end) ||
-        (end > r.start && end <= r.end) ||
-        (start <= r.start && end >= r.end),
+      return fixedRanges.some(
+        (r) =>
+          (start >= r.start && start < r.end) ||
+          (end > r.start && end <= r.end) ||
+          (start <= r.start && end >= r.end),
       );
     }
 

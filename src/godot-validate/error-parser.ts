@@ -78,7 +78,8 @@ export function isDuplicateClassFalsePositive(
   projectRoot: string,
   cacheDir?: string,
 ): boolean {
-  if (!/^Class ".*" hides a global script class/.test(error.message)) return false;
+  if (!/^Class ".*" hides a global script class/.test(error.message))
+    return false;
   return isUnderScratchDir(error.file, projectRoot, cacheDir);
 }
 
@@ -100,7 +101,7 @@ export function isUnderScratchDir(
   // Inside the configured cache dir (if any).
   if (cacheDir) {
     const relCache = relative(cacheDir, filePath);
-    if (relCache === '' ) return true;
+    if (relCache === '') return true;
     if (!relCache.startsWith('..') && !isAbsolute(relCache)) return true;
   }
   return false;

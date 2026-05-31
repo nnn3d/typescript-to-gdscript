@@ -30,7 +30,8 @@ function fail(message: string): never {
  * caller may not expect.
  */
 function detectGodotVersion(docsDirs: string[]): string | null {
-  const hits: Array<{ docsDir: string; versionFile: string; short: string }> = [];
+  const hits: Array<{ docsDir: string; versionFile: string; short: string }> =
+    [];
   for (const docsDir of docsDirs) {
     const candidates = [
       join(docsDir, '..', '..', 'version.py'),
@@ -74,7 +75,9 @@ function getPackageTypingsDir(): string {
   return resolve(thisDir, '..', '..', 'typings');
 }
 
-export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): void {
+export function registerGenerateGdscriptGlobalTypingsCommand(
+  program: Command,
+): void {
   program
     .command('generate-gdscript-global-typings')
     .description(
@@ -89,10 +92,7 @@ export function registerGenerateGdscriptGlobalTypingsCommand(program: Command): 
       '--override-dir <dir>',
       'User override directory for .d.ts files and non-nullable.json (combined with bundled defaults unless --no-default-overrides is set)',
     )
-    .option(
-      '--no-default-overrides',
-      'Disable the bundled default overrides',
-    )
+    .option('--no-default-overrides', 'Disable the bundled default overrides')
     .action((opts) => {
       // Variadic options collect into an array; commander gives us
       // either an array (when present), `undefined` (omitted), or

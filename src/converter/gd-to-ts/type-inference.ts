@@ -34,7 +34,10 @@ export function inferExprTypeStatic(
 }
 
 /** Infer the GD type of an expression (best-effort, for gd.ops detection) */
-export function inferExprType(node: SyntaxNode, ctx: GdToTsContext): string | null {
+export function inferExprType(
+  node: SyntaxNode,
+  ctx: GdToTsContext,
+): string | null {
   // Constructor call: Vector2(...), Color(...), etc.
   if (node.type === SyntaxType.Call) {
     const callee = node.namedChildren[0];
@@ -54,7 +57,8 @@ export function inferExprType(node: SyntaxNode, ctx: GdToTsContext): string | nu
   if (node.type === SyntaxType.Integer) return 'int';
   if (node.type === SyntaxType.Float) return 'float';
   if (node.type === SyntaxType.String) return 'String';
-  if (node.type === SyntaxType.True || node.type === SyntaxType.False) return 'bool';
+  if (node.type === SyntaxType.True || node.type === SyntaxType.False)
+    return 'bool';
   // Identifier: look up tracked type (local vars first, then class members)
   if (node.type === SyntaxType.Identifier) {
     if (ctx.localVarTypes.has(node.text))
@@ -87,10 +91,24 @@ export const GD_OPS_MAP: Record<string, string> = {
 /** Comparison operators where GDScript `not` has lower precedence than the op,
  *  but tree-sitter-gdscript incorrectly parses `not X op Y` as `(not X) op Y`.
  *  In real GDScript, `not a == 0` means `not (a == 0)`. */
-export const NOT_LIFT_OPS = new Set(['==', '!=', '<', '>', '<=', '>=', 'in', 'is']);
+export const NOT_LIFT_OPS = new Set([
+  '==',
+  '!=',
+  '<',
+  '>',
+  '<=',
+  '>=',
+  'in',
+  'is',
+]);
 
 /** GDScript primitive types that use `gd.is()` instead of `instanceof` */
-export const GD_IS_PRIMITIVE_TYPES = new Set(['int', 'float', 'bool', 'String']);
+export const GD_IS_PRIMITIVE_TYPES = new Set([
+  'int',
+  'float',
+  'bool',
+  'String',
+]);
 
 // ─── Helpers ──────────────────────────────────────────────────
 

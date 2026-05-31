@@ -35,7 +35,9 @@ export interface GodotValidateOptions {
    * JSON + original `.ts` path so diagnostics come back anchored at
    * the TypeScript positions.
    */
-  gdFiles: Array<string | { path: string; sourceMapJson?: string; tsFilePath?: string }>;
+  gdFiles: Array<
+    string | { path: string; sourceMapJson?: string; tsFilePath?: string }
+  >;
   /** Godot project root (must contain project.godot) */
   projectRoot: string;
   /** Path to Godot executable */
@@ -91,7 +93,10 @@ export async function validateGdFiles(
   // because Godot briefly initializes its display server before reading
   // the `--version` argument.
   try {
-    await execFileAsync(options.godotPath, ['--headless', '--version'], { timeout: 10000, signal });
+    await execFileAsync(options.godotPath, ['--headless', '--version'], {
+      timeout: 10000,
+      signal,
+    });
   } catch {
     // Abort during the --version probe: treat like a no-op, caller's
     // signal.aborted check will gate downstream work.
@@ -128,9 +133,12 @@ export async function validateGdFiles(
     // Stop between iterations as well — don't keep validating the
     // remaining batch once the caller has moved on.
     if (signal?.aborted) return { diagnostics: [], godotAvailable: true };
-    const gdFile = typeof gdFileEntry === 'string' ? gdFileEntry : gdFileEntry.path;
-    const sourceMapJson = typeof gdFileEntry === 'string' ? undefined : gdFileEntry.sourceMapJson;
-    const tsFilePath = typeof gdFileEntry === 'string' ? undefined : gdFileEntry.tsFilePath;
+    const gdFile =
+      typeof gdFileEntry === 'string' ? gdFileEntry : gdFileEntry.path;
+    const sourceMapJson =
+      typeof gdFileEntry === 'string' ? undefined : gdFileEntry.sourceMapJson;
+    const tsFilePath =
+      typeof gdFileEntry === 'string' ? undefined : gdFileEntry.tsFilePath;
     const resolvedFile = resolve(gdFile);
 
     if (!existsSync(resolvedFile)) {
@@ -195,15 +203,25 @@ export async function validateGdFiles(
         let isFalsePositive = false;
         if (autoloadNames.size > 0) {
           for (const autoloadName of autoloadNames) {
-            if (output.includes('Identifier not found: ' + autoloadName) ||
-                output.includes('Identifier "' + autoloadName + '" not declared')) {
+            if (
+              output.includes('Identifier not found: ' + autoloadName) ||
+              output.includes('Identifier "' + autoloadName + '" not declared')
+            ) {
               isFalsePositive = true;
               break;
             }
           }
         }
-        const isTmpFile = isUnderScratchDir(resolvedFile, options.projectRoot, cacheDir);
-        if (!isFalsePositive && isTmpFile && /Class ".*" hides a global script class/.test(output)) {
+        const isTmpFile = isUnderScratchDir(
+          resolvedFile,
+          options.projectRoot,
+          cacheDir,
+        );
+        if (
+          !isFalsePositive &&
+          isTmpFile &&
+          /Class ".*" hides a global script class/.test(output)
+        ) {
           isFalsePositive = true;
         }
         if (!isFalsePositive) {
@@ -266,16 +284,18 @@ export async function validateGdProject(
   // misconfigured setups don't think their lint is silently passing.
   if (!existsSync(resolve(options.projectRoot, 'project.godot'))) {
     return {
-      diagnostics: [{
-        message:
-          `Godot project root has no project.godot ("${options.projectRoot}"). ` +
-          'Pass --project-root pointing at the directory that contains project.godot ' +
-          'to enable Godot validation.',
-        severity: 'warning',
-        file: '',
-        line: 0,
-        column: 0,
-      }],
+      diagnostics: [
+        {
+          message:
+            `Godot project root has no project.godot ("${options.projectRoot}"). ` +
+            'Pass --project-root pointing at the directory that contains project.godot ' +
+            'to enable Godot validation.',
+          severity: 'warning',
+          file: '',
+          line: 0,
+          column: 0,
+        },
+      ],
       godotAvailable: true,
     };
   }
@@ -283,19 +303,24 @@ export async function validateGdProject(
   try {
     // See note above on the headless args — needed to suppress the GUI
     // mode-detection dialog on Windows.
-    await execFileAsync(options.godotPath, ['--headless', '--version'], { timeout: 10000, signal });
+    await execFileAsync(options.godotPath, ['--headless', '--version'], {
+      timeout: 10000,
+      signal,
+    });
   } catch {
     if (signal?.aborted) return { diagnostics: [], godotAvailable: true };
     return {
-      diagnostics: [{
-        message:
-          `Godot executable not found at "${options.godotPath}". ` +
-          'Set --godot-path, godotPath in tstogd.json, or GODOT_PATH env variable.',
-        severity: 'warning',
-        file: '',
-        line: 0,
-        column: 0,
-      }],
+      diagnostics: [
+        {
+          message:
+            `Godot executable not found at "${options.godotPath}". ` +
+            'Set --godot-path, godotPath in tstogd.json, or GODOT_PATH env variable.',
+          severity: 'warning',
+          file: '',
+          line: 0,
+          column: 0,
+        },
+      ],
       godotAvailable: false,
     };
   }
@@ -364,10 +389,13 @@ export async function validateGdProject(
   for (const rawError of rawErrors) {
     const resolvedGd = normalize(resolve(rawError.file));
     const entry = options.sourceMapTable.get(resolvedGd);
-    const diag = await remapError(rawError, entry?.sourceMapJson, entry?.tsFilePath);
+    const diag = await remapError(
+      rawError,
+      entry?.sourceMapJson,
+      entry?.tsFilePath,
+    );
     allDiagnostics.push(diag);
   }
 
   return { diagnostics: allDiagnostics, godotAvailable: true };
 }
-

@@ -63,7 +63,11 @@ export function convertTsToGd(options: ConvertOptions): TransformResult {
 
   // Registry is optional — if unavailable, diagnostics fall back to primitive checks only.
   let registry;
-  try { registry = resolveRegistry(); } catch { /* registry unavailable */ }
+  try {
+    registry = resolveRegistry();
+  } catch {
+    /* registry unavailable */
+  }
   const diagInfo = buildDiagnosticsTypeInfo(registry);
 
   const transformer = new TsToGdTransformer(

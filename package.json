@@ -26,6 +26,8 @@
     "test": "vitest",
     "test:run": "vitest run",
     "lint": "tsc --noEmit",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
     "generate:ast-types": "dts-tree-sitter tree-sitter-gdscript > src/parser/gdscript/types.ts && node scripts/fix-tree-sitter-types.js src/parser/gdscript/types.ts",
     "generate:resource-ast-types": "dts-tree-sitter tree-sitter-godot-resource > src/parser/godot-resource/types.ts && node scripts/fix-tree-sitter-types.js src/parser/godot-resource/types.ts",
     "generate:godot-typings": "tsx src/cli/index.ts generate-gdscript-global-typings --output-dir typings --docs-dir vendor/godot/doc/classes vendor/godot/modules/gdscript/doc_classes",

@@ -21,7 +21,11 @@ export function registerWatchCommand(program: Command): void {
       'Path to Godot executable (enables GD validation after conversion)',
     )
     .option('--project-root <dir>', 'Godot project root for validation')
-    .option('--emit-on-error', 'Emit output files even when conversion errors occur', false)
+    .option(
+      '--emit-on-error',
+      'Emit output files even when conversion errors occur',
+      false,
+    )
     .option('--no-check', 'Disable the debounced full-project diagnostic check')
     .action((opts) => {
       const cfg = resolveConfig({

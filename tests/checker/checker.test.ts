@@ -12,7 +12,10 @@ describe('collectProjectDiagnostics', () => {
     const gdDir = join(tmp, 'gd');
     mkdirSync(tsDir);
     mkdirSync(gdDir);
-    writeFileSync(join(tsDir, 'empty.ts'), 'export class Empty extends Node {}\n');
+    writeFileSync(
+      join(tsDir, 'empty.ts'),
+      'export class Empty extends Node {}\n',
+    );
     try {
       const result = await collectProjectDiagnostics({
         tsDir,

@@ -180,7 +180,9 @@ export class ProjectCache {
       if (existsSync(this.cacheFile)) {
         startupMtime = statSync(this.cacheFile).mtimeMs;
       }
-    } catch { /* best-effort */ }
+    } catch {
+      /* best-effort */
+    }
 
     const reload = (mtimeMs: number): void => {
       try {
@@ -197,14 +199,18 @@ export class ProjectCache {
       // back to a fresh stat to get mtime.
       let mtimeMs = stats?.mtimeMs;
       if (mtimeMs === undefined) {
-        try { mtimeMs = statSync(this.cacheFile).mtimeMs; }
-        catch { return; /* file transiently gone during rename */ }
+        try {
+          mtimeMs = statSync(this.cacheFile).mtimeMs;
+        } catch {
+          return; /* file transiently gone during rename */
+        }
       }
       // Our own `save()` just wrote this mtime — not an external event.
       if (
         this.lastSelfWriteMtime !== null &&
         mtimeMs === this.lastSelfWriteMtime
-      ) return;
+      )
+        return;
       reload(mtimeMs);
     };
 
@@ -229,7 +235,9 @@ export class ProjectCache {
         if (curr === startupMtime) return;
         if (curr === this.lastSelfWriteMtime) return;
         reload(curr);
-      } catch { /* best-effort */ }
+      } catch {
+        /* best-effort */
+      }
     });
   }
 
@@ -272,7 +280,9 @@ export class ProjectCache {
         if (data.version === PACKAGE_VERSION) {
           return data;
         }
-        console.log(`[cache] Version changed (${data.version} → ${PACKAGE_VERSION}), clearing cache.`);
+        console.log(
+          `[cache] Version changed (${data.version} → ${PACKAGE_VERSION}), clearing cache.`,
+        );
         this.clearFiles();
       } catch {
         // Corrupted cache; start fresh
@@ -293,8 +303,12 @@ export class ProjectCache {
     const entry = this.data.tsToGd[key];
     if (!entry) return false;
     try {
-      return hashFile(tsPath) === entry.tsHash && hashFile(gdPath) === entry.gdHash;
-    } catch { return false; }
+      return (
+        hashFile(tsPath) === entry.tsHash && hashFile(gdPath) === entry.gdHash
+      );
+    } catch {
+      return false;
+    }
   }
 
   /**
@@ -320,9 +334,10 @@ export class ProjectCache {
     const key = this.normKey(tsPath);
     const previous = this.data.tsToGd[key];
 
-    const tsHash = options?.tsContent !== undefined
-      ? hashContent(options.tsContent)
-      : hashFile(tsPath);
+    const tsHash =
+      options?.tsContent !== undefined
+        ? hashContent(options.tsContent)
+        : hashFile(tsPath);
 
     let gdHash: string;
     let cachedGdRel: string | undefined;
@@ -335,10 +350,7 @@ export class ProjectCache {
       // changed), remove the stale file — otherwise it'd live forever as
       // an orphan. When the path matches, the writeFileSync below simply
       // overwrites it with the fresh bytes.
-      if (
-        previous?.cachedGdRel &&
-        previous.cachedGdRel !== cachedGdRel
-      ) {
+      if (previous?.cachedGdRel && previous.cachedGdRel !== cachedGdRel) {
         this.removeCachedGdFile(previous);
       }
       const abs = join(this.cacheDir, cachedGdRel);
@@ -390,8 +402,7 @@ export class ProjectCache {
     if (!existsSync(abs)) return false;
     try {
       return (
-        hashFile(tsPath) === entry.tsHash &&
-        hashFile(abs) === entry.gdHash
+        hashFile(tsPath) === entry.tsHash && hashFile(abs) === entry.gdHash
       );
     } catch {
       return false;
@@ -457,10 +468,14 @@ export class ProjectCache {
     try {
       return (
         hashFile(gdPath) === entry.gdHash &&
-        existsSync(tsPath) && hashFile(tsPath) === entry.tsHash &&
-        existsSync(dtsPath) && hashFile(dtsPath) === entry.dtsHash
+        existsSync(tsPath) &&
+        hashFile(tsPath) === entry.tsHash &&
+        existsSync(dtsPath) &&
+        hashFile(dtsPath) === entry.dtsHash
       );
-    } catch { return false; }
+    } catch {
+      return false;
+    }
   }
 
   /** Update addon cache entry after full pipeline (convert + ts-helpers). */
@@ -483,9 +498,12 @@ export class ProjectCache {
     try {
       return (
         hashFile(sourcePath) === entry.sourceHash &&
-        existsSync(dtsPath) && hashFile(dtsPath) === entry.dtsHash
+        existsSync(dtsPath) &&
+        hashFile(dtsPath) === entry.dtsHash
       );
-    } catch { return false; }
+    } catch {
+      return false;
+    }
   }
 
   /** Update typings cache entry. */

@@ -19,7 +19,9 @@ export const TS_CLASS_READY_ERROR_CODES = new Set([7008, 2564]);
 /**
  * Walk up from a node to find the enclosing ClassDeclaration.
  */
-export function findEnclosingClass(node: ts.Node): ts.ClassDeclaration | undefined {
+export function findEnclosingClass(
+  node: ts.Node,
+): ts.ClassDeclaration | undefined {
   let current: ts.Node | undefined = node;
   while (current) {
     if (ts.isClassDeclaration(current)) return current;
@@ -126,7 +128,10 @@ export function isGdPrimitiveType(
  * literal). Enum-typed fields default to `0` at runtime in GDScript, so
  * they're effectively initialized just like primitives.
  */
-function isEnumLikeType(typeNode: ts.TypeNode, checker: ts.TypeChecker): boolean {
+function isEnumLikeType(
+  typeNode: ts.TypeNode,
+  checker: ts.TypeChecker,
+): boolean {
   const type = checker.getTypeAtLocation(typeNode);
   return !!(type.flags & ts.TypeFlags.EnumLike);
 }

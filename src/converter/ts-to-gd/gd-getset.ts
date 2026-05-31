@@ -38,9 +38,15 @@ export function visitGdGetsetProperty(
 ): void {
   const pos = t.getLineAndCol(node);
 
-  if (call.arguments.length !== 1 || !ts.isObjectLiteralExpression(call.arguments[0]!)) {
-    t.addDiagnostic(call, 'error',
-      '`gd.getset()` requires a single object literal argument with `get` and `set` properties.');
+  if (
+    call.arguments.length !== 1 ||
+    !ts.isObjectLiteralExpression(call.arguments[0]!)
+  ) {
+    t.addDiagnostic(
+      call,
+      'error',
+      '`gd.getset()` requires a single object literal argument with `get` and `set` properties.',
+    );
     return;
   }
   const objArg = call.arguments[0] as ts.ObjectLiteralExpression;
@@ -55,48 +61,78 @@ export function visitGdGetsetProperty(
     if (!ts.isPropertyAssignment(prop) || !ts.isIdentifier(prop.name)) continue;
     const key = prop.name.text;
     if (key === 'value') valueExpr = prop.initializer;
-    else if (key === 'get') { hasGetKey = true; getExpr = prop.initializer; }
-    else if (key === 'set') { hasSetKey = true; setExpr = prop.initializer; }
+    else if (key === 'get') {
+      hasGetKey = true;
+      getExpr = prop.initializer;
+    } else if (key === 'set') {
+      hasSetKey = true;
+      setExpr = prop.initializer;
+    }
   }
 
   if (!hasGetKey || !hasSetKey) {
-    t.addDiagnostic(call, 'error',
-      '`gd.getset()` requires both `get` and `set` properties (use `null` for the default).');
+    t.addDiagnostic(
+      call,
+      'error',
+      '`gd.getset()` requires both `get` and `set` properties (use `null` for the default).',
+    );
     return;
   }
 
-  const getIsNull = getExpr !== undefined && getExpr.kind === ts.SyntaxKind.NullKeyword;
-  const setIsNull = setExpr !== undefined && setExpr.kind === ts.SyntaxKind.NullKeyword;
+  const getIsNull =
+    getExpr !== undefined && getExpr.kind === ts.SyntaxKind.NullKeyword;
+  const setIsNull =
+    setExpr !== undefined && setExpr.kind === ts.SyntaxKind.NullKeyword;
 
   if (getIsNull && setIsNull) {
-    t.addDiagnostic(call, 'error',
-      '`gd.getset()`: at least one of `get` or `set` must be non-null.');
+    t.addDiagnostic(
+      call,
+      'error',
+      '`gd.getset()`: at least one of `get` or `set` must be non-null.',
+    );
     return;
   }
 
-  const getIsInline = !getIsNull && getExpr !== undefined &&
+  const getIsInline =
+    !getIsNull &&
+    getExpr !== undefined &&
     (ts.isArrowFunction(getExpr) || ts.isFunctionExpression(getExpr));
-  const setIsInline = !setIsNull && setExpr !== undefined &&
+  const setIsInline =
+    !setIsNull &&
+    setExpr !== undefined &&
     (ts.isArrowFunction(setExpr) || ts.isFunctionExpression(setExpr));
   const getIsRef = !getIsNull && !getIsInline;
   const setIsRef = !setIsNull && !setIsInline;
 
   if ((getIsInline && setIsRef) || (getIsRef && setIsInline)) {
-    t.addDiagnostic(call, 'error',
-      '`gd.getset()`: cannot mix inline `get`/`set` bodies with function-reference form.');
+    t.addDiagnostic(
+      call,
+      'error',
+      '`gd.getset()`: cannot mix inline `get`/`set` bodies with function-reference form.',
+    );
     return;
   }
 
   const usingRefForm = getIsRef || setIsRef;
 
   if (usingRefForm && valueExpr) {
-    t.addDiagnostic(call, 'error',
-      '`gd.getset()`: `value` default cannot be used with function-reference `get`/`set`.');
+    t.addDiagnostic(
+      call,
+      'error',
+      '`gd.getset()`: `value` default cannot be used with function-reference `get`/`set`.',
+    );
     return;
   }
 
   // Resolve type annotation
-  const gdType = resolveGetsetType(call, node, setExpr, setIsNull, valueExpr, t);
+  const gdType = resolveGetsetType(
+    call,
+    node,
+    setExpr,
+    setIsNull,
+    valueExpr,
+    t,
+  );
   const typePart = gdType ? `: ${gdType}` : '';
   const valuePart = valueExpr ? ` = ${t.emitExpression(valueExpr)}` : '';
 
@@ -105,8 +141,11 @@ export function visitGdGetsetProperty(
     if (getIsRef) {
       const fn = extractFunctionRefName(getExpr!);
       if (!fn) {
-        t.addDiagnostic(call, 'error',
-          '`gd.getset()`: function-reference form requires `this.fn_name` expressions.');
+        t.addDiagnostic(
+          call,
+          'error',
+          '`gd.getset()`: function-reference form requires `this.fn_name` expressions.',
+        );
         return;
       }
       parts.push(`get = ${fn}`);
@@ -114,13 +153,20 @@ export function visitGdGetsetProperty(
     if (setIsRef) {
       const fn = extractFunctionRefName(setExpr!);
       if (!fn) {
-        t.addDiagnostic(call, 'error',
-          '`gd.getset()`: function-reference form requires `this.fn_name` expressions.');
+        t.addDiagnostic(
+          call,
+          'error',
+          '`gd.getset()`: function-reference form requires `this.fn_name` expressions.',
+        );
         return;
       }
       parts.push(`set = ${fn}`);
     }
-    t.emitter.writeLine(`var ${name}${typePart}${valuePart}:`, pos.line, pos.col);
+    t.emitter.writeLine(
+      `var ${name}${typePart}${valuePart}:`,
+      pos.line,
+      pos.col,
+    );
     t.emitter.indent();
     t.emitter.writeLine(parts.join(', '), pos.line, pos.col);
     t.emitter.dedent();
@@ -142,7 +188,11 @@ export function visitGdGetsetProperty(
     if (ts.isBlock(getFn.body)) {
       for (const stmt of getFn.body.statements) t.visitStatement(stmt);
     } else {
-      t.emitter.writeLine(`return ${t.emitExpression(getFn.body)}`, getPos.line, getPos.col);
+      t.emitter.writeLine(
+        `return ${t.emitExpression(getFn.body)}`,
+        getPos.line,
+        getPos.col,
+      );
     }
     t.emitter.dedent();
   }
@@ -159,7 +209,11 @@ export function visitGdGetsetProperty(
     if (ts.isBlock(setFn.body)) {
       for (const stmt of setFn.body.statements) t.visitStatement(stmt);
     } else {
-      t.emitter.writeLine(t.emitExpression(setFn.body), setPos.line, setPos.col);
+      t.emitter.writeLine(
+        t.emitExpression(setFn.body),
+        setPos.line,
+        setPos.col,
+      );
     }
     t.emitter.dedent();
   }
@@ -181,12 +235,18 @@ function resolveGetsetType(
 
   if (call.typeArguments && call.typeArguments.length > 0) {
     gdType = tsTypeNodeToGdType(
-      call.typeArguments[0]!, t.ctx.checker, t.ctx.sourceFile, t.currentClassName,
+      call.typeArguments[0]!,
+      t.ctx.checker,
+      t.ctx.sourceFile,
+      t.currentClassName,
     );
   }
   if (!gdType && node.type) {
     gdType = tsTypeNodeToGdType(
-      node.type, t.ctx.checker, t.ctx.sourceFile, t.currentClassName,
+      node.type,
+      t.ctx.checker,
+      t.ctx.sourceFile,
+      t.currentClassName,
     );
   }
   if (!gdType && setExpr && !setIsNull) {
@@ -196,13 +256,20 @@ function resolveGetsetType(
       const param = sigs[0]!.parameters[0]!;
       const paramDecl = param.valueDeclaration;
       if (paramDecl) {
-        const paramType = t.ctx.checker.getTypeOfSymbolAtLocation(param, paramDecl);
-        let cleaned = t.ctx.checker.typeToString(paramType, node, ts.TypeFormatFlags.NoTruncation)
-          .replace(/\s*\|\s*null$/, '').replace(/\s*\|\s*undefined$/, '').trim();
+        const paramType = t.ctx.checker.getTypeOfSymbolAtLocation(
+          param,
+          paramDecl,
+        );
+        let cleaned = t.ctx.checker
+          .typeToString(paramType, node, ts.TypeFormatFlags.NoTruncation)
+          .replace(/\s*\|\s*null$/, '')
+          .replace(/\s*\|\s*undefined$/, '')
+          .trim();
         if (cleaned === 'number') cleaned = 'float';
         else if (cleaned === 'string') cleaned = 'String';
         else if (cleaned === 'boolean') cleaned = 'bool';
-        if (cleaned && !['any', 'unknown', 'error', '{}'].includes(cleaned)) gdType = cleaned;
+        if (cleaned && !['any', 'unknown', 'error', '{}'].includes(cleaned))
+          gdType = cleaned;
       }
     }
   }
@@ -213,12 +280,16 @@ function resolveGetsetType(
     } else {
       const inferred = t.ctx.checker.getTypeAtLocation(valueExpr);
       const widened = t.ctx.checker.getBaseTypeOfLiteralType(inferred);
-      let cleaned = t.ctx.checker.typeToString(widened, node, ts.TypeFormatFlags.NoTruncation)
-        .replace(/\s*\|\s*null$/, '').replace(/\s*\|\s*undefined$/, '').trim();
+      let cleaned = t.ctx.checker
+        .typeToString(widened, node, ts.TypeFormatFlags.NoTruncation)
+        .replace(/\s*\|\s*null$/, '')
+        .replace(/\s*\|\s*undefined$/, '')
+        .trim();
       if (cleaned === 'number') cleaned = 'float';
       else if (cleaned === 'string') cleaned = 'String';
       else if (cleaned === 'boolean') cleaned = 'bool';
-      if (cleaned && !['any', 'unknown', 'error', '{}'].includes(cleaned)) gdType = cleaned;
+      if (cleaned && !['any', 'unknown', 'error', '{}'].includes(cleaned))
+        gdType = cleaned;
     }
   }
   return gdType;
@@ -229,7 +300,8 @@ function extractFunctionRefName(expr: ts.Expression): string | null {
     ts.isPropertyAccessExpression(expr) &&
     expr.expression.kind === ts.SyntaxKind.ThisKeyword &&
     ts.isIdentifier(expr.name)
-  ) return expr.name.text;
+  )
+    return expr.name.text;
   if (ts.isIdentifier(expr)) return expr.text;
   return null;
 }

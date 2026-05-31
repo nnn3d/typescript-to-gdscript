@@ -224,7 +224,7 @@ function scanScriptClassHeader(root: SyntaxNode): ScriptClassHeader {
       if (typeNode) {
         extendsClass =
           typeNode.type === SyntaxType.Type
-            ? typeNode.namedChildren[0]?.text ?? typeNode.text
+            ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
             : typeNode.text;
       }
     } else if (child.type === SyntaxType.ClassNameStatement) {

@@ -21,7 +21,9 @@ export const TS_IMPLICIT_ANY_PARAM_CODE = 7006;
 /**
  * Walk up from a node to find the enclosing MethodDeclaration.
  */
-export function findEnclosingMethod(node: ts.Node): ts.MethodDeclaration | undefined {
+export function findEnclosingMethod(
+  node: ts.Node,
+): ts.MethodDeclaration | undefined {
   let current: ts.Node | undefined = node;
   while (current) {
     if (ts.isMethodDeclaration(current)) return current;
@@ -124,7 +126,9 @@ export function collectExtendsTypeFixes(
       // resolve them to `number`).
       let typeText: string;
       if (parentParamDecl.type) {
-        typeText = parentParamDecl.type.getText(parentParamDecl.getSourceFile());
+        typeText = parentParamDecl.type.getText(
+          parentParamDecl.getSourceFile(),
+        );
       } else {
         const parentType = checker.getTypeOfSymbolAtLocation(
           parentParam,
@@ -194,7 +198,8 @@ export function collectUnsafeAnyFieldFixes(
       // TS7006: Parameter 'X' implicitly has an 'any' type.
       // TS7008: Member 'X' implicitly has an 'any' type.
       // TS7034: Variable 'X' implicitly has type 'any[]' in some locations.
-      if (diag.code !== 7006 && diag.code !== 7008 && diag.code !== 7034) continue;
+      if (diag.code !== 7006 && diag.code !== 7008 && diag.code !== 7034)
+        continue;
       if (diag.start === undefined || diag.length === undefined) continue;
 
       const node = findNodeAt(sourceFile, diag.start, diag.length);
@@ -279,11 +284,14 @@ export const TS_POSSIBLY_NULL_CODES = new Set([2531, 18047, 18048, 18046]);
  * Check if a TS2322 diagnostic is caused by null in a union type.
  * Looks for "Type 'null' is not assignable to type" in the message chain.
  */
-export function isNullAssignmentError(messageText: string | ts.DiagnosticMessageChain): boolean {
+export function isNullAssignmentError(
+  messageText: string | ts.DiagnosticMessageChain,
+): boolean {
   if (typeof messageText === 'string') {
     return /type 'null' is not assignable to type/i.test(messageText);
   }
-  if (/type 'null' is not assignable to type/i.test(messageText.messageText)) return true;
+  if (/type 'null' is not assignable to type/i.test(messageText.messageText))
+    return true;
   if (messageText.next) {
     for (const sub of messageText.next) {
       if (isNullAssignmentError(sub)) return true;
@@ -332,7 +340,10 @@ export function collectUnsafeNonNullFixes(
       // TS2322: "Type 'X | null' is not assignable to type 'X'"
       // TS2345: "Argument of type 'X | null' is not assignable to parameter of type 'X'"
       // where the root cause is null -- insert `!` after the expression
-      if ((diag.code === 2322 || diag.code === 2345) && isNullAssignmentError(diag.messageText)) {
+      if (
+        (diag.code === 2322 || diag.code === 2345) &&
+        isNullAssignmentError(diag.messageText)
+      ) {
         let node = findNodeAt(sourceFile, diag.start, diag.length);
         if (!node) continue;
 
@@ -340,7 +351,8 @@ export function collectUnsafeNonNullFixes(
         const parent = node.parent;
         if (
           ts.isIdentifier(node) &&
-          (ts.isVariableDeclaration(parent) || ts.isPropertyDeclaration(parent)) &&
+          (ts.isVariableDeclaration(parent) ||
+            ts.isPropertyDeclaration(parent)) &&
           parent.name === node &&
           parent.initializer
         ) {
@@ -351,10 +363,7 @@ export function collectUnsafeNonNullFixes(
           parent.left === node
         ) {
           node = parent.right;
-        } else if (
-          ts.isReturnStatement(parent) &&
-          parent.expression
-        ) {
+        } else if (ts.isReturnStatement(parent) && parent.expression) {
           node = parent.expression;
         }
 

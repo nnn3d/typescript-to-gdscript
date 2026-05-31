@@ -126,12 +126,12 @@ describe('Source map accuracy', () => {
   it('mappings should point to the correct TS line, not the previous line', async () => {
     const code = [
       'export class Test extends Node {', // TS 1
-      '  _process() {',                   // TS 2
-      '    let a: int = 1;',              // TS 3
-      '    let b: int = 2;',              // TS 4
-      '    let c: int = 3;',              // TS 5
-      '  }',                              // TS 6
-      '}',                                // TS 7
+      '  _process() {', // TS 2
+      '    let a: int = 1;', // TS 3
+      '    let b: int = 2;', // TS 4
+      '    let c: int = 3;', // TS 5
+      '  }', // TS 6
+      '}', // TS 7
       '',
     ].join('\n');
 
@@ -173,14 +173,14 @@ describe('Source map accuracy', () => {
   it('else branch should map back to the else keyword position', async () => {
     const code = [
       'export class Test extends Node {', // TS 1
-      '  run() {',                        // TS 2
-      '    if (true) {',                  // TS 3
-      '      return 1;',                  // TS 4
-      '    } else {',                     // TS 5
-      '      return 2;',                  // TS 6
-      '    }',                            // TS 7
-      '  }',                              // TS 8
-      '}',                                // TS 9
+      '  run() {', // TS 2
+      '    if (true) {', // TS 3
+      '      return 1;', // TS 4
+      '    } else {', // TS 5
+      '      return 2;', // TS 6
+      '    }', // TS 7
+      '  }', // TS 8
+      '}', // TS 9
       '',
     ].join('\n');
 
@@ -276,15 +276,15 @@ describe('Source map accuracy', () => {
 
   it('nested indentation should produce correct column mappings', async () => {
     const code = [
-      'export class Test extends Node {',  // TS 1
-      '  run() {',                         // TS 2
-      '    if (true) {',                   // TS 3
-      '      if (false) {',               // TS 4
-      '        let x: int = 1;',          // TS 5
-      '      }',                           // TS 6
-      '    }',                             // TS 7
-      '  }',                               // TS 8
-      '}',                                 // TS 9
+      'export class Test extends Node {', // TS 1
+      '  run() {', // TS 2
+      '    if (true) {', // TS 3
+      '      if (false) {', // TS 4
+      '        let x: int = 1;', // TS 5
+      '      }', // TS 6
+      '    }', // TS 7
+      '  }', // TS 8
+      '}', // TS 9
       '',
     ].join('\n');
 

@@ -145,11 +145,7 @@ export function emitClassHeader(
   // user reads in the .gd file too.
   const className = node.name?.getText(t.ctx.sourceFile) ?? '';
   if (className && !isAnonymousClassName(className)) {
-    t.emitter.writeLine(
-      `class_name ${className}`,
-      pos.line,
-      pos.col,
-    );
+    t.emitter.writeLine(`class_name ${className}`, pos.line, pos.col);
   }
 
   // `const X = preload("res://…")` lines for renamed and anonymous
@@ -415,7 +411,10 @@ export function emitClassMembers(
   const closeBrace = node.getLastToken();
   if (closeBrace) {
     const sourceText = t.ctx.sourceFile.getFullText();
-    const ranges = ts.getLeadingCommentRanges(sourceText, closeBrace.getFullStart());
+    const ranges = ts.getLeadingCommentRanges(
+      sourceText,
+      closeBrace.getFullStart(),
+    );
     if (ranges && ranges.length > 0) {
       t.emitter.writeEmptyLine();
       t.emitLeadingComments(closeBrace);

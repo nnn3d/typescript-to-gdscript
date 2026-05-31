@@ -120,7 +120,9 @@ export function isAnonymousClassName(name: string): boolean {
  * is the canonical identifier on both sides.
  */
 export function escapeUnderscoreClassName(gdClassName: string): string {
-  return gdClassName.startsWith('_') ? 'G_' + gdClassName.slice(1) : gdClassName;
+  return gdClassName.startsWith('_')
+    ? 'G_' + gdClassName.slice(1)
+    : gdClassName;
 }
 
 /**
@@ -381,11 +383,20 @@ export function isReferenceType(
 ): boolean {
   const cleaned = gdType.trim();
 
-  if (cleaned === '' || cleaned === 'Nil' || cleaned === 'Variant' || cleaned === 'void') {
+  if (
+    cleaned === '' ||
+    cleaned === 'Nil' ||
+    cleaned === 'Variant' ||
+    cleaned === 'void'
+  ) {
     return false;
   }
   if (cleaned === 'any' || cleaned === 'unknown') return false;
-  if (cleaned.endsWith('[]') || cleaned.startsWith('Array[') || cleaned.startsWith('Dictionary[')) {
+  if (
+    cleaned.endsWith('[]') ||
+    cleaned.startsWith('Array[') ||
+    cleaned.startsWith('Dictionary[')
+  ) {
     return false;
   }
   // Dotted names are always Godot class enum refs (e.g. `Node.ProcessMode`).

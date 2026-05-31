@@ -48,6 +48,7 @@ export function registerValidateGdCommand(program: Command): void {
         );
       }
 
-      if (result.diagnostics.some((d) => d.severity === 'error')) process.exit(1);
+      if (result.diagnostics.some((d) => d.severity === 'error'))
+        process.exit(1);
     });
 }

@@ -143,7 +143,8 @@ export function makeProject(files: FixtureFile[]): HarnessProject {
     directoryExists: (dirName) => existsSync(dirName),
     getDirectories: (dirName) => {
       try {
-        return require('fs').readdirSync(dirName, { withFileTypes: true })
+        return require('fs')
+          .readdirSync(dirName, { withFileTypes: true })
           .filter((d: { isDirectory: () => boolean }) => d.isDirectory())
           .map((d: { name: string }) => d.name);
       } catch {
@@ -199,7 +200,9 @@ export function makeProject(files: FixtureFile[]): HarnessProject {
     ls,
     rawLs,
     logs,
-    get refreshCount() { return refreshCount; },
+    get refreshCount() {
+      return refreshCount;
+    },
     writeFile(relPath, content) {
       const abs = join(rootDir, relPath);
       const key = abs.replace(/\\/g, '/');
@@ -209,7 +212,11 @@ export function makeProject(files: FixtureFile[]): HarnessProject {
       versions.set(key, (versions.get(key) ?? 0) + 1);
     },
     dispose() {
-      try { rmSync(rootDir, { recursive: true, force: true }); } catch { /* ignore */ }
+      try {
+        rmSync(rootDir, { recursive: true, force: true });
+      } catch {
+        /* ignore */
+      }
     },
     abs(relPath) {
       return resolve(rootDir, relPath);

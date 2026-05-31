@@ -35,7 +35,11 @@ function fixCommentIndentation(source: string): string {
       const commentPrefix = trimmed.startsWith('##') ? '##' : '#';
       const afterPrefix = trimmed.slice(commentPrefix.length);
       let fixedTrimmed = trimmed;
-      if (afterPrefix.length > 0 && afterPrefix[0] !== ' ' && afterPrefix[0] !== '\t') {
+      if (
+        afterPrefix.length > 0 &&
+        afterPrefix[0] !== ' ' &&
+        afterPrefix[0] !== '\t'
+      ) {
         fixedTrimmed = commentPrefix + ' ' + afterPrefix;
       }
 
@@ -91,7 +95,10 @@ export interface GdToTsOptions {
    * When a GDScript function matches a handler name and has untyped params,
    * the signal's parameter types are used instead.
    */
-  signalHandlers?: Map<string, { params: Array<{ name: string; gdType: string }> }>;
+  signalHandlers?: Map<
+    string,
+    { params: Array<{ name: string; gdType: string }> }
+  >;
   /**
    * Use `any` instead of `unknown` as the fallback for unresolvable types
    * (e.g. `gd.getset` without a GDScript type annotation and without a
@@ -134,9 +141,10 @@ export function parseGdClassInfo(
     if (child.type === SyntaxType.ExtendsStatement) {
       const typeNode = child.namedChildren[0];
       if (typeNode) {
-        extendsClass = typeNode.type === SyntaxType.Type
-          ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
-          : typeNode.text;
+        extendsClass =
+          typeNode.type === SyntaxType.Type
+            ? (typeNode.namedChildren[0]?.text ?? typeNode.text)
+            : typeNode.text;
       }
     } else if (child.type === SyntaxType.ClassNameStatement) {
       // `parseGdClassInfo` builds the user-class index keyed on the GD
@@ -177,7 +185,13 @@ export function parseGdClassInfo(
   }
 
   if (!className) return null;
-  return { name: className, extends: extendsClass, members, memberTypes, filePath };
+  return {
+    name: className,
+    extends: extendsClass,
+    members,
+    memberTypes,
+    filePath,
+  };
 }
 
 export function convertGdToTs(options: GdToTsOptions): TransformResult {
@@ -192,7 +206,11 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
     }
   }
   // Also parse the current file so it's available for inner class extends resolution
-  const selfInfo = parseGdClassInfo(options.source, options.registry, options.filePath);
+  const selfInfo = parseGdClassInfo(
+    options.source,
+    options.registry,
+    options.filePath,
+  );
   if (selfInfo) userClasses.set(selfInfo.name, selfInfo);
 
   const parser = new GDScriptParser();
@@ -237,4 +255,7 @@ export function convertGdToTs(options: GdToTsOptions): TransformResult {
 }
 
 // Re-export functions used by source-emitter (needed for backward compat + internal use)
-export { resolveAllInheritedMembers, resolveInheritedMemberTypes } from './context.ts';
+export {
+  resolveAllInheritedMembers,
+  resolveInheritedMemberTypes,
+} from './context.ts';

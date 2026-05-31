@@ -67,7 +67,11 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  try { rmSync(project.dir, { recursive: true, force: true }); } catch { /* ignore */ }
+  try {
+    rmSync(project.dir, { recursive: true, force: true });
+  } catch {
+    /* ignore */
+  }
 });
 
 function normalize(code: string): string {
@@ -162,7 +166,9 @@ describe('TS→GD imports — happy path', () => {
     expect(normalize(result.code)).toBe(
       normalize('extends Node\nclass_name Main\n\nvar ref: _Foo = null\n'),
     );
-    expect(result.diagnostics.find((d) => d.severity === 'error')).toBeUndefined();
+    expect(
+      result.diagnostics.find((d) => d.severity === 'error'),
+    ).toBeUndefined();
   });
 
   it('silently drops per-binding type-only specifiers', () => {
@@ -238,7 +244,8 @@ describe('TS→GD imports — errors', () => {
     const result = project.convert('main.ts');
     expect(
       result.diagnostics.find(
-        (d) => d.severity === 'error' && d.message.includes('Namespace imports'),
+        (d) =>
+          d.severity === 'error' && d.message.includes('Namespace imports'),
       ),
     ).toBeDefined();
   });

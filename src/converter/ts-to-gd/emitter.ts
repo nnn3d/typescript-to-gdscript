@@ -63,11 +63,7 @@ export class GDScriptEmitter {
   }
 
   /** Write text followed by a newline, with mapping at column 0 (line start). */
-  writeLine(
-    text: string,
-    originalLine: number,
-    originalColumn: number,
-  ): void {
+  writeLine(text: string, originalLine: number, originalColumn: number): void {
     const indent = this.indentStr.repeat(this.indentLevel);
     this.write(indent + text, originalLine, originalColumn);
     this.write('\n');

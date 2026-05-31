@@ -37,8 +37,18 @@ export interface CheckResult {
   staleFiles: string[];
 }
 
-export async function collectProjectDiagnostics(opts: CheckOptions): Promise<CheckResult> {
-  const { tsDir, gdDir, projectRoot, tsFiles, cache, noEmit = false, onDebug } = opts;
+export async function collectProjectDiagnostics(
+  opts: CheckOptions,
+): Promise<CheckResult> {
+  const {
+    tsDir,
+    gdDir,
+    projectRoot,
+    tsFiles,
+    cache,
+    noEmit = false,
+    onDebug,
+  } = opts;
   const debug = (msg: string): void => onDebug?.(`[checker] ${msg}`);
 
   debug(`Starting (${tsFiles.length} file(s), noEmit=${noEmit})`);
@@ -60,7 +70,10 @@ export async function collectProjectDiagnostics(opts: CheckOptions): Promise<Che
 
   const converterDiagnostics: TransformDiagnostic[] = [];
   const staleFiles: string[] = [];
-  const sourceMapTable = new Map<string, { sourceMapJson?: string; tsFilePath?: string }>();
+  const sourceMapTable = new Map<
+    string,
+    { sourceMapJson?: string; tsFilePath?: string }
+  >();
   let cacheHits = 0;
   let conversions = 0;
 
@@ -124,15 +137,21 @@ export async function collectProjectDiagnostics(opts: CheckOptions): Promise<Che
           column: 1,
         });
       }
-      sourceMapTable.set(resolvedGd, { sourceMapJson: sourceMapForThisFile, tsFilePath: tsFile });
+      sourceMapTable.set(resolvedGd, {
+        sourceMapJson: sourceMapForThisFile,
+        tsFilePath: tsFile,
+      });
     } else {
-      sourceMapTable.set(resolvedGd, { sourceMapJson: result.sourceMap, tsFilePath: tsFile });
+      sourceMapTable.set(resolvedGd, {
+        sourceMapJson: result.sourceMap,
+        tsFilePath: tsFile,
+      });
     }
   }
 
   debug(
     `Conversion phase done — ${cacheHits} cache hit(s), ${conversions} fresh convert(s), ` +
-    `${converterDiagnostics.length} converter diagnostic(s), ${staleFiles.length} stale file(s)`,
+      `${converterDiagnostics.length} converter diagnostic(s), ${staleFiles.length} stale file(s)`,
   );
 
   let godotDiagnostics: TransformDiagnostic[] = [];
@@ -162,7 +181,7 @@ export async function collectProjectDiagnostics(opts: CheckOptions): Promise<Che
     tsDiagnostics = [];
     console.error(
       '[checker] No --tsconfig provided; TS diagnostics skipped ' +
-      '(would produce false positives for Godot types). Pass --tsconfig to enable.',
+        '(would produce false positives for Godot types). Pass --tsconfig to enable.',
     );
   }
 
@@ -228,11 +247,14 @@ export function summarizeDiagnostics(result: CheckResult): string | null {
   ];
 
   const visible = groups.filter(
-    (g) => g.counts.errors > 0 || g.counts.typeErrors > 0 || g.counts.warnings > 0,
+    (g) =>
+      g.counts.errors > 0 || g.counts.typeErrors > 0 || g.counts.warnings > 0,
   );
   if (visible.length === 0) return null;
 
-  return visible.map((g) => `  ${g.label}: ${formatCounts(g.counts)}`).join('\n');
+  return visible
+    .map((g) => `  ${g.label}: ${formatCounts(g.counts)}`)
+    .join('\n');
 }
 
 /**

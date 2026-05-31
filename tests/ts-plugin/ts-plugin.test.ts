@@ -53,7 +53,9 @@ function matchMessage(actual: string, exp: ExpectedMessage): boolean {
   return exp.message !== undefined && actual.includes(exp.message);
 }
 
-function fixtureDiagnostics(diags: readonly { source?: string }[]): readonly { source?: string }[] {
+function fixtureDiagnostics(
+  diags: readonly { source?: string }[],
+): readonly { source?: string }[] {
   return diags.filter((d) => d.source === 'tstogd');
 }
 
@@ -63,7 +65,9 @@ function fixtureDiagnostics(diags: readonly { source?: string }[]): readonly { s
  * and `code`. Must stay in lock-step with `severityToCategory` +
  * `DIAG_CODE_BASE` logic in `src/ts-plugin/index.ts`.
  */
-function expectedPluginCategory(severity: TransformDiagnostic['severity']): number {
+function expectedPluginCategory(
+  severity: TransformDiagnostic['severity'],
+): number {
   if (severity === 'error' || severity === 'type-error') return 1; // Error
   if (severity === 'warning') return 0; // Warning
   return 2; // Suggestion (info)
@@ -90,9 +94,7 @@ describe('ts-plugin: getSemanticDiagnostics (plugin fixture parity)', () => {
         readFileSync(jsonFile, 'utf-8'),
       );
 
-      const p = makeProject([
-        { path: `src/${tsFile}`, content: source },
-      ]);
+      const p = makeProject([{ path: `src/${tsFile}`, content: source }]);
 
       try {
         // Use the converter itself as the ground truth. Any expected
@@ -126,14 +128,21 @@ describe('ts-plugin: getSemanticDiagnostics (plugin fixture parity)', () => {
               `${JSON.stringify(exp)}\nConverter reports: ${converterHit.severity} ${converterHit.message}\nPlugin output:\n` +
               tstogd
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                .map((d) => `  code=${(d as any).code} cat=${(d as any).category} msg=${messageTextOf(d)}`)
+                .map(
+                  (d) =>
+                    `  code=${(d as any).code} cat=${(d as any).category} msg=${messageTextOf(d)}`,
+                )
                 .join('\n'),
           ).toBeDefined();
           expect(match!.source).toBe('tstogd');
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          expect((match as any).code).toBe(expectedPluginCode(converterHit.severity));
+          expect((match as any).code).toBe(
+            expectedPluginCode(converterHit.severity),
+          );
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          expect((match as any).category).toBe(expectedPluginCategory(converterHit.severity));
+          expect((match as any).category).toBe(
+            expectedPluginCategory(converterHit.severity),
+          );
         }
 
         // Sanity: empty-expectation fixtures (e.g. `valid-code`) should
@@ -167,7 +176,10 @@ function messageTextOf(d: unknown): string {
 
 describe('ts-plugin: passthrough', () => {
   let p: HarnessProject | undefined;
-  afterEach(() => { p?.dispose(); p = undefined; });
+  afterEach(() => {
+    p?.dispose();
+    p = undefined;
+  });
 
   it('does not attach tstogd diagnostics to .d.ts files', () => {
     p = makeProject([
@@ -199,7 +211,10 @@ describe('ts-plugin: passthrough', () => {
 
 describe('ts-plugin: namespace+class merge resolution', () => {
   let p: HarnessProject | undefined;
-  afterEach(() => { p?.dispose(); p = undefined; });
+  afterEach(() => {
+    p?.dispose();
+    p = undefined;
+  });
 
   /**
    * Drop tstogd diagnostics + diagnostics that only exist because the
@@ -209,7 +224,10 @@ describe('ts-plugin: namespace+class merge resolution', () => {
    */
   function tsErrorCodes(diags: readonly ts.Diagnostic[]): number[] {
     return diags
-      .filter((d) => d.source !== 'tstogd' && d.category === ts.DiagnosticCategory.Error)
+      .filter(
+        (d) =>
+          d.source !== 'tstogd' && d.category === ts.DiagnosticCategory.Error,
+      )
       .map((d) => d.code);
   }
 
@@ -276,7 +294,10 @@ describe('ts-plugin: namespace+class merge resolution', () => {
 
 describe('ts-plugin: persistent cache write-through', () => {
   let p: HarnessProject | undefined;
-  afterEach(() => { p?.dispose(); p = undefined; });
+  afterEach(() => {
+    p?.dispose();
+    p = undefined;
+  });
 
   // The plugin persists cache state via `saveAsync()` (fire-and-forget)
   // to avoid blocking the tsserver event loop. Tests that inspect
@@ -292,7 +313,9 @@ describe('ts-plugin: persistent cache write-through', () => {
       const found = findCacheJson(rootDir);
       if (found) return found;
       if (Date.now() - start > timeoutMs) {
-        throw new Error(`cache.json did not appear under ${rootDir} within ${timeoutMs}ms`);
+        throw new Error(
+          `cache.json did not appear under ${rootDir} within ${timeoutMs}ms`,
+        );
       }
       await new Promise((r) => setTimeout(r, 25));
     }
@@ -362,7 +385,9 @@ describe('ts-plugin: persistent cache write-through', () => {
     const cacheJson = await waitForCacheJson(p.rootDir);
     const cacheDir = cacheJson.replace(/[\\/]cache\.json$/, '');
     const mirrorBefore = await waitFor(() => {
-      const path = new ProjectCache(cacheDir).getCachedGdPath(p!.abs('src/Counter.ts'));
+      const path = new ProjectCache(cacheDir).getCachedGdPath(
+        p!.abs('src/Counter.ts'),
+      );
       return path ? readFileSync(path, 'utf-8') : undefined;
     });
     expect(mirrorBefore).toContain('var val');
@@ -379,7 +404,9 @@ describe('ts-plugin: persistent cache write-through', () => {
     p.ls.getSemanticDiagnostics(p.abs('src/Counter.ts'));
 
     const mirrorAfter = await waitFor(() => {
-      const path = new ProjectCache(cacheDir).getCachedGdPath(p!.abs('src/Counter.ts'));
+      const path = new ProjectCache(cacheDir).getCachedGdPath(
+        p!.abs('src/Counter.ts'),
+      );
       if (!path) return undefined;
       const txt = readFileSync(path, 'utf-8');
       // Wait until the NEW bytes are persisted (not the old snapshot).
@@ -433,7 +460,10 @@ describe('ts-plugin: persistent cache write-through', () => {
 
 describe('ts-plugin: async Godot diagnostics', () => {
   let p: HarnessProject | undefined;
-  afterEach(() => { p?.dispose(); p = undefined; });
+  afterEach(() => {
+    p?.dispose();
+    p = undefined;
+  });
 
   it('surfaces Godot validation errors via refreshDiagnostics + memo hit', async () => {
     // The source converts cleanly (converter produces 0 errors) but
@@ -517,7 +547,13 @@ describe('ts-plugin: async Godot diagnostics', () => {
  * path under `os.tmpdir()`. Search both.
  */
 function findCacheJson(rootDir: string): string | undefined {
-  const nmCache = join(rootDir, 'node_modules', '.cache', 'typescript-to-gdscript', 'cache.json');
+  const nmCache = join(
+    rootDir,
+    'node_modules',
+    '.cache',
+    'typescript-to-gdscript',
+    'cache.json',
+  );
   if (existsSync(nmCache)) return nmCache;
   const tmp = tmpdir();
   const expected = join(

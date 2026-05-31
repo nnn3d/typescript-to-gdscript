@@ -29,7 +29,10 @@ export function visitBlock(t: TransformerDelegate, block: ts.Block): void {
   }
 }
 
-export function visitStatement(t: TransformerDelegate, node: ts.Statement): void {
+export function visitStatement(
+  t: TransformerDelegate,
+  node: ts.Statement,
+): void {
   const pos = t.getLineAndCol(node);
 
   if (ts.isVariableStatement(node)) {
@@ -38,18 +41,16 @@ export function visitStatement(t: TransformerDelegate, node: ts.Statement): void
     if (isGdEvalCall(node.expression)) {
       emitGdEval(t, node.expression as ts.CallExpression, pos);
     } else if (isGdMatchCall(node.expression)) {
-      visitGdMatchStatement(t, node.expression as ts.CallExpression, visitStatement);
-    } else {
-      t.emitter.writeLine(
-        t.emitExpression(node.expression),
-        pos.line,
-        pos.col,
+      visitGdMatchStatement(
+        t,
+        node.expression as ts.CallExpression,
+        visitStatement,
       );
+    } else {
+      t.emitter.writeLine(t.emitExpression(node.expression), pos.line, pos.col);
     }
   } else if (ts.isReturnStatement(node)) {
-    const expr = node.expression
-      ? ` ${t.emitExpression(node.expression)}`
-      : '';
+    const expr = node.expression ? ` ${t.emitExpression(node.expression)}` : '';
     t.emitter.writeLine(`return${expr}`, pos.line, pos.col);
   } else if (ts.isIfStatement(node)) {
     visitIfStatement(t, node);
@@ -238,8 +239,7 @@ export function visitForOfStatement(
 ): void {
   const pos = t.getLineAndCol(node);
   const varName = ts.isVariableDeclarationList(node.initializer)
-    ? (node.initializer.declarations[0]?.name.getText(t.ctx.sourceFile) ??
-      '_')
+    ? (node.initializer.declarations[0]?.name.getText(t.ctx.sourceFile) ?? '_')
     : t.emitExpression(node.initializer as ts.Expression);
   const iterable = t.emitExpression(node.expression);
   t.emitter.writeLine(`for ${varName} in ${iterable}:`, pos.line, pos.col);
@@ -267,15 +267,17 @@ export function visitForStatement(
       );
     }
   }
-  const condition = node.condition
-    ? t.emitExpression(node.condition)
-    : 'true';
+  const condition = node.condition ? t.emitExpression(node.condition) : 'true';
   t.emitter.writeLine(`while ${condition}:`, pos.line, pos.col);
   t.emitter.indent();
   visitStatementBody(t, node.statement);
   if (node.incrementor) {
     const incPos = t.getLineAndCol(node.incrementor);
-    t.emitter.writeLine(t.emitExpression(node.incrementor), incPos.line, incPos.col);
+    t.emitter.writeLine(
+      t.emitExpression(node.incrementor),
+      incPos.line,
+      incPos.col,
+    );
   }
   t.emitter.dedent();
 }
@@ -314,7 +316,11 @@ export function visitSwitchStatement(
   for (const clause of node.caseBlock.clauses) {
     const clausePos = t.getLineAndCol(clause);
     if (ts.isCaseClause(clause)) {
-      t.emitter.writeLine(`${t.emitExpression(clause.expression)}:`, clausePos.line, clausePos.col);
+      t.emitter.writeLine(
+        `${t.emitExpression(clause.expression)}:`,
+        clausePos.line,
+        clausePos.col,
+      );
       t.emitter.indent();
       const stmts = clause.statements.filter((s) => !ts.isBreakStatement(s));
       if (stmts.length === 0) {

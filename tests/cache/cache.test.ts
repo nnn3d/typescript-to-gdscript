@@ -1,15 +1,13 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import {
-  writeFileSync,
-  readFileSync,
-  mkdirSync,
-  rmSync,
-  existsSync,
-} from 'fs';
+import { writeFileSync, readFileSync, mkdirSync, rmSync, existsSync } from 'fs';
 import { join, dirname } from 'path';
 import { tmpdir } from 'os';
 import { randomBytes } from 'crypto';
-import { ProjectCache, hashFile, type CachedDiagnostic } from '../../src/cache/index.ts';
+import {
+  ProjectCache,
+  hashFile,
+  type CachedDiagnostic,
+} from '../../src/cache/index.ts';
 
 // ─── Helpers ────────────────────────────────────────────────
 
@@ -149,7 +147,8 @@ describe('source map storage (inline in cache.json)', () => {
     const cache = new ProjectCache(join(tmpDir, 'cache'));
     const ts = writeFile(tmpDir, 'a.ts', 'ts');
     const gd = writeFile(tmpDir, 'a.gd', 'gd');
-    const mapWithContent = '{"version":3,"mappings":"","sourcesContent":["full source code"]}';
+    const mapWithContent =
+      '{"version":3,"mappings":"","sourcesContent":["full source code"]}';
     cache.updateTsToGd(ts, gd, mapWithContent, DIAGS);
     const result = cache.getSourceMap(ts);
     const parsed = JSON.parse(result!);
@@ -162,7 +161,8 @@ describe('source map storage (inline in cache.json)', () => {
     const cache = new ProjectCache(join(tmpDir, 'cache'));
     const ts = writeFile(tmpDir, 'a.ts', 'ts');
     const gd = writeFile(tmpDir, 'a.gd', 'gd');
-    const mapWithHashes = '{"version":3,"mappings":"","_tsHash":"abc","_gdHash":"def"}';
+    const mapWithHashes =
+      '{"version":3,"mappings":"","_tsHash":"abc","_gdHash":"def"}';
     cache.updateTsToGd(ts, gd, mapWithHashes, DIAGS);
     const result = cache.getSourceMap(ts);
     const parsed = JSON.parse(result!);
@@ -183,7 +183,13 @@ describe('diagnostics caching', () => {
     const ts = writeFile(tmpDir, 'a.ts', 'ts');
     const gd = writeFile(tmpDir, 'a.gd', 'gd');
     const diags: CachedDiagnostic[] = [
-      { message: 'test warning', severity: 'warning', file: ts, line: 5, column: 3 },
+      {
+        message: 'test warning',
+        severity: 'warning',
+        file: ts,
+        line: 5,
+        column: 3,
+      },
     ];
     cache.updateTsToGd(ts, gd, EMPTY_MAP, diags);
     const result = cache.getDiagnostics(ts);
@@ -565,7 +571,9 @@ describe('cache-folder gd-output', () => {
     const ts = writeFile(tmpDir, 'src/a.ts', 'ts');
     const gd = writeFile(tmpDir, 'gd/a.gd', 'ORIG'); // real path content that will NOT be overwritten
     const cache = new ProjectCache(cacheDir);
-    cache.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS, { gdContent: 'func foo():\n\tpass\n' });
+    cache.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS, {
+      gdContent: 'func foo():\n\tpass\n',
+    });
 
     expect(cache.hasFreshCachedGd(ts)).toBe(true);
     const cachedPath = cache.getCachedGdPath(ts);
@@ -656,7 +664,9 @@ describe('cache-folder gd-output', () => {
     const ts = writeFile(tmpDir, 'a.ts', 'ts');
     const gdTarget = join(tmpDir, 'real/a.gd');
     const cache = new ProjectCache(cacheDir);
-    cache.updateTsToGd(ts, gdTarget, EMPTY_MAP, DIAGS, { gdContent: 'func foo():\n\tpass\n' });
+    cache.updateTsToGd(ts, gdTarget, EMPTY_MAP, DIAGS, {
+      gdContent: 'func foo():\n\tpass\n',
+    });
 
     const mirrorBefore = cache.getCachedGdPath(ts)!;
     expect(existsSync(mirrorBefore)).toBe(true);
@@ -734,7 +744,9 @@ describe('cache-folder gd-output', () => {
     // Cache folder is tidy: exactly one `.gd` under gd-output/.
     const mirrorDir = join(cacheDir, 'gd-output');
     const files = existsSync(mirrorDir)
-      ? require('fs').readdirSync(mirrorDir).filter((f: string) => f.endsWith('.gd'))
+      ? require('fs')
+          .readdirSync(mirrorDir)
+          .filter((f: string) => f.endsWith('.gd'))
       : [];
     expect(files).toHaveLength(1);
   });
@@ -777,7 +789,9 @@ describe('atomic cache.json write', () => {
     // Must be valid JSON — any half-write would fail parsing.
     expect(() => JSON.parse(readFileSync(cacheFile, 'utf-8'))).not.toThrow();
     // No .tmp leftovers.
-    const leftovers = require('fs').readdirSync(cacheDir).filter((f: string) => f.includes('.tmp'));
+    const leftovers = require('fs')
+      .readdirSync(cacheDir)
+      .filter((f: string) => f.includes('.tmp'));
     expect(leftovers).toEqual([]);
   });
 });
@@ -821,7 +835,9 @@ describe('ProjectCache saveAsync', () => {
     const cacheFile = join(cacheDir, 'cache.json');
     expect(existsSync(cacheFile)).toBe(true);
     expect(() => JSON.parse(readFileSync(cacheFile, 'utf-8'))).not.toThrow();
-    const leftovers = require('fs').readdirSync(cacheDir).filter((f: string) => f.includes('.tmp'));
+    const leftovers = require('fs')
+      .readdirSync(cacheDir)
+      .filter((f: string) => f.includes('.tmp'));
     expect(leftovers).toEqual([]);
   });
 
@@ -855,7 +871,9 @@ describe('ProjectCache saveAsync', () => {
       { message: 'third', severity: 'warning', file: ts, line: 1, column: 1 },
     ]);
     // No .tmp file stragglers after all saves settled.
-    const leftovers = require('fs').readdirSync(cacheDir).filter((f: string) => f.includes('.tmp'));
+    const leftovers = require('fs')
+      .readdirSync(cacheDir)
+      .filter((f: string) => f.includes('.tmp'));
     expect(leftovers).toEqual([]);
   });
 
@@ -865,16 +883,31 @@ describe('ProjectCache saveAsync', () => {
     const ts = writeFile(tmpDir, 'a.ts', 'ts');
     const gd = writeFile(tmpDir, 'a.gd', 'gd');
 
-    const cache = new ProjectCache(cacheDir, { watch: true, watchInterval: 100 });
+    const cache = new ProjectCache(cacheDir, {
+      watch: true,
+      watchInterval: 100,
+    });
     try {
       cache.updateTsToGd(ts, gd, EMPTY_MAP, [
-        { message: 'self-async', severity: 'warning', file: ts, line: 1, column: 1 },
+        {
+          message: 'self-async',
+          severity: 'warning',
+          file: ts,
+          line: 1,
+          column: 1,
+        },
       ]);
       await cache.saveAsync();
 
       // Mutate only in memory. A self-triggered reload would overwrite it.
       cache.updateTsToGd(ts, gd, EMPTY_MAP, [
-        { message: 'in-memory', severity: 'warning', file: ts, line: 1, column: 1 },
+        {
+          message: 'in-memory',
+          severity: 'warning',
+          file: ts,
+          line: 1,
+          column: 1,
+        },
       ]);
       await new Promise((r) => setTimeout(r, 400));
 
@@ -927,7 +960,13 @@ describe('ProjectCache watch mode', () => {
       // Externally update through a different instance.
       const external = new ProjectCache(cacheDir);
       external.updateTsToGd(ts, gd, EMPTY_MAP, [
-        { message: 'external', severity: 'warning', file: ts, line: 1, column: 1 },
+        {
+          message: 'external',
+          severity: 'warning',
+          file: ts,
+          line: 1,
+          column: 1,
+        },
       ]);
       external.save();
 
@@ -954,7 +993,13 @@ describe('ProjectCache watch mode', () => {
     try {
       // Make a change that's NOT reflected on disk, then save.
       cache.updateTsToGd(ts, gd, EMPTY_MAP, [
-        { message: 'self-write', severity: 'warning', file: ts, line: 1, column: 1 },
+        {
+          message: 'self-write',
+          severity: 'warning',
+          file: ts,
+          line: 1,
+          column: 1,
+        },
       ]);
       cache.save();
       expect(cache.getDiagnostics(ts)![0].message).toBe('self-write');
@@ -967,7 +1012,13 @@ describe('ProjectCache watch mode', () => {
       // To distinguish: mutate in memory without saving, then wait.
       // A self-triggered reload would drop this mutation.
       cache.updateTsToGd(ts, gd, EMPTY_MAP, [
-        { message: 'in-memory-only', severity: 'warning', file: ts, line: 2, column: 2 },
+        {
+          message: 'in-memory-only',
+          severity: 'warning',
+          file: ts,
+          line: 2,
+          column: 2,
+        },
       ]);
       await sleep(POLL_WAIT);
 
@@ -996,7 +1047,13 @@ describe('ProjectCache watch mode', () => {
     const snapshot = JSON.stringify(cache.getDiagnostics(ts) ?? null);
     const external = new ProjectCache(cacheDir);
     external.updateTsToGd(ts, gd, EMPTY_MAP, [
-      { message: 'too late', severity: 'warning', file: ts, line: 1, column: 1 },
+      {
+        message: 'too late',
+        severity: 'warning',
+        file: ts,
+        line: 1,
+        column: 1,
+      },
     ]);
     external.save();
     await sleep(POLL_WAIT);
@@ -1010,13 +1067,19 @@ describe('ProjectCache watch mode', () => {
     const ts = writeFile(tmpDir, 'a.ts', 'ts');
     const gd = writeFile(tmpDir, 'a.gd', 'gd');
 
-    const cache = new ProjectCache(cacheDir);          // no options → no watch
+    const cache = new ProjectCache(cacheDir); // no options → no watch
     cache.updateTsToGd(ts, gd, EMPTY_MAP, DIAGS);
     cache.save();
 
     const external = new ProjectCache(cacheDir);
     external.updateTsToGd(ts, gd, EMPTY_MAP, [
-      { message: 'external', severity: 'warning', file: ts, line: 1, column: 1 },
+      {
+        message: 'external',
+        severity: 'warning',
+        file: ts,
+        line: 1,
+        column: 1,
+      },
     ]);
     external.save();
 

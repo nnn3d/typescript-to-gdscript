@@ -35,20 +35,18 @@ Add to your project's `tsconfig.json` (added automatically on `tstogd init`):
 ```json
 {
   "compilerOptions": {
-    "plugins": [
-      { "name": "typescript-to-gdscript/ts-plugin" }
-    ]
+    "plugins": [{ "name": "typescript-to-gdscript/ts-plugin" }]
   }
 }
 ```
 
 #### Plugin options
 
-| Option              | Type      | Description                                                                                                                                              |
-| ------------------- | --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `debug`             | `boolean` | Emit verbose `[tstogd-plugin] TRACE` lines to the tsserver log. Off by default.                                                                          |
-| `debugLog`          | `string`  | File path. When set, plugin log + trace lines are appended there in addition to the tsserver log — easier than fishing trace lines out of `tsserver.log`. |
-| `disableGodotLint`  | `boolean` | Per-editor override for `tstogd.json`'s `disableGodotLint`. Set `true` to skip the async Godot pass in the IDE only; set `false` to force-enable it.     |
+| Option             | Type      | Description                                                                                                                                               |
+| ------------------ | --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `debug`            | `boolean` | Emit verbose `[tstogd-plugin] TRACE` lines to the tsserver log. Off by default.                                                                           |
+| `debugLog`         | `string`  | File path. When set, plugin log + trace lines are appended there in addition to the tsserver log — easier than fishing trace lines out of `tsserver.log`. |
+| `disableGodotLint` | `boolean` | Per-editor override for `tstogd.json`'s `disableGodotLint`. Set `true` to skip the async Godot pass in the IDE only; set `false` to force-enable it.      |
 
 Example — silence the Godot pass in the IDE without changing project-wide config:
 
@@ -64,7 +62,7 @@ Example — silence the Godot pass in the IDE without changing project-wide conf
 
 Tell the IDE to use the workspace's TypeScript — plugins only load through `tsserver` spawned by the workspace `typescript` package, not the IDE's bundled one:
 
-- **WebStorm**: *Settings → Languages & Frameworks → TypeScript* — set "TypeScript" to `node_modules/typescript` (typically auto-detected), ensure "TypeScript Language Service" is ON, then restart the TS service (File → Invalidate Caches → Just Restart is the blunt way).
+- **WebStorm**: _Settings → Languages & Frameworks → TypeScript_ — set "TypeScript" to `node_modules/typescript` (typically auto-detected), ensure "TypeScript Language Service" is ON, then restart the TS service (File → Invalidate Caches → Just Restart is the blunt way).
 - **VS Code**: Open any `.ts` file, Command Palette → `TypeScript: Select TypeScript Version...` → `Use Workspace Version`.
 
 Verify: the plugin logs `[tstogd-plugin] plugin loaded` on startup. WebStorm → `Help → Show Log in Explorer/Finder → idea.log`; VS Code → `Output panel → TypeScript`.
@@ -130,7 +128,7 @@ Also enable **Editor Settings → Text Editor → Behavior → Auto Reload Scrip
 
 ### Debug with external editor
 
-Godot has a **separate** toggle for whether runtime errors (stack traces in the Debugger panel) open in the external editor vs the built-in script editor. The "Use External Editor" setting in *Editor Settings → Text Editor → External* only controls double-click-to-open from the FileSystem dock — it does **not** cover debugger stack-frame clicks.
+Godot has a **separate** toggle for whether runtime errors (stack traces in the Debugger panel) open in the external editor vs the built-in script editor. The "Use External Editor" setting in _Editor Settings → Text Editor → External_ only controls double-click-to-open from the FileSystem dock — it does **not** cover debugger stack-frame clicks.
 
 To also route debugger errors to your external editor, switch to the **Script** tab at the top of the Godot editor and look for the option there — the Script workspace has its own menu bar. From [godotengine/godot#65554](https://github.com/godotengine/godot/issues/65554):
 
@@ -141,7 +139,7 @@ If the toggle is off, clicking a stack frame silently does nothing — `tstogd o
 ### Editor command examples
 
 | Editor  | `-e` flag                                              |
-|---------|--------------------------------------------------------|
+| ------- | ------------------------------------------------------ |
 | VS Code | `-e "code --goto {tsFile}:{tsLine}:{tsCol}"`           |
 | Rider   | `-e "rider --line {tsLine} --column {tsCol} {tsFile}"` |
 | Vim     | `-e "vim +{tsLine} {tsFile}"`                          |

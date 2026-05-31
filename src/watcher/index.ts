@@ -6,7 +6,11 @@ import ts from 'typescript';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { createTsProgram } from '../parser/typescript/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
-import { generateTypings, generateAddonTypings, generateFileTypings } from '../typings/scenes.ts';
+import {
+  generateTypings,
+  generateAddonTypings,
+  generateFileTypings,
+} from '../typings/scenes.ts';
 import { shouldIgnore } from '../config/index.ts';
 import { ProjectCache } from '../cache/index.ts';
 import { isConversionErrorSeverity } from '../converter/common/index.ts';
@@ -61,9 +65,16 @@ export interface WatcherOptions {
 
 /** File extensions that trigger typings regeneration (scenes, resources, assets). */
 const RESOURCE_EXTENSIONS = new Set([
-  '.tscn', '.tres', '.res',
-  '.png', '.jpg', '.ogg', '.wav', '.mp3',
-  '.gdshader', '.theme',
+  '.tscn',
+  '.tres',
+  '.res',
+  '.png',
+  '.jpg',
+  '.ogg',
+  '.wav',
+  '.mp3',
+  '.gdshader',
+  '.theme',
 ]);
 
 /** All extensions the watcher cares about (TS + resources). */
@@ -107,7 +118,12 @@ export class Watcher {
     this.options = options;
     this.tsDir = options.tsDir ?? options.rootDir;
     this.gdDir = options.gdDir ?? options.outputDir ?? this.tsDir;
-    this.cacheDir = options.cacheDir ?? join(tmpdir(), `tstogd-cache-${createHash('sha256').update(resolve(options.rootDir)).digest('hex').slice(0, 16)}`);
+    this.cacheDir =
+      options.cacheDir ??
+      join(
+        tmpdir(),
+        `tstogd-cache-${createHash('sha256').update(resolve(options.rootDir)).digest('hex').slice(0, 16)}`,
+      );
     // `watch: true` keeps the manifest in sync with writes from the
     // parallel ts-plugin (inside tsserver). Without it, both sides hold
     // independent in-memory snapshots and their views of the cache drift.
@@ -116,14 +132,21 @@ export class Watcher {
 
   start(): void {
     // Chokidar v4 does not support glob patterns — watch directories and filter via ignored.
-    const watchedDirs = this.tsDir === this.options.rootDir
-      ? [this.options.rootDir]
-      : [this.tsDir, this.options.rootDir];
+    const watchedDirs =
+      this.tsDir === this.options.rootDir
+        ? [this.options.rootDir]
+        : [this.tsDir, this.options.rootDir];
 
     this.fsWatcher = watch(watchedDirs, {
       ignored: (path, stats) => {
         const base = path.split(/[/\\]/).pop() ?? '';
-        if (base.startsWith('.') || base === 'node_modules' || base === 'addons' || base === 'dist') return true;
+        if (
+          base.startsWith('.') ||
+          base === 'node_modules' ||
+          base === 'addons' ||
+          base === 'dist'
+        )
+          return true;
         if (!stats?.isFile()) return false;
         if (path.endsWith('.d.ts')) return true;
         if (base === 'project.godot') return false;
@@ -145,16 +168,24 @@ export class Watcher {
         this.flushPending();
         this.initialScanDone = true;
         // Clean stale cache entries now that all files have been scanned
-        const currentTsFiles = new Set([...this.tsFiles].map(f => f.replace(/\\/g, '/')));
+        const currentTsFiles = new Set(
+          [...this.tsFiles].map((f) => f.replace(/\\/g, '/')),
+        );
         this.cache.cleanStale(currentTsFiles);
         this.cache.save();
         // Print summary
         const parts: string[] = [];
-        if (this.initialConverted > 0) parts.push(`${this.initialConverted} converted`);
-        if (this.initialSkipped > 0) parts.push(`${this.initialSkipped} cached`);
-        if (this.initialErrors > 0) parts.push(`${this.initialErrors} error(s)`);
-        const summary = parts.length > 0 ? parts.join(', ') : 'no .ts files found';
-        console.log(`Initial scan complete: ${summary}. Watching for changes...`);
+        if (this.initialConverted > 0)
+          parts.push(`${this.initialConverted} converted`);
+        if (this.initialSkipped > 0)
+          parts.push(`${this.initialSkipped} cached`);
+        if (this.initialErrors > 0)
+          parts.push(`${this.initialErrors} error(s)`);
+        const summary =
+          parts.length > 0 ? parts.join(', ') : 'no .ts files found';
+        console.log(
+          `Initial scan complete: ${summary}. Watching for changes...`,
+        );
       });
   }
 
@@ -171,7 +202,8 @@ export class Watcher {
 
   private handleFile(filePath: string): void {
     const ext = extname(filePath);
-    if (shouldIgnore(filePath, this.options.rootDir, this.options.ignore ?? [])) return;
+    if (shouldIgnore(filePath, this.options.rootDir, this.options.ignore ?? []))
+      return;
 
     if (ext === '.ts' && !filePath.endsWith('.d.ts')) {
       this.tsFiles.add(filePath);
@@ -179,7 +211,10 @@ export class Watcher {
       // Invalidate cached program — a TS file changed
       this.cachedProgram = null;
       this.scheduleFlush();
-    } else if (RESOURCE_EXTENSIONS.has(ext) || filePath.endsWith('project.godot')) {
+    } else if (
+      RESOURCE_EXTENSIONS.has(ext) ||
+      filePath.endsWith('project.godot')
+    ) {
       this.pendingNonTsFiles.push(filePath);
       this.scheduleFlush();
     }
@@ -202,7 +237,10 @@ export class Watcher {
   }
 
   private flushPending(): void {
-    if (this.debounceTimer) { clearTimeout(this.debounceTimer); this.debounceTimer = null; }
+    if (this.debounceTimer) {
+      clearTimeout(this.debounceTimer);
+      this.debounceTimer = null;
+    }
 
     const tsToConvert = [...this.pendingTsFiles];
     const nonTsChanged = [...this.pendingNonTsFiles];
@@ -269,7 +307,9 @@ export class Watcher {
     });
     this.cachedProgram = program;
 
-    this.debugLog(`Converting ${toConvert.length} file(s) with ${oldProgram ? 'reused' : 'new'} program`);
+    this.debugLog(
+      `Converting ${toConvert.length} file(s) with ${oldProgram ? 'reused' : 'new'} program`,
+    );
 
     for (const { filePath, outputPath } of toConvert) {
       this.convertSingleFile(filePath, outputPath, program);
@@ -279,8 +319,13 @@ export class Watcher {
   private scheduleCheck(): void {
     if (this.options.noCheck) return;
     if (this.checkDebounceTimer) clearTimeout(this.checkDebounceTimer);
-    this.debugLog(`Scheduling diagnostic check (${CHECK_DEBOUNCE_MS}ms debounce)`);
-    this.checkDebounceTimer = setTimeout(() => this.runCheck(), CHECK_DEBOUNCE_MS);
+    this.debugLog(
+      `Scheduling diagnostic check (${CHECK_DEBOUNCE_MS}ms debounce)`,
+    );
+    this.checkDebounceTimer = setTimeout(
+      () => this.runCheck(),
+      CHECK_DEBOUNCE_MS,
+    );
   }
 
   private runCheck(): void {
@@ -293,7 +338,9 @@ export class Watcher {
 
     const projectRoot = this.options.projectRoot ?? this.options.rootDir;
     const checkStart = Date.now();
-    this.debugLog(`Diagnostic check starting (${tsFiles.length} file(s), program=${this.cachedProgram ? 'reused' : 'fresh'})`);
+    this.debugLog(
+      `Diagnostic check starting (${tsFiles.length} file(s), program=${this.cachedProgram ? 'reused' : 'fresh'})`,
+    );
 
     collectProjectDiagnostics({
       tsDir: this.tsDir,
@@ -310,28 +357,36 @@ export class Watcher {
       // (e.g. when the only event was a removal that invalidated it).
       program: this.cachedProgram ?? undefined,
       onDebug: this.options.debug ? (msg) => this.debugLog(msg) : undefined,
-    }).then((result) => {
-      this.debugLog(`Diagnostic check finished in ${Date.now() - checkStart}ms`);
-      const summary = summarizeDiagnostics(result);
+    })
+      .then((result) => {
+        this.debugLog(
+          `Diagnostic check finished in ${Date.now() - checkStart}ms`,
+        );
+        const summary = summarizeDiagnostics(result);
 
-      // Only clear the console when there's something to show — preserves the
-      // recent per-file conversion logs when the project is clean.
-      if (summary) {
-        process.stdout.write('\x1Bc');
-        printDiagnostics(result.tsDiagnostics, 'TS');
-        printDiagnostics(result.converterDiagnostics, 'CONV');
-        printDiagnostics(result.godotDiagnostics, 'GD');
-        console.log('[check] complete:');
-        console.log(summary);
-      } else {
-        console.log('[check] No issues found.');
-      }
-    }).catch((err: Error) => {
-      this.log('', `[check] Failed: ${err.message}`, 'warning');
-    });
+        // Only clear the console when there's something to show — preserves the
+        // recent per-file conversion logs when the project is clean.
+        if (summary) {
+          process.stdout.write('\x1Bc');
+          printDiagnostics(result.tsDiagnostics, 'TS');
+          printDiagnostics(result.converterDiagnostics, 'CONV');
+          printDiagnostics(result.godotDiagnostics, 'GD');
+          console.log('[check] complete:');
+          console.log(summary);
+        } else {
+          console.log('[check] No issues found.');
+        }
+      })
+      .catch((err: Error) => {
+        this.log('', `[check] Failed: ${err.message}`, 'warning');
+      });
   }
 
-  private convertSingleFile(filePath: string, outputPath: string, program: ts.Program): void {
+  private convertSingleFile(
+    filePath: string,
+    outputPath: string,
+    program: ts.Program,
+  ): void {
     const result = convertTsToGd({
       filePath,
       rootDir: this.tsDir,
@@ -364,9 +419,15 @@ export class Watcher {
     // Update cache. `gdContent` populates `<cacheDir>/gd-output/` so a
     // later run (or the plugin) can reuse the exact bytes via promote.
     if (result.sourceMap) {
-      this.cache.updateTsToGd(filePath, outputPath, result.sourceMap, result.diagnostics, {
-        gdContent: result.code,
-      });
+      this.cache.updateTsToGd(
+        filePath,
+        outputPath,
+        result.sourceMap,
+        result.diagnostics,
+        {
+          gdContent: result.code,
+        },
+      );
     }
     this.cache.save();
 
@@ -387,17 +448,23 @@ export class Watcher {
         projectRoot,
         godotPath: this.options.godotPath,
         cacheDir: this.cacheDir,
-      }).then((validateResult) => {
-        for (const d of validateResult.diagnostics) {
+      })
+        .then((validateResult) => {
+          for (const d of validateResult.diagnostics) {
+            this.log(
+              d.file || filePath,
+              `[${d.severity}] ${d.message} (${d.line}:${d.column})`,
+              d.severity,
+            );
+          }
+        })
+        .catch((err: Error) => {
           this.log(
-            d.file || filePath,
-            `[${d.severity}] ${d.message} (${d.line}:${d.column})`,
-            d.severity,
+            filePath,
+            `Godot validation failed: ${err.message}`,
+            'warning',
           );
-        }
-      }).catch((err: Error) => {
-        this.log(filePath, `Godot validation failed: ${err.message}`, 'warning');
-      });
+        });
     }
   }
 
@@ -412,7 +479,9 @@ export class Watcher {
   private regenerateTypingsFor(changedFiles: string[]): void {
     if (!this.options.typingsDir) return;
     const typingsDir = this.options.typingsDir;
-    const onDebug = this.options.debug ? (msg: string) => this.debugLog(msg) : undefined;
+    const onDebug = this.options.debug
+      ? (msg: string) => this.debugLog(msg)
+      : undefined;
 
     // First run: full generation (all scripts, scenes, resources, index, addons)
     if (!this.initialTypingsGenerated) {

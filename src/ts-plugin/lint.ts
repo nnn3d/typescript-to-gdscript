@@ -24,7 +24,11 @@
 
 import type tsModule from 'typescript';
 import { resolve, relative } from 'path';
-import { ProjectCache, hashContent, type CachedDiagnostic } from '../cache/index.ts';
+import {
+  ProjectCache,
+  hashContent,
+  type CachedDiagnostic,
+} from '../cache/index.ts';
 import { resolveGodotPath, type ResolvedConfig } from '../config/index.ts';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
@@ -399,7 +403,9 @@ export function createLintOverlay(deps: LintOverlayDeps): LintOverlay {
       );
       return;
     }
-    trace(`godot: start ${fileName} godot=${godotPath} projectRoot=${projectRoot}`);
+    trace(
+      `godot: start ${fileName} godot=${godotPath} projectRoot=${projectRoot}`,
+    );
 
     // Abort any prior Godot run for this file — its result would
     // apply to a stale version.

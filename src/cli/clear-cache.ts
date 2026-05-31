@@ -30,7 +30,9 @@ export function registerClearCacheCommand(program: Command): void {
         let remaining: string[] = [];
         try {
           remaining = readdirSync(cacheDir);
-        } catch { /* ignore */ }
+        } catch {
+          /* ignore */
+        }
         console.error(
           `Cache directory still exists after deletion: ${cacheDir}` +
             (remaining.length > 0

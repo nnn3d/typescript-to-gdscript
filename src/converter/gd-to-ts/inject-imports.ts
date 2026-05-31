@@ -152,7 +152,7 @@ function collectMissingClassNames(
     if (!m) continue;
     const name = m[1]!;
     const info = userClasses.get(name);
-    if (!info?.filePath) continue;          // unknown class — not ours to fix
+    if (!info?.filePath) continue; // unknown class — not ours to fix
     if (sameFile(info.filePath, file.gdPath)) continue; // self
     out.add(name);
   }

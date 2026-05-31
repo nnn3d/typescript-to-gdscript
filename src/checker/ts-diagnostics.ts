@@ -5,7 +5,9 @@ import type { TransformDiagnostic } from '../converter/common/index.ts';
 /** TS diagnostic codes that are correct-but-noisy for the namespace+class merge pattern. */
 const NOISE_CODES = new Set([2434, 2435, 2449]);
 
-function flattenDiagnosticMessage(msg: string | ts.DiagnosticMessageChain): string {
+function flattenDiagnosticMessage(
+  msg: string | ts.DiagnosticMessageChain,
+): string {
   if (typeof msg === 'string') return msg;
   const parts = [msg.messageText];
   if (msg.next) {
@@ -16,11 +18,16 @@ function flattenDiagnosticMessage(msg: string | ts.DiagnosticMessageChain): stri
   return parts.join(' ');
 }
 
-function tsSeverity(category: ts.DiagnosticCategory): TransformDiagnostic['severity'] {
+function tsSeverity(
+  category: ts.DiagnosticCategory,
+): TransformDiagnostic['severity'] {
   switch (category) {
-    case ts.DiagnosticCategory.Error: return 'error';
-    case ts.DiagnosticCategory.Warning: return 'warning';
-    default: return 'info';
+    case ts.DiagnosticCategory.Error:
+      return 'error';
+    case ts.DiagnosticCategory.Warning:
+      return 'warning';
+    default:
+      return 'info';
   }
 }
 

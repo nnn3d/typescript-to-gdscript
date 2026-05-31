@@ -10,7 +10,7 @@ One-shot bulk conversion of GDScript files to TypeScript — intended for the **
 
 By default the command **refuses to overwrite existing `.ts` files** so it can be re-run safely without clobbering any TypeScript you've hand-edited since the first migration. Skipped files are listed at the end of the run and the command exits non-zero. Pass `--force` to overwrite.
 
-> ⚠️ **Expect to fix TypeScript errors by hand after migrating.** GDScript is loosely, dynamically typed; TypeScript (in this project's `strict` setup) is not. The converter and its [post-conversion helpers](#conversion-helpers) automatically resolve the *common* mismatches — operator overloads, variant conversions, inherited parameter types, nullable widening/narrowing — but they **cannot** catch everything. In any non-trivial project you should expect remaining type errors in the generated `.ts`.
+> ⚠️ **Expect to fix TypeScript errors by hand after migrating.** GDScript is loosely, dynamically typed; TypeScript (in this project's `strict` setup) is not. The converter and its [post-conversion helpers](#conversion-helpers) automatically resolve the _common_ mismatches — operator overloads, variant conversions, inherited parameter types, nullable widening/narrowing — but they **cannot** catch everything. In any non-trivial project you should expect remaining type errors in the generated `.ts`.
 > This is normal and expected — the migration gets you ~90% of the way mechanically; the remaining errors are surfaced **in your IDE / `tsc`** so you can fix them deliberately. They do **not** block output: the `.ts` files are still written (conversion errors, distinct from type errors, are the only thing that blocks a file — and only without `--emit-on-error`). Treat the first migration as a starting point, then work through the squiggles. `--unsafe-use-any` (see below) trades strictness for fewer errors if you want a looser first pass, but hand-fixing with real types is recommended.
 
 ```bash
@@ -72,13 +72,16 @@ Detects TS7006 ("Parameter X implicitly has an any type") on method parameters w
 
 ```typescript
 class Player extends Node2D {
-  _process(delta) {        // TS7006
+  _process(delta) {
+    // TS7006
     this.position.x += delta;
   }
-  _input(event) {}         // TS7006
+  _input(event) {} // TS7006
 }
 ```
+
 becomes:
+
 ```typescript
 class Player extends Node2D {
   _process(delta: float) {
@@ -87,6 +90,7 @@ class Player extends Node2D {
   _input(event: InputEvent) {}
 }
 ```
+
 Methods that don't override anything (`custom_method(arg)`) are left untouched.
 
 ### Nullable helper
@@ -98,6 +102,7 @@ Applies `T | null` widening and narrowing in two directions:
 - **After widening (IN fallback)**: parameters that were emitted as `T | null` get narrowed back to `T` when the function body dereferences them without a null-check (triggering TS2531 / TS18047 "possibly null" diagnostics). Runs after the OUT widening pass so return types settle before parameter narrowing kicks in — a return type's null status often depends on its parameters. Setter value params of accessor pairs are skipped to keep getter/setter nullability in sync.
 
 Example:
+
 ```typescript
 class Player extends Node2D {
   target: Node;                    // TS2564 + unassigned + reference
@@ -112,7 +117,9 @@ class Player extends Node2D {
   }
 }
 ```
+
 becomes:
+
 ```typescript
 class Player extends Node2D {
   target: Node | null = null;              // Phase A
@@ -139,10 +146,10 @@ Example:
 
 ```typescript
 class Game extends Node {
-  time: float;                   // TS2564, assigned in _ready
-  progress_bar;                  // TS7008, assigned in _ready
-  score: int;                    // TS2564, NOT assigned, but primitive
-  target: Node2D;                // TS2564, NOT assigned, nullable helper widens
+  time: float; // TS2564, assigned in _ready
+  progress_bar; // TS7008, assigned in _ready
+  score: int; // TS2564, NOT assigned, but primitive
+  target: Node2D; // TS2564, NOT assigned, nullable helper widens
 
   _ready() {
     this.time = 0.0;
@@ -150,13 +157,15 @@ class Game extends Node {
   }
 }
 ```
+
 becomes:
+
 ```typescript
 class Game extends Node {
-  time!: float;                                    // assigned → `!`
+  time!: float; // assigned → `!`
   progress_bar!: typeof this.game_ui.progress_bar; // assigned → `!: <inferred>`
-  score!: int;                                     // primitive → `!`
-  target: Node2D | null = null;                    // nullable helper widens
+  score!: int; // primitive → `!`
+  target: Node2D | null = null; // nullable helper widens
 
   _ready() {
     this.time = 0.0;
@@ -164,4 +173,5 @@ class Game extends Node {
   }
 }
 ```
+
 For simple identifier/property-access right-hand sides, the helper emits `typeof <expr>`; for other expressions (literals, `new` calls, etc.) it uses the TS type checker's inferred type string.
