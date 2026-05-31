@@ -91,118 +91,103 @@ For comments, async, `this` / `self`, logical operators, and constructor mapping
 
 ## Cheat sheet
 
-Cheat sheet with all basics to write scripts, with comments showing the generated GDScript. For advanced helpers and deep dive, see the [**full cheat sheet** in docs/transform-rules.md](docs/transform-rules.md#full-cheat-sheet).
+Basics for writing scripts For advanced helpers and the deep dive, see the [**full cheat sheet** in docs/transform-rules.md](docs/transform-rules.md#full-cheat-sheet).
 
 ```typescript
-// ── Inner classes, class-level constants & enums (namespace merging) ──
-// A `namespace Player { ... }` block paired with the same-named class
-// lifts each `export`ed member into the class as a nested member.
-// Put constants and enums INSIDE the namespace — that's how GD
-// class-level `const` and `enum` are declared.
+// Inner classes, class-level constants & enums.
+// A `namespace Player` merged with class `Player`
+// lifts each exported member onto the class.
 export namespace Player {
-  export const MAX_HP = 100; // → const MAX_HP = 100   (on Player)
+  export const MAX_HP = 100;
 
   export enum State {
     IDLE,
     RUNNING,
-  } // → enum State { ... }   (on Player)
+  }
 
   export class Bullet extends Node2D {
-    // → class Bullet extends Node2D:
-    damage: int = 10; //       var damage: int = 10
+    damage: int = 10;
   }
 }
 
 export class Player extends CharacterBody2D {
-  // ── Statics (mutable) — for constants, use the namespace block above ──
-  static MAX_INSTANCES = 8; // → static var MAX_INSTANCES = 8
-  // `readonly` is a TS-only contract — emits a plain `var` on GD.
+  // Statics (mutable); for constants use the namespace
+  static MAX_INSTANCES = 8;
 
-  // ── Field decorators ─────────────────────────────────────────────
-  // Every Godot annotation works as a decorator.
-  // `@exports` is the only special alias:
-  // `@export` is a TS reserved word, so the plural form emits
-  @exports speed: float = 200.0; // → @export var speed: float = 200.0
-  @export_range(0, 100) health: int = 100; // → @export_range(0, 100) var health: int = 100
-  @onready sprite: Sprite2D; // → @onready var sprite: Sprite2D
+  // Field decorators. `@exports` aliases `@export`
+  // (a TS reserved word); other annotations are 1:1
+  @exports speed: float = 200.0;
+  @export_range(0, 100) health: int = 100;
+  @onready sprite: Sprite2D = this.get_node('Sprite');
 
-  // ── Signals — named tuple labels become GD arg names ─────────────
-  health_changed = gd.signal<[from: int, to: int]>(); // → signal health_changed(from: int, to: int)
-  died = gd.signal(); // → signal died
+  // Signals; tuple labels become GD arg names
+  health_changed = gd.signal<[from: int, to: int]>();
+  died = gd.signal();
 
-  // ── Constructor → _init ──────────────────────────────────────────
+  // Constructor replaces _init
   constructor(speed: float = 200.0) {
-    // → func _init(speed: float = 200.0):
-    this.speed = speed; //       self.speed = speed
+    this.speed = speed;
   }
 
-  // ── Getters / setters — native TS accessors ──────────────────────
+  // Getters / setters (native TS accessors)
   get score(): int {
     return this.score;
-  } // → var score: int:
+  }
   set score(v: int) {
     this.score = v;
-  } //       get: return score
-  //       set(value): score = value
+  }
 
-  // ── Async / await — Promise<T> unwraps to T on the GD side ───────
+  // Async / await; Promise<T> unwraps to T
   async long_task(): Promise<int> {
-    // → func long_task() -> int:
     await this.get_tree().create_timer(1).timeout;
     return 42;
   }
 
   _process(delta: float) {
-    // → func _process(delta: float):
-    // ── Operators ──────────────────────────────────────────────────
-    let eq = this.health === 0; // → var eq      = self.health == 0
-    let ternary = eq ? 1 : 2; // → var ternary = 1 if eq else 2
+    // Operators
+    let eq = this.health === 0;
+    let ternary = eq ? 1 : 2;
 
-    // ── Math on value types (Vector2, Color, …) needs gd.ops ───────
-    let pos = gd.ops.add(this.position, Vector2(1, 0)); // → var pos = (self.position + Vector2(1, 0))
-    // Available: add, sub, mul, div, rem, eq, ne, gt, gte, lt, lte, plus (unary), minus (unary)
+    // Math on value types (Vector2, Color, …) needs gd.ops
+    let pos = gd.ops.add(this.position, Vector2(1, 0));
+    // Also available: add, sub, mul, div, rem, eq, ne, gt, gte, lt, lte, plus (unary), minus (unary)
 
-    // ── Type casting / checking ────────────────────────────────────
-    let body = gd.as(this.get_node('Body'), CharacterBody2D); // → var body = self.get_node("Body") as CharacterBody2D
+    // Type casting / checking
+    // self.get_node("Body") as CharacterBody2D
+    let body = gd.as(this.get_node('Body'), CharacterBody2D);
     if (body instanceof CharacterBody2D) {
-      /* class check */
-    } // → if body is CharacterBody2D:
+      /* body is CharacterBody2D */
+    }
     if (gd.is(this.health, int)) {
-      /* primitive   */
-    } // → if self.health is int:
+      /* health is int */
+    }
 
-    // ── Object construction ────────────────────────────────────────
-    let bullet = new Player.Bullet(); // → var bullet = Bullet.new()
+    // Object construction instead of Player.Bullet.new()
+    let bullet = new Player.Bullet();
 
-    // ── Dictionaries (string keys — for non-string keys use gd.dict) ──
-    let stats = { name: 'Hero', hp: 100 }; // → var stats = { "name": "Hero", "hp": 100 }
+    // Dictionaries (other keys: gd.dict)
+    let stats = { name: 'Hero', hp: 100 };
 
-    // ── Strings, StringName, NodePath ──────────────────────────────
-    let greet = `Hi ${this.name}!`; // → var greet = "Hi " + str(self.name) + "!"
-    let path = NodePath('Body/Sprite'); // → var path  = ^"Body/Sprite"
-    let sig = StringName('died'); // → var sig   = &"died"
+    // Strings, StringName, NodePath
+    let greet = `Hi ${this.name}!`;
+    let path = NodePath('Body/Sprite');
+    let sig = StringName('died');
 
-    // ── Control flow ───────────────────────────────────────────────
-    for (let s of range(3)) print(s); // → for s in range(3): print(s)
+    // Control flow
+    for (let s of range(3)) print(s);
 
-    // ── Match — native TS switch round-trips with GD `match` ───────
-    switch (
-      this.health // → match self.health:
-    ) {
+    // Match (TS switch round-trips with GD match)
+    switch (this.health) {
       case 0:
         this.died.emit();
-        break; //       0: self.died.emit()
       default:
         print('alive');
-        break; //       _: print("alive")
     }
   }
 
   _ready() {
-    // → func _ready():
-    // Signals — emit and connect
-    this.health_changed.emit(0, 100); // → self.health_changed.emit(0, 100)
     this.health_changed.connect(this._on_health_changed);
+    this.health_changed.emit(0, 100);
   }
 
   _on_health_changed(from: int, to: int) {
@@ -214,35 +199,115 @@ export class Player extends CharacterBody2D {
 }
 ```
 
+<details>
+<summary>Result gdscript:</summary>
+
+```gdscript
+extends CharacterBody2D
+class_name Player
+
+const MAX_HP = 100
+
+enum State { IDLE, RUNNING }
+
+class Bullet extends Node2D:
+	var damage: int = 10
+
+# Statics (mutable); for constants use the namespace
+static var MAX_INSTANCES = 8
+# Field decorators. `@exports` aliases `@export`
+# (a TS reserved word); other annotations are 1:1
+@export
+var speed: float = 200.0
+@export_range(0, 100)
+var health: int = 100
+@onready
+var sprite: Sprite2D = this.get_node('Sprite')
+# Signals; tuple labels become GD arg names
+signal health_changed(from: int, to: int)
+signal died
+
+# Constructor replaces _init
+func _init(speed: float = 200.0):
+	self.speed = speed
+
+var score: int:
+	get:
+		return score
+	set(v):
+		score = v
+
+# Async / await; Promise<T> unwraps to T
+func long_task() -> int:
+	await self.get_tree().create_timer(1).timeout
+	return 42
+
+func _process(delta: float):
+	# Operators
+	var eq = self.health == 0
+	var ternary = 1 if eq else 2
+	# Math on value types (Vector2, Color, …) needs gd.ops
+	var pos = (self.position + Vector2(1, 0))
+	# Also available: add, sub, mul, div, rem, eq, ne, gt, gte, lt, lte, plus (unary), minus (unary)
+	# Type casting / checking
+	# self.get_node("Body") as CharacterBody2D
+	var body = self.get_node("Body") as CharacterBody2D
+	if body is CharacterBody2D:
+		pass
+	if self.health is int:
+		pass
+	# Object construction instead of Player.Bullet.new()
+	var bullet = self.Bullet.new()
+	# Dictionaries (other keys: gd.dict)
+	var stats = {
+		"name": "Hero",
+		"hp": 100,
+	}
+	# Strings, StringName, NodePath
+	var greet = "Hi " + str(self.name) + "!"
+	var path = NodePath("Body/Sprite")
+	var sig = StringName("died")
+	# Control flow
+	for s in range(3):
+		print(s)
+	# Match (TS switch round-trips with GD match)
+	match self.health:
+		0:
+			self.died.emit()
+		_:
+			print("alive")
+
+func _ready():
+	self.health_changed.connect(self._on_health_changed)
+	self.health_changed.emit(0, 100)
+
+func _on_health_changed(from: int, to: int):
+	pass
+
+func die():
+	pass
+```
+
+</details>
+
 #### Useful global types
 
-Each interface is a map from a string literal (a `res://` path or a group name) to the typed entity that path resolves to. You index them directly to get the typed value:
+Each interface maps a string literal (a `res://` path or group name) to the type it resolves to — index it directly, e.g. `GodotResources["res://player.tres"]` or `GodotScripts["res://player.gd"]`:
 
-| Interface          | Keys                                                         | Values                                                                                                                                            | Example                                                          |
-| ------------------ | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `GodotResources`   | every asset path (`.tscn`, `.gd`, `.tres`, images, audio, …) | The resource type the path resolves to — `PackedScene<Root>` for scenes, `typeof Class` for scripts, the concrete `Resource` subclass for `.tres` | `let mat: GodotResources["res://player_material.tres"]`          |
-| `GodotScripts`     | `.gd` script paths                                           | `typeof <Class>` — the class constructor for the script                                                                                           | `const GameManager: GodotScripts["res://GameManager.gd"]`        |
-| `GodotScenes`      | `.tscn` paths                                                | The **root node** type of the scene (with full tree attached)                                                                                     | `let root: GodotScenes["res://Level.tscn"]`                      |
-| `GodotSceneTrees`  | `.tscn` paths                                                | The **tree** type — used when you need to index descendants directly                                                                              | `type Tree = GodotSceneTrees["res://Player.tscn"]`               |
-| `GodotGroups`      | group names declared in `.tscn` files                        | `{ [scenePath]: union of node types in that group }`                                                                                              | `GodotGroups["enemies"]["res://Level.tscn"]` → `Goblin \| Slime` |
-| `GodotConnections` | scene paths that have `[connection]` entries                 | `{ "Node.signal": _GDSignalConnection<…> }` — connection metadata                                                                                 | `GodotConnections["res://UI.tscn"]["Button.pressed"]`            |
+- **`GodotResources`** — any asset path → its resource type (`PackedScene<Root>`, `typeof Class`, or the concrete `Resource` subclass)
+  - **`GodotResourceName`** (= `keyof GodotResources`) — any `res://…` asset
+- **`GodotScripts`** — `.gd` path → `typeof <Class>` (the script constructor)
+  - **`GodotScriptName`** (= `keyof GodotScripts`) — a `.gd` path
+- **`GodotScenes`** — `.tscn` path → the scene's **root node** type
+  - **`GodotSceneName`** (= `keyof GodotScenes`) — a `.tscn` path
+- **`GodotSceneTrees`** — `.tscn` path → the **tree** type, for indexing descendants directly
+  - **`GodotSceneTreeName`** (= `keyof GodotSceneTrees`) — same set as `GodotSceneName`, for the tree rather than the root
+- **`GodotGroups`** — group name → union of the node types in that group
+  - **`GodotGroupName`** (= `keyof GodotGroups`) — a group identifier (`"enemies"`, …)
 
-The Godot-typed `load()`, `preload()`, `get_node()`, and autoload singletons all index these interfaces under the hood.
+The Godot-typed `load()`, `preload()`, `get_node()`, and autoload singletons all index these under the hood.
 
-#### The `*Name` key-union aliases
-
-Each base interface has a parallel alias defined as `keyof <Interface>`, so you can constrain a function argument to **only paths/names that exist in the project**:
-
-| Alias                      | Equivalent to            | Typical use                                                             |
-| -------------------------- | ------------------------ | ----------------------------------------------------------------------- |
-| `GodotResourceName`        | `keyof GodotResources`   | `res://…` to any asset                                                  |
-| `GodotSceneName`           | `keyof GodotScenes`      | `res://…` to a `.tscn`                                                  |
-| `GodotSceneTreeName`       | `keyof GodotSceneTrees`  | Same set as `GodotSceneName`; pick when you want the tree, not the root |
-| `GodotScriptName`          | `keyof GodotScripts`     | `res://…` to a `.gd`                                                    |
-| `GodotGroupName`           | `keyof GodotGroups`      | Group identifier (`"enemies"`, `"entities"`, …)                         |
-| `GodotConnectionSceneName` | `keyof GodotConnections` | Scene paths that have `[connection]` entries                            |
-
-`keyof` is resolved lazily, so each alias automatically picks up new entries as more files are converted. Typos in resource paths or group names become compile-time errors instead of silent runtime failures:
+That types are resolved lazily, so each alias automatically picks up new entries as more files are converted. Typos in resource paths or group names become compile-time errors instead of silent runtime failures:
 
 ```typescript
 class AssetLoader extends Node {
@@ -256,9 +321,9 @@ class AssetLoader extends Node {
 
   _ready() {
     this.preload_asset('res://Player.tscn'); // ✅ typed
-    this.preload_asset('res://does_not_exist.png'); // ❌ TS2345
+    this.preload_asset('res://does_not_exist.png'); // ❌ error
     this.count_in_group('enemies'); // ✅ typed
-    this.count_in_group('typo'); // ❌ TS2345
+    this.count_in_group('typo'); // ❌ error
   }
 }
 ```
