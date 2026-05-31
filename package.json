@@ -44,13 +44,17 @@
     "test:sourcemap": "vitest run tests/typings/ts-to-gd-sourcemap.test.ts",
     "test:gd-registry": "vitest run tests/typings/gd-to-ts-registry.test.ts",
     "test:typecheck": "vitest run tests/typecheck.test.ts",
-    "test:cli": "vitest run tests/cli/cli.test.ts"
+    "test:cli": "vitest run tests/cli/cli.test.ts",
+    "prepare": "husky"
   },
   "prettier": {
     "trailingComma": "all",
     "tabWidth": 2,
     "semi": true,
     "singleQuote": true
+  },
+  "lint-staged": {
+    "*": "prettier --write --ignore-unknown"
   },
   "keywords": [
     "typescript",
@@ -77,13 +81,15 @@
     "typescript": ">=5.5.0"
   },
   "devDependencies": {
-    "typescript": "^5.9.0",
     "@asgerf/dts-tree-sitter": "^0.21.0",
     "@types/glob": "^9.0.0",
     "@types/node": "^22.0.0",
+    "husky": "^9.1.7",
     "jiti": "^2.6.1",
+    "lint-staged": "^17.0.7",
     "prettier": "^3.8.1",
     "tsx": "^4.21.0",
+    "typescript": "^5.9.0",
     "vitest": "^3.0.0"
   }
 }
