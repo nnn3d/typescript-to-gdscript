@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Holds collision data from the movement of a {@link PhysicsBody2D}. */
 declare class KinematicCollision2D extends RefCounted {

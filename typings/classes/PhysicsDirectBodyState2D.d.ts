@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Provides direct access to a physics body in the {@link PhysicsServer2D}. */
 declare class PhysicsDirectBodyState2D extends GodotObject {

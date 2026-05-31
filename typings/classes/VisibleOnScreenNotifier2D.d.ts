@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A rectangular region of 2D space that detects whether it is visible on screen. */
 declare class VisibleOnScreenNotifier2D extends Node2D {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Contains baked voxel global illumination data for use in a {@link VoxelGI} node. */
 declare class VoxelGIData extends Resource {

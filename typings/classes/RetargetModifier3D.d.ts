@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /**
  * A modifier to transfer parent skeleton poses (or global poses) to child skeletons in model space with different rests.

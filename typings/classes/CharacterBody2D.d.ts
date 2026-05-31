@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A 2D physics body specialized for characters moved by script. */
 declare class CharacterBody2D extends PhysicsBody2D {

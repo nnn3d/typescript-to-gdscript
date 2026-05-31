@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A modification that uses FABRIK to manipulate a series of {@link Bone2D} nodes to reach a target. */
 declare class SkeletonModification2DFABRIK extends SkeletonModification2D {

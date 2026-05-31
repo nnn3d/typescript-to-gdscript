@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A synchronization mechanism used to control access to a shared resource by {@link Thread}s. */
 declare class Semaphore extends RefCounted {

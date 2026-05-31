@@ -47,6 +47,10 @@ typings/                 # Godot typings (committed to git, used as TS lib)
   godot-class-registry.json  # Class hierarchy JSON (916 classes)
   classes/               # Per-class .d.ts files (916 classes)
 
+typings-overrides/       # Manual type overrides applied during typings generation (shipped in npm package, NOT in consumer tsconfig)
+  *.d.ts                 # Per-class override files (node.d.ts, array.d.ts, etc.) + _globals.d.ts for global functions
+  non-nullable.json      # Non-nullable member override data (merged per class)
+
 src/
   config/index.ts        # tstogd.json loader (exclude, disableGodotLint, cacheDir, sourcemapsDir), registry resolver
   converter/
@@ -65,10 +69,6 @@ src/
     scenes.ts            # generateTypings: parses .tscn/.tres for get_node/get_parent/GodotResources + emits per-script `.gd.d.ts` with `declare global { class <Name> extends ScriptClass { … } }` (shadow class — a `@see import(…)` JSDoc links each shadow back to its real .ts source)
     content-generators.ts  # `generateScriptTypingContent`: renders the `.gd.d.ts` body (shadow class + namespace for enums / inner classes). Reads per-class info from `scanTsFilesForClasses` (scene-utils.ts).
     scene-utils.ts       # `ScriptInfo` + `scanTsFilesForClasses` (walks TS source files, collects className, enums, inner classes, extendsNode classification for `get_node` overload emission)
-    overrides/           # Manual type overrides applied during typings generation
-      *.d.ts             # Per-class override files (node.d.ts, array.d.ts, etc.)
-    non-nullable/
-      index.json         # Non-nullable type override data
   ts-plugin/             # TS language service plugin (runs inside tsserver). Two responsibilities:
     index.ts             #   Glue: `init()`/`create()`, one-time config+cache setup, pass-through LS proxy, install lint overlay. Diagnostic filter drops augmentation-only codes (TS2434 / TS2435 / TS2449) unconditionally for in-scope `.ts` files — these are produced by the `export namespace Foo { ... } export class Foo` merge pattern the user writes for enums / inner classes; they're correct but noise. `debugLog` option (`{"debugLog": "<path>"}` in the plugin entry) mirrors plugin log + trace lines to a user-specified file in addition to tsserver's own log.
     lint.ts              #   Lint overlay — tier-1 reads ProjectCache diagnostics, tier-2 live-converts in tsserver's Program; fires async Godot validation via `validateGdFiles({ signal, cacheDir })`, chains off `saveAsync().finally()` so Godot runs after persistence. Memoizes per-(file,version) in an `LRU`.
@@ -148,7 +148,7 @@ tests/
   - **Incremental generation** (`generateFileTypings`): per-file `.gd.d.ts`/`.tscn.d.ts` regeneration for watch mode (full generation only on first run, addon typings only on first run)
   - **Non-Node scripts excluded**: scripts that don't extend Node (e.g. `extends Resource`) skip tree navigation typings (ScriptTree, `get_node` overrides, `__Trees` interface)
   - **Value type interfaces** (Vector2, Color, Rect2, Packed*Array, etc.): generated with instance interface + `*Constructor`interface +`declare const`. No `new` — constructors are call signatures only (matches GDScript)
-  - **Nullable reference types**: properties and method returns of reference types (Node, Material, Texture2D, etc.) are emitted as `T | null` in generated `.d.ts` files. Value/variant types (Vector2, Color, int, float, etc.) stay non-nullable. A type is a value type if its Godot XML docs include a copy constructor (a constructor with a single parameter of its own type). Both `valueTypes` and `constructorTypes` sets are derived from parsed XML at generation time (no hardcoded lists). `isNullableGodotType()` in `godot-docs.ts` determines nullability based on the derived value types. Nullability is applied at 4 emit sites in `godot-docs.ts` (properties, method returns, signal parameters, etc.). Overrides in `src/typings/overrides/` can restore non-null for specific members (e.g. `node.d.ts` overrides `get_tree(): SceneTree`, `get_viewport(): Viewport`, `get_window(): Window`).
+  - **Nullable reference types**: properties and method returns of reference types (Node, Material, Texture2D, etc.) are emitted as `T | null` in generated `.d.ts` files. Value/variant types (Vector2, Color, int, float, etc.) stay non-nullable. A type is a value type if its Godot XML docs include a copy constructor (a constructor with a single parameter of its own type). Both `valueTypes` and `constructorTypes` sets are derived from parsed XML at generation time (no hardcoded lists). `isNullableGodotType()` in `godot-docs.ts` determines nullability based on the derived value types. Nullability is applied at 4 emit sites in `godot-docs.ts` (properties, method returns, signal parameters, etc.). Overrides in `typings-overrides/` can restore non-null for specific members (e.g. `node.d.ts` overrides `get_tree(): SceneTree`, `get_viewport(): Viewport`, `get_window(): Window`).
   - **`GodotScenes` interface**: global interface in scene typings mapping scene resource paths (`res://...`) to root node types. Complements `GodotSceneTrees` (tree types) and `GodotResources` (PackedScene types).
   - **Key-union aliases in `_index.d.ts`** (emitted by `generateIndexTypingContent()` inside `declare global`, alongside the six base interfaces): `GodotScriptName = keyof GodotScripts`, `GodotSceneTreeName = keyof GodotSceneTrees`, `GodotSceneName = keyof GodotScenes`, `GodotResourceName = keyof GodotResources`, `GodotGroupName = keyof GodotGroups`, `GodotConnectionSceneName = keyof GodotConnections`. `keyof` is resolved lazily, so the aliases pick up entries merged in by per-file `.tscn.d.ts` / `.gd.d.ts` / `_resources.d.ts`. Users can type function args as `path: GodotResourceName`, `group: GodotGroupName`, etc. for autocomplete + typo-checking. Emitted once — no per-file duplication.
   - `[__variant_converts]` on value-type instance interfaces: union of types accepted by single-parameter "from" constructors (e.g. `Vector2[__variant_converts]: Vector2 | Vector2i`). Enables `gd.as(val, Target)` type narrowing

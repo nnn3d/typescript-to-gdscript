@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Base class for {@link AnimationPlayer} and {@link AnimationTree}. */
 declare class AnimationMixer extends Node {

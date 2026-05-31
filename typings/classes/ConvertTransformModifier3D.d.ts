@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A {@link SkeletonModifier3D} that apply transform to the bone which converted from reference. */
 declare class ConvertTransformModifier3D extends BoneConstraint3D {

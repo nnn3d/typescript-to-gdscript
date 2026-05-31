@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /**
  * GraphFrame is a special {@link GraphElement} that can be used to organize other {@link GraphElement}s inside a {@link GraphEdit}.

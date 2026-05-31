@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** The {@link AimModifier3D} rotates a bone to look at a reference bone. */
 declare class AimModifier3D extends BoneConstraint3D {

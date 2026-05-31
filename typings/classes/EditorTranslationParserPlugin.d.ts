@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /**
  * Plugin for adding custom parsers to extract strings that are to be translated from custom files (.csv, .json etc.).

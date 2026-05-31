@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A transition within an {@link AnimationTree} connecting two {@link AnimationNode}s. */
 declare class AnimationNodeTransition extends AnimationNodeSync {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Used to query and configure import format support. */
 declare class EditorFileSystemImportFormatSupportQuery extends RefCounted {

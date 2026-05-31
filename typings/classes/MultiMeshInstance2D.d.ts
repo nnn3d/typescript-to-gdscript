@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Node that instances a {@link MultiMesh} in 2D. */
 declare class MultiMeshInstance2D extends Node2D {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Computes and stores baked lightmaps for fast global illumination. */
 declare class LightmapGI extends VisualInstance3D {

@@ -31,7 +31,7 @@ Generated typings distinguish between value types and reference types for nullab
 
 A type is classified as a value type if its Godot XML documentation includes a copy constructor (a constructor with a single parameter of its own type). This is derived automatically from the parsed XML docs at generation time — no hardcoded type lists.
 
-**Overrides**: Files in `src/typings/overrides/` can restore non-null return types for specific members where `null` is never returned in practice. For example, `src/typings/overrides/node.d.ts` overrides `get_tree(): SceneTree`, `get_viewport(): Viewport`, and `get_window(): Window` as non-null.
+**Overrides**: Files in `typings-overrides/` can restore non-null return types for specific members where `null` is never returned in practice. For example, `typings-overrides/node.d.ts` overrides `get_tree(): SceneTree`, `get_viewport(): Viewport`, and `get_window(): Window` as non-null.
 
 ## `tstogd generate-typings`
 
@@ -236,7 +236,7 @@ Re-run step 1 whenever you rebuild Godot with new/changed classes.
 
 ### Custom override files
 
-Godot's XML docs don't capture everything TypeScript wants — some methods are documented as returning a base class when they always return a concrete one, some return values are never actually `null`, and some methods deserve extra overloads or generics. The generator applies a layer of **overrides** on top of the raw XML to fix these. The package ships a default set — browse [`src/typings/overrides/`](../src/typings/overrides) as a working reference — and you can supply **your own** via `--override-dir`, useful for custom-module classes, project-specific refinements, or correcting an engine signature you know better than the docs.
+Godot's XML docs don't capture everything TypeScript wants — some methods are documented as returning a base class when they always return a concrete one, some return values are never actually `null`, and some methods deserve extra overloads or generics. The generator applies a layer of **overrides** on top of the raw XML to fix these. The package ships a default set — browse [`typings-overrides/`](../typings-overrides) as a working reference — and you can supply **your own** via `--override-dir`, useful for custom-module classes, project-specific refinements, or correcting an engine signature you know better than the docs.
 
 ```bash
 tstogd generate-gdscript-global-typings \
@@ -267,7 +267,7 @@ declare class Node {
 }
 ```
 
-This is exactly how the bundled defaults work — see [`src/typings/overrides/`](../src/typings/overrides) for real examples: [`array.d.ts`](../src/typings/overrides/array.d.ts), [`dictionary.d.ts`](../src/typings/overrides/dictionary.d.ts), [`node.d.ts`](../src/typings/overrides/node.d.ts), [`packed-scene.d.ts`](../src/typings/overrides/packed-scene.d.ts), and more. A special [`_globals.d.ts`](../src/typings/overrides/_globals.d.ts) overrides **global functions** (the `@GlobalScope` free functions like `load`, `preload`, `str`) the same way.
+This is exactly how the bundled defaults work — see [`typings-overrides/`](../typings-overrides) for real examples: [`array.d.ts`](../typings-overrides/array.d.ts), [`dictionary.d.ts`](../typings-overrides/dictionary.d.ts), [`node.d.ts`](../typings-overrides/node.d.ts), [`packed-scene.d.ts`](../typings-overrides/packed-scene.d.ts), and more. A special [`_globals.d.ts`](../typings-overrides/_globals.d.ts) overrides **global functions** (the `@GlobalScope` free functions like `load`, `preload`, `str`) the same way.
 
 #### 2. `non-nullable.json` — opt members out of `T | null`
 
@@ -281,6 +281,6 @@ By default every reference-typed return is widened to `T | null` (see [Nullable 
 }
 ```
 
-With the entry above, `node.get_tree()` is typed `SceneTree` instead of `SceneTree | null`. Your `non-nullable.json` merges with the bundled one **per class**: a class you list replaces the bundled member list for that class (so re-list the bundled members if you're extending an already-covered class like `Node`), while classes you omit keep their bundled entries. See the bundled [`src/typings/overrides/non-nullable.json`](../src/typings/overrides/non-nullable.json) for the full default set.
+With the entry above, `node.get_tree()` is typed `SceneTree` instead of `SceneTree | null`. Your `non-nullable.json` merges with the bundled one **per class**: a class you list replaces the bundled member list for that class (so re-list the bundled members if you're extending an already-covered class like `Node`), while classes you omit keep their bundled entries. See the bundled [`typings-overrides/non-nullable.json`](../typings-overrides/non-nullable.json) for the full default set.
 
 > Both file kinds are optional and independent — an override dir can have just `.d.ts` files, just `non-nullable.json`, or both. After generating, point `tsconfig.json` + `tstogd.json` at the output folder as shown above.

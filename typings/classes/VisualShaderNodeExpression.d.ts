@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A custom visual shader graph expression written in Godot Shading Language. */
 declare class VisualShaderNodeExpression extends VisualShaderNodeGroupBase {

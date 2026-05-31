@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** {@link Mesh} type that provides utility for constructing a surface from arrays. */
 declare class ArrayMesh extends Mesh {

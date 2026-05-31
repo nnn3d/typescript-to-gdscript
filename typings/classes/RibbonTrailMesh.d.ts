@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Represents a straight ribbon-shaped {@link PrimitiveMesh} with variable width. */
 declare class RibbonTrailMesh extends PrimitiveMesh {

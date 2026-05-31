@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Contains a {@link Curve2D} path for {@link PathFollow2D} nodes to follow. */
 declare class Path2D extends Node2D {

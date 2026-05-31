@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Vertex attribute (used by {@link RenderingDevice}). */
 declare class RDVertexAttribute extends RefCounted {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A node that provides a thickened polygon shape (a prism) to a {@link CollisionObject3D} parent. */
 declare class CollisionPolygon3D extends Node3D {

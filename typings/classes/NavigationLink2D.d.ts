@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A link between two positions on {@link NavigationRegion2D}s that agents can be routed through. */
 declare class NavigationLink2D extends Node2D {

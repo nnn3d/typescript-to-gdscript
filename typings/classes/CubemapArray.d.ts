@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** An array of {@link Cubemap}s, stored together and with a single reference. */
 declare class CubemapArray extends ImageTextureLayered {

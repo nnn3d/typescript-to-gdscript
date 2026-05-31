@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A node that provides a polygon shape to a {@link CollisionObject2D} parent. */
 declare class CollisionPolygon2D extends Node2D {

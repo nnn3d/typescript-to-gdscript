@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Base class for all primitive meshes. Handles applying a {@link Material} to a primitive mesh. */
 declare class PrimitiveMesh extends Mesh {

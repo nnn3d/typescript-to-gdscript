@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Base class for resources that operate on {@link Bone2D}s in a {@link Skeleton2D}. */
 declare class SkeletonModification2D extends Resource {

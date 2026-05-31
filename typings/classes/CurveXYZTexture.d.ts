@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A 1D texture where the red, green, and blue color channels correspond to points on 3 curves. */
 declare class CurveXYZTexture extends Texture2D {

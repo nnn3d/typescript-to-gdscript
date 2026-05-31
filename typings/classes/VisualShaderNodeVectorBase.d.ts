@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A base type for the nodes that perform vector operations within the visual shader graph. */
 declare class VisualShaderNodeVectorBase extends VisualShaderNode {

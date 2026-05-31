@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /**
  * Compiled shader file in SPIR-V form (used by {@link RenderingDevice}). Not to be confused with Godot's own {@link Shader}.

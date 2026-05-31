@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A binary {@link Semaphore} for synchronization of multiple {@link Thread}s. */
 declare class Mutex extends RefCounted {

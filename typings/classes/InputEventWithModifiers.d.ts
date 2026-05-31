@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Abstract base class for input events affected by modifier keys like `Shift` and `Alt`. */
 declare class InputEventWithModifiers extends InputEventFromWindow {

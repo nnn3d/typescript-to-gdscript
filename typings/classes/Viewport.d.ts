@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Abstract base class for viewports. Encapsulates drawing and interaction with a game world. */
 declare class Viewport extends Node {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Imports scenes from third-parties' 3D files. */
 declare class EditorSceneFormatImporter extends RefCounted {

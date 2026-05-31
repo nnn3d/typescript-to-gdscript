@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A customizable {@link StyleBox} that doesn't use a texture. */
 declare class StyleBoxFlat extends StyleBox {

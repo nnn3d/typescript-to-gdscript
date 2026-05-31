@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /**
  * Plugin for adding custom converters from one resource format to another in the editor resource picker context menu; for example, converting a {@link StandardMaterial3D} to a {@link ShaderMaterial}.

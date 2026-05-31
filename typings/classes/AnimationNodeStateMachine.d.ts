@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A state machine with multiple {@link AnimationRootNode}s, used by {@link AnimationTree}. */
 declare class AnimationNodeStateMachine extends AnimationRootNode {

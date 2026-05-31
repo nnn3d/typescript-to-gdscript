@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A physics joint that restricts the movement of two 2D physics bodies to a fixed axis. */
 declare class GrooveJoint2D extends Joint2D {

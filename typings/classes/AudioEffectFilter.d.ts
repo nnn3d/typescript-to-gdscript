@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Base class for filters. Use effects that inherit this class instead of using it directly. */
 declare class AudioEffectFilter extends AudioEffect {

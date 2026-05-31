@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Imports an image for use in 2D or 3D rendering. */
 declare class ResourceImporterTexture extends ResourceImporter {

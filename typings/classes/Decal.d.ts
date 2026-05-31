@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Node that projects a texture onto a {@link MeshInstance3D}. */
 declare class Decal extends VisualInstance3D {

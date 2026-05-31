@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /**
  * A node used to rotate all bones of a {@link Skeleton3D} bone chain a way that places the end bone at a desired 3D position.

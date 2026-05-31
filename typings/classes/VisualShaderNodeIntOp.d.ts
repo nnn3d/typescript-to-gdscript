@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** An integer scalar operator to be used within the visual shader graph. */
 declare class VisualShaderNodeIntOp extends VisualShaderNode {

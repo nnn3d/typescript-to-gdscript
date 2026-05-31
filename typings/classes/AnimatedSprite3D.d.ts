@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** 2D sprite node in 3D world, that can use multiple 2D textures for animation. */
 declare class AnimatedSprite3D extends SpriteBase3D {

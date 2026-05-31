@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A spotlight, such as a reflector spotlight or a lantern. */
 declare class SpotLight3D extends Light3D {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A widget that provides an interface for selecting or modifying a color. */
 declare class ColorPicker extends VBoxContainer {

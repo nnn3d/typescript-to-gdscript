@@ -18,7 +18,7 @@ declare class GodotObject {
   callv<N extends string, A extends any[], R>(
     this: Record<N, (...args: A) => R>,
     method: N,
-    args: A
+    args: A,
   ): R;
   callv(method: string, args: any[]): unknown;
   emit_signal<const N extends string, A extends any[]>(
@@ -26,10 +26,7 @@ declare class GodotObject {
     signal: N,
     ...args: A
   ): Error.OK | Error.ERR_UNAVAILABLE;
-  emit_signal(
-    signal: string,
-    ...args: any[]
-  ): Error.OK | Error.ERR_UNAVAILABLE;
+  emit_signal(signal: string, ...args: any[]): Error.OK | Error.ERR_UNAVAILABLE;
   get<P extends keyof this>(property: P): this[P];
   get(property: string): unknown;
 }

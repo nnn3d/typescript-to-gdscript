@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A material that controls how volumetric fog is rendered, to be assigned to a {@link FogVolume}. */
 declare class FogMaterial extends Material {

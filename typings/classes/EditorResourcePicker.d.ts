@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Godot editor's control for selecting {@link Resource} type properties. */
 declare class EditorResourcePicker extends HBoxContainer {

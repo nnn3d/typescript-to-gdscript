@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A 2D game object, inherited by all 2D-related nodes. Has a position, rotation, scale, and skew. */
 declare class Node2D extends CanvasItem {

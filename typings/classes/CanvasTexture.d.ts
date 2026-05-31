@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Texture with optional normal and specular maps for use in 2D rendering. */
 declare class CanvasTexture extends Texture2D {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Exposes audio samples from an audio bus in real-time, such that it can be accessed as data. */
 declare class AudioEffectCapture extends AudioEffect {

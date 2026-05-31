@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Class representing a spherical {@link PrimitiveMesh}. */
 declare class SphereMesh extends PrimitiveMesh {

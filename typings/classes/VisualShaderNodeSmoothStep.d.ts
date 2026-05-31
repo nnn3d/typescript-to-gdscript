@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Calculates a SmoothStep function within the visual shader graph. */
 declare class VisualShaderNodeSmoothStep extends VisualShaderNode {

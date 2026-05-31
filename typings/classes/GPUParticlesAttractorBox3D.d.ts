@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A box-shaped attractor that influences particles from {@link GPUParticles3D} nodes. */
 declare class GPUParticlesAttractorBox3D extends GPUParticlesAttractor3D {

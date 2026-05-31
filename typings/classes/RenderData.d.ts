@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Abstract render data object, holds frame data related to rendering a single frame of a viewport. */
 declare class RenderData extends GodotObject {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Only exists for compatibility. Use {@link VisualShaderNodeFrame} as a replacement. */
 declare class VisualShaderNodeComment extends VisualShaderNodeFrame {

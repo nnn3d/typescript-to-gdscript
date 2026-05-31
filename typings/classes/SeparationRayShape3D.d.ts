@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A 3D ray shape used for physics collision that tries to separate itself from any collider. */
 declare class SeparationRayShape3D extends Shape3D {

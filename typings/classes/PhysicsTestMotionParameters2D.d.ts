@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Provides parameters for {@link PhysicsServer2D.body_test_motion}. */
 declare class PhysicsTestMotionParameters2D extends RefCounted {

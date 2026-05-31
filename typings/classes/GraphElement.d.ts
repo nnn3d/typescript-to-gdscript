@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A container that represents a basic element that can be placed inside a {@link GraphEdit} control. */
 declare class GraphElement extends Container {

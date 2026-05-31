@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A group of foldable containers that doesn't allow more than one container to be expanded at a time. */
 declare class FoldableGroup extends Resource {

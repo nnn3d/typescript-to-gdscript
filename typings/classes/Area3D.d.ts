@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A region of 3D space that detects other {@link CollisionObject3D}s entering or exiting it. */
 declare class Area3D extends CollisionObject3D {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A comparison function for common types within the visual shader graph. */
 declare class VisualShaderNodeCompare extends VisualShaderNode {

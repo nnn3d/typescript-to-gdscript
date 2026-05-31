@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Provides occlusion culling for 3D nodes, which improves performance in closed areas. */
 declare class OccluderInstance3D extends VisualInstance3D {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Texture for 3D that is bound to a texture created on the {@link RenderingDevice}. */
 declare class Texture3DRD extends Texture3D {

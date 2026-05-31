@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Holds a pattern to be copied from or pasted into {@link TileMap}s. */
 declare class TileMapPattern extends Resource {

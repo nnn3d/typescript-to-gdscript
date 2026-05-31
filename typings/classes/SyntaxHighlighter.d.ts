@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Base class for syntax highlighters. Provides syntax highlighting data to a {@link TextEdit}. */
 declare class SyntaxHighlighter extends Resource {

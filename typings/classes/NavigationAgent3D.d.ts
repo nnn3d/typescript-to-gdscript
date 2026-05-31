@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A 3D agent used to pathfind to a position while avoiding obstacles. */
 declare class NavigationAgent3D extends Node {

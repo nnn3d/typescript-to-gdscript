@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** An implementation of A* for finding the shortest path between two points on a partial 2D grid. */
 declare class AStarGrid2D extends RefCounted {

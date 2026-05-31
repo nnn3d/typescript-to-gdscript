@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A 3D physics body that is moved by a physics simulation. */
 declare class RigidBody3D extends PhysicsBody3D {

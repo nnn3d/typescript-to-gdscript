@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Triangle geometry for efficient, physicsless intersection queries. */
 declare class TriangleMesh extends RefCounted {

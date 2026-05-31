@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A {@link StyleBox} that displays a single line of a given color and thickness. */
 declare class StyleBoxLine extends StyleBox {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Provides high-performance drawing of a mesh multiple times using GPU instancing. */
 declare class MultiMesh extends Resource {

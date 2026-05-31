@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Imports a glTF, FBX, COLLADA, or Blender 3D scene. */
 declare class ResourceImporterScene extends ResourceImporter {

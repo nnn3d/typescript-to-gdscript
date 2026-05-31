@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A visual shader helper node for multiplying position and rotation of particles. */
 declare class VisualShaderNodeParticleMultiplyByAxisAngle extends VisualShaderNode {

@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A 2D texture that creates a pattern with colors obtained from a {@link Gradient}. */
 declare class GradientTexture2D extends Texture2D {

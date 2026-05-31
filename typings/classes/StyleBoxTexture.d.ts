@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A texture-based nine-patch {@link StyleBox}. */
 declare class StyleBoxTexture extends StyleBox {

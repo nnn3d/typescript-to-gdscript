@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A 2D shape that sweeps a region of space to detect {@link CollisionObject2D}s. */
 declare class ShapeCast2D extends Node2D {

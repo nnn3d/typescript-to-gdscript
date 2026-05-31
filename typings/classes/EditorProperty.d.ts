@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Custom control for editing properties that can be added to the {@link EditorInspector}. */
 declare class EditorProperty extends Container {

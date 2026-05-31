@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A box-shaped region of 3D space that, when visible on screen, enables a target node. */
 declare class VisibleOnScreenEnabler3D extends VisibleOnScreenNotifier3D {

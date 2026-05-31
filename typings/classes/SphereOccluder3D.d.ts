@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Spherical shape for use with occlusion culling in {@link OccluderInstance3D}. */
 declare class SphereOccluder3D extends Occluder3D {

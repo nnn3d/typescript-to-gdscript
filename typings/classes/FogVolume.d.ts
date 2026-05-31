@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A region that contributes to the default volumetric fog from the world environment. */
 declare class FogVolume extends VisualInstance3D {

@@ -9,6 +9,12 @@
     ".": "./dist/index.js",
     "./ts-plugin": "./dist/ts-plugin/index.js"
   },
+  "files": [
+    "dist",
+    "ts-plugin",
+    "typings",
+    "typings-overrides"
+  ],
   "packageManager": "yarn@1.22.22",
   "typesVersions": {
     "*": {
@@ -28,6 +34,11 @@
     "lint": "tsc --noEmit",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
+    "prepublishOnly": "yarn build",
+    "release": "npm publish && git push --follow-tags",
+    "release:patch": "npm version patch && npm run release",
+    "release:minor": "npm version minor && npm run release",
+    "release:major": "npm version major && npm run release",
     "generate:ast-types": "dts-tree-sitter tree-sitter-gdscript > src/parser/gdscript/types.ts && node scripts/fix-tree-sitter-types.js src/parser/gdscript/types.ts",
     "generate:resource-ast-types": "dts-tree-sitter tree-sitter-godot-resource > src/parser/godot-resource/types.ts && node scripts/fix-tree-sitter-types.js src/parser/godot-resource/types.ts",
     "generate:godot-typings": "tsx src/cli/index.ts generate-gdscript-global-typings --output-dir typings --docs-dir vendor/godot/doc/classes vendor/godot/modules/gdscript/doc_classes",
@@ -64,6 +75,7 @@
     "transpiler"
   ],
   "license": "MIT",
+  "author": "nnn3d",
   "homepage": "https://github.com/nnn3d/typescript-to-gdscript#readme",
   "repository": {
     "type": "git",

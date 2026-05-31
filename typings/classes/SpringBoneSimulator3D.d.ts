@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A {@link SkeletonModifier3D} to apply inertial wavering to bone chains. */
 declare class SpringBoneSimulator3D extends SkeletonModifier3D {

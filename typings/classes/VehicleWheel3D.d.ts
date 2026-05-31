@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A 3D physics body for a {@link VehicleBody3D} that simulates the behavior of a wheel. */
 declare class VehicleWheel3D extends Node3D {

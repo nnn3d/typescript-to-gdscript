@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A resource that holds all components of a 3D world, such as a visual scenario and a physics space. */
 declare class World3D extends Resource {

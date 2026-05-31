@@ -56,10 +56,15 @@ function detectGodotVersion(docsDirs: string[]): string | null {
   return hits[0]!.short;
 }
 
-/** Resolve the bundled src/typings/overrides directory next to this source file. */
+/**
+ * Resolve the bundled `typings-overrides/` directory at the package root.
+ * From `src/cli/<this>.ts` and the built `dist/cli/<this>.js`, `'..', '..'`
+ * both resolve to `<package_root>/typings-overrides`, so the same path works
+ * for source mode (`tsx`), local builds, and installed-as-dependency layouts.
+ */
 function getDefaultOverrideDir(): string {
   const thisDir = dirname(fileURLToPath(import.meta.url));
-  return resolve(thisDir, '..', 'typings', 'overrides');
+  return resolve(thisDir, '..', '..', 'typings-overrides');
 }
 
 /**

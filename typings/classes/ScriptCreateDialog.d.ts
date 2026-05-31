@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Godot editor's popup dialog for creating new {@link Script} files. */
 declare class ScriptCreateDialog extends ConfirmationDialog {

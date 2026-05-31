@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Represents a MIDI message from a MIDI device, such as a musical keyboard. */
 declare class InputEventMIDI extends InputEvent {

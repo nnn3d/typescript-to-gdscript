@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A group of buttons that doesn't allow more than one button to be pressed at a time. */
 declare class ButtonGroup extends Resource {

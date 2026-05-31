@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** Gizmo for editing {@link Node3D} objects. */
 declare class EditorNode3DGizmo extends Node3DGizmo {

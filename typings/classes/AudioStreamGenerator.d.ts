@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** An audio stream with utilities for procedural sound generation. */
 declare class AudioStreamGenerator extends AudioStream {

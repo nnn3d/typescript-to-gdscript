@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A singleton that manages the unique identifiers of all resources within a project. */
 declare interface ResourceUID extends GodotObject {

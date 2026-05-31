@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A parallax scrolling layer to be used with {@link ParallaxBackground}. */
 declare class ParallaxLayer extends Node2D {

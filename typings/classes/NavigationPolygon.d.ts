@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A 2D navigation mesh that describes a traversable surface for pathfinding. */
 declare class NavigationPolygon extends Resource {

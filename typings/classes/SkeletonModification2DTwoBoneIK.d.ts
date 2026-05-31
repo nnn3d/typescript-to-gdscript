@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A modification that rotates two bones using the law of cosines to reach the target. */
 declare class SkeletonModification2DTwoBoneIK extends SkeletonModification2D {

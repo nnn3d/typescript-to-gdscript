@@ -1,5 +1,5 @@
 // AUTO-GENERATED from Godot class documentation.
-// Manual overrides applied from src/typings/overrides/*.d.ts
+// Manual overrides applied from typings-overrides/*.d.ts
 
 /** A resource that holds a stack of {@link SkeletonModification2D}s. */
 declare class SkeletonModificationStack2D extends Resource {
