@@ -64,6 +64,14 @@
     "transpiler"
   ],
   "license": "MIT",
+  "homepage": "https://github.com/nnn3d/typescript-to-gdscript#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nnn3d/typescript-to-gdscript.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nnn3d/typescript-to-gdscript/issues"
+  },
   "engines": {
     "node": ">=22"
   },
