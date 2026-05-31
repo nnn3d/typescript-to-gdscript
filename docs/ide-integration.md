@@ -30,7 +30,7 @@ Godot validation is enabled automatically when the Godot executable is found on 
 
 ### Enable it
 
-Add to your project's `tsconfig.json`:
+Add to your project's `tsconfig.json` (added automatically on `tstogd init`):
 
 ```json
 {
@@ -83,8 +83,6 @@ Verify: the plugin logs `[tstogd-plugin] plugin loaded` on startup. WebStorm →
 
 5. **Persistent-cache write-through.** Every live conversion updates the shared `ProjectCache` (keyed by buffer hash). When you save, `tstogd watch` / `tstogd convert` detects that the cache already holds the right bytes and promotes them with a single `rename()` — no double conversion.
 
-> **Note on navigation:** an earlier version of the plugin also redirected Go-to-Definition / Find-Usages between the generated `*.gd.d.ts` shadow classes and their real TypeScript sources. That feature was removed because WebStorm handles symbol navigation entirely through its own native indexer (it doesn't forward `definition` / `references` to tsserver), so the overrides had no effect there. In WebStorm, Ctrl+B on a generated class lands on its `*.gd.d.ts`; the `@see import("…")` JSDoc emitted alongside each shadow class takes you to the real source on the next Ctrl+B.
-
 ### Plugin diagnostic codes
 
 | Code    | Meaning                                |
@@ -96,7 +94,7 @@ All plugin-originated diagnostics have `source: 'tstogd'`, so you can filter the
 
 ## `tstogd open-editor`
 
-Open a GDScript file in an external editor as the corresponding TypeScript file. Designed for Godot's external text editor integration -- when you double-click a script in Godot, it opens the `.ts` source instead of the generated `.gd` file.
+Open a GDScript file in an external editor as the corresponding TypeScript file. Designed for Godot's external text editor integration - when you double-click a script in Godot, it opens the `.ts` source instead of the generated `.gd` file.
 
 ```bash
 tstogd open-editor -f {file} -l {line} -c {col} -p {project} -e "code --goto {tsFile}:{tsLine}:{tsCol}"
@@ -126,7 +124,7 @@ In Godot, go to **Editor Settings → Text Editor → External** and configure:
 - **Exec Path**: `tstogd` (or `npx tstogd`, or full path to the binary)
 - **Exec Flags**: `open-editor -f "{file}" -l {line} -c {col} -p "{project}" -e "code --goto {tsFile}:{tsLine}:{tsCol}"`
 
-> **Note:** Use double quotes around `{file}` and `{project}` to handle paths with spaces. Do **not** use single quotes — they become literal characters on Windows.
+> **Note:** Use double quotes around `{file}` and `{project}` to handle paths with spaces.
 
 Also enable **Editor Settings → Text Editor → Behavior → Auto Reload Scripts on External Change**. When you edit TypeScript files and the converter regenerates the `.gd` output, Godot needs to pick up the changes without manually refocusing or reopening each script. With this option enabled, Godot automatically reloads any `.gd` file that was modified on disk, so your changes take effect immediately when you switch back to the editor.
 

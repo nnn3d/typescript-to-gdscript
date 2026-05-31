@@ -6,12 +6,13 @@ Detailed project layout, implementation status, conversion rules, and edge cases
 
 User-facing docs are split between `README.md` and `docs/`:
 
-- `README.md` — quick-start: install, setup, essential CLI, transform rules, anonymous-class basics, imports → preload, `gd` helpers overview. Designed so a new user doesn't need to open `docs/` to ship a working project.
-- `docs/configuration.md` — full `tstogd.json` reference + addon `_$CLASS$_` sentinel and `G_Foo` escape
+- `README.md` — quick-start: tagline + before/after snippet, why-use-it, install + `tstogd init`, manual config pointer, essential CLI, brief transform rules (one class per file, types, imports), `gd` helpers cheat sheet. Designed so a new user doesn't need to open `docs/` to ship a working project.
+- `docs/configuration.md` — full `tstogd.json` + `tsconfig.json` reference + addon `_$CLASS$_` sentinel and `G_Foo` escape
+- `docs/transform-rules.md` — every TS-construct → GDScript mapping: primitive type case mapping, operators, comments (incl. `/* */` → `"""..."""`), constructor, async + `Promise<T>` return unwrapping, Callable `.call()` rewrite, `this`/`self`, constants & static fields, enums (file-scope + class-scope via namespace), inner classes (namespace merging), decorators / annotations (bare + `@gd.*` forms, `@exports` plural rule), abstract classes, signal named-tuple labels, strings & template literals, GD-side shorthand literals (`&`, `^`, `$`, `%`, `:=`), `super` calls, GD→TS implicit `this.` insertion, member ordering, logical operators (both directions), anonymous-class convention, imports → preload, **Restrictions section** (destructuring, for...in, `??`/`?.`, spread, `var`, file-scope decls, multiple classes, missing extends, default/namespace imports, `undefined` type, string enums, Promise misuse, `in` on value/packed types, `gd.dict` / `gd.getset` constraints)
 - `docs/cli.md` — every CLI command and every flag (`init`, `convert`, `watch`, `clear-cache`, diagnostic modes); links to specialized commands in their own files
 - `docs/gd-helpers.md` — full `gd` namespace reference (semantics, rules, edge cases for every helper)
 - `docs/gd-to-ts-migration.md` — `initial-convert-gd-to-ts` + the 5 conversion helpers (signal handler, operator fix, explicit convert, extends type, nullable, ready field types)
-- `docs/typings.md` — `generate-typings`, `generate-gdscript-global-typings`, `generate-addon-typings`, `generate-class-typings` + typings tree layout + scene typings features + nullable reference types
+- `docs/typings.md` — `generate-typings`, `generate-gdscript-global-typings`, `generate-addon-typings` + typings tree layout + scene typings features + nullable reference types. (No `generate-class-typings` command exists — global class declarations are produced by `generate-typings` via `converterOptions.generateGlobalClassTypes`.)
 - `docs/ide-integration.md` — TypeScript language service plugin + `tstogd open-editor` + Godot external-editor configuration
 - `docs/development.md` — contributor info: prerequisites, test scripts, regenerating Godot typings
 
@@ -78,27 +79,40 @@ src/
   cli/index.ts           # Commander CLI
 
 tests/
-  fixtures/ts-to-gd/    # 21 paired .ts/.gd fixture files
-  fixtures/gd-to-ts/    # 22 paired .gd/.ts fixture files
-  converter/             # ts-to-gd.test.ts, gd-to-ts.test.ts, converter-diag.test.ts
-  typings/               # godot-registry, gd-to-ts-registry, class-typings, scene-typings, godot-docs, type-checks
-  sourcemap/             # ts-to-gd-sourcemap.test.ts (9 position checks)
-  ts-plugin/             # ts-plugin.test.ts + harness.ts — real `ts.LanguageService` wrapped with the plugin; exercises fixture parity, cache write-through, async Godot pipeline. `lru.test.ts` unit-tests the LRU independently of the LS
-  fixtures/plugin/       # Shared `.ts` / `.json` fixtures consumed by the ts-plugin tests (converter diagnostic expectations)
-  godot-validate/        # godot-validate.test.ts
+  fixtures/
+    ts-to-gd/            # 29 paired .ts/.gd fixture files (TS→GD conversion)
+    gd-to-ts/            # 32 paired .gd/.ts fixture files (GD→TS conversion, incl. nullable-* + signal-handlers)
+    converter-diag/      # 31 paired .ts/.json — expected converter diagnostics (errors, warnings, type-errors) per fixture
+    plugin/              # 21 paired .ts/.json + tsconfig.json + project.godot — IDE plugin diagnostics (converter + Godot CLI surfaced through tsserver)
+    ts-helpers/
+      default/           # 3 paired .in.ts/.out.ts — post-conversion helpers (nullable phases A/C/D, ready-field-types, param narrowing)
+      addon/             # 1 paired .in.ts/.out.ts — addon-mode (phase B aggressive widening)
+    cli/                 # 2 .ts/.gd pairs (valid + invalid) for CLI exit-code tests
+  converter/             # ts-to-gd, gd-to-ts, converter-diag, anonymous-class-naming, enum-undefined-debug,
+                         # gd-to-ts-imports, ts-to-gd-imports, reference-type, sourcemap-accuracy, ts-helpers
+  cache/                 # cache.test.ts — ProjectCache (freshness, sourcemap storage, addon/typings entries, version mismatch, atomic writes, gd-output mirror, saveAsync, watch mode)
+  checker/               # checker.test.ts (collectProjectDiagnostics, stale-detection), ts-diagnostics.test.ts (filters)
+  cli/                   # cli.test.ts (convert + initial-convert-gd-to-ts exit codes, --force, --debug)
+  watcher/               # watcher-cache.test.ts (updated-file re-conversion through cache)
+  typings/               # godot-registry, gd-to-ts-registry, godot-docs, godot-validate (CLI integration, autoload/duplicate-class filters),
+                         # module-scoped-typings, scene-typings, ts-to-gd-sourcemap, type-checks
+  ts-plugin/             # ts-plugin.test.ts + harness.ts — real `ts.LanguageService` wrapped with the plugin;
+                         # exercises fixture parity, cache write-through, async Godot pipeline. `lru.test.ts` unit-tests the LRU independently of the LS
+  typecheck.test.ts      # `tsc` no-error check on src/
 ```
 
 ## CLI Commands (binary: `tstogd`)
 
 - `tstogd init` — Interactive project initialization (tstogd.json, tsconfig.json with ts-plugin enabled, npm install, .gdignore)
-- `tstogd convert <files...>` — Convert TS to GD, then run full 3-source diagnostic check (`[TS]`/`[CONV]`/`[GD]` prefixes). Flags: `-o`, `--root-dir`, `--tsconfig`, `--godot-path`, `--project-root`, `--no-cache`, `--emit-on-error`, `--no-emit` (dry-run + stale-check, no writes), `--no-check` (skip diagnostic pipeline). Source maps stored in cache dir. Requires `--tsconfig` for TS diagnostics; requires `--godot-path` + `project.godot` for Godot check.
-- `tstogd initial-convert-gd-to-ts <files...>` — One-shot bulk GD→TS conversion for the initial migration of an existing GDScript project (`-o`, `--registry`, `--unsafe-use-any`, `--emit-on-error`, `-f, --force`). All conversion helpers always run; no per-helper disable flag. **Default-safe**: existing `.ts` outputs are NOT overwritten — the command lists each skipped path at the end of the run, prints a `Pass --force to overwrite` hint, and exits non-zero. `--force` clobbers existing `.ts` files.
-- `tstogd watch` — Watch and auto-convert (`--root-dir`, `--output-dir`, `--tsconfig`, `--class-typings`, `--no-check`). After each file-change batch settles (1500ms debounce), runs full diagnostic check + clears console. Source maps stored in cache dir.
-- `tstogd generate-typings` — Generate typings from Godot docs (`--docs-dir`, `--typings-dir`, `--patch-dir`, `--version`)
+- Global flag: `--debug` (placed before any subcommand) enables verbose info/debug messages via `setDebugEnabled(true)` in the `preAction` hook.
+- `tstogd convert <files...>` — Convert TS to GD, then run full 3-source diagnostic check (`[TS]`/`[CONV]`/`[GD]` prefixes). Flags: `--ts-dir`, `--gd-dir`, `--root-dir`, `--tsconfig`, `--godot-path`, `--project-root`, `--no-cache`, `--emit-on-error`, `--no-emit` (dry-run + stale-check, no writes), `--no-check` (skip diagnostic pipeline). Source maps stored in cache dir. Requires `--tsconfig` for TS diagnostics; requires `--godot-path` + `project.godot` for Godot check.
+- `tstogd initial-convert-gd-to-ts <files...>` — One-shot bulk GD→TS conversion for the initial migration of an existing GDScript project (`--ts-dir`, `--gd-dir`, `--root-dir`, `--registry`, `--unsafe-use-any`, `--emit-on-error`, `-f, --force`). All conversion helpers always run; no per-helper disable flag. **Default-safe**: existing `.ts` outputs are NOT overwritten — the command lists each skipped path at the end of the run, prints a `Pass --force to overwrite` hint, and exits non-zero. `--force` clobbers existing `.ts` files.
+- `tstogd watch` — Watch and auto-convert (`--root-dir`, `--ts-dir`, `--gd-dir`, `--tsconfig`, `--typings-dir`, `--godot-path`, `--project-root`, `--emit-on-error`, `--no-check`). After each file-change batch settles (1500ms debounce), runs full diagnostic check + clears console. Source maps stored in cache dir.
+- `tstogd validate-gd <files...>` — Run Godot CLI `--check-only` validation on `.gd` files (TS paths auto-resolve to their corresponding `.gd`), remap errors back to TS positions via cached source maps, and exit non-zero on any error diagnostic. Flags: `--godot-path`, `--project-root` (default `.`).
+- `tstogd generate-typings <files...>` — Generate the per-script `.gd.d.ts` / `.tscn.d.ts` / `_resources.d.ts` / `_index.d.ts` tree for scene typings. Flags: `-o, --output` (override the resolved `typingsDir`), `--typings-dir`, `--root-dir`, `--tsconfig`.
 - `tstogd generate-gdscript-global-typings` — Generate the bundled-class typings tree from Godot XML docs (`--docs-dir <dirs...>` variadic — accepts one or more dirs covering `doc/classes/`, `modules/gdscript/doc_classes/`, etc.; `--output-dir`, `--override-dir`, `--no-default-overrides`). Writes `classes/`, `godot-class-registry.json`, and copies the bundled static `globals/` folder + `index.d.ts` into the output dir (skipped when output dir IS this package's own `typings/`).
-- `tstogd generate-class-typings <files...>` — Generate global class .d.ts (`-o`, `--root-dir`, `--tsconfig`)
-- `tstogd generate-addon-typings` — Generate typings for GDScript addons in `addons/` (`-o`, `--root-dir`)
-- `tstogd open-editor` — Open a .gd file in an external editor as the corresponding .ts file (`-f`, `-e`, `-l`, `-c`, `-p`). Remaps GD→TS line:col via cached source maps.
+- `tstogd generate-addon-typings` — Generate typings for GDScript addons in `addons/` (`-o, --output`, `--root-dir`)
+- `tstogd open-editor` — Open a .gd file in an external editor as the corresponding .ts file. Required: `-f, --file`, `-e, --editor-cmd`. Optional: `-l, --line` (GD line, default 1), `-c, --col` (GD col, default 1), `-p, --project` (Godot project dir). Editor-command placeholders: `{tsFile}`, `{tsLine}`, `{tsCol}` — remapped via cached source maps.
 - `tstogd clear-cache` — Clear the conversion cache (removes `cacheDir`).
 
 ### Typings usage by consumer projects
@@ -109,8 +123,8 @@ tests/
 
 ## Implementation Status
 
-- [x] TS-to-GD converter (21 fixture tests): classes, properties, methods, signals, enums, control flow, expressions, operators (incl. `gd.ops.rem` for `%`), comments, await, lambdas, match, dict, gd.ops/as/signal/enum, source maps, variadic parameters (`...args`), `gd.is()` primitive type checks, optional property access → `.get()` auto-conversion
-- [x] GD-to-TS converter (22 fixture tests): same features in reverse, local scope tracking, async detection, inner classes, GodotClassRegistry for `this.` resolution, conversion helpers (signal handler type inference), global enum constant qualification (`KEY_F21` → `Key.KEY_F21`), variadic parameters, `gd.is()` for primitive `is` checks
+- [x] TS-to-GD converter (29 fixture tests): classes, properties, methods, signals, enums, control flow, expressions, operators (incl. `gd.ops.rem` for `%`), comments (`//` `/** */` `/* */`), await + `Promise<T>` return unwrap, lambdas, match, dict (`gd.dict` for non-string keys), gd.ops/as/signal/getset, source maps, variadic parameters (`...args`), `gd.is()` primitive type checks, optional property access → `.get()` auto-conversion, decorators (bare names, `@exports` plural alias), Callable `.call()` rewrite, template literal flattening, abstract classes, `static FOO` → `static var FOO` (mutable statics), `readonly` is TS-only and emits `var` (class-level `const` comes from `export const X` inside the paired namespace block), member ordering preserved
+- [x] GD-to-TS converter (32 fixture tests): same features in reverse, local scope tracking, async detection, inner classes, GodotClassRegistry for `this.` resolution, conversion helpers (signal handler type inference, operator fix, explicit convert, extends type, nullable phases A/B/C/D, ready-field-types), global enum constant qualification (`KEY_F21` → `Key.KEY_F21`), variadic parameters, `gd.is()` for primitive `is` checks, shorthand-literal expansion (`&"..."` `^"..."` `$Node` `%UniqueNode` `:=`), `super()` / `super.method()` round-trip, implicit `this.` insertion for own / inherited members
 - [x] AST types generated by @asgerf/dts-tree-sitter (gdscript + godot-resource)
   - Post-processed by `scripts/fix-tree-sitter-types.js` for TS 5.9 `erasableSyntaxOnly`
   - Regenerate: `yarn generate:ast-types`, `yarn generate:resource-ast-types`
@@ -136,6 +150,7 @@ tests/
   - **Value type interfaces** (Vector2, Color, Rect2, Packed*Array, etc.): generated with instance interface + `*Constructor` interface + `declare const`. No `new` — constructors are call signatures only (matches GDScript)
   - **Nullable reference types**: properties and method returns of reference types (Node, Material, Texture2D, etc.) are emitted as `T | null` in generated `.d.ts` files. Value/variant types (Vector2, Color, int, float, etc.) stay non-nullable. A type is a value type if its Godot XML docs include a copy constructor (a constructor with a single parameter of its own type). Both `valueTypes` and `constructorTypes` sets are derived from parsed XML at generation time (no hardcoded lists). `isNullableGodotType()` in `godot-docs.ts` determines nullability based on the derived value types. Nullability is applied at 4 emit sites in `godot-docs.ts` (properties, method returns, signal parameters, etc.). Overrides in `src/typings/overrides/` can restore non-null for specific members (e.g. `node.d.ts` overrides `get_tree(): SceneTree`, `get_viewport(): Viewport`, `get_window(): Window`).
   - **`GodotScenes` interface**: global interface in scene typings mapping scene resource paths (`res://...`) to root node types. Complements `GodotSceneTrees` (tree types) and `GodotResources` (PackedScene types).
+  - **Key-union aliases in `_index.d.ts`** (emitted by `generateIndexTypingContent()` inside `declare global`, alongside the six base interfaces): `GodotScriptName = keyof GodotScripts`, `GodotSceneTreeName = keyof GodotSceneTrees`, `GodotSceneName = keyof GodotScenes`, `GodotResourceName = keyof GodotResources`, `GodotGroupName = keyof GodotGroups`, `GodotConnectionSceneName = keyof GodotConnections`. `keyof` is resolved lazily, so the aliases pick up entries merged in by per-file `.tscn.d.ts` / `.gd.d.ts` / `_resources.d.ts`. Users can type function args as `path: GodotResourceName`, `group: GodotGroupName`, etc. for autocomplete + typo-checking. Emitted once — no per-file duplication.
   - `[__variant_converts]` on value-type instance interfaces: union of types accepted by single-parameter "from" constructors (e.g. `Vector2[__variant_converts]: Vector2 | Vector2i`). Enables `gd.as(val, Target)` type narrowing
   - `readonly prototype: ClassName` on `*Constructor` interfaces enables `v instanceof Vector2` type narrowing
   - Packed array types get `[Symbol.iterator](): IterableIterator<ItemType>` (item type inferred from `append(value: T)` method signature) for typed `for (const x of arr)` loops
@@ -188,7 +203,7 @@ tests/
 - [x] Logical value conversion (`||`/`&&` as non-boolean value):
   - TS-to-GD: `emitBinaryExpression` detects `||`/`&&` used outside boolean context (if/while condition, negation, nested logical, `bool()` call, expression statement). When the result type is not boolean (via `checker.getTypeAtLocation()` + `TypeFlags.BooleanLike`), emits a `type-error` suggesting `bool()` wrapper or ternary (GD still emits `or`/`and`, so `.gd` is written; `lint` fails, `convert`/`watch` warns).
   - GD-to-TS: `emitBinaryOp` detects `or`/`and` in value contexts (assignment RHS, variable initializer, function argument, return statement) and auto-wraps in `bool()`. Skipped when the expression is inherently boolean (composed of comparisons/logical ops/boolean literals) via `isGdBoolExpression()`.
-- [x] Open-editor CLI command: maps .gd files to .ts files via `tstogd.json` `gdDir`/`tsDir` path mapping, spawns external editor with placeholder substitution (`{tsFile}`, `{line}`, `{col}`, `{file}`). Designed for Godot's external text editor integration.
+- [x] Open-editor CLI command: maps .gd files to .ts files via `tstogd.json` `gdDir`/`tsDir` path mapping, spawns external editor with placeholder substitution (`{tsFile}`, `{tsLine}`, `{tsCol}` — these are remapped via the cached source map; `{file}`, `{line}`, `{col}` are Godot's own placeholders passed through unchanged to the `-f`, `-l`, `-c` arguments). Designed for Godot's external text editor integration.
 - [ ] Source map integration with Godot LSP (map LSP errors back to TS in IDE)
 
 ## Conversion Rules (TS ↔ GDScript)
@@ -207,12 +222,19 @@ tests/
 | `constructor()` | `_init()` | |
 | `this.` | `self.` | Always converted (never stripped) |
 | `let` / `const` | `var` | `var` restricted in TS |
+| `static FOO = ...` | `static var FOO = ...` | Mutable per-class static, shared across instances |
+| `readonly FOO = ...` | `var FOO = ...` | `readonly` is a **TS-only** contract (compiler-enforced immutability); on the GD side it emits a regular `var` (or `static var` when combined with `static`). Class-level GD `const X = ...` comes from `export const X = ...` inside the paired `namespace ClassName { ... }` block — see "Inner classes" in [transform-rules.md](docs/transform-rules.md#inner-classes-via-namespace-merging) |
 | `number` | `float` | `int`/`float` type aliases preserved |
 | `any` / `unknown` / non-class type alias | (annotation omitted) | GDScript's `Variant` is just "untyped", and the bare `var x` / `func f(x)` / `signal s(x)` forms already express that. `tsTypeNodeToGdType` returns `null` for `any`, `unknown`, and non-class `type` aliases; all call sites treat `null` as "no annotation". |
 | `undefined` | restricted | Use `null` instead |
 | `===` / `!==` | `==` / `!=` | |
 | `&&` / `\|\|` / `!` | `and` / `or` / `not` | GD returns `bool`, not operand. Non-boolean value use: TS→GD errors, GD→TS wraps in `bool()` |
-| `for (x of arr)` | `for x in arr` | |
+| `cond ? a : b` | `a if cond else b` | TS ternary inverts to GD's value-first form (both directions) |
+| `for (x of arr)` | `for x in arr` | `for...in` (TS) is rejected — GD `for in` already iterates values |
+| `super.method()` | `super.method()` | Direct parent-method call, identical syntax |
+| `super.<sameName>()` | `super()` | TS spells the method; GD's bare `super()` calls the same-named parent method (GD→TS expands to `super.method()`) |
+| `string` / `boolean` (TS lowercase) | `String` / `bool` (GD PascalCase) | Primitive case normalization; `string` literal types preserve escapes via `getText()` |
+| `\`${x}!\`` | `"" + str(x) + "!"` | Template literals flattened into `str()`-wrapped concatenation — GDScript has no f-strings |
 | `switch (val) { case X: ... }` | `match val:` | Simple matches (literal/expression/wildcard patterns, no bindings/guards/array/dict) use native TS `switch`. GD→TS auto-detects via `isSimpleMatchStatement()` |
 | `gd.match(val, [...])` | `match val:` | Advanced patterns (bindings, guards, arrays, dicts). Arrow `do: () => {}` preserves `this`; also supports `do()` method syntax |
 | `get X() {} / set X(v) {}` | `var X: get: ... set(v): ...` | Simple setget: native TS accessors ↔ inline GD get/set bodies. Missing get or set in GD is filled with a passthrough default in TS |
@@ -233,8 +255,11 @@ tests/
 | `int(x)` / `float(x)` | `int(x)` / `float(x)` | Cast functions (also types) |
 | `StringName('...')` | `&"..."` | `StringName` is a type alias for `String` (identical API) |
 | `NodePath('...')` | `^"..."` | Own variant type interface + constructor (not mapped to `string`) |
-| `@gd.export` | `@export` | `gd.decorators.export_` in TS types |
+| `@exports` | `@export` | Decorators are bare global functions declared in `typings/classes/_globals.d.ts`. The `@exports` plural alias for `export` (reserved in TS) is handled in `src/converter/ts-to-gd/class-members.ts`. **There is no `@gd.export` form** — `gd` holds helpers (signal, getset, match, …) but no decorators. The dead `@gd.<name>` matching code in the converter was removed; `getDecorators()` now handles only the bare-identifier / bare-call shapes. |
 | `@tool` / `@icon(...)` above `class` | `@tool` / `@icon(...)` above `extends` | Class-level annotations (script-level, not field-level). Both directions: bidirectional via `class-body.ts:emitClassHeader` (TS→GD) and `source-emitter.ts:scanScriptClassHeader` + `classLevelAnnotationNodes` (GD→TS). |
+| `fn()` where `fn: () => void` | `fn.call()` | Variable-held Callable needs `.call()` in GDScript. Direct method calls (`this.method()`) stay direct. Bidirectional |
+| `this.get_node("X")` | `$X` / `$"X"` | GD `$` shorthand; GD→TS canonicalizes to `get_node()` so the source map stays accurate. `%UniqueNode` → `this.get_node("%UniqueNode")` |
+| `let x = 42` (inferred) | `var x := 42` | GD walrus inference; round-trips (TS-side drops annotation when inferred) |
 | `instanceof` | `is` | Class types (Node2D, etc.) |
 | `gd.is(x, int)` | `x is int` | Primitive type checks (int, float, bool, String). Negation: `!gd.is(x, int)` ↔ `x is not int`, `!(gd.is(x, int))` ↔ `not x is int` |
 | `f(a: int, ...args: Array<any>)` | `func f(a: int, ...args: Array)` | Variadic parameters (bidirectional) |
@@ -313,6 +338,6 @@ tests/
 - Addon `class_name` preservation: with `_$CLASS$_` claiming the "anonymous" slot in addon mode, real `_`-prefixed `class_name` declarations are no longer ambiguous and the `_Foo` → `G_Foo` escape is **bypassed** in addon mode. The escape is non-trivial to reverse and addon class names are external — third-party-owned, globally registered, and referenced by consumer code under that exact name — so renaming would silently break everything. The escape still applies in non-addon GD→TS runs (where `_FilenameInUpperCamel` would otherwise collide with real `_Foo`). Two coordinated changes make this work: `scanScriptClassHeader` returns the raw `class_name` text and the helper `resolveTsClassName` in `emitSourceFile` applies the escape conditionally on `ctx.isAddon`. `scanTsFilesForClasses` takes an `isAddon` flag (default `false`); in addon mode the anonymity test becomes `className === ANONYMOUS_ADDON_CLASS_NAME` so `_Foo` is correctly classified as a NAMED class and emitted into `declare global`. Outside addon mode the legacy `isAnonymousClassName` (any `_`-prefix) still applies.
 - Addon-output one-way invariant: addon-mode TS→GD direction is **not supported**. The addon-specific naming rules (`_$CLASS$_` sentinel, `_Foo` preserved verbatim) make the generated `.ts` files asymmetric — both `_$CLASS$_` and a preserved `_Foo` start with `_`, so the TS→GD direction's `isAnonymousClassName` (used in `class-body.ts` and `imports.ts`) would treat them as anonymous and skip emitting `class_name`, producing wrong `.gd`. This is fine in practice: `findTsFiles` (and the watcher / convert-gd discovery) all exclude `addons/`, generated addon `.ts` files carry a `// @ts-nocheck — auto-generated from GDScript addon` header, and addons never enter the TS→GD pipeline. Don't add an addon-aware check to `class-body.ts` / `imports.ts` — keep the asymmetry as a documented invariant rather than introducing a flag every TS→GD call site has to thread through.
 - Import processing (`src/converter/ts-to-gd/imports.ts`): runs once per file at the top of `transform()`. Builds a `Map<localName, ImportEntry>` keyed by the TS-side identifier; only entries that need a `const X = preload(...)` line OR are candidates for an `extends "res://..."` rewrite are stored. The map is consulted by `visitClassDeclaration` for the extends rewrite and for field-name conflict detection (a field named the same as an imported local hard-errors on the field's source line). `res://` paths are computed as `relative(projectRoot, gdDir/<rel(tsDir, importTarget.ts)>.gd)` — i.e. the TS tree is mirrored under `gdDir`, then made relative to the Godot project root.
-- TS→GD converter `ConvertOptions` gained `tsDir`, `gdDir`, `projectRoot` (all default to `rootDir`). `TransformContext` carries the same three fields for the import-resolution code path.
+- TS→GD converter `ConvertOptions` gained `tsDir`, `gdDir`, `projectRoot`. `tsDir` / `gdDir` default to `"src"` / `"scripts"` respectively (set via `resolveConfig` from `tstogd.json` or CLI overrides); `projectRoot` defaults to `rootDir`. `TransformContext` carries the same three fields for the import-resolution code path.
 </content>
 </invoke>

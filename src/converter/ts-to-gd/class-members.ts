@@ -132,21 +132,18 @@ export function visitPropertyDeclaration(
   const isStatic = node.modifiers?.some(
     (m) => m.kind === ts.SyntaxKind.StaticKeyword,
   );
-  const isReadonly = node.modifiers?.some(
-    (m) => m.kind === ts.SyntaxKind.ReadonlyKeyword,
-  );
+  // `readonly` is a TS-only contract — the compiler enforces no
+  // reassignment, but on the GD side it emits a plain `var` (or
+  // `static var` when paired with `static`). Class-level constants
+  // are declared via a paired `namespace ClassName { export const X = ... }`
+  // block instead — that lifts into `const X = ...` inside the GD class.
 
   const gdType = tsTypeNodeToGdType(
     node.type, t.ctx.checker, t.ctx.sourceFile, t.currentClassName,
   );
 
-  let decl: string;
-  if (isReadonly) {
-    decl = `const ${name}`;
-  } else {
-    const staticPrefix = isStatic ? 'static ' : '';
-    decl = `${staticPrefix}var ${name}`;
-  }
+  const staticPrefix = isStatic ? 'static ' : '';
+  let decl = `${staticPrefix}var ${name}`;
   if (gdType) decl += `: ${gdType}`;
 
   if (
@@ -295,28 +292,18 @@ export function getDecorators(
   const decorators = ts.getDecorators(node);
   if (!decorators) return result;
 
+  // Decorators are bare global function names — e.g. `@onready`, `@tool`,
+  // `@export_range(0, 100)`, `@icon("res://x.svg")`. They're declared in
+  // `typings/classes/_globals.d.ts` as global decorator functions and
+  // emitted verbatim as GDScript annotations. The lone TS-specific quirk
+  // is `@exports` (plural) — `export` is a TS reserved word so the
+  // plural alias is rewritten to GDScript `@export`.
   for (const dec of decorators) {
-    if (ts.isCallExpression(dec.expression)) {
-      const callExpr = dec.expression;
-      if (ts.isPropertyAccessExpression(callExpr.expression)) {
-        const obj = callExpr.expression.expression;
-        const method = callExpr.expression.name.text;
-        if (ts.isIdentifier(obj) && obj.text === 'gd') {
-          const args = callExpr.arguments.map((a) => t.emitExpression(a)).join(', ');
-          result.push(args ? `@${method}(${args})` : `@${method}`);
-        }
-      } else if (ts.isIdentifier(callExpr.expression)) {
-        let name = callExpr.expression.text;
-        if (name === 'exports') name = 'export';
-        const args = callExpr.arguments.map((a) => t.emitExpression(a)).join(', ');
-        result.push(args ? `@${name}(${args})` : `@${name}`);
-      }
-    } else if (ts.isPropertyAccessExpression(dec.expression)) {
-      const obj = dec.expression.expression;
-      const method = dec.expression.name.text;
-      if (ts.isIdentifier(obj) && obj.text === 'gd') {
-        result.push(`@${method}`);
-      }
+    if (ts.isCallExpression(dec.expression) && ts.isIdentifier(dec.expression.expression)) {
+      let name = dec.expression.expression.text;
+      if (name === 'exports') name = 'export';
+      const args = dec.expression.arguments.map((a) => t.emitExpression(a)).join(', ');
+      result.push(args ? `@${name}(${args})` : `@${name}`);
     } else if (ts.isIdentifier(dec.expression)) {
       let name = dec.expression.text;
       if (name === 'exports') name = 'export';

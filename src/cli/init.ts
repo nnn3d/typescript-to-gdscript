@@ -77,9 +77,9 @@ async function stepTstogdJson(
 ): Promise<InitConfig> {
   const configPath = join(cwd, 'tstogd.json');
   const defaults: InitConfig = {
-    tsDir: 'ts',
-    gdDir: '.',
-    typingsDir: 'ts/_typings',
+    tsDir: 'src',
+    gdDir: 'scripts',
+    typingsDir: 'src/_typings',
   };
 
   if (existsSync(configPath)) {

@@ -550,6 +550,13 @@ export function generateIndexTypingContent(
   lines.push(`  interface GodotResources {}`);
   lines.push(`  interface GodotGroups {}`);
   lines.push(`  interface GodotConnections {}`);
+  lines.push(``);
+  lines.push(`  type GodotScriptName = keyof GodotScripts;`);
+  lines.push(`  type GodotSceneTreeName = keyof GodotSceneTrees;`);
+  lines.push(`  type GodotSceneName = keyof GodotScenes;`);
+  lines.push(`  type GodotResourceName = keyof GodotResources;`);
+  lines.push(`  type GodotGroupName = keyof GodotGroups;`);
+  lines.push(`  type GodotConnectionSceneName = keyof GodotConnections;`);
 
   // Autoload singletons
   if (autoloads.length > 0) {

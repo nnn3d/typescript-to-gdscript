@@ -10,58 +10,65 @@ One-shot bulk conversion of GDScript files to TypeScript — intended for the **
 
 By default the command **refuses to overwrite existing `.ts` files** so it can be re-run safely without clobbering any TypeScript you've hand-edited since the first migration. Skipped files are listed at the end of the run and the command exits non-zero. Pass `--force` to overwrite.
 
+> ⚠️ **Expect to fix TypeScript errors by hand after migrating.** GDScript is loosely, dynamically typed; TypeScript (in this project's `strict` setup) is not. The converter and its [post-conversion helpers](#conversion-helpers) automatically resolve the *common* mismatches — operator overloads, variant conversions, inherited parameter types, nullable widening/narrowing — but they **cannot** catch everything. In any non-trivial project you should expect remaining type errors in the generated `.ts`.
+> This is normal and expected — the migration gets you ~90% of the way mechanically; the remaining errors are surfaced **in your IDE / `tsc`** so you can fix them deliberately. They do **not** block output: the `.ts` files are still written (conversion errors, distinct from type errors, are the only thing that blocks a file — and only without `--emit-on-error`). Treat the first migration as a starting point, then work through the squiggles. `--unsafe-use-any` (see below) trades strictness for fewer errors if you want a looser first pass, but hand-fixing with real types is recommended.
+
 ```bash
-tstogd initial-convert-gd-to-ts addons/plugin/Plugin.gd -o src/
-tstogd initial-convert-gd-to-ts --force          # re-run from scratch, clobbering existing .ts
+# Convert the whole project: every .gd under gdDir → mirrored .ts under tsDir
+tstogd initial-convert-gd-to-ts
+
+# Convert specific files / globs
+tstogd initial-convert-gd-to-ts scripts/Player.gd scripts/enemies/*.gd
+
+# Re-run from scratch, clobbering existing .ts
+tstogd initial-convert-gd-to-ts --force
 ```
 
-Registry resolution order:
+### Input and output paths
 
-1. `--registry` CLI flag (explicit path to `godot-class-registry.json`)
-2. Bundled `typings/godot-class-registry.json`
+This command goes **GD → TS**, so the roles of `gdDir` and `tsDir` are the reverse of `convert`:
 
-Options:
+- **Source (read):** `.gd` files are read from `gdDir` (default `scripts`, overridable with `--gd-dir`). Explicit file arguments are still resolved relative to `gdDir`.
+- **Output (write):** each source file is written to `tsDir` (default `src`, overridable with `--ts-dir`), **mirroring the relative directory structure** — `<gdDir>/enemies/goblin.gd` becomes `<tsDir>/enemies/goblin.ts`.
+- `rootDir` (default `.`) is the base both directories resolve against, and the base for the `res://` paths used in signal-handler resolution.
 
-- `-o, --output-dir <dir>` — Output directory
-- `--registry <path>` — Path to `godot-class-registry.json`
+With the defaults, `scripts/world/Level.gd` → `src/world/Level.ts`.
+
+### Options
+
+- `[files...]` — GDScript files or glob patterns to convert. Omit to convert every `.gd` under `gdDir`.
+- `--gd-dir <dir>` — GDScript **source** directory to read from (overrides `gdDir` from `tstogd.json`; config default `scripts`).
+- `--ts-dir <dir>` — TypeScript **output** directory to write to (overrides `tsDir` from `tstogd.json`; config default `src`).
+- `--root-dir <dir>` — Root directory, base for the two dirs above (default: `.`).
+- `--registry <path>` — Path to `godot-class-registry.json` (overrides the bundled registry).
 - `-f, --force` — Overwrite existing TypeScript output files. Without this flag the command skips any `.gd` whose mirrored `.ts` already exists and exits non-zero.
-- `--unsafe-use-any` — Less strict but less error-prone conversion mode. Currently affects:
+- `--unsafe-use-any` — Less strict but more error-prone conversion mode. Currently affects:
   - `gd.getset` fallback type: uses `any` instead of `unknown` when neither a GDScript type annotation nor a typeof-able value expression is available.
   - Unsafe non-null assertions: TS2531/18047/18048/18046 "possibly null/undefined" errors get `!` inserted after the expression. TS2322/2345 where the root cause is a null union type get `!` after the RHS/argument.
   - TS7034 "variable implicitly has type `any[]`" gets `: any[]` annotation added.
-- `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `/* ERROR: ... */` comments)
+- `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `/* ERROR: ... */` comments).
 
-The full set of conversion helpers (see below) always runs; there is no per-helper disable flag.
+The full set of conversion helpers (see below) always runs; there is no per-helper disable flag. After conversion the command also runs import injection, typings generation, and the post-conversion helpers automatically.
 
 ## Conversion Helpers
 
-GD-to-TS conversion includes optional helpers that enhance the output.
+GD-to-TS conversion ships with a fixed pipeline of post-processing helpers. **All of them are always-on** — there's no per-helper disable toggle. The only behavior knob exposed to users is `--unsafe-use-any` (see the command options above), which only affects the unsafe-non-null + fallback type widening.
 
 ### Signal handler helper
 
-**Default: enabled.** Scans `.tscn` scene files for signal connections and adds typed parameter annotations to signal handler methods (e.g., `_on_area_entered(area: Area2D)` instead of untyped `_on_area_entered(area)`).
-
-Toggle via `tstogd.json`:
-
-```json
-{
-  "helpers": {
-    "signalHandler": true
-  }
-}
-```
+Scans `.tscn` scene files for signal connections and adds typed parameter annotations to signal handler methods (e.g., `_on_area_entered(area: Area2D | null)` instead of untyped `_on_area_entered(area)`). Parameter types come from the connected signal's declared signature in the Godot class registry. Reference-typed params are widened to `T | null` by the nullable helper (Phase A).
 
 ### Operator fix helper
 
-**Default: enabled.** After conversion and typings generation, runs the TypeScript type-checker on converted files to find operator type errors (e.g., `Vector2 + Vector2`). Automatically wraps them in `gd.ops.X()` calls (e.g., `gd.ops.add(v1, v2)`). Catches cases that GDScript-time type inference misses (inherited members, method return values, etc.).
+After conversion and typings generation, runs the TypeScript type-checker on converted files to find operator type errors (e.g., `Vector2 + Vector2`). Automatically wraps them in `gd.ops.X()` calls (e.g., `gd.ops.add(v1, v2)`). Catches cases that GDScript-time type inference misses (inherited members, method return values, etc.).
 
 ### Explicit convert helper
 
-**Default: enabled.** Runs alongside operator fix. Detects TS2345/TS2322/TS2739/TS2740/TS2741 assignment/argument errors where the source and target are both variant types (Vector2 ↔ Vector2i, PackedColorArray ↔ Array, etc.) and inserts an explicit `gd.as(value, Target)` conversion. Uses `variantConverts` metadata in `godot-class-registry.json` (derived from Godot XML "from" constructors). Handles return statements (wraps returned expression, not the `return` keyword) and property access assignments (redirects from LHS to RHS). Example: `wants_v2i(Vector2.DOWN)` → `wants_v2i(gd.as(Vector2.DOWN, Vector2i))`.
+Runs alongside operator fix. Detects TS2345/TS2322/TS2739/TS2740/TS2741 assignment/argument errors where the source and target are both variant types (Vector2 ↔ Vector2i, PackedColorArray ↔ Array, etc.) and inserts an explicit `gd.as(value, Target)` conversion. Uses `variantConverts` metadata in `godot-class-registry.json` (derived from Godot XML "from" constructors). Handles return statements (wraps returned expression, not the `return` keyword) and property access assignments (redirects from LHS to RHS). Example: `wants_v2i(Vector2.DOWN)` → `wants_v2i(gd.as(Vector2.DOWN, Vector2i))`.
 
 ### Extends type helper
 
-**Default: enabled.** Detects TS7006 ("Parameter X implicitly has an any type") on method parameters where the method overrides one inherited from a parent class. Copies the parameter types from the parent class signature, preserving type aliases (`float`, `int`) by using the syntactic type text from the parent's `.d.ts`. Example:
+Detects TS7006 ("Parameter X implicitly has an any type") on method parameters where the method overrides one inherited from a parent class. Copies the parameter types from the parent class signature, preserving type aliases (`float`, `int`) by using the syntactic type text from the parent's `.d.ts`. Example:
 
 ```typescript
 class Player extends Node2D {

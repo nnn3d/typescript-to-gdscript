@@ -15,7 +15,6 @@ export function registerInitialConvertGdToTsCommand(program: Command): void {
       'One-shot bulk GD→TS conversion for the initial migration. Refuses to overwrite existing .ts files unless --force is passed.',
     )
     .argument('[files...]', 'GDScript files or glob patterns to convert')
-    .option('-o, --output-dir <dir>', 'Output directory (alias for --ts-dir)')
     .option('--ts-dir <dir>', 'TypeScript output directory')
     .option('--gd-dir <dir>', 'GDScript source directory')
     .option('--root-dir <dir>', 'Root directory', '.')

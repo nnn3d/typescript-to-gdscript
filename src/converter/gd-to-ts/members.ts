@@ -424,17 +424,11 @@ function emitGdGetsetCall(
   return lines.join('\n');
 }
 
-export function emitConstStatement(node: SyntaxNode, ctx: GdToTsContext): string {
-  const name = node.childForFieldName('name')?.text ?? '';
-  const typeNode = node.childForFieldName('type');
-  const valueNode = node.childForFieldName('value');
-
-  const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode, ctx) : '';
-  const init = valueNode ? ` = ${emitExpr(valueNode, ctx)}` : '';
-
-  // GDScript const -> TS static readonly
-  return `  static readonly ${name}${typeAnnotation}${init};`;
-}
+// GD class-body `const X = ...` declarations are lifted into the
+// paired `export namespace ClassName { export const X = ... }` block
+// by the file-scope emitter, not emitted as a class member. (Previously
+// there was an `emitConstStatement` here that produced `static readonly`,
+// but the namespace-merge pattern superseded it.)
 
 export function emitLocalVariable(
   node: SyntaxNode,

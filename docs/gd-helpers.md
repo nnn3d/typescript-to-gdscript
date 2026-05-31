@@ -8,24 +8,67 @@
 
 ```typescript
 class Player extends CharacterBody2D {
-  health_changed = gd.signal<[int, int]>();
-  died = gd.signal();
+  health_changed = gd.signal<[from: int, to: int]>();   // named tuple → named args
+  mana_changed   = gd.signal<[int, int]>();             // unnamed → arg1, arg2
+  died           = gd.signal();                         // no args
 }
 ```
 
-## Enums
+Tuple **element labels** (TypeScript named tuple syntax) become signal argument names in the generated GDScript. Unlabelled tuple elements fall back to `arg1`, `arg2`, …. Always prefer labelled tuples — they give readable signatures in both IDE autocomplete (via TS) and the Godot editor (via GD).
 
-Use a native TS `enum` at file scope — it lifts into the GDScript class as `enum Name { ... }`:
+Emitting and connecting:
 
 ```typescript
-enum State { IDLE, PATROL, ATTACK = 2 }
+this.health_changed.emit(old, new);
+this.health_changed.connect(this._on_health_changed);
+```
 
-export class Enemy extends Node2D {
-  current: State = State.IDLE;
+## Cast functions and primitive helpers
+
+These live at the top level (not under `gd.*`) but are part of the helper surface:
+
+| Helper                | Behavior                                                                                 |
+| --------------------- | ---------------------------------------------------------------------------------------- |
+| `int(x)` / `float(x)` | GDScript primitive cast — truncates / converts to the named numeric type.                |
+| `bool(x)`             | Converts to GDScript `bool`. Also used to wrap `\|\|` / `&&` value-context expressions.  |
+| `String(x)`           | Converts to GDScript `String`.                                                           |
+| `StringName(s)`       | Constructs a GDScript `StringName`. Round-trips as `&"..."` shorthand.                   |
+| `NodePath(s)`         | Constructs a GDScript `NodePath`. Round-trips as `^"..."` shorthand.                     |
+| `TSOnly<T>`           | Type-level only — stripped at conversion. Use to mark types that have no GD counterpart and must not survive into the emitted code. |
+
+## Typed dictionary literals (`gd.dict`)
+
+A normal TypeScript object literal `{ "key": value }` converts to a GDScript dictionary literal — but TS object-literal keys are always string-coerced, so non-string keys (variables holding `StringName`, `Vector2`, an object reference, …) lose their identity.
+
+`gd.dict()` accepts an array of `[key, value]` tuples and preserves the key expression exactly:
+
+```typescript
+const key1 = "key";
+const key2 = Vector2.DOWN;
+const key3 = new Node2D();
+
+let dict = gd.dict([
+  [key1, "value"],
+  [key2, "value"],
+  [key3, "value"],
+  ["string-key", "value"],
+]);
+```
+
+```gdscript
+var dict = {
+    key1: "value",
+    key2: "value",
+    key3: "value",
+    "string-key": "value",
 }
 ```
 
-The legacy `static X = gd.enum('A', 'B')` form is no longer supported.
+Constraints (enforced by the converter):
+
+- Exactly one argument, which must be an **array literal**.
+- Each entry is a 2-tuple `[key, value]`.
+- Keys must be identifiers, string literals, or member access — not arbitrary expressions like `key + 1` or function calls. Pre-compute into a variable first.
 
 ## Math operations
 
@@ -158,21 +201,6 @@ gd.match(this.x, [
 ]);
 ```
 
-## Decorators
-
-```typescript
-class Player extends CharacterBody2D {
-  @gd.export
-  speed: float = 100.0;
-
-  @gd.export_range(0, 100)
-  health: int = 100;
-
-  @gd.onready
-  sprite: Sprite2D;
-}
-```
-
 ## Getters and setters
 
 Simple GDScript setget clauses map to native TypeScript `get`/`set` accessors. If only one of `get` or `set` is defined in GDScript, the converter synthesizes a default for the other.
@@ -264,3 +292,28 @@ Negation of `not x is Y` in GDScript converts to `!(gd.is(x, Y))` or `!(x instan
 let sn = StringName('my_signal');
 let np = NodePath('Path/To/Node');
 ```
+
+## Promise — GDScript coroutine rules
+
+GDScript has no `Promise` type. `async` / `await` map directly to GDScript's coroutine `await`, but the chained-callback API has no equivalent. The bundled typings mark `Promise.then`, `Promise.catch`, and `Promise.finally` as **`@deprecated`** so your IDE shows a strikethrough as you type, and the converter raises a `type-error` if you call them.
+
+```typescript
+async load(): Promise<int> { return 42; }
+
+run() {
+  // ✅ OK — awaited
+  const value = await this.load();
+
+  // ❌ Error — Promise used as value
+  const promise = this.load();        // type-error
+  somewhere(this.load());             // type-error
+  return this.load();                 // type-error (when caller isn't awaiting)
+
+  // ❌ Error — chained-callback API
+  this.load().then((v) => v + 1);     // @deprecated + converter error
+  this.load().catch((e) => e);        // @deprecated + converter error
+  this.load().finally(() => {});      // @deprecated + converter error
+}
+```
+
+The IDE warns immediately (via `@deprecated`); the converter catches the same cases on save. See [`transform-rules.md` § Async / await](transform-rules.md#async--await) for the return-type unwrapping rules and [`transform-rules.md` § Restrictions](transform-rules.md#restrictions--unsupported-typescript-features) for the full Promise restriction table.

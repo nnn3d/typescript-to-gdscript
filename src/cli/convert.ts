@@ -22,7 +22,6 @@ export function registerConvertCommand(program: Command): void {
       'After writing, runs full diagnostic check (TS + converter + Godot) unless --no-check is set.',
     )
     .argument('[files...]', 'TypeScript files or glob patterns to convert')
-    .option('-o, --output-dir <dir>', 'Output directory (alias for --gd-dir)')
     .option('--ts-dir <dir>', 'TypeScript source directory')
     .option('--gd-dir <dir>', 'GDScript output directory')
     .option('--root-dir <dir>', 'Root directory', '.')

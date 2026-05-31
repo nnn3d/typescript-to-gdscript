@@ -10,8 +10,10 @@ import { GodotClassRegistry } from '../typings/godot-registry.ts';
 export interface TsToGdConfig {
   /** Root directory (base for relative paths). Defaults to config file directory or CWD. */
   rootDir?: string;
-  /** TypeScript source directory (relative to rootDir or absolute). Defaults to rootDir. */
+  /** TypeScript source directory (relative to rootDir or absolute). Defaults to `"src"`. */
   tsDir?: string;
+  /** GDScript output directory (relative to rootDir or absolute). Defaults to `"scripts"`. */
+  gdDir?: string;
   /** Directory for all generated typings (globals.d.ts, scene-typings.d.ts). Relative to rootDir. Defaults to "_gdtots". */
   typingsDir?: string;
   /** Directory to scan for .tscn scene files (relative to rootDir). Defaults to rootDir. */
@@ -118,10 +120,10 @@ export function resolveConfig(options?: {
     baseDir,
     overrides.rootDir ?? config?.rootDir ?? '.',
   );
-  const tsDir = resolve(rootDir, overrides.tsDir ?? config?.tsDir ?? '.');
+  const tsDir = resolve(rootDir, overrides.tsDir ?? config?.tsDir ?? 'src');
   const gdDir = resolve(
     rootDir,
-    overrides.gdDir ?? '.',
+    overrides.gdDir ?? config?.gdDir ?? 'scripts',
   );
   const typingsDir = resolve(
     rootDir,
@@ -300,8 +302,7 @@ export interface ResolveRegistryOptions {
 /**
  * Resolves the GodotClassRegistry with the following priority:
  * 1. Explicit --registry CLI path
- * 2. registryPath from tstogd.json
- * 3. Bundled typings/godot-class-registry.json
+ * 2. Bundled typings/godot-class-registry.json
  */
 export function resolveRegistry(
   options?: ResolveRegistryOptions,

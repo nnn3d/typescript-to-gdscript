@@ -286,6 +286,15 @@ describe('Scene typings generation', () => {
     expect(index).toContain('interface GodotScripts {}');
     expect(index).toContain('interface GodotSceneTrees {}');
     expect(index).toContain('interface GodotResources {}');
+
+    // Key-union aliases (`keyof Godot*` shortcuts) — lazy aliases that
+    // pick up entries merged in by per-file `.gd.d.ts` / `.tscn.d.ts`.
+    expect(index).toContain('type GodotScriptName = keyof GodotScripts;');
+    expect(index).toContain('type GodotSceneTreeName = keyof GodotSceneTrees;');
+    expect(index).toContain('type GodotSceneName = keyof GodotScenes;');
+    expect(index).toContain('type GodotResourceName = keyof GodotResources;');
+    expect(index).toContain('type GodotGroupName = keyof GodotGroups;');
+    expect(index).toContain('type GodotConnectionSceneName = keyof GodotConnections;');
   });
 
   it('should generate addon .ts and .gd.d.ts from addons/ GDScript', () => {

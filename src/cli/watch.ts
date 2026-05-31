@@ -11,7 +11,6 @@ export function registerWatchCommand(program: Command): void {
     .option('--root-dir <dir>', 'Root directory', '.')
     .option('--ts-dir <dir>', 'TypeScript source directory to watch')
     .option('--gd-dir <dir>', 'GDScript output directory')
-    .option('--output-dir <dir>', 'Output directory (alias for --gd-dir)')
     .option('--tsconfig <path>', 'Path to tsconfig.json')
     .option(
       '--typings-dir <path>',
