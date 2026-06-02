@@ -1,0 +1,66 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [master]
+
+# Cancel superseded runs for the same PR/branch.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Godot release tag, as published at
+  # https://github.com/godotengine/godot-builds/releases
+  # Must match vendor/godot (the submodule the bundled typings were generated
+  # from — currently 4.7). The validation tests shell out to this binary.
+  GODOT_VERSION: '4.6-stable'
+  # Don't install git hooks (husky) in CI.
+  HUSKY: 0
+
+jobs:
+  test:
+    name: Build & test
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout (with vendor/godot submodule)
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+
+      - name: Install Godot ${{ env.GODOT_VERSION }} (headless)
+        run: |
+          set -euo pipefail
+          base="https://github.com/godotengine/godot-builds/releases/download/${GODOT_VERSION}"
+          zip="Godot_v${GODOT_VERSION}_linux.x86_64.zip"
+          echo "Downloading ${base}/${zip}"
+          curl -fSL "${base}/${zip}" -o /tmp/godot.zip
+          unzip -q /tmp/godot.zip -d /tmp/godot
+          install -Dm755 "/tmp/godot/Godot_v${GODOT_VERSION}_linux.x86_64" "$HOME/.local/bin/godot"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Verify Godot is on PATH
+        run: godot --headless --version
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Type-check & build
+        run: yarn build
+
+      - name: Check formatting
+        run: yarn format:check
+
+      - name: Run tests
+        run: yarn test:run
