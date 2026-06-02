@@ -43,6 +43,4 @@ declare class Shader extends Resource {
   static readonly MODE_SKY: int;
   /** Mode used for setting the color and density of volumetric fog effect. */
   static readonly MODE_FOG: int;
-  /** Mode used for drawing to DrawableTexture resources via blit calls. */
-  static readonly MODE_TEXTURE_BLIT: int;
 }

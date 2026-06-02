@@ -9,8 +9,6 @@ declare class OptionButton extends Button {
    * If `true`, the currently selected item can be selected again.
    */
   action_mode: int;
-  /** Enables the {@link PopupMenu} search bar if the item count is greater than `0`. */
-  enable_search_bar_on_item_count: int;
   /**
    * If `true`, minimum size will be determined by the longest item's text, instead of the currently selected one's.
    * **Note:** For performance reasons, the minimum size doesn't update immediately when adding, removing or modifying items.
@@ -21,8 +19,6 @@ declare class OptionButton extends Button {
   /** The index of the currently selected item, or `-1` if no item is selected. */
   selected: int;
   toggle_mode: boolean;
-  set_search_bar_enabled_on_item_count(value: int): void;
-  get_search_bar_enabled_on_item_count(): int;
   set_fit_to_longest_item(value: boolean): void;
   is_fit_to_longest_item(): boolean;
   set_item_count(value: int): void;
@@ -86,8 +82,6 @@ declare class OptionButton extends Button {
   is_item_disabled(idx: int): boolean;
   /** Returns `true` if the item at index `idx` is marked as a separator. */
   is_item_separator(idx: int): boolean;
-  /** Returns `true` if the search bar is enabled. */
-  is_search_bar_enabled(): boolean;
   /** Removes the item at index `idx`. */
   remove_item(idx: int): void;
   /**

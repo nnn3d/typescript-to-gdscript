@@ -46,8 +46,6 @@ declare class GradientTexture2D extends Texture2D {
   static readonly FILL_RADIAL: int;
   /** The colors are linearly interpolated in a square pattern. */
   static readonly FILL_SQUARE: int;
-  /** The colors are linearly interpolated in a cone pattern. */
-  static readonly FILL_CONIC: int;
   // enum Repeat
   /**
    * The gradient fill is restricted to the range defined by {@link fill_from} to {@link fill_to} offsets.

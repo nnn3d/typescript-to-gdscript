@@ -15,11 +15,8 @@ declare class CollisionShape2D extends Node2D {
   /**
    * Sets whether this collision shape should only detect collision on one side (top or bottom).
    * **Note:** This property has no effect if this {@link CollisionShape2D} is a child of an {@link Area2D} node.
-   * **Note:** The one way collision direction can be configured by setting {@link one_way_collision_direction}.
    */
   one_way_collision: boolean;
-  /** The direction used for one-way collision. */
-  one_way_collision_direction: Vector2;
   /**
    * The margin used for one-way collision (in pixels). Higher values will make the shape thicker, and work better for colliders that enter the shape at a high velocity.
    */
@@ -32,8 +29,6 @@ declare class CollisionShape2D extends Node2D {
   is_disabled(): boolean;
   set_one_way_collision(value: boolean): void;
   is_one_way_collision_enabled(): boolean;
-  set_one_way_collision_direction(value: Vector2 | Vector2i): void;
-  get_one_way_collision_direction(): Vector2;
   set_one_way_collision_margin(value: float): void;
   get_one_way_collision_margin(): float;
   set_shape(value: Shape2D | null): void;

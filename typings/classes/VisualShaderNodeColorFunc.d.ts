@@ -19,12 +19,12 @@ declare class VisualShaderNodeColorFunc extends VisualShaderNode {
   static readonly FUNC_SEPIA: int;
   /**
    * Converts color from linear encoding to nonlinear sRGB encoding using the following formula:
-   * The Compatibility renderer uses a simpler formula that may produce undefined behavior with negative input values:
+   * The Compatibility renderer uses a simpler formula:
    */
   static readonly FUNC_LINEAR_TO_SRGB: int;
   /**
    * Converts color from nonlinear sRGB encoding to linear encoding using the following formula:
-   * The Compatibility renderer uses a simpler formula that behaves poorly with negative input values:
+   * The Compatibility renderer uses a simpler formula:
    */
   static readonly FUNC_SRGB_TO_LINEAR: int;
   /** Represents the size of the {@link Function} enum. */

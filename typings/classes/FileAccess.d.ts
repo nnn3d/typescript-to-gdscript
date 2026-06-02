@@ -236,7 +236,7 @@ declare class FileAccess extends RefCounted {
   seek(position: int): void;
   /**
    * Sets the file cursor to the specified position in bytes, from the end of the file. This changes the value returned by {@link get_position}.
-   * **Note:** This is an offset, so you should use negative numbers otherwise the file cursor will move past the end of the file.
+   * **Note:** This is an offset, so you should use negative numbers otherwise the file cursor will be at the end of the file.
    */
   seek_end(position?: int): void;
   /**

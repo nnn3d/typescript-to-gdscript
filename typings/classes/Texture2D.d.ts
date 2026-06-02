@@ -18,20 +18,12 @@ declare class Texture2D extends Texture {
    * **Note:** This is only used in 2D rendering, not 3D.
    */
   _draw_rect_region(to_canvas_item: RID, rect: Rect2 | Rect2i, src_rect: Rect2 | Rect2i, modulate: Color, transpose: boolean, clip_uv: boolean): void;
-  /** Called when {@link get_format} is called. */
-  _get_format(): int;
   /** Called when the {@link Texture2D}'s height is queried. */
   _get_height(): int;
-  /** Called when {@link get_image} is called. */
-  _get_image(): Image | null;
-  /** Called when {@link get_mipmap_count} is called. */
-  _get_mipmap_count(): int;
   /** Called when the {@link Texture2D}'s width is queried. */
   _get_width(): int;
   /** Called when the presence of an alpha channel in the {@link Texture2D} is queried. */
   _has_alpha(): boolean;
-  /** Called when {@link has_mipmaps} is called. */
-  _has_mipmaps(): boolean;
   /**
    * Called when a pixel's opaque state in the {@link Texture2D} is queried at the specified `(x, y)` position.
    */
@@ -46,8 +38,6 @@ declare class Texture2D extends Texture {
   draw_rect(canvas_item: RID, rect: Rect2 | Rect2i, tile: boolean, modulate?: Color, transpose?: boolean): void;
   /** Draws a part of the texture using a {@link CanvasItem} with the {@link RenderingServer} API. */
   draw_rect_region(canvas_item: RID, rect: Rect2 | Rect2i, src_rect: Rect2 | Rect2i, modulate?: Color, transpose?: boolean, clip_uv?: boolean): void;
-  /** Returns the image format of the texture. */
-  get_format(): int;
   /** Returns the texture height in pixels. */
   get_height(): int;
   /**
@@ -56,14 +46,10 @@ declare class Texture2D extends Texture {
    * **Note:** This will fetch the texture data from the GPU, which might cause performance problems when overused. Avoid calling {@link get_image} every frame, especially on large textures.
    */
   get_image(): Image | null;
-  /** Returns the number of mipmaps of the texture. */
-  get_mipmap_count(): int;
   /** Returns the texture size in pixels. */
   get_size(): Vector2;
   /** Returns the texture width in pixels. */
   get_width(): int;
   /** Returns `true` if this {@link Texture2D} has an alpha channel. */
   has_alpha(): boolean;
-  /** Returns `true` if the texture has mipmaps. */
-  has_mipmaps(): boolean;
 }

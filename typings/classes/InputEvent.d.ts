@@ -74,12 +74,4 @@ declare class InputEvent extends Resource {
    * Device ID used for emulated mouse input from a touchscreen, or for emulated touch input from a mouse. This can be used to distinguish emulated mouse input from physical mouse input, or emulated touch input from physical touch input.
    */
   static readonly DEVICE_ID_EMULATION: int;
-  /**
-   * Device ID used for input from a keyboard. This can be used to distinguish keyboard input events from joypad input events.
-   */
-  static readonly DEVICE_ID_KEYBOARD: int;
-  /**
-   * Device ID used for input from a mouse. This can be used to distinguish mouse input events from joypad input events.
-   */
-  static readonly DEVICE_ID_MOUSE: int;
 }

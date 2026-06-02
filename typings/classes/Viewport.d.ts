@@ -57,7 +57,6 @@ declare class Viewport extends Node {
   /**
    * The automatic LOD bias to use for meshes rendered within the {@link Viewport} (this is analogous to {@link ReflectionProbe.mesh_lod_threshold}). Higher values will use less detailed versions of meshes that have LOD variations generated. If set to `0.0`, automatic LOD is disabled. Increase {@link mesh_lod_threshold} to improve performance at the cost of geometry detail.
    * To control this property on the root viewport, set the {@link ProjectSettings.rendering/mesh_lod/lod_change/threshold_pixels} project setting.
-   * **Note:** Depending on the mesh's attributes (vertex colors, blend shapes, ...), a mesh may have fewer levels of LOD generated to avoid visible distortion of the mesh once it is affected by vertex colors or blend shapes. Meshes with a very low vertex count will also not have any LODs generated, which means this setting will not affect them at all. In general, this setting makes the largest impact on static meshes with a high vertex count.
    * **Note:** {@link mesh_lod_threshold} does not affect {@link GeometryInstance3D} visibility ranges (also known as "manual" LOD or hierarchical LOD).
    */
   mesh_lod_threshold: float;
@@ -614,7 +613,6 @@ declare class Viewport extends Node {
   /**
    * Objects are displayed as wireframe models.
    * **Note:** {@link RenderingServer.set_debug_generate_wireframes} must be called before loading any meshes for wireframes to be visible when using the Compatibility renderer.
-   * **Note:** In the Compatibility renderer, backfaces are always visible when using wireframe rendering. In the Forward+ and Mobile renderers, wireframes follow the material's backface culling properties instead.
    */
   static readonly DEBUG_DRAW_WIREFRAME: int;
   /**
@@ -747,10 +745,6 @@ declare class Viewport extends Node {
    * Use this for non-pixel art textures that may be viewed at a low scale (e.g. due to {@link Camera2D} zoom or sprite scaling), as mipmaps are important to smooth out pixels that are smaller than on-screen pixels.
    */
   static readonly DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST_WITH_MIPMAPS: int;
-  /**
-   * The {@link Viewport} will inherit the filter from its parent {@link CanvasItem} or {@link Viewport}.
-   */
-  static readonly DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_PARENT_NODE: int;
   /** Represents the size of the {@link DefaultCanvasItemTextureFilter} enum. */
   static readonly DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_MAX: int;
   // enum DefaultCanvasItemTextureRepeat
@@ -764,10 +758,6 @@ declare class Viewport extends Node {
   static readonly DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_ENABLED: int;
   /** Flip the texture when repeating so that the edge lines up instead of abruptly changing. */
   static readonly DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_MIRROR: int;
-  /**
-   * The {@link Viewport} will inherit the repeat mode from its parent {@link CanvasItem} or {@link Viewport}.
-   */
-  static readonly DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_PARENT_NODE: int;
   /** Represents the size of the {@link DefaultCanvasItemTextureRepeat} enum. */
   static readonly DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_MAX: int;
   // enum SDFOversize

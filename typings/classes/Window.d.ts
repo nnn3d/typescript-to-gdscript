@@ -58,10 +58,6 @@ declare class Window extends Viewport {
   extend_to_title: boolean;
   /** If `true`, native window will be used regardless of parent viewport and project settings. */
   force_native: boolean;
-  /**
-   * If `true`, requests HDR output for the {@link Window}, falling back to SDR if not supported, and automatically switching between HDR and SDR as the window moves between screens, screen capabilities change, or system settings are modified. This will internally force {@link Viewport.use_hdr_2d} to be enabled on the main {@link Viewport}. All other {@link SubViewport} of this {@link Window} must have their {@link Viewport.use_hdr_2d} property enabled to produce HDR output.
-   */
-  hdr_output_requested: boolean;
   /** Specifies the initial type of position for the {@link Window}. */
   initial_position: int;
   /** If `true`, the {@link Window} width is expanded to keep the title bar text fully visible. */
@@ -197,8 +193,6 @@ declare class Window extends Viewport {
   is_exclusive(): boolean;
   set_force_native(value: boolean): void;
   get_force_native(): boolean;
-  set_hdr_output_requested(value: boolean): void;
-  is_hdr_output_requested(): boolean;
   set_initial_position(value: int): void;
   get_initial_position(): int;
   set_keep_title_visible(value: boolean): void;
@@ -287,12 +281,6 @@ declare class Window extends Viewport {
   static get_focused_window(): Window | null;
   /** Returns layout direction and text writing direction. */
   get_layout_direction(): int;
-  /**
-   * Returns the maximum value for linear color components that can be displayed in this window, regardless of SDR or HDR output. Returns `1.0` if HDR is not enabled or not supported. This value is used by tonemapping and other {@link Environment} effects to ensure that bright colors are presented in the range that can be displayed by this window.
-   * When using the Linear tonemapper without {@link Environment} effects or no {@link WorldEnvironment}, use the returned value to scale content to maximize the screen's brightness, such as for lasers or other bright effects. The following is an example that produces the brightest purple color that the screen can produce:
-   * **Note:** You will need to convert sRGB colors to linear before multiplying by this value to get correct results.
-   */
-  get_output_max_linear_value(): float;
   /**
    * Returns the window's position including its border.
    * **Note:** If {@link visible} is `false`, this method returns the same value as {@link position}.
@@ -525,17 +513,6 @@ declare class Window extends Viewport {
    * Sets layout direction and text writing direction. Right-to-left layouts are necessary for certain languages (e.g. Arabic and Hebrew).
    */
   set_layout_direction(direction: int): void;
-  /**
-   * Sets the type and state of the progress bar on the taskbar/dock icon of the {@link Window}. See {@link DisplayServer.ProgressState} for possible values and how each mode behaves.
-   * **Note:** This method is implemented only on Windows and macOS.
-   */
-  set_taskbar_progress_state(state: int): void;
-  /**
-   * Creates a progress bar on the taskbar/dock icon of the {@link Window} if it does not exist, sets the progress of the icon.
-   * `value` acts as a relative percentage value, ranges from `0.0` (lowest) to `1.0` (highest).
-   * **Note:** This method is implemented only on Windows and macOS.
-   */
-  set_taskbar_progress_value(value: float): void;
   /**
    * If `unparent` is `true`, the window is automatically unparented when going invisible.
    * **Note:** Make sure to keep a reference to the node, otherwise it will be orphaned. You also need to manually call {@link Node.queue_free} to free the window if it's not parented.

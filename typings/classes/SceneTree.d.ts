@@ -93,8 +93,18 @@ declare class SceneTree extends MainLoop {
    * Calls the given `method` on each node inside this tree added to the given `group`. Use `flags` to customize this method's behavior (see {@link GroupCallFlags}). Additional arguments for `method` can be passed at the end of this method. Nodes that cannot call `method` (either because the method doesn't exist or the arguments do not match) are ignored.
    * **Note:** In C#, `method` must be in snake_case when referring to built-in Godot methods. Prefer using the names exposed in the `MethodName` class to avoid allocating a new {@link StringName} on each call.
    */
-  call_group_flags(flags: int, group: GodotGroupNames, method: string, ...args: any[]): void;
-  call_group_flags(flags: int, group: string, method: string, ...args: any[]): void;
+  call_group_flags(
+  flags: int,
+  group: GodotGroupNames,
+  method: string,
+  ...args: any[]
+  ): void;
+  call_group_flags(
+  flags: int,
+  group: string,
+  method: string,
+  ...args: any[]
+  ): void;
   /**
    * Changes the running scene to the one at the given `path`, after loading it into a {@link PackedScene} and creating a new instance.
    * Returns {@link OK} on success, {@link ERR_CANT_OPEN} if the `path` cannot be loaded into a {@link PackedScene}, or {@link ERR_CANT_CREATE} if that scene cannot be instantiated.
@@ -174,7 +184,11 @@ declare class SceneTree extends MainLoop {
   /**
    * Calls {@link Object.notification} with the given `notification` to all nodes inside this tree added to the `group`. Use `call_flags` to customize this method's behavior (see {@link GroupCallFlags}).
    */
-  notify_group_flags(call_flags: int, group: GodotGroupNames, notification: int): void;
+  notify_group_flags(
+  call_flags: int,
+  group: GodotGroupNames,
+  notification: int,
+  ): void;
   notify_group_flags(call_flags: int, group: string, notification: int): void;
   /**
    * Queues the given `obj` to be deleted, calling its {@link Object.free} at the end of the current frame. This method is similar to {@link Node.queue_free}.
@@ -202,8 +216,18 @@ declare class SceneTree extends MainLoop {
    * Sets the given `property` to `value` on all nodes inside this tree added to the given `group`. Nodes that do not have the `property` are ignored. Use `call_flags` to customize this method's behavior (see {@link GroupCallFlags}).
    * **Note:** In C#, `property` must be in snake_case when referring to built-in Godot properties. Prefer using the names exposed in the `PropertyName` class to avoid allocating a new {@link StringName} on each call.
    */
-  set_group_flags(call_flags: int, group: GodotGroupNames, property: string, value: unknown): void;
-  set_group_flags(call_flags: int, group: string, property: string, value: unknown): void;
+  set_group_flags(
+  call_flags: int,
+  group: GodotGroupNames,
+  property: string,
+  value: unknown,
+  ): void;
+  set_group_flags(
+  call_flags: int,
+  group: string,
+  property: string,
+  value: unknown,
+  ): void;
   /**
    * Sets a custom {@link MultiplayerAPI} with the given `root_path` (controlling also the relative subpaths), or override the default one if `root_path` is empty.
    * **Note:** No {@link MultiplayerAPI} must be configured for the subpath containing `root_path`, nested custom multiplayers are not allowed. I.e. if one is configured for `"/root/Foo"` setting one for `"/root/Foo/Bar"` will cause an error.

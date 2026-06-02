@@ -269,7 +269,7 @@ declare class Node extends GodotObject {
   find_child(pattern: string | NodePath, recursive?: boolean, owned?: boolean): Node | null;
   /**
    * Finds all descendants of this node whose names match `pattern`, returning an empty {@link Array} if no match is found. The matching is done against node names, *not* their paths, through {@link String.match}. As such, it is case-sensitive, `"*"` matches zero or more characters, and `"?"` matches any single character.
-   * If `type` is not empty, only descendants inheriting from `type` are included (see {@link Object.is_class}).
+   * If `type` is not empty, only ancestors inheriting from `type` are included (see {@link Object.is_class}).
    * If `recursive` is `false`, only this node's direct children are checked. Nodes are checked in tree order, so this node's first direct child is checked first, then its own direct children, etc., before moving to the second direct child, and so on. Internal children are also included in the search (see `internal` parameter in {@link add_child}).
    * If `owned` is `true`, only descendants with a valid {@link owner} node are checked.
    * **Note:** This method can be very slow. Consider storing references to the found nodes in a variable.
@@ -725,19 +725,19 @@ declare class Node extends GodotObject {
    */
   static readonly PROCESS_MODE_INHERIT: int;
   /**
-   * Processes when {@link SceneTree.paused} is `false`. This is the inverse of {@link PROCESS_MODE_WHEN_PAUSED}, and the default for the root node.
+   * Stops processing when {@link SceneTree.paused} is `true`. This is the inverse of {@link PROCESS_MODE_WHEN_PAUSED}, and the default for the root node.
    */
   static readonly PROCESS_MODE_PAUSABLE: int;
   /**
-   * Processes **only** when {@link SceneTree.paused} is `true`. This is the inverse of {@link PROCESS_MODE_PAUSABLE}.
+   * Process **only** when {@link SceneTree.paused} is `true`. This is the inverse of {@link PROCESS_MODE_PAUSABLE}.
    */
   static readonly PROCESS_MODE_WHEN_PAUSED: int;
   /**
-   * Always processes. Keeps processing, ignoring {@link SceneTree.paused}. This is the inverse of {@link PROCESS_MODE_DISABLED}.
+   * Always process. Keeps processing, ignoring {@link SceneTree.paused}. This is the inverse of {@link PROCESS_MODE_DISABLED}.
    */
   static readonly PROCESS_MODE_ALWAYS: int;
   /**
-   * Never processes. Completely disables processing, ignoring {@link SceneTree.paused}. This is the inverse of {@link PROCESS_MODE_ALWAYS}.
+   * Never process. Completely disables processing, ignoring {@link SceneTree.paused}. This is the inverse of {@link PROCESS_MODE_ALWAYS}.
    */
   static readonly PROCESS_MODE_DISABLED: int;
   // enum ProcessThreadGroup
@@ -1008,10 +1008,6 @@ declare class Node extends GodotObject {
   static readonly NOTIFICATION_APPLICATION_FOCUS_OUT: int;
   /** Notification received when the {@link TextServer} is changed. */
   static readonly NOTIFICATION_TEXT_SERVER_CHANGED: int;
-  /** Notification received when the application enters picture-in-picture mode. */
-  static readonly NOTIFICATION_APPLICATION_PIP_MODE_ENTERED: int;
-  /** Notification received when the application exits picture-in-picture mode. */
-  static readonly NOTIFICATION_APPLICATION_PIP_MODE_EXITED: int;
   /** Notification received when an accessibility information update is required. */
   static readonly NOTIFICATION_ACCESSIBILITY_UPDATE: int;
   /**

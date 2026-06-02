@@ -107,20 +107,13 @@ declare class ItemList extends Control {
    * If `selectable` is `true`, the list item will be selectable.
    */
   add_item(text: string | NodePath, icon?: Texture2D, selectable?: boolean): int;
-  /**
-   * Ensures the currently selected item (the first selected item if multiple selection is enabled) is visible, adjusting the scroll position as necessary to place the item at the center of the list if possible. See also {@link ensure_current_is_visible}.
-   * Fails and prints an error if both arguments are `false`.
-   */
-  center_on_current(center_verically?: boolean, center_horizontally?: boolean): void;
   /** Removes all items from the list. */
   clear(): void;
   /** Ensures the item associated with the specified index is not selected. */
   deselect(idx: int): void;
   /** Ensures there are no items selected. */
   deselect_all(): void;
-  /**
-   * Ensures the currently selected item (the first selected item if multiple selection is enabled) is visible, adjusting the scroll position as necessary. See also {@link center_on_current}.
-   */
+  /** Ensure current selection is visible, adjusting the scroll position as necessary. */
   ensure_current_is_visible(): void;
   /**
    * Forces an update to the list size based on its items. This happens automatically whenever size of the items, or other relevant settings like {@link auto_height}, change. The method can be used to trigger the update ahead of next drawing pass.
@@ -188,7 +181,7 @@ declare class ItemList extends Control {
   /** Removes the item specified by `idx` index from the list. */
   remove_item(idx: int): void;
   /**
-   * Selects the item at the specified index.
+   * Select the item at the specified index.
    * **Note:** This method does not trigger the item selection signal.
    */
   select(idx: int, single?: boolean): void;

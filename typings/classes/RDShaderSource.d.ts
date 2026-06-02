@@ -5,20 +5,10 @@
 declare class RDShaderSource extends RefCounted {
   /** The language the shader is written in. */
   language: int;
-  /** Source code for the shader's any hit stage. */
-  source_any_hit: string;
-  /** Source code for the shader's closest hit stage. */
-  source_closest_hit: string;
   /** Source code for the shader's compute stage. */
   source_compute: string;
   /** Source code for the shader's fragment stage. */
   source_fragment: string;
-  /** Source code for the shader's intersection stage. */
-  source_intersection: string;
-  /** Source code for the shader's miss stage. */
-  source_miss: string;
-  /** Source code for the shader's ray generation stage. */
-  source_raygen: string;
   /** Source code for the shader's tessellation control stage. */
   source_tesselation_control: string;
   /** Source code for the shader's tessellation evaluation stage. */

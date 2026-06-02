@@ -19,10 +19,6 @@ declare class CameraFeed extends RefCounted {
   _activate_feed(): boolean;
   /** Called when the camera feed is deactivated. */
   _deactivate_feed(): void;
-  /** Override this method to define supported formats of the camera feed. */
-  _get_formats(): Array<unknown>;
-  /** Override this method to set the format of the camera feed. */
-  _set_format(index: int, parameters: Dictionary): boolean;
   /** Returns feed image data type. */
   get_datatype(): int;
   /** Returns the unique ID for this feed. */

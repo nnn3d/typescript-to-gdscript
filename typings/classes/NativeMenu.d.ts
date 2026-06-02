@@ -93,17 +93,17 @@ declare interface NativeMenu extends GodotObject {
    */
   create_menu(): RID;
   /**
-   * Returns the index of the item with the submenu specified by `submenu_rid`. Indices are automatically assigned to each item by the engine.
+   * Returns the index of the item with the submenu specified by `submenu_rid`. Indices are automatically assigned to each item by the engine, and cannot be set manually.
    * **Note:** This method is implemented on macOS and Windows.
    */
   find_item_index_with_submenu(rid: RID, submenu_rid: RID): int;
   /**
-   * Returns the index of the item with the specified `tag`. Indices are automatically assigned to each item by the engine.
+   * Returns the index of the item with the specified `tag`. Indices are automatically assigned to each item by the engine, and cannot be set manually.
    * **Note:** This method is implemented on macOS and Windows.
    */
   find_item_index_with_tag(rid: RID, tag: unknown): int;
   /**
-   * Returns the index of the item with the specified `text`. Indices are automatically assigned to each item by the engine.
+   * Returns the index of the item with the specified `text`. Indices are automatically assigned to each item by the engine, and cannot be set manually.
    * **Note:** This method is implemented on macOS and Windows.
    */
   find_item_index_with_text(rid: RID, text: string | NodePath): int;
@@ -324,13 +324,6 @@ declare interface NativeMenu extends GodotObject {
    * **Note:** This method is implemented only on macOS.
    */
   set_item_indentation_level(rid: RID, idx: int, level: int): void;
-  /**
-   * Changes the index of the item at index `idx` to be at index `target_idx`. This can be used to move an item above other items.
-   * Returns the new index of the moved item, it's not guaranteed to be the same as `target_idx`.
-   * **Note:** The indices of any items between index `idx` and index `target_idx` will be shifted by one.
-   * **Note:** This method is implemented on macOS and Windows.
-   */
-  set_item_index(rid: RID, idx: int, target_idx: int): int;
   /**
    * Sets the callback of the item at index `idx`. Callback is emitted when its accelerator is activated.
    * **Note:** The `key_callback` Callable needs to accept exactly one Variant parameter, the parameter passed to the Callable will be the value passed to the `tag` parameter when the menu item was created.

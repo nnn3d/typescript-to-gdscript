@@ -74,8 +74,6 @@ declare class VisualShader extends Shader {
   static readonly TYPE_SKY: int;
   /** A compute shader that runs for each froxel of the volumetric fog map. */
   static readonly TYPE_FOG: int;
-  /** A shader used to process blit calls to a DrawableTexture. */
-  static readonly TYPE_TEXTURE_BLIT: int;
   /** Represents the size of the {@link Type} enum. */
   static readonly TYPE_MAX: int;
   // enum VaryingMode

@@ -3,11 +3,11 @@
 
 /**
  * Adds a pitch-shifting audio effect to an audio bus.
- * Raises or lowers the pitch of the input audio.
+ * Raises or lowers the pitch of original sound.
  */
 declare class AudioEffectPitchShift extends AudioEffect {
   /**
-   * The size of the Fast Fourier transform (https://en.wikipedia.org/wiki/Fast_Fourier_transform) buffer. Higher values smooth out the effect over time, but have greater latency. The effects of this higher latency are especially noticeable on audio signals that have sudden amplitude changes.
+   * The size of the Fast Fourier transform (https://en.wikipedia.org/wiki/Fast_Fourier_transform) buffer. Higher values smooth out the effect over time, but have greater latency. The effects of this higher latency are especially noticeable on sounds that have sudden amplitude changes.
    */
   fft_size: int;
   /**
@@ -15,7 +15,7 @@ declare class AudioEffectPitchShift extends AudioEffect {
    */
   oversampling: int;
   /**
-   * The pitch scale to use. `1.0` is the default pitch and plays sounds unaffected. {@link pitch_scale} can range from 0 (infinitely low pitch, inaudible) to 16 (16 times higher than the initial pitch).
+   * The pitch scale to use. `1.0` is the default pitch and plays sounds unaffected. {@link pitch_scale} can range from `0.0` (infinitely low pitch, inaudible) to `16` (16 times higher than the initial pitch).
    */
   pitch_scale: float;
   set_fft_size(value: int): void;

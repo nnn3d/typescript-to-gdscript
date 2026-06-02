@@ -1,5 +1,5 @@
 {
-  "version": "4.7",
+  "version": "4.6",
   "classes": {
     "AABB": {
       "name": "AABB",
@@ -106,512 +106,6 @@
       ],
       "constants": [],
       "enums": []
-    },
-    "AccessibilityServer": {
-      "name": "AccessibilityServer",
-      "inherits": "Object",
-      "description": "A server interface for screen reader support.",
-      "methods": [
-        "create_element",
-        "create_sub_element",
-        "create_sub_text_edit_elements",
-        "element_get_meta",
-        "element_set_meta",
-        "free_element",
-        "get_window_root",
-        "has_element",
-        "is_supported",
-        "set_window_focused",
-        "set_window_rect",
-        "update_add_action",
-        "update_add_child",
-        "update_add_custom_action",
-        "update_add_related_controls",
-        "update_add_related_described_by",
-        "update_add_related_details",
-        "update_add_related_flow_to",
-        "update_add_related_labeled_by",
-        "update_add_related_radio_group",
-        "update_set_active_descendant",
-        "update_set_background_color",
-        "update_set_bounds",
-        "update_set_braille_label",
-        "update_set_braille_role_description",
-        "update_set_checked",
-        "update_set_classname",
-        "update_set_color_value",
-        "update_set_description",
-        "update_set_error_message",
-        "update_set_extra_info",
-        "update_set_flag",
-        "update_set_focus",
-        "update_set_foreground_color",
-        "update_set_in_page_link_target",
-        "update_set_language",
-        "update_set_list_item_count",
-        "update_set_list_item_expanded",
-        "update_set_list_item_index",
-        "update_set_list_item_level",
-        "update_set_list_item_selected",
-        "update_set_list_orientation",
-        "update_set_live",
-        "update_set_member_of",
-        "update_set_name",
-        "update_set_next_on_line",
-        "update_set_num_jump",
-        "update_set_num_range",
-        "update_set_num_step",
-        "update_set_num_value",
-        "update_set_placeholder",
-        "update_set_popup_type",
-        "update_set_previous_on_line",
-        "update_set_role",
-        "update_set_role_description",
-        "update_set_scroll_x",
-        "update_set_scroll_x_range",
-        "update_set_scroll_y",
-        "update_set_scroll_y_range",
-        "update_set_shortcut",
-        "update_set_state_description",
-        "update_set_table_cell_position",
-        "update_set_table_cell_span",
-        "update_set_table_column_count",
-        "update_set_table_column_index",
-        "update_set_table_row_count",
-        "update_set_table_row_index",
-        "update_set_text_align",
-        "update_set_text_decorations",
-        "update_set_text_orientation",
-        "update_set_text_selection",
-        "update_set_tooltip",
-        "update_set_transform",
-        "update_set_url",
-        "update_set_value"
-      ],
-      "properties": [],
-      "signals": [],
-      "constants": [],
-      "enums": [
-        {
-          "name": "AccessibilityRole",
-          "values": [
-            {
-              "name": "ROLE_UNKNOWN",
-              "value": "0"
-            },
-            {
-              "name": "ROLE_DEFAULT_BUTTON",
-              "value": "1"
-            },
-            {
-              "name": "ROLE_AUDIO",
-              "value": "2"
-            },
-            {
-              "name": "ROLE_VIDEO",
-              "value": "3"
-            },
-            {
-              "name": "ROLE_STATIC_TEXT",
-              "value": "4"
-            },
-            {
-              "name": "ROLE_CONTAINER",
-              "value": "5"
-            },
-            {
-              "name": "ROLE_PANEL",
-              "value": "6"
-            },
-            {
-              "name": "ROLE_BUTTON",
-              "value": "7"
-            },
-            {
-              "name": "ROLE_LINK",
-              "value": "8"
-            },
-            {
-              "name": "ROLE_CHECK_BOX",
-              "value": "9"
-            },
-            {
-              "name": "ROLE_RADIO_BUTTON",
-              "value": "10"
-            },
-            {
-              "name": "ROLE_CHECK_BUTTON",
-              "value": "11"
-            },
-            {
-              "name": "ROLE_SCROLL_BAR",
-              "value": "12"
-            },
-            {
-              "name": "ROLE_SCROLL_VIEW",
-              "value": "13"
-            },
-            {
-              "name": "ROLE_SPLITTER",
-              "value": "14"
-            },
-            {
-              "name": "ROLE_SLIDER",
-              "value": "15"
-            },
-            {
-              "name": "ROLE_SPIN_BUTTON",
-              "value": "16"
-            },
-            {
-              "name": "ROLE_PROGRESS_INDICATOR",
-              "value": "17"
-            },
-            {
-              "name": "ROLE_TEXT_FIELD",
-              "value": "18"
-            },
-            {
-              "name": "ROLE_MULTILINE_TEXT_FIELD",
-              "value": "19"
-            },
-            {
-              "name": "ROLE_COLOR_PICKER",
-              "value": "20"
-            },
-            {
-              "name": "ROLE_TABLE",
-              "value": "21"
-            },
-            {
-              "name": "ROLE_CELL",
-              "value": "22"
-            },
-            {
-              "name": "ROLE_ROW",
-              "value": "23"
-            },
-            {
-              "name": "ROLE_ROW_GROUP",
-              "value": "24"
-            },
-            {
-              "name": "ROLE_ROW_HEADER",
-              "value": "25"
-            },
-            {
-              "name": "ROLE_COLUMN_HEADER",
-              "value": "26"
-            },
-            {
-              "name": "ROLE_TREE",
-              "value": "27"
-            },
-            {
-              "name": "ROLE_TREE_ITEM",
-              "value": "28"
-            },
-            {
-              "name": "ROLE_LIST",
-              "value": "29"
-            },
-            {
-              "name": "ROLE_LIST_ITEM",
-              "value": "30"
-            },
-            {
-              "name": "ROLE_LIST_BOX",
-              "value": "31"
-            },
-            {
-              "name": "ROLE_LIST_BOX_OPTION",
-              "value": "32"
-            },
-            {
-              "name": "ROLE_TAB_BAR",
-              "value": "33"
-            },
-            {
-              "name": "ROLE_TAB",
-              "value": "34"
-            },
-            {
-              "name": "ROLE_TAB_PANEL",
-              "value": "35"
-            },
-            {
-              "name": "ROLE_MENU_BAR",
-              "value": "36"
-            },
-            {
-              "name": "ROLE_MENU",
-              "value": "37"
-            },
-            {
-              "name": "ROLE_MENU_ITEM",
-              "value": "38"
-            },
-            {
-              "name": "ROLE_MENU_ITEM_CHECK_BOX",
-              "value": "39"
-            },
-            {
-              "name": "ROLE_MENU_ITEM_RADIO",
-              "value": "40"
-            },
-            {
-              "name": "ROLE_IMAGE",
-              "value": "41"
-            },
-            {
-              "name": "ROLE_WINDOW",
-              "value": "42"
-            },
-            {
-              "name": "ROLE_TITLE_BAR",
-              "value": "43"
-            },
-            {
-              "name": "ROLE_DIALOG",
-              "value": "44"
-            },
-            {
-              "name": "ROLE_TOOLTIP",
-              "value": "45"
-            },
-            {
-              "name": "ROLE_REGION",
-              "value": "46"
-            },
-            {
-              "name": "ROLE_TEXT_RUN",
-              "value": "47"
-            }
-          ]
-        },
-        {
-          "name": "AccessibilityPopupType",
-          "values": [
-            {
-              "name": "POPUP_MENU",
-              "value": "0"
-            },
-            {
-              "name": "POPUP_LIST",
-              "value": "1"
-            },
-            {
-              "name": "POPUP_TREE",
-              "value": "2"
-            },
-            {
-              "name": "POPUP_DIALOG",
-              "value": "3"
-            }
-          ]
-        },
-        {
-          "name": "AccessibilityFlags",
-          "values": [
-            {
-              "name": "FLAG_HIDDEN",
-              "value": "0"
-            },
-            {
-              "name": "FLAG_MULTISELECTABLE",
-              "value": "1"
-            },
-            {
-              "name": "FLAG_REQUIRED",
-              "value": "2"
-            },
-            {
-              "name": "FLAG_VISITED",
-              "value": "3"
-            },
-            {
-              "name": "FLAG_BUSY",
-              "value": "4"
-            },
-            {
-              "name": "FLAG_MODAL",
-              "value": "5"
-            },
-            {
-              "name": "FLAG_TOUCH_PASSTHROUGH",
-              "value": "6"
-            },
-            {
-              "name": "FLAG_READONLY",
-              "value": "7"
-            },
-            {
-              "name": "FLAG_DISABLED",
-              "value": "8"
-            },
-            {
-              "name": "FLAG_CLIPS_CHILDREN",
-              "value": "9"
-            }
-          ]
-        },
-        {
-          "name": "AccessibilityAction",
-          "values": [
-            {
-              "name": "ACTION_CLICK",
-              "value": "0"
-            },
-            {
-              "name": "ACTION_FOCUS",
-              "value": "1"
-            },
-            {
-              "name": "ACTION_BLUR",
-              "value": "2"
-            },
-            {
-              "name": "ACTION_COLLAPSE",
-              "value": "3"
-            },
-            {
-              "name": "ACTION_EXPAND",
-              "value": "4"
-            },
-            {
-              "name": "ACTION_DECREMENT",
-              "value": "5"
-            },
-            {
-              "name": "ACTION_INCREMENT",
-              "value": "6"
-            },
-            {
-              "name": "ACTION_HIDE_TOOLTIP",
-              "value": "7"
-            },
-            {
-              "name": "ACTION_SHOW_TOOLTIP",
-              "value": "8"
-            },
-            {
-              "name": "ACTION_SET_TEXT_SELECTION",
-              "value": "9"
-            },
-            {
-              "name": "ACTION_REPLACE_SELECTED_TEXT",
-              "value": "10"
-            },
-            {
-              "name": "ACTION_SCROLL_BACKWARD",
-              "value": "11"
-            },
-            {
-              "name": "ACTION_SCROLL_DOWN",
-              "value": "12"
-            },
-            {
-              "name": "ACTION_SCROLL_FORWARD",
-              "value": "13"
-            },
-            {
-              "name": "ACTION_SCROLL_LEFT",
-              "value": "14"
-            },
-            {
-              "name": "ACTION_SCROLL_RIGHT",
-              "value": "15"
-            },
-            {
-              "name": "ACTION_SCROLL_UP",
-              "value": "16"
-            },
-            {
-              "name": "ACTION_SCROLL_INTO_VIEW",
-              "value": "17"
-            },
-            {
-              "name": "ACTION_SCROLL_TO_POINT",
-              "value": "18"
-            },
-            {
-              "name": "ACTION_SET_SCROLL_OFFSET",
-              "value": "19"
-            },
-            {
-              "name": "ACTION_SET_VALUE",
-              "value": "20"
-            },
-            {
-              "name": "ACTION_SHOW_CONTEXT_MENU",
-              "value": "21"
-            },
-            {
-              "name": "ACTION_CUSTOM",
-              "value": "22"
-            }
-          ]
-        },
-        {
-          "name": "AccessibilityLiveMode",
-          "values": [
-            {
-              "name": "LIVE_OFF",
-              "value": "0"
-            },
-            {
-              "name": "LIVE_POLITE",
-              "value": "1"
-            },
-            {
-              "name": "LIVE_ASSERTIVE",
-              "value": "2"
-            }
-          ]
-        },
-        {
-          "name": "AccessibilityScrollUnit",
-          "values": [
-            {
-              "name": "SCROLL_UNIT_ITEM",
-              "value": "0"
-            },
-            {
-              "name": "SCROLL_UNIT_PAGE",
-              "value": "1"
-            }
-          ]
-        },
-        {
-          "name": "AccessibilityScrollHint",
-          "values": [
-            {
-              "name": "SCROLL_HINT_TOP_LEFT",
-              "value": "0"
-            },
-            {
-              "name": "SCROLL_HINT_BOTTOM_RIGHT",
-              "value": "1"
-            },
-            {
-              "name": "SCROLL_HINT_TOP_EDGE",
-              "value": "2"
-            },
-            {
-              "name": "SCROLL_HINT_BOTTOM_EDGE",
-              "value": "3"
-            },
-            {
-              "name": "SCROLL_HINT_LEFT_EDGE",
-              "value": "4"
-            },
-            {
-              "name": "SCROLL_HINT_RIGHT_EDGE",
-              "value": "5"
-            }
-          ]
-        }
-      ]
     },
     "AESContext": {
       "name": "AESContext",
@@ -1506,14 +1000,10 @@
       "description": "A set of [AnimationRootNode]s placed on a virtual axis, crossfading between the two adjacent ones. Used by [AnimationTree].",
       "methods": [
         "add_blend_point",
-        "find_blend_point_by_name",
         "get_blend_point_count",
-        "get_blend_point_name",
         "get_blend_point_node",
         "get_blend_point_position",
         "remove_blend_point",
-        "reorder_blend_point",
-        "set_blend_point_name",
         "set_blend_point_node",
         "set_blend_point_position",
         "set_blend_mode",
@@ -1566,17 +1056,13 @@
       "methods": [
         "add_blend_point",
         "add_triangle",
-        "find_blend_point_by_name",
         "get_blend_point_count",
-        "get_blend_point_name",
         "get_blend_point_node",
         "get_blend_point_position",
         "get_triangle_count",
         "get_triangle_point",
         "remove_blend_point",
         "remove_triangle",
-        "reorder_blend_point",
-        "set_blend_point_name",
         "set_blend_point_node",
         "set_blend_point_position",
         "set_auto_triangles",
@@ -3131,7 +2617,7 @@
     "AudioEffectAmplify": {
       "name": "AudioEffectAmplify",
       "inherits": "AudioEffect",
-      "description": "Adds a volume manipulation audio effect to an audio bus.",
+      "description": "Adds an amplifying audio effect to an audio bus.",
       "methods": [
         "set_volume_db",
         "get_volume_db",
@@ -3149,7 +2635,7 @@
     "AudioEffectBandLimitFilter": {
       "name": "AudioEffectBandLimitFilter",
       "inherits": "AudioEffectFilter",
-      "description": "Adds a band-limit filter to an audio bus.",
+      "description": "Adds a band limit filter to the audio bus.",
       "methods": [],
       "properties": [],
       "signals": [],
@@ -3159,7 +2645,7 @@
     "AudioEffectBandPassFilter": {
       "name": "AudioEffectBandPassFilter",
       "inherits": "AudioEffectFilter",
-      "description": "Adds a band-pass filter to an audio bus.",
+      "description": "Adds a band pass filter to the audio bus.",
       "methods": [],
       "properties": [],
       "signals": [],
@@ -3169,7 +2655,7 @@
     "AudioEffectCapture": {
       "name": "AudioEffectCapture",
       "inherits": "AudioEffect",
-      "description": "Exposes audio samples from an audio bus in real-time, such that it can be accessed as data.",
+      "description": "Captures audio from an audio bus in real-time.",
       "methods": [
         "can_get_buffer",
         "clear_buffer",
@@ -3191,7 +2677,7 @@
     "AudioEffectChorus": {
       "name": "AudioEffectChorus",
       "inherits": "AudioEffect",
-      "description": "Adds a chorus audio effect to an audio bus.\n\t\tGives the impression of multiple audio sources.",
+      "description": "Adds a chorus audio effect.",
       "methods": [
         "get_voice_cutoff_hz",
         "get_voice_delay_ms",
@@ -3248,7 +2734,7 @@
     "AudioEffectCompressor": {
       "name": "AudioEffectCompressor",
       "inherits": "AudioEffect",
-      "description": "Adds a downward compressor audio effect to an audio bus.\n\t\tAllows control of the dynamic range via a volume threshold and timing controls.",
+      "description": "Adds a compressor audio effect to an audio bus.\n\t\tReduces sounds that exceed a certain threshold level, smooths out the dynamics and increases the overall volume.",
       "methods": [
         "set_attack_us",
         "get_attack_us",
@@ -3281,7 +2767,7 @@
     "AudioEffectDelay": {
       "name": "AudioEffectDelay",
       "inherits": "AudioEffect",
-      "description": "Adds a delay audio effect to an audio bus.\n\t\tEmulates an echo by playing the input audio back after a period of time.",
+      "description": "Adds a delay audio effect to an audio bus. Plays input signal back after a period of time.\n\t\tTwo tap delay and feedback options.",
       "methods": [
         "set_dry",
         "get_dry",
@@ -3332,7 +2818,7 @@
     "AudioEffectDistortion": {
       "name": "AudioEffectDistortion",
       "inherits": "AudioEffect",
-      "description": "Adds a distortion audio effect to an audio bus.\n\t\tRemaps audio samples using a nonlinear function to achieve a distorted sound.",
+      "description": "Adds a distortion audio effect to an Audio bus.\n\t\tModifies the sound to make it distorted.",
       "methods": [
         "set_drive",
         "get_drive",
@@ -3385,7 +2871,7 @@
     "AudioEffectEQ": {
       "name": "AudioEffectEQ",
       "inherits": "AudioEffect",
-      "description": "Base class for audio equalizers (EQ). Gives you control over frequencies.\n\t\tUse it to create a custom equalizer if [AudioEffectEQ6], [AudioEffectEQ10], or [AudioEffectEQ21] don't fit your needs.",
+      "description": "Base class for audio equalizers. Gives you control over frequencies.\n\t\tUse it to create a custom equalizer if [AudioEffectEQ6], [AudioEffectEQ10] or [AudioEffectEQ21] don't fit your needs.",
       "methods": [
         "get_band_count",
         "get_band_gain_db",
@@ -3399,7 +2885,7 @@
     "AudioEffectEQ10": {
       "name": "AudioEffectEQ10",
       "inherits": "AudioEffectEQ",
-      "description": "Adds a 10-band equalizer audio effect to an audio bus.\n\t\tGives you control over frequencies from 31 Hz to 16000 Hz. Each frequency can be modulated between -60/+24 dB.",
+      "description": "Adds a 10-band equalizer audio effect to an Audio bus. Gives you control over frequencies from 31 Hz to 16000 Hz.\n\t\tEach frequency can be modulated between -60/+24 dB.",
       "methods": [],
       "properties": [],
       "signals": [],
@@ -3409,7 +2895,7 @@
     "AudioEffectEQ21": {
       "name": "AudioEffectEQ21",
       "inherits": "AudioEffectEQ",
-      "description": "Adds a 21-band equalizer audio effect to an audio bus.\n\t\tGives you control over frequencies from 22 Hz to 22000 Hz. Each frequency can be modulated between -60/+24 dB.",
+      "description": "Adds a 21-band equalizer audio effect to an Audio bus. Gives you control over frequencies from 22 Hz to 22000 Hz.\n\t\tEach frequency can be modulated between -60/+24 dB.",
       "methods": [],
       "properties": [],
       "signals": [],
@@ -3419,7 +2905,7 @@
     "AudioEffectEQ6": {
       "name": "AudioEffectEQ6",
       "inherits": "AudioEffectEQ",
-      "description": "Adds a 6-band equalizer audio effect to an audio bus.\n\t\tGives you control over frequencies from 32 Hz to 10000 Hz. Each frequency can be modulated between -60/+24 dB.",
+      "description": "Adds a 6-band equalizer audio effect to an audio bus. Gives you control over frequencies from 32 Hz to 10000 Hz.\n\t\tEach frequency can be modulated between -60/+24 dB.",
       "methods": [],
       "properties": [],
       "signals": [],
@@ -3429,7 +2915,7 @@
     "AudioEffectFilter": {
       "name": "AudioEffectFilter",
       "inherits": "AudioEffect",
-      "description": "Base class for filters. Use effects that inherit this class instead of using it directly.",
+      "description": "Adds a filter to the audio bus.",
       "methods": [
         "set_cutoff",
         "get_cutoff",
@@ -3475,7 +2961,7 @@
     "AudioEffectHardLimiter": {
       "name": "AudioEffectHardLimiter",
       "inherits": "AudioEffect",
-      "description": "Adds a limiter audio effect to an audio bus.\n\t\tPrevents audio signals from exceeding a specified volume level.",
+      "description": "Adds a hard limiter audio effect to an Audio bus.",
       "methods": [
         "set_ceiling_db",
         "get_ceiling_db",
@@ -3496,7 +2982,7 @@
     "AudioEffectHighPassFilter": {
       "name": "AudioEffectHighPassFilter",
       "inherits": "AudioEffectFilter",
-      "description": "Adds a high-pass filter to an audio bus.",
+      "description": "Adds a high-pass filter to the audio bus.",
       "methods": [],
       "properties": [],
       "signals": [],
@@ -3506,7 +2992,7 @@
     "AudioEffectHighShelfFilter": {
       "name": "AudioEffectHighShelfFilter",
       "inherits": "AudioEffectFilter",
-      "description": "Adds a high-shelf filter to an audio bus.",
+      "description": "Adds a high-shelf filter to the audio bus.",
       "methods": [],
       "properties": [],
       "signals": [],
@@ -3529,7 +3015,7 @@
     "AudioEffectLimiter": {
       "name": "AudioEffectLimiter",
       "inherits": "AudioEffect",
-      "description": "Adds a soft-clip limiter audio effect to an audio bus.",
+      "description": "Adds a soft-clip limiter audio effect to an Audio bus.",
       "methods": [
         "set_ceiling_db",
         "get_ceiling_db",
@@ -3553,7 +3039,7 @@
     "AudioEffectLowPassFilter": {
       "name": "AudioEffectLowPassFilter",
       "inherits": "AudioEffectFilter",
-      "description": "Adds a low-pass filter to an audio bus.",
+      "description": "Adds a low-pass filter to the audio bus.",
       "methods": [],
       "properties": [],
       "signals": [],
@@ -3563,7 +3049,7 @@
     "AudioEffectLowShelfFilter": {
       "name": "AudioEffectLowShelfFilter",
       "inherits": "AudioEffectFilter",
-      "description": "Adds a low-shelf filter to an audio bus.",
+      "description": "Adds a low-shelf filter to the audio bus.",
       "methods": [],
       "properties": [],
       "signals": [],
@@ -3573,7 +3059,7 @@
     "AudioEffectNotchFilter": {
       "name": "AudioEffectNotchFilter",
       "inherits": "AudioEffectFilter",
-      "description": "Adds a notch filter to an audio bus.",
+      "description": "Adds a notch filter to the Audio bus.",
       "methods": [],
       "properties": [],
       "signals": [],
@@ -3583,7 +3069,7 @@
     "AudioEffectPanner": {
       "name": "AudioEffectPanner",
       "inherits": "AudioEffect",
-      "description": "Adds a panner audio effect to an audio bus.\n\t\tPans the sound left or right.",
+      "description": "Adds a panner audio effect to an audio bus. Pans sound left or right.",
       "methods": [
         "set_pan",
         "get_pan"
@@ -3598,7 +3084,7 @@
     "AudioEffectPhaser": {
       "name": "AudioEffectPhaser",
       "inherits": "AudioEffect",
-      "description": "Adds a phaser audio effect to an audio bus.\n\t\tCreates several notch and peak filters that sweep across the spectrum.",
+      "description": "Adds a phaser audio effect to an audio bus.\n\t\tCombines the original signal with a copy that is slightly out of phase with the original.",
       "methods": [
         "set_depth",
         "get_depth",
@@ -3625,7 +3111,7 @@
     "AudioEffectPitchShift": {
       "name": "AudioEffectPitchShift",
       "inherits": "AudioEffect",
-      "description": "Adds a pitch-shifting audio effect to an audio bus.\n\t\tRaises or lowers the pitch of the input audio.",
+      "description": "Adds a pitch-shifting audio effect to an audio bus.\n\t\tRaises or lowers the pitch of original sound.",
       "methods": [
         "set_fft_size",
         "get_fft_size",
@@ -3694,7 +3180,7 @@
     "AudioEffectReverb": {
       "name": "AudioEffectReverb",
       "inherits": "AudioEffect",
-      "description": "Adds a reverberation audio effect to an audio bus.\n\t\tEmulates an echo by playing a blurred version of the input audio.",
+      "description": "Adds a reverberation audio effect to an Audio bus.",
       "methods": [
         "set_damping",
         "get_damping",
@@ -3730,16 +3216,19 @@
     "AudioEffectSpectrumAnalyzer": {
       "name": "AudioEffectSpectrumAnalyzer",
       "inherits": "AudioEffect",
-      "description": "Creates an [AudioEffectInstance] which performs frequency analysis and exposes results to be accessed in real-time.",
+      "description": "Audio effect that can be used for real-time audio visualizations.",
       "methods": [
         "set_buffer_length",
         "get_buffer_length",
         "set_fft_size",
-        "get_fft_size"
+        "get_fft_size",
+        "set_tap_back_pos",
+        "get_tap_back_pos"
       ],
       "properties": [
         "buffer_length",
-        "fft_size"
+        "fft_size",
+        "tap_back_pos"
       ],
       "signals": [],
       "constants": [],
@@ -3804,7 +3293,7 @@
     "AudioEffectStereoEnhance": {
       "name": "AudioEffectStereoEnhance",
       "inherits": "AudioEffect",
-      "description": "Adds a stereo manipulation audio effect to an audio bus.\n\t\tControls gain of the side channels, and widens the stereo image.",
+      "description": "An audio effect that can be used to adjust the intensity of stereo panning.",
       "methods": [
         "set_pan_pullout",
         "get_pan_pullout",
@@ -4184,7 +3673,6 @@
     "AudioStreamPlaybackResampled": {
       "name": "AudioStreamPlaybackResampled",
       "inherits": "AudioStreamPlayback",
-      "description": "Playback class used for resampled [AudioStream]s.",
       "methods": [
         "_get_stream_sampling_rate",
         "_mix_resampled",
@@ -4610,18 +4098,6 @@
           ]
         }
       ]
-    },
-    "AwaitTweener": {
-      "name": "AwaitTweener",
-      "inherits": "Tweener",
-      "description": "Awaits a specified signal.",
-      "methods": [
-        "set_timeout"
-      ],
-      "properties": [],
-      "signals": [],
-      "constants": [],
-      "enums": []
     },
     "BackBufferCopy": {
       "name": "BackBufferCopy",
@@ -5709,7 +5185,6 @@
         "is_conformal",
         "is_equal_approx",
         "is_finite",
-        "is_orthonormal",
         "looking_at",
         "orthonormalized",
         "rotated",
@@ -5762,47 +5237,6 @@
       "signals": [],
       "constants": [],
       "enums": []
-    },
-    "BlitMaterial": {
-      "name": "BlitMaterial",
-      "inherits": "Material",
-      "description": "A material that processes blit calls to a DrawableTexture.",
-      "methods": [
-        "set_blend_mode",
-        "get_blend_mode"
-      ],
-      "properties": [
-        "blend_mode"
-      ],
-      "signals": [],
-      "constants": [],
-      "enums": [
-        {
-          "name": "BlendMode",
-          "values": [
-            {
-              "name": "BLEND_MODE_MIX",
-              "value": "0"
-            },
-            {
-              "name": "BLEND_MODE_ADD",
-              "value": "1"
-            },
-            {
-              "name": "BLEND_MODE_SUB",
-              "value": "2"
-            },
-            {
-              "name": "BLEND_MODE_MUL",
-              "value": "3"
-            },
-            {
-              "name": "BLEND_MODE_DISABLED",
-              "value": "4"
-            }
-          ]
-        }
-      ]
     },
     "Bone2D": {
       "name": "Bone2D",
@@ -6579,8 +6013,6 @@
       "methods": [
         "_activate_feed",
         "_deactivate_feed",
-        "_get_formats",
-        "_set_format",
         "get_datatype",
         "get_id",
         "get_name",
@@ -7723,7 +7155,6 @@
         "is_line_code_region_start",
         "is_line_executing",
         "is_line_folded",
-        "join_lines",
         "move_lines_down",
         "move_lines_up",
         "remove_comment_delimiter",
@@ -8004,7 +7435,6 @@
         "get_collision_layer_value",
         "get_collision_mask_value",
         "get_rid",
-        "get_shape_owner_one_way_collision_direction",
         "get_shape_owner_one_way_collision_margin",
         "get_shape_owners",
         "is_shape_owner_disabled",
@@ -8023,7 +7453,6 @@
         "shape_owner_remove_shape",
         "shape_owner_set_disabled",
         "shape_owner_set_one_way_collision",
-        "shape_owner_set_one_way_collision_direction",
         "shape_owner_set_one_way_collision_margin",
         "shape_owner_set_transform",
         "set_collision_layer",
@@ -8226,8 +7655,6 @@
         "is_disabled",
         "set_one_way_collision",
         "is_one_way_collision_enabled",
-        "set_one_way_collision_direction",
-        "get_one_way_collision_direction",
         "set_one_way_collision_margin",
         "get_one_way_collision_margin",
         "set_polygon",
@@ -8237,7 +7664,6 @@
         "build_mode",
         "disabled",
         "one_way_collision",
-        "one_way_collision_direction",
         "one_way_collision_margin",
         "polygon"
       ],
@@ -8300,8 +7726,6 @@
         "is_disabled",
         "set_one_way_collision",
         "is_one_way_collision_enabled",
-        "set_one_way_collision_direction",
-        "get_one_way_collision_direction",
         "set_one_way_collision_margin",
         "get_one_way_collision_margin",
         "set_shape",
@@ -8311,7 +7735,6 @@
         "debug_color",
         "disabled",
         "one_way_collision",
-        "one_way_collision_direction",
         "one_way_collision_margin",
         "shape"
       ],
@@ -9062,13 +8485,10 @@
         "_get_allowed_size_flags_vertical",
         "fit_child_in_rect",
         "queue_sort",
-        "set_accessibility_region",
-        "is_accessibility_region",
         "set_mouse_filter",
         "get_mouse_filter"
       ],
       "properties": [
-        "accessibility_region",
         "mouse_filter"
       ],
       "signals": [
@@ -9235,22 +8655,6 @@
         "get_mouse_filter",
         "set_force_pass_scroll_events",
         "is_force_pass_scroll_events",
-        "set_offset_transform_enabled",
-        "is_offset_transform_enabled",
-        "set_offset_transform_pivot",
-        "get_offset_transform_pivot",
-        "set_offset_transform_pivot_ratio",
-        "get_offset_transform_pivot_ratio",
-        "set_offset_transform_position",
-        "get_offset_transform_position",
-        "set_offset_transform_position_ratio",
-        "get_offset_transform_position_ratio",
-        "set_offset_transform_rotation",
-        "get_offset_transform_rotation",
-        "set_offset_transform_scale",
-        "get_offset_transform_scale",
-        "set_offset_transform_visual_only",
-        "is_offset_transform_visual_only",
         "set_physics_interpolation_mode",
         "get_physics_interpolation_mode",
         "set_pivot_offset_ratio",
@@ -9318,14 +8722,6 @@
         "offset_left",
         "offset_right",
         "offset_top",
-        "offset_transform_enabled",
-        "offset_transform_pivot",
-        "offset_transform_pivot_ratio",
-        "offset_transform_position",
-        "offset_transform_position_ratio",
-        "offset_transform_rotation",
-        "offset_transform_scale",
-        "offset_transform_visual_only",
         "physics_interpolation_mode",
         "pivot_offset_ratio",
         "position",
@@ -11326,7 +10722,6 @@
         "ime_get_text",
         "is_dark_mode",
         "is_dark_mode_supported",
-        "is_in_pip_mode",
         "is_touchscreen_available",
         "is_window_transparency_available",
         "keyboard_get_current_layout",
@@ -11340,9 +10735,6 @@
         "mouse_get_mode",
         "mouse_get_position",
         "mouse_set_mode",
-        "pip_mode_enter",
-        "pip_mode_set_aspect_ratio",
-        "pip_mode_set_auto_enter_on_background",
         "process_events",
         "register_additional_output",
         "screen_get_dpi",
@@ -11392,15 +10784,10 @@
         "window_get_attached_instance_id",
         "window_get_current_screen",
         "window_get_flag",
-        "window_get_hdr_output_current_max_luminance",
-        "window_get_hdr_output_current_reference_luminance",
-        "window_get_hdr_output_max_luminance",
-        "window_get_hdr_output_reference_luminance",
         "window_get_max_size",
         "window_get_min_size",
         "window_get_mode",
         "window_get_native_handle",
-        "window_get_output_max_linear_value",
         "window_get_popup_safe_rect",
         "window_get_position",
         "window_get_position_with_decorations",
@@ -11410,22 +10797,16 @@
         "window_get_title_size",
         "window_get_vsync_mode",
         "window_is_focused",
-        "window_is_hdr_output_enabled",
-        "window_is_hdr_output_requested",
-        "window_is_hdr_output_supported",
         "window_is_maximize_allowed",
         "window_maximize_on_title_dbl_click",
         "window_minimize_on_title_dbl_click",
         "window_move_to_foreground",
         "window_request_attention",
-        "window_request_hdr_output",
         "window_set_color",
         "window_set_current_screen",
         "window_set_drop_files_callback",
         "window_set_exclusive",
         "window_set_flag",
-        "window_set_hdr_output_max_luminance",
-        "window_set_hdr_output_reference_luminance",
         "window_set_ime_active",
         "window_set_ime_position",
         "window_set_input_event_callback",
@@ -11438,8 +10819,6 @@
         "window_set_position",
         "window_set_rect_changed_callback",
         "window_set_size",
-        "window_set_taskbar_progress_state",
-        "window_set_taskbar_progress_value",
         "window_set_title",
         "window_set_transient",
         "window_set_vsync_mode",
@@ -11449,17 +10828,7 @@
         "window_start_resize"
       ],
       "properties": [],
-      "signals": [
-        {
-          "name": "orientation_changed",
-          "parameters": [
-            {
-              "name": "orientation",
-              "type": "int"
-            }
-          ]
-        }
-      ],
+      "signals": [],
       "constants": [
         "INVALID_SCREEN",
         "SCREEN_WITH_MOUSE_FOCUS",
@@ -11609,14 +10978,6 @@
             {
               "name": "FEATURE_ACCESSIBILITY_SCREEN_READER",
               "value": "34"
-            },
-            {
-              "name": "FEATURE_HDR_OUTPUT",
-              "value": "35"
-            },
-            {
-              "name": "FEATURE_PIP_MODE",
-              "value": "36"
             }
           ]
         },
@@ -11806,14 +11167,6 @@
             {
               "name": "ROLE_TOOLTIP",
               "value": "45"
-            },
-            {
-              "name": "ROLE_REGION",
-              "value": "46"
-            },
-            {
-              "name": "ROLE_TEXT_RUN",
-              "value": "47"
             }
           ]
         },
@@ -12266,31 +11619,6 @@
           ]
         },
         {
-          "name": "ProgressState",
-          "values": [
-            {
-              "name": "PROGRESS_STATE_NOPROGRESS",
-              "value": "0"
-            },
-            {
-              "name": "PROGRESS_STATE_INDETERMINATE",
-              "value": "1"
-            },
-            {
-              "name": "PROGRESS_STATE_NORMAL",
-              "value": "2"
-            },
-            {
-              "name": "PROGRESS_STATE_ERROR",
-              "value": "3"
-            },
-            {
-              "name": "PROGRESS_STATE_PAUSED",
-              "value": "4"
-            }
-          ]
-        },
-        {
           "name": "WindowFlags",
           "values": [
             {
@@ -12480,14 +11808,6 @@
             {
               "name": "EGL_CONFIG",
               "value": "5"
-            },
-            {
-              "name": "GLX_VISUALID",
-              "value": "6"
-            },
-            {
-              "name": "GLX_FBCONFIG",
-              "value": "7"
             }
           ]
         },
@@ -12528,69 +11848,17 @@
         "get_base_scale",
         "set_color_map",
         "get_color_map",
-        "set_fix_alpha_border",
-        "get_fix_alpha_border",
-        "set_premult_alpha",
-        "get_premult_alpha",
         "set_local_to_scene",
         "is_local_to_scene"
       ],
       "properties": [
         "base_scale",
         "color_map",
-        "fix_alpha_border",
-        "premult_alpha",
         "resource_local_to_scene"
       ],
       "signals": [],
       "constants": [],
       "enums": []
-    },
-    "DrawableTexture2D": {
-      "name": "DrawableTexture2D",
-      "inherits": "Texture2D",
-      "description": "A 2D texture that supports drawing to itself via Blit calls.",
-      "methods": [
-        "blit_rect",
-        "blit_rect_multi",
-        "generate_mipmaps",
-        "get_use_mipmaps",
-        "set_format",
-        "set_height",
-        "set_use_mipmaps",
-        "set_width",
-        "setup",
-        "set_local_to_scene",
-        "is_local_to_scene"
-      ],
-      "properties": [
-        "resource_local_to_scene"
-      ],
-      "signals": [],
-      "constants": [],
-      "enums": [
-        {
-          "name": "DrawableFormat",
-          "values": [
-            {
-              "name": "DRAWABLE_FORMAT_RGBA8",
-              "value": "0"
-            },
-            {
-              "name": "DRAWABLE_FORMAT_RGBA8_SRGB",
-              "value": "1"
-            },
-            {
-              "name": "DRAWABLE_FORMAT_RGBAH",
-              "value": "2"
-            },
-            {
-              "name": "DRAWABLE_FORMAT_RGBAF",
-              "value": "3"
-            }
-          ]
-        }
-      ]
     },
     "DTLSServer": {
       "name": "DTLSServer",
@@ -12786,10 +12054,6 @@
         {
           "name": "closed",
           "parameters": []
-        },
-        {
-          "name": "opened",
-          "parameters": []
         }
       ],
       "constants": [],
@@ -12859,16 +12123,8 @@
               "value": "8"
             },
             {
-              "name": "DOCK_SLOT_BOTTOM_L",
-              "value": "9"
-            },
-            {
-              "name": "DOCK_SLOT_BOTTOM_R",
-              "value": "10"
-            },
-            {
               "name": "DOCK_SLOT_MAX",
-              "value": "11"
+              "value": "9"
             }
           ]
         }
@@ -13036,7 +12292,6 @@
         "_customize_scene",
         "_end_customize_resources",
         "_end_customize_scenes",
-        "_end_generate_apple_embedded_project",
         "_export_begin",
         "_export_end",
         "_export_file",
@@ -13284,7 +12539,6 @@
         "get_filesystem",
         "get_filesystem_path",
         "get_scanning_progress",
-        "is_importing",
         "is_scanning",
         "reimport_files",
         "scan",
@@ -13581,7 +12835,6 @@
         "get_script_editor",
         "get_selected_paths",
         "get_selection",
-        "get_unsaved_scenes",
         "inspect_object",
         "is_multi_window_enabled",
         "is_node_3d_snap_enabled",
@@ -14501,7 +13754,6 @@
         "debugger/remote_inspect_refresh_interval",
         "debugger/remote_scene_tree_refresh_interval",
         "docks/filesystem/always_show_folders",
-        "docks/filesystem/automatically_open_created_scripts",
         "docks/filesystem/other_file_extensions",
         "docks/filesystem/textfile_extensions",
         "docks/filesystem/thumbnail_size",
@@ -14524,9 +13776,7 @@
         "editors/2d/bone_width",
         "editors/2d/grid_color",
         "editors/2d/guides_color",
-        "editors/2d/locked_selection_rectangle_color",
         "editors/2d/ruler_width",
-        "editors/2d/selection_rectangle_color",
         "editors/2d/smart_snapping_line_color",
         "editors/2d/use_integer_zoom_by_default",
         "editors/2d/viewport_border_color",
@@ -14538,7 +13788,6 @@
         "editors/3d/freelook/freelook_activation_modifier",
         "editors/3d/freelook/freelook_base_speed",
         "editors/3d/freelook/freelook_inertia",
-        "editors/3d/freelook/freelook_invert_y_axis",
         "editors/3d/freelook/freelook_navigation_scheme",
         "editors/3d/freelook/freelook_sensitivity",
         "editors/3d/freelook/freelook_speed_zoom_link",
@@ -14574,7 +13823,6 @@
         "editors/3d/secondary_grid_color",
         "editors/3d/selection_box_color",
         "editors/3d/show_gizmo_during_rotation",
-        "editors/3d/view_plane_rotation_gizmo_scale",
         "editors/3d_gizmos/gizmo_colors/aabb",
         "editors/3d_gizmos/gizmo_colors/camera",
         "editors/3d_gizmos/gizmo_colors/csg",
@@ -14606,7 +13854,6 @@
         "editors/3d_gizmos/gizmo_settings/bone_shape",
         "editors/3d_gizmos/gizmo_settings/lightmap_gi_probe_size",
         "editors/3d_gizmos/gizmo_settings/path3d_tilt_disk_size",
-        "editors/3d_gizmos/gizmo_settings/show_collision_shapes_only_when_selected",
         "editors/animation/autorename_animation_tracks",
         "editors/animation/confirm_insert_track",
         "editors/animation/default_animation_step",
@@ -14693,51 +13940,52 @@
         "input/buffering/agile_event_flushing",
         "input/buffering/use_accumulated_input",
         "interface/accessibility/accessibility_support",
-        "interface/editor/appearance/accept_dialog_cancel_ok_buttons",
-        "interface/editor/appearance/collapse_main_menu",
-        "interface/editor/appearance/custom_display_scale",
-        "interface/editor/appearance/display_scale",
-        "interface/editor/appearance/editor_screen",
-        "interface/editor/appearance/expand_to_title",
-        "interface/editor/appearance/project_manager_screen",
-        "interface/editor/appearance/show_update_spinner",
-        "interface/editor/appearance/use_embedded_menu",
-        "interface/editor/appearance/use_native_file_dialogs",
-        "interface/editor/behavior/automatically_open_screenshots",
-        "interface/editor/behavior/import_resources_when_unfocused",
-        "interface/editor/behavior/save_each_scene_on_quit",
-        "interface/editor/behavior/save_on_focus_loss",
-        "interface/editor/behavior/separate_distraction_mode",
-        "interface/editor/behavior/show_internal_errors_in_toast_notifications",
-        "interface/editor/display/keep_screen_on",
-        "interface/editor/display/single_window_mode",
-        "interface/editor/display/update_continuously",
-        "interface/editor/display/vsync_mode",
-        "interface/editor/docks/bottom_dock_tab_style",
-        "interface/editor/docks/dock_tab_style",
-        "interface/editor/fonts/code_font",
-        "interface/editor/fonts/code_font_contextual_ligatures",
-        "interface/editor/fonts/code_font_custom_opentype_features",
-        "interface/editor/fonts/code_font_custom_variations",
-        "interface/editor/fonts/code_font_size",
-        "interface/editor/fonts/font_allow_msdf",
-        "interface/editor/fonts/font_antialiasing",
-        "interface/editor/fonts/font_disable_embedded_bitmaps",
-        "interface/editor/fonts/font_hinting",
-        "interface/editor/fonts/font_subpixel_positioning",
-        "interface/editor/fonts/main_font",
-        "interface/editor/fonts/main_font_bold",
-        "interface/editor/fonts/main_font_custom_opentype_features",
-        "interface/editor/fonts/main_font_size",
-        "interface/editor/input/mouse_extra_buttons_navigate_history",
-        "interface/editor/input/tablet_driver",
-        "interface/editor/localization/editor_language",
-        "interface/editor/localization/localize_settings",
-        "interface/editor/localization/ui_layout_direction",
-        "interface/editor/timers/dragging_hover_wait_seconds",
-        "interface/editor/timers/low_processor_mode_sleep_usec",
-        "interface/editor/timers/unfocused_low_processor_mode_sleep_usec",
+        "interface/editor/accept_dialog_cancel_ok_buttons",
+        "interface/editor/automatically_open_screenshots",
+        "interface/editor/bottom_dock_tab_style",
+        "interface/editor/code_font",
+        "interface/editor/code_font_contextual_ligatures",
+        "interface/editor/code_font_custom_opentype_features",
+        "interface/editor/code_font_custom_variations",
+        "interface/editor/code_font_size",
+        "interface/editor/collapse_main_menu",
+        "interface/editor/custom_display_scale",
+        "interface/editor/display_scale",
+        "interface/editor/dock_tab_style",
+        "interface/editor/dragging_hover_wait_seconds",
+        "interface/editor/editor_language",
+        "interface/editor/editor_screen",
+        "interface/editor/expand_to_title",
+        "interface/editor/font_allow_msdf",
+        "interface/editor/font_antialiasing",
+        "interface/editor/font_disable_embedded_bitmaps",
+        "interface/editor/font_hinting",
+        "interface/editor/font_subpixel_positioning",
+        "interface/editor/import_resources_when_unfocused",
+        "interface/editor/keep_screen_on",
+        "interface/editor/localize_settings",
+        "interface/editor/low_processor_mode_sleep_usec",
+        "interface/editor/main_font",
+        "interface/editor/main_font_bold",
+        "interface/editor/main_font_custom_opentype_features",
+        "interface/editor/main_font_size",
+        "interface/editor/mouse_extra_buttons_navigate_history",
+        "interface/editor/project_manager_screen",
+        "interface/editor/save_each_scene_on_quit",
+        "interface/editor/save_on_focus_loss",
+        "interface/editor/separate_distraction_mode",
+        "interface/editor/show_internal_errors_in_toast_notifications",
+        "interface/editor/show_update_spinner",
+        "interface/editor/single_window_mode",
+        "interface/editor/tablet_driver",
+        "interface/editor/ui_layout_direction",
+        "interface/editor/unfocused_low_processor_mode_sleep_usec",
+        "interface/editor/update_continuously",
+        "interface/editor/use_embedded_menu",
+        "interface/editor/use_native_file_dialogs",
+        "interface/editor/vsync_mode",
         "interface/editors/derive_script_globals_by_name",
+        "interface/editors/show_scene_tree_root_selection",
         "interface/inspector/auto_unfold_foreign_scenes",
         "interface/inspector/color_picker_show_intensity",
         "interface/inspector/default_color_picker_mode",
@@ -14781,7 +14029,6 @@
         "interface/theme/relationship_line_opacity",
         "interface/theme/spacing_preset",
         "interface/theme/style",
-        "interface/theme/use_monospace_font_for_editor_symbols",
         "interface/theme/use_system_accent_color",
         "interface/touchscreen/enable_long_press_as_right_click",
         "interface/touchscreen/enable_pan_and_scale_gestures",
@@ -14794,12 +14041,6 @@
         "network/debug/remote_port",
         "network/http_proxy/host",
         "network/http_proxy/port",
-        "network/language_server/enable_smart_resolve",
-        "network/language_server/poll_limit_usec",
-        "network/language_server/remote_host",
-        "network/language_server/remote_port",
-        "network/language_server/show_native_symbols_in_editor",
-        "network/language_server/use_thread",
         "network/tls/editor_tls_certificates",
         "network/tls/enable_tls_v1.3",
         "project_manager/default_renderer",
@@ -14822,7 +14063,6 @@
         "text_editor/appearance/caret/highlight_all_occurrences",
         "text_editor/appearance/caret/highlight_current_line",
         "text_editor/appearance/caret/type",
-        "text_editor/appearance/drag_and_drop_info/show_drag_and_drop_info",
         "text_editor/appearance/enable_inline_color_picker",
         "text_editor/appearance/guidelines/line_length_guideline_hard_column",
         "text_editor/appearance/guidelines/line_length_guideline_soft_column",
@@ -14968,8 +14208,6 @@
       "methods": [
         "set_control_state",
         "get_control_state",
-        "set_deferred_drag_mode_enabled",
-        "is_deferred_drag_mode_enabled",
         "set_editing_integer",
         "is_editing_integer",
         "set_flat",
@@ -14985,7 +14223,6 @@
       ],
       "properties": [
         "control_state",
-        "deferred_drag_mode",
         "editing_integer",
         "flat",
         "focus_mode",
@@ -18158,10 +17395,6 @@
             {
               "name": "FILL_SQUARE",
               "value": "2"
-            },
-            {
-              "name": "FILL_CONIC",
-              "value": "3"
             }
           ]
         },
@@ -19951,6 +19184,7 @@
       "description": "A [Texture2D] based on an [Image].",
       "methods": [
         "create_from_image",
+        "get_format",
         "set_image",
         "set_size_override",
         "update",
@@ -20036,7 +19270,6 @@
         "get_surface_material",
         "get_surface_name",
         "get_surface_primitive_type",
-        "merge_importer_meshes",
         "set_blend_shape_mode",
         "set_lightmap_size_hint",
         "set_surface_material",
@@ -20096,7 +19329,6 @@
         "action_press",
         "action_release",
         "add_joy_mapping",
-        "clear_joy_motion_sensors_calibration",
         "flush_buffered_events",
         "get_accelerometer",
         "get_action_raw_strength",
@@ -20106,17 +19338,11 @@
         "get_current_cursor_shape",
         "get_gravity",
         "get_gyroscope",
-        "get_joy_accelerometer",
         "get_joy_axis",
-        "get_joy_gravity",
         "get_joy_guid",
-        "get_joy_gyroscope",
         "get_joy_info",
-        "get_joy_motion_sensors_calibration",
-        "get_joy_motion_sensors_rate",
         "get_joy_name",
         "get_joy_vibration_duration",
-        "get_joy_vibration_remaining_duration",
         "get_joy_vibration_strength",
         "get_last_mouse_screen_velocity",
         "get_last_mouse_velocity",
@@ -20124,8 +19350,6 @@
         "get_mouse_button_mask",
         "get_vector",
         "has_joy_light",
-        "has_joy_motion_sensors",
-        "has_joy_vibration",
         "is_action_just_pressed",
         "is_action_just_pressed_by_event",
         "is_action_just_released",
@@ -20134,10 +19358,6 @@
         "is_anything_pressed",
         "is_joy_button_pressed",
         "is_joy_known",
-        "is_joy_motion_sensors_calibrated",
-        "is_joy_motion_sensors_calibrating",
-        "is_joy_motion_sensors_enabled",
-        "is_joy_vibrating",
         "is_key_label_pressed",
         "is_key_pressed",
         "is_mouse_button_pressed",
@@ -20150,13 +19370,9 @@
         "set_gravity",
         "set_gyroscope",
         "set_joy_light",
-        "set_joy_motion_sensors_calibration",
-        "set_joy_motion_sensors_enabled",
         "set_magnetometer",
         "should_ignore_device",
-        "start_joy_motion_sensors_calibration",
         "start_joy_vibration",
-        "stop_joy_motion_sensors_calibration",
         "stop_joy_vibration",
         "vibrate_handheld",
         "warp_mouse",
@@ -20164,8 +19380,6 @@
         "is_emulating_mouse_from_touch",
         "set_emulate_touch_from_mouse",
         "is_emulating_touch_from_mouse",
-        "set_ignore_joypad_on_unfocused_application",
-        "is_ignoring_joypad_on_unfocused_application",
         "set_mouse_mode",
         "get_mouse_mode",
         "set_use_accumulated_input",
@@ -20174,7 +19388,6 @@
       "properties": [
         "emulate_mouse_from_touch",
         "emulate_touch_from_mouse",
-        "ignore_joypad_on_unfocused_application",
         "mouse_mode",
         "use_accumulated_input"
       ],
@@ -20325,9 +19538,7 @@
       ],
       "signals": [],
       "constants": [
-        "DEVICE_ID_EMULATION",
-        "DEVICE_ID_KEYBOARD",
-        "DEVICE_ID_MOUSE"
+        "DEVICE_ID_EMULATION"
       ],
       "enums": []
     },
@@ -20375,11 +19586,11 @@
       "inherits": "InputEventWithModifiers",
       "description": "Abstract base class for touch gestures.",
       "methods": [
-        "set_device",
-        "get_device"
+        "set_position",
+        "get_position"
       ],
       "properties": [
-        "device"
+        "position"
       ],
       "signals": [],
       "constants": [],
@@ -20522,14 +19733,14 @@
       "methods": [
         "set_button_mask",
         "get_button_mask",
-        "set_device",
-        "get_device",
+        "set_global_position",
+        "get_global_position",
         "set_position",
         "get_position"
       ],
       "properties": [
         "button_mask",
-        "device",
+        "global_position",
         "position"
       ],
       "signals": [],
@@ -20705,8 +19916,8 @@
         "is_command_or_control_autoremap",
         "set_ctrl_pressed",
         "is_ctrl_pressed",
-        "set_device",
-        "get_device",
+        "set_meta_pressed",
+        "is_meta_pressed",
         "set_shift_pressed",
         "is_shift_pressed"
       ],
@@ -20714,7 +19925,7 @@
         "alt_pressed",
         "command_or_control_autoremap",
         "ctrl_pressed",
-        "device",
+        "meta_pressed",
         "shift_pressed"
       ],
       "signals": [],
@@ -20742,12 +19953,7 @@
         "load_from_project_settings"
       ],
       "properties": [],
-      "signals": [
-        {
-          "name": "project_settings_loaded",
-          "parameters": []
-        }
-      ],
+      "signals": [],
       "constants": [],
       "enums": []
     },
@@ -20865,7 +20071,6 @@
       "methods": [
         "add_icon_item",
         "add_item",
-        "center_on_current",
         "clear",
         "deselect",
         "deselect_all",
@@ -23056,9 +22261,7 @@
         "NOTIFICATION_APPLICATION_PAUSED",
         "NOTIFICATION_APPLICATION_FOCUS_IN",
         "NOTIFICATION_APPLICATION_FOCUS_OUT",
-        "NOTIFICATION_TEXT_SERVER_CHANGED",
-        "NOTIFICATION_APPLICATION_PIP_MODE_ENTERED",
-        "NOTIFICATION_APPLICATION_PIP_MODE_EXITED"
+        "NOTIFICATION_TEXT_SERVER_CHANGED"
       ],
       "enums": []
     },
@@ -24258,7 +23461,6 @@
         "set_item_hover_callbacks",
         "set_item_icon",
         "set_item_indentation_level",
-        "set_item_index",
         "set_item_key_callback",
         "set_item_max_states",
         "set_item_radio_checkable",
@@ -26367,8 +25569,6 @@
         "NOTIFICATION_APPLICATION_FOCUS_IN",
         "NOTIFICATION_APPLICATION_FOCUS_OUT",
         "NOTIFICATION_TEXT_SERVER_CHANGED",
-        "NOTIFICATION_APPLICATION_PIP_MODE_ENTERED",
-        "NOTIFICATION_APPLICATION_PIP_MODE_EXITED",
         "NOTIFICATION_ACCESSIBILITY_UPDATE",
         "NOTIFICATION_ACCESSIBILITY_INVALIDATE"
       ],
@@ -26998,7 +26198,6 @@
         "has_selectable_items",
         "is_item_disabled",
         "is_item_separator",
-        "is_search_bar_enabled",
         "remove_item",
         "select",
         "set_disable_shortcuts",
@@ -27012,8 +26211,6 @@
         "show_popup",
         "set_action_mode",
         "get_action_mode",
-        "set_search_bar_enabled_on_item_count",
-        "get_search_bar_enabled_on_item_count",
         "set_fit_to_longest_item",
         "is_fit_to_longest_item",
         "set_item_count",
@@ -27025,7 +26222,6 @@
       ],
       "properties": [
         "action_mode",
-        "enable_search_bar_on_item_count",
         "fit_to_longest_item",
         "item_count",
         "selected",
@@ -28547,7 +27743,6 @@
       "description": "Creates packages that can be loaded into a running project.",
       "methods": [
         "add_file",
-        "add_file_from_buffer",
         "add_file_removal",
         "flush",
         "pck_start"
@@ -32055,7 +31250,6 @@
         "is_item_separator",
         "is_item_shortcut_disabled",
         "is_native_menu",
-        "is_search_bar_enabled",
         "is_system_menu",
         "remove_item",
         "scroll_to_item",
@@ -32072,7 +31266,6 @@
         "set_item_icon_modulate",
         "set_item_id",
         "set_item_indent",
-        "set_item_index",
         "set_item_language",
         "set_item_metadata",
         "set_item_multistate",
@@ -32088,8 +31281,8 @@
         "toggle_item_multistate",
         "set_allow_search",
         "get_allow_search",
-        "set_default_canvas_item_texture_filter",
-        "get_default_canvas_item_texture_filter",
+        "set_hide_on_checkable_item_selection",
+        "is_hide_on_checkable_item_selection",
         "set_hide_on_item_selection",
         "is_hide_on_item_selection",
         "set_hide_on_state_item_selection",
@@ -32098,8 +31291,6 @@
         "get_item_count",
         "set_prefer_native_menu",
         "is_prefer_native_menu",
-        "set_search_bar_enabled_on_item_count",
-        "get_search_bar_enabled_on_item_count",
         "set_shrink_height",
         "get_shrink_height",
         "set_shrink_width",
@@ -32115,12 +31306,11 @@
       ],
       "properties": [
         "allow_search",
-        "canvas_item_default_texture_filter",
+        "hide_on_checkable_item_selection",
         "hide_on_item_selection",
         "hide_on_state_item_selection",
         "item_count",
         "prefer_native_menu",
-        "search_bar_enabled_on_item_count",
         "shrink_height",
         "shrink_width",
         "submenu_popup_delay",
@@ -32169,18 +31359,12 @@
       "inherits": "Popup",
       "description": "A popup with a panel background.",
       "methods": [
-        "set_default_canvas_item_texture_filter",
-        "get_default_canvas_item_texture_filter",
-        "set_default_canvas_item_texture_repeat",
-        "get_default_canvas_item_texture_repeat",
         "set_flag",
         "get_flag",
         "set_transparent_background",
         "has_transparent_background"
       ],
       "properties": [
-        "canvas_item_default_texture_filter",
-        "canvas_item_default_texture_repeat",
         "transparent",
         "transparent_bg"
       ],
@@ -32195,6 +31379,7 @@
       "methods": [
         "create_from_image",
         "get_compression_mode",
+        "get_format",
         "is_keeping_all_compressed_buffers",
         "set_basisu_compressor_params",
         "set_keep_all_compressed_buffers",
@@ -32509,7 +31694,6 @@
         "set_setting"
       ],
       "properties": [
-        "accessibility/general/accessibility_driver",
         "accessibility/general/accessibility_support",
         "accessibility/general/updates_per_second",
         "animation/compatibility/default_parent_skeleton_in_mesh_instance_3d",
@@ -32720,7 +31904,6 @@
         "display/window/frame_pacing/android/enable_frame_pacing",
         "display/window/frame_pacing/android/swappy_mode",
         "display/window/handheld/orientation",
-        "display/window/hdr/request_hdr_output",
         "display/window/ios/allow_high_refresh_rate",
         "display/window/ios/hide_home_indicator",
         "display/window/ios/hide_status_bar",
@@ -32897,7 +32080,6 @@
         "input/ui_up",
         "input_devices/buffering/agile_event_flushing",
         "input_devices/compatibility/legacy_just_pressed_behavior",
-        "input_devices/joypads/ignore_joypad_on_unfocused_application",
         "input_devices/pen_tablet/driver",
         "input_devices/pen_tablet/driver.windows",
         "input_devices/pointing/android/disable_scroll_deadzone",
@@ -33435,7 +32617,6 @@
         "xr/openxr/extensions/spatial_entity/enable_plane_tracking",
         "xr/openxr/extensions/spatial_entity/enable_spatial_anchors",
         "xr/openxr/extensions/spatial_entity/enabled",
-        "xr/openxr/extensions/user_presence",
         "xr/openxr/form_factor",
         "xr/openxr/foveation_dynamic",
         "xr/openxr/foveation_level",
@@ -34111,13 +33292,8 @@
       ],
       "properties": [
         "language",
-        "source_any_hit",
-        "source_closest_hit",
         "source_compute",
         "source_fragment",
-        "source_intersection",
-        "source_miss",
-        "source_raygen",
         "source_tesselation_control",
         "source_tesselation_evaluation",
         "source_vertex"
@@ -34137,23 +33313,13 @@
         "set_stage_compile_error"
       ],
       "properties": [
-        "bytecode_any_hit",
-        "bytecode_closest_hit",
         "bytecode_compute",
         "bytecode_fragment",
-        "bytecode_intersection",
-        "bytecode_miss",
-        "bytecode_raygen",
         "bytecode_tesselation_control",
         "bytecode_tesselation_evaluation",
         "bytecode_vertex",
-        "compile_error_any_hit",
-        "compile_error_closest_hit",
         "compile_error_compute",
         "compile_error_fragment",
-        "compile_error_intersection",
-        "compile_error_miss",
-        "compile_error_raygen",
         "compile_error_tesselation_control",
         "compile_error_tesselation_evaluation",
         "compile_error_vertex"
@@ -34594,9 +33760,7 @@
       "inherits": "Object",
       "description": "Abstraction for working with modern low-level graphics APIs.",
       "methods": [
-        "acceleration_structure_build",
         "barrier",
-        "blas_create",
         "buffer_clear",
         "buffer_copy",
         "buffer_get_data",
@@ -34673,14 +33837,6 @@
         "index_array_create",
         "index_buffer_create",
         "limit_get",
-        "raytracing_list_begin",
-        "raytracing_list_bind_raytracing_pipeline",
-        "raytracing_list_bind_uniform_set",
-        "raytracing_list_end",
-        "raytracing_list_set_push_constant",
-        "raytracing_list_trace_rays",
-        "raytracing_pipeline_create",
-        "raytracing_pipeline_is_valid",
         "render_pipeline_create",
         "render_pipeline_is_valid",
         "sampler_create",
@@ -34716,9 +33872,6 @@
         "texture_resolve_multisample",
         "texture_set_discardable",
         "texture_update",
-        "tlas_create",
-        "tlas_instances_buffer_create",
-        "tlas_instances_buffer_fill",
         "uniform_buffer_create",
         "uniform_set_create",
         "uniform_set_is_valid",
@@ -36138,23 +35291,6 @@
             {
               "name": "BUFFER_CREATION_AS_STORAGE_BIT",
               "value": "2"
-            },
-            {
-              "name": "BUFFER_CREATION_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT",
-              "value": "8"
-            }
-          ]
-        },
-        {
-          "name": "AccelerationStructureGeometryBits",
-          "values": [
-            {
-              "name": "ACCELERATION_STRUCTURE_GEOMETRY_OPAQUE",
-              "value": "1"
-            },
-            {
-              "name": "ACCELERATION_STRUCTURE_GEOMETRY_NO_DUPLICATE_ANY_HIT_INVOCATION",
-              "value": "2"
             }
           ]
         },
@@ -36210,12 +35346,8 @@
               "value": "11"
             },
             {
-              "name": "UNIFORM_TYPE_ACCELERATION_STRUCTURE",
-              "value": "12"
-            },
-            {
               "name": "UNIFORM_TYPE_MAX",
-              "value": "13"
+              "value": "12"
             }
           ]
         },
@@ -36694,28 +35826,8 @@
               "value": "4"
             },
             {
-              "name": "SHADER_STAGE_RAYGEN",
-              "value": "5"
-            },
-            {
-              "name": "SHADER_STAGE_ANY_HIT",
-              "value": "6"
-            },
-            {
-              "name": "SHADER_STAGE_CLOSEST_HIT",
-              "value": "7"
-            },
-            {
-              "name": "SHADER_STAGE_MISS",
-              "value": "8"
-            },
-            {
-              "name": "SHADER_STAGE_INTERSECTION",
-              "value": "9"
-            },
-            {
               "name": "SHADER_STAGE_MAX",
-              "value": "10"
+              "value": "5"
             },
             {
               "name": "SHADER_STAGE_VERTEX_BIT",
@@ -36736,26 +35848,6 @@
             {
               "name": "SHADER_STAGE_COMPUTE_BIT",
               "value": "16"
-            },
-            {
-              "name": "SHADER_STAGE_RAYGEN_BIT",
-              "value": "32"
-            },
-            {
-              "name": "SHADER_STAGE_ANY_HIT_BIT",
-              "value": "64"
-            },
-            {
-              "name": "SHADER_STAGE_CLOSEST_HIT_BIT",
-              "value": "128"
-            },
-            {
-              "name": "SHADER_STAGE_MISS_BIT",
-              "value": "256"
-            },
-            {
-              "name": "SHADER_STAGE_INTERSECTION_BIT",
-              "value": "512"
             }
           ]
         },
@@ -36807,18 +35899,6 @@
             {
               "name": "SUPPORTS_IMAGE_ATOMIC_32_BIT",
               "value": "7"
-            },
-            {
-              "name": "SUPPORTS_RAY_QUERY",
-              "value": "11"
-            },
-            {
-              "name": "SUPPORTS_RAYTRACING_PIPELINE",
-              "value": "12"
-            },
-            {
-              "name": "SUPPORTS_HDR_OUTPUT",
-              "value": "13"
             }
           ]
         },
@@ -37617,10 +36697,6 @@
         "texture_3d_placeholder_create",
         "texture_3d_update",
         "texture_create_from_native_handle",
-        "texture_drawable_blit_rect",
-        "texture_drawable_create",
-        "texture_drawable_generate_mipmaps",
-        "texture_drawable_get_default_material",
         "texture_get_format",
         "texture_get_native_handle",
         "texture_get_path",
@@ -37806,27 +36882,6 @@
           ]
         },
         {
-          "name": "TextureDrawableFormat",
-          "values": [
-            {
-              "name": "TEXTURE_DRAWABLE_FORMAT_RGBA8",
-              "value": "0"
-            },
-            {
-              "name": "TEXTURE_DRAWABLE_FORMAT_RGBA8_SRGB",
-              "value": "1"
-            },
-            {
-              "name": "TEXTURE_DRAWABLE_FORMAT_RGBAH",
-              "value": "2"
-            },
-            {
-              "name": "TEXTURE_DRAWABLE_FORMAT_RGBAF",
-              "value": "3"
-            }
-          ]
-        },
-        {
           "name": "ShaderMode",
           "values": [
             {
@@ -37850,12 +36905,8 @@
               "value": "4"
             },
             {
-              "name": "SHADER_TEXTURE_BLIT",
-              "value": "5"
-            },
-            {
               "name": "SHADER_MAX",
-              "value": "6"
+              "value": "5"
             }
           ]
         },
@@ -40617,8 +39668,6 @@
         "base_scale",
         "color_map",
         "compress",
-        "fix_alpha_border",
-        "premult_alpha",
         "saturation"
       ],
       "signals": [],
@@ -42066,8 +41115,6 @@
         "goto_line",
         "open_script_create_dialog",
         "register_syntax_highlighter",
-        "reload_open_files",
-        "save_all_scripts",
         "unregister_syntax_highlighter",
         "update_docs_from_script"
       ],
@@ -42717,10 +41764,6 @@
             {
               "name": "MODE_FOG",
               "value": "4"
-            },
-            {
-              "name": "MODE_TEXTURE_BLIT",
-              "value": "5"
             }
           ]
         }
@@ -44227,8 +43270,6 @@
         "get_drag_area_margin_end",
         "set_drag_area_offset",
         "get_drag_area_offset",
-        "set_drag_nested_intersections",
-        "is_dragging_nested_intersections",
         "set_dragger_visibility",
         "get_dragger_visibility",
         "set_dragging_enabled",
@@ -44248,7 +43289,6 @@
         "drag_area_margin_begin",
         "drag_area_margin_end",
         "drag_area_offset",
-        "drag_nested_intersections",
         "dragger_visibility",
         "dragging_enabled",
         "split_offset",
@@ -45566,17 +44606,14 @@
         "set_size_2d_override",
         "get_size_2d_override",
         "set_size_2d_override_stretch",
-        "is_size_2d_override_stretch_enabled",
-        "set_view_count",
-        "get_view_count"
+        "is_size_2d_override_stretch_enabled"
       ],
       "properties": [
         "render_target_clear_mode",
         "render_target_update_mode",
         "size",
         "size_2d_override",
-        "size_2d_override_stretch",
-        "view_count"
+        "size_2d_override_stretch"
       ],
       "signals": [],
       "constants": [],
@@ -46308,7 +45345,6 @@
         "is_gutter_overwritable",
         "is_in_mulitcaret_edit",
         "is_line_gutter_clickable",
-        "is_line_in_viewport",
         "is_line_wrapped",
         "is_menu_visible",
         "is_mouse_over_selection",
@@ -47166,7 +46202,6 @@
         "shaped_get_run_direction",
         "shaped_get_run_font_rid",
         "shaped_get_run_font_size",
-        "shaped_get_run_glyph_range",
         "shaped_get_run_language",
         "shaped_get_run_object",
         "shaped_get_run_range",
@@ -47983,7 +47018,6 @@
         "_shaped_get_run_direction",
         "_shaped_get_run_font_rid",
         "_shaped_get_run_font_size",
-        "_shaped_get_run_glyph_range",
         "_shaped_get_run_language",
         "_shaped_get_run_object",
         "_shaped_get_run_range",
@@ -48132,26 +47166,19 @@
         "_draw",
         "_draw_rect",
         "_draw_rect_region",
-        "_get_format",
         "_get_height",
-        "_get_image",
-        "_get_mipmap_count",
         "_get_width",
         "_has_alpha",
-        "_has_mipmaps",
         "_is_pixel_opaque",
         "create_placeholder",
         "draw",
         "draw_rect",
         "draw_rect_region",
-        "get_format",
         "get_height",
         "get_image",
-        "get_mipmap_count",
         "get_size",
         "get_width",
-        "has_alpha",
-        "has_mipmaps"
+        "has_alpha"
       ],
       "properties": [],
       "signals": [],
@@ -50253,7 +49280,6 @@
         "erase_button",
         "get_auto_translate_mode",
         "get_autowrap_mode",
-        "get_autowrap_trim_flags",
         "get_button",
         "get_button_by_id",
         "get_button_color",
@@ -50316,7 +49342,6 @@
         "select",
         "set_auto_translate_mode",
         "set_autowrap_mode",
-        "set_autowrap_trim_flags",
         "set_button",
         "set_button_color",
         "set_button_description",
@@ -50463,7 +49488,6 @@
         "custom_step",
         "get_loops_left",
         "get_total_elapsed_time",
-        "has_tweeners",
         "interpolate_value",
         "is_running",
         "is_valid",
@@ -50480,7 +49504,6 @@
         "set_speed_scale",
         "set_trans",
         "stop",
-        "tween_await",
         "tween_callback",
         "tween_interval",
         "tween_method",
@@ -51968,12 +50991,8 @@
               "value": "3"
             },
             {
-              "name": "DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_PARENT_NODE",
-              "value": "4"
-            },
-            {
               "name": "DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_MAX",
-              "value": "5"
+              "value": "4"
             }
           ]
         },
@@ -51993,12 +51012,8 @@
               "value": "2"
             },
             {
-              "name": "DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_PARENT_NODE",
-              "value": "3"
-            },
-            {
               "name": "DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_MAX",
-              "value": "4"
+              "value": "3"
             }
           ]
         },
@@ -52106,113 +51121,6 @@
       "signals": [],
       "constants": [],
       "enums": []
-    },
-    "VirtualJoystick": {
-      "name": "VirtualJoystick",
-      "inherits": "Control",
-      "description": "A virtual joystick control for touchscreen devices.",
-      "methods": [
-        "set_action_down",
-        "get_action_down",
-        "set_action_left",
-        "get_action_left",
-        "set_action_right",
-        "get_action_right",
-        "set_action_up",
-        "get_action_up",
-        "set_clampzone_ratio",
-        "get_clampzone_ratio",
-        "set_deadzone_ratio",
-        "get_deadzone_ratio",
-        "set_initial_offset_ratio",
-        "get_initial_offset_ratio",
-        "set_joystick_mode",
-        "get_joystick_mode",
-        "set_joystick_size",
-        "get_joystick_size",
-        "set_tip_size",
-        "get_tip_size",
-        "set_visibility_mode",
-        "get_visibility_mode"
-      ],
-      "properties": [
-        "action_down",
-        "action_left",
-        "action_right",
-        "action_up",
-        "clampzone_ratio",
-        "deadzone_ratio",
-        "initial_offset_ratio",
-        "joystick_mode",
-        "joystick_size",
-        "tip_size",
-        "visibility_mode"
-      ],
-      "signals": [
-        {
-          "name": "flick_canceled",
-          "parameters": []
-        },
-        {
-          "name": "flicked",
-          "parameters": [
-            {
-              "name": "input_vector",
-              "type": "Vector2"
-            }
-          ]
-        },
-        {
-          "name": "pressed",
-          "parameters": []
-        },
-        {
-          "name": "released",
-          "parameters": [
-            {
-              "name": "input_vector",
-              "type": "Vector2"
-            }
-          ]
-        },
-        {
-          "name": "tapped",
-          "parameters": []
-        }
-      ],
-      "constants": [],
-      "enums": [
-        {
-          "name": "JoystickMode",
-          "values": [
-            {
-              "name": "JOYSTICK_FIXED",
-              "value": "0"
-            },
-            {
-              "name": "JOYSTICK_DYNAMIC",
-              "value": "1"
-            },
-            {
-              "name": "JOYSTICK_FOLLOWING",
-              "value": "2"
-            }
-          ]
-        },
-        {
-          "name": "VisibilityMode",
-          "values": [
-            {
-              "name": "VISIBILITY_ALWAYS",
-              "value": "0"
-            },
-            {
-              "name": "VISIBILITY_WHEN_TOUCHED",
-              "value": "1"
-            }
-          ]
-        }
-      ]
     },
     "VisibleOnScreenEnabler2D": {
       "name": "VisibleOnScreenEnabler2D",
@@ -52448,12 +51356,8 @@
               "value": "9"
             },
             {
-              "name": "TYPE_TEXTURE_BLIT",
-              "value": "10"
-            },
-            {
               "name": "TYPE_MAX",
-              "value": "11"
+              "value": "10"
             }
           ]
         },
@@ -55987,7 +54891,6 @@
         "get_flag",
         "get_focused_window",
         "get_layout_direction",
-        "get_output_max_linear_value",
         "get_position_with_decorations",
         "get_size_with_decorations",
         "get_theme_color",
@@ -56043,8 +54946,6 @@
         "set_ime_active",
         "set_ime_position",
         "set_layout_direction",
-        "set_taskbar_progress_state",
-        "set_taskbar_progress_value",
         "set_unparent_when_invisible",
         "set_use_font_oversampling",
         "show",
@@ -56072,8 +54973,6 @@
         "is_exclusive",
         "set_force_native",
         "get_force_native",
-        "set_hdr_output_requested",
-        "is_hdr_output_requested",
         "set_initial_position",
         "get_initial_position",
         "set_keep_title_visible",
@@ -56123,7 +55022,6 @@
         "exclusive",
         "extend_to_title",
         "force_native",
-        "hdr_output_requested",
         "initial_position",
         "keep_title_visible",
         "max_size",
@@ -57130,7 +56028,7 @@
     "XRCamera3D": {
       "name": "XRCamera3D",
       "inherits": "Camera3D",
-      "description": "A camera node which automatically positions itself based on XR tracking data.",
+      "description": "A camera node with a few overrules for AR/VR applied, such as location tracking.",
       "methods": [
         "set_physics_interpolation_mode",
         "get_physics_interpolation_mode"
@@ -58621,10 +57519,6 @@
               "type": "int"
             }
           ]
-        },
-        {
-          "name": "world_origin_changed",
-          "parameters": []
         }
       ],
       "constants": [],
@@ -58869,19 +57763,7 @@
     "print_stack",
     "get_stack"
   ],
-  "globalConstants": [
-    "UINT8_MAX",
-    "UINT16_MAX",
-    "UINT32_MAX",
-    "INT8_MIN",
-    "INT8_MAX",
-    "INT16_MIN",
-    "INT16_MAX",
-    "INT32_MIN",
-    "INT32_MAX",
-    "INT64_MIN",
-    "INT64_MAX"
-  ],
+  "globalConstants": [],
   "globalEnums": [
     {
       "name": "Side",
@@ -60076,28 +58958,8 @@
           "value": "20"
         },
         {
-          "name": "JOY_BUTTON_MISC2",
-          "value": "21"
-        },
-        {
-          "name": "JOY_BUTTON_MISC3",
-          "value": "22"
-        },
-        {
-          "name": "JOY_BUTTON_MISC4",
-          "value": "23"
-        },
-        {
-          "name": "JOY_BUTTON_MISC5",
-          "value": "24"
-        },
-        {
-          "name": "JOY_BUTTON_MISC6",
-          "value": "25"
-        },
-        {
           "name": "JOY_BUTTON_SDL_MAX",
-          "value": "26"
+          "value": "21"
         },
         {
           "name": "JOY_BUTTON_MAX",
@@ -61103,10 +59965,6 @@
   ],
   "singletons": [
     {
-      "name": "AccessibilityServer",
-      "type": "AccessibilityServer"
-    },
-    {
       "name": "AudioServer",
       "type": "AudioServer"
     },
@@ -61137,10 +59995,6 @@
     {
       "name": "GDExtensionManager",
       "type": "GDExtensionManager"
-    },
-    {
-      "name": "GDScriptLanguageProtocol",
-      "type": "GDScriptLanguageProtocol"
     },
     {
       "name": "Geometry2D",

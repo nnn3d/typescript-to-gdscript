@@ -444,7 +444,7 @@ declare class CanvasItem extends Node {
   /** Represents the size of the {@link TextureFilter} enum. */
   static readonly TEXTURE_FILTER_MAX: int;
   // enum TextureRepeat
-  /** The {@link CanvasItem} will inherit the repeat mode from its parent. */
+  /** The {@link CanvasItem} will inherit the filter from its parent. */
   static readonly TEXTURE_REPEAT_PARENT_NODE: int;
   /**
    * The texture does not repeat. Sampling the texture outside its extents will result in "stretching" of the edge pixels. You can avoid this by ensuring a 1-pixel fully transparent border on each side of the texture.

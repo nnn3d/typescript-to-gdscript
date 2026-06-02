@@ -293,9 +293,9 @@ declare interface PhysicsServer2D extends GodotObject {
    */
   body_set_shape(body: RID, shape_idx: int, shape: RID): void;
   /**
-   * Sets the one-way collision properties of the body's shape with the given index. If `enable` is `true`, the one-way collision direction given by `direction` in the shape's local space (that is `body_get_shape_transform(body, shape_idx).basis_xform(direction).normalized()` in the body's local space) will be used to ignore collisions with the shape in the opposite direction, and to ensure depenetration of kinematic bodies happens in this direction.
+   * Sets the one-way collision properties of the body's shape with the given index. If `enable` is `true`, the one-way collision direction given by the shape's local upward axis `body_get_shape_transform(body, shape_idx).y` will be used to ignore collisions with the shape in the opposite direction, and to ensure depenetration of kinematic bodies happens in this direction.
    */
-  body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float, direction?: Vector2 | Vector2i): void;
+  body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float): void;
   /**
    * Sets the disabled property of the body's shape with the given index. If `disabled` is `true`, then the shape will be ignored in all collision detection.
    */

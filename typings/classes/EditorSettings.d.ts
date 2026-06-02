@@ -49,8 +49,6 @@ declare class EditorSettings extends Resource {
    * **Note:** This setting has no effect when split mode is disabled (which is the default).
    */
   'docks/filesystem/always_show_folders': boolean;
-  /** If `true`, scripts created in FileSystem dock will be automatically edited. */
-  'docks/filesystem/automatically_open_created_scripts': boolean;
   /**
    * A comma separated list of unsupported file extensions to show in the FileSystem dock, e.g. `"ico,icns"`.
    */
@@ -130,17 +128,9 @@ declare class EditorSettings extends Resource {
    */
   'editors/2d/guides_color': Color;
   /**
-   * The color to use for the selection rectangle that surrounds selected locked nodes in the 2D editor viewport.
-   */
-  'editors/2d/locked_selection_rectangle_color': Color;
-  /**
    * The thickness of the coordinate ruler in the 2D editor. Increasing this will also increase the size of the ruler font, improving readability when using a lower editor scale. The editor may force a minimum size to keep the ruler numbers legible.
    */
   'editors/2d/ruler_width': float;
-  /**
-   * The color to use for the selection rectangle outlines that surrounds selected nodes in the 2D editor viewport.
-   */
-  'editors/2d/selection_rectangle_color': Color;
   /**
    * The color to use when drawing smart snapping lines in the 2D editor. The smart snapping lines will automatically display when moving 2D nodes if smart snapping is enabled in the Snapping Options menu at the top of the 2D editor viewport.
    */
@@ -158,7 +148,7 @@ declare class EditorSettings extends Resource {
    */
   'editors/2d/zoom_speed_factor': float;
   /**
-   * The color to use for the active selection box that surrounds selected nodes in the 3D editor viewport.
+   * The color to use for the active selection box that surrounds selected nodes in the 3D editor viewport. The color's alpha channel influences the selection box's opacity.
    * **Note:** The term "active" indicates that this object is the primary selection used as the basis for certain operations. This is the last selected {@link Node3D}, which can be reordered with `Shift + Left mouse button`.
    */
   'editors/3d/active_selection_box_color': Color;
@@ -189,8 +179,6 @@ declare class EditorSettings extends Resource {
    * The inertia of the 3D freelook camera. Higher values make the camera start and stop slower, which looks smoother but adds latency.
    */
   'editors/3d/freelook/freelook_inertia': float;
-  /** If `true`, invert the vertical mouse axis when using freelook mode in the 3D editor. */
-  'editors/3d/freelook/freelook_invert_y_axis': boolean;
   /**
    * The navigation scheme to use when freelook is enabled in the 3D editor. Some of the navigation schemes below may be more convenient when designing specific levels in the 3D editor.
    * - **Default:** The "Freelook Forward", "Freelook Backward", "Freelook Up" and "Freelook Down" keys will move relative to the camera, taking its pitch angle into account for the movement.
@@ -250,7 +238,9 @@ declare class EditorSettings extends Resource {
    * If `true`, invert the horizontal mouse axis when panning or orbiting in the 3D editor. This setting does *not* apply to freelook mode.
    */
   'editors/3d/navigation/invert_x_axis': boolean;
-  /** If `true`, invert the vertical mouse axis when panning or orbiting in the 3D editor. */
+  /**
+   * If `true`, invert the vertical mouse axis when panning, orbiting, or using freelook mode in the 3D editor.
+   */
   'editors/3d/navigation/invert_y_axis': boolean;
   /**
    * The navigation scheme preset to use in the 3D editor. Changing this setting will affect the mouse button and modifier keys used to navigate the 3D editor viewport.
@@ -315,14 +305,12 @@ declare class EditorSettings extends Resource {
    * The color to use for the secondary 3D grid. This is generally a less visible color than {@link editors/3d/primary_grid_color}. The color's alpha channel affects the grid's opacity.
    */
   'editors/3d/secondary_grid_color': Color;
-  /** The color to use for the selection box that surrounds selected nodes in the 3D editor viewport. */
+  /**
+   * The color to use for the selection box that surrounds selected nodes in the 3D editor viewport. The color's alpha channel influences the selection box's opacity.
+   */
   'editors/3d/selection_box_color': Color;
   /** If checked, the transform gizmo remains visible during rotation in that transform mode. */
   'editors/3d/show_gizmo_during_rotation': int;
-  /**
-   * The scale of the outer circle of the rotation gizmo as view plane rotation in the 3D editor. If set to `2.0`, the outer circle has twice the radius of the XYZ rotation gizmo sphere.
-   */
-  'editors/3d/view_plane_rotation_gizmo_scale': float;
   /**
    * The color to use for the AABB gizmo that displays the {@link GeometryInstance3D}'s custom {@link AABB}.
    */
@@ -397,10 +385,6 @@ declare class EditorSettings extends Resource {
   'editors/3d_gizmos/gizmo_settings/lightmap_gi_probe_size': float;
   /** Size of the disk gizmo displayed when editing {@link Path3D}'s tilt handles. */
   'editors/3d_gizmos/gizmo_settings/path3d_tilt_disk_size': float;
-  /**
-   * If `true`, collision shapes in the 3D editor are visible only when selected. If `false`, collision shapes are always visible.
-   */
-  'editors/3d_gizmos/gizmo_settings/show_collision_shapes_only_when_selected': boolean;
   /**
    * If `true`, automatically updates animation tracks' target paths when renaming or reparenting nodes in the Scene tree dock.
    */
@@ -633,24 +617,8 @@ declare class EditorSettings extends Resource {
    * To enable this feature for your specific project, use {@link ProjectSettings.filesystem/import/blender/enabled}.
    * If this setting is empty, Blender's default paths will be detected and used automatically if present in this order:
    * **Windows:**
-   * [codeblock lang=text]
-   * - C:\Program Files\Blender Foundation\blender.exe
-   * - C:\Program Files (x86)\Blender Foundation\blender.exe
-   * [/codeblock]
    * **macOS:**
-   * [codeblock lang=text]
-   * - /opt/homebrew/bin/blender
-   * - /opt/local/bin/blender
-   * - /usr/local/bin/blender
-   * - /usr/local/opt/blender
-   * - /Applications/Blender.app/Contents/MacOS/Blender
-   * [/codeblock]
    * **Linux/*BSD:**
-   * [codeblock lang=text]
-   * - /usr/bin/blender
-   * - /usr/local/bin/blender
-   * - /opt/blender/bin/blender
-   * [/codeblock]
    */
   'filesystem/import/blender/blender_path': string;
   /**
@@ -736,136 +704,85 @@ declare class EditorSettings extends Resource {
    * - **OK First** forces the OK/Cancel ordering.
    * To check if these buttons are swapped at runtime, use {@link DisplayServer.get_swap_cancel_ok}.
    */
-  'interface/editor/appearance/accept_dialog_cancel_ok_buttons': int;
-  /**
-   * If `true`, the main menu collapses into a {@link MenuButton}.
-   * **Note:** This setting is only applicable on macOS when {@link interface/editor/appearance/use_embedded_menu} is `true`.
-   * **Note:** Defaults to `true` on the Android editor.
-   */
-  'interface/editor/appearance/collapse_main_menu': boolean;
-  /**
-   * The custom editor scale factor to use. This can be used for displays with very high DPI where a scale factor of 200% is not sufficient.
-   * **Note:** Only effective if {@link interface/editor/appearance/display_scale} is set to **Custom**.
-   */
-  'interface/editor/appearance/custom_display_scale': float;
-  /**
-   * The display scale factor to use for the editor interface. Higher values are more suited to hiDPI/Retina displays.
-   * If set to **Auto**, the editor scale is automatically determined based on the screen resolution and reported display DPI. This heuristic is not always ideal, which means you can get better results by setting the editor scale manually.
-   * If set to **Custom**, the scaling value in {@link interface/editor/appearance/custom_display_scale} will be used.
-   */
-  'interface/editor/appearance/display_scale': int;
-  /**
-   * The preferred monitor to display the editor. If **Auto**, the editor will remember the last screen it was displayed on across multiple sessions.
-   */
-  'interface/editor/appearance/editor_screen': int;
-  /**
-   * Expanding main editor window content to the title, if supported by {@link DisplayServer}. See {@link DisplayServer.WINDOW_FLAG_EXTEND_TO_TITLE}.
-   * Specific to the macOS platform.
-   */
-  'interface/editor/appearance/expand_to_title': boolean;
-  /** The preferred monitor to display the project manager. */
-  'interface/editor/appearance/project_manager_screen': int;
-  /**
-   * If enabled, displays an icon in the top-right corner of the editor that spins when the editor redraws a frame. This can be used to diagnose situations where the engine is constantly redrawing, which should be avoided as this increases CPU and GPU utilization for no good reason. To further troubleshoot these situations, start the editor with the `--debug-canvas-item-redraw` command line argument ($DOCS_URL/tutorials/editor/command_line_tutorial.html).
-   * Consider enabling this if you are developing editor plugins to ensure they only make the editor redraw when required.
-   * The default **Auto** value will only enable this if the editor was compiled with the `dev_build=yes` SCons option (the default is `dev_build=no`).
-   * **Note:** If {@link interface/editor/display/update_continuously} is `true`, the spinner icon displays in red.
-   * **Note:** If the editor was started with the `--debug-canvas-item-redraw` command line argument ($DOCS_URL/tutorials/editor/command_line_tutorial.html), the update spinner will *never* display regardless of this setting's value. This is to avoid confusion with what would cause redrawing in real world scenarios.
-   */
-  'interface/editor/appearance/show_update_spinner': int;
-  /**
-   * If `true`, editor main menu is using embedded {@link MenuBar} instead of system global menu.
-   * Specific to the macOS platform.
-   */
-  'interface/editor/appearance/use_embedded_menu': boolean;
-  /** If `true`, editor UI uses OS native file/directory selection dialogs. */
-  'interface/editor/appearance/use_native_file_dialogs': boolean;
+  'interface/editor/accept_dialog_cancel_ok_buttons': int;
   /**
    * If `true`, automatically opens screenshots with the default program associated to `.png` files after a screenshot is taken using the **Editor > Take Screenshot** action.
    */
-  'interface/editor/behavior/automatically_open_screenshots': boolean;
-  /**
-   * If `true`, (re)imports resources even if the editor window is unfocused or minimized. If `false`, resources are only (re)imported when the editor window is focused. This can be set to `true` to speed up iteration by starting the import process earlier when saving files in the project folder. This also allows getting visual feedback on changes without having to click the editor window, which is useful with multi-monitor setups. The downside of setting this to `true` is that it increases idle CPU usage and may steal CPU time from other applications when importing resources.
-   */
-  'interface/editor/behavior/import_resources_when_unfocused': boolean;
-  /**
-   * If `false`, the editor will save all scenes when confirming the **Save** action when quitting the editor or quitting to the project list. If `true`, the editor will ask to save each scene individually.
-   */
-  'interface/editor/behavior/save_each_scene_on_quit': boolean;
-  /**
-   * If `true`, scenes and scripts are saved when the editor loses focus. Depending on the work flow, this behavior can be less intrusive than {@link text_editor/behavior/files/autosave_interval_secs} or remembering to save manually.
-   */
-  'interface/editor/behavior/save_on_focus_loss': boolean;
-  /**
-   * If `true`, the editor's Script tab will have a separate distraction mode setting from the 2D/3D/Game/AssetLib tabs. If `false`, the distraction-free mode toggle is shared between all tabs.
-   */
-  'interface/editor/behavior/separate_distraction_mode': boolean;
-  /**
-   * If enabled, displays internal engine errors in toast notifications (toggleable by clicking the "bell" icon at the bottom of the editor). No matter the value of this setting, non-internal engine errors will always be visible in toast notifications.
-   * The default **Auto** value will only enable this if the editor was compiled with the `dev_build=yes` SCons option (the default is `dev_build=no`).
-   */
-  'interface/editor/behavior/show_internal_errors_in_toast_notifications': int;
-  /**
-   * If `true`, keeps the screen on (even in case of inactivity), so the screensaver does not take over. Works on desktop and mobile platforms.
-   */
-  'interface/editor/display/keep_screen_on': boolean;
-  /**
-   * If `true`, embed modal windows such as docks inside the main editor window. When single-window mode is enabled, tooltips will also be embedded inside the main editor window, which means they can't be displayed outside of the editor window. Single-window mode can be faster as it does not need to create a separate window for every popup and tooltip, which can be a slow operation depending on the operating system and rendering method in use.
-   * This is equivalent to {@link ProjectSettings.display/window/subwindows/embed_subwindows} in the running project, except the setting's value is inverted.
-   * **Note:** To query whether the editor can use multiple windows in an editor plugin, use {@link EditorInterface.is_multi_window_enabled} instead of querying the value of this editor setting.
-   * **Note:** If `true`, game embedding is disabled.
-   */
-  'interface/editor/display/single_window_mode': boolean;
-  /**
-   * If `true`, redraws the editor every frame even if nothing has changed on screen. When this setting is enabled, the update spinner displays in red (see {@link interface/editor/appearance/show_update_spinner}).
-   * **Warning:** This greatly increases CPU and GPU utilization, leading to increased power usage. This should only be enabled for troubleshooting purposes.
-   */
-  'interface/editor/display/update_continuously': boolean;
-  /**
-   * Sets the V-Sync mode for the editor. Does not affect the project when run from the editor (this is controlled by {@link ProjectSettings.display/window/vsync/vsync_mode}).
-   * Depending on the platform and used renderer, the engine will fall back to **Enabled** if the desired mode is not supported.
-   * **Note:** V-Sync modes other than **Enabled** are only supported in the Forward+ and Mobile rendering methods, not Compatibility.
-   */
-  'interface/editor/display/vsync_mode': int;
+  'interface/editor/automatically_open_screenshots': boolean;
   /** Tab style of editor docks located at the bottom. */
-  'interface/editor/docks/bottom_dock_tab_style': int;
-  /** Tab style of editor docks, except bottom docks. */
-  'interface/editor/docks/dock_tab_style': int;
+  'interface/editor/bottom_dock_tab_style': int;
   /**
    * The font to use for the script editor. Must be a resource of a {@link Font} type such as a `.ttf` or `.otf` font file.
    */
-  'interface/editor/fonts/code_font': string;
+  'interface/editor/code_font': string;
   /**
    * The font ligatures to enable for the currently configured code font. Not all fonts include support for ligatures.
    * **Note:** The default editor code font (JetBrains Mono (https://www.jetbrains.com/lp/mono/)) has contextual ligatures in its font file.
    */
-  'interface/editor/fonts/code_font_contextual_ligatures': int;
+  'interface/editor/code_font_contextual_ligatures': int;
   /**
    * List of custom OpenType features to use, if supported by the currently configured code font. Not all fonts include support for custom OpenType features. The string should follow the OpenType specification.
    * **Note:** The default editor code font (JetBrains Mono (https://www.jetbrains.com/lp/mono/)) has custom OpenType features in its font file, but there is no documented list yet.
    */
-  'interface/editor/fonts/code_font_custom_opentype_features': string;
+  'interface/editor/code_font_custom_opentype_features': string;
   /**
    * List of alternative characters to use, if supported by the currently configured code font. Not all fonts include support for custom variations. The string should follow the OpenType specification.
    * **Note:** The default editor code font (JetBrains Mono (https://www.jetbrains.com/lp/mono/)) has alternate characters in its font file, but there is no documented list yet.
    */
-  'interface/editor/fonts/code_font_custom_variations': string;
+  'interface/editor/code_font_custom_variations': string;
   /**
    * The size of the font in the script editor. This setting does not impact the font size of the Output panel (see {@link run/output/font_size}).
    */
-  'interface/editor/fonts/code_font_size': int;
+  'interface/editor/code_font_size': int;
+  /**
+   * If `true`, the main menu collapses into a {@link MenuButton}.
+   * **Note:** This setting is only applicable on macOS when {@link interface/editor/use_embedded_menu} is `true`.
+   * **Note:** Defaults to `true` on the Android editor.
+   */
+  'interface/editor/collapse_main_menu': boolean;
+  /**
+   * The custom editor scale factor to use. This can be used for displays with very high DPI where a scale factor of 200% is not sufficient.
+   * **Note:** Only effective if {@link interface/editor/display_scale} is set to **Custom**.
+   */
+  'interface/editor/custom_display_scale': float;
+  /**
+   * The display scale factor to use for the editor interface. Higher values are more suited to hiDPI/Retina displays.
+   * If set to **Auto**, the editor scale is automatically determined based on the screen resolution and reported display DPI. This heuristic is not always ideal, which means you can get better results by setting the editor scale manually.
+   * If set to **Custom**, the scaling value in {@link interface/editor/custom_display_scale} will be used.
+   */
+  'interface/editor/display_scale': int;
+  /** Tab style of editor docks, except bottom docks. */
+  'interface/editor/dock_tab_style': int;
+  /**
+   * During a drag-and-drop, this is how long to wait over a UI element before it triggers a reaction (e.g. a section unfolds to show nested items).
+   */
+  'interface/editor/dragging_hover_wait_seconds': float;
+  /**
+   * The language to use for the editor interface. If set to **Auto**, the language is automatically determined based on the system locale. See also {@link EditorInterface.get_editor_language}.
+   * Translations are provided by the community. If you spot a mistake, contribute to editor translations on Weblate! (https://contributing.godotengine.org/en/latest/documentation/translation/index.html)
+   */
+  'interface/editor/editor_language': string;
+  /**
+   * The preferred monitor to display the editor. If **Auto**, the editor will remember the last screen it was displayed on across multiple sessions.
+   */
+  'interface/editor/editor_screen': int;
+  /**
+   * Expanding main editor window content to the title, if supported by {@link DisplayServer}. See {@link DisplayServer.WINDOW_FLAG_EXTEND_TO_TITLE}.
+   * Specific to the macOS platform.
+   */
+  'interface/editor/expand_to_title': boolean;
   /**
    * If set to `true`, MSDF font rendering will be used for the visual shader graph editor. You may need to set this to `false` when using a custom main font, as some fonts will look broken due to the use of self-intersecting outlines in their font data. Downloading the font from the font maker's official website as opposed to a service like Google Fonts can help resolve this issue.
    */
-  'interface/editor/fonts/font_allow_msdf': boolean;
+  'interface/editor/font_allow_msdf': boolean;
   /**
    * FreeType's font anti-aliasing mode used to render the editor fonts. Most fonts are not designed to look good with anti-aliasing disabled, so it's recommended to leave this enabled unless you're using a pixel art font.
    */
-  'interface/editor/fonts/font_antialiasing': int;
+  'interface/editor/font_antialiasing': int;
   /**
    * If set to `true`, embedded font bitmap loading is disabled (bitmap-only and color fonts ignore this property).
    */
-  'interface/editor/fonts/font_disable_embedded_bitmaps': boolean;
+  'interface/editor/font_disable_embedded_bitmaps': boolean;
   /**
    * The font hinting mode to use for the editor fonts. FreeType supports the following font hinting modes:
    * - **None:** Don't use font hinting when rasterizing the font. This results in a smooth font, but it can look blurry.
@@ -873,65 +790,118 @@ declare class EditorSettings extends Resource {
    * - **Normal:** Use hinting on both X and Y axes. This results in a sharp font, but it doesn't look very smooth.
    * If set to **Auto**, the font hinting mode will be set to match the current operating system in use. This means the **Light** hinting mode will be used on Windows and Linux, and the **None** hinting mode will be used on macOS.
    */
-  'interface/editor/fonts/font_hinting': int;
+  'interface/editor/font_hinting': int;
   /**
    * The subpixel positioning mode to use when rendering editor font glyphs. This affects both the main and code fonts. **Disabled** is the fastest to render and uses the least memory. **Auto** only uses subpixel positioning for small font sizes (where the benefit is the most noticeable). **One Half of a Pixel** and **One Quarter of a Pixel** force the same subpixel positioning mode for all editor fonts, regardless of their size (with **One Quarter of a Pixel** being the highest-quality option).
    */
-  'interface/editor/fonts/font_subpixel_positioning': int;
+  'interface/editor/font_subpixel_positioning': int;
+  /**
+   * If `true`, (re)imports resources even if the editor window is unfocused or minimized. If `false`, resources are only (re)imported when the editor window is focused. This can be set to `true` to speed up iteration by starting the import process earlier when saving files in the project folder. This also allows getting visual feedback on changes without having to click the editor window, which is useful with multi-monitor setups. The downside of setting this to `true` is that it increases idle CPU usage and may steal CPU time from other applications when importing resources.
+   */
+  'interface/editor/import_resources_when_unfocused': boolean;
+  /**
+   * If `true`, keeps the screen on (even in case of inactivity), so the screensaver does not take over. Works on desktop and mobile platforms.
+   */
+  'interface/editor/keep_screen_on': boolean;
+  /**
+   * If `true`, setting names in the editor are localized when possible.
+   * **Note:** This setting affects most {@link EditorInspector}s in the editor UI, primarily Project Settings and Editor Settings. To control names displayed in the Inspector dock, use {@link interface/inspector/default_property_name_style} instead.
+   */
+  'interface/editor/localize_settings': boolean;
+  /**
+   * The amount of sleeping between frames in the editor (in microseconds). Higher values will result in lower CPU/GPU usage, which can improve battery life on laptops. However, higher values will result in a less responsive editor. The default value is set to allow for maximum smoothness on monitors up to 144 Hz. See also {@link interface/editor/unfocused_low_processor_mode_sleep_usec}.
+   * **Note:** This setting is ignored if {@link interface/editor/update_continuously} is `true`, as enabling that setting disables low-processor mode.
+   */
+  'interface/editor/low_processor_mode_sleep_usec': int;
   /**
    * The font to use for the editor interface. Must be a resource of a {@link Font} type such as a `.ttf` or `.otf` font file.
    * **Note:** If the provided font is variable, a weight of 400 (normal) will be used.
    */
-  'interface/editor/fonts/main_font': string;
+  'interface/editor/main_font': string;
   /**
    * The font to use for bold text in the editor interface. Must be a resource of a {@link Font} type such as a `.ttf` or `.otf` font file.
    * **Note:** If the provided font is variable, a weight of 700 (bold) will be used.
    */
-  'interface/editor/fonts/main_font_bold': string;
+  'interface/editor/main_font_bold': string;
   /**
    * List of custom OpenType features to use, if supported by the currently configured main font. Check what OpenType features are supported by your font first.
    * The string should follow the OpenType specification, e.g. `ss01,tnum,calt=false`. Microsoft's documentation contains a list of all registered features (https://learn.microsoft.com/en-us/typography/opentype/spec/featurelist).
    * **Note:** The default editor main font (Inter (https://rsms.me/inter)) has custom OpenType features in its font file, with `ss04` and `tnum` enabled and `calt` disabled by default. Supported features can be found at its website.
    */
-  'interface/editor/fonts/main_font_custom_opentype_features': string;
+  'interface/editor/main_font_custom_opentype_features': string;
   /** The size of the font in the editor interface. */
-  'interface/editor/fonts/main_font_size': int;
+  'interface/editor/main_font_size': int;
   /**
    * If `true`, the mouse's additional side buttons will be usable to navigate in the script editor's file history. Set this to `false` if you're using the side buttons for other purposes (such as a push-to-talk button in a VoIP program).
    */
-  'interface/editor/input/mouse_extra_buttons_navigate_history': boolean;
+  'interface/editor/mouse_extra_buttons_navigate_history': boolean;
+  /** The preferred monitor to display the project manager. */
+  'interface/editor/project_manager_screen': int;
+  /**
+   * If `false`, the editor will save all scenes when confirming the **Save** action when quitting the editor or quitting to the project list. If `true`, the editor will ask to save each scene individually.
+   */
+  'interface/editor/save_each_scene_on_quit': boolean;
+  /**
+   * If `true`, scenes and scripts are saved when the editor loses focus. Depending on the work flow, this behavior can be less intrusive than {@link text_editor/behavior/files/autosave_interval_secs} or remembering to save manually.
+   */
+  'interface/editor/save_on_focus_loss': boolean;
+  /**
+   * If `true`, the editor's Script tab will have a separate distraction mode setting from the 2D/3D/Game/AssetLib tabs. If `false`, the distraction-free mode toggle is shared between all tabs.
+   */
+  'interface/editor/separate_distraction_mode': boolean;
+  /**
+   * If enabled, displays internal engine errors in toast notifications (toggleable by clicking the "bell" icon at the bottom of the editor). No matter the value of this setting, non-internal engine errors will always be visible in toast notifications.
+   * The default **Auto** value will only enable this if the editor was compiled with the `dev_build=yes` SCons option (the default is `dev_build=no`).
+   */
+  'interface/editor/show_internal_errors_in_toast_notifications': int;
+  /**
+   * If enabled, displays an icon in the top-right corner of the editor that spins when the editor redraws a frame. This can be used to diagnose situations where the engine is constantly redrawing, which should be avoided as this increases CPU and GPU utilization for no good reason. To further troubleshoot these situations, start the editor with the `--debug-canvas-item-redraw` command line argument ($DOCS_URL/tutorials/editor/command_line_tutorial.html).
+   * Consider enabling this if you are developing editor plugins to ensure they only make the editor redraw when required.
+   * The default **Auto** value will only enable this if the editor was compiled with the `dev_build=yes` SCons option (the default is `dev_build=no`).
+   * **Note:** If {@link interface/editor/update_continuously} is `true`, the spinner icon displays in red.
+   * **Note:** If the editor was started with the `--debug-canvas-item-redraw` command line argument ($DOCS_URL/tutorials/editor/command_line_tutorial.html), the update spinner will *never* display regardless of this setting's value. This is to avoid confusion with what would cause redrawing in real world scenarios.
+   */
+  'interface/editor/show_update_spinner': int;
+  /**
+   * If `true`, embed modal windows such as docks inside the main editor window. When single-window mode is enabled, tooltips will also be embedded inside the main editor window, which means they can't be displayed outside of the editor window. Single-window mode can be faster as it does not need to create a separate window for every popup and tooltip, which can be a slow operation depending on the operating system and rendering method in use.
+   * This is equivalent to {@link ProjectSettings.display/window/subwindows/embed_subwindows} in the running project, except the setting's value is inverted.
+   * **Note:** To query whether the editor can use multiple windows in an editor plugin, use {@link EditorInterface.is_multi_window_enabled} instead of querying the value of this editor setting.
+   * **Note:** If `true`, game embedding is disabled.
+   */
+  'interface/editor/single_window_mode': boolean;
   /** Overrides the tablet driver used by the editor. */
-  'interface/editor/input/tablet_driver': int;
-  /**
-   * The language to use for the editor interface. If set to **Auto**, the language is automatically determined based on the system locale. See also {@link EditorInterface.get_editor_language}.
-   * Translations are provided by the community. If you spot a mistake, contribute to editor translations on Weblate! (https://contributing.godotengine.org/en/latest/documentation/translation/index.html)
-   */
-  'interface/editor/localization/editor_language': string;
-  /**
-   * If `true`, setting names in the editor are localized when possible.
-   * **Note:** This setting affects most {@link EditorInspector}s in the editor UI, primarily Project Settings and Editor Settings. To control names displayed in the Inspector dock, use {@link interface/inspector/default_property_name_style} instead.
-   */
-  'interface/editor/localization/localize_settings': boolean;
+  'interface/editor/tablet_driver': int;
   /** Editor UI default layout direction. */
-  'interface/editor/localization/ui_layout_direction': int;
+  'interface/editor/ui_layout_direction': int;
   /**
-   * During a drag-and-drop, this is how long to wait over a UI element before it triggers a reaction (e.g. a section unfolds to show nested items).
+   * When the editor window is unfocused, the amount of sleeping between frames when the low-processor usage mode is enabled (in microseconds). Higher values will result in lower CPU/GPU usage, which can improve battery life on laptops (in addition to improving the running project's performance if the editor has to redraw continuously). However, higher values will result in a less responsive editor. The default value is set to limit the editor to 10 FPS when the editor window is unfocused. See also {@link interface/editor/low_processor_mode_sleep_usec}.
+   * **Note:** This setting is ignored if {@link interface/editor/update_continuously} is `true`, as enabling that setting disables low-processor mode.
    */
-  'interface/editor/timers/dragging_hover_wait_seconds': float;
+  'interface/editor/unfocused_low_processor_mode_sleep_usec': int;
   /**
-   * The amount of sleeping between frames in the editor (in microseconds). Higher values will result in lower CPU/GPU usage, which can improve battery life on laptops. However, higher values will result in a less responsive editor. The default value is set to allow for maximum smoothness on monitors up to 144 Hz. See also {@link interface/editor/timers/unfocused_low_processor_mode_sleep_usec}.
-   * **Note:** This setting is ignored if {@link interface/editor/display/update_continuously} is `true`, as enabling that setting disables low-processor mode.
+   * If `true`, redraws the editor every frame even if nothing has changed on screen. When this setting is enabled, the update spinner displays in red (see {@link interface/editor/show_update_spinner}).
+   * **Warning:** This greatly increases CPU and GPU utilization, leading to increased power usage. This should only be enabled for troubleshooting purposes.
    */
-  'interface/editor/timers/low_processor_mode_sleep_usec': int;
+  'interface/editor/update_continuously': boolean;
   /**
-   * When the editor window is unfocused, the amount of sleeping between frames when the low-processor usage mode is enabled (in microseconds). Higher values will result in lower CPU/GPU usage, which can improve battery life on laptops (in addition to improving the running project's performance if the editor has to redraw continuously). However, higher values will result in a less responsive editor. The default value is set to limit the editor to 10 FPS when the editor window is unfocused. See also {@link interface/editor/timers/low_processor_mode_sleep_usec}.
-   * **Note:** This setting is ignored if {@link interface/editor/display/update_continuously} is `true`, as enabling that setting disables low-processor mode.
+   * If `true`, editor main menu is using embedded {@link MenuBar} instead of system global menu.
+   * Specific to the macOS platform.
    */
-  'interface/editor/timers/unfocused_low_processor_mode_sleep_usec': int;
+  'interface/editor/use_embedded_menu': boolean;
+  /** If `true`, editor UI uses OS native file/directory selection dialogs. */
+  'interface/editor/use_native_file_dialogs': boolean;
+  /**
+   * Sets the V-Sync mode for the editor. Does not affect the project when run from the editor (this is controlled by {@link ProjectSettings.display/window/vsync/vsync_mode}).
+   * Depending on the platform and used renderer, the engine will fall back to **Enabled** if the desired mode is not supported.
+   * **Note:** V-Sync modes other than **Enabled** are only supported in the Forward+ and Mobile rendering methods, not Compatibility.
+   */
+  'interface/editor/vsync_mode': int;
   /**
    * If `true`, when extending a script, the global class name of the script is inserted in the script creation dialog, if it exists. If `false`, the script's file path is always inserted.
    */
   'interface/editors/derive_script_globals_by_name': boolean;
+  /** If `true`, the Scene dock will display buttons to quickly add a root node to a newly created scene. */
+  'interface/editors/show_scene_tree_root_selection': boolean;
   /**
    * If `true`, automatically unfolds Inspector property groups containing modified values when opening a scene for the first time. Only affects scenes without saved folding preferences and only unfolds groups with properties that have been changed from their default values.
    * **Note:** This setting only works in specific scenarios: when opening a scene brought in from another project, or when opening a new scene that already has modified properties (e.g., from version control). Duplicated scenes are not considered foreign, so this setting will not affect them.
@@ -956,7 +926,7 @@ declare class EditorSettings extends Resource {
    * - **Raw:** Displays properties in `snake_case`.
    * - **Capitalized:** Displays properties capitalized.
    * - **Localized:** Displays the localized string for the current editor language if a translation is available for the given property. If no translation is available, falls back to **Capitalized**.
-   * **Note:** To display translated setting names in Project Settings and Editor Settings, use {@link interface/editor/localization/localize_settings} instead.
+   * **Note:** To display translated setting names in Project Settings and Editor Settings, use {@link interface/editor/localize_settings} instead.
    */
   'interface/inspector/default_property_name_style': int;
   /**
@@ -1005,7 +975,7 @@ declare class EditorSettings extends Resource {
   'interface/inspector/show_low_level_opentype_features': boolean;
   /**
    * If `true`, multiple window support in editor is enabled. The following panels can become dedicated windows (i.e. made floating): Docks, Script editor, Shader editor, and Game Workspace.
-   * **Note:** When {@link interface/editor/display/single_window_mode} is `true`, the multi window support is always disabled.
+   * **Note:** When {@link interface/editor/single_window_mode} is `true`, the multi window support is always disabled.
    * **Note:** To query whether the editor can use multiple windows in an editor plugin, use {@link EditorInterface.is_multi_window_enabled} instead of querying the value of this editor setting.
    */
   'interface/multi_window/enable': boolean;
@@ -1104,12 +1074,8 @@ declare class EditorSettings extends Resource {
   /** The editor theme style to use. */
   'interface/theme/style': string;
   /**
-   * If `true`, use the monospace font for some labels in the editor that display code symbols, such as signals, properties, and methods.
-   */
-  'interface/theme/use_monospace_font_for_editor_symbols': boolean;
-  /**
    * If `true`, set accent color based on system settings.
-   * **Note:** This setting is effective on Windows, macOS, Linux, and Android.
+   * **Note:** This setting is only effective on Windows, MacOS, and Android.
    */
   'interface/theme/use_system_accent_color': boolean;
   /**
@@ -1140,9 +1106,8 @@ declare class EditorSettings extends Resource {
   /**
    * Specifies how the engine should check for updates.
    * - **Disable Update Checks** will block the engine from checking updates (see also {@link network/connection/network_mode}).
-   * - **Auto** (default) will check for newest stable or unstable version, depending on which version are you currently using. Switch to another option if you want to lock in.
-   * - **Check Newest Preview** will check for the newest available development snapshot.
-   * - **Check Newest Stable** will check for the newest available stable version.
+   * - **Check Newest Preview** (default for preview versions) will check for the newest available development snapshot.
+   * - **Check Newest Stable** (default for stable versions) will check for the newest available stable version.
    * - **Check Newest Patch** will check for the latest available stable version, but only within the same minor version. E.g. if your version is `4.3.stable`, you will be notified about `4.3.1.stable`, but not `4.4.stable`.
    * All update modes will ignore builds with different major versions (e.g. Godot 4 -> Godot 5).
    */
@@ -1170,31 +1135,6 @@ declare class EditorSettings extends Resource {
    * **Note:** Godot currently doesn't automatically use system proxy settings, so you have to enter them manually here if needed.
    */
   'network/http_proxy/port': int;
-  /**
-   * If `true` the language server will try to provide additional results when resolving symbols at the cost of showing wrong results. All symbols in the project are checked and resolved just based on their name, without taking context into account.
-   * When using static typing it is recommended to disable this setting, since it will mostly add false positives for typed code.
-   * **Note:** This setting also influences how symbols are resolved when using renaming capabilities.
-   * **Note:** The default value of this setting might change in future versions.
-   */
-  'network/language_server/enable_smart_resolve': boolean;
-  /** The upper limit of time, that the language server spends for IO each poll. */
-  'network/language_server/poll_limit_usec': int;
-  /** The host used to listen for language server clients. */
-  'network/language_server/remote_host': string;
-  /**
-   * The port used to listen for language server clients.
-   * **Note:** A port configured with command-line options will take priority over this setting: `--lsp-port <port>`.
-   */
-  'network/language_server/remote_port': int;
-  /**
-   * The declaration of native symbols can't be resolved to a position in the file system. If `true` the language server will instead open the documentation for native symbols in the editor.
-   * **Note:** The VSCode plugin adds additional functionality which allows viewing Godot documentation directly in VSCode, so this option is usually not needed in VSCode.
-   */
-  'network/language_server/show_native_symbols_in_editor': boolean;
-  /**
-   * If `true` the language server will run in a separate thread, if `false` it will run on the main thread.
-   */
-  'network/language_server/use_thread': boolean;
   /**
    * The TLS certificate bundle to use for HTTP requests made within the editor (e.g. from the AssetLib tab). If left empty, the included Mozilla certificate bundle (https://github.com/godotengine/godot/blob/master/thirdparty/certs/ca-bundle.crt) will be used.
    */
@@ -1233,7 +1173,7 @@ declare class EditorSettings extends Resource {
   /** If `true`, the editor will clear the Output panel when running the project. */
   'run/output/always_clear_output_on_play': boolean;
   /**
-   * The size of the font in the **Output** panel at the bottom of the editor. This setting does not impact the font size of the script editor (see {@link interface/editor/fonts/code_font_size}).
+   * The size of the font in the **Output** panel at the bottom of the editor. This setting does not impact the font size of the script editor (see {@link interface/editor/code_font_size}).
    */
   'run/output/font_size': int;
   /** Maximum number of lines to show at any one time in the Output panel. */
@@ -1283,10 +1223,6 @@ declare class EditorSettings extends Resource {
    * The shape of the caret to use in the script editor. **Line** displays a vertical line to the left of the current character, whereas **Block** displays an outline over the current character.
    */
   'text_editor/appearance/caret/type': int;
-  /**
-   * If `true`, shows an info label listing available drop options when dragging an object into the script text editor.
-   */
-  'text_editor/appearance/drag_and_drop_info/show_drag_and_drop_info': boolean;
   /**
    * If `true`, displays a colored button before any {@link Color} constructor in the script editor. Clicking on them allows the color to be modified through a color picker.
    */
@@ -1338,7 +1274,7 @@ declare class EditorSettings extends Resource {
   /** If `true`, draws tab characters as chevrons. */
   'text_editor/appearance/whitespace/draw_tabs': boolean;
   /**
-   * The space to add between lines (in pixels). Greater line spacing can help improve readability at the cost of displaying fewer lines on screen. Negative values allow for even more compact text, but may look broken with certain fonts.
+   * The space to add between lines (in pixels). Greater line spacing can help improve readability at the cost of displaying fewer lines on screen.
    */
   'text_editor/appearance/whitespace/line_spacing': int;
   /** If `true`, documentation tooltips will appear when hovering over a symbol. */

@@ -2,8 +2,8 @@
 // Manual overrides applied from typings-overrides/*.d.ts
 
 /**
- * Base class for audio equalizers (EQ). Gives you control over frequencies.
- * Use it to create a custom equalizer if {@link AudioEffectEQ6}, {@link AudioEffectEQ10}, or {@link AudioEffectEQ21} don't fit your needs.
+ * Base class for audio equalizers. Gives you control over frequencies.
+ * Use it to create a custom equalizer if {@link AudioEffectEQ6}, {@link AudioEffectEQ10} or {@link AudioEffectEQ21} don't fit your needs.
  */
 declare class AudioEffectEQ extends AudioEffect {
   /** Returns the number of bands of the equalizer. */

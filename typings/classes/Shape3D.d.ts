@@ -6,7 +6,6 @@ declare class Shape3D extends Resource {
   /**
    * The shape's custom solver bias. Defines how much bodies react to enforce contact separation when this shape is involved.
    * When set to `0`, the default value from {@link ProjectSettings.physics/3d/solver/default_contact_bias} is used.
-   * **Note:** {@link custom_solver_bias} is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   custom_solver_bias: float;
   /**

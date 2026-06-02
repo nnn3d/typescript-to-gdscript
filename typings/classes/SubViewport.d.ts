@@ -21,8 +21,6 @@ declare class SubViewport extends Viewport {
   size_2d_override: Vector2i;
   /** If `true`, the 2D size override affects stretch as well. */
   size_2d_override_stretch: boolean;
-  /** The number of view layers we are rendering to. Set this to `2` to enable stereo rendering. */
-  view_count: int;
   set_clear_mode(value: int): void;
   get_clear_mode(): int;
   set_update_mode(value: int): void;
@@ -33,8 +31,6 @@ declare class SubViewport extends Viewport {
   get_size_2d_override(): Vector2i;
   set_size_2d_override_stretch(value: boolean): void;
   is_size_2d_override_stretch_enabled(): boolean;
-  set_view_count(value: int): void;
-  get_view_count(): int;
 
   // enum ClearMode
   /** Always clear the render target before drawing. */

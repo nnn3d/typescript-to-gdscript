@@ -6,7 +6,7 @@ declare class GeometryInstance3D extends VisualInstance3D {
   /** The mode used to cast shadows from this instance. */
   cast_shadow: int;
   /**
-   * Overrides the bounding box of this node with a custom one. This can be used to avoid the expensive {@link AABB} recalculation that happens when a skeleton is used with a {@link MeshInstance3D} or to have precise control over the {@link MeshInstance3D}'s bounding box. To use the default AABB, set value to an {@link AABB} with all fields set to `0.0`. To avoid frustum culling, set {@link custom_aabb} to a very large AABB that covers your entire game world such as `AABB(-10000, -10000, -10000, 20000, 20000, 20000)`. To disable all forms of culling (including occlusion and layer culling), call {@link RenderingServer.instance_set_ignore_culling} on the {@link GeometryInstance3D}'s {@link RID}.
+   * Overrides the bounding box of this node with a custom one. This can be used to avoid the expensive {@link AABB} recalculation that happens when a skeleton is used with a {@link MeshInstance3D} or to have precise control over the {@link MeshInstance3D}'s bounding box. To use the default AABB, set value to an {@link AABB} with all fields set to `0.0`. To avoid frustum culling, set {@link custom_aabb} to a very large AABB that covers your entire game world such as `AABB(-10000, -10000, -10000, 20000, 20000, 20000)`. To disable all forms of culling (including occlusion culling), call {@link RenderingServer.instance_set_ignore_culling} on the {@link GeometryInstance3D}'s {@link RID}.
    */
   custom_aabb: AABB;
   /**

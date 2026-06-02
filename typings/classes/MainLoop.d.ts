@@ -73,8 +73,4 @@ declare class MainLoop extends GodotObject {
   static readonly NOTIFICATION_APPLICATION_FOCUS_OUT: int;
   /** Notification received when text server is changed. */
   static readonly NOTIFICATION_TEXT_SERVER_CHANGED: int;
-  /** Notification received when the application enters picture-in-picture mode. */
-  static readonly NOTIFICATION_APPLICATION_PIP_MODE_ENTERED: int;
-  /** Notification received when the application exits picture-in-picture mode. */
-  static readonly NOTIFICATION_APPLICATION_PIP_MODE_EXITED: int;
 }

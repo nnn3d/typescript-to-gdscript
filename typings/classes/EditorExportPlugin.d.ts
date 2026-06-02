@@ -37,11 +37,6 @@ declare class EditorExportPlugin extends RefCounted {
   /** This is called when the customization process for scenes ends. */
   _end_customize_scenes(): void;
   /**
-   * This is called after Xcode project generation, but before it is built.
-   * **Note:** Only supported on iOS and visionOS.
-   */
-  _end_generate_apple_embedded_project(path: string | NodePath, will_build_archive: boolean): void;
-  /**
    * Virtual method to be overridden by the user. It is called when the export starts and provides all information about the export. `features` is the list of features for the export, `is_debug` is `true` for debug builds, `path` is the target path for the exported project. `flags` is only used when running a runnable profile, e.g. when using native run on Android.
    */
   _export_begin(features: PackedStringArray | Array<unknown>, is_debug: boolean, path: string | NodePath, flags: int): void;

@@ -11,7 +11,6 @@ declare class Environment extends Resource {
   adjustment_brightness: float;
   /**
    * The {@link Texture2D} or {@link Texture3D} lookup table (LUT) to use for the built-in post-process color grading. Can use a {@link GradientTexture1D} for a 1-dimensional LUT, or a {@link Texture3D} for a more complex LUT. Effective only if {@link adjustment_enabled} is `true`.
-   * **Note:** Color correction does not currently support HDR output due to only supporting values in the SDR (0.0 to 1.0) range.
    */
   adjustment_color_correction: Texture | null;
   /**
@@ -346,7 +345,7 @@ declare class Environment extends Resource {
   tonemap_agx_contrast: float;
   /**
    * The white reference value for tonemapping, which indicates where bright white is located in the scale of values provided to the tonemapper. For photorealistic lighting, it is recommended to set {@link tonemap_agx_white} to at least `6.0`. Higher values result in less blown out highlights, but may make the scene appear lower contrast. {@link tonemap_agx_white} is the same as {@link tonemap_white}, but is only effective with the {@link TONE_MAPPER_AGX} tonemapper. See also {@link tonemap_exposure}.
-   * **Note:** When using the Mobile renderer with {@link Viewport.use_hdr_2d} disabled, {@link tonemap_agx_white} is ignored and a white value of `2.0` will always be used instead. Otherwise, {@link tonemap_agx_white} will be dynamically adjusted at runtime by multiplying it by the parent window's {@link Window.get_output_max_linear_value} when using {@link Viewport.use_hdr_2d} to ensure good behavior with both SDR and HDR output.
+   * **Note:** When using the Mobile renderer with {@link Viewport.use_hdr_2d} disabled, {@link tonemap_agx_white} is ignored and a white value of `2.0` will always be used instead.
    */
   tonemap_agx_white: float;
   /**
@@ -361,7 +360,6 @@ declare class Environment extends Resource {
   /**
    * The white reference value for tonemapping, which indicates where bright white is located in the scale of values provided to the tonemapper. For photorealistic lighting, it is recommended to set {@link tonemap_white} to at least `6.0`. Higher values result in less blown out highlights, but may make the scene appear lower contrast. {@link tonemap_agx_white} will be used instead when using the {@link TONE_MAPPER_AGX} tonemapper. See also {@link tonemap_exposure}.
    * **Note:** {@link tonemap_white} must be set to `2.0` or lower on the Mobile renderer to produce bright images.
-   * **Note:** {@link tonemap_white} is ignored when using {@link TONE_MAPPER_LINEAR} and will be dynamically adjusted at runtime to never be less than the parent window's {@link Window.get_output_max_linear_value} when using {@link TONE_MAPPER_REINHARDT} with {@link Viewport.use_hdr_2d}.
    */
   tonemap_white: float;
   /**
@@ -664,13 +662,11 @@ declare class Environment extends Resource {
   static readonly TONE_MAPPER_REINHARDT: int;
   /**
    * Uses a film-like tonemapping curve to prevent clipping of bright values and provide better contrast than {@link TONE_MAPPER_REINHARDT}. Slightly slower than {@link TONE_MAPPER_REINHARDT}.
-   * **Note:** This tonemapper does not support HDR output because it produces output in the SDR range. It is recommended to use a different tonemapper when rendering to an HDR screen.
    */
   static readonly TONE_MAPPER_FILMIC: int;
   /**
    * Uses a high-contrast film-like tonemapping curve and desaturates bright values for a more realistic appearance. Slightly slower than {@link TONE_MAPPER_FILMIC}.
    * **Note:** This tonemapping operator is called "ACES Fitted" in Godot 3.x.
-   * **Note:** This tonemapper does not support HDR output because it produces output in the SDR range. It is recommended to use a different tonemapper when rendering to an HDR screen.
    */
   static readonly TONE_MAPPER_ACES: int;
   /**
@@ -681,12 +677,11 @@ declare class Environment extends Resource {
   /** Adds the glow effect to the scene. */
   static readonly GLOW_BLEND_MODE_ADDITIVE: int;
   /**
-   * Adds the glow effect to the scene after modifying the glow influence based on the scene value; dark values will be highly influenced by glow and bright values will not be influenced by glow. This approach avoids bright values becoming overly bright from the glow effect. {@link tonemap_white} is used to determine the maximum scene value where the glow should have no influence. When {@link tonemap_mode} is set to {@link TONE_MAPPER_LINEAR} and {@link Viewport.use_hdr_2d} is `true`, the parent window's {@link Window.get_output_max_linear_value} will be used as the maximum scene value.
+   * Adds the glow effect to the scene after modifying the glow influence based on the scene value; dark values will be highly influenced by glow and bright values will not be influenced by glow. This approach avoids bright values becoming overly bright from the glow effect. {@link tonemap_white} is used to determine the maximum scene value where the glow should have no influence. When {@link tonemap_mode} is set to {@link TONE_MAPPER_LINEAR}, a value of `1.0` will be used as the maximum scene value.
    */
   static readonly GLOW_BLEND_MODE_SCREEN: int;
   /**
    * Adds the glow effect to the tonemapped image after modifying the glow influence based on the image value; dark values and bright values will not be influenced by glow and mid-range values will be highly influenced by glow. This approach avoids bright values becoming overly bright from the glow effect. The glow will have the largest influence on image values of `0.25` and will have no influence when applied to image values greater than `1.0`.
-   * **Note:** This blend mode does not support HDR output because expects a maximum output value of `1.0`. It is recommended to use a different blend mode when rendering to an HDR screen.
    */
   static readonly GLOW_BLEND_MODE_SOFTLIGHT: int;
   /**

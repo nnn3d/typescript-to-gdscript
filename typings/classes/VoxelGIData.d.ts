@@ -46,25 +46,15 @@ declare class VoxelGIData extends Resource {
   set_use_two_bounces(value: boolean): void;
   is_using_two_bounces(): boolean;
 
-  /**
-   * Initializes this {@link VoxelGIData} with the specified data. `octree_cells` must be a multiple of 32. `octree_cells` must be double the size of `data_cells`. The allocated data can be retrieved later using the various getter methods.
-   */
   allocate(to_cell_xform: Transform3D | Projection, aabb: AABB, octree_size: Vector3 | Vector3i, octree_cells: PackedByteArray | Array<unknown>, data_cells: PackedByteArray | Array<unknown>, distance_field: PackedByteArray | Array<unknown>, level_counts: PackedInt32Array | Array<unknown>): void;
   /**
    * Returns the bounds of the baked voxel data as an {@link AABB}, which should match {@link VoxelGI.size} after being baked (which only contains the size as a {@link Vector3}).
    * **Note:** If the size was modified without baking the VoxelGI data, then the value of {@link get_bounds} and {@link VoxelGI.size} will not match.
    */
   get_bounds(): AABB;
-  /** Returns the baked cell data for this {@link VoxelGIData}. */
   get_data_cells(): PackedByteArray;
-  /** Returns the baked level counts for this {@link VoxelGIData}. */
   get_level_counts(): PackedInt32Array;
-  /** Returns the baked octree cell data for this {@link VoxelGIData}. */
   get_octree_cells(): PackedByteArray;
-  /**
-   * Returns the baked octree size for this {@link VoxelGIData}, which corresponds to the number of subdivisions per axis. This can be viewed in the editor by hovering the **Bake VoxelGI** button at the top of the 3D editor viewport when a {@link VoxelGI} node is selected and looking at the **Subdivisions** field in the tooltip.
-   */
   get_octree_size(): Vector3;
-  /** Returns the baked cell transform for this {@link VoxelGIData}. */
   get_to_cell_xform(): Transform3D;
 }

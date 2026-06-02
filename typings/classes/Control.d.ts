@@ -140,49 +140,6 @@ declare class Control extends CanvasItem {
    */
   offset_top: float;
   /**
-   * If `true`, applies all offset transform properties. Otherwise, no offset transform is applied and the properties have no effect.
-   */
-  offset_transform_enabled: boolean;
-  /**
-   * Pivot used by {@link offset_transform_rotation} and {@link offset_transform_scale} in absolute units.
-   * The final pivot position is the combined value of this property and {@link offset_transform_pivot_ratio}.
-   * Has no effect unless {@link offset_transform_enabled} is `true`.
-   */
-  offset_transform_pivot: Vector2;
-  /**
-   * Same as {@link offset_transform_pivot} but expressed in units relative to the {@link Control} {@link size} where `Vector2(0, 0)` is the top-left corner of this control, and `Vector2(1, 1)` is its bottom-right corner.
-   * The final pivot position is the combined value of this property and {@link offset_transform_pivot}.
-   * Has no effect unless {@link offset_transform_enabled} is `true`.
-   */
-  offset_transform_pivot_ratio: Vector2;
-  /**
-   * Position offset in absolute units. The final offset is the combined value of this property and {@link offset_transform_position_ratio}.
-   * Has no effect unless {@link offset_transform_enabled} is `true`.
-   */
-  offset_transform_position: Vector2;
-  /**
-   * Same as {@link offset_transform_position} but expressed in units relative to the {@link Control} {@link size} where `Vector2(0, 0)` is the top-left corner of this control, and `Vector2(1, 1)` is its bottom-right corner.
-   * The final offset is the combined value of this property and {@link offset_transform_position}.
-   * Has no effect unless {@link offset_transform_enabled} is `true`.
-   */
-  offset_transform_position_ratio: Vector2;
-  /**
-   * Rotation offset. The rotation pivot is defined by {@link offset_transform_pivot} and {@link offset_transform_pivot_ratio}.
-   * Has no effect unless {@link offset_transform_enabled} is `true`.
-   */
-  offset_transform_rotation: float;
-  /**
-   * Scale offset. The scale pivot is defined by {@link offset_transform_pivot} and {@link offset_transform_pivot_ratio}.
-   * Has no effect unless {@link offset_transform_enabled} is `true`.
-   */
-  offset_transform_scale: Vector2;
-  /**
-   * If `true`, the offset transforms is only applied visually and does not affect input. In other words, this Control will still receive input events at its original location before the offset transform is applied.
-   * If `false`, the entire transform of this Control is affected and input events will register where the Control is visually.
-   * Has no effect unless {@link offset_transform_enabled} is `true`.
-   */
-  offset_transform_visual_only: boolean;
-  /**
    * <member name="pivot_offset" type="Vector2" setter="set_pivot_offset" getter="get_pivot_offset" default="Vector2(0, 0)">
    * By default, the node's pivot is its top-left corner. When you change its {@link rotation} or {@link scale}, it will rotate or scale around this pivot.
    * The actual offset is the combined value of this property and {@link pivot_offset_ratio}.
@@ -304,22 +261,6 @@ declare class Control extends CanvasItem {
   get_mouse_filter(): int;
   set_force_pass_scroll_events(value: boolean): void;
   is_force_pass_scroll_events(): boolean;
-  set_offset_transform_enabled(value: boolean): void;
-  is_offset_transform_enabled(): boolean;
-  set_offset_transform_pivot(value: Vector2 | Vector2i): void;
-  get_offset_transform_pivot(): Vector2;
-  set_offset_transform_pivot_ratio(value: Vector2 | Vector2i): void;
-  get_offset_transform_pivot_ratio(): Vector2;
-  set_offset_transform_position(value: Vector2 | Vector2i): void;
-  get_offset_transform_position(): Vector2;
-  set_offset_transform_position_ratio(value: Vector2 | Vector2i): void;
-  get_offset_transform_position_ratio(): Vector2;
-  set_offset_transform_rotation(value: float): void;
-  get_offset_transform_rotation(): float;
-  set_offset_transform_scale(value: Vector2 | Vector2i): void;
-  get_offset_transform_scale(): Vector2;
-  set_offset_transform_visual_only(value: boolean): void;
-  is_offset_transform_visual_only(): boolean;
   set_pivot_offset_ratio(value: Vector2 | Vector2i): void;
   get_pivot_offset_ratio(): Vector2;
   _set_position(value: Vector2 | Vector2i): void;

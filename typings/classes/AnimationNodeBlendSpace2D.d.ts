@@ -44,22 +44,15 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   get_y_label(): string;
 
   /**
-   * Adds a new point with `name` that represents a `node` at the position set by `pos`. You can insert it at a specific index using the `at_index` argument. If you use the default value for `at_index`, the point is inserted at the end of the blend points array.
-   * **Note:** If no name is provided, safe index is used as reference. In the future, empty names will be deprecated, so explicitly passing a name is recommended.
+   * Adds a new point that represents a `node` at the position set by `pos`. You can insert it at a specific index using the `at_index` argument. If you use the default value for `at_index`, the point is inserted at the end of the blend points array.
    */
-  add_blend_point(node: AnimationRootNode, pos: Vector2 | Vector2i, at_index?: int, name?: string): void;
+  add_blend_point(node: AnimationRootNode, pos: Vector2 | Vector2i, at_index?: int): void;
   /**
    * Creates a new triangle using three points `x`, `y`, and `z`. Triangles can overlap. You can insert the triangle at a specific index using the `at_index` argument. If you use the default value for `at_index`, the point is inserted at the end of the blend points array.
    */
   add_triangle(x: int, y: int, z: int, at_index?: int): void;
-  /**
-   * Returns the index of the blend point with the given `name`. Returns `-1` if no blend point with that name is found.
-   */
-  find_blend_point_by_name(name: string): int;
   /** Returns the number of points in the blend space. */
   get_blend_point_count(): int;
-  /** Returns the name of the blend point at index `point`. */
-  get_blend_point_name(point: int): string;
   /** Returns the {@link AnimationRootNode} referenced by the point at index `point`. */
   get_blend_point_node(point: int): AnimationRootNode | null;
   /** Returns the position of the point at index `point`. */
@@ -72,14 +65,6 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   remove_blend_point(point: int): void;
   /** Removes the triangle at index `triangle` from the blend space. */
   remove_triangle(triangle: int): void;
-  /**
-   * Swaps the blend points at indices `from_index` and `to_index`, exchanging their positions and properties.
-   */
-  reorder_blend_point(from_index: int, to_index: int): void;
-  /**
-   * Sets the name of the blend point at index `point`. If the name conflicts with an existing point, a unique name will be generated automatically.
-   */
-  set_blend_point_name(point: int, name: string): void;
   /** Changes the {@link AnimationNode} referenced by the point at index `point`. */
   set_blend_point_node(point: int, node: AnimationRootNode): void;
   /** Updates the position of the point at index `point` in the blend space. */

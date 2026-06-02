@@ -13,8 +13,6 @@ declare class EditorFileSystem extends Node {
   get_filesystem_path(path: string | NodePath): EditorFileSystemDirectory | null;
   /** Returns the scan progress for 0 to 1 if the FS is being scanned. */
   get_scanning_progress(): float;
-  /** Returns `true` if resources are currently being imported. */
-  is_importing(): boolean;
   /** Returns `true` if the filesystem is being scanned. */
   is_scanning(): boolean;
   /**

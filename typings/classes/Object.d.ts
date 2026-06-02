@@ -108,7 +108,7 @@ declare class GodotObject {
   callv<N extends string, A extends any[], R>(
   this: Record<N, (...args: A) => R>,
   method: N,
-  args: A
+  args: A,
   ): R;
   callv(method: string, args: any[]): unknown;
   /**
@@ -141,10 +141,7 @@ declare class GodotObject {
   signal: N,
   ...args: A
   ): Error.OK | Error.ERR_UNAVAILABLE;
-  emit_signal(
-  signal: string,
-  ...args: any[]
-  ): Error.OK | Error.ERR_UNAVAILABLE;
+  emit_signal(signal: string, ...args: any[]): Error.OK | Error.ERR_UNAVAILABLE;
   /**
    * Deletes the object from memory. Pre-existing references to the object become invalid, and any attempt to access them will result in a runtime error. Checking the references with {@link @GlobalScope.is_instance_valid} will return `false`. This is equivalent to the `memdelete` function in GDExtension C++.
    */

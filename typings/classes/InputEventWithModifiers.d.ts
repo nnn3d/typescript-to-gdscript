@@ -12,10 +12,9 @@ declare class InputEventWithModifiers extends InputEventFromWindow {
   /** State of the `Ctrl` modifier. */
   ctrl_pressed: boolean;
   /**
-   * <member name="meta_pressed" type="bool" setter="set_meta_pressed" getter="is_meta_pressed" default="false">
    * State of the `Meta` modifier. On Windows and Linux, this represents the Windows key (sometimes called "meta" or "super" on Linux). On macOS, this represents the Command key.
    */
-  device: int;
+  meta_pressed: boolean;
   /** State of the `Shift` modifier. */
   shift_pressed: boolean;
   set_alt_pressed(value: boolean): void;
@@ -24,6 +23,8 @@ declare class InputEventWithModifiers extends InputEventFromWindow {
   is_command_or_control_autoremap(): boolean;
   set_ctrl_pressed(value: boolean): void;
   is_ctrl_pressed(): boolean;
+  set_meta_pressed(value: boolean): void;
+  is_meta_pressed(): boolean;
   set_shift_pressed(value: boolean): void;
   is_shift_pressed(): boolean;
 

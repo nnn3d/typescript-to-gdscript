@@ -126,9 +126,8 @@ declare class Area3D extends CollisionObject3D {
    */
   get_overlapping_areas(): Array<Area3D>;
   /**
-   * Returns a list of intersecting {@link PhysicsBody3D}s, {@link SoftBody3D}s, and {@link GridMap}s. The overlapping body's {@link CollisionObject3D.collision_layer} must be part of this area's {@link CollisionObject3D.collision_mask} in order to be detected.
+   * Returns a list of intersecting {@link PhysicsBody3D}s and {@link GridMap}s. The overlapping body's {@link CollisionObject3D.collision_layer} must be part of this area's {@link CollisionObject3D.collision_mask} in order to be detected.
    * For performance reasons (collisions are all processed at the same time) this list is modified once during the physics step, not immediately after objects are moved. Consider using signals instead.
-   * **Note:** Godot Physics does not support reporting overlaps with {@link SoftBody3D}, so will not return any such bodies.
    */
   get_overlapping_bodies(): Array<Node3D>;
   /**
@@ -137,9 +136,8 @@ declare class Area3D extends CollisionObject3D {
    */
   has_overlapping_areas(): boolean;
   /**
-   * Returns `true` if intersecting any {@link PhysicsBody3D}s, {@link SoftBody3D}s, or {@link GridMap}s, otherwise returns `false`. The overlapping body's {@link CollisionObject3D.collision_layer} must be part of this area's {@link CollisionObject3D.collision_mask} in order to be detected.
+   * Returns `true` if intersecting any {@link PhysicsBody3D}s or {@link GridMap}s, otherwise returns `false`. The overlapping body's {@link CollisionObject3D.collision_layer} must be part of this area's {@link CollisionObject3D.collision_mask} in order to be detected.
    * For performance reasons (collisions are all processed at the same time) the list of overlapping bodies is modified once during the physics step, not immediately after objects are moved. Consider using signals instead.
-   * **Note:** Godot Physics does not support reporting overlaps with {@link SoftBody3D}, so will not consider such bodies.
    */
   has_overlapping_bodies(): boolean;
   /**
@@ -149,9 +147,8 @@ declare class Area3D extends CollisionObject3D {
   overlaps_area(area: Node): boolean;
   /**
    * Returns `true` if the given physics body intersects or overlaps this {@link Area3D}, `false` otherwise.
-   * `body` argument can either be a {@link PhysicsBody3D}, {@link SoftBody3D}, or a {@link GridMap} instance. While GridMaps are not physics body themselves, they register their tiles with collision shapes as a virtual physics body.
    * **Note:** The result of this test is not immediate after moving objects. For performance, list of overlaps is updated once per frame and before the physics step. Consider using signals instead.
-   * **Note:** Godot Physics does not support reporting overlaps with {@link SoftBody3D}, so will return `false` in such cases.
+   * The `body` argument can either be a {@link PhysicsBody3D} or a {@link GridMap} instance. While GridMaps are not physics body themselves, they register their tiles with collision shapes as a virtual physics body.
    */
   overlaps_body(body: Node): boolean;
 
@@ -171,26 +168,22 @@ declare class Area3D extends CollisionObject3D {
    */
   area_shape_exited: Signal<[RID, Area3D, int, int]>;
   /**
-   * Emitted when the received `body` enters this area. `body` can be a {@link PhysicsBody3D}, {@link SoftBody3D} or {@link GridMap}. {@link GridMap}s are detected if their {@link MeshLibrary} has collision shapes configured. Requires {@link monitoring} to be set to `true`.
-   * **Note:** Godot Physics does not support reporting overlaps with {@link SoftBody3D}, so will not emit this signal in such cases.
+   * Emitted when the received `body` enters this area. `body` can be a {@link PhysicsBody3D} or a {@link GridMap}. {@link GridMap}s are detected if their {@link MeshLibrary} has collision shapes configured. Requires {@link monitoring} to be set to `true`.
    */
   body_entered: Signal<[Node3D]>;
   /**
-   * Emitted when the received `body` exits this area. `body` can be a {@link PhysicsBody3D}, {@link SoftBody3D} or {@link GridMap}. {@link GridMap}s are detected if their {@link MeshLibrary} has collision shapes configured. Requires {@link monitoring} to be set to `true`.
-   * **Note:** Godot Physics does not support reporting overlaps with {@link SoftBody3D}, so will not emit this signal in such cases.
+   * Emitted when the received `body` exits this area. `body` can be a {@link PhysicsBody3D} or a {@link GridMap}. {@link GridMap}s are detected if their {@link MeshLibrary} has collision shapes configured. Requires {@link monitoring} to be set to `true`.
    */
   body_exited: Signal<[Node3D]>;
   /**
-   * Emitted when a {@link Shape3D} of the received `body` enters a shape of this area. `body` can be a {@link PhysicsBody3D}, {@link SoftBody3D} or {@link GridMap}. {@link GridMap}s are detected if their {@link MeshLibrary} has collision shapes configured. Requires {@link monitoring} to be set to `true`.
+   * Emitted when a {@link Shape3D} of the received `body` enters a shape of this area. `body` can be a {@link PhysicsBody3D} or a {@link GridMap}. {@link GridMap}s are detected if their {@link MeshLibrary} has collision shapes configured. Requires {@link monitoring} to be set to `true`.
    * `local_shape_index` and `body_shape_index` contain indices of the interacting shapes from this area and the interacting body, respectively. `body_rid` contains the {@link RID} of the body. These values can be used with the {@link PhysicsServer3D}.
-   * **Note:** Godot Physics does not support reporting overlaps with {@link SoftBody3D}, so will not emit this signal in such cases.
    * **Example:** Get the {@link CollisionShape3D} node from the shape index:
    */
   body_shape_entered: Signal<[RID, Node3D, int, int]>;
   /**
-   * Emitted when a {@link Shape3D} of the received `body` exits a shape of this area. `body` can be a {@link PhysicsBody3D}, {@link SoftBody3D} or {@link GridMap}. {@link GridMap}s are detected if their {@link MeshLibrary} has collision shapes configured. Requires {@link monitoring} to be set to `true`.
+   * Emitted when a {@link Shape3D} of the received `body` exits a shape of this area. `body` can be a {@link PhysicsBody3D} or a {@link GridMap}. {@link GridMap}s are detected if their {@link MeshLibrary} has collision shapes configured. Requires {@link monitoring} to be set to `true`.
    * See also {@link body_shape_entered}.
-   * **Note:** Godot Physics does not support reporting overlaps with {@link SoftBody3D}, so will not emit this signal in such cases.
    */
   body_shape_exited: Signal<[RID, Node3D, int, int]>;
 

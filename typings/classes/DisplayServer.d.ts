@@ -271,7 +271,7 @@ declare interface DisplayServer extends GodotObject {
    * Displays OS native dialog for selecting files or directories in the file system.
    * Each filter string in the `filters` array should be formatted like this: `*.png,*.jpg,*.jpeg;Image Files;image/png,image/jpeg`. The description text of the filter is optional and can be omitted. It is recommended to set both file extension and MIME type. See also {@link FileDialog.filters}.
    * Callbacks have the following arguments: `status: bool, selected_paths: PackedStringArray, selected_filter_index: int`. **On Android,** the third callback argument (`selected_filter_index`) is always `0`.
-   * **Note:** This method is implemented if the display server has the {@link FEATURE_NATIVE_DIALOG_FILE} feature. Supported platforms include Linux (X11/Wayland), Windows, macOS, and Android.
+   * **Note:** This method is implemented if the display server has the {@link FEATURE_NATIVE_DIALOG_FILE} feature. Supported platforms include Linux (X11/Wayland), Windows, macOS, and Android (API level 29+).
    * **Note:** `current_directory` might be ignored.
    * **Note:** Embedded file dialogs and Windows file dialogs support only file extensions, while Android, Linux, and macOS file dialogs also support MIME types.
    * **Note:** On Android and Linux, `show_hidden` is ignored.
@@ -772,11 +772,6 @@ declare interface DisplayServer extends GodotObject {
    */
   is_dark_mode_supported(): boolean;
   /**
-   * Returns `true` if the application is in picture-in-picture mode.
-   * **Note:** This method is implemented on Android.
-   */
-  is_in_pip_mode(window_id?: int): boolean;
-  /**
    * Returns `true` if touch events are available (Android or iOS), the capability is detected on the Web platform or if {@link ProjectSettings.input_devices/pointing/emulate_touch_from_mouse} is `true`.
    */
   is_touchscreen_available(): boolean;
@@ -829,21 +824,6 @@ declare interface DisplayServer extends GodotObject {
   mouse_get_position(): Vector2i;
   /** Sets the current mouse mode. See also {@link mouse_get_mode}. */
   mouse_set_mode(mouse_mode: int): void;
-  /**
-   * Enters picture-in-picture mode.
-   * **Note:** This method is implemented on Android.
-   */
-  pip_mode_enter(window_id?: int): void;
-  /**
-   * Specifies the aspect ratio for picture-in-picture mode.
-   * **Note:** This method is implemented on Android.
-   */
-  pip_mode_set_aspect_ratio(numerator: int, denominator: int, window_id?: int): void;
-  /**
-   * Specifies whether picture-in-picture mode should be entered automatically when the application goes in the background.
-   * **Note:** This method is implemented on Android.
-   */
-  pip_mode_set_auto_enter_on_background(auto_enter_on_background: boolean, window_id?: int): void;
   /**
    * Perform window manager processing, including input flushing. See also {@link force_process_and_drop_events}, {@link Input.flush_buffered_events} and {@link Input.use_accumulated_input}.
    */
@@ -1133,24 +1113,6 @@ declare interface DisplayServer extends GodotObject {
   window_get_current_screen(window_id?: int): int;
   /** Returns the current value of the given window's `flag`. */
   window_get_flag(flag: int, window_id?: int): boolean;
-  /**
-   * When {@link window_is_hdr_output_enabled} returns `true`, this returns the current maximum luminance in nits (cd/m²) for HDR output by the window specified by `window_id`. If the maximum luminance is being automatically adjusted based on the screen's capabilities, this method will return that value. Otherwise, it will return the value set by {@link window_set_hdr_output_max_luminance}. This maximum luminance value is used when calculating {@link window_get_output_max_linear_value}.
-   * **Note:** This maximum luminance may not match the physical behavior of the screen, but will always be proportionally correct relative to {@link window_get_hdr_output_current_reference_luminance}.
-   */
-  window_get_hdr_output_current_max_luminance(window_id?: int): float;
-  /**
-   * When {@link window_is_hdr_output_enabled} returns `true`, this returns the current reference white luminance in nits (cd/m²) for HDR output by the window specified by `window_id`. If the reference luminance is being automatically adjusted to match the operating system brightness, this will return that value. Otherwise, it will return the value set by {@link window_set_hdr_output_reference_luminance}. This reference luminance value is used when calculating {@link window_get_output_max_linear_value}.
-   * **Note:** This reference white luminance may not match the physical behavior of the screen, but will always be proportionally correct relative to {@link window_get_hdr_output_current_max_luminance}.
-   */
-  window_get_hdr_output_current_reference_luminance(window_id?: int): float;
-  /**
-   * Returns the maximum luminance in nits (cd/m²) set for HDR output by the window specified by `window_id`. Negative values indicate that the value is being automatically adjusted based on the screen's capabilities. See also {@link window_get_hdr_output_current_max_luminance}.
-   */
-  window_get_hdr_output_max_luminance(window_id?: int): float;
-  /**
-   * Returns the reference white luminance in nits (cd/m²) set for HDR output by the window specified by `window_id`. Negative values indicate that the value is being automatically adjusted to match the operating system brightness. See also {@link window_get_hdr_output_current_reference_luminance}.
-   */
-  window_get_hdr_output_reference_luminance(window_id?: int): float;
   /** Returns the window's maximum size (in pixels). See also {@link window_set_max_size}. */
   window_get_max_size(window_id?: int): Vector2i;
   /** Returns the window's minimum size (in pixels). See also {@link window_set_min_size}. */
@@ -1162,10 +1124,6 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** This method is implemented on Android, Linux (X11/Wayland), macOS, and Windows.
    */
   window_get_native_handle(handle_type: int, window_id?: int): int;
-  /**
-   * Returns the maximum value for linear color components that can be displayed for the window specified by `window_id`, regardless of SDR or HDR output. Returns `1.0` if HDR is not enabled or not supported. When HDR output is enabled, this is calculated based on {@link window_get_hdr_output_current_reference_luminance} and {@link window_get_hdr_output_current_max_luminance}. This value is used by tonemapping and other {@link Environment} effects to ensure that bright colors are presented in the range that can be displayed by this window. Corresponds to {@link Window.get_output_max_linear_value}.
-   */
-  window_get_output_max_linear_value(window_id?: int): float;
   /**
    * Returns the bounding box of control, or menu item that was used to open the popup window, in the screen coordinate system.
    */
@@ -1197,18 +1155,6 @@ declare interface DisplayServer extends GodotObject {
   window_get_vsync_mode(window_id?: int): int;
   /** Returns `true` if the window specified by `window_id` is focused. */
   window_is_focused(window_id?: int): boolean;
-  /**
-   * Returns `true` if HDR output is currently enabled for the window specified by `window_id`. The returned value may change dynamically based on system settings, screen capabilities, and which screen the window is currently on.
-   */
-  window_is_hdr_output_enabled(window_id?: int): boolean;
-  /**
-   * Returns `true` if HDR output is requested for the window specified by `window_id`. Corresponds to {@link Window.hdr_output_requested}.
-   */
-  window_is_hdr_output_requested(window_id?: int): boolean;
-  /**
-   * Returns `true` if the window specified by `window_id` supports HDR output. This depends on the platform, screen capabilities, system settings, and the screen the window is currently on.
-   */
-  window_is_hdr_output_supported(window_id?: int): boolean;
   /** Returns `true` if the given window can be maximized (the maximize button is enabled). */
   window_is_maximize_allowed(window_id?: int): boolean;
   /**
@@ -1229,10 +1175,6 @@ declare interface DisplayServer extends GodotObject {
    * Makes the window specified by `window_id` request attention, which is materialized by the window title and taskbar entry blinking until the window is focused. This usually has no visible effect if the window is currently focused. The exact behavior varies depending on the operating system.
    */
   window_request_attention(window_id?: int): void;
-  /**
-   * If `enable` is `true`, HDR output is requested for the window specified by `window_id`. The window will automatically switch between HDR and SDR if it is moved between screens, screen capabilities change, or system settings are modified. This will internally force {@link Viewport.use_hdr_2d} to be enabled on the main {@link Viewport}. All other {@link SubViewport} of the {@link Window} must have their {@link Viewport.use_hdr_2d} property enabled to produce HDR output. Corresponds to {@link Window.hdr_output_requested}.
-   */
-  window_request_hdr_output(enable: boolean, window_id?: int): void;
   /**
    * Sets the background color of the root window.
    * **Note:** This method is implemented only on Android.
@@ -1258,14 +1200,6 @@ declare interface DisplayServer extends GodotObject {
   window_set_exclusive(window_id: int, exclusive: boolean): void;
   /** Enables or disables the given window's given `flag`. */
   window_set_flag(flag: int, enabled: boolean, window_id?: int): void;
-  /**
-   * Sets the maximum luminance in nits (cd/m²) for HDR output by the window specified by `window_id`. If `max_luminance` is negative, the window uses the screen's maximum luminance that is reported by the operating system. By default, this luminance is set to `-1.0` for every window. Typically this property should be left at this default value, but may optionally be exposed through in-game settings to allow the player to correct an inaccurate maximum luminance reported by the operating system. See also {@link window_get_hdr_output_current_max_luminance} and {@link window_get_hdr_output_max_luminance}.
-   */
-  window_set_hdr_output_max_luminance(max_luminance: float, window_id?: int): void;
-  /**
-   * Sets the reference white luminance in nits (cd/m²) for HDR output by the window specified by `window_id`. If `reference_luminance` is negative, the window automatically adjusts to the brightness set by the operating system. By default, this luminance is set to `-1.0` for every window. Typically this property should be left at this default value, but may optionally be exposed as an "HDR Brightness" in-game setting to allow the player to adjust the brightness of their game, independently of their device settings. See also {@link window_get_hdr_output_current_reference_luminance} and {@link window_get_hdr_output_reference_luminance}.
-   */
-  window_set_hdr_output_reference_luminance(reference_luminance: float, window_id?: int): void;
   /**
    * Sets whether Input Method Editor (https://en.wikipedia.org/wiki/Input_method) should be enabled for the window specified by `window_id`. See also {@link window_set_ime_position}.
    */
@@ -1340,19 +1274,6 @@ declare interface DisplayServer extends GodotObject {
    */
   window_set_size(size: Vector2i | Vector2, window_id?: int): void;
   /**
-   * Sets the type and state of the progress bar on the taskbar/dock icon of the window specified by `window_id`. See {@link ProgressState} for possible values and how each mode behaves.
-   * **Note:** This method is implemented only on Windows and macOS.
-   * **Note:** On macOS, the progress bar is displayed only for the main window.
-   */
-  window_set_taskbar_progress_state(state: int, window_id?: int): void;
-  /**
-   * Creates a progress bar on the taskbar/dock icon of the window specified by `window_id` if it does not exist, sets the progress of the icon.
-   * `value` acts as a relative percentage value, ranges from `0.0` (lowest) to `1.0` (highest).
-   * **Note:** This method is implemented only on Windows and macOS.
-   * **Note:** On macOS, the progress bar is displayed only for the main window.
-   */
-  window_set_taskbar_progress_value(value: float, window_id?: int): void;
-  /**
    * Sets the title of the given window to `title`.
    * **Note:** It's recommended to change this value using {@link Window.title} instead.
    * **Note:** Avoid changing the window title every frame, as this can cause performance issues on certain window managers. Try to change the window title only a few times per second at most.
@@ -1390,13 +1311,6 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** This method is implemented on Linux (X11/Wayland), macOS, and Windows.
    */
   window_start_resize(edge: int, window_id?: int): void;
-
-  /**
-   * Emitted when the device orientation changes. `orientation` is the new orientation.
-   * Returns `1` for portrait, `2` for landscape, and `0` if the orientation is undefined.
-   * **Note:** This method is implemented on Android and iOS.
-   */
-  orientation_changed: Signal<[int]>;
 
   // enum Feature
   /**
@@ -1514,10 +1428,6 @@ declare interface DisplayServer extends GodotObject {
    * Display server supports interaction with screen reader or Braille display. **Linux (X11/Wayland), macOS, Windows**
    */
   readonly FEATURE_ACCESSIBILITY_SCREEN_READER: int;
-  /** Display server supports HDR output. **macOS, iOS, visionOS, Windows** */
-  readonly FEATURE_HDR_OUTPUT: int;
-  /** Display server supports putting the application in picture-in-picture mode. **Android** */
-  readonly FEATURE_PIP_MODE: int;
   // enum AccessibilityRole
   /** Unknown or custom role. */
   readonly ROLE_UNKNOWN: int;
@@ -1613,13 +1523,6 @@ declare interface DisplayServer extends GodotObject {
   readonly ROLE_DIALOG: int;
   /** Tooltip element. */
   readonly ROLE_TOOLTIP: int;
-  /** Region/landmark element. Screen readers can navigate between regions using landmark navigation. */
-  readonly ROLE_REGION: int;
-  /**
-   * Unifor text run.
-   * Note: This role is used for internal text elements, and should not be assigned to nodes.
-   */
-  readonly ROLE_TEXT_RUN: int;
   // enum AccessibilityPopupType
   /** Popup menu. */
   readonly POPUP_MENU: int;
@@ -1900,26 +1803,6 @@ declare interface DisplayServer extends GodotObject {
    * **Note:** Regardless of the platform, enabling full screen will change the window size to match the monitor's size. Therefore, make sure your project supports multiple resolutions ($DOCS_URL/tutorials/rendering/multiple_resolutions.html) when enabling full screen mode.
    */
   readonly WINDOW_MODE_EXCLUSIVE_FULLSCREEN: int;
-  // enum ProgressState
-  /** Stops displaying progress and returns the button to its normal state. */
-  readonly PROGRESS_STATE_NOPROGRESS: int;
-  /**
-   * The progress indicator shows an indeterminate progress.
-   * On Windows, the progress indicator does not grow in size, but cycles repeatedly along the length of the taskbar button by default.
-   */
-  readonly PROGRESS_STATE_INDETERMINATE: int;
-  /** The progress indicator shows progress normally. */
-  readonly PROGRESS_STATE_NORMAL: int;
-  /**
-   * The progress indicator shows that an error has occurred.
-   * On Windows, the progress indicator turns red by default to show that an error has occurred in one of the windows that is broadcasting progress.
-   */
-  readonly PROGRESS_STATE_ERROR: int;
-  /**
-   * The progress indicator shows it was paused.
-   * On Windows, the progress indicator turns yellow by default to show that progress is currently stopped in one of the windows but can be resumed by the user.
-   */
-  readonly PROGRESS_STATE_PAUSED: int;
   // enum WindowFlags
   /**
    * The window can't be resized by dragging its resize grip. It's still possible to resize the window using {@link window_set_size}. This flag is ignored for full screen windows.
@@ -2094,16 +1977,6 @@ declare interface DisplayServer extends GodotObject {
    * - Linux (Wayland): `EGLConfig` for the window.
    */
   readonly EGL_CONFIG: int;
-  /**
-   * The GLX `VisualID` for the window.
-   * **Note:** Only available on Linux when using X11.
-   */
-  readonly GLX_VISUALID: int;
-  /**
-   * The `GLXFBConfig` for the window.
-   * **Note:** Only available on Linux when using X11.
-   */
-  readonly GLX_FBCONFIG: int;
   // enum TTSUtteranceEvent
   /** Utterance has begun to be spoken. */
   readonly TTS_UTTERANCE_STARTED: int;

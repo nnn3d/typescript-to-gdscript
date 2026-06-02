@@ -38,7 +38,7 @@ declare class BaseButton extends Control {
    */
   shortcut_feedback: boolean;
   /**
-   * If `true`, the button will add information about its shortcut in the tooltip. This includes the shortcut's events and its {@link Resource.resource_name}. If both events and name are empty, the shortcut will not be included.
+   * If `true`, the button will add information about its shortcut in the tooltip.
    * **Note:** This property does nothing when the tooltip control is customized using {@link Control._make_custom_tooltip}.
    */
   shortcut_in_tooltip: boolean;

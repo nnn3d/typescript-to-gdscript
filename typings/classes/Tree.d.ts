@@ -18,10 +18,7 @@ declare class Tree extends Control {
    * If `true`, column titles are visible.
    */
   clip_contents: boolean;
-  /**
-   * The number of columns.
-   * Prints an error and does not allow setting the columns during mouse selection.
-   */
+  /** The number of columns. */
   columns: int;
   /**
    * The drop mode as an OR combination of flags. See {@link DropModeFlags} constants. Once dropping is done, reverts to {@link DROP_MODE_DISABLED}. Setting this during {@link Control._can_drop_data} is recommended.
@@ -86,16 +83,12 @@ declare class Tree extends Control {
   set_tile_scroll_hint(value: boolean): void;
   is_scroll_hint_tiled(): boolean;
 
-  /**
-   * Clears the tree. This removes all items.
-   * Prints an error and does not allow clearing the tree if called during mouse selection.
-   */
+  /** Clears the tree. This removes all items. */
   clear(): void;
   /**
    * Creates an item in the tree and adds it as a child of `parent`, which can be either a valid {@link TreeItem} or `null`.
    * If `parent` is `null`, the root item will be the parent, or the new item will be the root itself if the tree is empty.
    * The new item will be the `index`-th child of parent, or it will be the last child if there are not enough siblings.
-   * Prints an error and returns `null` if called during mouse selection, or if the `parent` does not belong to this tree.
    */
   create_item(parent?: TreeItem, index?: int): TreeItem | null;
   /**

@@ -8,7 +8,7 @@ declare class FoldableContainer extends Container {
    * The {@link FoldableGroup} associated with the container. When multiple {@link FoldableContainer} nodes share the same group, only one of them is allowed to be unfolded.
    */
   focus_mode: int;
-  /** If `true`, the container will become folded and will hide all its children. */
+  /** If `true`, the container will becomes folded and will hide all its children. */
   folded: boolean;
   /** Language code used for text shaping algorithms. If left empty, the current locale is used instead. */
   language: string;

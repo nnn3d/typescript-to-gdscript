@@ -42,9 +42,6 @@ declare interface InputMap extends GodotObject {
    * Clears all {@link InputEventAction} in the {@link InputMap} and load it anew from {@link ProjectSettings}.
    */
   load_from_project_settings(): void;
-
-  /** Emitted when the {@link ProjectSettings} {@link InputMap} has been loaded. */
-  project_settings_loaded: Signal<[]>;
 }
 declare const InputMap: InputMap;
 

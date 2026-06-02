@@ -44,7 +44,7 @@ declare class Font extends Resource {
   /** Returns {@link TextServer} RID of the font cache for specific variation. */
   find_variation(variation_coordinates: Dictionary, face_index?: int, strength?: float, transform?: Transform2D, spacing_top?: int, spacing_bottom?: int, spacing_space?: int, spacing_glyph?: int, baseline_offset?: float): RID;
   /**
-   * Returns the maximum font ascent (number of pixels above the baseline) of this font and all fallback fonts.
+   * Returns the average font ascent (number of pixels above the baseline).
    * **Note:** Real ascent of the string is context-dependent and can be significantly different from the value returned by this function. Use it only as rough estimate (e.g. as the ascent of empty line).
    */
   get_ascent(font_size?: int): float;
@@ -54,7 +54,7 @@ declare class Font extends Resource {
    */
   get_char_size(char: int, font_size: int): Vector2;
   /**
-   * Returns the maximum font descent (number of pixels below the baseline) of this font and all fallback fonts.
+   * Returns the average font descent (number of pixels below the baseline).
    * **Note:** Real descent of the string is context-dependent and can be significantly different from the value returned by this function. Use it only as rough estimate (e.g. as the descent of empty line).
    */
   get_descent(font_size?: int): float;

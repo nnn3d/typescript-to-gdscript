@@ -3,16 +3,8 @@
 
 /** Abstraction for working with modern low-level graphics APIs. */
 declare class RenderingDevice extends GodotObject {
-  /** Builds the `acceleration_structure`. */
-  acceleration_structure_build(acceleration_structure: RID): int;
   /** This method does nothing. */
   barrier(from_: int, to: int): void;
-  /**
-   * Creates a new Bottom Level Acceleration Structure. It can be accessed with the RID that is returned.
-   * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
-   * `position_attribute_location` selects which vertex attribute location supplies the position data (default is 0).
-   */
-  blas_create(vertex_array: RID, index_array: RID, geometry_bits: int, position_attribute_location?: int): RID;
   /**
    * Clears the contents of the `buffer`, clearing `size_bytes` bytes, starting at `offset`.
    * Prints an error if:
@@ -352,36 +344,6 @@ declare class RenderingDevice extends GodotObject {
    */
   limit_get(limit: int): int;
   /**
-   * Starts a list of raytracing commands. The returned value should be passed to other `raytracing_list_*` functions.
-   * Multiple raytracing lists cannot be created at the same time; you must finish the previous raytracing list first using {@link raytracing_list_end}.
-   * A simple raytracing operation might look like this (code is not a complete example):
-   */
-  raytracing_list_begin(): int;
-  /** Binds `raytracing_pipeline` to the specified `raytracing_list`. */
-  raytracing_list_bind_raytracing_pipeline(raytracing_list: int, raytracing_pipeline: RID): void;
-  /** Binds the `uniform_set` to this `raytracing_list`. */
-  raytracing_list_bind_uniform_set(raytracing_list: int, uniform_set: RID, set_index: int): void;
-  /** Finishes a list of raytracing commands created with the `raytracing_*` methods. */
-  raytracing_list_end(): void;
-  /**
-   * Sets the push constant data to `buffer` for the specified `raytracing_list`. The shader determines how this binary data is used. The buffer's size in bytes must also be specified in `size_bytes` (this can be obtained by calling the {@link PackedByteArray.size} method on the passed `buffer`).
-   */
-  raytracing_list_set_push_constant(raytracing_list: int, buffer: PackedByteArray | Array<unknown>, size_bytes: int): void;
-  /**
-   * Initializes a ray tracing dispatch for the specified `raytracing_list` assembling a group of `width` x `height` rays.
-   */
-  raytracing_list_trace_rays(raytracing_list: int, width: int, height: int): void;
-  /**
-   * Creates a new raytracing pipeline. It can be accessed with the RID that is returned.
-   * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
-   * **Note:**: Recursive raytracing is not permitted.
-   */
-  raytracing_pipeline_create(shader: RID, specialization_constants?: Array<RDPipelineSpecializationConstant>): RID;
-  /**
-   * Returns `true` if the raytracing pipeline specified by the `raytracing_pipeline` RID is valid, `false` otherwise.
-   */
-  raytracing_pipeline_is_valid(raytracing_pipeline: RID): boolean;
-  /**
    * Creates a new render pipeline. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    * This will be freed automatically when the `shader` is freed.
@@ -563,21 +525,6 @@ declare class RenderingDevice extends GodotObject {
    * **Note:** The existing `texture` requires the {@link TEXTURE_USAGE_CAN_UPDATE_BIT} to be updatable.
    */
   texture_update(texture: RID, layer: int, data: PackedByteArray | Array<unknown>): int;
-  /**
-   * Creates a new Top Level Acceleration Structure. It can be accessed with the RID that is returned.
-   * The instances buffer passed as input is expected to be filled before building the TLAS.
-   * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
-   */
-  tlas_create(instances_buffer: RID): RID;
-  /**
-   * Creates a new instances buffer which can be used to create a TLAS. It can be accessed with the RID that is returned.
-   * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
-   */
-  tlas_instances_buffer_create(instance_count: int, creation_bits: int): RID;
-  /**
-   * Fills the content of an instances buffer. The number of BLASes and transforms passed as input should be the same and should equal the instance count used at instance buffer creation time.
-   */
-  tlas_instances_buffer_fill(instances_buffer: RID, blases: Array<RID>, transforms: Array<Transform3D>): void;
   /**
    * Creates a new uniform buffer. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
@@ -1773,15 +1720,6 @@ declare class RenderingDevice extends GodotObject {
    * Set this flag so that it is created as storage. This is useful if Compute Shaders need access (for reading or writing) to the buffer, e.g. skeletal animations are processed in Compute Shaders which need access to vertex buffers, to be later consumed by vertex shaders as part of the regular rasterization pipeline.
    */
   static readonly BUFFER_CREATION_AS_STORAGE_BIT: int;
-  /**
-   * Allows usage of this buffer as input data for an acceleration structure build operation. You must first check that the GPU supports it:
-   */
-  static readonly BUFFER_CREATION_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT: int;
-  // enum AccelerationStructureGeometryBits
-  /** An opaque geometry does not invoke the any hit shaders. */
-  static readonly ACCELERATION_STRUCTURE_GEOMETRY_OPAQUE: int;
-  /** This geometry only calls the any hit shader a single time for each primitive. */
-  static readonly ACCELERATION_STRUCTURE_GEOMETRY_NO_DUPLICATE_ANY_HIT_INVOCATION: int;
   // enum UniformType
   /** Sampler uniform. */
   static readonly UNIFORM_TYPE_SAMPLER: int;
@@ -1815,8 +1753,6 @@ declare class RenderingDevice extends GodotObject {
    * It's exposed in case GD users receive a buffer created with such flag from Godot.
    */
   static readonly UNIFORM_TYPE_STORAGE_BUFFER_DYNAMIC: int;
-  /** Acceleration structure uniform. */
-  static readonly UNIFORM_TYPE_ACCELERATION_STRUCTURE: int;
   /** Represents the size of the {@link UniformType} enum. */
   static readonly UNIFORM_TYPE_MAX: int;
   // enum RenderPrimitive
@@ -2082,24 +2018,6 @@ declare class RenderingDevice extends GodotObject {
    * Compute shader stage. This can be used to run arbitrary computing tasks in a shader, performing them on the GPU instead of the CPU.
    */
   static readonly SHADER_STAGE_COMPUTE: int;
-  /** Ray generation shader stage. This can be used to generate primary rays. */
-  static readonly SHADER_STAGE_RAYGEN: int;
-  /**
-   * Any hit shader stage. Invoked when ray intersections are not opaque. This can be used to specify what happens when a ray hits any of the geometry in the scene.
-   */
-  static readonly SHADER_STAGE_ANY_HIT: int;
-  /**
-   * Closest hit shader stage. This can be used to specify what happens when a ray hits the closest geometry in the scene.
-   */
-  static readonly SHADER_STAGE_CLOSEST_HIT: int;
-  /**
-   * Miss shader stage. This can be used to specify what happens if a ray does not hit anything in the scene.
-   */
-  static readonly SHADER_STAGE_MISS: int;
-  /**
-   * Intersection shader stage. The intersection shader for triangles is built-in. This can be used to compute ray intersections with primitives that are not triangles.
-   */
-  static readonly SHADER_STAGE_INTERSECTION: int;
   /** Represents the size of the {@link ShaderStage} enum. */
   static readonly SHADER_STAGE_MAX: int;
   /** Vertex shader stage bit (see also {@link SHADER_STAGE_VERTEX}). */
@@ -2112,16 +2030,6 @@ declare class RenderingDevice extends GodotObject {
   static readonly SHADER_STAGE_TESSELATION_EVALUATION_BIT: int;
   /** Compute shader stage bit (see also {@link SHADER_STAGE_COMPUTE}). */
   static readonly SHADER_STAGE_COMPUTE_BIT: int;
-  /** Ray generation shader stage bit (see also {@link SHADER_STAGE_RAYGEN}). */
-  static readonly SHADER_STAGE_RAYGEN_BIT: int;
-  /** Any hit shader stage bit (see also {@link SHADER_STAGE_ANY_HIT}). */
-  static readonly SHADER_STAGE_ANY_HIT_BIT: int;
-  /** Closest hit shader stage bit (see also {@link SHADER_STAGE_CLOSEST_HIT}). */
-  static readonly SHADER_STAGE_CLOSEST_HIT_BIT: int;
-  /** Miss shader stage bit (see also {@link SHADER_STAGE_MISS}). */
-  static readonly SHADER_STAGE_MISS_BIT: int;
-  /** Intersection shader stage bit (see also {@link SHADER_STAGE_INTERSECTION}). */
-  static readonly SHADER_STAGE_INTERSECTION_BIT: int;
   // enum ShaderLanguage
   /**
    * Khronos' GLSL shading language (used natively by OpenGL and Vulkan). This is the language used for core Godot shaders.
@@ -2147,18 +2055,6 @@ declare class RenderingDevice extends GodotObject {
   static readonly SUPPORTS_BUFFER_DEVICE_ADDRESS: int;
   /** Support for 32-bit image atomic operations. */
   static readonly SUPPORTS_IMAGE_ATOMIC_32_BIT: int;
-  /**
-   * Support for ray query extension.
-   * **Note:** This is currently only supported when using Vulkan. This is not supported on macOS and iOS (even on hardware supporting raytracing) due to MoltenVK limitations.
-   */
-  static readonly SUPPORTS_RAY_QUERY: int;
-  /**
-   * Support for raytracing pipeline extension.
-   * **Note:** This is currently only supported when using Vulkan. This is not supported on macOS and iOS (even on hardware supporting raytracing) due to MoltenVK limitations.
-   */
-  static readonly SUPPORTS_RAYTRACING_PIPELINE: int;
-  /** Support for high dynamic range (HDR) output. */
-  static readonly SUPPORTS_HDR_OUTPUT: int;
   // enum Limit
   /** Maximum number of uniform sets that can be bound at a given time. */
   static readonly LIMIT_MAX_BOUND_UNIFORM_SETS: int;

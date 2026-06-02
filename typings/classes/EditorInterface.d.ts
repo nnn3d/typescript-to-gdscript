@@ -70,7 +70,7 @@ declare interface EditorInterface extends GodotObject {
   get_editor_paths(): EditorPaths;
   /**
    * Returns the actual scale of the editor UI (`1.0` being 100% scale). This can be used to adjust position and dimensions of the UI added by plugins.
-   * **Note:** This value is set via the {@link EditorSettings.interface/editor/appearance/display_scale} and {@link EditorSettings.interface/editor/appearance/custom_display_scale} settings. The editor must be restarted for changes to be properly applied.
+   * **Note:** This value is set via the {@link EditorSettings.interface/editor/display_scale} and {@link EditorSettings.interface/editor/custom_display_scale} settings. The editor must be restarted for changes to be properly applied.
    */
   get_editor_scale(): float;
   /** Returns the editor's {@link EditorSettings} instance. */
@@ -131,8 +131,6 @@ declare interface EditorInterface extends GodotObject {
   get_selected_paths(): PackedStringArray;
   /** Returns the editor's {@link EditorSelection} instance. */
   get_selection(): EditorSelection;
-  /** Returns an array of file paths of currently unsaved scenes. */
-  get_unsaved_scenes(): PackedStringArray;
   /**
    * Shows the given property on the given `object` in the editor's Inspector dock. If `inspector_only` is `true`, plugins will not attempt to edit `object`.
    */
@@ -140,7 +138,7 @@ declare interface EditorInterface extends GodotObject {
   /**
    * Returns `true` if multiple window support is enabled in the editor. Multiple window support is enabled if *all* of these statements are true:
    * - {@link EditorSettings.interface/multi_window/enable} is `true`.
-   * - {@link EditorSettings.interface/editor/display/single_window_mode} is `false`.
+   * - {@link EditorSettings.interface/editor/single_window_mode} is `false`.
    * - {@link Viewport.gui_embed_subwindows} is `false`. This is forced to `true` on platforms that don't support multiple windows such as Web, or when the `--single-window` command line argument ($DOCS_URL/tutorials/editor/command_line_tutorial.html) is used.
    */
   is_multi_window_enabled(): boolean;

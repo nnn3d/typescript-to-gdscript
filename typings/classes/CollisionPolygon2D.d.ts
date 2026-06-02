@@ -12,11 +12,8 @@ declare class CollisionPolygon2D extends Node2D {
   /**
    * If `true`, only edges that face up, relative to {@link CollisionPolygon2D}'s rotation, will collide with other objects.
    * **Note:** This property has no effect if this {@link CollisionPolygon2D} is a child of an {@link Area2D} node.
-   * **Note:** The one way collision direction can be configured by setting {@link one_way_collision_direction}.
    */
   one_way_collision: boolean;
-  /** The direction used for one-way collision. */
-  one_way_collision_direction: Vector2;
   /**
    * The margin used for one-way collision (in pixels). Higher values will make the shape thicker, and work better for colliders that enter the polygon at a high velocity.
    */
@@ -32,8 +29,6 @@ declare class CollisionPolygon2D extends Node2D {
   is_disabled(): boolean;
   set_one_way_collision(value: boolean): void;
   is_one_way_collision_enabled(): boolean;
-  set_one_way_collision_direction(value: Vector2 | Vector2i): void;
-  get_one_way_collision_direction(): Vector2;
   set_one_way_collision_margin(value: float): void;
   get_one_way_collision_margin(): float;
   set_polygon(value: PackedVector2Array | Array<unknown>): void;

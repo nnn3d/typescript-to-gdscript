@@ -62,10 +62,6 @@ declare interface Basis {
    */
   is_finite(): boolean;
   /**
-   * Returns `true` if this basis is orthonormal. An orthonormal basis is both *orthogonal* (the axes are perpendicular to each other) and *normalized* (the length of every axis is `1.0`). This method can be especially useful during physics calculations.
-   */
-  is_orthonormal(): boolean;
-  /**
    * Returns the orthonormalized version of this basis. An orthonormal basis is both *orthogonal* (the axes are perpendicular to each other) and *normalized* (the axes have a length of `1.0`), which also means it can only represent a rotation.
    * It is often useful to call this method to avoid rounding errors on a rotating basis:
    */

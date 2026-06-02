@@ -9,6 +9,8 @@ declare class ImageTexture extends Texture2D {
    * Creates a new {@link ImageTexture} and initializes it by allocating and setting the data from an {@link Image}.
    */
   static create_from_image(image: Image): ImageTexture;
+  /** Returns the format of the texture. */
+  get_format(): int;
   /**
    * Replaces the texture's data with a new {@link Image}. This will re-allocate new memory for the texture.
    * If you want to update the image, but don't need to change its parameters (format, size), use {@link update} instead for better performance.

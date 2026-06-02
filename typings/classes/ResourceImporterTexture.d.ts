@@ -61,7 +61,7 @@ declare class ResourceImporterTexture extends ResourceImporter {
    */
   'editor/convert_colors_with_editor_theme': boolean;
   /**
-   * If `true`, scales the imported image to match {@link EditorSettings.interface/editor/appearance/custom_display_scale}. This should be enabled for editor plugin icons and custom class icons, but should be left disabled otherwise.
+   * If `true`, scales the imported image to match {@link EditorSettings.interface/editor/custom_display_scale}. This should be enabled for editor plugin icons and custom class icons, but should be left disabled otherwise.
    * **Note:** Only available for SVG images.
    */
   'editor/scale_with_editor_scale': boolean;
@@ -158,7 +158,7 @@ declare class ResourceImporterTexture extends ResourceImporter {
   'process/normal_map_invert_y': boolean;
   /**
    * An alternative to fixing darkened borders with {@link process/fix_alpha_border} is to use premultiplied alpha. By enabling this option, the texture will be converted to this format. A premultiplied alpha texture requires specific materials to be displayed correctly:
-   * - In 2D, a {@link CanvasItemMaterial} will need to be created and configured to use the {@link CanvasItemMaterial.BLEND_MODE_PREMULT_ALPHA} blend mode on {@link CanvasItem}s that use this texture. In custom `canvas_item` shaders, `render_mode blend_premul_alpha;` should be used.
+   * - In 2D, a {@link CanvasItemMaterial} will need to be created and configured to use the {@link CanvasItemMaterial.BLEND_MODE_PREMULT_ALPHA} blend mode on {@link CanvasItem}s that use this texture. In custom `@canvas_item` shaders, `render_mode blend_premul_alpha;` should be used.
    * - In 3D, a {@link BaseMaterial3D} will need to be created and configured to use the {@link BaseMaterial3D.BLEND_MODE_PREMULT_ALPHA} blend mode on materials that use this texture. In custom `spatial` shaders, `render_mode blend_premul_alpha;` should be used.
    */
   'process/premult_alpha': boolean;

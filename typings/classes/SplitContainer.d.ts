@@ -22,10 +22,6 @@ declare class SplitContainer extends Container {
    */
   drag_area_offset: int;
   /**
-   * Adds extra draggers at the intersection of the draggers of two SplitContainers to allow dragging both at once. This must be set to `true` for both SplitContainers, and one needs to be a descendant of the other. They also must be orthogonal (their {@link vertical} are different) and the descendant must be next to at least one of the ancestor's draggers (within ).
-   */
-  drag_nested_intersections: boolean;
-  /**
    * Determines the dragger's visibility. This property does not determine whether dragging is enabled or not. Use {@link dragging_enabled} for that.
    */
   dragger_visibility: int;
@@ -58,8 +54,6 @@ declare class SplitContainer extends Container {
   get_drag_area_margin_end(): int;
   set_drag_area_offset(value: int): void;
   get_drag_area_offset(): int;
-  set_drag_nested_intersections(value: boolean): void;
-  is_dragging_nested_intersections(): boolean;
   set_dragger_visibility(value: int): void;
   get_dragger_visibility(): int;
   set_dragging_enabled(value: boolean): void;

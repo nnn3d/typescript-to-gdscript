@@ -25,10 +25,6 @@ declare class Tween extends RefCounted {
    */
   get_total_elapsed_time(): float;
   /**
-   * Returns `true` if any {@link Tweener} has been added to the {@link Tween} and the {@link Tween} is valid. Useful when tweeners are added dynamically and the tween can end up empty. Killing an empty tween before it starts will prevent errors.
-   */
-  has_tweeners(): boolean;
-  /**
    * This method can be used for manual interpolation of a value, when you don't want {@link Tween} to do animating for you. It's similar to {@link @GlobalScope.lerp}, but with support for custom transition and easing.
    * `initial_value` is the starting value of the interpolation.
    * `delta_value` is the change of the value in the interpolation, i.e. it's equal to `final_value - initial_value`.
@@ -103,15 +99,6 @@ declare class Tween extends RefCounted {
    * **Note:** If a Tween is stopped and not bound to any node, it will exist indefinitely until manually started or invalidated. If you lose a reference to such Tween, you can retrieve it using {@link SceneTree.get_processed_tweens}.
    */
   stop(): void;
-  /**
-   * Creates and appends an {@link AwaitTweener}. This method can be used to await a signal to be emitted and create asynchronous animations or cutscenes.
-   * The animation will not progress to the next step until the awaited signal is emitted or the connection becomes invalid (e.g. as a result of freeing the target object). If you know that the emission may not happen, use {@link AwaitTweener.set_timeout}.
-   * **Note:** The awaited signal should be emitted during the step when {@link AwaitTweener} is active.
-   * **Example:** An object launches itself and explodes upon collision or after 4 seconds.
-   * **Example:** A character walks to a specific point, says some lines and walks back when the player closes the message box.
-   * **Note:** If you are awaiting a signal from a callback called in the same {@link Tween}, make sure the signal is emitted *after* the await starts. If it can't be reasonably guaranteed, you can await and emit in the same step:
-   */
-  tween_await(signal: Signal): AwaitTweener;
   /**
    * Creates and appends a {@link CallbackTweener}. This method can be used to call an arbitrary method in any object. Use {@link Callable.bind} to bind additional arguments for the call.
    * **Example:** Object that keeps shooting every 1 second:

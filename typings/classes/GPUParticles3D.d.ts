@@ -225,13 +225,9 @@ declare class GPUParticles3D extends GeometryInstance3D {
   /** Particle starts with specified `CUSTOM` data. */
   static readonly EMIT_FLAG_CUSTOM: int;
   // enum TransformAlign
-  /** Do not align particle transforms relative to the camera or velocity. */
   static readonly TRANSFORM_ALIGN_DISABLED: int;
-  /** Align each particle's Z axis to face the camera. */
   static readonly TRANSFORM_ALIGN_Z_BILLBOARD: int;
-  /** Align each particle's Y axis to the velocity vector. */
   static readonly TRANSFORM_ALIGN_Y_TO_VELOCITY: int;
-  /** Align each particle's Z axis to face the camera and Y axis to the velocity vector. */
   static readonly TRANSFORM_ALIGN_Z_BILLBOARD_Y_TO_VELOCITY: int;
 
   /** Maximum number of draw passes supported. */

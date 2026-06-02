@@ -297,7 +297,6 @@ declare interface RenderingServer extends GodotObject {
    * This is useful when moving an occluder to a new location, to give an instantaneous change rather than interpolation from the previous location.
    */
   canvas_light_occluder_reset_physics_interpolation(occluder: RID): void;
-  /** Enables or disables using the light occluder as a signed distance field for 2D particle collision. */
   canvas_light_occluder_set_as_sdf_collision(occluder: RID, enable: boolean): void;
   /** Enables or disables light occluder. */
   canvas_light_occluder_set_enabled(occluder: RID, enabled: boolean): void;
@@ -378,11 +377,6 @@ declare interface RenderingServer extends GodotObject {
   canvas_occluder_polygon_set_cull_mode(occluder_polygon: RID, mode: int): void;
   /** Sets the shape of the occluder polygon. */
   canvas_occluder_polygon_set_shape(occluder_polygon: RID, shape: PackedVector2Array | Array<unknown>, closed: boolean): void;
-  /**
-   * If `disable` is `true`, makes 2D rendering ignore the canvas scale defined for each canvas layer. This affects {@link CanvasLayer}s with the {@link CanvasLayer.follow_viewport_enabled} property set to `true`.
-   * In the editor, this is set to `true` by default, and set to `false` when **View > Preview Canvas Scale** is enabled at the top of the 2D editor viewport.
-   * **Note:** Setting this to `true` does not impact the behavior of {@link CanvasLayer.scale}, {@link Node2D.scale}, or {@link Control.scale}.
-   */
   canvas_set_disable_scale(disable: boolean): void;
   /**
    * A copy of the canvas item will be drawn with a local offset of the `mirroring`.
@@ -838,7 +832,7 @@ declare interface RenderingServer extends GodotObject {
    */
   instance_set_extra_visibility_margin(instance: RID, margin: float): void;
   /**
-   * If `true`, ignores all culling on the specified 3D geometry instance, including frustum culling, occlusion culling, and layer culling. This is not the same as {@link GeometryInstance3D.ignore_occlusion_culling}, which only ignores occlusion culling but leaves frustum and layer culling intact.
+   * If `true`, ignores both frustum and occlusion culling on the specified 3D geometry instance. This is not the same as {@link GeometryInstance3D.ignore_occlusion_culling}, which only ignores occlusion culling and leaves frustum culling intact.
    */
   instance_set_ignore_culling(instance: RID, enabled: boolean): void;
   /**
@@ -948,41 +942,17 @@ declare interface RenderingServer extends GodotObject {
    * **Note:** The equivalent node is {@link LightmapGI}.
    */
   lightmap_create(): RID;
-  /**
-   * Returns the BSP tree data used for accelerating probe lookups. The BSP data is structured as a series of six signed 32-bit values per BSP node in this order: `float plane_x`, `float plane_y`, `float plane_z`, `float plane_distance`, `int32_t over`, `int32_t under`. An empty leaf is denoted by the value `-2147483648` (the minimum 32-bit signed integer). See also {@link lightmap_set_probe_capture_data}.
-   */
   lightmap_get_probe_capture_bsp_tree(lightmap: RID): PackedInt32Array;
-  /**
-   * Returns the *local space* positions of each lightmap probe capture point. Keep in mind the lightmap instance may have a non-zero transform, which will affect the position of the probe capture points. See also {@link lightmap_set_probe_capture_data}.
-   */
   lightmap_get_probe_capture_points(lightmap: RID): PackedVector3Array;
-  /**
-   * Returns the L0, L1, and L2 spherical harmonics (https://en.wikipedia.org/wiki/Spherical_harmonics) data for each lightmap probe capture point. This is specified as 9 {@link Color} values per probe, which means the size of the returned data is always 9 times the number of probe points. See also {@link lightmap_set_probe_capture_data}.
-   */
   lightmap_get_probe_capture_sh(lightmap: RID): PackedColorArray;
-  /**
-   * Returns the tetrahedralization data used for interpolating between lightmap probe capture points. Each tetrahedron is specified as a series of 4 numbers, each being an index into the probe capture points array returned by {@link lightmap_get_probe_capture_points}. See also {@link lightmap_set_probe_capture_data}.
-   */
   lightmap_get_probe_capture_tetrahedra(lightmap: RID): PackedInt32Array;
   /**
    * Used to inform the renderer what exposure normalization value was used while baking the lightmap. This value will be used and modulated at run time to ensure that the lightmap maintains a consistent level of exposure even if the scene-wide exposure normalization is changed at run time. For more information see {@link camera_attributes_set_exposure}.
    */
   lightmap_set_baked_exposure_normalization(lightmap: RID, baked_exposure: float): void;
-  /**
-   * Sets the bounds that this lightmap instance should visually affect, both in terms of static lightmap baking and probe-based global illumination.
-   */
   lightmap_set_probe_bounds(lightmap: RID, bounds: AABB): void;
-  /**
-   * Sets the probe capture data for the given lightmap instance. See {@link lightmap_get_probe_capture_points}, {@link lightmap_get_probe_capture_sh}, {@link lightmap_get_probe_capture_tetrahedra}, and {@link lightmap_get_probe_capture_bsp_tree} for the expected data formats.
-   */
   lightmap_set_probe_capture_data(lightmap: RID, points: PackedVector3Array | Array<unknown>, point_sh: PackedColorArray | Array<unknown>, tetrahedra: PackedInt32Array | Array<unknown>, bsp_tree: PackedInt32Array | Array<unknown>): void;
-  /**
-   * The framerate-independent update speed when representing dynamic object lighting from {@link LightmapProbe}s. Higher values make dynamic object lighting update faster. Higher values can prevent fast-moving objects from having "outdated" indirect lighting displayed on them, at the cost of possible flickering when an object moves from a bright area to a shaded area. See also {@link ProjectSettings.rendering/lightmapping/probe_capture/update_speed}.
-   */
   lightmap_set_probe_capture_update_speed(speed: float): void;
-  /**
-   * Sets whether the lightmap instance should be considered as interior (when `interior` is `true`). If the lightmap is marked as interior, environment lighting is ignored when baking lightmaps.
-   */
   lightmap_set_probe_interior(lightmap: RID, interior: boolean): void;
   /**
    * Set the textures on the given `lightmap` GI instance to the texture array pointed to by the `light` RID. If the lightmap texture was baked with {@link LightmapGI.directional} set to `true`, then `uses_sh` must also be `true`.
@@ -1018,21 +988,7 @@ declare interface RenderingServer extends GodotObject {
    * See also {@link ProjectSettings.rendering/anti_aliasing/quality/use_debanding} and {@link RenderingServer.viewport_set_use_debanding}.
    */
   material_set_use_debanding(enable: boolean): void;
-  /**
-   * Creates a new surface on the given `mesh`. Equivalent to {@link mesh_add_surface_from_arrays}, but takes a single {@link Dictionary} argument instead of separate arguments. The dictionary must follow this structure:
-   * See also {@link mesh_get_surface}, which returns data in the same structure defined above.
-   */
   mesh_add_surface(mesh: RID, surface: Dictionary): void;
-  /**
-   * Creates a new surface on the given `mesh`. {@link mesh_get_surface_count} will become the surface index for this new surface.
-   * Surfaces are created to be rendered using a `primitive`, which may be any of the values defined in {@link Mesh.PrimitiveType}.
-   * The `arrays` argument is an array of arrays. Each of the {@link Mesh.ARRAY_MAX} elements contains an array with some of the mesh data for this surface as described by the corresponding member of {@link Mesh.ArrayType} or `null` if it is not used by the surface. For example, `arrays[0]` is the array of vertices. That first vertex sub-array is always required; the others are optional. Adding an index array puts this surface into "index mode" where the vertex and other arrays become the sources of data and the index array defines the vertex order. All sub-arrays must have the same length as the vertex array (or be an exact multiple of the vertex array's length, when multiple elements of a sub-array correspond to a single vertex) or be empty, except for {@link Mesh.ARRAY_INDEX} if it is used.
-   * The `blend_shapes` argument is an array of vertex data for each blend shape. Each element is an array of the same structure as `arrays`, but {@link Mesh.ARRAY_VERTEX}, {@link Mesh.ARRAY_NORMAL}, and {@link Mesh.ARRAY_TANGENT} are set if and only if they are set in `arrays` and all other entries are `null`.
-   * The `lods` argument is a dictionary with [float] keys and {@link PackedInt32Array} values. Each entry in the dictionary represents an LOD level of the surface, where the value is the {@link Mesh.ARRAY_INDEX} array to use for the LOD level and the key is roughly proportional to the distance at which the LOD stats being used. I.e., increasing the key of an LOD also increases the distance that the objects has to be from the camera before the LOD is used.
-   * The `compress_format` argument is the bitwise OR of, as required: One value of {@link ArrayFormat} left shifted by `ARRAY_FORMAT_CUSTOMn_SHIFT` for each custom channel in use, {@link ARRAY_FLAG_USE_DYNAMIC_UPDATE}, {@link ARRAY_FLAG_USE_8_BONE_WEIGHTS}, or {@link ARRAY_FLAG_USES_EMPTY_VERTEX_ARRAY}.
-   * See {@link ArrayMesh.add_surface_from_arrays} and {@link ImporterMesh.add_surface} for higher-level equivalents of this method.
-   * **Note:** When using indices, it is recommended to only use points, lines, or triangles.
-   */
   mesh_add_surface_from_arrays(mesh: RID, primitive: int, arrays: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, blend_shapes?: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, lods?: Dictionary, compress_format?: int): void;
   /** Removes all surfaces from a mesh. */
   mesh_clear(mesh: RID): void;
@@ -1043,13 +999,6 @@ declare interface RenderingServer extends GodotObject {
    * **Note:** The equivalent resource is {@link Mesh}.
    */
   mesh_create(): RID;
-  /**
-   * Creates a new mesh with predefined surfaces for it and adds the mesh to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `mesh_*` RenderingServer functions. This method is more efficient for creating meshes with multiple surfaces compared to creating an empty mesh with {@link mesh_create} and adding surfaces one by one with {@link mesh_add_surface}.
-   * Each element in the `surfaces` array must follow the same structure as described in {@link mesh_add_surface}. The `blend_shape_count` parameter must match the blend shape data defined in all surfaces.
-   * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
-   * To place in a scene, attach this mesh to an instance using {@link instance_set_base} using the returned RID.
-   * **Note:** The equivalent resource is {@link Mesh}.
-   */
   mesh_create_from_surfaces(surfaces: Array<Dictionary>, blend_shape_count?: int): RID;
   /** Returns a mesh's blend shape count. */
   mesh_get_blend_shape_count(mesh: RID): int;
@@ -1057,9 +1006,6 @@ declare interface RenderingServer extends GodotObject {
   mesh_get_blend_shape_mode(mesh: RID): int;
   /** Returns a mesh's custom aabb. */
   mesh_get_custom_aabb(mesh: RID): AABB;
-  /**
-   * Returns a mesh's surface as a dictionary following the same structure as described in {@link mesh_add_surface}.
-   */
   mesh_get_surface(mesh: RID, surface: int): Dictionary;
   /** Returns a mesh's number of surfaces. */
   mesh_get_surface_count(mesh: RID): int;
@@ -1067,10 +1013,6 @@ declare interface RenderingServer extends GodotObject {
   mesh_set_blend_shape_mode(mesh: RID, mode: int): void;
   /** Sets a mesh's custom aabb. */
   mesh_set_custom_aabb(mesh: RID, aabb: AABB): void;
-  /**
-   * Sets an optional second mesh which can be used for rendering shadows and the depth prepass. Can be used to increase performance by supplying a mesh with fused vertices and only vertex position data (without normals, UVs, colors, etc.).
-   * **Note:** This mesh must have exactly the same vertex positions as the source mesh (including the source mesh's LODs, if present). If vertex positions differ, then the mesh will not draw correctly.
-   */
   mesh_set_shadow_mesh(mesh: RID, shadow_mesh: RID): void;
   /** Returns a mesh's surface's buffer arrays. */
   mesh_surface_get_arrays(mesh: RID, surface: int): Array<unknown>;
@@ -1100,31 +1042,13 @@ declare interface RenderingServer extends GodotObject {
   mesh_surface_remove(mesh: RID, surface: int): void;
   /** Sets a mesh's surface's material. */
   mesh_surface_set_material(mesh: RID, surface: int, material: RID): void;
-  /**
-   * Updates the attribute buffer of the mesh surface with the given `data`. The expected data per attribute is 8 or 12 bytes (4 bytes per float, 2 floats per {@link Vector2}, and 3 floats per {@link Vector3}) depending on if the mesh is using {@link Vector2} or {@link Vector3} vertices. This value can be determined with {@link mesh_surface_get_format_attribute_stride} instead.
-   * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each attribute.
-   * A {@link PackedVector3Array} of attribute locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
-   */
   mesh_surface_update_attribute_region(mesh: RID, surface: int, offset: int, data: PackedByteArray | Array<unknown>): void;
   /**
    * Updates the index buffer of the mesh surface with the given `data`. The expected data are 16 or 32-bit unsigned integers, which can be determined with {@link mesh_surface_get_format_index_stride}.
    */
   mesh_surface_update_index_region(mesh: RID, surface: int, offset: int, data: PackedByteArray | Array<unknown>): void;
-  /**
-   * Updates the skin buffer of the mesh surface with the given `data`. The expected data per skin is 8 or 12 bytes (4 bytes per float, 2 floats per {@link Vector2}, and 3 floats per {@link Vector3}) depending on if the mesh is using {@link Vector2} or {@link Vector3} vertices. This value can be determined with {@link mesh_surface_get_format_skin_stride} instead.
-   * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each skin.
-   * A {@link PackedVector3Array} of skin locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
-   */
   mesh_surface_update_skin_region(mesh: RID, surface: int, offset: int, data: PackedByteArray | Array<unknown>): void;
-  /**
-   * Updates the vertex buffer of the mesh surface with the given `data`. The expected data per vertex is 8 or 12 bytes (4 bytes per float, 2 floats per {@link Vector2}, and 3 floats per {@link Vector3}) depending on if the mesh is using {@link Vector2} or {@link Vector3} vertices. This value can be determined with {@link mesh_surface_get_format_vertex_stride} instead.
-   * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each vertex.
-   * A {@link PackedVector3Array} of vertex locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
-   */
   mesh_surface_update_vertex_region(mesh: RID, surface: int, offset: int, data: PackedByteArray | Array<unknown>): void;
-  /**
-   * Sets up the multimesh using the specified data. The number of instances is set by `instances`. The format of the instance transforms is set by `transform_format`, which should be set according to whether the multimesh is meant to be rendered in 2D or 3D. If `color_format` is `true`, each instance will have a color associated with it. If `custom_data_format` is `true`, each instance will have a custom data vector associated with it. If `use_indirect` is `true`, an indirect command buffer will be created for this multimesh, allowing the instance count to be modified directly on the GPU. See also {@link multimesh_get_command_buffer_rd_rid}.
-   */
   multimesh_allocate_data(multimesh: RID, instances: int, transform_format: int, color_format?: boolean, custom_data_format?: boolean, use_indirect?: boolean): void;
   /**
    * Creates a new multimesh on the RenderingServer and returns an {@link RID} handle. This RID will be used in all `multimesh_*` RenderingServer functions.
@@ -1157,7 +1081,7 @@ declare interface RenderingServer extends GodotObject {
    * 2 - firstIndex;
    * 3 - vertexOffset;
    * 4 - firstInstance;
-   * Non-indexed:
+   * Non Indexed:
    * 0 - vertexCount;
    * 1 - instanceCount;
    * 2 - firstVertex;
@@ -1350,9 +1274,6 @@ declare interface RenderingServer extends GodotObject {
    * Sets the amount ratio for particles to be emitted. Equivalent to {@link GPUParticles3D.amount_ratio}.
    */
   particles_set_amount_ratio(particles: RID, ratio: float): void;
-  /**
-   * Sets the base size for particle collision. Equivalent to {@link GPUParticles3D.collision_base_size}.
-   */
   particles_set_collision_base_size(particles: RID, size: float): void;
   /**
    * Sets a custom axis-aligned bounding box for the particle system. Equivalent to {@link GPUParticles3D.visibility_aabb}.
@@ -1390,9 +1311,6 @@ declare interface RenderingServer extends GodotObject {
    * Sets the value that informs a {@link ParticleProcessMaterial} to rush all particles towards the end of their lifetime.
    */
   particles_set_interp_to_end(particles: RID, factor: float): void;
-  /**
-   * Sets whether particles should use interpolation between fixed steps. Equivalent to {@link GPUParticles3D.interpolate}.
-   */
   particles_set_interpolate(particles: RID, enable: boolean): void;
   /** Sets the lifetime of each particle in the system. Equivalent to {@link GPUParticles3D.lifetime}. */
   particles_set_lifetime(particles: RID, lifetime: float): void;
@@ -1417,21 +1335,12 @@ declare interface RenderingServer extends GodotObject {
   particles_set_randomness_ratio(particles: RID, ratio: float): void;
   /** Sets the speed scale of the particle system. Equivalent to {@link GPUParticles3D.speed_scale}. */
   particles_set_speed_scale(particles: RID, scale: float): void;
-  /**
-   * Sets the subemitter particles for the particle system. Equivalent to {@link GPUParticles3D.sub_emitter}.
-   */
   particles_set_subemitter(particles: RID, subemitter_particles: RID): void;
-  /**
-   * Sets the trail bind poses for the particle system. This specified as an array of {@link Transform3D}s representing the bind pose for each draw pass. See {@link GPUParticles3D.draw_skin}, {@link Skin.get_bind_count}, and {@link Skin.get_bind_pose}. Set the value for each draw pass to {@link Transform3D.IDENTITY} to use the default behavior, which is what built-in trails use ({@link RibbonTrailMesh} and {@link TubeTrailMesh}).
-   */
   particles_set_trail_bind_poses(particles: RID, bind_poses: Array<Transform3D>): void;
   /**
    * If `enable` is `true`, enables trails for the `particles` with the specified `length_sec` in seconds. Equivalent to {@link GPUParticles3D.trail_enabled} and {@link GPUParticles3D.trail_lifetime}.
    */
   particles_set_trails(particles: RID, enable: boolean, length_sec: float): void;
-  /**
-   * Sets the transform alignment for the particle system. Equivalent to {@link GPUParticles3D.transform_align}.
-   */
   particles_set_transform_align(particles: RID, align: int): void;
   /**
    * If `true`, particles use local coordinates. If `false` they use global coordinates. Equivalent to {@link GPUParticles3D.local_coords}.
@@ -1540,7 +1449,7 @@ declare interface RenderingServer extends GodotObject {
   set_boot_image_with_stretch(image: Image, color: Color, stretch_mode: int, use_filter?: boolean): void;
   /**
    * If `generate` is `true`, generates debug wireframes for all meshes that are loaded when using the Compatibility renderer. By default, the engine does not generate debug wireframes at runtime, since they slow down loading of assets and take up VRAM.
-   * **Note:** You must call this method before loading any meshes when using the Compatibility renderer. Otherwise, wireframes will not be used.
+   * **Note:** You must call this method before loading any meshes when using the Compatibility renderer, otherwise wireframes will not be used.
    */
   set_debug_generate_wireframes(generate: boolean): void;
   /**
@@ -1575,9 +1484,6 @@ declare interface RenderingServer extends GodotObject {
    * Sets the path hint for the specified shader. This should generally match the {@link Shader} resource's {@link Resource.resource_path}.
    */
   shader_set_path_hint(shader: RID, path: string | NodePath): void;
-  /**
-   * Allocates data for this skeleton using the number of bones specified in `bones`. If `is_2d_skeleton` is `true`, the skeleton will be treated as a 2D skeleton instead of a 3D skeleton. See also {@link skeleton_get_bone_count}.
-   */
   skeleton_allocate_data(skeleton: RID, bones: int, is_2d_skeleton?: boolean): void;
   /** Returns the {@link Transform3D} set for a specific bone of this skeleton. */
   skeleton_bone_get_transform(skeleton: RID, bone: int): Transform3D;
@@ -1592,9 +1498,8 @@ declare interface RenderingServer extends GodotObject {
    * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
    */
   skeleton_create(): RID;
-  /** Returns the number of bones allocated for this skeleton. See also {@link skeleton_allocate_data}. */
+  /** Returns the number of bones allocated for this skeleton. */
   skeleton_get_bone_count(skeleton: RID): int;
-  /** Sets the base {@link Transform2D} to use for the specified skeleton. */
   skeleton_set_base_transform_2d(skeleton: RID, base_transform: Transform2D): void;
   /**
    * Generates and returns an {@link Image} containing the radiance map for the specified `sky` RID. This supports built-in sky material and custom sky shaders. If `bake_irradiance` is `true`, the irradiance map is saved instead of the radiance map. The radiance map is used to render reflected light, while the irradiance map is used to render ambient light. See also {@link environment_bake_panorama}.
@@ -1687,21 +1592,6 @@ declare interface RenderingServer extends GodotObject {
    * **Note:** If using only the rendering device renderer, it's recommend to use {@link RenderingDevice.texture_create_from_extension} together with {@link RenderingServer.texture_rd_create}, rather than this method. This way, the texture's format and usage can be controlled more effectively.
    */
   texture_create_from_native_handle(type_: int, format: int, native_handle: int, width: int, height: int, depth: int, layers?: int, layered_type?: int): RID;
-  /**
-   * Draws to `rect` on up to 4 given Drawable `textures`, using a TextureBlit Shader from `material`. `modulate` and up to 4 `source_textures` are uniforms for the Shader to process with. `to_mipmap` can specify to perform this draw to a lower mipmap level.
-   * **Note:** All `textures` must be the same size and format.
-   */
-  texture_drawable_blit_rect(textures: Array<RID>, rect: Rect2i | Rect2, material: RID, modulate: Color, source_textures: Array<RID>, to_mipmap?: int): void;
-  /**
-   * Creates a 2-dimensional texture and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `texture_drawable*` RenderingServer functions.
-   * Once finished with your RID, you will want to free the RID using the RenderingServer's {@link free_rid} method.
-   * **Note:** The equivalent resource is {@link DrawableTexture2D}.
-   */
-  texture_drawable_create(width: int, height: int, format: int, color?: Color, with_mipmaps?: boolean): RID;
-  /** Calculates new MipMaps for the given Drawable `texture`. */
-  texture_drawable_generate_mipmaps(texture: RID): void;
-  /** Returns a ShaderMaterial with the default texture_blit Shader. */
-  texture_drawable_get_default_material(): RID;
   /** Returns the format for the texture. */
   texture_get_format(texture: RID): int;
   /**
@@ -1710,9 +1600,6 @@ declare interface RenderingServer extends GodotObject {
    * **Note:** This function returns a `uint64_t` which internally maps to a `GLuint` (OpenGL) or `VkImage` (Vulkan).
    */
   texture_get_native_handle(texture: RID, srgb?: boolean): int;
-  /**
-   * Returns the resource path (starting with `res://` or `uid://`) for the specified texture RID. Returns an empty {@link String} if the resource is built-in. See also {@link texture_set_path}.
-   */
   texture_get_path(texture: RID): string;
   /**
    * Returns a texture {@link RID} that can be used with {@link RenderingDevice}.
@@ -1733,18 +1620,8 @@ declare interface RenderingServer extends GodotObject {
    * Replaces `texture`'s texture data by the texture specified by the `by_texture` RID, without changing `texture`'s RID.
    */
   texture_replace(texture: RID, by_texture: RID): void;
-  /**
-   * Sets whether the texture RID should force redrawing when it's visible on screen when {@link OS.low_processor_usage_mode} is `true`. This is used by {@link AnimatedTexture} to force redrawing.
-   */
   texture_set_force_redraw_if_visible(texture: RID, enable: boolean): void;
-  /**
-   * Sets the resource path for this texture RID. See also {@link texture_get_path}.
-   * **Note:** This is purely a hint and does not cause the texture to be automatically saved when set to a `res://` path.
-   */
   texture_set_path(texture: RID, path: string | NodePath): void;
-  /**
-   * Sets the size at which the texture should be *displayed* in 2D, ignoring its original size. This does not rescale the texture data itself, only how it is drawn in 2D. Set `width` and `height` to 0 to disable the size override.
-   */
   texture_set_size_override(texture: RID, width: int, height: int): void;
   /** Sets a viewport's camera. */
   viewport_attach_camera(viewport: RID, camera: RID): void;
@@ -1889,10 +1766,8 @@ declare interface RenderingServer extends GodotObject {
    * Sets the viewport's 2D signed distance field {@link ProjectSettings.rendering/2d/sdf/oversize} and {@link ProjectSettings.rendering/2d/sdf/scale}. This is used when sampling the signed distance field in {@link CanvasItem} shaders as well as {@link GPUParticles2D} collision. This is *not* used by SDFGI in 3D rendering.
    */
   viewport_set_sdf_oversize_and_scale(viewport: RID, oversize: int, scale: int): void;
-  /**
-   * Sets the viewport's `width` and `height` in pixels. Optionally the `view_count` can be set to increase the number of view layers for stereo rendering.
-   */
-  viewport_set_size(viewport: RID, width: int, height: int, view_count?: int): void;
+  /** Sets the viewport's width and height in pixels. */
+  viewport_set_size(viewport: RID, width: int, height: int): void;
   /**
    * If `true`, canvas item transforms (i.e. origin position) are snapped to the nearest pixel when rendering. This can lead to a crisper appearance at the cost of less smooth movement, especially when {@link Camera2D} smoothing is enabled. Equivalent to {@link ProjectSettings.rendering/2d/snap/snap_2d_transforms_to_pixel}.
    */
@@ -1949,13 +1824,8 @@ declare interface RenderingServer extends GodotObject {
    * **Note:** The equivalent node is {@link VisibleOnScreenNotifier3D}.
    */
   visibility_notifier_create(): RID;
-  /** Sets the AABB of the specified visibility notifier. */
   visibility_notifier_set_aabb(notifier: RID, aabb: AABB): void;
-  /** Sets the methods to be called when the notifier enters or exits the view. */
   visibility_notifier_set_callbacks(notifier: RID, enter_callable: Callable, exit_callable: Callable): void;
-  /**
-   * Allocates and initializes the voxel GI data for the specified `voxel_gi` RID. `octree_cells` must be a multiple of 32. `octree_cells` must be double the size of `data_cells`. The allocated data can be retrieved later using the various `voxel_gi_get_*` methods.
-   */
   voxel_gi_allocate_data(voxel_gi: RID, to_cell_xform: Transform3D | Projection, aabb: AABB, octree_size: Vector3i | Vector3, octree_cells: PackedByteArray | Array<unknown>, data_cells: PackedByteArray | Array<unknown>, distance_field: PackedByteArray | Array<unknown>, level_counts: PackedInt32Array | Array<unknown>): void;
   /**
    * Creates a new voxel-based global illumination object and adds it to the RenderingServer. It can be accessed with the RID that is returned. This RID will be used in all `voxel_gi_*` RenderingServer functions.
@@ -1963,29 +1833,11 @@ declare interface RenderingServer extends GodotObject {
    * **Note:** The equivalent node is {@link VoxelGI}.
    */
   voxel_gi_create(): RID;
-  /**
-   * Returns the data cells for the specified voxel GI data instance. See also {@link voxel_gi_allocate_data}.
-   */
   voxel_gi_get_data_cells(voxel_gi: RID): PackedByteArray;
-  /**
-   * Returns the distance field data for the specified voxel GI data instance. See also {@link voxel_gi_allocate_data}.
-   */
   voxel_gi_get_distance_field(voxel_gi: RID): PackedByteArray;
-  /**
-   * Returns the level counts for the specified voxel GI data instance. See also {@link voxel_gi_allocate_data}.
-   */
   voxel_gi_get_level_counts(voxel_gi: RID): PackedInt32Array;
-  /**
-   * Returns the octree cell data for the specified voxel GI data instance. See also {@link voxel_gi_allocate_data}.
-   */
   voxel_gi_get_octree_cells(voxel_gi: RID): PackedByteArray;
-  /**
-   * Returns the octree size for the specified voxel GI data instance, which corresponds to the number of subdivisions per axis. This can be viewed in the editor by hovering the **Bake VoxelGI** button at the top of the 3D editor viewport when a {@link VoxelGI} node is selected and looking at the **Subdivisions** field in the tooltip.
-   */
   voxel_gi_get_octree_size(voxel_gi: RID): Vector3i;
-  /**
-   * Returns the transform to cell space for the specified voxel GI data instance. See also {@link voxel_gi_allocate_data}.
-   */
   voxel_gi_get_to_cell_xform(voxel_gi: RID): Transform3D;
   /**
    * Used to inform the renderer what exposure normalization value was used while baking the voxel gi. This value will be used and modulated at run time to ensure that the voxel gi maintains a consistent level of exposure even if the scene-wide exposure normalization is changed at run time. For more information see {@link camera_attributes_set_exposure}.
@@ -2044,22 +1896,6 @@ declare interface RenderingServer extends GodotObject {
   readonly CUBEMAP_LAYER_FRONT: int;
   /** Back face of a {@link Cubemap}. */
   readonly CUBEMAP_LAYER_BACK: int;
-  // enum TextureDrawableFormat
-  /** OpenGL texture format RGBA with four components, each with a bitdepth of 8. */
-  readonly TEXTURE_DRAWABLE_FORMAT_RGBA8: int;
-  /**
-   * OpenGL texture format RGBA with four components, each with a bitdepth of 8.
-   * When drawn to, an sRGB to linear color space conversion is performed.
-   */
-  readonly TEXTURE_DRAWABLE_FORMAT_RGBA8_SRGB: int;
-  /**
-   * OpenGL texture format GL_RGBA16F where there are four components, each a 16-bit "half-precision" floating-point value.
-   */
-  readonly TEXTURE_DRAWABLE_FORMAT_RGBAH: int;
-  /**
-   * OpenGL texture format GL_RGBA32F where there are four components, each a 32-bit floating-point value.
-   */
-  readonly TEXTURE_DRAWABLE_FORMAT_RGBAF: int;
   // enum ShaderMode
   /** Shader is a 3D shader. */
   readonly SHADER_SPATIAL: int;
@@ -2071,8 +1907,6 @@ declare interface RenderingServer extends GodotObject {
   readonly SHADER_SKY: int;
   /** Shader is a 3D fog shader. */
   readonly SHADER_FOG: int;
-  /** Shader is a texture_blit shader. */
-  readonly SHADER_TEXTURE_BLIT: int;
   /** Represents the size of the {@link ShaderMode} enum. */
   readonly SHADER_MAX: int;
   // enum ArrayType
@@ -2463,13 +2297,9 @@ declare interface RenderingServer extends GodotObject {
   /** 3D particles. */
   readonly PARTICLES_MODE_3D: int;
   // enum ParticlesTransformAlign
-  /** Do not align particle transforms relative to the camera or velocity. */
   readonly PARTICLES_TRANSFORM_ALIGN_DISABLED: int;
-  /** Align each particle's Z axis to face the camera. */
   readonly PARTICLES_TRANSFORM_ALIGN_Z_BILLBOARD: int;
-  /** Align each particle's Y axis to the velocity vector. */
   readonly PARTICLES_TRANSFORM_ALIGN_Y_TO_VELOCITY: int;
-  /** Align each particle's Z axis to face the camera and Y axis to the velocity vector. */
   readonly PARTICLES_TRANSFORM_ALIGN_Z_BILLBOARD_Y_TO_VELOCITY: int;
   // enum ParticlesDrawOrder
   /** Draw particles in the order that they appear in the particles array. */
@@ -2485,38 +2315,19 @@ declare interface RenderingServer extends GodotObject {
   /** Sort particles based on their distance to the camera. */
   readonly PARTICLES_DRAW_ORDER_VIEW_DEPTH: int;
   // enum ParticlesCollisionType
-  /** Sphere attractor type for {@link GPUParticles3D} (see {@link GPUParticlesAttractorSphere3D}). */
   readonly PARTICLES_COLLISION_TYPE_SPHERE_ATTRACT: int;
-  /** Box attractor type for {@link GPUParticles3D} (see {@link GPUParticlesAttractorBox3D}). */
   readonly PARTICLES_COLLISION_TYPE_BOX_ATTRACT: int;
-  /**
-   * Vector field attractor type for {@link GPUParticles3D} (see {@link GPUParticlesAttractorVectorField3D}).
-   */
   readonly PARTICLES_COLLISION_TYPE_VECTOR_FIELD_ATTRACT: int;
-  /** Sphere collision type for {@link GPUParticles3D} (see {@link GPUParticlesCollisionSphere3D}). */
   readonly PARTICLES_COLLISION_TYPE_SPHERE_COLLIDE: int;
-  /** Box collision type for {@link GPUParticles3D} (see {@link GPUParticlesCollisionBox3D}). */
   readonly PARTICLES_COLLISION_TYPE_BOX_COLLIDE: int;
-  /**
-   * Signed distance field collision type for {@link GPUParticles3D} (see {@link GPUParticlesCollisionSDF3D}).
-   */
   readonly PARTICLES_COLLISION_TYPE_SDF_COLLIDE: int;
-  /**
-   * Heightfield collision type for {@link GPUParticles3D} (see {@link GPUParticlesCollisionHeightField3D}).
-   */
   readonly PARTICLES_COLLISION_TYPE_HEIGHTFIELD_COLLIDE: int;
   // enum ParticlesCollisionHeightfieldResolution
-  /** 256×256 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
   readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_256: int;
-  /** 512×512 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
   readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_512: int;
-  /** 1024×1024 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
   readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_1024: int;
-  /** 2048×2048 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
   readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_2048: int;
-  /** 4096×4096 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
   readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_4096: int;
-  /** 8192×8192 heightfield resolution for {@link GPUParticlesCollisionHeightField3D}. */
   readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_8192: int;
   /** Represents the size of the {@link ParticlesCollisionHeightfieldResolution} enum. */
   readonly PARTICLES_COLLISION_HEIGHTFIELD_RESOLUTION_MAX: int;
@@ -2713,7 +2524,6 @@ declare interface RenderingServer extends GodotObject {
   /**
    * Debug draw draws objects in wireframe.
    * **Note:** {@link set_debug_generate_wireframes} must be called before loading any meshes for wireframes to be visible when using the Compatibility renderer.
-   * **Note:** In the Compatibility renderer, backfaces are always visible when using wireframe rendering. In the Forward+ and Mobile renderers, wireframes follow the material's backface culling properties instead.
    */
   readonly VIEWPORT_DEBUG_DRAW_WIREFRAME: int;
   /**
@@ -2927,23 +2737,18 @@ declare interface RenderingServer extends GodotObject {
   /** Use the {@link Sky} for reflections regardless of what the background is. */
   readonly ENV_REFLECTION_SOURCE_SKY: int;
   // enum EnvironmentGlowBlendMode
-  /** Adds the glow effect to the scene. */
+  /** Additive glow blending mode. Mostly used for particles, glows (bloom), lens flare, bright sources. */
   readonly ENV_GLOW_BLEND_MODE_ADDITIVE: int;
-  /**
-   * Adds the glow effect to the scene after modifying the glow influence based on the scene value; dark values will be highly influenced by glow and bright values will not be influenced by glow. This approach avoids bright values becoming overly bright from the glow effect. {@link Environment.tonemap_white} is used to determine the maximum scene value where the glow should have no influence. When {@link Environment.tonemap_mode} is set to {@link Environment.TONE_MAPPER_LINEAR} and {@link Viewport.use_hdr_2d} is `true`, the parent window's {@link Window.get_output_max_linear_value} will be used as the maximum scene value.
-   */
+  /** Screen glow blending mode. Increases brightness, used frequently with bloom. */
   readonly ENV_GLOW_BLEND_MODE_SCREEN: int;
-  /**
-   * Adds the glow effect to the tonemapped image after modifying the glow influence based on the image value; dark values and bright values will not be influenced by glow and mid-range values will be highly influenced by glow. This approach avoids bright values becoming overly bright from the glow effect. The glow will have the largest influence on image values of `0.25` and will have no influence when applied to image values greater than `1.0`.
-   * **Note:** This blend mode does not support HDR output because expects a maximum output value of `1.0`. It is recommended to use a different blend mode when rendering to an HDR screen.
-   */
+  /** Soft light glow blending mode. Modifies contrast, exposes shadows and highlights (vivid bloom). */
   readonly ENV_GLOW_BLEND_MODE_SOFTLIGHT: int;
   /**
-   * Replaces all pixels' color by the glow effect. This can be used to simulate a full-screen blur effect by tweaking the glow parameters to match the original image's brightness or to preview glow configuration in the editor.
+   * Replace glow blending mode. Replaces all pixels' color by the glow value. This can be used to simulate a full-screen blur effect by tweaking the glow parameters to match the original image's brightness.
    */
   readonly ENV_GLOW_BLEND_MODE_REPLACE: int;
   /**
-   * Mixes the glow image with the scene image. Best used with {@link Environment.glow_bloom} to avoid darkening the scene.
+   * Mixes the glow with the underlying color to avoid increasing brightness as much while still maintaining a glow effect.
    */
   readonly ENV_GLOW_BLEND_MODE_MIX: int;
   // enum EnvironmentFogMode
@@ -2965,13 +2770,11 @@ declare interface RenderingServer extends GodotObject {
   readonly ENV_TONE_MAPPER_REINHARD: int;
   /**
    * Uses a film-like tonemapping curve to prevent clipping of bright values and provide better contrast than {@link ENV_TONE_MAPPER_REINHARD}. Slightly slower than {@link ENV_TONE_MAPPER_REINHARD}.
-   * **Note:** This tonemapper does not support HDR output because it produces output in the SDR range. It is recommended to use a different tonemapper when rendering to an HDR screen.
    */
   readonly ENV_TONE_MAPPER_FILMIC: int;
   /**
    * Uses a high-contrast film-like tonemapping curve and desaturates bright values for a more realistic appearance. Slightly slower than {@link ENV_TONE_MAPPER_FILMIC}.
    * **Note:** This tonemapping operator is called "ACES Fitted" in Godot 3.x.
-   * **Note:** This tonemapper does not support HDR output because it produces output in the SDR range. It is recommended to use a different tonemapper when rendering to an HDR screen.
    */
   readonly ENV_TONE_MAPPER_ACES: int;
   /**
@@ -3486,15 +3289,10 @@ declare interface RenderingServer extends GodotObject {
    * The number of custom data arrays available ({@link ARRAY_CUSTOM0}, {@link ARRAY_CUSTOM1}, {@link ARRAY_CUSTOM2}, {@link ARRAY_CUSTOM3}).
    */
   readonly ARRAY_CUSTOM_COUNT: int;
-  /** Particle starts at the specified position. */
   readonly PARTICLES_EMIT_FLAG_POSITION: int;
-  /** Particle starts with specified rotation and scale. */
   readonly PARTICLES_EMIT_FLAG_ROTATION_SCALE: int;
-  /** Particle starts with the specified velocity vector, which defines the emission direction and speed. */
   readonly PARTICLES_EMIT_FLAG_VELOCITY: int;
-  /** Particle starts with specified color. */
   readonly PARTICLES_EMIT_FLAG_COLOR: int;
-  /** Particle starts with specified `CUSTOM` data. */
   readonly PARTICLES_EMIT_FLAG_CUSTOM: int;
 }
 declare const RenderingServer: RenderingServer;

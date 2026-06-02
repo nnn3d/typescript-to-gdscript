@@ -144,8 +144,7 @@ declare class PhysicsDirectBodyState3D extends GodotObject {
   /** Returns the current state of the space, useful for queries. */
   get_space_state(): PhysicsDirectSpaceState3D | null;
   /**
-   * Returns the body's velocity at the given relative position.
-   * `local_position` is the offset from the body origin in global coordinates.
+   * Returns the body's velocity at the given relative position, including both translation and rotation.
    */
   get_velocity_at_local_position(local_position: Vector3 | Vector3i): Vector3;
   /**

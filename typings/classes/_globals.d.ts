@@ -6,7 +6,17 @@
 /**
  * Override: Global functions — adds generic type parameters to polymorphic functions.
  */
-declare function abs<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T): T;
+declare function abs<
+  T extends
+    | int
+    | float
+    | Vector2
+    | Vector2i
+    | Vector3
+    | Vector3i
+    | Vector4
+    | Vector4i,
+>(x: T): T;
 /** Returns the absolute value of float parameter `x` (i.e. positive value). */
 declare function absf(x: float): float;
 /** Returns the absolute value of int parameter `x` (i.e. positive value). */
@@ -70,7 +80,17 @@ declare function bytes_to_var_with_objects(bytes: PackedByteArray): unknown;
  * See also {@link floor}, {@link round}, and {@link snapped}.
  * **Note:** For better type safety, use {@link ceilf}, {@link ceili}, {@link Vector2.ceil}, {@link Vector3.ceil}, or {@link Vector4.ceil}.
  */
-declare function ceil<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T): T;
+declare function ceil<
+  T extends
+    | int
+    | float
+    | Vector2
+    | Vector2i
+    | Vector3
+    | Vector3i
+    | Vector4
+    | Vector4i,
+>(x: T): T;
 /**
  * Rounds `x` upward (towards positive infinity), returning the smallest whole number that is not less than `x`.
  * A type-safe version of {@link ceil}, returning a [float].
@@ -145,7 +165,17 @@ declare function exp(x: float): float;
  * See also {@link ceil}, {@link round}, and {@link snapped}.
  * **Note:** For better type safety, use {@link floorf}, {@link floori}, {@link Vector2.floor}, {@link Vector3.floor}, or {@link Vector4.floor}.
  */
-declare function floor<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T): T;
+declare function floor<
+  T extends
+    | int
+    | float
+    | Vector2
+    | Vector2i
+    | Vector3
+    | Vector3i
+    | Vector4
+    | Vector4i,
+>(x: T): T;
 /**
  * Rounds `x` downward (towards negative infinity), returning the largest whole number that is not more than `x`.
  * A type-safe version of {@link floor}, returning a [float].
@@ -229,7 +259,19 @@ declare function is_zero_approx(x: float): boolean;
  * See also {@link inverse_lerp} which performs the reverse of this operation. To perform eased interpolation with {@link lerp}, combine it with {@link ease} or {@link smoothstep}. See also {@link remap} to map a continuous series of values to another.
  * **Note:** For better type safety, use {@link lerpf}, {@link Vector2.lerp}, {@link Vector3.lerp}, {@link Vector4.lerp}, {@link Color.lerp}, {@link Quaternion.slerp}, {@link Basis.slerp}, {@link Transform2D.interpolate_with}, or {@link Transform3D.interpolate_with}.
  */
-declare function lerp<T extends int | float | Vector2 | Vector3 | Vector4 | Color | Quaternion | Basis | Transform2D | Transform3D>(from_: T, to: T, weight: float): T;
+declare function lerp<
+  T extends
+    | int
+    | float
+    | Vector2
+    | Vector3
+    | Vector4
+    | Color
+    | Quaternion
+    | Basis
+    | Transform2D
+    | Transform3D,
+>(from_: T, to: T, weight: float): T;
 /**
  * Linearly interpolates between two angles (in radians) by a `weight` value between 0.0 and 1.0.
  * Similar to {@link lerp}, but interpolates correctly when the angles wrap around {@link @GDScript.TAU}. To perform eased interpolation with {@link lerp_angle}, combine it with {@link ease} or {@link smoothstep}.
@@ -392,7 +434,17 @@ declare function rotate_toward(from_: float, to: float, delta: float): float;
  * See also {@link floor}, {@link ceil}, and {@link snapped}.
  * **Note:** For better type safety, use {@link roundf}, {@link roundi}, {@link Vector2.round}, {@link Vector3.round}, or {@link Vector4.round}.
  */
-declare function round<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T): T;
+declare function round<
+  T extends
+    | int
+    | float
+    | Vector2
+    | Vector2i
+    | Vector3
+    | Vector3i
+    | Vector4
+    | Vector4i,
+>(x: T): T;
 /**
  * Rounds `x` to the nearest whole number, with halfway cases rounded away from 0.
  * A type-safe version of {@link round}, returning a [float].
@@ -412,7 +464,17 @@ declare function seed(base: int): void;
  * Supported types: [int], [float], {@link Vector2}, {@link Vector2i}, {@link Vector3}, {@link Vector3i}, {@link Vector4}, {@link Vector4i}.
  * **Note:** For better type safety, use {@link signf}, {@link signi}, {@link Vector2.sign}, {@link Vector2i.sign}, {@link Vector3.sign}, {@link Vector3i.sign}, {@link Vector4.sign}, or {@link Vector4i.sign}.
  */
-declare function sign<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T): T;
+declare function sign<
+  T extends
+    | int
+    | float
+    | Vector2
+    | Vector2i
+    | Vector3
+    | Vector3i
+    | Vector4
+    | Vector4i,
+>(x: T): T;
 /**
  * Returns `-1.0` if `x` is negative, `1.0` if `x` is positive, and `0.0` if `x` is zero. For `nan` values of `x` it returns 0.0.
  */
@@ -439,7 +501,17 @@ declare function smoothstep(from_: float, to: float, x: float): float;
  * See also {@link ceil}, {@link floor}, and {@link round}.
  * **Note:** For better type safety, use {@link snappedf}, {@link snappedi}, {@link Vector2.snapped}, {@link Vector2i.snapped}, {@link Vector3.snapped}, {@link Vector3i.snapped}, {@link Vector4.snapped}, or {@link Vector4i.snapped}.
  */
-declare function snapped<T extends int | float | Vector2 | Vector2i | Vector3 | Vector3i | Vector4 | Vector4i>(x: T, step: T): T;
+declare function snapped<
+  T extends
+    | int
+    | float
+    | Vector2
+    | Vector2i
+    | Vector3
+    | Vector3i
+    | Vector4
+    | Vector4i,
+>(x: T, step: T): T;
 /**
  * Returns the multiple of `step` that is the closest to `x`. This can also be used to round a floating-point number to an arbitrary number of decimals.
  * A type-safe version of {@link snapped}, returning a [float].
@@ -1187,20 +1259,8 @@ declare const enum JoyButton {
   JOY_BUTTON_PADDLE4 = 19,
   /** Game controller SDL touchpad button. */
   JOY_BUTTON_TOUCHPAD = 20,
-  /**
-   * Game controller SDL miscellaneous button. Used by Nintendo Switch 2 Pro Controller and Horipad Steam controllers.
-   */
-  JOY_BUTTON_MISC2 = 21,
-  /** Game controller SDL miscellaneous button. */
-  JOY_BUTTON_MISC3 = 22,
-  /** Game controller SDL miscellaneous button. */
-  JOY_BUTTON_MISC4 = 23,
-  /** Game controller SDL miscellaneous button. */
-  JOY_BUTTON_MISC5 = 24,
-  /** Game controller SDL miscellaneous button. */
-  JOY_BUTTON_MISC6 = 25,
   /** The number of SDL game controller buttons. */
-  JOY_BUTTON_SDL_MAX = 26,
+  JOY_BUTTON_SDL_MAX = 21,
   /**
    * The maximum number of game controller buttons supported by the engine. The actual limit may be lower on specific platforms:
    * - **Android:** Up to 36 buttons.
@@ -1849,29 +1909,6 @@ declare const enum Variant_Operator {
   OP_MAX = 25,
 }
 
-
-/** Maximum value of an 8-bit unsigned integer. */
-declare const UINT8_MAX: int;
-/** Maximum value of a 16-bit unsigned integer. */
-declare const UINT16_MAX: int;
-/** Maximum value of a 32-bit unsigned integer. */
-declare const UINT32_MAX: int;
-/** Minimum value of an 8-bit signed integer. */
-declare const INT8_MIN: int;
-/** Maximum value of an 8-bit signed integer. */
-declare const INT8_MAX: int;
-/** Minimum value of a 16-bit signed integer. */
-declare const INT16_MIN: int;
-/** Maximum value of a 16-bit signed integer. */
-declare const INT16_MAX: int;
-/** Minimum value of a 32-bit signed integer. */
-declare const INT32_MIN: int;
-/** Maximum value of a 32-bit signed integer. */
-declare const INT32_MAX: int;
-/** Minimum value of a 64-bit signed integer. */
-declare const INT64_MIN: int;
-/** Maximum value of a 64-bit signed integer. */
-declare const INT64_MAX: int;
 // @GDScript — built-in constants, functions, and annotations
 
 /**
@@ -1963,7 +2000,9 @@ declare function len(var_: unknown): int;
  * **Note:** Files have to be imported into the engine first to load them using this function. If you want to load {@link Image}s at run-time, you may use {@link Image.load}. If you want to import audio files, you can use the snippet described in {@link AudioStreamMP3.data}.
  * **Note:** If {@link ProjectSettings.editor/export/convert_text_resources_to_binary} is `true`, {@link @GDScript.load} will not be able to read converted files in an exported project. If you rely on run-time loading of files present within the PCK, set {@link ProjectSettings.editor/export/convert_text_resources_to_binary} to `false`.
  */
-declare function load<P extends keyof GodotResources>(path: P): GodotResources[P];
+declare function load<P extends keyof GodotResources>(
+  path: P,
+): GodotResources[P];
 declare function load<T extends Resource = Resource>(path: string): T;
 /**
  * Returns an integer representing the Unicode code point of the given character `char`, which should be a string of length 1.
@@ -1975,7 +2014,9 @@ declare function ord(char: string): int;
  * **Note:** Resource paths can be obtained by right-clicking on a resource in the Assets Panel and choosing "Copy Path", or by dragging the file from the FileSystem dock into the current script.
  * **Note:** {@link preload} is a keyword, not a function. So you cannot access it as a {@link Callable}.
  */
-declare function preload<P extends keyof GodotResources>(path: P): GodotResources[P];
+declare function preload<P extends keyof GodotResources>(
+  path: P,
+): GodotResources[P];
 declare function preload<T extends Resource = Resource>(path: string): T;
 /**
  * Like {@link @GlobalScope.print}, but includes the current stack frame when running with the debugger turned on.

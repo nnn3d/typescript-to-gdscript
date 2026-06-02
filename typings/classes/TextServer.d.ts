@@ -451,8 +451,6 @@ declare class TextServer extends RefCounted {
   shaped_get_run_font_rid(shaped: RID, index: int): RID;
   /** Returns the font size of the `index` text run (in visual order). */
   shaped_get_run_font_size(shaped: RID, index: int): int;
-  /** Returns the glyph range of the `index` text run (in visual order). */
-  shaped_get_run_glyph_range(shaped: RID, index: int): Vector2i;
   /** Returns the language of the `index` text run (in visual order). */
   shaped_get_run_language(shaped: RID, index: int): string;
   /** Returns the embedded object of the `index` text run (in visual order). */

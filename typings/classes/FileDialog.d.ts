@@ -76,7 +76,7 @@ declare class FileDialog extends ConfirmationDialog {
    * <member name="title" type="String" setter="set_title" getter="get_title" overrides="Window" default="&quot;Save a File&quot;" />
    * <member name="use_native_dialog" type="bool" setter="set_use_native_dialog" getter="get_use_native_dialog" default="false">
    * If `true`, and if supported by the current {@link DisplayServer}, OS native dialog will be used instead of custom one.
-   * **Note:** On Android, it is only supported when using {@link ACCESS_FILESYSTEM}. For access mode {@link ACCESS_RESOURCES} and {@link ACCESS_USERDATA}, the system will fall back to custom FileDialog.
+   * **Note:** On Android, it is only supported for Android 10+ devices and when using {@link ACCESS_FILESYSTEM}. For access mode {@link ACCESS_RESOURCES} and {@link ACCESS_USERDATA}, the system will fall back to custom FileDialog.
    * **Note:** On Linux and macOS, sandboxed apps always use native dialogs to access the host file system.
    * **Note:** On macOS, sandboxed apps will save security-scoped bookmarks to retain access to the opened folders across multiple sessions. Use {@link OS.get_granted_permissions} to get a list of saved bookmarks.
    * **Note:** Native dialogs are isolated from the base process, file dialog properties can't be modified once the dialog is shown.

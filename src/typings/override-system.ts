@@ -220,6 +220,13 @@ function loadGlobalOverridesFromDir(overrideDir: string): Map<string, string> {
       pendingJsDoc = [];
       continue;
     }
+
+    // Continuation of a multi-line declaration (e.g. a prettier-wrapped
+    // generic signature spanning several lines). Append it to the current
+    // declaration so the whole signature is preserved.
+    if (currentName) {
+      currentLines.push(line);
+    }
   }
   flush();
 

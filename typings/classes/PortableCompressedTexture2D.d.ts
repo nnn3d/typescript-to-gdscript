@@ -24,6 +24,8 @@ declare class PortableCompressedTexture2D extends Texture2D {
   create_from_image(image: Image, compression_mode: int, normal_map?: boolean, lossy_quality?: float): void;
   /** Return the compression mode used (valid after initialized). */
   get_compression_mode(): int;
+  /** Return the image format used (valid after initialized). */
+  get_format(): int;
   /** Returns `true` if the flag is overridden for all textures of this type. */
   static is_keeping_all_compressed_buffers(): boolean;
   /**

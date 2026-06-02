@@ -188,7 +188,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /** Overridable version of {@link PhysicsServer2D.body_set_shape}. */
   _body_set_shape(body: RID, shape_idx: int, shape: RID): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_shape_as_one_way_collision}. */
-  _body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float, direction: Vector2 | Vector2i): void;
+  _body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_shape_disabled}. */
   _body_set_shape_disabled(body: RID, shape_idx: int, disabled: boolean): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_shape_transform}. */

@@ -11,10 +11,6 @@ declare interface Input extends GodotObject {
    * If `true`, sends touch input events when clicking or dragging the mouse. See also {@link ProjectSettings.input_devices/pointing/emulate_touch_from_mouse}.
    */
   emulate_touch_from_mouse: boolean;
-  /**
-   * If `true`, joypad input (including motion sensors) and LED light changes will be ignored and joypad vibration will be stopped when the application is not focused.
-   */
-  ignore_joypad_on_unfocused_application: boolean;
   /** Controls the mouse mode. */
   mouse_mode: int;
   /**
@@ -27,8 +23,6 @@ declare interface Input extends GodotObject {
   is_emulating_mouse_from_touch(): boolean;
   set_emulate_touch_from_mouse(value: boolean): void;
   is_emulating_touch_from_mouse(): boolean;
-  set_ignore_joypad_on_unfocused_application(value: boolean): void;
-  is_ignoring_joypad_on_unfocused_application(): boolean;
   set_mouse_mode(value: int): void;
   get_mouse_mode(): int;
   set_use_accumulated_input(value: boolean): void;
@@ -46,12 +40,6 @@ declare interface Input extends GodotObject {
    * Adds a new mapping entry (in SDL2 format) to the mapping database. Optionally update already connected devices.
    */
   add_joy_mapping(mapping: string | NodePath, update_existing?: boolean): void;
-  /**
-   * Clears the calibration information for the specified joypad's motion sensors, if it has any and if they were calibrated.
-   * See {@link start_joy_motion_sensors_calibration} for an example on how to use joypad motion sensors and calibration in your games.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  clear_joy_motion_sensors_calibration(device: int): void;
   /**
    * Sends all input events which are in the current buffer to the game loop. These events may have been buffered as a result of accumulated input ({@link use_accumulated_input}) or agile input flushing ({@link ProjectSettings.input_devices/buffering/agile_event_flushing}).
    * The engine will already do this itself at key execution points (at least once per frame). However, this can be useful in advanced cases where you want precise control over the timing of event handling.
@@ -79,10 +67,7 @@ declare interface Input extends GodotObject {
    * This is a shorthand for writing `Input.get_action_strength("positive_action") - Input.get_action_strength("negative_action")`.
    */
   get_axis(negative_action: string, positive_action: string): float;
-  /**
-   * Returns an {@link Array} containing the device IDs of all currently connected joypads.
-   * **Note:** The order of connected joypads can not be guaranteed to be the same after a project and/or the editor is restarted, because Godot doesn't save the order of joypad connections. Joypads are registered in the order they are discovered by Godot.
-   */
+  /** Returns an {@link Array} containing the device IDs of all currently connected joypads. */
   get_connected_joypads(): Array<int>;
   /** Returns the currently assigned cursor shape. */
   get_current_cursor_shape(): int;
@@ -98,86 +83,33 @@ declare interface Input extends GodotObject {
    * **Note:** For Android, {@link ProjectSettings.input_devices/sensors/enable_gyroscope} must be enabled.
    */
   get_gyroscope(): Vector3;
-  /**
-   * Returns the acceleration, including the force of gravity, in m/s² of the joypad's accelerometer sensor, if the joypad has one and it's currently enabled. Otherwise, the method returns {@link Vector3.ZERO}. See also {@link get_joy_gravity} and {@link set_joy_motion_sensors_enabled}.
-   * For a joypad held in front of you, the returned axes are defined as follows:
-   * +X ... -X: left ... right;
-   * +Y ... -Y: bottom ... top;
-   * +Z ... -Z: farther ... closer.
-   * The gravity part value is measured as a vector with length of `9.8` away from the center of the Earth, which is a negative Y value.
-   * **Note:** This feature is only supported on Windows, Linux, and macOS. On iOS, joypad accelerometer sensor reading is not supported due to OS limitations.
-   */
-  get_joy_accelerometer(device: int): Vector3;
   /** Returns the current value of the joypad axis at index `axis`. */
   get_joy_axis(device: int, axis: int): float;
   /**
-   * Returns the gravity in m/s² of the joypad's accelerometer sensor, if the joypad has one and it's currently enabled. Otherwise, the method returns {@link Vector3.ZERO}. See also {@link get_joy_accelerometer} and {@link set_joy_motion_sensors_enabled}.
-   * For a joypad held in front of you, the returned axes are defined as follows:
-   * +X ... -X: left ... right;
-   * +Y ... -Y: bottom ... top;
-   * +Z ... -Z: farther ... closer.
-   * The gravity part value is measured as a vector with length of `9.8` away from the center of the Earth, which is a negative Y value.
-   * **Note:** This feature is only supported on Windows, Linux, and macOS. On iOS, joypad accelerometer sensor reading is not supported due to OS limitations.
-   */
-  get_joy_gravity(device: int): Vector3;
-  /**
-   * Returns an SDL-compatible device GUID on platforms that use gamepad remapping, e.g. `030000004c050000c405000000010000`. Returns an empty string if it cannot be found. Godot uses SDL's internal mappings, supplemented by community-contributed mappings, to determine gamepad names and mappings based on this GUID.
+   * Returns an SDL2-compatible device GUID on platforms that use gamepad remapping, e.g. `030000004c050000c405000000010000`. Returns an empty string if it cannot be found. Godot uses the SDL2 game controller database (https://github.com/gabomdq/SDL_GameControllerDB) to determine gamepad names and mappings based on this GUID.
    * On Windows, all XInput joypad GUIDs will be overridden by Godot to `__XINPUT_DEVICE__`, because their mappings are the same.
    */
   get_joy_guid(device: int): string;
   /**
-   * Returns the rotation rate in rad/s around a joypad's X, Y, and Z axes of the gyroscope sensor, if the joypad has one and it's currently enabled. Otherwise, the method returns {@link Vector3.ZERO}. See also {@link set_joy_motion_sensors_enabled}.
-   * The rotation is positive in the counter-clockwise direction.
-   * For a joypad held in front of you, the returned axes are defined as follows:
-   * X: Angular speed around the X axis (pitch);
-   * Y: Angular speed around the Y axis (yaw);
-   * Z: Angular speed around the Z axis (roll).
-   * See {@link start_joy_motion_sensors_calibration} for an example on how to use joypad gyroscope and gyroscope calibration in your games.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  get_joy_gyroscope(device: int): Vector3;
-  /**
    * Returns a dictionary with extra platform-specific information about the device, e.g. the raw gamepad name from the OS or the Steam Input index.
-   * On Windows, Linux, macOS, and iOS, the dictionary contains the following fields:
+   * On Windows, Linux, and macOS, the dictionary contains the following fields:
    * `raw_name`: The name of the controller as it came from the OS, before getting renamed by the controller database.
    * `vendor_id`: The USB vendor ID of the device.
    * `product_id`: The USB product ID of the device.
-   * `serial_number`: The serial number of the device. This key won't be present if the serial number is unavailable.
-   * The dictionary can also include the following fields under selected platforms:
-   * `steam_input_index`: The Steam Input gamepad index (Windows, Linux, and macOS only). If the device is not a Steam Input device this key won't be present.
-   * `xinput_index`: The index of the controller in the XInput system (Windows only). This key won't be present for devices not handled by XInput.
-   * **Note:** The returned dictionary is always empty on Android and Web.
+   * `steam_input_index`: The Steam Input gamepad index, if the device is not a Steam Input device this key won't be present.
+   * On Windows, the dictionary can have an additional field:
+   * `xinput_index`: The index of the controller in the XInput system. This key won't be present for devices not handled by XInput.
+   * **Note:** The returned dictionary is always empty on Android, iOS, visionOS, and Web.
    */
   get_joy_info(device: int): Dictionary;
-  /**
-   * Returns the calibration information about the specified joypad's motion sensors in the form of a {@link Dictionary}, if it has any and if they have been calibrated, otherwise returns an empty {@link Dictionary}.
-   * The dictionary contains the following fields:
-   * `gyroscope_offset`: average offset in gyroscope values from {@link Vector2.ZERO} in rad/s.
-   * See {@link start_joy_motion_sensors_calibration} for an example on how to use joypad motion sensors and calibration in your games.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  get_joy_motion_sensors_calibration(device: int): Dictionary;
-  /**
-   * Returns the joypad's motion sensor rate in Hz, if the joypad has motion sensors and they're currently enabled. See also {@link set_joy_motion_sensors_enabled}.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  get_joy_motion_sensors_rate(device: int): float;
   /**
    * Returns the name of the joypad at the specified device index, e.g. `PS4 Controller`. Godot uses the SDL2 game controller database (https://github.com/gabomdq/SDL_GameControllerDB) to determine gamepad names.
    */
   get_joy_name(device: int): string;
-  /**
-   * Returns the duration of the current vibration effect in seconds.
-   * **Note:** This method returns the same value that was passed to {@link start_joy_vibration}, and this value does **not** change when the joypad's vibration runs out, it only gets reset after a call to {@link stop_joy_vibration}.
-   * If you want to check if a joypad is still vibrating, use {@link is_joy_vibrating} instead.
-   */
+  /** Returns the duration of the current vibration effect in seconds. */
   get_joy_vibration_duration(device: int): float;
-  /** Returns the remaining duration of the current vibration effect in seconds. */
-  get_joy_vibration_remaining_duration(device: int): float;
   /**
    * Returns the strength of the joypad vibration: x is the strength of the weak motor, and y is the strength of the strong motor.
-   * **Note:** This method returns the same values that were passed to {@link start_joy_vibration}, and these values do **not** change when the joypad's vibration runs out, they only get reset after a call to {@link stop_joy_vibration}.
-   * If you want to check if a joypad is still vibrating, use {@link is_joy_vibrating} instead.
    */
   get_joy_vibration_strength(device: int): Vector2;
   /**
@@ -206,20 +138,9 @@ declare interface Input extends GodotObject {
   get_vector(negative_x: string, positive_x: string, negative_y: string, positive_y: string, deadzone?: float): Vector2;
   /**
    * Returns `true` if the joypad has an LED light that can change colors and/or brightness. See also {@link set_joy_light}.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
+   * **Note:** This feature is only supported on Windows, Linux, and macOS.
    */
   has_joy_light(device: int): boolean;
-  /**
-   * Returns `true` if the joypad has motion sensors (accelerometer and gyroscope).
-   * **Note:** On iOS, joypad accelerometer sensor reading is not supported due to OS limitations.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  has_joy_motion_sensors(device: int): boolean;
-  /**
-   * Returns `true` if the joypad supports vibration. See also {@link start_joy_vibration}.
-   * **Note:** For macOS, vibration is only supported in macOS 11 and later. When connected via USB, vibration is only supported for major brand controllers (except Xbox One and Xbox Series X/S controllers) due to macOS limitations.
-   */
-  has_joy_vibration(device: int): boolean;
   /**
    * Returns `true` when the user has *started* pressing the action event in the current frame or physics tick. It will only return `true` on the frame or tick that the user pressed down the button.
    * This is useful for code that needs to run only once when an action is pressed, instead of every frame while it's pressed.
@@ -267,29 +188,6 @@ declare interface Input extends GodotObject {
    * Returns `true` if the system knows the specified device. This means that it sets all button and axis indices. Unknown joypads are not expected to match these constants, but you can still retrieve events from them.
    */
   is_joy_known(device: int): boolean;
-  /**
-   * Returns `true` if the joypad's motion sensors have been calibrated.
-   * See {@link start_joy_motion_sensors_calibration} for an example on how to use joypad motion sensors and calibration in your games.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  is_joy_motion_sensors_calibrated(device: int): boolean;
-  /**
-   * Returns `true` if the joypad's motion sensors are currently being calibrated.
-   * See {@link start_joy_motion_sensors_calibration} for an example on how to use joypad motion sensors and calibration in your games.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  is_joy_motion_sensors_calibrating(device: int): boolean;
-  /**
-   * Returns `true` if the requested joypad has motion sensors (accelerometer and gyroscope) and they are currently enabled. See also {@link set_joy_motion_sensors_enabled} and {@link has_joy_motion_sensors}.
-   * See {@link start_joy_motion_sensors_calibration} for an example on how to use joypad motion sensors and calibration in your games.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  is_joy_motion_sensors_enabled(device: int): boolean;
-  /**
-   * Returns `true` if the joypad is still vibrating after a call to {@link start_joy_vibration}.
-   * Unlike {@link get_joy_vibration_strength} and {@link get_joy_vibration_duration}, this method returns `false` after the joypad's vibration runs out.
-   */
-  is_joy_vibrating(device: int): boolean;
   /**
    * Returns `true` if you are pressing the key with the `keycode` printed on it. You can pass a {@link Key} constant or any Unicode character code.
    */
@@ -351,22 +249,9 @@ declare interface Input extends GodotObject {
   /**
    * Sets the joypad's LED light, if available, to the specified color. See also {@link has_joy_light}.
    * **Note:** There is no way to get the color of the light from a joypad. If you need to know the assigned color, store it separately.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
+   * **Note:** This feature is only supported on Windows, Linux, and macOS.
    */
   set_joy_light(device: int, color: Color): void;
-  /**
-   * Sets the specified joypad's calibration information. See also {@link get_joy_motion_sensors_calibration}.
-   * See {@link start_joy_motion_sensors_calibration} for an example on how to use joypad motion sensors and calibration in your games.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  set_joy_motion_sensors_calibration(device: int, calibration_info: Dictionary): void;
-  /**
-   * Enables or disables the motion sensors (accelerometer and gyroscope), if available, on the specified joypad.
-   * See {@link start_joy_motion_sensors_calibration} for an example on how to use joypad motion sensors and calibration in your games.
-   * It's recommended to disable the motion sensors when they're no longer being used, because otherwise it might drain the controller battery faster.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  set_joy_motion_sensors_enabled(device: int, enable: boolean): void;
   /**
    * Sets the value of the magnetic field of the magnetometer sensor. Can be used for debugging on devices without a hardware sensor, for example in an editor on a PC.
    * **Note:** This value can be immediately overwritten by the hardware sensor value on Android and iOS.
@@ -378,30 +263,11 @@ declare interface Input extends GodotObject {
    */
   should_ignore_device(vendor_id: int, product_id: int): boolean;
   /**
-   * Starts the process of calibrating the specified joypad's gyroscope, if it has one.
-   * Once a joypad's gyroscope has been calibrated correctly (e.g. laying still on a table without being rotated), {@link get_joy_gyroscope} will return values close or equal to {@link Vector3.ZERO} when the joypad is not being rotated.
-   * Here's an example of how to use joypad gyroscope and gyroscope calibration in your games:
-   * **Note:** Accelerometer sensor doesn't usually require calibration.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  start_joy_motion_sensors_calibration(device: int): void;
-  /**
-   * Starts to vibrate the joypad. See also {@link has_joy_vibration} and {@link is_joy_vibrating}.
-   * Joypads usually come with two rumble motors, a strong and a weak one.
-   * `weak_magnitude` is the strength of the weak motor (between `0.0` and `1.0`).
-   * `strong_magnitude` is the strength of the strong motor (between `0.0` and `1.0`).
-   * `duration` is the duration of the effect in seconds (a duration of `0.0` will try to play the vibration as long as possible, which is about 65 seconds).
-   * The vibration can be stopped early by calling {@link stop_joy_vibration}.
-   * See also {@link get_joy_vibration_strength} and {@link get_joy_vibration_duration}.
-   * **Note:** For macOS, vibration is only supported in macOS 11 and later. When connected via USB, vibration is only supported for major brand controllers (except Xbox One and Xbox Series X/S controllers) due to macOS limitations.
+   * Starts to vibrate the joypad. Joypads usually come with two rumble motors, a strong and a weak one. `weak_magnitude` is the strength of the weak motor (between 0 and 1) and `strong_magnitude` is the strength of the strong motor (between 0 and 1). `duration` is the duration of the effect in seconds (a duration of 0 will try to play the vibration indefinitely). The vibration can be stopped early by calling {@link stop_joy_vibration}.
+   * **Note:** Not every hardware is compatible with long effect durations; it is recommended to restart an effect if it has to be played for more than a few seconds.
+   * **Note:** For macOS, vibration is only supported in macOS 11 and later.
    */
   start_joy_vibration(device: int, weak_magnitude: float, strong_magnitude: float, duration?: float): void;
-  /**
-   * Stops the calibration process of the specified joypad's motion sensors.
-   * See {@link start_joy_motion_sensors_calibration} for an example on how to use joypad motion sensors and calibration in your games.
-   * **Note:** This feature is only supported on Windows, Linux, macOS, and iOS.
-   */
-  stop_joy_motion_sensors_calibration(device: int): void;
   /** Stops the vibration of the joypad started with {@link start_joy_vibration}. */
   stop_joy_vibration(device: int): void;
   /**
@@ -412,7 +278,6 @@ declare interface Input extends GodotObject {
    * **Note:** For iOS, specifying the duration is only supported in iOS 13 and later.
    * **Note:** For Web, the amplitude cannot be changed.
    * **Note:** Some web browsers such as Safari and Firefox for Android do not support {@link vibrate_handheld}.
-   * **Note:** Device settings such as vibration on/off, "do not disturb" mode or specific haptic feedback on/off may prevent {@link vibrate_handheld} effects.
    */
   vibrate_handheld(duration_ms?: int, amplitude?: float): void;
   /**

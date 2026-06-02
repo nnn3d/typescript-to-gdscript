@@ -569,15 +569,10 @@ declare class ParticleProcessMaterial extends Material {
   /** Represents the size of the {@link EmissionShape} enum. */
   static readonly EMISSION_SHAPE_MAX: int;
   // enum SubEmitterMode
-  /** The subemitter is disabled. */
   static readonly SUB_EMITTER_DISABLED: int;
-  /** The submitter is emitted on the constant interval defined by {@link sub_emitter_frequency}. */
   static readonly SUB_EMITTER_CONSTANT: int;
-  /** The subemitter is emitted at the end of the particle's lifetime. */
   static readonly SUB_EMITTER_AT_END: int;
-  /** The subemitter is emitted when the particle collides. */
   static readonly SUB_EMITTER_AT_COLLISION: int;
-  /** The subemitter is emitted when the particle spawns. */
   static readonly SUB_EMITTER_AT_START: int;
   /** Represents the size of the {@link SubEmitterMode} enum. */
   static readonly SUB_EMITTER_MAX: int;

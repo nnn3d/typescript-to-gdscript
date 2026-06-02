@@ -8,10 +8,6 @@ declare class PCKPacker extends RefCounted {
    */
   add_file(target_path: string | NodePath, source_path: string | NodePath, encrypt?: boolean): int;
   /**
-   * Adds the `data` to the current PCK package at the `target_path` internal path. The `res://` prefix for `target_path` is optional and stripped internally. File content is immediately written to the PCK.
-   */
-  add_file_from_buffer(target_path: string | NodePath, data: PackedByteArray | Array<unknown>, encrypt?: boolean): int;
-  /**
    * Registers a file removal of the `target_path` internal path to the PCK. This is mainly used for patches. If the file at this path has been loaded from a previous PCK, it will be removed. The `res://` prefix for `target_path` is optional and stripped internally.
    */
   add_file_removal(target_path: string | NodePath): int;

@@ -1,10 +1,10 @@
 // AUTO-GENERATED from Godot class documentation.
 // Manual overrides applied from typings-overrides/*.d.ts
 
-/** Adds a volume manipulation audio effect to an audio bus. */
+/** Adds an amplifying audio effect to an audio bus. */
 declare class AudioEffectAmplify extends AudioEffect {
   /**
-   * Amount of amplification in dB. Positive values make the sound louder, negative values make it quieter. Value can range from -80 to 24.
+   * Amount of amplification in decibels. Positive values make the sound louder, negative values make it quieter. Value can range from -80 to 24.
    */
   volume_db: float;
   /**

@@ -17,7 +17,6 @@ declare class Joint3D extends Node3D {
   node_b: NodePath;
   /**
    * The priority used to define which solver is executed first for multiple joints. The lower the value, the higher the priority.
-   * **Note:** Only supported when using GodotPhysics3D. This property is ignored when using Jolt Physics.
    */
   solver_priority: int;
   set_exclude_nodes_from_collision(value: boolean): void;

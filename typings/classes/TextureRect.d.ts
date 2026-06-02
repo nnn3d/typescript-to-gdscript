@@ -49,10 +49,7 @@ declare class TextureRect extends Control {
   // enum StretchMode
   /** Scale to fit the node's bounding rectangle. */
   static readonly STRETCH_SCALE: int;
-  /**
-   * Tile inside the node's bounding rectangle.
-   * **Note:** {@link STRETCH_TILE} mode is not supported for {@link texture} set to an {@link AtlasTexture} with non-zero {@link AtlasTexture.margin}.
-   */
+  /** Tile inside the node's bounding rectangle. */
   static readonly STRETCH_TILE: int;
   /** The texture keeps its original size and stays in the bounding rectangle's top-left corner. */
   static readonly STRETCH_KEEP: int;

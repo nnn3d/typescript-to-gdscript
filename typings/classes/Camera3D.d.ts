@@ -155,7 +155,7 @@ declare class Camera3D extends Node3D {
    */
   set_cull_mask_value(layer_number: int, value: boolean): void;
   /**
-   * Sets the camera projection to frustum mode (see {@link PROJECTION_FRUSTUM}), by specifying a `size`, an `offset`, and the `z_near` and `z_far` clip planes in world space units. The `size` parameter represents the size of the near plane, either its width or height depending on the value of {@link keep_aspect}. See also {@link frustum_offset}.
+   * Sets the camera projection to frustum mode (see {@link PROJECTION_FRUSTUM}), by specifying a `size`, an `offset`, and the `z_near` and `z_far` clip planes in world space units. See also {@link frustum_offset}.
    */
   set_frustum(size: float, offset: Vector2 | Vector2i, z_near: float, z_far: float): void;
   /**

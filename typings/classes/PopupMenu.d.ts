@@ -5,12 +5,8 @@
 declare class PopupMenu extends Popup {
   /** If `true`, allows navigating {@link PopupMenu} with letter keys. */
   allow_search: boolean;
-  /**
-   * <member name="canvas_item_default_texture_repeat" type="int" setter="set_default_canvas_item_texture_repeat" getter="get_default_canvas_item_texture_repeat" overrides="Viewport" enum="Viewport.DefaultCanvasItemTextureRepeat" default="3" />
-   * <member name="hide_on_checkable_item_selection" type="bool" setter="set_hide_on_checkable_item_selection" getter="is_hide_on_checkable_item_selection" default="true">
-   * If `true`, hides the {@link PopupMenu} when a checkbox or radio button is selected.
-   */
-  canvas_item_default_texture_filter: int;
+  /** If `true`, hides the {@link PopupMenu} when a checkbox or radio button is selected. */
+  hide_on_checkable_item_selection: boolean;
   /** If `true`, hides the {@link PopupMenu} when an item is selected. */
   hide_on_item_selection: boolean;
   /** If `true`, hides the {@link PopupMenu} when a state item is selected. */
@@ -22,11 +18,6 @@ declare class PopupMenu extends Popup {
    * **Note:** If {@link PopupMenu} is linked to {@link StatusIndicator}, {@link MenuBar}, or another {@link PopupMenu} item it can use native menu regardless of this property, use {@link is_native_menu} to check it.
    */
   prefer_native_menu: boolean;
-  /**
-   * Enables the {@link PopupMenu} search bar if the item count is greater than `0`.
-   * **Note:** When enabled, {@link allow_search} is ignored.
-   */
-  search_bar_enabled_on_item_count: int;
   /** If `true`, shrinks {@link PopupMenu} to minimum height when it's shown. */
   shrink_height: boolean;
   /** If `true`, shrinks {@link PopupMenu} to minimum width when it's shown. */
@@ -44,6 +35,8 @@ declare class PopupMenu extends Popup {
   transparent_bg: boolean;
   set_allow_search(value: boolean): void;
   get_allow_search(): boolean;
+  set_hide_on_checkable_item_selection(value: boolean): void;
+  is_hide_on_checkable_item_selection(): boolean;
   set_hide_on_item_selection(value: boolean): void;
   is_hide_on_item_selection(): boolean;
   set_hide_on_state_item_selection(value: boolean): void;
@@ -52,8 +45,6 @@ declare class PopupMenu extends Popup {
   get_item_count(): int;
   set_prefer_native_menu(value: boolean): void;
   is_prefer_native_menu(): boolean;
-  set_search_bar_enabled_on_item_count(value: int): void;
-  get_search_bar_enabled_on_item_count(): int;
   set_shrink_height(value: boolean): void;
   get_shrink_height(): boolean;
   set_shrink_width(value: boolean): void;
@@ -173,12 +164,14 @@ declare class PopupMenu extends Popup {
   get_item_icon_max_width(index: int): int;
   /** Returns a {@link Color} modulating the item's icon at the given `index`. */
   get_item_icon_modulate(index: int): Color;
-  /** Returns the ID of the item at the given `index`. */
+  /**
+   * Returns the ID of the item at the given `index`. `id` can be manually assigned, while index can not.
+   */
   get_item_id(index: int): int;
   /** Returns the horizontal offset of the item at the given `index`. */
   get_item_indent(index: int): int;
   /**
-   * Returns the index of the item containing the specified `id`. The index is automatically assigned to each item by the engine when added and represents the order items will be displayed.
+   * Returns the index of the item containing the specified `id`. Index is automatically assigned to each item by the engine and can not be set manually.
    */
   get_item_index(id: int): int;
   /** Returns item's text language code. */
@@ -232,8 +225,6 @@ declare class PopupMenu extends Popup {
   is_item_shortcut_disabled(index: int): boolean;
   /** Returns `true` if the system native menu is supported and currently used by this {@link PopupMenu}. */
   is_native_menu(): boolean;
-  /** Returns `true` if search bar is currently enabled. */
-  is_search_bar_enabled(): boolean;
   /** Returns `true` if the menu is bound to the special system menu. */
   is_system_menu(): boolean;
   /**
@@ -291,11 +282,6 @@ declare class PopupMenu extends Popup {
   set_item_id(index: int, id: int): void;
   /** Sets the horizontal offset of the item at the given `index`. */
   set_item_indent(index: int, indent: int): void;
-  /**
-   * Changes the index of the item at index `index` to be at index `target_index`. This can be used to move an item above other items. The moved item will keep the same ID, even if it was generated from the original index.
-   * **Note:** The indices of any items between index `index` and index `target_index` will be shifted by one.
-   */
-  set_item_index(index: int, target_index: int): void;
   /**
    * Sets the language code of the text for the item at the given index to `language`. This is used for line-breaking and text shaping algorithms. If `language` is empty, the current locale is used.
    */

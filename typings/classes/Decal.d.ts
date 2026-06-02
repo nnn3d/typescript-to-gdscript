@@ -63,7 +63,6 @@ declare class Decal extends VisualInstance3D {
    * {@link Texture2D} storing ambient occlusion, roughness, and metallic for the decal. Use this to add extra detail to decals.
    * **Note:** Unlike {@link BaseMaterial3D} whose filter mode can be adjusted on a per-material basis, the filter mode for {@link Decal} textures is set globally with {@link ProjectSettings.rendering/textures/decals/filter}.
    * **Note:** Setting this texture alone will not result in a visible decal, as {@link texture_albedo} must also be set. To create an ORM-only decal, load an albedo texture into {@link texture_albedo} and set {@link albedo_mix} to `0.0`. The albedo texture's alpha channel will be used to determine where the underlying surface's ORM map should be overridden (and its intensity).
-   * **Note:** Due to technical limitations, modifying the underlying surface's roughness using {@link texture_orm} does *not* affect screen-space reflections ({@link Environment.ssr_enabled}), reflections from {@link VoxelGI}, and reflections from SDFGI ({@link Environment.sdfgi_enabled}). Only reflections from {@link ReflectionProbe}s are affected.
    */
   texture_orm: Texture2D | null;
   /**

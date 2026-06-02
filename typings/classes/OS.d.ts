@@ -506,14 +506,14 @@ declare interface OS extends GodotObject {
 
   // enum RenderingDriver
   /**
-   * The Vulkan rendering driver. It requires Vulkan 1.0 support and automatically uses features from Vulkan 1.1, 1.2, and 1.3 if available.
+   * The Vulkan rendering driver. It requires Vulkan 1.0 support and automatically uses features from Vulkan 1.1 and 1.2 if available.
    */
   readonly RENDERING_DRIVER_VULKAN: int;
   /**
    * The OpenGL 3 rendering driver. It uses OpenGL 3.3 Core Profile on desktop platforms, OpenGL ES 3.0 on mobile devices, and WebGL 2.0 on Web.
    */
   readonly RENDERING_DRIVER_OPENGL3: int;
-  /** The Direct3D 12 rendering driver. It requires the 12_0 feature level and Shader Model 6.0 support. */
+  /** The Direct3D 12 rendering driver. */
   readonly RENDERING_DRIVER_D3D12: int;
   /** The Metal rendering driver. */
   readonly RENDERING_DRIVER_METAL: int;

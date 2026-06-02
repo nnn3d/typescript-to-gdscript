@@ -88,8 +88,6 @@ declare interface XRServer extends GodotObject {
    * Emitted when an existing tracker has been updated. This can happen if the user switches controllers.
    */
   tracker_updated: Signal<[string, int]>;
-  /** Emitted when the world origin transform changes. */
-  world_origin_changed: Signal<[]>;
 
   // enum TrackerType
   /**

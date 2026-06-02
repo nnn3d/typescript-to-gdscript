@@ -73,22 +73,7 @@ declare class ArrayMesh extends Mesh {
   surface_remove(surf_idx: int): void;
   /** Sets a name for a given surface. */
   surface_set_name(surf_idx: int, name: string | NodePath): void;
-  /**
-   * Updates the attribute buffer of this mesh's surface with the given `data`. The expected data per attribute is 12 or 8 bytes (4 bytes per float, 2 floats per {@link Vector2}, and 3 floats per {@link Vector3}) depending on if the mesh is using {@link Vector3} or {@link Vector2} vertices. This value can be determined with {@link RenderingServer.mesh_surface_get_format_attribute_stride}.
-   * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each attribute.
-   * A {@link PackedVector3Array} of attribute locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
-   */
   surface_update_attribute_region(surf_idx: int, offset: int, data: PackedByteArray | Array<unknown>): void;
-  /**
-   * Updates the skin buffer of this mesh's surface with the given `data`. The expected data per skin is 12 or 8 bytes (4 bytes per float, 2 floats per {@link Vector2}, and 3 floats per {@link Vector3}) depending on if the mesh is using {@link Vector3} or {@link Vector2} vertices. This value can be determined with {@link RenderingServer.mesh_surface_get_format_skin_stride}.
-   * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each skin.
-   * A {@link PackedVector3Array} of skin locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
-   */
   surface_update_skin_region(surf_idx: int, offset: int, data: PackedByteArray | Array<unknown>): void;
-  /**
-   * Updates the vertex buffer of this mesh's surface with the given `data`. The expected data per vertex is 12 or 8 bytes (4 bytes per float, 2 floats per {@link Vector2}, and 3 floats per {@link Vector3}) depending on if the mesh is using {@link Vector3} or {@link Vector2} vertices. This value can be determined with {@link RenderingServer.mesh_surface_get_format_vertex_stride}.
-   * The starting point of the updates can be changed with `offset`. The value of `offset` should be a multiple of 12 bytes in most cases to align to each vertex.
-   * A {@link PackedVector3Array} of vertex locations can be converted into a {@link PackedByteArray} using {@link PackedVector3Array.to_byte_array} for use in `data`.
-   */
   surface_update_vertex_region(surf_idx: int, offset: int, data: PackedByteArray | Array<unknown>): void;
 }

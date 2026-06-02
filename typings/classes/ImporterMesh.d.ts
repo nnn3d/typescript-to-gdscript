@@ -67,12 +67,6 @@ declare class ImporterMesh extends Resource {
   get_surface_name(surface_idx: int): string;
   /** Returns the primitive type of the requested surface (see {@link add_surface}). */
   get_surface_primitive_type(surface_idx: int): int;
-  /**
-   * Merges multiple {@link ImporterMesh}es into a single {@link ImporterMesh}. Each input mesh is transformed by the corresponding {@link Transform3D} in the `relative_transforms` array, which must be the same size as `importer_meshes`. Negative scales are supported, and the winding order in the mesh data will be corrected to account for this.
-   * If `deduplicate_surfaces` is `true` and multiple meshes have surfaces with the same names and formats, the surfaces will be merged together when the meshes are merged, and will use the material from the first matching surface. This is useful for reducing the number of surfaces in the resulting mesh, and avoids duplicating materials. Surfaces with bone weights will never be deduplicated. If `deduplicate_surfaces` is `false`, the surfaces will always be kept separate, and will be given unique names.
-   * **Warning:** Blend shapes and LODs are not supported and will be discarded. Do not use this function to discard blend shapes and LODs, as support for these may be added in the future.
-   */
-  static merge_importer_meshes(importer_meshes: Array<ImporterMesh>, relative_transforms: Array<Transform3D>, deduplicate_surfaces?: boolean): ImporterMesh | null;
   /** Sets the blend shape mode. */
   set_blend_shape_mode(mode: int): void;
   /** Sets the size hint of this mesh for lightmap-unwrapping in UV-space. */

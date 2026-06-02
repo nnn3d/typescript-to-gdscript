@@ -71,8 +71,6 @@ declare class CollisionObject2D extends Node2D {
   get_collision_mask_value(layer_number: int): boolean;
   /** Returns the object's {@link RID}. */
   get_rid(): RID;
-  /** Returns the `one_way_collision_direction` of the shape owner identified by the given `owner_id`. */
-  get_shape_owner_one_way_collision_direction(owner_id: int): Vector2;
   /** Returns the `one_way_collision_margin` of the shape owner identified by given `owner_id`. */
   get_shape_owner_one_way_collision_margin(owner_id: int): float;
   /**
@@ -119,10 +117,6 @@ declare class CollisionObject2D extends Node2D {
    * If `enable` is `true`, collisions for the shape owner originating from this {@link CollisionObject2D} will not be reported to collided with {@link CollisionObject2D}s.
    */
   shape_owner_set_one_way_collision(owner_id: int, enable: boolean): void;
-  /**
-   * Sets the `one_way_collision_direction` of the shape owner identified by the given `owner_id` to `p_direction`.
-   */
-  shape_owner_set_one_way_collision_direction(owner_id: int, p_direction: Vector2 | Vector2i): void;
   /**
    * Sets the `one_way_collision_margin` of the shape owner identified by given `owner_id` to `margin` pixels.
    */

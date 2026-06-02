@@ -19,7 +19,7 @@ declare class Resource extends RefCounted {
    */
   resource_path: string;
   /**
-   * A unique identifier relative to this resource's scene. If left empty, the ID is automatically generated when this resource is saved inside a {@link PackedScene}. If the resource is not inside a scene, this property is empty by default.
+   * A unique identifier relative to the this resource's scene. If left empty, the ID is automatically generated when this resource is saved inside a {@link PackedScene}. If the resource is not inside a scene, this property is empty by default.
    * **Note:** When the {@link PackedScene} is saved, if multiple resources in the same scene use the same ID, only the earliest resource in the scene hierarchy keeps the original ID. The other resources are assigned new IDs from {@link generate_scene_unique_id}.
    * **Note:** Setting this property does not emit the {@link changed} signal.
    * **Warning:** When setting, the ID must only consist of letters, numbers, and underscores. Otherwise, it will fail and default to a randomly generated ID.
@@ -118,7 +118,7 @@ declare class Resource extends RefCounted {
 
   // enum DeepDuplicateMode
   /**
-   * No subresources at all are duplicated. This is useful even in a deep duplication to have all the arrays and dictionaries duplicated but still pointing to the original resources.
+   * No subresorces at all are duplicated. This is useful even in a deep duplication to have all the arrays and dictionaries duplicated but still pointing to the original resources.
    */
   static readonly DEEP_DUPLICATE_NONE: int;
   /** Only subresources without a path or with a scene-local path will be duplicated. */

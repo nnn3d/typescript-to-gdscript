@@ -4,12 +4,6 @@
 /** Stores globally-accessible variables. */
 declare interface ProjectSettings {
   /**
-   * Accessibility driver:
-   * -**accesskit** (default): AccessKit driver.
-   * -**dummy**: Dummy driver, screen reader support is disabled.
-   */
-  'accessibility/general/accessibility_driver': string;
-  /**
    * Accessibility support mode:
    * - **Auto** (`0`): Accessibility support is enabled, but updates to the accessibility information are processed only if an assistive app (such as a screen reader or a Braille display) is active (default).
    * - **Always Active** (`1`): Accessibility support is enabled, and updates to the accessibility information are always processed, regardless of the status of assistive apps.
@@ -847,11 +841,6 @@ declare interface ProjectSettings {
    */
   'display/window/handheld/orientation': int;
   /**
-   * If `true`, HDR output is requested for the main window and the editor. The main window and editor will automatically switch between HDR and SDR if it is moved between screens, screen capabilities change, or system settings are modified. This will internally force {@link Viewport.use_hdr_2d} to be enabled on the main {@link Viewport}. All other {@link SubViewport} of the {@link Window} must have their {@link Viewport.use_hdr_2d} property enabled to produce HDR output.
-   * **Note:** This property is only read when the project starts. To change this property at runtime, set {@link Window.hdr_output_requested}.
-   */
-  'display/window/hdr/request_hdr_output': boolean;
-  /**
    * If `true`, iOS devices that support high refresh rate/"ProMotion" will be allowed to render at up to 120 frames per second.
    */
   'display/window/ios/allow_high_refresh_rate': boolean;
@@ -983,11 +972,11 @@ declare interface ProjectSettings {
   /**
    * If `true`, subwindows are embedded in the main window (this is also called single-window mode). Single-window mode can be faster as it does not need to create a separate window for every popup and tooltip, which can be a slow operation depending on the operating system and rendering method in use.
    * If `false`, subwindows are created as separate windows (this is also called multi-window mode). This allows them to be moved outside the main window and use native operating system window decorations.
-   * This is equivalent to {@link EditorSettings.interface/editor/display/single_window_mode} in the editor.
+   * This is equivalent to {@link EditorSettings.interface/editor/single_window_mode} in the editor.
    */
   'display/window/subwindows/embed_subwindows': boolean;
   /**
-   * Sets the V-Sync mode for the main game window. The editor's own V-Sync mode can be set using {@link EditorSettings.interface/editor/display/vsync_mode}.
+   * Sets the V-Sync mode for the main game window. The editor's own V-Sync mode can be set using {@link EditorSettings.interface/editor/vsync_mode}.
    * See {@link DisplayServer.VSyncMode} for possible values and how they affect the behavior of your application.
    * Depending on the platform and rendering method, the engine will fall back to **Enabled** if the desired mode is not supported.
    * V-Sync can be disabled on the command line using the `--disable-vsync` command line argument ($DOCS_URL/tutorials/editor/command_line_tutorial.html).
@@ -1633,10 +1622,6 @@ declare interface ProjectSettings {
    * **Note:** You should in nearly all cases prefer the `false` setting. The legacy behavior is to enable supporting old projects that rely on the old logic, without changes to script.
    */
   'input_devices/compatibility/legacy_just_pressed_behavior': boolean;
-  /**
-   * If `true`, joypad input (including motion sensors) and LED light changes will be ignored and joypad vibration will be stopped when the application is not focused.
-   */
-  'input_devices/joypads/ignore_joypad_on_unfocused_application': boolean;
   /**
    * Specifies the tablet driver to use. If left empty, the default driver will be used.
    * **Note:** The driver in use can be overridden at runtime via the `--tablet-driver` command line argument ($DOCS_URL/tutorials/editor/command_line_tutorial.html).
@@ -2397,12 +2382,10 @@ declare interface ProjectSettings {
   'physics/2d/sleep_threshold_angular': float;
   /**
    * Threshold linear velocity under which a 2D physics body will be considered inactive. See {@link PhysicsServer2D.SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD}.
-   * **Note:** Only supported when using GodotPhysics3D. This project setting is ignored when using Jolt Physics.
    */
   'physics/2d/sleep_threshold_linear': float;
   /**
    * Maximum distance a shape can penetrate another shape before it is considered a collision. See {@link PhysicsServer2D.SPACE_PARAM_CONTACT_MAX_ALLOWED_PENETRATION}.
-   * **Note:** Only supported when using GodotPhysics3D. This project setting is ignored when using Jolt Physics.
    */
   'physics/2d/solver/contact_max_allowed_penetration': float;
   /**
@@ -2480,43 +2463,35 @@ declare interface ProjectSettings {
   'physics/3d/run_on_separate_thread': boolean;
   /**
    * Threshold angular velocity under which a 3D physics body will be considered inactive. See {@link PhysicsServer3D.SPACE_PARAM_BODY_ANGULAR_VELOCITY_SLEEP_THRESHOLD}.
-   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/sleep_threshold_angular': float;
   /**
    * Threshold linear velocity under which a 3D physics body will be considered inactive. See {@link PhysicsServer3D.SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD}.
-   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/sleep_threshold_linear': float;
   /**
    * Maximum distance a shape can penetrate another shape before it is considered a collision. See {@link PhysicsServer3D.SPACE_PARAM_CONTACT_MAX_ALLOWED_PENETRATION}.
-   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/solver/contact_max_allowed_penetration': float;
   /**
    * Maximum distance a shape can be from another before they are considered separated and the contact is discarded. See {@link PhysicsServer3D.SPACE_PARAM_CONTACT_MAX_SEPARATION}.
-   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/solver/contact_max_separation': float;
   /**
    * Maximum distance a pair of bodies has to move before their collision status has to be recalculated. See {@link PhysicsServer3D.SPACE_PARAM_CONTACT_RECYCLE_RADIUS}.
-   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/solver/contact_recycle_radius': float;
   /**
    * Default solver bias for all physics contacts. Defines how much bodies react to enforce contact separation. See {@link PhysicsServer3D.SPACE_PARAM_CONTACT_DEFAULT_BIAS}.
    * Individual shapes can have a specific bias value (see {@link Shape3D.custom_solver_bias}).
-   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/solver/default_contact_bias': float;
   /**
    * Number of solver iterations for all contacts and constraints. The greater the number of iterations, the more accurate the collisions will be. However, a greater number of iterations requires more CPU power, which can decrease performance. See {@link PhysicsServer3D.SPACE_PARAM_SOLVER_ITERATIONS}.
-   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/solver/solver_iterations': int;
   /**
    * Time (in seconds) of inactivity before which a 3D physics body will put to sleep. See {@link PhysicsServer3D.SPACE_PARAM_BODY_TIME_TO_SLEEP}.
-   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/time_before_sleep': float;
   /** Enables {@link Viewport.physics_object_picking} on the root viewport. */
@@ -3083,7 +3058,6 @@ declare interface ProjectSettings {
   'rendering/lightmapping/primitive_meshes/texel_size': float;
   /**
    * The framerate-independent update speed when representing dynamic object lighting from {@link LightmapProbe}s. Higher values make dynamic object lighting update faster. Higher values can prevent fast-moving objects from having "outdated" indirect lighting displayed on them, at the cost of possible flickering when an object moves from a bright area to a shaded area.
-   * **Note:** This property is only read when the project starts. To adjust the BVH build quality at runtime, use {@link RenderingServer.lightmap_set_probe_capture_update_speed}.
    */
   'rendering/lightmapping/probe_capture/update_speed': float;
   /**
@@ -3193,7 +3167,6 @@ declare interface ProjectSettings {
   'rendering/limits/time/time_rollover_secs': float;
   /**
    * The automatic LOD bias to use for meshes rendered within the {@link ReflectionProbe}. Higher values will use less detailed versions of meshes that have LOD variations generated. If set to `0.0`, automatic LOD is disabled. Increase {@link rendering/mesh_lod/lod_change/threshold_pixels} to improve performance at the cost of geometry detail.
-   * **Note:** Depending on the mesh's attributes (vertex colors, blend shapes, ...), a mesh may have fewer levels of LOD generated to avoid visible distortion of the mesh once it is affected by vertex colors or blend shapes. Meshes with a very low vertex count will also not have any LODs generated, which means this setting will not affect them at all. In general, this setting makes the largest impact on static meshes with a high vertex count.
    * **Note:** {@link rendering/mesh_lod/lod_change/threshold_pixels} does not affect {@link GeometryInstance3D} visibility ranges (also known as "manual" LOD or hierarchical LOD).
    * **Note:** This property is only read when the project starts. To adjust the automatic LOD threshold at runtime, set {@link Viewport.mesh_lod_threshold} on the root {@link Viewport}.
    */
@@ -3666,8 +3639,6 @@ declare interface ProjectSettings {
    * **Note:** This requires that the OpenXR spatial entities extension is supported by the XR runtime. If not supported this setting will be ignored.
    */
   'xr/openxr/extensions/spatial_entity/enabled': boolean;
-  /** If `true`, the user presence extension is enabled if available. */
-  'xr/openxr/extensions/user_presence': boolean;
   /** Specify whether OpenXR should be configured for an HMD or a hand held device. */
   'xr/openxr/form_factor': int;
   /**
@@ -3711,7 +3682,9 @@ declare interface ProjectSettings {
    */
   check_changed_settings_in_group(setting_prefix: string): boolean;
   /** Clears the whole configuration (not recommended, may break things). */
-  clear<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T): void;
+  clear<const T extends keyof ProjectSettings & `${string}/${string}`>(
+  name: T,
+  ): void;
   clear(name: string): void;
   /**
    * Gets an array of the settings which have been changed since the last save. Note that internally `changed_settings` is cleared after a successful save, so generally the most appropriate place to use this method is when processing {@link settings_changed}.
@@ -3728,26 +3701,43 @@ declare interface ProjectSettings {
    */
   get_global_class_list(): Array<Dictionary>;
   /** Returns the order of a configuration value (influences when saved to the config file). */
-  get_order<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T): int;
+  get_order<const T extends keyof ProjectSettings & `${string}/${string}`>(
+  name: T,
+  ): int;
   get_order(name: string): int;
   /**
    * Returns the value of the setting identified by `name`. If the setting doesn't exist and `default_value` is specified, the value of `default_value` is returned. Otherwise, `null` is returned.
    * **Note:** This method doesn't take potential feature overrides into account automatically. Use {@link get_setting_with_override} to handle seamlessly.
    * See also {@link has_setting} to check whether a setting exists.
    */
-  get_setting<const T extends keyof ProjectSettings & `${string}/${string}`, D>(name: T, default_value?: ProjectSettings[T]): ProjectSettings[T];
+  get_setting<const T extends keyof ProjectSettings & `${string}/${string}`, D>(
+  name: T,
+  default_value?: ProjectSettings[T],
+  ): ProjectSettings[T];
   get_setting(name: string, default_value?: unknown): unknown;
   /**
    * Similar to {@link get_setting}, but applies feature tag overrides if any exists and is valid.
    * **Example:** If the setting override `"application/config/name.windows"` exists, and the following code is executed on a *Windows* operating system, the overridden setting is printed instead:
    */
-  get_setting_with_override<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T): ProjectSettings[T];
+  get_setting_with_override<
+  const T extends keyof ProjectSettings & `${string}/${string}`,
+  >(
+  name: T,
+  ): ProjectSettings[T];
   get_setting_with_override(name: string): unknown;
   /**
    * Similar to {@link get_setting_with_override}, but applies feature tag overrides instead of current OS features.
    */
-  get_setting_with_override_and_custom_features<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, features: PackedStringArray): ProjectSettings[T];
-  get_setting_with_override_and_custom_features(name: string, features: PackedStringArray): unknown;
+  get_setting_with_override_and_custom_features<
+  const T extends keyof ProjectSettings & `${string}/${string}`,
+  >(
+  name: T,
+  features: PackedStringArray,
+  ): ProjectSettings[T];
+  get_setting_with_override_and_custom_features(
+  name: string,
+  features: PackedStringArray,
+  ): unknown;
   /**
    * Returns the absolute, native OS path corresponding to the localized `path` (starting with `res://` or `user://`). The returned path will vary depending on the operating system and user preferences. See File paths in Godot projects ($DOCS_URL/tutorials/io/data_paths.html) to see what those paths convert to. See also {@link localize_path}.
    * **Note:** {@link globalize_path} with `res://` will not work in an exported project. Instead, prepend the executable's base directory to the path when running from an exported project:
@@ -3757,7 +3747,9 @@ declare interface ProjectSettings {
    * Returns `true` if a configuration value is present.
    * **Note:** In order to be be detected, custom settings have to be either defined with {@link set_setting}, or exist in the `project.godot` file. This is especially relevant when using {@link set_initial_value}.
    */
-  has_setting<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T): boolean;
+  has_setting<const T extends keyof ProjectSettings & `${string}/${string}`>(
+  name: T,
+  ): boolean;
   has_setting(name: string): boolean;
   /**
    * Loads the contents of the .pck or .zip file specified by `pack` into the resource filesystem (`res://`). Returns `true` on success.
@@ -3782,33 +3774,57 @@ declare interface ProjectSettings {
   /**
    * Defines if the specified setting is considered basic or advanced. Basic settings will always be shown in the project settings. Advanced settings will only be shown if the user enables the "Advanced Settings" option.
    */
-  set_as_basic<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, basic: boolean): void;
+  set_as_basic<const T extends keyof ProjectSettings & `${string}/${string}`>(
+  name: T,
+  basic: boolean,
+  ): void;
   set_as_basic(name: string, basic: boolean): void;
   /**
    * Defines if the specified setting is considered internal. An internal setting won't show up in the Project Settings dialog. This is mostly useful for addons that need to store their own internal settings without exposing them directly to the user.
    */
-  set_as_internal<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, internal: boolean): void;
+  set_as_internal<
+  const T extends keyof ProjectSettings & `${string}/${string}`,
+  >(
+  name: T,
+  internal: boolean,
+  ): void;
   set_as_internal(name: string, internal: boolean): void;
   /**
    * Sets the specified setting's initial value. This is the value the setting reverts to. The setting should already exist before calling this method. Note that project settings equal to their default value are not saved, so your code needs to account for that.
    * If you have a project setting defined by an {@link EditorPlugin}, but want to use it in a running project, you will need a similar code at runtime.
    */
-  set_initial_value<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, value: unknown): void;
+  set_initial_value<
+  const T extends keyof ProjectSettings & `${string}/${string}`,
+  >(
+  name: T,
+  value: unknown,
+  ): void;
   set_initial_value(name: string, value: unknown): void;
   /** Sets the order of a configuration value (influences when saved to the config file). */
-  set_order<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, position: int): void;
+  set_order<const T extends keyof ProjectSettings & `${string}/${string}`>(
+  name: T,
+  position: int,
+  ): void;
   set_order(name: string, position: int): void;
   /**
    * Sets whether a setting requires restarting the editor to properly take effect.
    * **Note:** This is just a hint to display to the user that the editor must be restarted for changes to take effect. Enabling {@link set_restart_if_changed} does *not* delay the setting being set when changed.
    */
-  set_restart_if_changed<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, restart: boolean): void;
+  set_restart_if_changed<
+  const T extends keyof ProjectSettings & `${string}/${string}`,
+  >(
+  name: T,
+  restart: boolean,
+  ): void;
   set_restart_if_changed(name: string, restart: boolean): void;
   /**
    * Sets the value of a setting.
    * This can also be used to erase custom project settings. To do this change the setting value to `null`.
    */
-  set_setting<const T extends keyof ProjectSettings & `${string}/${string}`>(name: T, value: unknown): void;
+  set_setting<const T extends keyof ProjectSettings & `${string}/${string}`>(
+  name: T,
+  value: unknown,
+  ): void;
   set_setting(name: string, value: unknown): void;
 
   /** Emitted when any setting is changed, up to once per process frame. */

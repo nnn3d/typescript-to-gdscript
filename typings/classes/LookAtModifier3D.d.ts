@@ -68,7 +68,6 @@ declare class LookAtModifier3D extends SkeletonModifier3D {
   primary_rotation_axis: int;
   /**
    * The relative option. If `true`, the rotation is applied relative to the pose. If `false`, the rotation is applied relative to the rest. It means to replace the current pose with the {@link LookAtModifier3D}'s result.
-   * **Note:** This option affects the base angle for {@link use_angle_limitation} unlike {@link IterateIK3D}'s {@link JointLimitation3D}. Since the {@link LookAtModifier3D} relies strongly on Euler rotation, the axis that determines the limitation and the actual rotation are strongly tied together.
    */
   relative: boolean;
   /** The threshold to start damping for {@link secondary_limit_angle}. */
@@ -100,7 +99,7 @@ declare class LookAtModifier3D extends SkeletonModifier3D {
   transition_type: int;
   /**
    * If `true`, limits the amount of rotation. For example, this helps to prevent a character's neck from rotating 360 degrees.
-   * **Note:** As with {@link AnimationTree} blending, interpolation is provided that favors {@link Skeleton3D.get_bone_rest} or {@link Skeleton3D.get_bone_pose} depends on the {@link relative} option. This means that interpolation does not select the shortest path in some cases.
+   * **Note:** As with {@link AnimationTree} blending, interpolation is provided that favors {@link Skeleton3D.get_bone_rest}. This means that interpolation does not select the shortest path in some cases.
    * **Note:** Some values for {@link transition_type} (such as {@link Tween.TRANS_BACK}, {@link Tween.TRANS_ELASTIC}, and {@link Tween.TRANS_SPRING}) may exceed the limitations. If interpolation occurs while overshooting the limitations, the result might not respect the bone rest.
    */
   use_angle_limitation: boolean;

@@ -35,12 +35,6 @@ declare class ScriptEditor extends PanelContainer {
    */
   register_syntax_highlighter(syntax_highlighter: EditorSyntaxHighlighter): void;
   /**
-   * Reloads all currently opened files. This should be used when opened files are changed outside of the script editor. The user may be prompted to resolve file conflicts, see {@link EditorSettings.text_editor/behavior/files/auto_reload_scripts_on_external_change}.
-   */
-  reload_open_files(): void;
-  /** Saves all open scripts. */
-  save_all_scripts(): void;
-  /**
    * Unregisters the {@link EditorSyntaxHighlighter} from the editor.
    * **Note:** The {@link EditorSyntaxHighlighter} will still be applied to scripts that are already opened.
    */

@@ -56,10 +56,6 @@ declare class TreeItem extends GodotObject {
    * Returns the text autowrap mode in the given `column`. By default it is {@link TextServer.AUTOWRAP_OFF}.
    */
   get_autowrap_mode(column: int): int;
-  /**
-   * Returns the autowrap trim flags for the given `column`. By default, both {@link TextServer.BREAK_TRIM_START_EDGE_SPACES} and {@link TextServer.BREAK_TRIM_END_EDGE_SPACES} are enabled.
-   */
-  get_autowrap_trim_flags(column: int): int;
   /** Returns the {@link Texture2D} of the button at index `button_index` in column `column`. */
   get_button(column: int, button_index: int): Texture2D | null;
   /**
@@ -228,10 +224,6 @@ declare class TreeItem extends GodotObject {
    * Sets the autowrap mode in the given `column`. If set to something other than {@link TextServer.AUTOWRAP_OFF}, the text gets wrapped inside the cell's bounding rectangle.
    */
   set_autowrap_mode(column: int, autowrap_mode: int): void;
-  /**
-   * Sets the autowrap trim flags for the given `column`. These flags control whether leading and trailing spaces are trimmed on wrapped lines. Set to `0` to disable all trimming.
-   */
-  set_autowrap_trim_flags(column: int, flags: int): void;
   /** Sets the given column's button {@link Texture2D} at index `button_index` to `button`. */
   set_button(column: int, button_index: int, button: Texture2D): void;
   /** Sets the given column's button color at index `button_index` to `color`. */

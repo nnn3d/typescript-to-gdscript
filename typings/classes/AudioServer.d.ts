@@ -96,9 +96,9 @@ declare interface AudioServer extends GodotObject {
   get_output_latency(): float;
   /** Returns the speaker configuration. */
   get_speaker_mode(): int;
-  /** Returns the relative time since the last mix occurred, in seconds. */
+  /** Returns the relative time since the last mix occurred. */
   get_time_since_last_mix(): float;
-  /** Returns the relative time until the next mix occurs, in seconds. */
+  /** Returns the relative time until the next mix occurs. */
   get_time_to_next_mix(): float;
   /** If `true`, the bus at index `bus_idx` is bypassing effects. */
   is_bus_bypassing_effects(bus_idx: int): boolean;

@@ -19,7 +19,7 @@ declare interface String {
    */
   c_unescape(): string;
   /**
-   * Returns a copy of the string with changed appearance. Replaces underscores (`_`) and hyphens (`-`) with spaces, adds spaces before uppercase letters in the middle of a word, converts all letters to lowercase, then converts the first one and each one following a space to uppercase.
+   * Changes the appearance of the string: replaces underscores (`_`) with spaces, adds spaces before uppercase letters in the middle of a word, converts all letters to lowercase, then converts the first one and each one following a space to uppercase.
    */
   capitalize(): string;
   /**

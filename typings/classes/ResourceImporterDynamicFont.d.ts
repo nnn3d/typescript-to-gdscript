@@ -39,8 +39,6 @@ declare class ResourceImporterDynamicFont extends ResourceImporter {
    * **None:** Smoothest appearance, which can make the font look blurry at small sizes.
    * **Light:** Sharp result by snapping glyph edges to pixels on the Y axis only.
    * **Normal:** Sharpest by snapping glyph edges to pixels on both X and Y axes.
-   * **Light (Except Pixel Fonts):** **Disabled** for pixel style fonts (each glyph's contours contain only straight horizontal and vertical lines), **Light** for other fonts.
-   * **Normal (Except Pixel Fonts):** **Disabled** for pixel style fonts (each glyph's contours contain only straight horizontal and vertical lines), **Normal** for other fonts.
    */
   hinting: int;
   /**
@@ -90,7 +88,7 @@ declare class ResourceImporterDynamicFont extends ResourceImporter {
    * **Auto:** Use subpixel positioning at small font sizes (the chosen quality varies depending on font size). Large fonts will not use subpixel positioning. This is a good tradeoff between performance and quality.
    * **One Half of a Pixel:** Always perform intermediate subpixel positioning regardless of font size. High quality, slow rendering.
    * **One Quarter of a Pixel:** Always perform precise subpixel positioning regardless of font size. Highest quality, slowest rendering.
-   * **Auto (Except Pixel Fonts):** **Disabled** for pixel style fonts (each glyph's contours contain only straight horizontal and vertical lines), **Auto** for other fonts.
+   * **Auto (Except Pixel Fonts):** **Disabled** for the pixel style fonts (each glyph contours contain only straight horizontal and vertical lines), **Auto** for the other fonts.
    */
   subpixel_positioning: int;
 }

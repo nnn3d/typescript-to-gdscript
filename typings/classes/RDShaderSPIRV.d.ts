@@ -5,34 +5,16 @@
  * SPIR-V intermediate representation as part of an {@link RDShaderFile} (used by {@link RenderingDevice}).
  */
 declare class RDShaderSPIRV extends Resource {
-  /** The SPIR-V bytecode for the any hit shader stage. */
-  bytecode_any_hit: PackedByteArray;
-  /** The SPIR-V bytecode for the closest hit shader stage. */
-  bytecode_closest_hit: PackedByteArray;
   /** The SPIR-V bytecode for the compute shader stage. */
   bytecode_compute: PackedByteArray;
   /** The SPIR-V bytecode for the fragment shader stage. */
   bytecode_fragment: PackedByteArray;
-  /** The SPIR-V bytecode for the intersection shader stage. */
-  bytecode_intersection: PackedByteArray;
-  /** The SPIR-V bytecode for the miss shader stage. */
-  bytecode_miss: PackedByteArray;
-  /** The SPIR-V bytecode for the ray generation shader stage. */
-  bytecode_raygen: PackedByteArray;
   /** The SPIR-V bytecode for the tessellation control shader stage. */
   bytecode_tesselation_control: PackedByteArray;
   /** The SPIR-V bytecode for the tessellation evaluation shader stage. */
   bytecode_tesselation_evaluation: PackedByteArray;
   /** The SPIR-V bytecode for the vertex shader stage. */
   bytecode_vertex: PackedByteArray;
-  /**
-   * The compilation error message for the any hit shader stage (set by the SPIR-V compiler and Godot). If empty, shader compilation was successful.
-   */
-  compile_error_any_hit: string;
-  /**
-   * The compilation error message for the closest hit shader stage (set by the SPIR-V compiler and Godot). If empty, shader compilation was successful.
-   */
-  compile_error_closest_hit: string;
   /**
    * The compilation error message for the compute shader stage (set by the SPIR-V compiler and Godot). If empty, shader compilation was successful.
    */
@@ -41,18 +23,6 @@ declare class RDShaderSPIRV extends Resource {
    * The compilation error message for the fragment shader stage (set by the SPIR-V compiler and Godot). If empty, shader compilation was successful.
    */
   compile_error_fragment: string;
-  /**
-   * The compilation error message for the intersection shader stage (set by the SPIR-V compiler and Godot). If empty, shader compilation was successful.
-   */
-  compile_error_intersection: string;
-  /**
-   * The compilation error message for the miss shader stage (set by the SPIR-V compiler and Godot). If empty, shader compilation was successful.
-   */
-  compile_error_miss: string;
-  /**
-   * The compilation error message for the ray generation shader stage (set by the SPIR-V compiler and Godot). If empty, shader compilation was successful.
-   */
-  compile_error_raygen: string;
   /**
    * The compilation error message for the tessellation control shader stage (set by the SPIR-V compiler and Godot). If empty, shader compilation was successful.
    */

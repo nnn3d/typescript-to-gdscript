@@ -210,7 +210,6 @@ declare class Image extends Resource {
   premultiply_alpha(): void;
   /**
    * Resizes the image to the given `width` and `height`. New pixels are calculated using the `interpolation` mode defined via {@link Interpolation} constants.
-   * **Note:** If the image's format is {@link FORMAT_RGBA4444}, {@link FORMAT_RGB565}, or {@link FORMAT_RGBE9995}, it will be temporarily converted to either {@link FORMAT_RGBA8} or {@link FORMAT_RGBAH}. This can affect the quality of the resized image.
    */
   resize(width: int, height: int, interpolation: int): void;
   /**

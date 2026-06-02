@@ -32,7 +32,6 @@ declare interface Object {
   find_key(value: unknown): unknown;
   /**
    * Returns the corresponding value for the given `key` in the dictionary. If the `key` does not exist, returns `default`, or `null` if the parameter is omitted.
-   * **Note:** If the `default` argument is computationally expensive or has unwanted side effects, consider using the {@link has} method instead:
    */
   get(key: unknown, default_?: unknown): unknown;
   /**

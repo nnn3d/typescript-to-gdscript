@@ -5,7 +5,6 @@
 declare class CameraAttributes extends Resource {
   /**
    * If `true`, enables the tonemapping auto exposure mode of the scene renderer. If `true`, the renderer will automatically determine the exposure setting to adapt to the scene's illumination and the observed light.
-   * **Note:** Auto-exposure is only supported in the Forward+ rendering method, not Mobile or Compatibility.
    */
   auto_exposure_enabled: boolean;
   /** The scale of the auto exposure effect. Affects the intensity of auto exposure. */
