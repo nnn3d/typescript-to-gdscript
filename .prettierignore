@@ -12,6 +12,9 @@ typings
 src/parser/gdscript/types.ts
 src/parser/godot-resource/types.ts
 
+# Generated from conventional commits (via `yarn changelog`)
+CHANGELOG.md
+
 # Test fixtures are exact-match expected outputs — never reformat
 **/fixtures/**
 
