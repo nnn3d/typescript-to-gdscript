@@ -1,3 +1,15 @@
+## [0.1.1](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.0...v0.1.1) (2026-06-07)
+
+### Features
+
+* **CI:** add build and test CI ([1ff7f6b](https://github.com/nnn3d/typescript-to-gdscript/commit/1ff7f6bf9927ea64ce1055bd3dc595a2555ad393))
+* **docs:** add showcase, update cheat sheet ([211f0e3](https://github.com/nnn3d/typescript-to-gdscript/commit/211f0e334790143de026f89b207836444a5b4d9c))
+* **docs:** small cli description fixes ([39d7f7a](https://github.com/nnn3d/typescript-to-gdscript/commit/39d7f7a93024c0df7dde7aacd2604c706959d6a5))
+
+### Bug Fixes
+
+* **ts-to-gd:** don't emit invalid gdscript types ([ba12db2](https://github.com/nnn3d/typescript-to-gdscript/commit/ba12db2e0e72f9e4e0e0c9397b6420e83a6b9f05))
+* **vendor:** fix submodule version ([cc32432](https://github.com/nnn3d/typescript-to-gdscript/commit/cc32432901e1dd8609eef5e886004ef70dacb188))
 
 ## [0.1.0](https://github.com/nnn3d/typescript-to-gdscript/compare/2b7b1f36ac47f49732ec1ef43af54ab55fc8ba98...v0.1.0) (2026-05-31)
 
