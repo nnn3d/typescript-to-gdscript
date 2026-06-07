@@ -54,19 +54,29 @@ The full set of conversion helpers (see below) always runs; there is no per-help
 
 GD-to-TS conversion ships with a fixed pipeline of post-processing helpers. **All of them are always-on** — there's no per-helper disable toggle. The only behavior knob exposed to users is `--unsafe-use-any` (see the command options above), which only affects the unsafe-non-null + fallback type widening.
 
-### Signal handler helper
+<details>
+<summary><b>Signal handler helper</b></summary>
 
 Scans `.tscn` scene files for signal connections and adds typed parameter annotations to signal handler methods (e.g., `_on_area_entered(area: Area2D | null)` instead of untyped `_on_area_entered(area)`). Parameter types come from the connected signal's declared signature in the Godot class registry. Reference-typed params are widened to `T | null` by the nullable helper (Phase A).
 
-### Operator fix helper
+</details>
+
+<details>
+<summary><b>Operator fix helper</b></summary>
 
 After conversion and typings generation, runs the TypeScript type-checker on converted files to find operator type errors (e.g., `Vector2 + Vector2`). Automatically wraps them in `gd.ops.X()` calls (e.g., `gd.ops.add(v1, v2)`). Catches cases that GDScript-time type inference misses (inherited members, method return values, etc.).
 
-### Explicit convert helper
+</details>
+
+<details>
+<summary><b>Explicit convert helper</b></summary>
 
 Runs alongside operator fix. Detects TS2345/TS2322/TS2739/TS2740/TS2741 assignment/argument errors where the source and target are both variant types (Vector2 ↔ Vector2i, PackedColorArray ↔ Array, etc.) and inserts an explicit `gd.as(value, Target)` conversion. Uses `variantConverts` metadata in `godot-class-registry.json` (derived from Godot XML "from" constructors). Handles return statements (wraps returned expression, not the `return` keyword) and property access assignments (redirects from LHS to RHS). Example: `wants_v2i(Vector2.DOWN)` → `wants_v2i(gd.as(Vector2.DOWN, Vector2i))`.
 
-### Extends type helper
+</details>
+
+<details>
+<summary><b>Extends type helper</b></summary>
 
 Detects TS7006 ("Parameter X implicitly has an any type") on method parameters where the method overrides one inherited from a parent class. Copies the parameter types from the parent class signature, preserving type aliases (`float`, `int`) by using the syntactic type text from the parent's `.d.ts`. Example:
 
@@ -93,7 +103,10 @@ class Player extends Node2D {
 
 Methods that don't override anything (`custom_method(arg)`) are left untouched.
 
-### Nullable helper
+</details>
+
+<details>
+<summary><b>Nullable helper</b></summary>
 
 Applies `T | null` widening and narrowing in two directions:
 
@@ -135,7 +148,10 @@ class Player extends Node2D {
 }
 ```
 
-### Ready field types helper
+</details>
+
+<details>
+<summary><b>Ready field types helper</b></summary>
 
 Detects TS7008 ("Member implicitly has an any type") and TS2564 ("Property has no initializer") on class properties:
 
@@ -175,3 +191,5 @@ class Game extends Node {
 ```
 
 For simple identifier/property-access right-hand sides, the helper emits `typeof <expr>`; for other expressions (literals, `new` calls, etc.) it uses the TS type checker's inferred type string.
+
+</details>

@@ -4,8 +4,6 @@ Write Godot 4 scripts in TypeScript. Get autocomplete and type-checking for the 
 
 ![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/convert.webp)
 
-> Have an existing GDScript project? Bulk-convert it to TypeScript with [tstogd initial-convert-gd-to-ts](docs/gd-to-ts-migration.md).
-
 ## Why
 
 GDScript is great for getting things on screen, but its type system and tooling are intentionally lightweight. The bigger a project gets, the more that costs you: typos surface at runtime, refactors are risky, and autocomplete only goes so far. TypeScript was built for exactly this problem, and it has had a decade of investment poured into making large codebases safe to change.
@@ -31,6 +29,48 @@ The output is clean, idiomatic `.gd` you can read and ship — TypeScript is the
 - **Addons supported** — typings for third-party GDScript addons, consumable from TypeScript
 - **GD → TS migration** — one-shot bulk converter for existing projects
 
+### Showcase
+
+<details>
+<summary>Scene and path type hints</summary>
+
+Given this scene structure:
+
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_scene.png)
+
+You get type hints for this:
+
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_hint_1.png)
+
+…or this:
+
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_hint_2.png)
+
+…or even this:
+
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_hint_3.png)
+
+`preload()` is typed too:
+
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_preload.png)
+
+</details>
+
+<details>
+<summary>GDScript and converter errors in TypeScript code</summary>
+
+GDScript doesn't allow a static and an instance member to share the same name — though TypeScript does. Your IDE surfaces the GDScript error at the exact spot in your `.ts`:
+
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_gdscript_error.png)
+
+For edge cases — like using the result of `&&` as a value — you get a converter error instead, because logical operations in GDScript always return a boolean:
+
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_converter_error.png)
+
+You also get all of these errors (along with the TypeScript errors themselves) from the `convert` CLI command.
+
+</details>
+
 ## Quick start
 
 ```bash
@@ -55,6 +95,10 @@ Use `tstogd watch` during development for auto-conversion plus live diagnostics.
 ### Manual setup (without `tstogd init`)
 
 Setup `tstogd.json` and `tsconfig.json` in your project - for full template and field reference see [docs/configuration.md](docs/configuration.md).
+
+### Migration from existing GDScript
+
+Have an existing GDScript project? Bulk-convert it to TypeScript with [tstogd initial-convert-gd-to-ts](docs/gd-to-ts-migration.md).
 
 ## CLI
 
@@ -86,6 +130,7 @@ Each `.ts` file must contain exactly one class. Named classes (`class Foo`) are 
 - `let` and `const` both convert to GDScript `var`. **Use `let`** — TS `var` is restricted (GDScript `var` ≈ TS `let`, not TS `var`).
 - `undefined` is restricted — use `null`. Optional property access (`obj.foo` where the type includes `undefined`) auto-converts to `obj.get("foo")`. Same for `obj["key"]` with an undefined type. Class-field access stays direct.
 - `TSOnly<T>` — type-level wrapper, stripped at conversion.
+- Only types GDScript actually has get an annotation. Godot classes/value types and your own `class_name` classes (including ones imported from another file) keep their type; plain `interface`s, `object`, `type` aliases, and unknown/unresolved names have the annotation **omitted** (bare untyped `var x` / `func f(x)`) rather than emitting a bogus GD type. See [docs/transform-rules.md#type-annotations--what-gets-emitted](docs/transform-rules.md#type-annotations--what-gets-emitted).
 
 For comments, async, `this` / `self`, logical operators, and constructor mapping, see [docs/transform-rules.md](docs/transform-rules.md).
 
@@ -94,6 +139,10 @@ For comments, async, `this` / `self`, logical operators, and constructor mapping
 Basics for writing scripts For advanced helpers and the deep dive, see the [**full cheat sheet** in docs/transform-rules.md](docs/transform-rules.md#full-cheat-sheet).
 
 ```typescript
+// Use imports instead of global classes for better DX
+// Can be changed by `converterOptions.generateGlobalClassTypes` config option
+import { PlayerSprite, type PlayerSpriteState } from './PlayerSprite';
+
 // Inner classes, class-level constants & enums.
 // A `namespace Player` merged with class `Player`
 // lifts each exported member onto the class.
@@ -118,7 +167,8 @@ export class Player extends CharacterBody2D {
   // (a TS reserved word); other annotations are 1:1
   @exports speed: float = 200.0;
   @export_range(0, 100) health: int = 100;
-  @onready sprite: Sprite2D = this.get_node('Sprite');
+  @onready sprite: PlayerSprite = this.get_node('Sprite');
+  @onready sprite_state: PlayerSpriteState = this.sprite.get_state();
 
   // Signals; tuple labels become GD arg names
   health_changed = gd.signal<[from: int, to: int]>();
@@ -222,7 +272,9 @@ var speed: float = 200.0
 @export_range(0, 100)
 var health: int = 100
 @onready
-var sprite: Sprite2D = this.get_node('Sprite')
+var sprite: PlayerSprite = self.get_node("Sprite")
+@onready
+var spriteState = self.sprite.get_state()
 # Signals; tuple labels become GD arg names
 signal health_changed(from: int, to: int)
 signal died

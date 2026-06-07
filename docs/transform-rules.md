@@ -6,197 +6,338 @@
 
 ## Full cheat sheet
 
-**Everything TS-specific** in this project, in **one Player.ts** with comments showing the generated GDScript. Each section maps to a doc subsection below for the full semantics.
+**Everything TS-specific** in this project, in **one Player.ts**. The TypeScript below is annotated with what each construct is for; expand the dropdown underneath to see the exact GDScript it converts to. Each section maps to a doc subsection below for the full semantics.
 
 ```typescript
-// ── Inner classes, class-level constants & enums (namespace merging) ──
+// Imports — how each one maps to GDScript:
+// Named class → nothing emitted
+// (global in GD via `class_name Enemy`)
+import { Enemy } from './Enemy.ts';
+
+// Type-only → erased (no GD output)
+import type { DamageInfo } from './types.ts';
+// anonymous class (`_` prefix) →
+//   const _Hud = preload("res://hud.gd")
+import { _Hud } from './hud.ts';
+
+// Inner classes, class-level constants & enums (namespace merging)
 // A `namespace Player { ... }` block paired with the same-named class
 // lifts each `export`ed member into the class as a nested member.
-// Put **constants and enums INSIDE the namespace** — that's how GD
+// Put constants and enums INSIDE the namespace — that's how GD
 // class-level `const` and nested `enum` are declared.
 export namespace Player {
-  export const MAX_HP = 100; // → const MAX_HP = 100   (on Player)
+  export const MAX_HP = 100;
 
   export enum State {
     IDLE,
     RUNNING,
-  } // → enum State { ... }   (on Player)
+  }
 
-  // Constants and enums for inner class
+  // A nested namespace adds class-level consts/enums to the inner class.
   export namespace Bullet {
-    const SPEED = 100; // → const SPEED = 100 (on Bullet)
+    export const SPEED = 100;
   }
   export class Bullet extends Node2D {
-    // → class Bullet extends Node2D:
-    damage: int = 10; //       var damage: int = 10
+    damage: int = 10;
   }
 }
 
-// ── Class-level annotations — bare global names, NOT `@gd.*` ────────
+// Class-level annotations — bare global names, NOT `@gd.*`
 // Every Godot annotation works as a decorator (declared in
 // `typings/classes/_globals.d.ts`). `@exports` is the only special
-// alias: `@export` is a TS reserved word, so the plural form emits
-// GDScript `@export`.
-@tool // → @tool
-@icon('res://player.svg') // → @icon("res://player.svg")
+// alias: `@export` is a TS reserved word, so the plural form emits @export.
+@tool
+@icon('res://player.svg')
 export abstract class Player extends CharacterBody2D {
-  // abstract → @abstract above extends/class_name
+  // abstract → @abstract
 
-  // ── Class-level statics & TS-only readonly ───────────────────────
-  // `static FOO = ...` → `static var FOO = ...` (mutable, shared).
+  // Class-level statics & TS-only readonly
+  // `static FOO` → `static var FOO` (mutable, shared across instances).
   // `readonly` is a TS-only contract — emits a plain `var` on GD.
-  // For GD class-level constants, use the namespace block above.
-  static MAX_INSTANCES = 8; // → static var MAX_INSTANCES = 8
-  readonly default_speed = 200.0; // → var default_speed = 200.0  (readonly is TS-only)
-  static readonly TAG = 'player'; // → static var TAG = "player"  (static stays; readonly TS-only)
+  // For GD class-level `const`, use the namespace block above.
+  static MAX_INSTANCES = 8;
+  readonly default_speed = 200.0;
+  static readonly TAG = 'player';
 
-  // ── Field decorators ─────────────────────────────────────────────
-  @exports speed: float = 200.0; // → @export var speed: float = 200.0
-  @export_range(0, 100) health: int = 100; // → @export_range(0, 100) var health: int = 100
-  @export_group('Stats') damage: int = 10; // → @export_group("Stats") var damage: int = 10
-  @onready sprite: Sprite2D; // → @onready var sprite: Sprite2D
+  // Field decorators
+  @exports speed: float = 200.0;
+  @export_range(0, 100) health: int = 100;
+  @export_group('Stats') damage: int = 10;
+  @onready sprite: Sprite2D;
 
-  // ── Signals — named tuple labels become GD arg names ─────────────
-  health_changed = gd.signal<[from: int, to: int]>(); // → signal health_changed(from: int, to: int)
-  hit_at = gd.signal<[int, int]>(); // → signal hit_at(arg1: int, arg2: int)
-  died = gd.signal(); // → signal died
+  // Signals — named tuple labels become GD arg names
+  health_changed = gd.signal<[from: int, to: int]>();
+  hit_at = gd.signal<[int, int]>(); // unlabelled → arg1, arg2
+  died = gd.signal();
 
-  // ── Abstract method (auto-translated, no decorator needed) ───────
-  abstract take_damage(amount: int): void; // → @abstract func take_damage(amount: int) -> void: pass
+  // Abstract method (auto-translated, no decorator needed)
+  abstract take_damage(amount: int): void;
 
-  // ── Constructor → _init ──────────────────────────────────────────
+  // Constructor → _init
   constructor(speed: float = 200.0) {
-    // → func _init(speed: float = 200.0):
-    this.speed = speed; //       self.speed = speed
+    this.speed = speed;
   }
 
-  // ── Getters / setters — native TS accessors for simple cases ─────
+  // Getters / setters — native TS accessors for simple cases
   get score(): int {
     return this.score;
-  } // → var score: int:
+  }
   set score(v: int) {
     this.score = v;
-  } //       get: return score
-  //       set(value): score = value
+  }
 
-  // For default values or function-reference form, use gd.getset()
+  // For a default value or function-reference accessors, use gd.getset()
   hp: int = gd.getset({
-    // → var hp: int = 100:
-    value: 100, //       get: return hp
-    get: () => this.hp, //       set(value): hp = value
+    value: 100,
+    get: () => this.hp,
     set: (v) => {
       this.hp = v;
     },
   });
 
-  // ── Async / await — Promise<T> unwraps to T on the GD side ───────
+  // Async / await — Promise<T> unwraps to T on the GD side
   async long_task(): Promise<int> {
-    // → func long_task() -> int:
-    await this.get_tree().create_timer(1).timeout; //   await self.get_tree()...
+    await this.get_tree().create_timer(1).timeout;
     return 42;
   }
 
-  // ── Comments ─────────────────────────────────────────────────────
-  // single-line                           → # single-line
-  /** doc comment */ // → ## doc comment
-  /* block comment */ // → """block comment"""  (GD has no native block comments)
+  // Comments
+  // single-line comment
+  /** doc comment */
+  /* block comment */
 
   _process(delta: float) {
-    // → func _process(delta: float):
+    // Operators
+    let eq = this.health === 0; // === / !== → == / !=
+    let and_ = true && false; // && / || / ! → and / or / not
+    let not_ = !true;
+    let ternary = eq ? 1 : 2; // → `1 if eq else 2`
 
-    // ── Operators ──────────────────────────────────────────────────
-    let eq = this.health === 0; // → var eq      = self.health == 0
-    let and_ = true && false; // → var and_    = true and false
-    let not_ = !true; // → var not_    = not true
-    let ternary = eq ? 1 : 2; // → var ternary = 1 if eq else 2
+    // Math on value types (Vector2, Color, …) needs gd.ops
+    // Available: add, sub, mul, div, rem, eq, ne, gt, gte, lt, lte, plus, minus
+    let pos = gd.ops.add(this.position, Vector2(1, 0));
+    let scaled = gd.ops.mul(this.position, 2.0);
 
-    // ── Math on value types — primitives + works, vectors need gd.ops ──
-    let pos = gd.ops.add(this.position, Vector2(1, 0)); // → var pos    = (self.position + Vector2(1, 0))
-    let scaled = gd.ops.mul(this.position, 2.0); // → var scaled = (self.position * 2.0)
-    // Available: add, sub, mul, div, rem, eq, ne, gt, gte, lt, lte, plus (unary), minus (unary)
-
-    // ── Type casting / checking ────────────────────────────────────
-    let body = gd.as(this.get_node('Body'), CharacterBody2D); // → var body = self.get_node("Body") as CharacterBody2D
+    // Type casting / checking
+    let body = gd.as(this.get_node('Body'), CharacterBody2D); // → `as`
     if (body instanceof CharacterBody2D) {
-      /* class check */
-    } // → if body is CharacterBody2D:
+      /* class check → `is` */
+    }
     if (gd.is(this.health, int)) {
-      /* primitive   */
-    } // → if self.health is int:
-
-    // ── Object construction ────────────────────────────────────────
-    let bullet = new Player.Bullet(); // → var bullet = Bullet.new()
-
-    // ── Dictionaries ───────────────────────────────────────────────
-    let stats = { name: 'Hero', hp: 100 }; // → var stats = { "name": "Hero", "hp": 100 }
-    // Non-string keys → use gd.dict():
-    let key = Vector2.DOWN;
-    let directions = gd.dict([
-      // → var directions = { key: "down" }
-      [key, 'down'],
-    ]);
-
-    // Optional property access auto-converts when the type includes undefined
-    let maybe: { v?: int } = {};
-    let val = maybe.v; // → var val = maybe.get("v")
-
-    // ── Strings, StringName, NodePath ──────────────────────────────
-    let greet = `Hi ${this.name}!`; // → var greet = "Hi " + str(self.name) + "!"
-    let path = NodePath('Body/Sprite'); // → var path  = ^"Body/Sprite"
-    let sig = StringName('died'); // → var sig   = &"died"
-
-    // ── Callables — `fn()` via variable needs `.call()` (auto) ─────
-    let cb: () => void = this.die;
-    cb(); // → cb.call()
-    this.die(); // → self.die()           (direct call, preserved)
-
-    // ── Control flow ───────────────────────────────────────────────
-    for (let s of [1, 2, 3]) print(s); // → for s in [1, 2, 3]: print(s)
-    // for...in is NOT supported — converter rejects it.
-
-    // ── Match — simple → native TS switch (round-trips with GD `match`) ──
-    switch (
-      this.health // → match self.health:
-    ) {
-      case 0:
-        this.died.emit();
-        break; //       0: self.died.emit()
-      default:
-        print('alive');
-        break; //       _: print("alive")
+      /* primitive check → `is int` */
     }
 
-    // ── Match — advanced patterns → gd.match ──────────────────────
+    // Object construction
+    let bullet = new Player.Bullet(); // → Bullet.new()
+
+    // Dictionaries
+    let stats = { name: 'Hero', hp: 100 }; // string keys — plain object literal
+    // Non-string keys → use gd.dict():
+    let key = Vector2.DOWN;
+    let directions = gd.dict([[key, 'down']]);
+
+    // Optional property access auto-converts to .get() when the type
+    // includes undefined:
+    let maybe: { v?: int } = {};
+    let val = maybe.v; // → maybe.get("v")
+
+    // Strings, StringName, NodePath
+    let greet = `Hi ${this.name}!`; // template literal → str() concatenation
+    let path = NodePath('Body/Sprite'); // → ^"Body/Sprite"
+    let sig = StringName('died'); // → &"died"
+
+    // Callables — `fn()` via variable needs `.call()` (auto)
+    let cb: () => void = this.die;
+    cb(); // → cb.call()
+    this.die(); // direct call preserved → self.die()
+
+    // Control flow
+    for (let s of [1, 2, 3]) print(s); // for...of → for in (for...in is rejected)
+
+    // Match — native TS switch round-trips with GD `match`
+    switch (this.health) {
+      case 0:
+        this.died.emit();
+        break;
+      default:
+        print('alive');
+        break;
+    }
+
+    // Match — advanced patterns (arrays/dicts/bindings/guards) → gd.match
     gd.match(stats, [
-      { match: { name: 'Hero', ...{} }, do: () => print('the hero') }, // dict pattern + open-end
-      (n) => ({
-        match: n,
-        when: typeof n === 'number',
-        do: () => print('a number'),
-      }), // binding + guard
-      { match: [1, 2, ..._], do: () => print('starts 1,2') }, // array pattern + open-end
+      { match: { name: 'Hero', ...{} }, do: () => print('the hero') },
+      (n) => ({ match: n, when: n > 10, do: () => print('big') }),
+      { match: [1, 2, ..._], do: () => print('starts 1,2') },
     ]);
 
-    // ── Escape hatch — raw GDScript ────────────────────────────────
-    gd.eval('var raw = 10'); // → var raw = 10
+    // Escape hatch — raw GDScript
+    gd.eval('var raw = 10');
     // @gd.eval: @warning_ignore("integer_division")  ← magic comment for statements
   }
 
   _ready() {
-    // → func _ready():
     // Signals — emit and connect
-    this.health_changed.emit(0, 100); // → self.health_changed.emit(0, 100)
+    this.health_changed.emit(0, 100);
     this.health_changed.connect(this._on_health_changed);
   }
 
-  _on_health_changed(from: int, to: int) {
-    /* ... */
-  }
-  die() {
-    /* ... */
-  }
+  _on_health_changed(from: int, to: int) {}
+  die() {}
 }
 ```
+
+<details>
+<summary><b>Generated GDScript (click to expand)</b></summary>
+
+```gdscript
+# Class-level annotations — bare global names, NOT `@gd.*`
+# Every Godot annotation works as a decorator (declared in
+# `typings/classes/_globals.d.ts`). `@exports` is the only special
+# alias: `@export` is a TS reserved word, so the plural form emits @export.
+@tool
+@icon("res://player.svg")
+@abstract
+extends CharacterBody2D
+class_name Player
+
+const _Hud = preload("res://hud.gd")
+
+const MAX_HP = 100
+
+enum State { IDLE, RUNNING }
+
+class Bullet extends Node2D:
+	const SPEED = 100
+	var damage: int = 10
+
+# Class-level statics & TS-only readonly
+# `static FOO` → `static var FOO` (mutable, shared across instances).
+# `readonly` is a TS-only contract — emits a plain `var` on GD.
+# For GD class-level `const`, use the namespace block above.
+static var MAX_INSTANCES = 8
+var default_speed = 200.0
+static var TAG = "player"
+# Field decorators
+@export
+var speed: float = 200.0
+@export_range(0, 100)
+var health: int = 100
+@export_group("Stats")
+var damage: int = 10
+@onready
+var sprite: Sprite2D
+# Signals — named tuple labels become GD arg names
+signal health_changed(from: int, to: int)
+signal hit_at(arg1: int, arg2: int)
+signal died
+
+# Abstract method (auto-translated, no decorator needed)
+@abstract
+func take_damage(amount: int) -> void:
+	pass
+
+# Constructor → _init
+func _init(speed: float = 200.0):
+	self.speed = speed
+
+var score: int:
+	get:
+		return score
+	set(v):
+		score = v
+
+# For a default value or function-reference accessors, use gd.getset()
+var hp: int = 100:
+	get:
+		return hp
+	set(v):
+		hp = v
+
+# Async / await — Promise<T> unwraps to T on the GD side
+func long_task() -> int:
+	await self.get_tree().create_timer(1).timeout
+	return 42
+
+# Comments
+# single-line comment
+## doc comment
+"""block comment"""
+func _process(delta: float):
+	# Operators
+	var eq = self.health == 0
+	var and_ = true and false
+	var not_ = not true
+	var ternary = 1 if eq else 2
+	# Math on value types (Vector2, Color, …) needs gd.ops
+	# Available: add, sub, mul, div, rem, eq, ne, gt, gte, lt, lte, plus, minus
+	var pos = (self.position + Vector2(1, 0))
+	var scaled = (self.position * 2.0)
+	# Type casting / checking
+	var body = self.get_node("Body") as CharacterBody2D
+	if body is CharacterBody2D:
+		pass
+	if self.health is int:
+		pass
+	# Object construction
+	var bullet = self.Bullet.new()
+	# Dictionaries
+	var stats = {
+		"name": "Hero",
+		"hp": 100,
+	}
+	# Non-string keys → use gd.dict():
+	var key = Vector2.DOWN
+	var directions = {
+		key: "down",
+	}
+	# Optional property access auto-converts to .get() when the type
+	# includes undefined:
+	var maybe = {}
+	var val = maybe.get("v")
+	# Strings, StringName, NodePath
+	var greet = "Hi " + str(self.name) + "!"
+	var path = NodePath("Body/Sprite")
+	var sig = StringName("died")
+	# Callables — `fn()` via variable needs `.call()` (auto)
+	var cb: Callable = self.die
+	cb.call()
+	self.die()
+	# Control flow
+	for s in [1, 2, 3]:
+		print(s)
+	# Match — native TS switch round-trips with GD `match`
+	match self.health:
+		0:
+			self.died.emit()
+		_:
+			print("alive")
+	# Match — advanced patterns (arrays/dicts/bindings/guards) → gd.match
+	match stats:
+		{"name": "Hero", ..}:
+			pass
+		var n when n > 10:
+			pass
+		[1, 2, ..]:
+			pass
+	# Escape hatch — raw GDScript
+	var raw = 10
+	@warning_ignore("integer_division")  ← magic comment for statements
+
+func _ready():
+	# Signals — emit and connect
+	self.health_changed.emit(0, 100)
+	self.health_changed.connect(self._on_health_changed)
+
+func _on_health_changed(from: int, to: int):
+	pass
+
+func die():
+	pass
+
+```
+
+</details>
 
 The remaining sections cover the same rules in tables / prose form so individual features can be looked up by name.
 
@@ -215,6 +356,23 @@ Lowercase TypeScript primitive names map to GDScript's PascalCase value-type nam
 | `String`  | `String` |
 
 `int`, `float`, and `bool` are also **cast functions**: `int(x)`, `float(x)`, `bool(x)`, `String(x)` all transpile verbatim.
+
+## Type annotations — what gets emitted
+
+A type annotation (`x: T`, `func f() -> T`, `var x: T`) is only emitted when `T` is something GDScript actually has. The converter classifies the referenced type and **drops the annotation** (emitting the bare, untyped `var x` / `func f(x)` form) for anything without a GD equivalent:
+
+| TS type                                              | GD annotation | Notes                                                                                                                                                                                          |
+| ---------------------------------------------------- | ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Godot class (`Node`, `Node2D`, …)                    | emitted       | Recognised by name from the class registry.                                                                                                                                                    |
+| Godot value type (`Vector2`, `Color`, …)             | emitted       | Registry constructor / global-enum names.                                                                                                                                                      |
+| User `class_name` class (`class Foo`)                | emitted       | Resolved via the TS checker — incl. classes imported from another file.                                                                                                                        |
+| `enum` that resolves to an enum decl                 | emitted       | TS `enum E`, Godot global enums (`Key`), and inner enums the checker resolves to a declaration.                                                                                                |
+| `object`, an `interface`, a `type` alias             | **omitted**   | No GDScript equivalent — these became bogus `: object` / `: MyInterface` annotations before.                                                                                                   |
+| Dotted ref that doesn't resolve (`Node.ProcessMode`) | **omitted**   | The checker returns no declaration for Godot class-scoped enums and the name isn't in the registry — can't verify it's a real GD type, so it's dropped rather than risk an invalid annotation. |
+| Unknown / unresolved name (typo, bad import)         | **omitted**   | Names that don't resolve to any declaration are no longer leaked into the `.gd` output.                                                                                                        |
+| `any`, `unknown`                                     | **omitted**   | The bare untyped form is the idiomatic GD equivalent.                                                                                                                                          |
+
+The guiding principle: GD type hints are **optional**, so the converter only emits a type it can prove is valid GDScript and drops anything it can't — dropping a type is always safe, emitting a wrong one breaks the `.gd`. Godot built-ins are matched by **name** against the class registry (so they keep their annotation even when the Godot `.d.ts` typings aren't loaded); user types are classified by resolving their declaration through the TS checker.
 
 ## Operators
 
