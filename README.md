@@ -22,7 +22,7 @@ The output is clean, idiomatic `.gd` you can read and ship — TypeScript is the
 
 - **Type-safe Godot API** — all 900+ engine classes generated as `.d.ts` from the official Godot XML docs, with nullable reference types where appropriate
 - **Live IDE diagnostics** — TypeScript language service plugin surfaces converter and Godot CLI errors as squiggles, on unsaved buffers
-- **Watch mode** — auto-convert on save, then run a debounced full-project check (TypeScript + converter + Godot CLI)
+- **Watch mode** — auto-convert on save and keep typings in sync (it watches your `.tscn` scenes and assets too), then run a debounced full-project check (TypeScript + converter + Godot CLI)
 - **Source maps** — Godot script parse errors, runtime errors and stack traces map back to your TypeScript line/column
 - **Scene and path typings** — `get_node()`, `get_parent()`, `get_child()`, `load()`, `preload()` and group queries typed from your project files
 - **`gd` namespace** — strongly-typed helpers for GDScript-only constructs (signals, decorators, match, operator overloading)
@@ -81,10 +81,12 @@ tstogd init # interactive: writes tstogd.json + tsconfig.json + installs typescr
 Then:
 
 1. Write a `.ts` class in your TS source dir (default `src/`).
-2. `tstogd convert` — emits `.gd` files into your output dir (default `scripts/`).
+2. `tstogd convert` — emits `.gd` into your output dir (default `scripts/`), regenerates all typings, and runs a full diagnostic check.
 3. Attach the `.gd` file in Godot as you normally would. Configure Godot's external editor to point at your IDE for TS language server and one-click jump-to-source ([guide](docs/ide-integration.md)).
 
-Use `tstogd watch` during development for auto-conversion plus live diagnostics.
+**That's the whole loop — `convert` and `watch` are the only commands you need in normal use.** Each one converts your code _and_ regenerates every typing (scene, script, resource, addon) in the same pass, so `get_node()` paths, `res://` references, and group queries stay in sync without any extra step. Most projects never run another CLI command.
+
+For day-to-day work, run **`tstogd watch`**: it auto-converts on save, watches your `.tscn` scenes and assets so scene typings refresh the instant you change the tree in Godot, and runs a debounced full-project check feeding live IDE diagnostics.
 
 ### Requirements
 
@@ -102,17 +104,24 @@ Have an existing GDScript project? Bulk-convert it to TypeScript with [tstogd in
 
 ## CLI
 
+In everyday use you only need these three:
+
 ```bash
-tstogd init                # interactive scaffold (tsconfig + tstogd.json + ts-plugin)
-tstogd convert             # convert TS → GD (cached, with diagnostic check)
-tstogd watch               # auto-convert on change + debounced full check
-tstogd generate-typings    # generate scene + script typings
-tstogd clear-cache         # clear conversion cache
+tstogd init                # one-time interactive scaffold (tsconfig + tstogd.json + ts-plugin)
+tstogd convert             # convert TS → GD + regenerate all typings + full diagnostic check
+tstogd watch               # the same, continuously: auto-convert on save, live diagnostics
+```
+
+`convert` and `watch` already regenerate every typing (scene, script, resource, addon) as part of the run — there is no separate "generate typings" step to remember. The commands below cover one-off or advanced situations, and most projects never touch them:
+
+```bash
+tstogd generate-typings    # regenerate typings standalone (convert/watch do this for you)
+tstogd clear-cache         # clear the conversion cache (e.g. after upgrading the converter)
 ```
 
 Full reference in [docs/cli.md](docs/cli.md). Specialized commands:
 
-- [`initial-convert-gd-to-ts`](docs/gd-to-ts-migration.md) — bulk migration of an existing GDScript project to TypeScript
+- [`initial-convert-gd-to-ts`](docs/gd-to-ts-migration.md) — one-shot bulk migration of an existing GDScript project to TypeScript
 - [`generate-gdscript-global-typings`](docs/typings.md#tstogd-generate-gdscript-global-typings), [`generate-addon-typings`](docs/typings.md#tstogd-generate-addon-typings) — typings generation
 - [`open-editor`](docs/ide-integration.md#tstogd-open-editor) — Godot external-editor integration
 

@@ -19,7 +19,7 @@
   "include": [
     "node_modules/typescript-to-gdscript/typings",
     "src/**/*.ts",
-    "_gdtots/**/*.d.ts"
+    "src/_typings/**/*.d.ts"
   ]
 }
 ```
@@ -27,9 +27,9 @@
 - `noLib: true` disables the standard TypeScript libs — GDScript has a different runtime, so DOM / Node / ES libs would lie to you.
 - `types: []` prevents stray `@types/*` packages from leaking in.
 - The `include` array must reference the package typings directory so Godot classes, global functions, and `gd` helpers resolve.
-- Adjust `src/**/*.ts` and `_gdtots/**/*.d.ts` to match your `rootDir` and `typingsDir`.
+- Adjust `src/**/*.ts` to match your `tsDir`, and the `*.d.ts` glob to match your `typingsDir` — **these two must point at the same directory** or your generated scene typings won't be picked up. (`tstogd init` keeps them in sync for you; the value shown here, `src/_typings`, is what `init` writes.)
 
-Run `tstogd generate-typings` to populate the typings directory. The generated `_index.d.ts` includes a `/// <reference>` to the package typings so IDEs (WebStorm, Rider, VS Code) eagerly index all Godot classes for autocomplete.
+`tstogd convert` and `tstogd watch` populate this directory for you on every run (you can also run `tstogd generate-typings` standalone). The generated `_index.d.ts` includes a `/// <reference>` to the package typings so IDEs (WebStorm, Rider, VS Code) eagerly index all Godot classes for autocomplete.
 
 > Tip: use a **dedicated** `tsconfig.json` for the Godot subtree. If you share a tsconfig with a non-Godot TS project, `noLib: true` will break the other side.
 
@@ -52,7 +52,7 @@ Create a `tstogd.json` in your project root to configure the converter. Paths ar
 | `rootDir`          | `string`   | Base for relative paths. Defaults to the directory containing `tstogd.json`.                                                                                                                                                                                                                                                   |
 | `tsDir`            | `string`   | TypeScript source directory. Relative to `rootDir`. Defaults to `"src"`.                                                                                                                                                                                                                                                       |
 | `gdDir`            | `string`   | GDScript output directory. Relative to `rootDir`. Defaults to `"scripts"`. Overridable per-call via `--gd-dir`.                                                                                                                                                                                                                |
-| `typingsDir`       | `string`   | Directory for all generated typings (per-file `.gd.d.ts` / `.tscn.d.ts`, `_resources.d.ts`, `_index.d.ts`). Relative to `rootDir`. Defaults to `"_gdtots"`.                                                                                                                                                                    |
+| `typingsDir`       | `string`   | Directory for all generated typings (per-file `.gd.d.ts` / `.tscn.d.ts`, `_resources.d.ts`, `_index.d.ts`). Relative to `rootDir`. Falls back to `"_gdtots"` when unset; `tstogd init` writes `"src/_typings"`. Whatever you choose, the `tsconfig.json` `include` glob must match it.                                         |
 | `scenesDir`        | `string`   | Directory to scan for `.tscn` scene files. Relative to `rootDir`. Defaults to `rootDir`.                                                                                                                                                                                                                                       |
 | `projectFile`      | `string`   | Path to `project.godot`. Relative to `rootDir`. Defaults to `"project.godot"`.                                                                                                                                                                                                                                                 |
 | `tsconfig`         | `string`   | Path to `tsconfig.json`. Defaults to `rootDir/tsconfig.json` if present.                                                                                                                                                                                                                                                       |

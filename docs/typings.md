@@ -35,6 +35,8 @@ A type is classified as a value type if its Godot XML documentation includes a c
 
 ## `tstogd generate-typings`
 
+> Both `tstogd convert` and `tstogd watch` run this automatically on every conversion, so you normally never call it directly. Use it standalone only to regenerate typings _without_ converting (CI, scripted builds, or after editing scenes outside a running watcher).
+
 Generates scene typings — per-file `.d.ts` declarations that provide typed `get_node()`, `get_parent()`, `get_child()`, and group methods based on your `.tscn` scene structure.
 
 ```bash
@@ -216,6 +218,7 @@ This writes `_godot-typings/classes/`, `_godot-typings/godot-class-registry.json
 {
   "tsDir": "src",
   "gdDir": "scripts",
+  "typingsDir": "src/_typings",
   "godotTypingsDir": "_godot-typings"
 }
 ```

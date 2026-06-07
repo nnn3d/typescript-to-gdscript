@@ -6,6 +6,8 @@
 
 The CLI binary is `tstogd`. A global `--debug` flag (placed before the subcommand) enables verbose info/debug messages on any command.
 
+> **You usually only need `convert` and `watch`.** Both convert your TypeScript _and_ regenerate every typing (scene, script, resource, addon) _and_ run the diagnostic check in a single pass — there is no separate "generate typings" step to remember. The remaining commands (`generate-typings`, `generate-addon-typings`, `validate-gd`, `clear-cache`, …) cover one-off setup, migration, or custom Godot builds; a typical project never runs them directly.
+
 > **Config keys vs flags.** Names like `tsDir`, `gdDir`, `typingsDir`, `rootDir`, `scenesDir`, and `godotPath` referenced below are fields read from **`tstogd.json`** (see [Configuration](configuration.md#tstogdjson) for defaults and the full schema). Most commands accept matching CLI flags (`--ts-dir`, `--gd-dir`, …) that override the config value for that run. When this page says e.g. "reads from `gdDir`", it means the value resolved from `tstogd.json` (or its overriding flag).
 
 ## Command index
@@ -43,7 +45,7 @@ Each step is skipped if its target file already exists (the existing file is pre
 
 ## `tstogd convert`
 
-Convert TypeScript files to GDScript.
+Convert TypeScript files to GDScript. A full `tstogd convert` run is self-contained: it converts, **regenerates all scene/script/resource/addon typings** (the same output as `generate-typings` + `generate-addon-typings`), and then runs the diagnostic check described below. You do not need to call the typings commands separately.
 
 ```bash
 tstogd convert src/Player.ts --gd-dir scripts/
@@ -91,7 +93,7 @@ tstogd convert --no-check
 
 ## `tstogd watch`
 
-Watch TypeScript files and auto-convert on change. After each conversion batch settles (1.5s debounce), runs a full diagnostic check and clears the console before printing results.
+The long-running version of `convert`, and the only command most projects keep running. It watches not just `.ts` files but also `.tscn` scenes, `.tres`/`.res` resources, common asset files, and `project.godot` — so editing your scene tree in Godot **regenerates the affected scene typings live**. Each changed `.ts` is reconverted (with source maps and typings updated incrementally); after the batch settles (~1s debounce) it runs a full diagnostic check and clears the console before printing results.
 
 ```bash
 tstogd watch --ts-dir src --gd-dir scripts
@@ -164,6 +166,8 @@ Arguments / options:
 
 ## `tstogd generate-typings`
 
+> **Usually automatic.** `convert` and `watch` run this on every conversion, so you normally never call it directly. Reach for it standalone only to regenerate typings _without_ converting — e.g. a CI step, or after editing scenes outside a running watcher.
+
 Generate scene/script typings — per-file `.gd.d.ts` / `.tscn.d.ts`, `_resources.d.ts`, and `_index.d.ts` — so `get_node()`, `get_parent()`, group queries, autoloads, and `res://` paths are typed from your `.tscn` / `.gd` / `.tres` files. Scans `tsDir` (the `tstogd.json` key) when no files are given.
 
 ```bash
@@ -212,7 +216,7 @@ Options:
 - `-o, --output <path>` — Output directory for generated typings.
 - `--root-dir <dir>` — Root directory (default: `.`).
 
-Run automatically by `initial-convert-gd-to-ts` and `watch` (first run). Details in [Typings](typings.md#tstogd-generate-addon-typings).
+Run automatically by `convert` (every run), `watch` (first run), and `initial-convert-gd-to-ts` — you rarely need it standalone. Details in [Typings](typings.md#tstogd-generate-addon-typings).
 
 ## `tstogd open-editor`
 
