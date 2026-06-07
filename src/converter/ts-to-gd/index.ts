@@ -78,6 +78,7 @@ export function convertTsToGd(options: ConvertOptions): TransformResult {
       filePath: options.filePath,
       diagnostics: [],
       diagInfo,
+      registry,
       tsDir: options.tsDir ?? options.rootDir,
       gdDir: options.gdDir ?? options.rootDir,
       projectRoot: options.projectRoot ?? options.rootDir,

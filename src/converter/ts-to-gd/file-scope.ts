@@ -80,6 +80,7 @@ export function emitFileScopeVariable(
           t.ctx.checker,
           t.ctx.sourceFile,
           t.currentClassName,
+          t.ctx.registry,
         )
       : null;
 

@@ -64,6 +64,7 @@ function extractSignalParams(
       t.ctx.checker,
       t.ctx.sourceFile,
       t.currentClassName,
+      t.ctx.registry,
     );
     params.push(
       gdType ? { name: paramName, type: gdType } : { name: paramName },
@@ -148,6 +149,7 @@ export function visitPropertyDeclaration(
     t.ctx.checker,
     t.ctx.sourceFile,
     t.currentClassName,
+    t.ctx.registry,
   );
 
   const staticPrefix = isStatic ? 'static ' : '';
@@ -186,6 +188,7 @@ export function visitAccessorPair(
       t.ctx.checker,
       t.ctx.sourceFile,
       t.currentClassName,
+      t.ctx.registry,
     );
   } else if (
     setNode &&
@@ -197,6 +200,7 @@ export function visitAccessorPair(
       t.ctx.checker,
       t.ctx.sourceFile,
       t.currentClassName,
+      t.ctx.registry,
     );
   }
 
@@ -274,6 +278,7 @@ export function visitMethodDeclaration(
     t.ctx.checker,
     t.ctx.sourceFile,
     t.currentClassName,
+    t.ctx.registry,
   );
   const returnAnnotation = returnType ? ` -> ${returnType}` : '';
 

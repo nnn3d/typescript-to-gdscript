@@ -55,6 +55,10 @@ This project converts TypeScript code to GDScript for the Godot game engine, wit
 
 10. **⚠️ Use Claude plans, not standalone `.md` design/spec files.** When brainstorming or planning an implementation, write the output as a Claude plan (via `EnterPlanMode` → plan file under `~/.claude/plans/`). Do not create `.md` design/spec files in the project tree (e.g. `docs/superpowers/specs/*.md`). Claude plans are visible in the Claude app and are the canonical place for planning artifacts. If a spec `.md` file already exists and the information has been captured in a Claude plan, delete the `.md` file.
 
+11. **⚠️ Correctness over completeness.** Generated output (GDScript, typings, source maps) must always be valid. When the converter cannot _prove_ that emitting something is correct, drop it rather than guess — **but only when dropping keeps the result correct.** This holds for optional constructs like type annotations: a missing type hint is always safe (GDScript types are optional), whereas a wrong one breaks the `.gd`, so prefer dropping more over emitting something that _might_ be invalid.
+
+    The flip side: when silently skipping (or emitting a best-effort guess) would produce an **incorrect or misleading** result rather than a merely less-complete one, **raise an error/diagnostic and fail loudly** — surfacing an unknown/unsupported/ambiguous construct is always better than silently doing nothing and shipping wrong output. Never silently swallow something that changes behavior.
+
 ## Development Guidelines
 
 ### Philosophy

@@ -126,6 +126,7 @@ export function visitVariableStatement(
       t.ctx.checker,
       t.ctx.sourceFile,
       t.currentClassName,
+      t.ctx.registry,
     );
     const typeAnnotation = gdType ? `: ${gdType}` : '';
 

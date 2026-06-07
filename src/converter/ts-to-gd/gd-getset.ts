@@ -239,6 +239,7 @@ function resolveGetsetType(
       t.ctx.checker,
       t.ctx.sourceFile,
       t.currentClassName,
+      t.ctx.registry,
     );
   }
   if (!gdType && node.type) {
@@ -247,6 +248,7 @@ function resolveGetsetType(
       t.ctx.checker,
       t.ctx.sourceFile,
       t.currentClassName,
+      t.ctx.registry,
     );
   }
   if (!gdType && setExpr && !setIsNull) {

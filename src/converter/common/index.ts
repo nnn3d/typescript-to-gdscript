@@ -43,6 +43,15 @@ export interface TransformContext {
    * `extends "res://..."` are taken relative to this directory.
    */
   projectRoot: string;
+  /**
+   * Godot class registry. Used to recognise Godot built-in types (classes,
+   * value-type constructors, global enums) by name when classifying TS type
+   * annotations — see {@link tsTypeNodeToGdType}. May be `undefined` when the
+   * registry could not be resolved, in which case classification can only
+   * emit types it proves are classes/enums via the checker and drops every
+   * other name (Godot built-ins can no longer be recognised by name).
+   */
+  registry?: GodotClassRegistry;
 }
 
 // ─── Anonymous class naming ─────────────────────────────────
@@ -201,6 +210,13 @@ export function isFloatType(type: ts.Type, checker: ts.TypeChecker): boolean {
 /**
  * Converts a TypeScript type to its GDScript type annotation string.
  * Returns null if the type should be omitted.
+ *
+ * NOTE: unlike {@link tsTypeNodeToGdType}, this `ts.Type`-based variant does
+ * NOT classify reference types — it returns the symbol name verbatim for any
+ * class-like type, so an `object`/`interface`/unknown type would leak a bogus
+ * annotation. It is currently unused for emission (kept only for its own
+ * recursion). Do not wire it into an emit path without adding the same
+ * class/enum/registry classification `classifyTypeReferenceName` applies.
  */
 export function tsTypeToGdType(
   type: ts.Type,
@@ -269,6 +285,7 @@ export function tsTypeNodeToGdType(
   checker: ts.TypeChecker,
   sourceFile: ts.SourceFile,
   className?: string,
+  registry?: GodotClassRegistry,
 ): string | null {
   if (!typeNode) return null;
 
@@ -290,23 +307,9 @@ export function tsTypeNodeToGdType(
       const arg = typeNode.typeArguments?.[0];
       if (!arg) return null;
       if (arg.kind === ts.SyntaxKind.VoidKeyword) return null;
-      return tsTypeNodeToGdType(arg, checker, sourceFile, className);
+      return tsTypeNodeToGdType(arg, checker, sourceFile, className, registry);
     }
-    // Type aliases (non-class) → omit annotation. GDScript has no equivalent
-    // and `Variant` conveys nothing beyond "untyped", which the bare `var x`
-    // / `func f(x)` forms already express.
-    const symbol = checker.getSymbolAtLocation(typeNode.typeName);
-    if (symbol) {
-      const declarations = symbol.getDeclarations();
-      if (declarations && declarations.length > 0) {
-        const decl = declarations[0]!;
-        if (ts.isTypeAliasDeclaration(decl)) {
-          return null;
-        }
-      }
-    }
-    // Strip generic args for class types
-    return name;
+    return classifyTypeReferenceName(typeNode, name, checker, registry);
   }
 
   // Keyword types
@@ -327,6 +330,7 @@ export function tsTypeNodeToGdType(
       checker,
       sourceFile,
       className,
+      registry,
     );
     return elementType ? `Array[${elementType}]` : 'Array';
   }
@@ -344,7 +348,13 @@ export function tsTypeNodeToGdType(
   if (ts.isUnionTypeNode(typeNode)) {
     const nonNull = typeNode.types.filter((t) => !isNullLiteralTypeNode(t));
     if (nonNull.length === 1 && nonNull.length !== typeNode.types.length) {
-      return tsTypeNodeToGdType(nonNull[0]!, checker, sourceFile, className);
+      return tsTypeNodeToGdType(
+        nonNull[0]!,
+        checker,
+        sourceFile,
+        className,
+        registry,
+      );
     }
     return null;
   }
@@ -352,6 +362,78 @@ export function tsTypeNodeToGdType(
     return null;
   }
 
+  return null;
+}
+
+/**
+ * Classify a TS type-reference name and decide whether it should be emitted
+ * as a GDScript type annotation.
+ *
+ * Only types that GDScript actually has are emitted:
+ *   - User / Godot `class` declarations and `enum` declarations (resolved via
+ *     the TS checker — user classes resolve locally even without the Godot
+ *     typings loaded).
+ *   - Godot built-in types recognised *by name* from the registry: classes
+ *     (`Node`, `Node2D`, …), value-type constructors (`Vector2`, `Color`,
+ *     `Dictionary`, …) and global enums (`Key`, `MouseButton`, …). The
+ *     name-based check is what keeps Godot types working in test/program
+ *     setups that don't load the Godot `.d.ts` typings.
+ *
+ * Everything else — type aliases, plain interfaces, `object`-like types,
+ * dotted refs that don't resolve to a class/enum (`Node.ProcessMode`,
+ * `Outer.SomeIface`) and unknown / unresolved names — is omitted (the bare
+ * `var x` / `func f(x)` form is the idiomatic "untyped" GD). GD type hints are
+ * optional, so dropping an unverifiable type is always safe; emitting a bogus
+ * one would break the `.gd`.
+ *
+ * Omitting is always safe; emitting an annotation GDScript doesn't recognise
+ * breaks the generated `.gd`. So when no registry is available the converter
+ * can't recognise Godot built-ins by name — it only emits types it can prove
+ * are classes/enums (via the checker) and drops the rest, rather than risk
+ * leaking an invalid type.
+ */
+function classifyTypeReferenceName(
+  typeNode: ts.TypeReferenceNode,
+  name: string,
+  checker: ts.TypeChecker,
+  registry?: GodotClassRegistry,
+): string | null {
+  // Resolve the symbol, following import aliases to the real declaration so
+  // that types imported from another file are classified by what they are,
+  // not by the `ImportSpecifier` binding.
+  let symbol = checker.getSymbolAtLocation(typeNode.typeName);
+  if (symbol && symbol.flags & ts.SymbolFlags.Alias) {
+    symbol = checker.getAliasedSymbol(symbol);
+  }
+  const declarations = symbol?.getDeclarations() ?? [];
+
+  // Type aliases have no GDScript equivalent → omit.
+  if (declarations.some(ts.isTypeAliasDeclaration)) return null;
+
+  // User / Godot `class` and `enum` declarations are valid GD types.
+  if (
+    declarations.some(
+      (d) => ts.isClassDeclaration(d) || ts.isEnumDeclaration(d),
+    )
+  ) {
+    return name;
+  }
+
+  // Godot built-in types are recognised by name (works without typings).
+  if (
+    registry &&
+    (registry.hasClass(name) ||
+      registry.isConstructor(name) ||
+      registry.isGlobalEnum(name))
+  ) {
+    return name;
+  }
+
+  // Whatever is left is a non-class type (interface, `object`-like, namespace),
+  // a dotted ref we can't verify (`Node.ProcessMode`, `Outer.SomeIface`), or an
+  // unknown / unresolved name — none provably a GD type. Omit the annotation:
+  // GD type hints are optional, so dropping a type is always safe, whereas
+  // emitting a bogus one breaks the generated GDScript.
   return null;
 }
 

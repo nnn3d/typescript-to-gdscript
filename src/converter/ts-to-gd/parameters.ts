@@ -102,6 +102,7 @@ export function emitParameters(
             t.ctx.checker,
             t.ctx.sourceFile,
             t.currentClassName,
+            t.ctx.registry,
           );
         }
         // Multi-type union (e.g. Node | Node2D | null) -- can't express in GD
@@ -111,6 +112,7 @@ export function emitParameters(
           t.ctx.checker,
           t.ctx.sourceFile,
           t.currentClassName,
+          t.ctx.registry,
         );
       }
 

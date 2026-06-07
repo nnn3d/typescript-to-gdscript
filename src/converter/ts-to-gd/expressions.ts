@@ -928,6 +928,7 @@ export function emitLambda(
     t.ctx.checker,
     t.ctx.sourceFile,
     t.currentClassName,
+    t.ctx.registry,
   );
   const returnAnnotation = returnType ? ` -> ${returnType}` : '';
 
