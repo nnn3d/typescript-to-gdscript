@@ -84,7 +84,7 @@ Then:
 2. `tstogd convert` — emits `.gd` into your output dir (default `scripts/`), regenerates all typings, and runs a full diagnostic check.
 3. Attach the `.gd` file in Godot as you normally would. Configure Godot's external editor to point at your IDE for TS language server and one-click jump-to-source ([guide](docs/ide-integration.md)).
 
-**That's the whole loop — `convert` and `watch` are the only commands you need in normal use.** Each one converts your code _and_ regenerates every typing (scene, script, resource, addon) in the same pass, so `get_node()` paths, `res://` references, and group queries stay in sync without any extra step. Most projects never run another CLI command.
+That's the whole loop — `convert` and `watch` are the only commands you need in normal use. Each one converts your code _and_ regenerates every typing (scene, script, resource, addon) in the same pass, so `get_node()` paths, `res://` references, and group queries stay in sync without any extra step. Most projects never run another CLI command.
 
 For day-to-day work, run **`tstogd watch`**: it auto-converts on save, watches your `.tscn` scenes and assets so scene typings refresh the instant you change the tree in Godot, and runs a debounced full-project check feeding live IDE diagnostics.
 
@@ -111,6 +111,8 @@ tstogd init                # one-time interactive scaffold (tsconfig + tstogd.js
 tstogd convert             # convert TS → GD + regenerate all typings + full diagnostic check
 tstogd watch               # the same, continuously: auto-convert on save, live diagnostics
 ```
+
+> **Tip:** run `tstogd convert` after finishing a `watch` session. `watch` reconverts a file only when that file itself changes, so an edit that changes types used by _other_ files (a shared interface, a scene rename) can leave their `.gd` outputs stale. `convert` reconverts everything fresh by default and guarantees every `.gd` matches the current types.
 
 `convert` and `watch` already regenerate every typing (scene, script, resource, addon) as part of the run — there is no separate "generate typings" step to remember. The commands below cover one-off or advanced situations, and most projects never touch them:
 

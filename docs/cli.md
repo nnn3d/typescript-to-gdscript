@@ -52,7 +52,11 @@ tstogd convert src/Player.ts --gd-dir scripts/
 ```
 
 Source maps are stored in the cache directory (not alongside `.gd` files).
-Unchanged files are skipped automatically via the cache.
+
+By default every file is converted fresh on each run — correct even when the
+output depends on types from _other_ files (imports, scene typings, global
+classes) that changed since the last run. Results are still written to the
+cache so `watch` and the IDE plugin can reuse them.
 
 Options:
 
@@ -60,7 +64,8 @@ Options:
 - `--gd-dir <dir>` — GDScript output directory (overrides `gdDir` from `tstogd.json`)
 - `--root-dir <dir>` — Root directory (default: `.`)
 - `--tsconfig <path>` — Path to tsconfig.json
-- `--no-cache` — Disable cache (force full reconversion)
+- `--use-cache` — Skip conversion for files with a fresh cache entry (fast, but may keep stale `.gd` output when types in imported files or global typings changed)
+- `--no-cache` — Disable cache entirely (no reads, no writes)
 - `--emit-on-error` — Emit output files even when conversion errors occur (errors inlined as `# ERROR:` comments)
 
 ### Diagnostic modes
@@ -100,6 +105,8 @@ tstogd watch --ts-dir src --gd-dir scripts
 ```
 
 Source maps are stored in the cache directory.
+
+> **Tip:** run `tstogd convert` after finishing a `watch` session. `watch` reconverts a file only when that file itself changes (cache freshness is judged by file content), so an edit that changes types used by _other_ files can leave their `.gd` outputs stale. `convert` reconverts everything fresh by default.
 
 Options:
 

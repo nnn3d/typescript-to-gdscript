@@ -19,6 +19,8 @@ export function registerConvertCommand(program: Command): void {
     .command('convert')
     .description(
       'Convert TypeScript file(s) to GDScript. If no files given, converts all .ts files in tsDir. ' +
+        'Converts every file fresh by default — correct even when types in other files changed; ' +
+        'pass --use-cache to skip content-unchanged files (faster, may serve stale output). ' +
         'After writing, runs full diagnostic check (TS + converter + Godot) unless --no-check is set.',
     )
     .argument('[files...]', 'TypeScript files or glob patterns to convert')
@@ -31,7 +33,14 @@ export function registerConvertCommand(program: Command): void {
       'Path to Godot executable (enables GDScript validation)',
     )
     .option('--project-root <dir>', 'Godot project root for validation')
-    .option('--no-cache', 'Disable cache (force full reconversion)')
+    .option(
+      '--use-cache',
+      'Skip conversion for files with a fresh cache entry. Fast, but can keep ' +
+        'stale .gd output when types in imported files or global typings changed ' +
+        '(freshness is judged by file content only)',
+      false,
+    )
+    .option('--no-cache', 'Disable cache entirely (no reads, no writes)')
     .option(
       '--emit-on-error',
       'Emit output files even when conversion errors occur',
@@ -69,8 +78,14 @@ export function registerConvertCommand(program: Command): void {
       // commander: --no-emit sets opts.emit = false, --no-check sets opts.check = false
       const noEmit: boolean = opts.emit === false;
       const noCheck: boolean = opts.check === false;
-      const useCache = opts.cache !== false;
-      const cache = useCache ? new ProjectCache(cfg.cacheDir) : null;
+      // Cache is write-only by default: every run converts fresh (correct even
+      // when types in OTHER files changed — content hashes can't see that),
+      // but results are still recorded so the watcher / ts-plugin / check
+      // phase can reuse them. `--use-cache` opts into the read-side skip;
+      // `--no-cache` disables the cache entirely.
+      const cache =
+        opts.cache !== false ? new ProjectCache(cfg.cacheDir) : null;
+      const useCacheReads: boolean = opts.useCache === true && cache !== null;
 
       debugLog(
         `${noEmit ? 'Checking' : 'Converting'} ${resolvedFiles.length} file(s)...`,
@@ -97,13 +112,13 @@ export function registerConvertCommand(program: Command): void {
             relPath.replace(/\.ts$/, '.gd'),
           );
 
-          if (cache?.isTsToGdFresh(filePath, outputPath)) {
+          if (useCacheReads && cache?.isTsToGdFresh(filePath, outputPath)) {
             debugLog(`Skipped (cache): ${outputPath}`);
             skipped++;
             continue;
           }
 
-          if (cache && cache.hasFreshCachedGd(filePath)) {
+          if (useCacheReads && cache?.hasFreshCachedGd(filePath)) {
             const promoted = cache.promoteCachedGd(filePath, outputPath);
             if (promoted && cache.isTsToGdFresh(filePath, outputPath)) {
               debugLog(`Promoted (cache-folder): ${outputPath}`);

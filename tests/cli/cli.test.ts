@@ -2,7 +2,7 @@ import { describe, it, expect, afterEach } from 'vitest';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { mkdirSync, rmSync, existsSync, writeFileSync, readFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { join, resolve, basename } from 'path';
 import { tmpdir } from 'os';
 import { randomBytes } from 'crypto';
 
@@ -135,6 +135,94 @@ describe('CLI: convert (TS → GD)', () => {
     expect(result.stdout).not.toContain('Converting');
     expect(result.stdout).not.toContain('Written:');
   });
+});
+
+describe('CLI: convert cache modes', () => {
+  let tmpDir: string;
+  let cacheDir: string;
+
+  afterEach(() => {
+    if (tmpDir) rmSync(tmpDir, { recursive: true, force: true });
+    if (cacheDir) rmSync(cacheDir, { recursive: true, force: true });
+  });
+
+  /**
+   * rootDir (tmpDir) has no node_modules and no tstogd.json, so
+   * resolveConfig places the cache at
+   * `<os-tmp>/typescript-to-gdscript/<basename(rootDir)>`.
+   */
+  function setup(): { input: string; outputPath: string } {
+    tmpDir = makeTmpDir();
+    cacheDir = join(tmpdir(), 'typescript-to-gdscript', basename(tmpDir));
+    return {
+      input: join(FIXTURES, 'valid.ts'),
+      outputPath: join(tmpDir, 'valid.gd'),
+    };
+  }
+
+  function convertArgs(input: string, ...extra: string[]): string[] {
+    return [
+      '--debug',
+      'convert',
+      input,
+      '--ts-dir',
+      FIXTURES,
+      '--gd-dir',
+      tmpDir,
+      '--root-dir',
+      tmpDir,
+      ...extra,
+    ];
+  }
+
+  /**
+   * Keys of the `tsToGd` section of cache.json, or [] when the manifest
+   * doesn't exist. NB: cache.json itself is written unconditionally by
+   * typings generation (it has its own cache section), so tests must
+   * assert on `tsToGd` entries — not on the file's existence.
+   */
+  function tsToGdCacheKeys(): string[] {
+    const manifest = join(cacheDir, 'cache.json');
+    if (!existsSync(manifest)) return [];
+    const data = JSON.parse(readFileSync(manifest, 'utf-8'));
+    return Object.keys(data.tsToGd ?? {});
+  }
+
+  it('default: reconverts on every run (no cache read) but still writes cache', async () => {
+    const { input, outputPath } = setup();
+
+    const first = await runCliRaw(convertArgs(input));
+    expect(first.exitCode).toBe(0);
+    expect(first.stdout).toContain(`Written: ${outputPath}`);
+    // Conversion result must be written to cache even though reads are disabled
+    expect(tsToGdCacheKeys().some((k) => k.endsWith('/valid.ts'))).toBe(true);
+
+    const second = await runCliRaw(convertArgs(input));
+    expect(second.exitCode).toBe(0);
+    expect(second.stdout).toContain(`Written: ${outputPath}`);
+    expect(second.stdout).not.toContain('Skipped (cache)');
+  }, 60000);
+
+  it('--use-cache: second run skips conversion via cache', async () => {
+    const { input, outputPath } = setup();
+
+    const first = await runCliRaw(convertArgs(input, '--use-cache'));
+    expect(first.exitCode).toBe(0);
+    expect(first.stdout).toContain(`Written: ${outputPath}`);
+
+    const second = await runCliRaw(convertArgs(input, '--use-cache'));
+    expect(second.exitCode).toBe(0);
+    expect(second.stdout).toContain(`Skipped (cache): ${outputPath}`);
+    expect(second.stdout).not.toContain(`Written: ${outputPath}`);
+  }, 60000);
+
+  it('--no-cache: nothing written to cache dir', async () => {
+    const { input } = setup();
+
+    const result = await runCliRaw(convertArgs(input, '--no-cache'));
+    expect(result.exitCode).toBe(0);
+    expect(tsToGdCacheKeys().some((k) => k.endsWith('/valid.ts'))).toBe(false);
+  }, 60000);
 });
 
 describe('CLI: initial-convert-gd-to-ts (GD → TS)', () => {

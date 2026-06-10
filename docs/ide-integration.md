@@ -79,7 +79,7 @@ Verify: the plugin logs `[tstogd-plugin] plugin loaded` on startup. WebStorm →
 
 4. **Cancellation.** Typing another character while Godot is still running aborts the stale validation (both the subprocess and the superseded result) — no stale squiggles from a version you've already moved past.
 
-5. **Persistent-cache write-through.** Every live conversion updates the shared `ProjectCache` (keyed by buffer hash). When you save, `tstogd watch` / `tstogd convert` detects that the cache already holds the right bytes and promotes them with a single `rename()` — no double conversion.
+5. **Persistent-cache write-through.** Every live conversion updates the shared `ProjectCache` (keyed by buffer hash). When you save, `tstogd watch` (or `tstogd convert --use-cache`) detects that the cache already holds the right bytes and promotes them with a single `rename()` — no double conversion.
 
 ### Plugin diagnostic codes
 
