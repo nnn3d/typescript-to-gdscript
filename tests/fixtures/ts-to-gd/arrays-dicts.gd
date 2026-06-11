@@ -16,5 +16,5 @@ func test_dictionaries():
 		"health": 100,
 		"alive": true,
 	}
-	var player_name = dict["name"]
+	var player_name = dict.get("name")
 	dict["score"] = 9001

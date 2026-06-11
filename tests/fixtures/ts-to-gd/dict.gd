@@ -33,17 +33,23 @@ func test_optional_access():
 	}
 	# Optional prop → .get()
 	var a = d.get("a")
-	# Non-optional prop → stays dot access
-	var b = d.b
+	# Non-optional prop → also .get() (plain objects are Dictionaries in GD)
+	var b = d.get("b")
+	# Assignment target — stays dot access (valid for Dictionary and Object)
+	d.a = 5
+	d.b += 1
+	d.b += 1
+	d["a"] = 2
+	d["b"] += 3
 	# Optional element access → .get()
 	var c = d.get("a")
 	# Standalone optional → .get()
 	var e = {}
 	var f = e.get("f")
-	# Chained access — no .get() (used as object for further access)
-	var g = e.f.g
+	# Chained access — inner link stays dot, final read → .get()
+	var g = e.f.get("g")
 	if e.get("f"):
-		var g2 = e.f.g
+		var g2 = e.f.get("g")
 	# Call on optional — no .get() (used as callee)
 	var h = {}
 	h.fn()
@@ -53,3 +59,10 @@ func test_optional_access():
 	# Class field — no .get() (always defined in GDScript)
 	var node = Node2D.new()
 	var pos = node.position
+
+func test_plain_object_members(obj):
+	var n = obj.get("name")
+	var c = obj.get("count")
+	obj.count = 2
+	obj.count *= 3
+	return obj.get("name")

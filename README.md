@@ -112,7 +112,7 @@ tstogd convert             # convert TS → GD + regenerate all typings + full d
 tstogd watch               # the same, continuously: auto-convert on save, live diagnostics
 ```
 
-> **Tip:** run `tstogd convert` after finishing a `watch` session. `watch` reconverts a file only when that file itself changes, so an edit that changes types used by _other_ files (a shared interface, a scene rename) can leave their `.gd` outputs stale. `convert` reconverts everything fresh by default and guarantees every `.gd` matches the current types.
+> **Note:** `watch` self-heals — when an edit causes new errors in other files, those files are reconverted automatically. For a guaranteed full refresh of every `.gd`, run `tstogd convert` after a `watch` session.
 
 `convert` and `watch` already regenerate every typing (scene, script, resource, addon) as part of the run — there is no separate "generate typings" step to remember. The commands below cover one-off or advanced situations, and most projects never touch them:
 
@@ -139,7 +139,7 @@ Each `.ts` file must contain exactly one class. Named classes (`class Foo`) are 
 - `bool` — alias for `boolean`, also a cast: `bool(x)` → GDScript `bool(x)`. Same for `String(x)`.
 - `Dictionary<K, V>` — generic, with typed `get` / `set` / `keys` / `values`. `{}` literals keep dictionary methods via the `Object` interface. Untyped `Dictionary` is `<unknown, unknown>`.
 - `let` and `const` both convert to GDScript `var`. **Use `let`** — TS `var` is restricted (GDScript `var` ≈ TS `let`, not TS `var`).
-- `undefined` is restricted — use `null`. Optional property access (`obj.foo` where the type includes `undefined`) auto-converts to `obj.get("foo")`. Same for `obj["key"]` with an undefined type. Class-field access stays direct.
+- `undefined` is restricted — use `null`. Plain objects (interfaces, object literals) are Dictionaries in GDScript: member reads convert to `obj.get("foo")`, which returns `null` for a missing key instead of crashing. Writes and class-instance access stay direct.
 - `TSOnly<T>` — type-level wrapper, stripped at conversion.
 - Only types GDScript actually has get an annotation. Godot classes/value types and your own `class_name` classes (including ones imported from another file) keep their type; plain `interface`s, `object`, `type` aliases, and unknown/unresolved names have the annotation **omitted** (bare untyped `var x` / `func f(x)`) rather than emitting a bogus GD type. See [docs/transform-rules.md#type-annotations--what-gets-emitted](docs/transform-rules.md#type-annotations--what-gets-emitted).
 

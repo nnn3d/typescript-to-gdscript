@@ -8,6 +8,7 @@ import {
   tryEmitGdOps,
 } from './gd-helpers.ts';
 import { typeContainsUndefined } from './parameters.ts';
+import { isPlainObjectType, isAssignmentTarget } from './access-rewrite.ts';
 import type { TransformerDelegate } from './transformer-types.ts';
 
 // ---- Main Expression Emitter ----
@@ -62,16 +63,22 @@ export function emitExpression(
     return emitPropertyAccess(t, node);
   }
 
-  // Element access: a[b] — convert to .get() when type includes undefined
+  // Element access: a[b] — convert standalone reads to .get() when the
+  // object is a plain TS object (a Dictionary in GD), or when the element
+  // type includes undefined (legacy fallback for other object kinds).
   if (ts.isElementAccessExpression(node)) {
     const elemType = t.ctx.checker.getTypeAtLocation(node);
-    if (typeContainsUndefined(elemType)) {
+    const objType = t.ctx.checker.getTypeAtLocation(node.expression);
+    if (
+      isPlainObjectType(objType, t.ctx.checker, t.ctx.registry) ||
+      typeContainsUndefined(elemType)
+    ) {
       const parent = node.parent;
       const isChainedOrCalled =
         (ts.isCallExpression(parent) && parent.expression === node) ||
         (ts.isPropertyAccessExpression(parent) && parent.expression === node) ||
         (ts.isElementAccessExpression(parent) && parent.expression === node);
-      if (!isChainedOrCalled) {
+      if (!isChainedOrCalled && !isAssignmentTarget(node)) {
         return `${t.emitExpression(node.expression)}.get(${t.emitExpression(node.argumentExpression)})`;
       }
     }
@@ -411,13 +418,25 @@ export function emitPropertyAccess(
   const obj = t.emitExpression(node.expression);
   const prop = node.name.text;
 
-  // Optional property access: convert standalone `obj.prop` to `obj.get("prop")`
-  // when the property type includes `undefined` (optional or T | undefined).
+  // Property access → `obj.get("prop")` rewrite. Applies to standalone
+  // READS when:
+  // - the object is a plain TS object type (interface / type literal /
+  //   object literal) — a Dictionary in GD, where `.get()` is the
+  //   stale-type-safe access form (it also exists on Object); or
+  // - the property type includes `undefined` (legacy fallback for other
+  //   object kinds).
   // Skip when:
   // - chained or called: obj.prop(), obj.prop.inner, obj.prop["key"]
+  // - assignment target: obj.prop = v / obj.prop += v / obj.prop++
+  //   (`obj.get("p") = v` is invalid GD; plain assignment works on both
+  //   Dictionary and Object)
   // - accessing a class field (always defined in GDScript)
   const propType = t.ctx.checker.getTypeAtLocation(node);
-  if (typeContainsUndefined(propType)) {
+  const objType = t.ctx.checker.getTypeAtLocation(node.expression);
+  if (
+    isPlainObjectType(objType, t.ctx.checker, t.ctx.registry) ||
+    typeContainsUndefined(propType)
+  ) {
     // Walk up through non-null assertions (!) and parens to find the real parent
     let effectiveNode: ts.Node = node;
     let parent = node.parent;
@@ -441,7 +460,7 @@ export function emitPropertyAccess(
     const isClassField =
       symbol?.getDeclarations()?.some((d) => ts.isPropertyDeclaration(d)) ??
       false;
-    if (!isChainedOrCalled && !isClassField) {
+    if (!isChainedOrCalled && !isClassField && !isAssignmentTarget(node)) {
       return `${obj}.get("${prop}")`;
     }
   }
@@ -709,6 +728,21 @@ export function emitBinaryExpression(
   t: TransformerDelegate,
   node: ts.BinaryExpression,
 ): string {
+  // Destructuring assignment ([a, b] = arr / ({ x } = obj)) -> not
+  // supported. Declarations are rejected in visitVariableStatement; the
+  // assignment-expression form must fail loudly too — emitting the
+  // literal-as-LHS form would be silently invalid GDScript.
+  if (
+    node.operatorToken.kind === ts.SyntaxKind.EqualsToken &&
+    (ts.isArrayLiteralExpression(node.left) ||
+      ts.isObjectLiteralExpression(node.left))
+  ) {
+    t.addDiagnostic(
+      node,
+      'error',
+      'Destructuring assignment is not supported in GDScript',
+    );
+  }
   // Nullish coalescing (??) -> not supported
   if (node.operatorToken.kind === ts.SyntaxKind.QuestionQuestionToken) {
     t.addDiagnostic(

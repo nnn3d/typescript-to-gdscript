@@ -106,7 +106,7 @@ tstogd watch --ts-dir src --gd-dir scripts
 
 Source maps are stored in the cache directory.
 
-> **Tip:** run `tstogd convert` after finishing a `watch` session. `watch` reconverts a file only when that file itself changes (cache freshness is judged by file content), so an edit that changes types used by _other_ files can leave their `.gd` outputs stale. `convert` reconverts everything fresh by default.
+> **Self-healing:** an edit in one file can change the correct output of _other_ files (shared types, scene typings). When that happens, it surfaces as new errors in the per-cycle check, and `watch` reconverts those files automatically. Stale output that causes no error may still linger, so run `tstogd convert` after a session for a guaranteed full refresh.
 
 Options:
 

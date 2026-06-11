@@ -136,10 +136,14 @@ export abstract class Player extends CharacterBody2D {
     let key = Vector2.DOWN;
     let directions = gd.dict([[key, 'down']]);
 
-    // Optional property access auto-converts to .get() when the type
-    // includes undefined:
+    // Plain TS objects (interfaces, object literals) are Dictionaries
+    // in GDScript, so reads convert to .get() — it returns null for a
+    // missing key instead of crashing. Writes and class instances keep
+    // dot access.
     let maybe: { v?: int } = {};
     let val = maybe.v; // → maybe.get("v")
+    let hp = stats.hp; // → stats.get("hp")
+    stats.hp = 50; // → stats.hp = 50
 
     // Strings, StringName, NodePath
     let greet = `Hi ${this.name}!`; // template literal → str() concatenation
@@ -291,10 +295,14 @@ func _process(delta: float):
 	var directions = {
 		key: "down",
 	}
-	# Optional property access auto-converts to .get() when the type
-	# includes undefined:
+	# Plain TS objects (interfaces, object literals) are Dictionaries
+	# in GDScript, so reads convert to .get() — it returns null for a
+	# missing key instead of crashing. Writes and class instances keep
+	# dot access.
 	var maybe = {}
 	var val = maybe.get("v")
+	var hp = stats.get("hp")
+	stats.hp = 50
 	# Strings, StringName, NodePath
 	var greet = "Hi " + str(self.name) + "!"
 	var path = NodePath("Body/Sprite")
@@ -770,21 +778,21 @@ The converter rejects TS features that have no faithful GDScript equivalent. Eac
 
 ### Syntax-level restrictions (errors)
 
-| TS feature                                                  | Why it's rejected                                                                                                  |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| **Destructuring** — `let [a, b] = ...` / `let {a, b} = ...` | GDScript has no destructuring. Assign each binding manually.                                                       |
-| **`for...in`**                                              | GDScript `for in` always iterates **values** (TS `for...of` semantics). Use `for...of` to avoid confusion.         |
-| **Nullish coalescing** — `??` / `??=`                       | GDScript distinguishes `null` from default values differently; no direct equivalent.                               |
-| **Optional chaining** — `?.`                                | GDScript has no `?.` short-circuit. Use explicit `null` checks or `obj.get("key")` for Dictionary access.          |
-| **Spread** — `f(...args)` / `[...arr]`                      | Variadic call sites can't be desugared to GDScript. Function declarations may use `...rest` (rest parameters).     |
-| **`var` keyword** — function-scoped `var x`                 | Warning (not error). Use `let` or `const`; both convert to GDScript `var`. GD `var` ≈ TS `let`.                    |
-| **File-scope `const`/`let`/`var`**                          | GDScript doesn't allow top-level mutable bindings outside a class. Wrap in a class.                                |
-| **Multiple `export class` per file**                        | Each `.gd` is one class. Split additional classes into separate files, or use inner classes via namespace merging. |
-| **Missing `extends` clause**                                | GDScript defaults to `RefCounted` — declare the base explicitly (`RefCounted`, `Node`, `Resource`, ...).           |
-| **`import Foo from '...'`** (default import)                | GDScript has no default-export concept.                                                                            |
-| **`import * as ns from '...'`** (namespace)                 | Same reason.                                                                                                       |
-| **Namespace member without `export`**                       | The paired class can only see `export`ed members from the namespace.                                               |
-| **Field name conflicts with a file-scope declaration**      | The emitted `preload` const would shadow the field — name them differently.                                        |
+| TS feature                                                              | Why it's rejected                                                                                                  |
+| ----------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Destructuring** — `let [a, b] = ...` / `[a, b] = arr` / `({a} = obj)` | GDScript has no destructuring (declaration or assignment form). Assign each binding manually.                      |
+| **`for...in`**                                                          | GDScript `for in` always iterates **values** (TS `for...of` semantics). Use `for...of` to avoid confusion.         |
+| **Nullish coalescing** — `??` / `??=`                                   | GDScript distinguishes `null` from default values differently; no direct equivalent.                               |
+| **Optional chaining** — `?.`                                            | GDScript has no `?.` short-circuit. Use explicit `null` checks or `obj.get("key")` for Dictionary access.          |
+| **Spread** — `f(...args)` / `[...arr]`                                  | Variadic call sites can't be desugared to GDScript. Function declarations may use `...rest` (rest parameters).     |
+| **`var` keyword** — function-scoped `var x`                             | Warning (not error). Use `let` or `const`; both convert to GDScript `var`. GD `var` ≈ TS `let`.                    |
+| **File-scope `const`/`let`/`var`**                                      | GDScript doesn't allow top-level mutable bindings outside a class. Wrap in a class.                                |
+| **Multiple `export class` per file**                                    | Each `.gd` is one class. Split additional classes into separate files, or use inner classes via namespace merging. |
+| **Missing `extends` clause**                                            | GDScript defaults to `RefCounted` — declare the base explicitly (`RefCounted`, `Node`, `Resource`, ...).           |
+| **`import Foo from '...'`** (default import)                            | GDScript has no default-export concept.                                                                            |
+| **`import * as ns from '...'`** (namespace)                             | Same reason.                                                                                                       |
+| **Namespace member without `export`**                                   | The paired class can only see `export`ed members from the namespace.                                               |
+| **Field name conflicts with a file-scope declaration**                  | The emitted `preload` const would shadow the field — name them differently.                                        |
 
 ### Type-system restrictions
 

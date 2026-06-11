@@ -1,0 +1,4 @@
+[
+  { "message": "Destructuring assignment", "severity": "error", "line": 7 },
+  { "message": "Destructuring assignment", "severity": "error", "line": 8 }
+]

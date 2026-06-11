@@ -14,13 +14,9 @@ import {
 import { shouldIgnore } from '../config/index.ts';
 import { ProjectCache } from '../cache/index.ts';
 import { isConversionErrorSeverity } from '../converter/common/index.ts';
-import { writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'fs';
 import { dirname } from 'path';
-import {
-  collectProjectDiagnostics,
-  printDiagnostics,
-  summarizeDiagnostics,
-} from '../checker/index.ts';
+import { CheckRunner } from './check.ts';
 
 export interface WatcherOptions {
   /** Root directory (base for relative paths) */
@@ -107,6 +103,9 @@ export class Watcher {
   // ── Debounced full-project check ──────────────────────────
   private checkDebounceTimer: ReturnType<typeof setTimeout> | null = null;
 
+  // ── Check + error-driven self-heal (see check.ts / heal.ts) ──
+  private checkRunner: CheckRunner;
+
   // ── Initial scan counters ─────────────────────────────────
   private initialConverted = 0;
   private initialSkipped = 0;
@@ -128,6 +127,26 @@ export class Watcher {
     // parallel ts-plugin (inside tsserver). Without it, both sides hold
     // independent in-memory snapshots and their views of the cache drift.
     this.cache = new ProjectCache(this.cacheDir, { watch: true });
+
+    this.checkRunner = new CheckRunner({
+      tsDir: this.tsDir,
+      gdDir: this.gdDir,
+      projectRoot: options.projectRoot ?? options.rootDir,
+      cacheDir: this.cacheDir,
+      tsConfigPath: options.tsConfigPath,
+      godotPath: options.godotPath,
+      emitOnError: options.emitOnError,
+      debug: options.debug,
+      cache: this.cache,
+      getTsFiles: () => this.tsFiles,
+      getProgram: () => this.cachedProgram,
+      setProgram: (p) => {
+        this.cachedProgram = p;
+      },
+      requestRecheck: () => this.scheduleCheck(),
+      log: (file, message, severity) => this.log(file, message, severity),
+      debugLog: (message) => this.debugLog(message),
+    });
   }
 
   start(): void {
@@ -192,6 +211,9 @@ export class Watcher {
   async stop(): Promise<void> {
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
     if (this.checkDebounceTimer) clearTimeout(this.checkDebounceTimer);
+    // Wait for an in-flight check (which may be heal-writing files)
+    // before tearing anything down.
+    await this.checkRunner.dispose();
     await this.fsWatcher?.close();
     this.cache.save();
     await this.cache.close();
@@ -330,56 +352,7 @@ export class Watcher {
 
   private runCheck(): void {
     this.checkDebounceTimer = null;
-    const tsFiles = [...this.tsFiles].filter((f) => !f.endsWith('.d.ts'));
-    if (tsFiles.length === 0) {
-      this.debugLog('Diagnostic check skipped — no .ts files');
-      return;
-    }
-
-    const projectRoot = this.options.projectRoot ?? this.options.rootDir;
-    const checkStart = Date.now();
-    this.debugLog(
-      `Diagnostic check starting (${tsFiles.length} file(s), program=${this.cachedProgram ? 'reused' : 'fresh'})`,
-    );
-
-    collectProjectDiagnostics({
-      tsDir: this.tsDir,
-      gdDir: this.gdDir,
-      projectRoot,
-      tsFiles,
-      tsConfigPath: this.options.tsConfigPath,
-      cache: this.cache,
-      godotPath: this.options.godotPath,
-      cacheDir: this.cacheDir,
-      noEmit: false,
-      // Reuse the program from the just-finished convertBatch — avoids
-      // re-parsing all .ts files. Falls back to a fresh program when null
-      // (e.g. when the only event was a removal that invalidated it).
-      program: this.cachedProgram ?? undefined,
-      onDebug: this.options.debug ? (msg) => this.debugLog(msg) : undefined,
-    })
-      .then((result) => {
-        this.debugLog(
-          `Diagnostic check finished in ${Date.now() - checkStart}ms`,
-        );
-        const summary = summarizeDiagnostics(result);
-
-        // Only clear the console when there's something to show — preserves the
-        // recent per-file conversion logs when the project is clean.
-        if (summary) {
-          process.stdout.write('\x1Bc');
-          printDiagnostics(result.tsDiagnostics, 'TS');
-          printDiagnostics(result.converterDiagnostics, 'CONV');
-          printDiagnostics(result.godotDiagnostics, 'GD');
-          console.log('[check] complete:');
-          console.log(summary);
-        } else {
-          console.log('[check] No issues found.');
-        }
-      })
-      .catch((err: Error) => {
-        this.log('', `[check] Failed: ${err.message}`, 'warning');
-      });
+    this.checkRunner.run();
   }
 
   private convertSingleFile(
@@ -387,6 +360,10 @@ export class Watcher {
     outputPath: string,
     program: ts.Program,
   ): void {
+    // This file's diagnostics may legitimately change this cycle (it was
+    // edited) — exclude it from the heal pass's suspect detection.
+    this.checkRunner.noteConverted(filePath);
+
     const result = convertTsToGd({
       filePath,
       rootDir: this.tsDir,
@@ -412,12 +389,24 @@ export class Watcher {
       if (!this.options.emitOnError) return;
     }
 
-    // Write output
-    mkdirSync(dirname(outputPath), { recursive: true });
-    writeFileSync(outputPath, result.code);
+    // Write output — only when the bytes actually changed, so Godot
+    // doesn't reimport identical files and file watchers don't churn.
+    const normalizeEol = (s: string): string => s.replace(/\r\n/g, '\n');
+    const diskContent = existsSync(outputPath)
+      ? readFileSync(outputPath, 'utf-8')
+      : null;
+    const outputUnchanged =
+      diskContent !== null &&
+      normalizeEol(diskContent) === normalizeEol(result.code);
+    if (!outputUnchanged) {
+      mkdirSync(dirname(outputPath), { recursive: true });
+      writeFileSync(outputPath, result.code);
+    }
 
     // Update cache. `gdContent` populates `<cacheDir>/gd-output/` so a
     // later run (or the plugin) can reuse the exact bytes via promote.
+    // When the write was skipped, hash the bytes actually on disk — a
+    // CRLF .gd would never look fresh against the LF `result.code` hash.
     if (result.sourceMap) {
       this.cache.updateTsToGd(
         filePath,
@@ -425,7 +414,7 @@ export class Watcher {
         result.sourceMap,
         result.diagnostics,
         {
-          gdContent: result.code,
+          gdContent: outputUnchanged ? diskContent! : result.code,
         },
       );
     }
@@ -440,8 +429,9 @@ export class Watcher {
       'info',
     );
 
-    // Validate with Godot if configured
-    if (this.options.godotPath) {
+    // Validate with Godot if configured (identical bytes → identical
+    // validation result, so skip when nothing was written)
+    if (this.options.godotPath && !outputUnchanged) {
       const projectRoot = this.options.projectRoot ?? this.options.rootDir;
       validateGdFiles({
         gdFiles: [outputPath],
