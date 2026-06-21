@@ -1,3 +1,13 @@
+## [0.1.2](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.1...v0.1.2) (2026-06-21)
+
+### Features
+
+* **typings:** upgrade Godot API typings to 4.7 ([3ec2a6e](https://github.com/nnn3d/typescript-to-gdscript/commit/3ec2a6e2dd2ad385ab9b35df83fe4ac840fd6859))
+
+### Bug Fixes
+
+* **cli:** don't use cache by default on convert ([2c85217](https://github.com/nnn3d/typescript-to-gdscript/commit/2c8521742d5a01a288bf19f78a55cb28da778c94))
+* **cli:** fix stale cache on watch ([718c16e](https://github.com/nnn3d/typescript-to-gdscript/commit/718c16e428e2eedb33ecab64078878eb5d007c58))
 ## [0.1.1](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.0...v0.1.1) (2026-06-07)
 
 ### Features
