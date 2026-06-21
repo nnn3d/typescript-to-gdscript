@@ -19,6 +19,31 @@ declare class Curve extends Resource {
   min_value: float;
   /** The number of points describing the curve. */
   point_count: int;
+  /**
+   * The left {@link TangentMode} for the point at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/left_mode': int;
+  /**
+   * The left tangent angle (in degrees) for the point at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/left_tangent': float;
+  /**
+   * The position of the point at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/position': Vector2;
+  /**
+   * The right {@link TangentMode} for the point at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/right_mode': int;
+  /**
+   * The right tangent angle (in degrees) for the point at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/right_tangent': float;
   set_bake_resolution(value: int): void;
   get_bake_resolution(): int;
   set_max_domain(value: float): void;
@@ -70,7 +95,7 @@ declare class Curve extends Resource {
   set_point_left_mode(index: int, mode: int): void;
   /** Sets the left tangent angle for the point at `index` to `tangent`. */
   set_point_left_tangent(index: int, tangent: float): void;
-  /** Sets the offset from `0.5`. */
+  /** Assigns the horizontal position `offset` to the point at `index`. */
   set_point_offset(index: int, offset: float): int;
   /** Sets the right {@link TangentMode} for the point at `index` to `mode`. */
   set_point_right_mode(index: int, mode: int): void;

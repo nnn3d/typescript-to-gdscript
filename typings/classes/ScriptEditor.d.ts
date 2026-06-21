@@ -8,6 +8,11 @@ declare class ScriptEditor extends PanelContainer {
    * **Note:** This should be called whenever the script is changed to keep the open documentation state up to date.
    */
   clear_docs_from_script(script: Script): void;
+  /**
+   * Closes the file at the given `path`, discarding any unsaved changes.
+   * Returns {@link OK} on success or {@link ERR_FILE_NOT_FOUND} if the file is not found.
+   */
+  close_file(path: string | NodePath): int;
   /** Returns array of breakpoints. */
   get_breakpoints(): PackedStringArray;
   /** Returns the {@link ScriptEditorBase} object that the user is currently editing. */
@@ -18,6 +23,8 @@ declare class ScriptEditor extends PanelContainer {
   get_open_script_editors(): Array<ScriptEditorBase>;
   /** Returns an array with all {@link Script} objects which are currently open in editor. */
   get_open_scripts(): Array<Script>;
+  /** Returns an array of file paths of scripts with unsaved changes open in the editor. */
+  get_unsaved_files(): PackedStringArray;
   /**
    * Opens help for the given topic. The `topic` is an encoded string that controls which class, method, constant, signal, annotation, property, or theme item should be focused.
    * The supported `topic` formats include `class_name:class`, `class_method:class:method`, `class_constant:class:constant`, `class_signal:class:signal`, `class_annotation:class:@annotation`, `class_property:class:property`, and `class_theme_item:class:item`, where `class` is the class name, `method` is the method name, `constant` is the constant name, `signal` is the signal name, `annotation` is the annotation name, `property` is the property name, and `item` is the theme item.
@@ -34,6 +41,12 @@ declare class ScriptEditor extends PanelContainer {
    * **Note:** Does not apply to scripts that are already opened.
    */
   register_syntax_highlighter(syntax_highlighter: EditorSyntaxHighlighter): void;
+  /**
+   * Reloads all currently opened files. This should be used when opened files are changed outside of the script editor. The user may be prompted to resolve file conflicts, see {@link EditorSettings.text_editor/behavior/files/auto_reload_scripts_on_external_change}.
+   */
+  reload_open_files(): void;
+  /** Saves all open scripts. */
+  save_all_scripts(): void;
   /**
    * Unregisters the {@link EditorSyntaxHighlighter} from the editor.
    * **Note:** The {@link EditorSyntaxHighlighter} will still be applied to scripts that are already opened.

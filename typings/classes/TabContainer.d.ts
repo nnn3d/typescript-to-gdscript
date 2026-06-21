@@ -3,9 +3,7 @@
 
 /** A container that creates a tab for each child control, displaying only the active tab's control. */
 declare class TabContainer extends Container {
-  /**
-   * If `true`, all tabs are drawn in front of the panel. If `false`, inactive tabs are drawn behind the panel.
-   */
+  /** This doesn't do anything. */
   all_tabs_in_front: boolean;
   /**
    * If `true`, tabs overflowing this node's width will be hidden, displaying two navigation buttons instead. Otherwise, this node's minimum size is updated so that all tabs are visible.
@@ -31,6 +29,26 @@ declare class TabContainer extends Container {
   tab_alignment: int;
   /** The focus access mode for the internal {@link TabBar} node. */
   tab_focus_mode: int;
+  /**
+   * If `true`, the tab at `index` is disabled.
+   * **Note:** `index` is a value in the `0 .. get_tab_count() - 1` range.
+   */
+  'tab_{index}/disabled': boolean;
+  /**
+   * If `true`, the tab at `index` is hidden.
+   * **Note:** `index` is a value in the `0 .. get_tab_count() - 1` range.
+   */
+  'tab_{index}/hidden': boolean;
+  /**
+   * The title text of the tab at `index`.
+   * **Note:** `index` is a value in the `0 .. get_tab_count() - 1` range.
+   */
+  'tab_{index}/icon': Texture2D | null;
+  /**
+   * The tooltip text of the tab at `index`.
+   * **Note:** `index` is a value in the `0 .. get_tab_count() - 1` range.
+   */
+  'tab_{index}/title': string;
   /** The horizontal alignment of the tabs. */
   tabs_position: int;
   /**

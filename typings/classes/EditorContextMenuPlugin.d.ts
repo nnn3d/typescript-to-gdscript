@@ -56,4 +56,8 @@ declare class EditorContextMenuPlugin extends RefCounted {
    * The paths array is empty if there weren't any nodes under cursor. The option callback will receive a typed array of {@link CanvasItem} nodes.
    */
   static readonly CONTEXT_SLOT_2D_EDITOR: int;
+  /**
+   * Context menu of the inspectors right-click menu. {@link _popup_menu} will be called with an array of two items: The first will be the object's ID, the second will be the property name. An object can be retrieved from it's ID via {@link @GlobalScope.instance_from_id} after converting it to an int. The option callback will receive the EditorProperty directly.
+   */
+  static readonly CONTEXT_SLOT_INSPECTOR_PROPERTY: int;
 }

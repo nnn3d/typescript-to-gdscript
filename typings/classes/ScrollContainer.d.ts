@@ -14,8 +14,11 @@ declare class ScrollContainer extends Container {
   follow_focus: boolean;
   /** Controls whether horizontal scrollbar can be used and when it should be visible. */
   horizontal_scroll_mode: int;
-  /** Deadzone for touch scrolling. Lower deadzone makes the scrolling more sensitive. */
-  scroll_deadzone: int;
+  /**
+   * <member name="scroll_deadzone" type="int" setter="set_deadzone" getter="get_deadzone" default="0">
+   * Deadzone for touch scrolling. Lower deadzone makes the scrolling more sensitive.
+   */
+  propagate_maximum_size: boolean;
   /**
    * The way which scroll hints (indicators that show that the content can still be scrolled in a certain direction) will be shown.
    * **Note:** Hints won't be shown if the content can be scrolled both vertically and horizontally.
@@ -26,6 +29,11 @@ declare class ScrollContainer extends Container {
    * **Note:** If you are setting this value in the {@link Node._ready} function or earlier, it needs to be wrapped with {@link Object.set_deferred}, since scroll bar's {@link Range.max_value} is not initialized yet.
    */
   scroll_horizontal: int;
+  /**
+   * If `true`, the mouse wheel scrolls the view horizontally, and holding `Shift` scrolls vertically.
+   * If `false` (default), the mouse wheel scrolls the view vertically, and holding `Shift` scrolls horizontally.
+   */
+  scroll_horizontal_by_default: boolean;
   /**
    * Overrides the {@link ScrollBar.custom_step} used when clicking the internal scroll bar's horizontal increment and decrement buttons or when using arrow keys when the {@link ScrollBar} is focused.
    */
@@ -49,12 +57,12 @@ declare class ScrollContainer extends Container {
   is_following_focus(): boolean;
   set_horizontal_scroll_mode(value: int): void;
   get_horizontal_scroll_mode(): int;
-  set_deadzone(value: int): void;
-  get_deadzone(): int;
   set_scroll_hint_mode(value: int): void;
   get_scroll_hint_mode(): int;
   set_h_scroll(value: int): void;
   get_h_scroll(): int;
+  set_scroll_horizontal_by_default(value: boolean): void;
+  is_scroll_horizontal_by_default(): boolean;
   set_horizontal_custom_step(value: float): void;
   get_horizontal_custom_step(): float;
   set_v_scroll(value: int): void;
@@ -88,7 +96,7 @@ declare class ScrollContainer extends Container {
    */
   scroll_ended: Signal<[]>;
   /**
-   * Emitted when scrolling starts when dragging the scrollable area w*ith a touch event*. This signal is *not* emitted when scrolling by dragging the scrollbar, scrolling with the mouse wheel or scrolling with keyboard/gamepad events.
+   * Emitted when scrolling starts when dragging the scrollable area *with a touch event*. This signal is *not* emitted when scrolling by dragging the scrollbar, scrolling with the mouse wheel or scrolling with keyboard/gamepad events.
    * **Note:** This signal is only emitted on Android or iOS, or on desktop/web platforms when {@link ProjectSettings.input_devices/pointing/emulate_touch_from_mouse} is enabled.
    */
   scroll_started: Signal<[]>;
@@ -108,6 +116,10 @@ declare class ScrollContainer extends Container {
    * Combines {@link SCROLL_MODE_AUTO} and {@link SCROLL_MODE_SHOW_ALWAYS}. The scrollbar is only visible if necessary, but the content size is adjusted as if it was always visible. It's useful for ensuring that content size stays the same regardless if the scrollbar is visible.
    */
   static readonly SCROLL_MODE_RESERVE: int;
+  /**
+   * Behaves like {@link SCROLL_MODE_AUTO}, but makes the {@link ScrollContainer} report a minimum size based on its content (limited by {@link Control.custom_maximum_size} when set on the corresponding axis). This allows it to grow first and only start scrolling once constrained.
+   */
+  static readonly SCROLL_MODE_MAXIMIZE_FIRST: int;
   // enum ScrollHintMode
   /** Scroll hints will never be shown. */
   static readonly SCROLL_HINT_MODE_DISABLED: int;

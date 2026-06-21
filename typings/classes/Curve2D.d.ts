@@ -9,6 +9,21 @@ declare class Curve2D extends Resource {
   bake_interval: float;
   /** The number of points describing the curve. */
   point_count: int;
+  /**
+   * The position of the control point leading to the vertex at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/in': Vector2;
+  /**
+   * The position of the control point leading out of the vertex at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/out': Vector2;
+  /**
+   * The position of for the vertex at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/position': Vector2;
   set_bake_interval(value: float): void;
   get_bake_interval(): float;
   set_point_count(value: int): void;

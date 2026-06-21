@@ -27,8 +27,9 @@ declare class EditorResourcePicker extends HBoxContainer {
    */
   _handle_menu_selected(id: int): boolean;
   /**
-   * This virtual method is called when updating the context menu of {@link EditorResourcePicker}. Implement this method to override the "New ..." items with your own options. `menu_node` is a reference to the {@link PopupMenu} node.
+   * This virtual method is called when updating the context menu of an {@link editable} {@link EditorResourcePicker}. Implement this method to override the "New" items section with your own options. `menu_node` is a reference to the {@link PopupMenu} node.
    * **Note:** Implement {@link _handle_menu_selected} to handle these custom items.
+   * **Note:** Relevant built-in options ("Load", "Copy", "Paste", etc.) are automatically added to the `menu_node` afterwards, using their hard-coded IDs starting from `0`. Custom options need to use non-colliding IDs to be handled properly. Using `id = 100 + custom_option_index` is safe (this is what the default items in the "New" section use).
    */
   _set_create_options(menu_node: GodotObject): void;
   /**

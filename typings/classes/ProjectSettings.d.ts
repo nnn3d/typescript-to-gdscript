@@ -4,6 +4,12 @@
 /** Stores globally-accessible variables. */
 declare interface ProjectSettings {
   /**
+   * Accessibility driver:
+   * -**accesskit** (default): AccessKit driver.
+   * -**dummy**: Dummy driver, screen reader support is disabled.
+   */
+  'accessibility/general/accessibility_driver': string;
+  /**
    * Accessibility support mode:
    * - **Auto** (`0`): Accessibility support is enabled, but updates to the accessibility information are processed only if an assistive app (such as a screen reader or a Braille display) is active (default).
    * - **Always Active** (`1`): Accessibility support is enabled, and updates to the accessibility information are always processed, regardless of the status of assistive apps.
@@ -22,6 +28,10 @@ declare interface ProjectSettings {
    * If `true`, {@link AnimationMixer} prints the warning of interpolation being forced to choose the shortest rotation path due to multiple angle interpolation types being mixed in the {@link AnimationMixer} cache.
    */
   'animation/warnings/check_angle_interpolation_type_conflicting': boolean;
+  /**
+   * If `true`, {@link SkeletonModifier3D} prints a warning if there's no matching object for the track path in the scene when assigning.
+   */
+  'animation/warnings/check_invalid_skeleton_modifier_node_paths': boolean;
   /**
    * If `true`, {@link AnimationMixer} prints the warning of no matching object of the track path in the scene.
    */
@@ -337,6 +347,10 @@ declare interface ProjectSettings {
    * When set to **Warn** or **Error**, produces a warning or an error respectively when an identifier that will be shadowed below in the block is used.
    */
   'debug/gdscript/warnings/confusable_local_usage': int;
+  /**
+   * When set to **Warn** or **Error**, produces a warning or an error respectively when a built-in property of type `Packed*Array` is modified using a complex assignment chain or a non-`const` method call. In this case, you are only modifying a temporary value, and the property's value remains unchanged.
+   */
+  'debug/gdscript/warnings/confusable_temporary_modification': int;
   /**
    * When set to **Warn** or **Error**, produces a warning or an error respectively when deprecated keywords are used.
    * **Note:** There are currently no deprecated keywords, so this warning is never produced.
@@ -841,6 +855,11 @@ declare interface ProjectSettings {
    */
   'display/window/handheld/orientation': int;
   /**
+   * If `true`, HDR output is requested for the main window and the editor. The main window and editor will automatically switch between HDR and SDR if it is moved between screens, screen capabilities change, or system settings are modified. This will internally force {@link Viewport.use_hdr_2d} to be enabled on the main {@link Viewport}. All other {@link SubViewport} of the {@link Window} must have their {@link Viewport.use_hdr_2d} property enabled to produce HDR output.
+   * **Note:** This property is only read when the project starts. To change this property at runtime, set {@link Window.hdr_output_requested}.
+   */
+  'display/window/hdr/request_hdr_output': boolean;
+  /**
    * If `true`, iOS devices that support high refresh rate/"ProMotion" will be allowed to render at up to 120 frames per second.
    */
   'display/window/ios/allow_high_refresh_rate': boolean;
@@ -948,13 +967,13 @@ declare interface ProjectSettings {
    * `"keep"`: Keep aspect ratio when stretching the screen. This means that the viewport retains its original size regardless of the screen resolution, and black bars will be added to the top/bottom of the screen ("letterboxing") or the sides ("pillarboxing").
    * `"keep_width"`: Keep aspect ratio when stretching the screen. If the screen is wider than the base size, black bars are added at the left and right (pillarboxing). But if the screen is taller than the base resolution, the viewport will be grown in the vertical direction (and more content will be visible at the bottom). You can also think of this as "Expand Vertically".
    * `"keep_height"`: Keep aspect ratio when stretching the screen. If the screen is taller than the base size, black bars are added at the top and bottom (letterboxing). But if the screen is wider than the base resolution, the viewport will be grown in the horizontal direction (and more content will be visible to the right). You can also think of this as "Expand Horizontally".
-   * `"expand"`: Keep aspect ratio when stretching the screen, but keep neither the base width nor height. Depending on the screen aspect ratio, the viewport will either be larger in the horizontal direction (if the screen is wider than the base size) or in the vertical direction (if the screen is taller than the original size).
+   * `"expand"`: Keep aspect ratio when stretching the screen, but keep neither the base width nor height. Depending on the screen aspect ratio, the viewport will either be larger in the horizontal direction (if the screen is wider than the base size) or in the vertical direction (if the screen is taller than the original size). This is the default for projects created starting in Godot 4.7.
    */
   'display/window/stretch/aspect': string;
   /**
    * Defines how the base size is stretched to fit the resolution of the window or screen.
    * `"disabled"`: No stretching happens. One unit in the scene corresponds to one pixel on the screen. In this mode, {@link display/window/stretch/aspect} has no effect. Recommended for non-game applications.
-   * `"canvas_items"`: The base size specified in width and height in the project settings is stretched to cover the whole screen (taking {@link display/window/stretch/aspect} into account). This means that everything is rendered directly at the target resolution. 3D is unaffected, while in 2D, there is no longer a 1:1 correspondence between sprite pixels and screen pixels, which may result in scaling artifacts. Recommended for most games that don't use a pixel art aesthetic, although it is possible to use this stretch mode for pixel art games too (especially in 3D).
+   * `"canvas_items"`: The base size specified in width and height in the project settings is stretched to cover the whole screen (taking {@link display/window/stretch/aspect} into account). This means that everything is rendered directly at the target resolution. 3D is unaffected, while in 2D, there is no longer a 1:1 correspondence between sprite pixels and screen pixels, which may result in scaling artifacts. Recommended for most games that don't use a pixel art aesthetic, although it is possible to use this stretch mode for pixel art games too (especially in 3D). This is the default for projects created starting in Godot 4.7.
    * `"viewport"`: The size of the root {@link Viewport} is set precisely to the base size specified in the Project Settings' Display section. The scene is rendered to this viewport first. Finally, this viewport is scaled to fit the screen (taking {@link display/window/stretch/aspect} into account). Recommended for games that use a pixel art aesthetic.
    */
   'display/window/stretch/mode': string;
@@ -972,11 +991,11 @@ declare interface ProjectSettings {
   /**
    * If `true`, subwindows are embedded in the main window (this is also called single-window mode). Single-window mode can be faster as it does not need to create a separate window for every popup and tooltip, which can be a slow operation depending on the operating system and rendering method in use.
    * If `false`, subwindows are created as separate windows (this is also called multi-window mode). This allows them to be moved outside the main window and use native operating system window decorations.
-   * This is equivalent to {@link EditorSettings.interface/editor/single_window_mode} in the editor.
+   * This is equivalent to {@link EditorSettings.interface/editor/display/single_window_mode} in the editor.
    */
   'display/window/subwindows/embed_subwindows': boolean;
   /**
-   * Sets the V-Sync mode for the main game window. The editor's own V-Sync mode can be set using {@link EditorSettings.interface/editor/vsync_mode}.
+   * Sets the V-Sync mode for the main game window. The editor's own V-Sync mode can be set using {@link EditorSettings.interface/editor/display/vsync_mode}.
    * See {@link DisplayServer.VSyncMode} for possible values and how they affect the behavior of your application.
    * Depending on the platform and rendering method, the engine will fall back to **Enabled** if the desired mode is not supported.
    * V-Sync can be disabled on the command line using the `--disable-vsync` command line argument ($DOCS_URL/tutorials/editor/command_line_tutorial.html).
@@ -1133,10 +1152,10 @@ declare interface ProjectSettings {
    */
   'gui/common/drag_threshold': int;
   /**
-   * Determines whether a {@link Control} should visually indicate focus when said focus is gained using a mouse or touch input.
+   * Determines whether a {@link Control} should visually indicate focus when that focus is gained using a mouse or touch input.
    * - **Never** (`0`) show the focused state for mouse/touch input.
-   * - **Control Supports Keyboard Input** (`1`) shows the focused state even when gained via mouse/touch input (similar to how browsers handle focus).
-   * - **Always** (`2`) show the focused state, even if said focus was gained via mouse/touch input.
+   * - **Text Input Controls** (`1`) show the focused state even if that focus was gained via mouse/touch input (similar to browser behavior).
+   * - **Always** (`2`) show the focused state, even if that focus was gained via mouse/touch input.
    */
   'gui/common/show_focus_state_on_pointer_event': int;
   /**
@@ -1199,7 +1218,7 @@ declare interface ProjectSettings {
   /** LCD subpixel layout used for font anti-aliasing. See {@link TextServer.FontLCDSubpixelLayout}. */
   'gui/theme/lcd_subpixel_layout': int;
   /**
-   * When {@link BaseButton.shortcut_feedback} is enabled, this is the time the {@link BaseButton} will remain highlighted after a shortcut.
+   * When {@link BaseButton.shortcut_feedback} is enabled, this is the time the {@link BaseButton} will remain highlighted after a shortcut. This duration is not affected by {@link Engine.time_scale}.
    */
   'gui/timers/button_shortcut_feedback_highlight_time': float;
   /**
@@ -1622,6 +1641,10 @@ declare interface ProjectSettings {
    * **Note:** You should in nearly all cases prefer the `false` setting. The legacy behavior is to enable supporting old projects that rely on the old logic, without changes to script.
    */
   'input_devices/compatibility/legacy_just_pressed_behavior': boolean;
+  /**
+   * If `true`, joypad input (including motion sensors) and LED light changes will be ignored and joypad vibration will be stopped when the application is not focused.
+   */
+  'input_devices/joypads/ignore_joypad_on_unfocused_application': boolean;
   /**
    * Specifies the tablet driver to use. If left empty, the default driver will be used.
    * **Note:** The driver in use can be overridden at runtime via the `--tablet-driver` command line argument ($DOCS_URL/tutorials/editor/command_line_tutorial.html).
@@ -2382,10 +2405,12 @@ declare interface ProjectSettings {
   'physics/2d/sleep_threshold_angular': float;
   /**
    * Threshold linear velocity under which a 2D physics body will be considered inactive. See {@link PhysicsServer2D.SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD}.
+   * **Note:** Only supported when using GodotPhysics3D. This project setting is ignored when using Jolt Physics.
    */
   'physics/2d/sleep_threshold_linear': float;
   /**
    * Maximum distance a shape can penetrate another shape before it is considered a collision. See {@link PhysicsServer2D.SPACE_PARAM_CONTACT_MAX_ALLOWED_PENETRATION}.
+   * **Note:** Only supported when using GodotPhysics3D. This project setting is ignored when using Jolt Physics.
    */
   'physics/2d/solver/contact_max_allowed_penetration': float;
   /**
@@ -2463,35 +2488,43 @@ declare interface ProjectSettings {
   'physics/3d/run_on_separate_thread': boolean;
   /**
    * Threshold angular velocity under which a 3D physics body will be considered inactive. See {@link PhysicsServer3D.SPACE_PARAM_BODY_ANGULAR_VELOCITY_SLEEP_THRESHOLD}.
+   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/sleep_threshold_angular': float;
   /**
    * Threshold linear velocity under which a 3D physics body will be considered inactive. See {@link PhysicsServer3D.SPACE_PARAM_BODY_LINEAR_VELOCITY_SLEEP_THRESHOLD}.
+   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/sleep_threshold_linear': float;
   /**
    * Maximum distance a shape can penetrate another shape before it is considered a collision. See {@link PhysicsServer3D.SPACE_PARAM_CONTACT_MAX_ALLOWED_PENETRATION}.
+   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/solver/contact_max_allowed_penetration': float;
   /**
    * Maximum distance a shape can be from another before they are considered separated and the contact is discarded. See {@link PhysicsServer3D.SPACE_PARAM_CONTACT_MAX_SEPARATION}.
+   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/solver/contact_max_separation': float;
   /**
    * Maximum distance a pair of bodies has to move before their collision status has to be recalculated. See {@link PhysicsServer3D.SPACE_PARAM_CONTACT_RECYCLE_RADIUS}.
+   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/solver/contact_recycle_radius': float;
   /**
    * Default solver bias for all physics contacts. Defines how much bodies react to enforce contact separation. See {@link PhysicsServer3D.SPACE_PARAM_CONTACT_DEFAULT_BIAS}.
    * Individual shapes can have a specific bias value (see {@link Shape3D.custom_solver_bias}).
+   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/solver/default_contact_bias': float;
   /**
    * Number of solver iterations for all contacts and constraints. The greater the number of iterations, the more accurate the collisions will be. However, a greater number of iterations requires more CPU power, which can decrease performance. See {@link PhysicsServer3D.SPACE_PARAM_SOLVER_ITERATIONS}.
+   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/solver/solver_iterations': int;
   /**
    * Time (in seconds) of inactivity before which a 3D physics body will put to sleep. See {@link PhysicsServer3D.SPACE_PARAM_BODY_TIME_TO_SLEEP}.
+   * **Note:** This project setting is only effective when using GodotPhysics3D. It has no effect when using Jolt Physics.
    */
   'physics/3d/time_before_sleep': float;
   /** Enables {@link Viewport.physics_object_picking} on the root viewport. */
@@ -2792,6 +2825,10 @@ declare interface ProjectSettings {
    */
   'rendering/environment/defaults/default_environment': string;
   /**
+   * Enables legacy fog blending behavior from version 4.5 and earlier. This is intended for users who are developing on pre-4.6 versions and want to upgrade to 4.6 with the smallest possible change to their visuals.
+   */
+  'rendering/environment/fog/use_legacy_blending': boolean;
+  /**
    * Sets how the glow effect is upscaled before being copied onto the screen. Linear is faster, but looks blocky. Bicubic is slower but looks smooth.
    * **Note:** {@link rendering/environment/glow/upscale_mode} is only effective when using the Forward+ or Mobile rendering methods, as Compatibility uses a different glow implementation.
    */
@@ -3058,6 +3095,7 @@ declare interface ProjectSettings {
   'rendering/lightmapping/primitive_meshes/texel_size': float;
   /**
    * The framerate-independent update speed when representing dynamic object lighting from {@link LightmapProbe}s. Higher values make dynamic object lighting update faster. Higher values can prevent fast-moving objects from having "outdated" indirect lighting displayed on them, at the cost of possible flickering when an object moves from a bright area to a shaded area.
+   * **Note:** This property is only read when the project starts. To adjust the BVH build quality at runtime, use {@link RenderingServer.lightmap_set_probe_capture_update_speed}.
    */
   'rendering/lightmapping/probe_capture/update_speed': float;
   /**
@@ -3167,6 +3205,7 @@ declare interface ProjectSettings {
   'rendering/limits/time/time_rollover_secs': float;
   /**
    * The automatic LOD bias to use for meshes rendered within the {@link ReflectionProbe}. Higher values will use less detailed versions of meshes that have LOD variations generated. If set to `0.0`, automatic LOD is disabled. Increase {@link rendering/mesh_lod/lod_change/threshold_pixels} to improve performance at the cost of geometry detail.
+   * **Note:** Depending on the mesh's attributes (vertex colors, blend shapes, ...), a mesh may have fewer levels of LOD generated to avoid visible distortion of the mesh once it is affected by vertex colors or blend shapes. Meshes with a very low vertex count will also not have any LODs generated, which means this setting will not affect them at all. In general, this setting makes the largest impact on static meshes with a high vertex count.
    * **Note:** {@link rendering/mesh_lod/lod_change/threshold_pixels} does not affect {@link GeometryInstance3D} visibility ranges (also known as "manual" LOD or hierarchical LOD).
    * **Note:** This property is only read when the project starts. To adjust the automatic LOD threshold at runtime, set {@link Viewport.mesh_lod_threshold} on the root {@link Viewport}.
    */
@@ -3398,6 +3437,7 @@ declare interface ProjectSettings {
   'rendering/scaling_3d/mode.macos': int;
   /**
    * Scales the 3D render buffer based on the viewport size uses an image filter specified in {@link rendering/scaling_3d/mode} to scale the output image to the full viewport size. Values lower than `1.0` can be used to speed up 3D rendering at the cost of quality (undersampling). Values greater than `1.0` are only valid for bilinear mode and can be used to improve 3D rendering quality at a high performance cost (supersampling). See also {@link rendering/anti_aliasing/quality/msaa_3d} for multi-sample antialiasing, which is significantly cheaper but only smooths the edges of polygons.
+   * **Note:** When using the **Nearest** scaling mode, to avoid uneven pixel scaling, it's highly recommended to use a value equal to an integer divisor with a dividend of `1`. For example, it's best to use a scale of `0.5` (1/2), `0.3333` (1/3), `0.25` (1/4), `0.2` (1/5), and so on.
    */
   'rendering/scaling_3d/scale': float;
   'rendering/shader_compiler/shader_cache/compress': boolean;
@@ -3456,6 +3496,7 @@ declare interface ProjectSettings {
    * Affects the final texture sharpness by reading from a lower or higher mipmap (also called "texture LOD bias"). Negative values make mipmapped textures sharper but grainier when viewed at a distance, while positive values make mipmapped textures blurrier (even when up close).
    * Enabling temporal antialiasing ({@link rendering/anti_aliasing/quality/use_taa}) will automatically apply a `-0.5` offset to this value, while enabling FXAA ({@link rendering/anti_aliasing/quality/screen_space_aa}) will automatically apply a `-0.25` offset to this value. If both TAA and FXAA are enabled at the same time, an offset of `-0.75` is applied to this value.
    * **Note:** If {@link rendering/scaling_3d/scale} is lower than `1.0` (exclusive), {@link rendering/textures/default_filters/texture_mipmap_bias} is used to adjust the automatic mipmap bias which is calculated internally based on the scale factor. The formula for this is `log2(scaling_3d_scale) + mipmap_bias`.
+   * **Note:** This property is only supported in the Forward+ and Mobile renderers, not Compatibility. In Compatibility, this property is always treated as if it was set to `0.0`.
    */
   'rendering/textures/default_filters/texture_mipmap_bias': float;
   /**
@@ -3639,6 +3680,8 @@ declare interface ProjectSettings {
    * **Note:** This requires that the OpenXR spatial entities extension is supported by the XR runtime. If not supported this setting will be ignored.
    */
   'xr/openxr/extensions/spatial_entity/enabled': boolean;
+  /** If `true`, the user presence extension is enabled if available. */
+  'xr/openxr/extensions/user_presence': boolean;
   /** Specify whether OpenXR should be configured for an HMD or a hand held device. */
   'xr/openxr/form_factor': int;
   /**
@@ -3646,10 +3689,19 @@ declare interface ProjectSettings {
    */
   'xr/openxr/foveation_dynamic': boolean;
   /**
+   * If `true` and foveation level is set to anything other than "Disabled", eye-tracked foveation will be used, so long as it's supported by the headset.
+   */
+  'xr/openxr/foveation_eye_tracked': boolean;
+  /**
    * Applied foveation level if supported.
    * **Note:** On platforms other than Android, if {@link rendering/anti_aliasing/quality/msaa_3d} is enabled, this feature will be disabled.
    */
   'xr/openxr/foveation_level': int;
+  /**
+   * If `true` and foveation is also enabled, subsampled images will be used on Vulkan. This can improve the performance gain from foveated rendering, especially when using high foveation levels.
+   * **Note:**: Using subsampled images is incompatible with many screen-space rendering features or post-processing effects like FXAA or glow. If any such effects are enabled, subsampled images will automatically be disabled and a warning shown in the log.
+   */
+  'xr/openxr/foveation_with_subsampled_images': boolean;
   /** Specify the default reference space. */
   'xr/openxr/reference_space': int;
   /** If `true`, Godot will display an alert modal when OpenXR initialization fails on startup. */
@@ -3764,11 +3816,11 @@ declare interface ProjectSettings {
   localize_path(path: string | NodePath): string;
   /**
    * Saves the configuration to the `project.godot` file.
-   * **Note:** This method is intended to be used by editor plugins, as modified {@link ProjectSettings} can't be loaded back in the running app. If you want to change project settings in exported projects, use {@link save_custom} to save `override.cfg` file.
+   * **Note:** This method is intended to be used by editor plugins, as modified {@link ProjectSettings} can't be loaded back in the running app. If you want to change project settings in exported projects, use {@link save_custom} to save an `override.cfg` file.
    */
   save(): int;
   /**
-   * Saves the configuration to a custom file. The file extension must be `.godot` (to save in text-based {@link ConfigFile} format) or `.binary` (to save in binary format). You can also save `override.cfg` file, which is also text, but can be used in exported projects unlike other formats.
+   * Saves the configuration to a custom file. The file extension must be `.godot` (to save in text-based {@link ConfigFile} format) or `.binary` (to save in binary format). You can also save an `override.cfg` file, which is also text, but can be used in exported projects unlike other formats.
    */
   save_custom(file: string | NodePath): int;
   /**

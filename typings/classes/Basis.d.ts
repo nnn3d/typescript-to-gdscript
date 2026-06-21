@@ -31,7 +31,7 @@ declare interface Basis {
    * - The {@link Vector3.x} contains the angle around the {@link x} axis (pitch);
    * - The {@link Vector3.y} contains the angle around the {@link y} axis (yaw);
    * - The {@link Vector3.z} contains the angle around the {@link z} axis (roll).
-   * The order of each consecutive rotation can be changed with `order` (see {@link EulerOrder} constants). By default, the YXZ convention is used ({@link EULER_ORDER_YXZ}): Z (roll) is calculated first, then X (pitch), and lastly Y (yaw). When using the opposite method {@link from_euler}, this order is reversed.
+   * The order of each consecutive rotation can be changed with `order` (see {@link EulerOrder} constants). In Godot, Euler angles always use intrinsic order. By default, the intrinsic YXZ convention is used ({@link EULER_ORDER_YXZ}): since we are decomposing, local Z (roll) is calculated first, then local X (pitch), and lastly local Y (yaw). When using the opposite method {@link from_euler} to compose a rotation, this order is reversed.
    * **Note:** For this method to return correctly, the basis needs to be *orthonormal* (see {@link orthonormalized}).
    * **Note:** Euler angles are much more intuitive but are not suitable for 3D math. Because of this, consider using the {@link get_rotation_quaternion} method instead, which returns a {@link Quaternion}.
    * **Note:** In the Inspector dock, a basis's rotation is often displayed in Euler angles (in degrees), as is the case with the {@link Node3D.rotation} property.
@@ -61,6 +61,10 @@ declare interface Basis {
    * Returns `true` if this basis is finite, by calling {@link @GlobalScope.is_finite} on all vector components.
    */
   is_finite(): boolean;
+  /**
+   * Returns `true` if this basis is orthonormal. An orthonormal basis is both *orthogonal* (the axes are perpendicular to each other) and *normalized* (the length of every axis is `1.0`). This method can be especially useful during physics calculations.
+   */
+  is_orthonormal(): boolean;
   /**
    * Returns the orthonormalized version of this basis. An orthonormal basis is both *orthogonal* (the axes are perpendicular to each other) and *normalized* (the axes have a length of `1.0`), which also means it can only represent a rotation.
    * It is often useful to call this method to avoid rounding errors on a rotating basis:
@@ -177,7 +181,7 @@ declare interface BasisConstructor {
    * - The {@link Vector3.x} should contain the angle around the {@link x} axis (pitch);
    * - The {@link Vector3.y} should contain the angle around the {@link y} axis (yaw);
    * - The {@link Vector3.z} should contain the angle around the {@link z} axis (roll).
-   * The order of each consecutive rotation can be changed with `order` (see {@link EulerOrder} constants). By default, the YXZ convention is used ({@link EULER_ORDER_YXZ}): the basis rotates first around the Y axis (yaw), then X (pitch), and lastly Z (roll). When using the opposite method {@link get_euler}, this order is reversed.
+   * The order of each consecutive rotation can be changed with `order` (see {@link EulerOrder} constants). In Godot, Euler angles always use intrinsic order. By default, the intrinsic YXZ convention is used ({@link EULER_ORDER_YXZ}): the basis rotates first around the local Y axis (yaw), then local X (pitch), and lastly local Z (roll). When using the opposite method {@link get_euler} to decompose a rotation, this order is reversed.
    */
   from_euler(euler: Vector3 | Vector3i, order?: int): Basis;
   /**

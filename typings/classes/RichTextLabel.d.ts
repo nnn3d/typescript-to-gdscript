@@ -5,6 +5,7 @@
 declare class RichTextLabel extends Control {
   /**
    * If set to something other than {@link TextServer.AUTOWRAP_OFF}, the text gets wrapped inside the node's bounding rectangle.
+   * **Note:** RichTextLabels with autowrapping and {@link fit_content} enabled must have a custom maximum width configured to work correctly, either through the RichTextLabel's own {@link Control.custom_maximum_size} or as a result of a propagated maximum size from a parent Control with {@link Control.propagate_maximum_size} enabled.
    */
   autowrap_mode: int;
   /**
@@ -32,6 +33,7 @@ declare class RichTextLabel extends Control {
   drag_and_drop_selection_enabled: boolean;
   /**
    * If `true`, the label's minimum size will be automatically updated to fit its content, matching the behavior of {@link Label}.
+   * **Note:** RichTextLabels with autowrapping and {@link fit_content} enabled must have a custom maximum width configured to work correctly, either through the RichTextLabel's own {@link Control.custom_maximum_size} or as a result of a propagated maximum size from a parent Control with {@link Control.propagate_maximum_size} enabled.
    */
   fit_content: boolean;
   /**
@@ -175,11 +177,10 @@ declare class RichTextLabel extends Control {
    * If `width` and `height` are not set, but `region` is, the region's rect will be used.
    * `key` is an optional identifier, that can be used to modify the image via {@link update_image}.
    * If `pad` is set, and the image is smaller than the size specified by `width` and `height`, the image padding is added to match the size instead of upscaling.
-   * If `width_in_percent` is set, `width` values are percentages of the control width instead of pixels.
-   * If `height_in_percent` is set, `height` values are percentages of the control width instead of pixels.
+   * Parameters `width_unit` and `height_unit` determine the units used to calculate the image width and height, respectively.
    * `alt_text` is used as the image description for assistive apps.
    */
-  add_image(image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2 | Rect2i, key?: unknown, pad?: boolean, tooltip?: string | NodePath, width_in_percent?: boolean, height_in_percent?: boolean, alt_text?: string | NodePath): void;
+  add_image(image: Texture2D, width?: float, height?: float, color?: Color, inline_align?: int, region?: Rect2 | Rect2i, key?: unknown, pad?: boolean, tooltip?: string | NodePath, width_unit?: int, height_unit?: int, alt_text?: string | NodePath): void;
   /** Adds raw non-BBCode-parsed text to the tag stack. */
   add_text(text: string | NodePath): void;
   /**
@@ -462,7 +463,7 @@ declare class RichTextLabel extends Control {
   /**
    * Updates the existing images with the key `key`. Only properties specified by `mask` bits are updated. See {@link add_image}.
    */
-  update_image(key: unknown, mask: int, image: Texture2D, width?: int, height?: int, color?: Color, inline_align?: int, region?: Rect2 | Rect2i, pad?: boolean, tooltip?: string | NodePath, width_in_percent?: boolean, height_in_percent?: boolean): void;
+  update_image(key: unknown, mask: int, image: Texture2D, width?: float, height?: float, color?: Color, inline_align?: int, region?: Rect2 | Rect2i, pad?: boolean, tooltip?: string | NodePath, width_unit?: int, height_unit?: int): void;
 
   /**
    * Triggered when the document is fully loaded.
@@ -519,6 +520,13 @@ declare class RichTextLabel extends Control {
   static readonly UPDATE_PAD: int;
   /** If this bit is set, {@link update_image} changes image tooltip. */
   static readonly UPDATE_TOOLTIP: int;
-  /** If this bit is set, {@link update_image} changes image width from/to percents. */
-  static readonly UPDATE_WIDTH_IN_PERCENT: int;
+  /** If this bit is set, {@link update_image} changes the units used to calculate image size. */
+  static readonly UPDATE_WIDTH_UNIT: int;
+  // enum ImageUnit
+  /** Images drawn with this unit will be in pixels. */
+  static readonly IMAGE_UNIT_PIXEL: int;
+  /** Images drawn with this unit will be in percentages of the control width. */
+  static readonly IMAGE_UNIT_PERCENT: int;
+  /** Images drawn with this unit will be in percentages of the surrounding font size. */
+  static readonly IMAGE_UNIT_EM: int;
 }

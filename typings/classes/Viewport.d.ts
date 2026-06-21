@@ -57,6 +57,7 @@ declare class Viewport extends Node {
   /**
    * The automatic LOD bias to use for meshes rendered within the {@link Viewport} (this is analogous to {@link ReflectionProbe.mesh_lod_threshold}). Higher values will use less detailed versions of meshes that have LOD variations generated. If set to `0.0`, automatic LOD is disabled. Increase {@link mesh_lod_threshold} to improve performance at the cost of geometry detail.
    * To control this property on the root viewport, set the {@link ProjectSettings.rendering/mesh_lod/lod_change/threshold_pixels} project setting.
+   * **Note:** Depending on the mesh's attributes (vertex colors, blend shapes, ...), a mesh may have fewer levels of LOD generated to avoid visible distortion of the mesh once it is affected by vertex colors or blend shapes. Meshes with a very low vertex count will also not have any LODs generated, which means this setting will not affect them at all. In general, this setting makes the largest impact on static meshes with a high vertex count.
    * **Note:** {@link mesh_lod_threshold} does not affect {@link GeometryInstance3D} visibility ranges (also known as "manual" LOD or hierarchical LOD).
    */
   mesh_lod_threshold: float;
@@ -151,8 +152,9 @@ declare class Viewport extends Node {
   /**
    * Affects the final texture sharpness by reading from a lower or higher mipmap (also called "texture LOD bias"). Negative values make mipmapped textures sharper but grainier when viewed at a distance, while positive values make mipmapped textures blurrier (even when up close).
    * Enabling temporal antialiasing ({@link use_taa}) will automatically apply a `-0.5` offset to this value, while enabling FXAA ({@link screen_space_aa}) will automatically apply a `-0.25` offset to this value. If both TAA and FXAA are enabled at the same time, an offset of `-0.75` is applied to this value.
-   * **Note:** If {@link scaling_3d_scale} is lower than `1.0` (exclusive), {@link texture_mipmap_bias} is used to adjust the automatic mipmap bias which is calculated internally based on the scale factor. The formula for this is `log2(scaling_3d_scale) + mipmap_bias`.
    * To control this property on the root viewport, set the {@link ProjectSettings.rendering/textures/default_filters/texture_mipmap_bias} project setting.
+   * **Note:** If {@link scaling_3d_scale} is lower than `1.0` (exclusive), {@link texture_mipmap_bias} is used to adjust the automatic mipmap bias which is calculated internally based on the scale factor. The formula for this is `log2(scaling_3d_scale) + mipmap_bias`.
+   * **Note:** This property is only supported in the Forward+ and Mobile renderers, not Compatibility. In Compatibility, this property is always treated as if it was set to `0.0`.
    */
   texture_mipmap_bias: float;
   /**
@@ -530,6 +532,11 @@ declare class Viewport extends Node {
    * **Note:** Only supported when the Metal rendering driver is in use, which limits this scaling mode to macOS and iOS.
    */
   static readonly SCALING_3D_MODE_METALFX_TEMPORAL: int;
+  /**
+   * Use nearest-neighbor filtering for the viewport's 3D buffer. This looks crisper than {@link SCALING_3D_MODE_BILINEAR} and has no additional rendering cost. The amount of scaling can be set using {@link scaling_3d_scale}. Values greater than `1.0` are not supported and bilinear downsampling will be used instead. A value of `1.0` disables scaling.
+   * **Note:** When using the **Nearest** scaling mode, to avoid uneven pixel scaling, it's highly recommended to use a value equal to an integer divisor with a dividend of `1`. For example, it's best to use a scale of `0.5` (1/2), `0.3333` (1/3), `0.25` (1/4), `0.2` (1/5), and so on.
+   */
+  static readonly SCALING_3D_MODE_NEAREST: int;
   /** Represents the size of the {@link Scaling3DMode} enum. */
   static readonly SCALING_3D_MODE_MAX: int;
   // enum MSAA
@@ -613,6 +620,7 @@ declare class Viewport extends Node {
   /**
    * Objects are displayed as wireframe models.
    * **Note:** {@link RenderingServer.set_debug_generate_wireframes} must be called before loading any meshes for wireframes to be visible when using the Compatibility renderer.
+   * **Note:** In the Compatibility renderer, backfaces are always visible when using wireframe rendering. In the Forward+ and Mobile renderers, wireframes follow the material's backface culling properties instead.
    */
   static readonly DEBUG_DRAW_WIREFRAME: int;
   /**
@@ -726,6 +734,16 @@ declare class Viewport extends Node {
    * **Note:** Only supported when using the Forward+ or Mobile rendering methods.
    */
   static readonly DEBUG_DRAW_INTERNAL_BUFFER: int;
+  /**
+   * Draws the cluster used by {@link AreaLight3D} nodes to optimize light rendering.
+   * **Note:** Only supported when using the Forward+ rendering method.
+   */
+  static readonly DEBUG_DRAW_CLUSTER_AREA_LIGHTS: int;
+  /**
+   * Draws the atlas used by {@link AreaLight3D} nodes in the upper left quadrant of the {@link Viewport}.
+   * **Note:** Only supported when using the Forward+ or Mobile rendering method.
+   */
+  static readonly DEBUG_DRAW_AREA_LIGHT_ATLAS: int;
   // enum DefaultCanvasItemTextureFilter
   /**
    * The texture filter reads from the nearest pixel only. This makes the texture look pixelated from up close, and grainy from a distance (due to mipmaps not being sampled).
@@ -745,6 +763,10 @@ declare class Viewport extends Node {
    * Use this for non-pixel art textures that may be viewed at a low scale (e.g. due to {@link Camera2D} zoom or sprite scaling), as mipmaps are important to smooth out pixels that are smaller than on-screen pixels.
    */
   static readonly DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST_WITH_MIPMAPS: int;
+  /**
+   * The {@link Viewport} will inherit the filter from its parent {@link CanvasItem} or {@link Viewport}.
+   */
+  static readonly DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_PARENT_NODE: int;
   /** Represents the size of the {@link DefaultCanvasItemTextureFilter} enum. */
   static readonly DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_MAX: int;
   // enum DefaultCanvasItemTextureRepeat
@@ -758,6 +780,10 @@ declare class Viewport extends Node {
   static readonly DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_ENABLED: int;
   /** Flip the texture when repeating so that the edge lines up instead of abruptly changing. */
   static readonly DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_MIRROR: int;
+  /**
+   * The {@link Viewport} will inherit the repeat mode from its parent {@link CanvasItem} or {@link Viewport}.
+   */
+  static readonly DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_PARENT_NODE: int;
   /** Represents the size of the {@link DefaultCanvasItemTextureRepeat} enum. */
   static readonly DEFAULT_CANVAS_ITEM_TEXTURE_REPEAT_MAX: int;
   // enum SDFOversize

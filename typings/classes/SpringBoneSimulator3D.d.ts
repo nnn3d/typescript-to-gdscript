@@ -221,7 +221,8 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   set_joint_radius(index: int, joint: int, radius: float): void;
   /**
    * Sets the rotation axis at `joint` in the bone chain's joint list when {@link is_config_individual} is `true`.
-   * The axes are based on the {@link Skeleton3D.get_bone_rest}'s space, if `axis` is {@link SkeletonModifier3D.ROTATION_AXIS_CUSTOM}, you can specify any axis.
+   * The axes are based on the reference pose's space, if `axis` is {@link SkeletonModifier3D.ROTATION_AXIS_CUSTOM}, you can specify any axis.
+   * In here, the reference pose is the bone pose immediately before the simulation.
    * **Note:** The rotation axis and the forward vector shouldn't be colinear to avoid unintended rotation since {@link SpringBoneSimulator3D} does not factor in twisting forces.
    */
   set_joint_rotation_axis(index: int, joint: int, axis: int): void;
@@ -248,7 +249,8 @@ declare class SpringBoneSimulator3D extends SkeletonModifier3D {
   set_root_bone_name(index: int, bone_name: string | NodePath): void;
   /**
    * Sets the rotation axis of the bone chain. If set to a specific axis, it acts like a hinge joint. The value is cached in each joint setting in the joint list.
-   * The axes are based on the {@link Skeleton3D.get_bone_rest}'s space, if `axis` is {@link SkeletonModifier3D.ROTATION_AXIS_CUSTOM}, you can specify any axis.
+   * The axes are based on the reference pose's space, if `axis` is {@link SkeletonModifier3D.ROTATION_AXIS_CUSTOM}, you can specify any axis.
+   * In here, the reference pose is the bone pose immediately before the simulation.
    * **Note:** The rotation axis vector and the forward vector shouldn't be colinear to avoid unintended rotation since {@link SpringBoneSimulator3D} does not factor in twisting forces.
    */
   set_rotation_axis(index: int, axis: int): void;

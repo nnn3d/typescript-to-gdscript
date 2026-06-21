@@ -3,10 +3,14 @@
 
 /** Version Control System (VCS) interface, which reads and writes to the local VCS in use. */
 declare class EditorVCSInterface extends GodotObject {
+  /** Returns whether or not the plugin allows commit amends. */
+  _allow_amends(): boolean;
   /** Checks out a `branch_name` in the VCS. */
   _checkout_branch(branch_name: string | NodePath): boolean;
-  /** Commits the currently staged changes and applies the commit `msg` to the resulting commit. */
-  _commit(msg: string | NodePath): void;
+  /**
+   * Commits the currently staged changes and applies the commit `msg` to the resulting commit. If `amend` is `true` the commit will modify the most recent commit instead.
+   */
+  _commit(msg: string | NodePath, amend: boolean): void;
   /** Creates a new branch named `branch_name` in the VCS. */
   _create_branch(branch_name: string | NodePath): void;
   /**

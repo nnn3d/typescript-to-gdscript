@@ -112,6 +112,20 @@ declare class TextServerExtension extends TextServer {
    * Returns oversampling factor override. If set to a positive value, overrides the oversampling factor of the viewport this font is used in. See {@link Viewport.oversampling}. This value doesn't override the [code skip-lint]oversampling[/code] parameter of [code skip-lint]draw_*[/code] methods. Used by dynamic fonts only.
    */
   _font_get_oversampling(font_rid: RID): float;
+  /**
+   * Returns the array in the predefined color palette at `index`. Palette contains all colors used to render font glyphs. Each palette has the same number of colors. Colors can be overridden using {@link _font_set_palette_custom_colors}.
+   */
+  _font_get_palette_colors(font_rid: RID, index: int): PackedColorArray;
+  /**
+   * Returns the number of predefined color palettes. Palette contains all colors used to render font glyphs. Each palette has the same number of colors.
+   */
+  _font_get_palette_count(font_rid: RID): int;
+  /** Returns array of custom colors to override predefined palette. */
+  _font_get_palette_custom_colors(font_rid: RID): PackedColorArray;
+  /**
+   * Returns the name of the predefined color palette at `index`. Palette contains all colors used to render font glyphs. Each palette has the same number of colors.
+   */
+  _font_get_palette_name(font_rid: RID, index: int): string;
   /** Returns scaling factor of the color bitmap font. */
   _font_get_scale(font_rid: RID, size: int): float;
   /** Returns `true` if support override is enabled for the `script`. */
@@ -154,6 +168,8 @@ declare class TextServerExtension extends TextServer {
   _font_get_underline_position(font_rid: RID, size: int): float;
   /** Returns thickness of the underline in pixels. */
   _font_get_underline_thickness(font_rid: RID, size: int): float;
+  /** Returns used palette index. */
+  _font_get_used_palette(font_rid: RID): int;
   /** Returns variation coordinates for the specified font cache entry. */
   _font_get_variation_coordinates(font_rid: RID): Dictionary;
   /**
@@ -272,6 +288,10 @@ declare class TextServerExtension extends TextServer {
    * If set to a positive value, overrides the oversampling factor of the viewport this font is used in. See {@link Viewport.oversampling}. This value doesn't override the [code skip-lint]oversampling[/code] parameter of [code skip-lint]draw_*[/code] methods. Used by dynamic fonts only.
    */
   _font_set_oversampling(font_rid: RID, oversampling: float): void;
+  /**
+   * Sets array of custom colors to override predefined palette. Set to empty array to reset overrides. Use `Color(0, 0, 0, 0)`, to keep predefined palette color at specific position.
+   */
+  _font_set_palette_custom_colors(font_rid: RID, colors: PackedColorArray | Array<unknown>): void;
   /** Sets scaling factor of the color bitmap font. */
   _font_set_scale(font_rid: RID, size: int, scale: float): void;
   /** Adds override for {@link _font_is_script_supported}. */
@@ -298,6 +318,8 @@ declare class TextServerExtension extends TextServer {
   _font_set_underline_position(font_rid: RID, size: int, underline_position: float): void;
   /** Sets thickness of the underline in pixels. */
   _font_set_underline_thickness(font_rid: RID, size: int, underline_thickness: float): void;
+  /** Sets used palette index. */
+  _font_set_used_palette(font_rid: RID, index: int): void;
   /** Sets variation coordinates for the specified font cache entry. */
   _font_set_variation_coordinates(font_rid: RID, variation_coordinates: Dictionary): void;
   /**
@@ -371,6 +393,8 @@ declare class TextServerExtension extends TextServer {
   _shaped_get_run_font_rid(shaped: RID, index: int): RID;
   /** Returns the font size of the `index` text run (in visual order). */
   _shaped_get_run_font_size(shaped: RID, index: int): int;
+  /** Returns the glyph range of the `index` text run (in visual order). */
+  _shaped_get_run_glyph_range(shaped: RID, index: int): Vector2i;
   /** Returns the language of the `index` text run (in visual order). */
   _shaped_get_run_language(shaped: RID, index: int): string;
   /** Returns the embedded object of the `index` text run (in visual order). */
@@ -424,7 +448,7 @@ declare class TextServerExtension extends TextServer {
   /**
    * Returns shapes of the carets corresponding to the character offset `position` in the text. Returned caret shape is 1 pixel wide rectangle.
    */
-  _shaped_text_get_carets(shaped: RID, position: int, caret: unknown): void;
+  _shaped_text_get_carets(shaped: RID, position: int, r_caret: unknown): void;
   /** Returns array of the composite character boundaries. */
   _shaped_text_get_character_breaks(shaped: RID): PackedInt32Array;
   /** Returns ellipsis character used for text clipping. */

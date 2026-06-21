@@ -91,7 +91,7 @@ declare class PhysicsServer3DExtension extends PhysicsServer3D {
   _body_set_state(body: RID, state: int, value: unknown): void;
   _body_set_state_sync_callback(body: RID, callable: Callable): void;
   _body_set_user_flags(body: RID, flags: int): void;
-  _body_test_motion(body: RID, from_: Transform3D | Projection, motion: Vector3 | Vector3i, margin: float, max_collisions: int, collide_separation_ray: boolean, recovery_as_collision: boolean, result: unknown): boolean;
+  _body_test_motion(body: RID, from_: Transform3D | Projection, motion: Vector3 | Vector3i, margin: float, max_collisions: int, collide_separation_ray: boolean, recovery_as_collision: boolean, r_result: unknown): boolean;
   _box_shape_create(): RID;
   _capsule_shape_create(): RID;
   _concave_polygon_shape_create(): RID;

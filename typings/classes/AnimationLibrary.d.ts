@@ -20,15 +20,15 @@ declare class AnimationLibrary extends Resource {
   /** Changes the key of the {@link Animation} associated with the key `name` to `newname`. */
   rename_animation(name: string, newname: string): void;
 
-  /** Emitted when an {@link Animation} is added, under the key `name`. */
+  /** Emitted when an {@link Animation} is added, under the key `anim_name`. */
   animation_added: Signal<[string]>;
   /**
-   * Emitted when there's a change in one of the animations, e.g. tracks are added, moved or have changed paths. `name` is the key of the animation that was changed.
+   * Emitted when there's a change in one of the animations, e.g. tracks are added, moved or have changed paths. `anim_name` is the key of the animation that was changed.
    * See also {@link Resource.changed}, which this acts as a relay for.
    */
   animation_changed: Signal<[string]>;
-  /** Emitted when an {@link Animation} stored with the key `name` is removed. */
+  /** Emitted when an {@link Animation} stored with the key `anim_name` is removed. */
   animation_removed: Signal<[string]>;
-  /** Emitted when the key for an {@link Animation} is changed, from `name` to `to_name`. */
+  /** Emitted when the key for an {@link Animation} is changed, from `old_name` to `new_name`. */
   animation_renamed: Signal<[string, string]>;
 }

@@ -47,4 +47,4 @@ yarn generate:godot-typings
 
 - Node.js >= 22 (see Prerequisites above for the reason)
 - TypeScript >= 5.9
-- Godot >= 4.6 (for typings generation)
+- Godot >= 4.7 (for typings generation)

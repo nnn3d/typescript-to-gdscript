@@ -68,13 +68,13 @@ declare class UndoRedo extends GodotObject {
    * Returns `true` if the {@link UndoRedo} is currently committing the action, i.e. running its "do" method or property change (see {@link commit_action}).
    */
   is_committing_action(): boolean;
-  /** Redo the last action. */
+  /** Redo the last action. Returns `false` if there was no action to redo. */
   redo(): boolean;
   /**
    * Marks the next "do" and "undo" operations to be processed even if the action gets merged with another in the {@link MERGE_ENDS} mode. Return to normal operation using {@link end_force_keep_in_merge_ends}.
    */
   start_force_keep_in_merge_ends(): void;
-  /** Undo the last action. */
+  /** Undo the last action. Returns `false` if there was no action to undo. */
   undo(): boolean;
 
   /** Called when {@link undo} or {@link redo} was called. */

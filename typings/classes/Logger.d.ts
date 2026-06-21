@@ -8,7 +8,7 @@ declare class Logger extends RefCounted {
    * The type of error provided by `error_type` is described in the {@link ErrorType} enumeration.
    * Additionally, `script_backtraces` provides backtraces for each of the script languages. These will only contain stack frames in editor builds and debug builds by default. To enable them for release builds as well, you need to enable {@link ProjectSettings.debug/settings/gdscript/always_track_call_stacks}.
    * **Warning:** This method will be called from threads other than the main thread, possibly at the same time, so you will need to have some kind of thread-safety in your implementation of it, like a {@link Mutex}.
-   * **Note:** `script_backtraces` will not contain any captured variables, due to its prohibitively high cost. To get those you will need to capture the backtraces yourself, from within the {@link Logger} virtual methods, using {@link Engine.capture_script_backtraces}.
+   * **Note:** `script_backtraces` will not contain any captured variables, due to its prohibitively high cost. To get those, you will need to capture the backtraces yourself, from within the {@link Logger} virtual methods, using {@link Engine.capture_script_backtraces}.
    * **Note:** Logging errors from this method using functions like {@link @GlobalScope.push_error} or {@link @GlobalScope.push_warning} is not supported, as it could cause infinite recursion. These errors will only show up in the console output.
    */
   _log_error(function_: string | NodePath, file: string | NodePath, line: int, code: string | NodePath, rationale: string | NodePath, editor_notify: boolean, error_type: int, script_backtraces: Array<ScriptBacktrace>): void;

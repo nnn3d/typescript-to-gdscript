@@ -74,11 +74,13 @@ declare interface Vector2 {
    */
   direction_to(to: Vector2 | Vector2i): Vector2;
   /**
-   * Returns the squared distance between this vector and `to`.
+   * Returns the squared Euclidean distance (https://en.wikipedia.org/wiki/Euclidean_distance) between this vector and `to`.
    * This method runs faster than {@link distance_to}, so prefer it if you need to compare vectors or need the squared distance for some formula.
    */
   distance_squared_to(to: Vector2 | Vector2i): float;
-  /** Returns the distance between this vector and `to`. */
+  /**
+   * Returns the Euclidean distance (https://en.wikipedia.org/wiki/Euclidean_distance) between this vector and `to`.
+   */
   distance_to(to: Vector2 | Vector2i): float;
   /**
    * Returns the dot product of this vector and `with`. This can be used to compare the angle between two vectors. For example, this can be used to determine whether an enemy is facing the player.

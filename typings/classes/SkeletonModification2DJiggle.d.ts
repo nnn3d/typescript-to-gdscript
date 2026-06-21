@@ -67,6 +67,10 @@ declare class SkeletonModification2DJiggle extends SkeletonModification2D {
   /** Returns whether the jiggle modifier is taking physics colliders into account when solving. */
   get_use_colliders(): boolean;
   /**
+   * Resets the internal jiggle simulation state to the current bone positions, clearing velocity, acceleration, and accumulated forces.
+   */
+  reset(): void;
+  /**
    * Sets the collision mask that the Jiggle modifier will use when reacting to colliders, if the Jiggle modifier is set to take colliders into account.
    */
   set_collision_mask(collision_mask: int): void;

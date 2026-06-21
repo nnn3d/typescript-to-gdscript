@@ -3,8 +3,6 @@
 
 /** Godot editor's command palette. */
 declare class EditorCommandPalette extends ConfirmationDialog {
-  dialog_hide_on_ok: boolean;
-
   /**
    * Adds a custom command to EditorCommandPalette.
    * - `command_name`: {@link String} (Name of the **Command**. This is displayed to the user.)

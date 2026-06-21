@@ -11,6 +11,10 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   auto_triangles: boolean;
   /** Controls the interpolation between animations. */
   blend_mode: int;
+  /**
+   * The cycle length in seconds used by {@link SYNC_MODE_CYCLIC_CONSTANT}. All animations are time-scaled so they complete one full cycle in this duration. Must be greater than `0` for cyclic sync to take effect.
+   */
+  cyclic_length: float;
   /** The blend space's X and Y axes' upper limit for the points' position. See {@link add_blend_point}. */
   max_space: Vector2;
   /** The blend space's X and Y axes' lower limit for the points' position. See {@link add_blend_point}. */
@@ -18,10 +22,11 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   /** Position increment to snap to when moving a point. */
   snap: Vector2;
   /**
-   * If `false`, the blended animations' frame are stopped when the blend value is `0`.
-   * If `true`, forcing the blended animations to advance frame.
+   * If `true`, sync mode is enabled (equivalent to {@link SYNC_MODE_INDEPENDENT}). This property is kept for backward compatibility.
    */
   sync: boolean;
+  /** Controls how animations are synced when blended. See {@link SyncMode} for available options. */
+  sync_mode: int;
   /** Name of the blend space's X axis. */
   x_label: string;
   /** Name of the blend space's Y axis. */
@@ -30,6 +35,8 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   get_auto_triangles(): boolean;
   set_blend_mode(value: int): void;
   get_blend_mode(): int;
+  set_cyclic_length(value: float): void;
+  get_cyclic_length(): float;
   set_max_space(value: Vector2 | Vector2i): void;
   get_max_space(): Vector2;
   set_min_space(value: Vector2 | Vector2i): void;
@@ -38,21 +45,30 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   get_snap(): Vector2;
   set_use_sync(value: boolean): void;
   is_using_sync(): boolean;
+  set_sync_mode(value: int): void;
+  get_sync_mode(): int;
   set_x_label(value: string | NodePath): void;
   get_x_label(): string;
   set_y_label(value: string | NodePath): void;
   get_y_label(): string;
 
   /**
-   * Adds a new point that represents a `node` at the position set by `pos`. You can insert it at a specific index using the `at_index` argument. If you use the default value for `at_index`, the point is inserted at the end of the blend points array.
+   * Adds a new point with `name` that represents a `node` at the position set by `pos`. You can insert it at a specific index using the `at_index` argument. If you use the default value for `at_index`, the point is inserted at the end of the blend points array.
+   * **Note:** If no name is provided, safe index is used as reference. In the future, empty names will be deprecated, so explicitly passing a name is recommended.
    */
-  add_blend_point(node: AnimationRootNode, pos: Vector2 | Vector2i, at_index?: int): void;
+  add_blend_point(node: AnimationRootNode, pos: Vector2 | Vector2i, at_index?: int, name?: string): void;
   /**
    * Creates a new triangle using three points `x`, `y`, and `z`. Triangles can overlap. You can insert the triangle at a specific index using the `at_index` argument. If you use the default value for `at_index`, the point is inserted at the end of the blend points array.
    */
   add_triangle(x: int, y: int, z: int, at_index?: int): void;
+  /**
+   * Returns the index of the blend point with the given `name`. Returns `-1` if no blend point with that name is found.
+   */
+  find_blend_point_by_name(name: string): int;
   /** Returns the number of points in the blend space. */
   get_blend_point_count(): int;
+  /** Returns the name of the blend point at index `point`. */
+  get_blend_point_name(point: int): string;
   /** Returns the {@link AnimationRootNode} referenced by the point at index `point`. */
   get_blend_point_node(point: int): AnimationRootNode | null;
   /** Returns the position of the point at index `point`. */
@@ -65,6 +81,14 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
   remove_blend_point(point: int): void;
   /** Removes the triangle at index `triangle` from the blend space. */
   remove_triangle(triangle: int): void;
+  /**
+   * Swaps the blend points at indices `from_index` and `to_index`, exchanging their positions and properties.
+   */
+  reorder_blend_point(from_index: int, to_index: int): void;
+  /**
+   * Sets the name of the blend point at index `point`. If the name conflicts with an existing point, a unique name will be generated automatically.
+   */
+  set_blend_point_name(point: int, name: string): void;
   /** Changes the {@link AnimationNode} referenced by the point at index `point`. */
   set_blend_point_node(point: int, node: AnimationRootNode): void;
   /** Updates the position of the point at index `point` in the blend space. */
@@ -86,4 +110,21 @@ declare class AnimationNodeBlendSpace2D extends AnimationRootNode {
    * Similar to {@link BLEND_MODE_DISCRETE}, but starts the new animation at the last animation's playback position.
    */
   static readonly BLEND_MODE_DISCRETE_CARRY: int;
+  // enum SyncMode
+  /** Inactive animations are frozen and do not advance. */
+  static readonly SYNC_MODE_NONE: int;
+  /**
+   * Inactive animations advance with a weight of `0`. This is equivalent to the previous `sync = true` behavior.
+   */
+  static readonly SYNC_MODE_INDEPENDENT: int;
+  /**
+   * All animations are time-scaled so they stay in sync, with the cycle length dynamically computed from active blend weights. This is self-normalizing: a solo animation plays at normal speed.
+   * **Note:** If you apply {@link AnimationNodeTimeSeek} to the result when handling animations of different lengths, synchronization will be broken. In such cases, it is recommended to use {@link AnimationNodeAnimation.use_custom_timeline} to align the animation lengths.
+   */
+  static readonly SYNC_MODE_CYCLIC_MUTABLE: int;
+  /**
+   * All animations are time-scaled so they complete one cycle in {@link cyclic_length} seconds, keeping them in sync regardless of their individual lengths.
+   * **Note:** If you apply {@link AnimationNodeTimeSeek} to the result when handling animations of different lengths, synchronization will be broken. In such cases, it is recommended to use {@link AnimationNodeAnimation.use_custom_timeline} to align the animation lengths.
+   */
+  static readonly SYNC_MODE_CYCLIC_CONSTANT: int;
 }

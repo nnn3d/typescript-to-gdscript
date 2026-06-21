@@ -50,7 +50,7 @@ declare class Node3D extends Node {
    * - The {@link Vector3.x} is the angle around the local X axis (pitch);
    * - The {@link Vector3.y} is the angle around the local Y axis (yaw);
    * - The {@link Vector3.z} is the angle around the local Z axis (roll).
-   * The order of each consecutive rotation can be changed with {@link rotation_order} (see {@link EulerOrder} constants). By default, the YXZ convention is used ({@link EULER_ORDER_YXZ}).
+   * The order of each consecutive rotation can be changed with {@link rotation_order} (see {@link EulerOrder} constants). In Godot, Euler angles always use intrinsic order. By default, the intrinsic YXZ convention is used ({@link EULER_ORDER_YXZ}).
    * **Note:** This property is edited in degrees in the inspector. If you want to use degrees in a script, use {@link rotation_degrees}.
    */
   rotation: Vector3;
@@ -62,7 +62,7 @@ declare class Node3D extends Node {
   /** How this node's rotation and scale are displayed in the Inspector dock. */
   rotation_edit_mode: int;
   /**
-   * The axis rotation order of the {@link rotation} property. The final orientation is calculated by rotating around the local X, Y, and Z axis in this order.
+   * The axis rotation order of the {@link rotation} property. In Godot, Euler angles always use intrinsic order, meaning that the final orientation is calculated by rotating around the local axes in this order.
    */
   rotation_order: int;
   /**
@@ -293,10 +293,12 @@ declare class Node3D extends Node {
 
   // enum RotationEditMode
   /**
-   * The rotation is edited using a {@link Vector3} in Euler angles (https://en.wikipedia.org/wiki/Euler_angles).
+   * The rotation is edited using a {@link Vector3} in Euler angles (https://en.wikipedia.org/wiki/Euler_angles). In Godot, Euler angles always use intrinsic order, meaning that rotation happens around the local axes of the object.
    */
   static readonly ROTATION_EDIT_MODE_EULER: int;
-  /** The rotation is edited using a {@link Quaternion}. */
+  /**
+   * The rotation is edited using a {@link Quaternion}. Quaternions avoid gimbal lock ($DOCS_URL/tutorials/3d/using_transforms.html) and having to choose an order of rotation, but are less intuitive. Quaternion rotation is mostly the same as rotors in 3D geometric algebra, except that the numbers are labeled differently.
+   */
   static readonly ROTATION_EDIT_MODE_QUATERNION: int;
   /**
    * The rotation is edited using a {@link Basis}. In this mode, the raw {@link basis}'s axes can be freely modified, but the {@link scale} property is not available.

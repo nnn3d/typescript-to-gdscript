@@ -19,6 +19,16 @@ declare class AudioStreamRandomizer extends AudioStream {
    * The intensity of random volume variation. Volume will be increased or decreased by a random value up to [code skip-lint]random_volume_offset_db[/code]. A value of `0.0` means no variation. A value of `3.0` means volume will be randomized between `-3.0 dB` and `+3.0 dB`.
    */
   random_volume_offset_db: float;
+  /**
+   * The {@link AudioStream} at `index`.
+   * **Note:** `index` is a value in the `0 .. streams_count - 1` range.
+   */
+  'stream_{index}/stream': AudioStream | null;
+  /**
+   * The probability weight of the {@link AudioStream} at `index`.
+   * **Note:** `index` is a value in the `0 .. streams_count - 1` range.
+   */
+  'stream_{index}/weight': float;
   /** The number of streams in the stream pool. */
   streams_count: int;
   set_playback_mode(value: int): void;

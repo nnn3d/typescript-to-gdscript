@@ -5,6 +5,10 @@ import { tmpdir } from 'os';
 import { generateGodotDocsTypings } from '../../src/typings/godot-docs.js';
 
 const GODOT_DOCS_DIR = join(__dirname, '../../vendor/godot/doc/classes');
+const GODOT_GDSCRIPT_DOCS_DIR = join(
+  __dirname,
+  '../../vendor/godot/modules/gdscript/doc_classes',
+);
 const OVERRIDE_DIR = join(__dirname, '../../typings-overrides');
 const VERSION_CLASSES_DIR = join(__dirname, '../../typings/classes');
 
@@ -14,7 +18,7 @@ describe('Godot Docs: typings generation', () => {
 
     try {
       generateGodotDocsTypings({
-        classDocsDir: GODOT_DOCS_DIR,
+        classDocsDir: [GODOT_DOCS_DIR, GODOT_GDSCRIPT_DOCS_DIR],
         outputDir: tmpDir,
         overrideDirs: [OVERRIDE_DIR],
       });

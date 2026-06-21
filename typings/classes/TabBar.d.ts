@@ -41,6 +41,26 @@ declare class TabBar extends Control {
   /** The number of tabs currently in the bar. */
   tab_count: int;
   /**
+   * If `true`, the tab at `index` is disabled.
+   * **Note:** `index` is a value in the `0 .. tab_count - 1` range.
+   */
+  'tab_{index}/disabled': boolean;
+  /**
+   * If `true`, the tab at `index` is hidden.
+   * **Note:** `index` is a value in the `0 .. tab_count - 1` range.
+   */
+  'tab_{index}/icon': Texture2D | null;
+  /**
+   * The title text of the tab at `index`.
+   * **Note:** `index` is a value in the `0 .. tab_count - 1` range.
+   */
+  'tab_{index}/title': string;
+  /**
+   * The tooltip text of the tab at `index`.
+   * **Note:** `index` is a value in the `0 .. tab_count - 1` range.
+   */
+  'tab_{index}/tooltip': string;
+  /**
    * {@link TabBar}s with the same rearrange group ID will allow dragging the tabs between them. Enable drag with {@link drag_to_rearrange_enabled}.
    * Setting this to `-1` will disable rearranging between {@link TabBar}s.
    */

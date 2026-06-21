@@ -11,6 +11,8 @@ declare class MovieWriter extends GodotObject {
    * Called when the audio speaker mode used for recording the audio is requested by the engine. This can affect the number of output channels in the resulting audio file/stream. Defaults to {@link AudioServer.SPEAKER_MODE_STEREO} if {@link _get_audio_speaker_mode} is not overridden.
    */
   _get_audio_speaker_mode(): int;
+  /** Returns the list of supported filename extensions for movies written with this {@link MovieWriter}. */
+  _get_supported_extensions(): PackedStringArray;
   /**
    * Called when the engine determines whether this {@link MovieWriter} is able to handle the file at `path`. Must return `true` if this {@link MovieWriter} is able to handle the given file path, `false` otherwise. Typically, {@link _handles_file} is overridden as follows to allow the user to record a file at any path with a given file extension:
    */

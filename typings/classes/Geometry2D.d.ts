@@ -66,7 +66,7 @@ declare interface Geometry2D extends GodotObject {
   is_polygon_clockwise(polygon: PackedVector2Array | Array<unknown>): boolean;
   /**
    * Returns the point of intersection between the two lines (`from_a`, `dir_a`) and (`from_b`, `dir_b`). Returns a {@link Vector2}, or `null` if the lines are parallel.
-   * `from` and `dir` are *not* endpoints of a line segment or ray but the slope (`dir`) and a known point (`from`) on that line.
+   * `from` and `dir` are *not* endpoints of a line segment or ray but the slope (`dir`) and a known point (`from`) on that line. To get the intersection between two line segments, use {@link segment_intersects_segment}.
    */
   line_intersects_line(from_a: Vector2 | Vector2i, dir_a: Vector2 | Vector2i, from_b: Vector2 | Vector2i, dir_b: Vector2 | Vector2i): unknown;
   /**
@@ -99,7 +99,7 @@ declare interface Geometry2D extends GodotObject {
    */
   segment_intersects_circle(segment_from: Vector2 | Vector2i, segment_to: Vector2 | Vector2i, circle_position: Vector2 | Vector2i, circle_radius: float): float;
   /**
-   * Checks if the two segments (`from_a`, `to_a`) and (`from_b`, `to_b`) intersect. If yes, return the point of intersection as {@link Vector2}. If no intersection takes place, returns `null`.
+   * Checks if two line segments intersect, with line `a` between `from_a` and `to_a` and line `b` between `from_b` and `to_b`. If the line segments intersect, the point of intersection is returned as a {@link Vector2}. If no intersection takes place, `null` is returned.
    */
   segment_intersects_segment(from_a: Vector2 | Vector2i, to_a: Vector2 | Vector2i, from_b: Vector2 | Vector2i, to_b: Vector2 | Vector2i): unknown;
   /**

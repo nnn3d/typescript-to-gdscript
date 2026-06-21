@@ -21,11 +21,13 @@ declare interface Vector2i {
    */
   clampi(min: int, max: int): Vector2i;
   /**
-   * Returns the squared distance between this vector and `to`.
+   * Returns the squared Euclidean distance (https://en.wikipedia.org/wiki/Euclidean_distance) between this vector and `to`.
    * This method runs faster than {@link distance_to}, so prefer it if you need to compare vectors or need the squared distance for some formula.
    */
   distance_squared_to(to: Vector2i | Vector2): int;
-  /** Returns the distance between this vector and `to`. */
+  /**
+   * Returns the Euclidean distance (https://en.wikipedia.org/wiki/Euclidean_distance) between this vector and `to`.
+   */
   distance_to(to: Vector2i | Vector2): float;
   /** Returns the length (magnitude) of this vector. */
   length(): float;

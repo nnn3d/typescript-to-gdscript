@@ -70,7 +70,7 @@ declare interface EditorInterface extends GodotObject {
   get_editor_paths(): EditorPaths;
   /**
    * Returns the actual scale of the editor UI (`1.0` being 100% scale). This can be used to adjust position and dimensions of the UI added by plugins.
-   * **Note:** This value is set via the {@link EditorSettings.interface/editor/display_scale} and {@link EditorSettings.interface/editor/custom_display_scale} settings. The editor must be restarted for changes to be properly applied.
+   * **Note:** This value is set via the {@link EditorSettings.interface/editor/appearance/display_scale} and {@link EditorSettings.interface/editor/appearance/custom_display_scale} settings. The editor must be restarted for changes to be properly applied.
    */
   get_editor_scale(): float;
   /** Returns the editor's {@link EditorSettings} instance. */
@@ -131,6 +131,8 @@ declare interface EditorInterface extends GodotObject {
   get_selected_paths(): PackedStringArray;
   /** Returns the editor's {@link EditorSelection} instance. */
   get_selection(): EditorSelection;
+  /** Returns an array of file paths of currently unsaved scenes. */
+  get_unsaved_scenes(): PackedStringArray;
   /**
    * Shows the given property on the given `object` in the editor's Inspector dock. If `inspector_only` is `true`, plugins will not attempt to edit `object`.
    */
@@ -138,7 +140,7 @@ declare interface EditorInterface extends GodotObject {
   /**
    * Returns `true` if multiple window support is enabled in the editor. Multiple window support is enabled if *all* of these statements are true:
    * - {@link EditorSettings.interface/multi_window/enable} is `true`.
-   * - {@link EditorSettings.interface/editor/single_window_mode} is `false`.
+   * - {@link EditorSettings.interface/editor/display/single_window_mode} is `false`.
    * - {@link Viewport.gui_embed_subwindows} is `false`. This is forced to `true` on platforms that don't support multiple windows such as Web, or when the `--single-window` command line argument ($DOCS_URL/tutorials/editor/command_line_tutorial.html) is used.
    */
   is_multi_window_enabled(): boolean;
@@ -213,7 +215,7 @@ declare interface EditorInterface extends GodotObject {
    * Pops up an editor dialog for quick selecting a resource file. The `callback` must take a single argument of type {@link String} which will contain the path of the selected resource or be empty if the dialog is canceled. If `base_types` is provided, the dialog will only show resources that match these types. Only types deriving from {@link Resource} are supported.
    */
   popup_quick_open(callback: Callable, base_types?: Array<string>): void;
-  /** Reloads the scene at the given path. */
+  /** Reloads the scene at the given path. Fails if the scene is not open. */
   reload_scene_from_path(scene_filepath: string | NodePath): void;
   /**
    * Restarts the editor. This closes the editor and then opens the same project. If `save` is `true`, the project will be saved before restarting.
@@ -234,7 +236,7 @@ declare interface EditorInterface extends GodotObject {
    */
   set_current_feature_profile(profile_name: string | NodePath): void;
   /**
-   * Sets the editor's current main screen to the one specified in `name`. `name` must match the title of the tab in question exactly (e.g. `2D`, `3D`, [code skip-lint]Script[/code], `Game`, or `AssetLib` for default tabs).
+   * Sets the editor's current main screen to the one specified in `name`. `name` must match the title of the tab in question exactly (e.g. `2D`, `3D`, [code skip-lint]Script[/code], `Game`, or `Asset Store` for default tabs).
    */
   set_main_screen_editor(name: string | NodePath): void;
   /**

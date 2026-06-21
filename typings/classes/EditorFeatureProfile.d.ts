@@ -57,7 +57,7 @@ declare class EditorFeatureProfile extends RefCounted {
    * The Script tab, which contains the script editor and class reference browser. If this feature is disabled, the Script tab won't display.
    */
   static readonly FEATURE_SCRIPT: int;
-  /** The AssetLib tab. If this feature is disabled, the AssetLib tab won't display. */
+  /** The Asset Store tab. If this feature is disabled, the Asset Store tab won't display. */
   static readonly FEATURE_ASSET_LIB: int;
   /**
    * Scene tree editing. If this feature is disabled, the Scene tree dock will still be visible but will be read-only.

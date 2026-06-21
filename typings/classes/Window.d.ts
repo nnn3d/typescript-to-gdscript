@@ -58,6 +58,10 @@ declare class Window extends Viewport {
   extend_to_title: boolean;
   /** If `true`, native window will be used regardless of parent viewport and project settings. */
   force_native: boolean;
+  /**
+   * If `true`, requests HDR output for the {@link Window}, falling back to SDR if not supported, and automatically switching between HDR and SDR as the window moves between screens, screen capabilities change, or system settings are modified. This will internally force {@link Viewport.use_hdr_2d} to be enabled on the main {@link Viewport}. All other {@link SubViewport} of this {@link Window} must have their {@link Viewport.use_hdr_2d} property enabled to produce HDR output.
+   */
+  hdr_output_requested: boolean;
   /** Specifies the initial type of position for the {@link Window}. */
   initial_position: int;
   /** If `true`, the {@link Window} width is expanded to keep the title bar text fully visible. */
@@ -193,6 +197,8 @@ declare class Window extends Viewport {
   is_exclusive(): boolean;
   set_force_native(value: boolean): void;
   get_force_native(): boolean;
+  set_hdr_output_requested(value: boolean): void;
+  is_hdr_output_requested(): boolean;
   set_initial_position(value: int): void;
   get_initial_position(): int;
   set_keep_title_visible(value: boolean): void;
@@ -281,6 +287,12 @@ declare class Window extends Viewport {
   static get_focused_window(): Window | null;
   /** Returns layout direction and text writing direction. */
   get_layout_direction(): int;
+  /**
+   * Returns the maximum value for linear color components that can be displayed in this window, regardless of SDR or HDR output. Returns `1.0` if HDR is not enabled or not supported. The {@link output_max_linear_value_changed} signal will be emitted whenever this value changes.
+   * This value is used by tonemapping and other {@link Environment} effects to ensure that bright colors are presented in the range that can be displayed by this window. When using this maximum linear value in your project, it should only be used to present colors directly to the screen without tonemapping and without influencing lighting, post-processing effects, or surrounding color. The following is an example that produces the brightest purple color that the screen can produce:
+   * **Note:** You will need to convert sRGB colors to linear before multiplying by this value to get correct results.
+   */
+  get_output_max_linear_value(): float;
   /**
    * Returns the window's position including its border.
    * **Note:** If {@link visible} is `false`, this method returns the same value as {@link position}.
@@ -514,6 +526,17 @@ declare class Window extends Viewport {
    */
   set_layout_direction(direction: int): void;
   /**
+   * Sets the type and state of the progress bar on the taskbar/dock icon of the {@link Window}. See {@link DisplayServer.ProgressState} for possible values and how each mode behaves.
+   * **Note:** This method is implemented only on Windows and macOS.
+   */
+  set_taskbar_progress_state(state: int): void;
+  /**
+   * Creates a progress bar on the taskbar/dock icon of the {@link Window} if it does not exist, sets the progress of the icon.
+   * `value` acts as a relative percentage value, ranges from `0.0` (lowest) to `1.0` (highest).
+   * **Note:** This method is implemented only on Windows and macOS.
+   */
+  set_taskbar_progress_value(value: float): void;
+  /**
    * If `unparent` is `true`, the window is automatically unparented when going invisible.
    * **Note:** Make sure to keep a reference to the node, otherwise it will be orphaned. You also need to manually call {@link Node.queue_free} to free the window if it's not parented.
    */
@@ -570,6 +593,10 @@ declare class Window extends Viewport {
    * Emitted when the mouse event is received by the custom decoration area defined by {@link nonclient_area}, and normal input to the window is blocked (such as when it has an exclusive child opened). `event`'s position is in the embedder's coordinate system.
    */
   nonclient_window_input: Signal<[InputEvent]>;
+  /**
+   * Emitted when the output max linear value returned by {@link Window.get_output_max_linear_value} has changed. This occurs when HDR output is enabled or disabled and when any HDR output luminance values of the window have changed, such as when the player adjusts their screen brightness setting or moves the window to a different screen. `output_max_linear_value` is the new value.
+   */
+  output_max_linear_value_changed: Signal<[float]>;
   /** Emitted when the {@link NOTIFICATION_THEME_CHANGED} notification is sent. */
   theme_changed: Signal<[]>;
   /** Emitted when window title bar text is changed. */
@@ -621,39 +648,45 @@ declare class Window extends Viewport {
   // enum Flags
   /**
    * The window can't be resized by dragging its resize grip. It's still possible to resize the window using {@link size}. This flag is ignored for full screen windows. Set with {@link unresizable}.
+   * **Note:** This flag is implemented on Linux (X11), macOS, Windows, and embedded windows.
    */
   static readonly FLAG_RESIZE_DISABLED: int;
   /**
    * The window do not have native title bar and other decorations. This flag is ignored for full-screen windows. Set with {@link borderless}.
+   * **Note:** This flag is implemented on Linux (X11/Wayland), macOS, Windows, and embedded windows.
    */
   static readonly FLAG_BORDERLESS: int;
   /**
    * The window is floating on top of all other windows. This flag is ignored for full-screen windows. Set with {@link always_on_top}.
+   * **Note:** This flag is implemented on Linux (X11), macOS, Windows, and embedded windows.
    */
   static readonly FLAG_ALWAYS_ON_TOP: int;
   /**
    * The window background can be transparent. Set with {@link transparent}.
    * **Note:** This flag has no effect if either {@link ProjectSettings.display/window/per_pixel_transparency/allowed}, or the window's {@link Viewport.transparent_bg} is set to `false`.
+   * **Note:** Transparency support is implemented on Linux (X11/Wayland), macOS, Windows, and embedded windows.
    */
   static readonly FLAG_TRANSPARENT: int;
   /**
    * The window can't be focused. No-focus window will ignore all input, except mouse clicks. Set with {@link unfocusable}.
+   * **Note:** This flag is implemented on Linux (X11), macOS, Windows, and embedded windows.
    */
   static readonly FLAG_NO_FOCUS: int;
   /**
    * Window is part of menu or {@link OptionButton} dropdown. This flag can't be changed when the window is visible. An active popup window will exclusively receive all input, without stealing focus from its parent. Popup windows are automatically closed when uses click outside it, or when an application is switched. Popup window must have transient parent set (see {@link transient}).
-   * **Note:** This flag has no effect in embedded windows (unless said window is a {@link Popup}).
+   * **Note:** This flag is implemented on Linux (X11/Wayland), macOS, Windows, and embedded {@link Popup} windows.
    */
   static readonly FLAG_POPUP: int;
   /**
    * Window content is expanded to the full size of the window. Unlike borderless window, the frame is left intact and can be used to resize the window, title bar is transparent, but have minimize/maximize/close buttons. Set with {@link extend_to_title}.
-   * **Note:** This flag is implemented only on macOS.
    * **Note:** This flag has no effect in embedded windows.
+   * **Note:** This flag is implemented only on macOS.
    */
   static readonly FLAG_EXTEND_TO_TITLE: int;
   /**
    * All mouse events are passed to the underlying window of the same application.
    * **Note:** This flag has no effect in embedded windows.
+   * **Note:** This flag is implemented on Linux (X11), macOS, Windows.
    */
   static readonly FLAG_MOUSE_PASSTHROUGH: int;
   /**
@@ -671,16 +704,20 @@ declare class Window extends Viewport {
   static readonly FLAG_EXCLUDE_FROM_CAPTURE: int;
   /**
    * Signals the window manager that this window is supposed to be an implementation-defined "popup" (usually a floating, borderless, untileable and immovable child window).
+   * **Note:** This flag has no effect in embedded windows.
+   * **Note:** This flag is implemented on Linux (Wayland).
    */
   static readonly FLAG_POPUP_WM_HINT: int;
   /**
    * Window minimize button is disabled.
-   * **Note:** This flag is implemented on macOS and Windows.
+   * **Note:** This flag has no effect in embedded windows.
+   * **Note:** This flag is implemented on Linux (X11), macOS, and Windows.
    */
   static readonly FLAG_MINIMIZE_DISABLED: int;
   /**
    * Window maximize button is disabled.
-   * **Note:** This flag is implemented on macOS and Windows.
+   * **Note:** This flag has no effect in embedded windows.
+   * **Note:** This flag is implemented on Linux (X11), macOS, and Windows.
    */
   static readonly FLAG_MAXIMIZE_DISABLED: int;
   /** Max value of the {@link Flags}. */

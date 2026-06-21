@@ -30,12 +30,18 @@ declare class EditorExportPlugin extends RefCounted {
   /**
    * Customize a scene. If changes are made to it, return the same or a new scene. Otherwise, return `null`. If a new scene is returned, it is up to you to dispose of the old one.
    * Implementing this method is required if {@link _begin_customize_scenes} returns `true`.
+   * **Note:** To change a variable in your scene, use the `@export` annotation when declaring it.
    */
   _customize_scene(scene: Node, path: string | NodePath): Node | null;
   /** This is called when the customization process for resources ends. */
   _end_customize_resources(): void;
   /** This is called when the customization process for scenes ends. */
   _end_customize_scenes(): void;
+  /**
+   * This is called after Xcode project generation, but before it is built.
+   * **Note:** Only supported on iOS and visionOS.
+   */
+  _end_generate_apple_embedded_project(path: string | NodePath, will_build_archive: boolean): void;
   /**
    * Virtual method to be overridden by the user. It is called when the export starts and provides all information about the export. `features` is the list of features for the export, `is_debug` is `true` for debug builds, `path` is the target path for the exported project. `flags` is only used when running a runnable profile, e.g. when using native run on Android.
    */
@@ -84,6 +90,7 @@ declare class EditorExportPlugin extends RefCounted {
   /**
    * Return a hash based on the configuration passed (for both scenes and resources). This helps keep separate caches for separate export configurations.
    * Implementing this method is required if {@link _begin_customize_resources} returns `true`.
+   * **Note:** {@link _customize_resource} and {@link _customize_scene} will not be called when the {@link EditorExportPlugin} script is modified unless this hash changes too.
    */
   _get_customization_configuration_hash(): int;
   /**

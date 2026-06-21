@@ -44,8 +44,8 @@ typings/                 # Godot typings (committed to git, used as TS lib)
   globals/               # Static (hand-written, NOT regenerated from Godot docs) global stubs
     globals.d.ts         # noLib stubs for Boolean/Number/RegExp/etc.
     gd-helpers.d.ts      # gd namespace type defs (signal, enum_, as, ops, decorators) + int/float/bool casts
-  godot-class-registry.json  # Class hierarchy JSON (916 classes)
-  classes/               # Per-class .d.ts files (916 classes)
+  godot-class-registry.json  # Class hierarchy JSON (814 classes)
+  classes/               # Per-class .d.ts files (814 classes)
 
 typings-overrides/       # Manual type overrides applied during typings generation (shipped in npm package, NOT in consumer tsconfig)
   *.d.ts                 # Per-class override files (node.d.ts, array.d.ts, etc.) + _globals.d.ts for global functions
@@ -162,7 +162,7 @@ tests/
   - `Dictionary` and `Callable` constructors and static methods generated from Godot XML docs via shared `generateConstructorInterface()` — call syntax (no `new`)
   - `StringName` emitted as `type StringName = String` (identical API in GDScript)
   - `NodePath` has its own variant type interface + constructor (not mapped to `string`)
-- [x] Godot class registry (916 classes, inheritance chain, global functions, per-class `variantConverts` from single-param "from" constructors, from `vendor/godot` XML docs). Constructor types (`deriveConstructorTypes()` in `godot-registry.ts`) and value types are derived from parsed XML at generation time — not hardcoded. Operator overload types derived from `registry.hasOperators()` (no hardcoded `OPERATOR_OVERLOAD_TYPES` list)
+- [x] Godot class registry (814 classes, inheritance chain, global functions, per-class `variantConverts` from single-param "from" constructors, from `vendor/godot` XML docs). Constructor types (`deriveConstructorTypes()` in `godot-registry.ts`) and value types are derived from parsed XML at generation time — not hardcoded. Operator overload types derived from `registry.hasOperators()` (no hardcoded `OPERATOR_OVERLOAD_TYPES` list)
 - [x] Converter diagnostic system — surfaced to the CLI (`lint` / `convert` / `watch`) and to the IDE via the TS language service plugin
   - **Diagnostic severities** (`TransformDiagnostic.severity`): `'error' | 'type-error' | 'warning' | 'info'`:
     - `error` — conversion failure (invalid/unsupported syntax, e.g. `undefined` keyword as a value, optional chaining, spread, `yield`, destructuring, `for…in`, `gd.getset()`/`gd.dict()` syntax errors). Blocks `.gd` output (unless `--emit-on-error`). Blocks Godot validation.

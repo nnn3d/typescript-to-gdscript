@@ -44,7 +44,16 @@ declare class Control extends CanvasItem {
    */
   clip_contents: boolean;
   /**
+   * The maximum size of this Control's bounding rectangle. If set to a value greater than or equal to `(0, 0)`, the node's bounding rectangle will never exceed this size. A value below `(0, 0)` means there is no maximum size.
+   * **Note:** The final effective maximum size may be subject to parent Container sizing and propagated maximum sizes. See also: {@link get_combined_maximum_size}.
+   * **Note:** Not all {@link Control} subtypes handle a custom maximum size gracefully, which may lead to unexpected behavior if the control's contents exceed this size.
+   * **Note:** This value has priority over {@link custom_minimum_size}. For example, if you set {@link custom_maximum_size} to `(100, 100)` and {@link custom_minimum_size} to `(200, 200)`, the resulting size will be `(100, 100)`.
+   * **Note:** It is recommended to use {@link get_bound_minimum_size} instead of {@link get_combined_minimum_size} when using this property, as the former respects maximum size limits when calculating the minimum size, while the latter does not.
+   */
+  custom_maximum_size: Vector2;
+  /**
    * The minimum size of the node's bounding rectangle. If you set it to a value greater than `(0, 0)`, the node's bounding rectangle will always have at least this size. Note that {@link Control} nodes have their internal minimum size returned by {@link get_minimum_size}. It depends on the control's contents, like text, textures, or style boxes. The actual minimum size is the maximum value of this property and the internal minimum size (see {@link get_combined_minimum_size}).
+   * **Note:** {@link custom_maximum_size} has priority over this property. For example, if you set {@link custom_minimum_size} to `(200, 200)` and {@link custom_maximum_size} to `(100, 100)`, the resulting size will be `(100, 100)`.
    */
   custom_minimum_size: Vector2;
   /**
@@ -140,6 +149,49 @@ declare class Control extends CanvasItem {
    */
   offset_top: float;
   /**
+   * If `true`, applies all offset transform properties. Otherwise, no offset transform is applied and the properties have no effect.
+   */
+  offset_transform_enabled: boolean;
+  /**
+   * Pivot used by {@link offset_transform_rotation} and {@link offset_transform_scale} in absolute units.
+   * The final pivot position is the combined value of this property and {@link offset_transform_pivot_ratio}.
+   * Has no effect unless {@link offset_transform_enabled} is `true`.
+   */
+  offset_transform_pivot: Vector2;
+  /**
+   * Same as {@link offset_transform_pivot} but expressed in units relative to the {@link Control} {@link size} where `Vector2(0, 0)` is the top-left corner of this control, and `Vector2(1, 1)` is its bottom-right corner.
+   * The final pivot position is the combined value of this property and {@link offset_transform_pivot}.
+   * Has no effect unless {@link offset_transform_enabled} is `true`.
+   */
+  offset_transform_pivot_ratio: Vector2;
+  /**
+   * Position offset in absolute units. The final offset is the combined value of this property and {@link offset_transform_position_ratio}.
+   * Has no effect unless {@link offset_transform_enabled} is `true`.
+   */
+  offset_transform_position: Vector2;
+  /**
+   * Same as {@link offset_transform_position} but expressed in units relative to the {@link Control} {@link size} where `Vector2(0, 0)` is the top-left corner of this control, and `Vector2(1, 1)` is its bottom-right corner.
+   * The final offset is the combined value of this property and {@link offset_transform_position}.
+   * Has no effect unless {@link offset_transform_enabled} is `true`.
+   */
+  offset_transform_position_ratio: Vector2;
+  /**
+   * Rotation offset. The rotation pivot is defined by {@link offset_transform_pivot} and {@link offset_transform_pivot_ratio}.
+   * Has no effect unless {@link offset_transform_enabled} is `true`.
+   */
+  offset_transform_rotation: float;
+  /**
+   * Scale offset. The scale pivot is defined by {@link offset_transform_pivot} and {@link offset_transform_pivot_ratio}.
+   * Has no effect unless {@link offset_transform_enabled} is `true`.
+   */
+  offset_transform_scale: Vector2;
+  /**
+   * If `true`, the offset transforms is only applied visually and does not affect input. In other words, this Control will still receive input events at its original location before the offset transform is applied.
+   * If `false`, the entire transform of this Control is affected and input events will register where the Control is visually.
+   * Has no effect unless {@link offset_transform_enabled} is `true`.
+   */
+  offset_transform_visual_only: boolean;
+  /**
    * <member name="pivot_offset" type="Vector2" setter="set_pivot_offset" getter="get_pivot_offset" default="Vector2(0, 0)">
    * By default, the node's pivot is its top-left corner. When you change its {@link rotation} or {@link scale}, it will rotate or scale around this pivot.
    * The actual offset is the combined value of this property and {@link pivot_offset_ratio}.
@@ -154,6 +206,10 @@ declare class Control extends CanvasItem {
    * The node's position, relative to its containing node. It corresponds to the rectangle's top-left corner. The property is not affected by {@link pivot_offset}.
    */
   position: Vector2;
+  /**
+   * If `true`, this Control's children will use the value returned by {@link get_combined_maximum_size} in their own size calculations.
+   */
+  propagate_maximum_size: boolean;
   /**
    * The node's rotation around its pivot, in radians. See {@link pivot_offset} to change the pivot's position.
    * **Note:** This property is edited in the inspector in degrees. If you want to use degrees in a script, use {@link rotation_degrees}.
@@ -211,6 +267,10 @@ declare class Control extends CanvasItem {
    * The tooltip popup will use either a default implementation, or a custom one that you can provide by overriding {@link _make_custom_tooltip}. The default tooltip includes a {@link PopupPanel} and {@link Label} whose theme properties can be customized using {@link Theme} methods with the `"TooltipPanel"` and `"TooltipLabel"` respectively. For example:
    */
   tooltip_text: string;
+  /**
+   * The translation context used when translating this control's displayed text, if it has any. Also used when generating translation templates.
+   */
+  translation_context: string;
   set_accessibility_controls_nodes(value: Array<NodePath>): void;
   get_accessibility_controls_nodes(): Array<NodePath>;
   set_accessibility_described_by_nodes(value: Array<NodePath>): void;
@@ -233,6 +293,8 @@ declare class Control extends CanvasItem {
   is_auto_translating(): boolean;
   set_clip_contents(value: boolean): void;
   is_clipping_contents(): boolean;
+  set_custom_maximum_size(value: Vector2 | Vector2i): void;
+  get_custom_maximum_size(): Vector2;
   set_custom_minimum_size(value: Vector2 | Vector2i): void;
   get_custom_minimum_size(): Vector2;
   set_focus_behavior_recursive(value: int): void;
@@ -261,10 +323,28 @@ declare class Control extends CanvasItem {
   get_mouse_filter(): int;
   set_force_pass_scroll_events(value: boolean): void;
   is_force_pass_scroll_events(): boolean;
+  set_offset_transform_enabled(value: boolean): void;
+  is_offset_transform_enabled(): boolean;
+  set_offset_transform_pivot(value: Vector2 | Vector2i): void;
+  get_offset_transform_pivot(): Vector2;
+  set_offset_transform_pivot_ratio(value: Vector2 | Vector2i): void;
+  get_offset_transform_pivot_ratio(): Vector2;
+  set_offset_transform_position(value: Vector2 | Vector2i): void;
+  get_offset_transform_position(): Vector2;
+  set_offset_transform_position_ratio(value: Vector2 | Vector2i): void;
+  get_offset_transform_position_ratio(): Vector2;
+  set_offset_transform_rotation(value: float): void;
+  get_offset_transform_rotation(): float;
+  set_offset_transform_scale(value: Vector2 | Vector2i): void;
+  get_offset_transform_scale(): Vector2;
+  set_offset_transform_visual_only(value: boolean): void;
+  is_offset_transform_visual_only(): boolean;
   set_pivot_offset_ratio(value: Vector2 | Vector2i): void;
   get_pivot_offset_ratio(): Vector2;
   _set_position(value: Vector2 | Vector2i): void;
   get_position(): Vector2;
+  set_propagate_maximum_size(value: boolean): void;
+  is_propagating_maximum_size(): boolean;
   set_rotation(value: float): void;
   get_rotation(): float;
   set_rotation_degrees(value: float): void;
@@ -289,6 +369,8 @@ declare class Control extends CanvasItem {
   get_tooltip_auto_translate_mode(): int;
   set_tooltip_text(value: string | NodePath): void;
   get_tooltip_text(): string;
+  set_translation_context(value: string): void;
+  get_translation_context(): string;
 
   /** Return the description of the keyboard shortcuts and other contextual help for this control. */
   _accessibility_get_contextual_info(): string;
@@ -308,11 +390,23 @@ declare class Control extends CanvasItem {
    */
   _get_accessibility_container_name(node: Node): string;
   /**
+   * Virtual method to be implemented by the user. Returns the cursor shape for the position `at_position` in the control's local coordinates, which will typically be used while hovering over this control. See {@link get_cursor_shape}.
+   * If not overridden, defaults to {@link mouse_default_cursor_shape}.
+   */
+  _get_cursor_shape(at_position: Vector2 | Vector2i): int;
+  /**
    * Godot calls this method to get data that can be dragged and dropped onto controls that expect drop data. Returns `null` if there is no data to drag. Controls that want to receive drop data should implement {@link _can_drop_data} and {@link _drop_data}. `at_position` is local to this control. Drag may be forced with {@link force_drag}.
    * A preview that will follow the mouse that should represent the data can be set with {@link set_drag_preview}. A good time to set the preview is in this method.
    * **Note:** If the drag was initiated by a keyboard shortcut or {@link accessibility_drag}, `at_position` is set to {@link Vector2.INF}, and the currently selected item/text position should be used as the drag position.
    */
   _get_drag_data(at_position: Vector2 | Vector2i): unknown;
+  /**
+   * Virtual method to be implemented by the user. Returns the maximum size for this control. Alternative to {@link custom_maximum_size} for controlling maximum size via code. The actual maximum size will be the max value of these two (in each axis separately).
+   * If not overridden, defaults to {@link Vector2.ZERO}.
+   * **Note:** This method will not be called when the script is attached to a {@link Control} node that already overrides its maximum size (e.g. {@link ScrollContainer}).
+   * **Note:** It is recommended to use {@link get_bound_minimum_size} instead of {@link get_combined_minimum_size} when implementing this method, as the former respects maximum size limits when calculating the minimum size, while the latter does not.
+   */
+  _get_maximum_size(): Vector2;
   /**
    * Virtual method to be implemented by the user. Returns the minimum size for this control. Alternative to {@link custom_minimum_size} for controlling minimum size via code. The actual minimum size will be the max value of these two (in each axis separately).
    * If not overridden, defaults to {@link Vector2.ZERO}.
@@ -320,10 +414,14 @@ declare class Control extends CanvasItem {
    */
   _get_minimum_size(): Vector2;
   /**
-   * Virtual method to be implemented by the user. Returns the tooltip text for the position `at_position` in control's local coordinates, which will typically appear when the cursor is resting over this control. See {@link get_tooltip}.
+   * Virtual method to be implemented by the user. Returns the tooltip text for the position `at_position` in the control's local coordinates, which will typically appear when the cursor is resting over this control. See {@link get_tooltip}.
    * **Note:** If this method returns an empty {@link String} and {@link _make_custom_tooltip} is not overridden, no tooltip is displayed.
    */
   _get_tooltip(at_position: Vector2 | Vector2i): string;
+  /**
+   * Return the auto-translation mode at the given `at_position`. If not implemented, the {@link tooltip_auto_translate_mode} property will be used instead.
+   */
+  _get_tooltip_auto_translate_mode_at(at_position: Vector2 | Vector2i): int;
   /**
    * Virtual method to be implemented by the user. Override this method to handle and accept inputs on UI elements. See also {@link accept_event}.
    * **Example:** Click on the control to print a message:
@@ -338,7 +436,7 @@ declare class Control extends CanvasItem {
   _gui_input(event: InputEvent): void;
   /**
    * Virtual method to be implemented by the user. Returns whether the given `point` is inside this control.
-   * If not overridden, default behavior is checking if the point is within control's Rect.
+   * If not overridden, default behavior is checking if the point is within the control's Rect.
    * **Note:** If you want to check if a point is inside the control, you can use `Rect2(Vector2.ZERO, size).has_point(point)`.
    */
   _has_point(point: Vector2 | Vector2i): boolean;
@@ -425,16 +523,27 @@ declare class Control extends CanvasItem {
   get_anchor(side: int): float;
   /** Returns {@link offset_left} and {@link offset_top}. See also {@link position}. */
   get_begin(): Vector2;
-  /** Returns combined minimum size from {@link custom_minimum_size} and {@link get_minimum_size}. */
+  /**
+   * Returns the bound value of {@link get_combined_minimum_size} by {@link get_combined_maximum_size}.
+   * This value is the true minimum size of the container, as the maximum size has priority over the minimum size.
+   * For example, if the combined minimum size is (100, 100) and the combined maximum size is (50, 150), the bound minimum size will be (50, 100).
+   */
+  get_bound_minimum_size(): Vector2;
+  /**
+   * Returns the combined maximum size from {@link custom_maximum_size} and {@link get_maximum_size}, as well as the {@link custom_maximum_size} of this node's parent if it is a Control node with {@link propagate_maximum_size} set to `true`.
+   */
+  get_combined_maximum_size(): Vector2;
+  /** Returns the combined minimum size from {@link custom_minimum_size} and {@link get_minimum_size}. */
   get_combined_minimum_size(): Vector2;
   /**
    * Returns the combined value of {@link pivot_offset} and {@link pivot_offset_ratio}, in pixels. The ratio is multiplied by the control's size.
    */
   get_combined_pivot_offset(): Vector2;
   /**
-   * Returns the mouse cursor shape for this control when hovered over `position` in local coordinates. For most controls, this is the same as {@link mouse_default_cursor_shape}, but some built-in controls implement more complex logic.
+   * Returns the mouse cursor shape for this control when hovered over `at_position` in local coordinates. For most controls, this is the same as {@link mouse_default_cursor_shape}, but some built-in controls implement more complex logic.
+   * You can override {@link _get_cursor_shape} to implement custom behavior for this method.
    */
-  get_cursor_shape(position?: Vector2 | Vector2i): int;
+  get_cursor_shape(at_position?: Vector2 | Vector2i): int;
   /** Returns {@link offset_right} and {@link offset_bottom}. */
   get_end(): Vector2;
   /**
@@ -452,6 +561,8 @@ declare class Control extends CanvasItem {
    * **Note:** Setting {@link Viewport.gui_snap_controls_to_pixels} to `true` can lead to rounding inaccuracies between the displayed control and the returned {@link Rect2}.
    */
   get_global_rect(): Rect2;
+  /** Returns the maximum size for this control. See {@link custom_maximum_size}. */
+  get_maximum_size(): Vector2;
   /** Returns the minimum size for this control. See {@link custom_minimum_size}. */
   get_minimum_size(): Vector2;
   /**
@@ -524,8 +635,8 @@ declare class Control extends CanvasItem {
    */
   get_theme_stylebox(name: string, theme_type?: string): StyleBox | null;
   /**
-   * Returns the tooltip text for the position `at_position` in control's local coordinates, which will typically appear when the cursor is resting over this control. By default, it returns {@link tooltip_text}.
-   * This method can be overridden to customize its behavior. See {@link _get_tooltip}.
+   * Returns the tooltip text for the position `at_position` in the control's local coordinates, which will typically appear when the cursor is resting over this control. By default, it returns {@link tooltip_text}.
+   * You can override {@link _get_tooltip} to implement custom behavior for this method.
    * **Note:** If this method returns an empty {@link String} and {@link _make_custom_tooltip} is not overridden, no tooltip is displayed.
    */
   get_tooltip(at_position?: Vector2 | Vector2i): string;
@@ -535,7 +646,7 @@ declare class Control extends CanvasItem {
   grab_click_focus(): void;
   /**
    * Steal the focus from another control and become the focused control (see {@link focus_mode}).
-   * If `hide_focus` is `true`, the control will not visually show its focused state. Has no effect for {@link LineEdit} and {@link TextEdit} when {@link ProjectSettings.gui/common/show_focus_state_on_pointer_event} is set to `Control Supports Keyboard Input`, or for any control when it is set to `Always`.
+   * If `hide_focus` is `true`, the control will not visually show its focused state. Has no effect for {@link LineEdit} and {@link TextEdit} when {@link ProjectSettings.gui/common/show_focus_state_on_pointer_event} is set to `Text Input Controls`, or for any control when it is set to `Always`.
    * **Note:** Using this method together with {@link Callable.call_deferred} makes it more reliable, especially when called inside {@link Node._ready}.
    */
   grab_focus(hide_focus?: boolean): void;
@@ -708,7 +819,12 @@ declare class Control extends CanvasItem {
    */
   set_size(size: Vector2 | Vector2i, keep_offsets?: boolean): void;
   /**
-   * Invalidates the size cache in this node and in parent nodes up to top level. Intended to be used with {@link get_minimum_size} when the return value is changed. Setting {@link custom_minimum_size} directly calls this method automatically.
+   * Invalidates the maximum size cache in this node and in parent nodes up to top level. Intended to be used with {@link get_maximum_size} when the return value is changed. Setting {@link custom_maximum_size} directly calls this method automatically.
+   * **Note:** Calling this method also calls {@link update_minimum_size} since the combined minimum size may be affected by the maximum size change.
+   */
+  update_maximum_size(): void;
+  /**
+   * Invalidates the minimum size cache in this node and in parent nodes up to top level. Intended to be used with {@link get_minimum_size} when the return value is changed. Setting {@link custom_minimum_size} directly calls this method automatically.
    */
   update_minimum_size(): void;
   /**
@@ -723,6 +839,8 @@ declare class Control extends CanvasItem {
   focus_exited: Signal<[]>;
   /** Emitted when the node receives an {@link InputEvent}. */
   gui_input: Signal<[InputEvent]>;
+  /** Emitted when the node's maximum size changes. */
+  maximum_size_changed: Signal<[]>;
   /** Emitted when the node's minimum size changes. */
   minimum_size_changed: Signal<[]>;
   /**

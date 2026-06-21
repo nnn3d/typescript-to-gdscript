@@ -282,6 +282,10 @@ declare class CodeEdit extends TextEdit {
   is_line_executing(line: int): boolean;
   /** Returns `true` if the given line is folded. See {@link fold_line}. */
   is_line_folded(line: int): boolean;
+  /**
+   * Joins all selected lines or lines containing a caret with their next line. Whitespace in between will be removed. If the next line has content, the `line_ending` will be inserted in between.
+   */
+  join_lines(line_ending?: string | NodePath): void;
   /** Moves all lines down that are selected or have a caret on them. */
   move_lines_down(): void;
   /** Moves all lines up that are selected or have a caret on them. */
@@ -378,6 +382,8 @@ declare class CodeEdit extends TextEdit {
   static readonly KIND_FILE_PATH: int;
   /** Marks the option as unclassified or plain text. */
   static readonly KIND_PLAIN_TEXT: int;
+  /** Marks the option as a keyword. */
+  static readonly KIND_KEYWORD: int;
   // enum CodeCompletionLocation
   /**
    * The option is local to the location of the code completion query - e.g. a local variable. Subsequent value of location represent options from the outer class, the exact value represent how far they are (in terms of inner classes).

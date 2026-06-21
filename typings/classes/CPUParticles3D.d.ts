@@ -304,9 +304,9 @@ declare class CPUParticles3D extends GeometryInstance3D {
   get_particle_flag(particle_flag: int): boolean;
   /**
    * Requests the particles to process for extra process time during a single frame.
-   * Useful for particle playback, if used in combination with {@link use_fixed_seed} or by calling {@link restart} with parameter `keep_seed` set to `true`.
+   * `process_time` defines the time that the particles will process while emitting is on. `process_time_residual` defines the time that particles will process with emitting turned off for the simulation. When combined with {@link speed_scale} set to `0.0`, this is useful to be able to seek a particle system timeline.
    */
-  request_particles_process(process_time: float): void;
+  request_particles_process(process_time: float, process_time_residual?: float): void;
   /**
    * Restarts the particle emitter.
    * If `keep_seed` is `true`, the current random seed will be preserved. Useful for seeking and playback.

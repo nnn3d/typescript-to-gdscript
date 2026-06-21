@@ -44,6 +44,8 @@ declare class Script extends Resource {
    * **Note:** The dictionaries returned by this method are formatted identically to those returned by {@link Object.get_signal_list}.
    */
   get_script_signal_list(): Array<Dictionary>;
+  /** Returns `true` if the script, or a base class, defines a method with the given name. */
+  has_script_method(method_name: string): boolean;
   /** Returns `true` if the script, or a base class, defines a signal with the given name. */
   has_script_signal(signal_name: string): boolean;
   /**

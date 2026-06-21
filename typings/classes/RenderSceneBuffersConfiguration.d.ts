@@ -21,7 +21,10 @@ declare class RenderSceneBuffersConfiguration extends RefCounted {
   screen_space_aa: int;
   /** The target (upscale) size if scaling is used. */
   target_size: Vector2i;
-  /** Bias applied to mipmaps. */
+  /**
+   * Bias applied to mipmaps.
+   * **Note:** This property is only supported in the Forward+ and Mobile renderers, not Compatibility. In Compatibility, this property is always treated as if it was set to `0.0`.
+   */
   texture_mipmap_bias: float;
   /** The number of views we're rendering. */
   view_count: int;

@@ -9,6 +9,10 @@ declare class EditorNode3DGizmoPlugin extends Resource {
    */
   _can_be_hidden(): boolean;
   /**
+   * Override this method to define whether the gizmos should commit when the final handle position is the same as the initial one. Returns `false` if not overridden.
+   */
+  _can_commit_handle_on_click(): boolean;
+  /**
    * Override this method to commit a handle being edited (handles must have been previously added by {@link EditorNode3DGizmo.add_handles} during {@link _redraw}). This usually means creating an {@link UndoRedo} action for the change, using the current handle value as "do" and the `restore` argument as "undo".
    * If the `cancel` argument is `true`, the `restore` value should be directly set, without any {@link UndoRedo} action.
    * The `secondary` argument is `true` when the committed handle is secondary (see {@link EditorNode3DGizmo.add_handles} for more information).

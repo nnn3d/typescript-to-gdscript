@@ -5,6 +5,7 @@
 declare class Label extends Control {
   /**
    * If set to something other than {@link TextServer.AUTOWRAP_OFF}, the text gets wrapped inside the node's bounding rectangle. If you resize the node, it will change its height automatically to show all the text.
+   * **Note:** Labels with autowrapping enabled must have a custom maximum width configured to work correctly, either through the Label's own {@link Control.custom_maximum_size} or as a result of a propagated maximum size from a parent Control with {@link Control.propagate_maximum_size} enabled.
    */
   autowrap_mode: int;
   /**

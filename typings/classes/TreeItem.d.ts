@@ -56,6 +56,10 @@ declare class TreeItem extends GodotObject {
    * Returns the text autowrap mode in the given `column`. By default it is {@link TextServer.AUTOWRAP_OFF}.
    */
   get_autowrap_mode(column: int): int;
+  /**
+   * Returns the autowrap trim flags for the given `column`. By default, both {@link TextServer.BREAK_TRIM_START_EDGE_SPACES} and {@link TextServer.BREAK_TRIM_END_EDGE_SPACES} are enabled.
+   */
+  get_autowrap_trim_flags(column: int): int;
   /** Returns the {@link Texture2D} of the button at index `button_index` in column `column`. */
   get_button(column: int, button_index: int): Texture2D | null;
   /**
@@ -171,6 +175,8 @@ declare class TreeItem extends GodotObject {
   get_tooltip_text(column: int): string;
   /** Returns the {@link Tree} that owns this TreeItem. */
   get_tree(): Tree | null;
+  /** Returns `true` if this {@link TreeItem} is allowed to accept children. */
+  is_accepting_children(): boolean;
   /**
    * Returns `true` if this {@link TreeItem}, or any of its descendants, is collapsed.
    * If `only_visible` is `true` it ignores non-visible {@link TreeItem}s.
@@ -213,8 +219,12 @@ declare class TreeItem extends GodotObject {
    * **Note:** If you want to move a child from one {@link Tree} to another, then instead of removing and adding it manually you can use {@link move_before} or {@link move_after}.
    */
   remove_child(child: TreeItem): void;
-  /** Selects the given `column`. */
-  select(column: int): void;
+  /**
+   * Selects the given `column`. If `set_as_cursor` is `true`, the {@link Tree}'s cursor will be moved to this item (only matters if {@link Tree.select_mode} is set to {@link Tree.SELECT_MULTI}).
+   */
+  select(column: int, set_as_cursor?: boolean): void;
+  /** Sets {@link TreeItem}'s ability to accept children. */
+  set_accept_children(allowed: boolean): void;
   /**
    * Sets the given column's auto translate mode to `mode`.
    * All columns use {@link Node.AUTO_TRANSLATE_MODE_INHERIT} by default, which uses the same auto translate mode as the {@link Tree} itself.
@@ -224,6 +234,10 @@ declare class TreeItem extends GodotObject {
    * Sets the autowrap mode in the given `column`. If set to something other than {@link TextServer.AUTOWRAP_OFF}, the text gets wrapped inside the cell's bounding rectangle.
    */
   set_autowrap_mode(column: int, autowrap_mode: int): void;
+  /**
+   * Sets the autowrap trim flags for the given `column`. These flags control whether leading and trailing spaces are trimmed on wrapped lines. Set to `0` to disable all trimming.
+   */
+  set_autowrap_trim_flags(column: int, flags: int): void;
   /** Sets the given column's button {@link Texture2D} at index `button_index` to `button`. */
   set_button(column: int, button_index: int, button: Texture2D): void;
   /** Sets the given column's button color at index `button_index` to `color`. */
@@ -257,6 +271,7 @@ declare class TreeItem extends GodotObject {
   /**
    * Sets the given column's custom draw callback. Use an empty {@link Callable} ([code skip-lint]Callable()[/code]) to clear the custom callback. The cell has to be in {@link CELL_MODE_CUSTOM} to use this feature.
    * The `callback` should accept two arguments: the {@link TreeItem} that is drawn and its position and size as a {@link Rect2}.
+   * To draw custom content over the native style, please use {@link Tree.get_custom_drawing_canvas_item}.
    */
   set_custom_draw_callback(column: int, callback: Callable): void;
   /** Sets custom font used to draw text in the given `column`. */

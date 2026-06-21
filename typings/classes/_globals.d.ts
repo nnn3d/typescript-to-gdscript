@@ -289,7 +289,7 @@ declare function lerpf(from_: float, to: float, weight: float): float;
  */
 declare function linear_to_db(lin: float): float;
 /**
- * Returns the natural logarithm (https://en.wikipedia.org/wiki/Natural_logarithm) of `x` (base *e* (https://en.wikipedia.org/wiki/E_(mathematical_constant)), with *e* being approximately 2.71828). This is the amount of time needed to reach a certain level of continuous growth.
+ * Returns the natural logarithm (https://en.wikipedia.org/wiki/Natural_logarithm) of `x` (base e (https://en.wikipedia.org/wiki/E_(mathematical_constant)), with *e* being approximately 2.71828). This is the amount of time needed to reach a certain level of continuous growth.
  * **Note:** This is not the same as the "log" function on most calculators, which uses a base 10 logarithm. To use base 10 logarithm, use `log(x) / log(10)`.
  * **Note:** The logarithm of `0` returns `-inf`, while negative values return `-nan`.
  */
@@ -715,27 +715,27 @@ declare const enum InlineAlignment {
 
 declare const enum EulerOrder {
   /**
-   * Specifies that Euler angles should be in XYZ order. When composing, the order is X, Y, Z. When decomposing, the order is reversed, first Z, then Y, and X last.
+   * Specifies that Euler angles should be in intrinsic XYZ order. When composing, the rotations happen around the local X, Y, and Z axes, in that order. When decomposing, the order is reversed, first Z, then Y, and X last.
    */
   EULER_ORDER_XYZ = 0,
   /**
-   * Specifies that Euler angles should be in XZY order. When composing, the order is X, Z, Y. When decomposing, the order is reversed, first Y, then Z, and X last.
+   * Specifies that Euler angles should be in intrinsic XZY order. When composing, the rotations happen around the local X, Z, and Y axes, in that order. When decomposing, the order is reversed, first Y, then Z, and X last.
    */
   EULER_ORDER_XZY = 1,
   /**
-   * Specifies that Euler angles should be in YXZ order. When composing, the order is Y, X, Z. When decomposing, the order is reversed, first Z, then X, and Y last.
+   * Specifies that Euler angles should be in intrinsic YXZ order. When composing, the rotations happen around the local Y, X, and Z axes, in that order. When decomposing, the order is reversed, first Z, then X, and Y last.
    */
   EULER_ORDER_YXZ = 2,
   /**
-   * Specifies that Euler angles should be in YZX order. When composing, the order is Y, Z, X. When decomposing, the order is reversed, first X, then Z, and Y last.
+   * Specifies that Euler angles should be in intrinsic YZX order. When composing, the rotations happen around the local Y, Z, and X axes, in that order. When decomposing, the order is reversed, first X, then Z, and Y last.
    */
   EULER_ORDER_YZX = 3,
   /**
-   * Specifies that Euler angles should be in ZXY order. When composing, the order is Z, X, Y. When decomposing, the order is reversed, first Y, then X, and Z last.
+   * Specifies that Euler angles should be in intrinsic ZXY order. When composing, the rotations happen around the local Z, X, and Y axes, in that order. When decomposing, the order is reversed, first Y, then X, and Z last.
    */
   EULER_ORDER_ZXY = 4,
   /**
-   * Specifies that Euler angles should be in ZYX order. When composing, the order is Z, Y, X. When decomposing, the order is reversed, first X, then Y, and Z last.
+   * Specifies that Euler angles should be in intrinsic ZYX order. When composing, the rotations happen around the local Z, Y, and X axes, in that order. When decomposing, the order is reversed, first X, then Y, and Z last.
    */
   EULER_ORDER_ZYX = 5,
 }
@@ -1132,9 +1132,9 @@ declare const enum Key {
 }
 
 declare const enum KeyModifierMask {
-  /** Key Code mask. */
+  /** Bit mask with all bits enabled except for modifier keys. Apply it to remove modifiers. */
   KEY_CODE_MASK = 8388607,
-  /** Modifier key mask. */
+  /** Bit mask with all modifier bits enabled. Apply it to isolate modifiers. */
   KEY_MODIFIER_MASK = 2130706432,
   /**
    * Automatically remapped to {@link KEY_META} on macOS and {@link KEY_CTRL} on other platforms, this mask is never set in the actual events, and should be used for key mapping only.
@@ -1259,8 +1259,20 @@ declare const enum JoyButton {
   JOY_BUTTON_PADDLE4 = 19,
   /** Game controller SDL touchpad button. */
   JOY_BUTTON_TOUCHPAD = 20,
+  /**
+   * Game controller SDL miscellaneous button. Used by Nintendo Switch 2 Pro Controller and Horipad Steam controllers.
+   */
+  JOY_BUTTON_MISC2 = 21,
+  /** Game controller SDL miscellaneous button. */
+  JOY_BUTTON_MISC3 = 22,
+  /** Game controller SDL miscellaneous button. */
+  JOY_BUTTON_MISC4 = 23,
+  /** Game controller SDL miscellaneous button. */
+  JOY_BUTTON_MISC5 = 24,
+  /** Game controller SDL miscellaneous button. */
+  JOY_BUTTON_MISC6 = 25,
   /** The number of SDL game controller buttons. */
-  JOY_BUTTON_SDL_MAX = 21,
+  JOY_BUTTON_SDL_MAX = 26,
   /**
    * The maximum number of game controller buttons supported by the engine. The actual limit may be lower on specific platforms:
    * - **Android:** Up to 36 buttons.
@@ -1471,15 +1483,17 @@ declare const enum Error {
    * **Note:** If a built-in method returns this code, please open an issue on the GitHub Issue Tracker (https://github.com/godotengine/godot/issues).
    */
   ERR_BUG = 47,
-  /** Printer on fire error (This is an easter egg, no built-in methods return this error code). */
+  /** Printer on fire error (this is an easter egg, no built-in methods return this error code). */
   ERR_PRINTER_ON_FIRE = 48,
 }
 
 declare const enum PropertyHint {
-  /** The property has no hint for the editor. */
+  /**
+   * The property has no hint for the editor. However, the hint string is still read, which can be used to specify a suffix for a property that has no range limit (see {@link PROPERTY_HINT_RANGE}'s description).
+   */
   PROPERTY_HINT_NONE = 0,
   /**
-   * Hints that an [int] or [float] property should be within a range specified via the hint string `"min,max"` or `"min,max,step"`. The hint string can optionally include `"or_greater"` and/or `"or_less"` to allow manual input going respectively above the max or below the min values.
+   * Hints that an [int], [float], or packed/typed {@link Array} property containing [int] or [float] types should be within a range specified via the hint string `"min,max"` or `"min,max,step"`. The hint string can optionally include `"or_greater"` and/or `"or_less"` to allow manual input going respectively above the max or below the min values.
    * **Example:** `"-360,360,1,or_greater,or_less"`.
    * Additionally, other keywords can be included: `"exp"` for exponential range editing, `"radians_as_degrees"` for editing radian angles in degrees (the range values are also in degrees), `"degrees"` to hint at an angle, `"prefer_slider"` to show the slider for integers, `"hide_control"` to hide the slider or up-down arrows, and `"suffix:px/s"` to display a suffix indicating the value's unit (e.g. `px/s` for pixels per second).
    */
@@ -1495,11 +1509,11 @@ declare const enum PropertyHint {
    */
   PROPERTY_HINT_ENUM_SUGGESTION = 3,
   /**
-   * Hints that a [float] property should be edited via an exponential easing function. The hint string can include `"attenuation"` to flip the curve horizontally and/or `"positive_only"` to exclude in/out easing and limit values to be greater than or equal to zero.
+   * Hints that a [float] property should be edited using a curve editor showing an exponential easing function. The hint string can include `"attenuation"` to flip the curve horizontally and/or `"positive_only"` to exclude in/out easing and limit values to be greater than or equal to zero. This displays differently to a property that uses {@link PROPERTY_HINT_RANGE} with the `"exp"` keyword, as it's edited with a slider instead of a curve editor.
    */
   PROPERTY_HINT_EXP_EASING = 4,
   /**
-   * Hints that a vector property should allow its components to be linked. For example, this allows {@link Vector2.x} and {@link Vector2.y} to be edited together.
+   * Hints that a vector property should allow its components to be linked. For example, this allows {@link Vector2.x} and {@link Vector2.y} to be edited together. This hint is supported on {@link Vector2}, {@link Vector2i}, {@link Vector3}, {@link Vector3i}, {@link Vector4}, and {@link Vector4i}. The hint string can be used to specify a suffix indicating each value's unit with the `"suffix:px/s"` syntax.
    */
   PROPERTY_HINT_LINK = 5,
   /**
@@ -1909,6 +1923,29 @@ declare const enum Variant_Operator {
   OP_MAX = 25,
 }
 
+
+/** Maximum value of an 8-bit unsigned integer. */
+declare const UINT8_MAX: int;
+/** Maximum value of a 16-bit unsigned integer. */
+declare const UINT16_MAX: int;
+/** Maximum value of a 32-bit unsigned integer. */
+declare const UINT32_MAX: int;
+/** Minimum value of an 8-bit signed integer. */
+declare const INT8_MIN: int;
+/** Maximum value of an 8-bit signed integer. */
+declare const INT8_MAX: int;
+/** Minimum value of a 16-bit signed integer. */
+declare const INT16_MIN: int;
+/** Maximum value of a 16-bit signed integer. */
+declare const INT16_MAX: int;
+/** Minimum value of a 32-bit signed integer. */
+declare const INT32_MIN: int;
+/** Maximum value of a 32-bit signed integer. */
+declare const INT32_MAX: int;
+/** Minimum value of a 64-bit signed integer. */
+declare const INT64_MIN: int;
+/** Maximum value of a 64-bit signed integer. */
+declare const INT64_MAX: int;
 // @GDScript — built-in constants, functions, and annotations
 
 /**
@@ -1937,7 +1974,7 @@ declare const NAN: float;
  */
 declare function Color8(r8: int, g8: int, b8: int, a8?: int): Color;
 /**
- * Asserts that the `condition` is `true`. If the `condition` is `false`, an error is generated. When running from the editor, the running project will also be paused until you resume it. This can be used as a stronger form of {@link @GlobalScope.push_error} for reporting errors to project developers or add-on users.
+ * Asserts that the `condition` is `true`. If the `condition` is `false`, an error is generated and the current method returns a default value. When running from the editor, failed asserts also cause a debugger break. This can be used as a stronger form of {@link @GlobalScope.push_error} for reporting errors to project developers or add-on users.
  * An optional `message` can be shown in addition to the generic "Assertion failed" message. You can use this to provide additional details about why the assertion failed.
  * **Warning:** For performance reasons, the code inside {@link assert} is only executed in debug builds or when running the project from the editor. Don't include code that has side effects in an {@link assert} call. Otherwise, the project will behave differently when exported in release mode.
  * **Note:** {@link assert} is a keyword, not a function. So you cannot access it as a {@link Callable} or use it inside expressions.
@@ -1982,10 +2019,10 @@ declare function inst_to_dict(instance: GodotObject): Dictionary;
  * - A constant from the {@link Variant.Type} enumeration, for example {@link TYPE_INT}.
  * - An {@link Object}-derived class which exists in {@link ClassDB}, for example {@link Node}.
  * - A {@link Script} (you can use any class, including inner one).
- * Unlike the right operand of the `is` operator, `type` can be a non-constant value. The `is` operator supports more features (such as typed arrays). Use the operator instead of this method if you do not need to check the type dynamically.
+ * Unlike the right operand of the `is` operator, `type` can be a non-constant value. The `is` operator supports more features (such as typed arrays and dictionaries). Use the operator instead of this method if you do not need to check the type dynamically.
  * **Examples:**
  * **Note:** If `value` and/or `type` are freed objects (see {@link @GlobalScope.is_instance_valid}), or `type` is not one of the above options, this method will raise a runtime error.
- * See also {@link @GlobalScope.typeof}, {@link type_exists}, {@link Array.is_same_typed} (and other {@link Array} methods).
+ * See also {@link @GlobalScope.typeof}, {@link Object.is_class}, {@link Object.get_script}, {@link Array.is_same_typed} (and other {@link Array} methods), {@link Dictionary.is_same_typed} (and other {@link Dictionary} methods).
  */
 declare function is_instance_of(value: unknown, type_: unknown): boolean;
 /**

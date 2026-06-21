@@ -24,7 +24,7 @@ declare class InputEventMouseMotion extends InputEventMouse {
   screen_relative: Vector2;
   /**
    * The unscaled mouse velocity in pixels per second in screen coordinates. This velocity is *not* scaled according to the content scale factor or calls to {@link InputEvent.xformed_by}.
-   * **Note:** Use {@link screen_relative} for mouse aiming using the {@link Input.MOUSE_MODE_CAPTURED} mouse mode.
+   * **Note:** In {@link Input.MOUSE_MODE_CAPTURED} mode, {@link screen_velocity} returns `(0, 0)` because the mouse cursor is hidden and locked. Use {@link screen_relative} for mouse aiming using the {@link Input.MOUSE_MODE_CAPTURED} mouse mode.
    */
   screen_velocity: Vector2;
   /**
@@ -34,7 +34,7 @@ declare class InputEventMouseMotion extends InputEventMouse {
   /**
    * The mouse velocity in pixels per second.
    * **Note:** {@link velocity} is automatically scaled according to the content scale factor, which is defined by the project's stretch mode settings. That means mouse sensitivity may appear different depending on resolution.
-   * **Note:** Use {@link screen_relative} for mouse aiming using the {@link Input.MOUSE_MODE_CAPTURED} mouse mode.
+   * **Note:** In {@link Input.MOUSE_MODE_CAPTURED} mode, {@link velocity} returns `(0, 0)` because the mouse cursor is hidden and locked. Use {@link screen_relative} for mouse aiming using the {@link Input.MOUSE_MODE_CAPTURED} mouse mode.
    */
   velocity: Vector2;
   set_pen_inverted(value: boolean): void;

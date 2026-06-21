@@ -8,6 +8,7 @@ declare class GodotObject {
    * Combined with {@link _set} and {@link _get_property_list}, this method allows defining custom properties, which is particularly useful for editor plugins.
    * **Note:** This method is not called when getting built-in properties of an object, including properties defined with .
    * **Note:** Unlike other virtual methods, this method is called automatically for every script that overrides it. This means that the base implementation should not be called via `super` in GDScript or its equivalents in other languages. The bottom-most sub-class will be called first, with subsequent calls ascending the class hierarchy. The call chain will stop on the first class that returns a non-`null` value.
+   * **Warning:** This method must be thread-safe ($DOCS_URL/tutorials/performance/thread_safe_apis.html) if overridden. Otherwise, the engine may crash when trying to save a resource containing the object.
    */
   _get(property: string): unknown;
   /**
@@ -18,6 +19,7 @@ declare class GodotObject {
    * **Note:** This method is intended for advanced purposes. For most common use cases, the scripting languages offer easier ways to handle properties. See , , , etc. If you want to customize exported properties, use {@link _validate_property}.
    * **Note:** If the object's script is not , this method will not be called in the editor.
    * **Note:** Unlike other virtual methods, this method is called automatically for every script that overrides it. This means that the base implementation should not be called via `super` in GDScript or its equivalents in other languages. The bottom-most sub-class will be called first, with subsequent calls ascending the class hierarchy.
+   * **Warning:** This method must be thread-safe ($DOCS_URL/tutorials/performance/thread_safe_apis.html) if overridden. Otherwise, the engine may crash when trying to save a resource containing the object.
    */
   _get_property_list(): Array<Dictionary>;
   /**
@@ -32,7 +34,8 @@ declare class GodotObject {
   _iter_get(iter: unknown): unknown;
   /**
    * Initializes the iterator. `iter` stores the iteration state. Since GDScript does not support passing arguments by reference, a single-element array is used as a wrapper. Returns `true` so long as the iterator has not reached the end.
-   * **Note:** Alternatively, you can ignore `iter` and use the object's state instead, see online docs ($DOCS_URL/tutorials/scripting/gdscript/gdscript_advanced.html#custom-iterators) for an example. Note that in this case you will not be able to reuse the same iterator instance in nested loops. Also, make sure you reset the iterator state in this method if you want to reuse the same instance multiple times.
+   * **Note:** Avoid storing iterator state in a member variable, use the `iter` parameter instead. Otherwise, you won't be able to reuse the same iterator instance in nested loops.
+   * See also online docs ($DOCS_URL/tutorials/scripting/gdscript/gdscript_advanced.html#custom-iterators).
    */
   _iter_init(iter: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array): boolean;
   /**
@@ -262,13 +265,16 @@ declare class GodotObject {
    * Returns `true` if the object inherits from the given `class`. See also {@link get_class}.
    * **Note:** This method ignores `class_name` declarations in the object's script.
    */
-  is_class(class_: string | NodePath): boolean;
+  is_class(class_: string): boolean;
   /**
    * Returns `true` if a connection exists between the given `signal` name and `callable`.
    * **Note:** In C#, `signal` must be in snake_case when referring to built-in Godot signals. Prefer using the names exposed in the `SignalName` class to avoid allocating a new {@link StringName} on each call.
    */
   is_connected(signal: string, callable: Callable): boolean;
-  /** Returns `true` if the {@link Node.queue_free} method was called for the object. */
+  /**
+   * Returns `true` if the methods {@link Node.queue_free} or {@link SceneTree.queue_delete} was called for the object.
+   * **Note:** This method does not return `true` on children of the node that {@link Node.queue_free} has been called on, even though they will be freed together with the parent.
+   */
   is_queued_for_deletion(): boolean;
   /**
    * Sends the given `what` notification to all classes inherited by the object, triggering calls to {@link _notification}, starting from the highest ancestor (the {@link Object} class) and going down to the object's script.

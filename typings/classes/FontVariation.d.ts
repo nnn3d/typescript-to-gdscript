@@ -11,6 +11,12 @@ declare class FontVariation extends Font {
    * A set of OpenType feature tags. More info: OpenType feature tags (https://docs.microsoft.com/en-us/typography/opentype/spec/featuretags).
    */
   opentype_features: Dictionary;
+  /**
+   * An array of colors to override predefined palette. Use `Color(0, 0, 0, 0)`, to keep predefined palette color at specific position.
+   */
+  palette_custom_colors: PackedColorArray;
+  /** A palette index. */
+  palette_index: int;
   /** Extra spacing at the bottom of the line in pixels. */
   spacing_bottom: int;
   /** Extra spacing between graphical glyphs. */
@@ -42,6 +48,10 @@ declare class FontVariation extends Font {
   set_baseline_offset(value: float): void;
   get_baseline_offset(): float;
   set_opentype_features(value: Dictionary): void;
+  set_palette_custom_colors(value: PackedColorArray | Array<unknown>): void;
+  get_palette_custom_colors(): PackedColorArray;
+  set_palette_index(value: int): void;
+  get_palette_index(): int;
   set_variation_embolden(value: float): void;
   get_variation_embolden(): float;
   set_variation_face_index(value: int): void;

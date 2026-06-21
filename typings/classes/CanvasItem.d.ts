@@ -16,6 +16,8 @@ declare class CanvasItem extends Node {
    * The color applied to this {@link CanvasItem}. This property does affect child {@link CanvasItem}s, unlike {@link self_modulate} which only affects the node itself.
    */
   modulate: Color;
+  /** If enabled, oversampling for this {@link CanvasItem} is automatically adjusted with scale. */
+  oversampling_with_scale: int;
   /**
    * The color applied to this {@link CanvasItem}. This property does **not** affect child {@link CanvasItem}s, unlike {@link modulate} which affects both the node itself and its children.
    * **Note:** Internal children are also not affected by this property (see the `include_internal` parameter in {@link Node.add_child}). For built-in nodes this includes sliders in {@link ColorPicker}, and the tab bar in {@link TabContainer}.
@@ -70,6 +72,8 @@ declare class CanvasItem extends Node {
   get_material(): Material | null;
   set_modulate(value: Color): void;
   get_modulate(): Color;
+  set_oversampling_with_scale(value: int): void;
+  get_oversampling_with_scale(): int;
   set_self_modulate(value: Color): void;
   get_self_modulate(): Color;
   set_draw_behind_parent(value: boolean): void;
@@ -444,7 +448,7 @@ declare class CanvasItem extends Node {
   /** Represents the size of the {@link TextureFilter} enum. */
   static readonly TEXTURE_FILTER_MAX: int;
   // enum TextureRepeat
-  /** The {@link CanvasItem} will inherit the filter from its parent. */
+  /** The {@link CanvasItem} will inherit the repeat mode from its parent. */
   static readonly TEXTURE_REPEAT_PARENT_NODE: int;
   /**
    * The texture does not repeat. Sampling the texture outside its extents will result in "stretching" of the edge pixels. You can avoid this by ensuring a 1-pixel fully transparent border on each side of the texture.
@@ -471,6 +475,17 @@ declare class CanvasItem extends Node {
   static readonly CLIP_CHILDREN_AND_DRAW: int;
   /** Represents the size of the {@link ClipChildrenMode} enum. */
   static readonly CLIP_CHILDREN_MAX: int;
+  // enum OversamplingWithScale
+  /** The {@link CanvasItem} will inherit the oversampling mode from its parent. */
+  static readonly OVERSAMPLING_WITH_SCALE_PARENT_NODE: int;
+  /**
+   * The oversampling is not affected by {@link CanvasItem} scale, and is equal to the {@link Viewport} oversampling.
+   */
+  static readonly OVERSAMPLING_WITH_SCALE_DISABLED: int;
+  /** The oversampling is a product of {@link CanvasItem} scale and {@link Viewport} oversampling. */
+  static readonly OVERSAMPLING_WITH_SCALE_ENABLED: int;
+  /** Represents the size of the {@link OversamplingWithScale} enum. */
+  static readonly OVERSAMPLING_WITH_SCALE_MAX: int;
 
   /**
    * Notification received when this node's global transform changes, if {@link is_transform_notification_enabled} is `true`. See also {@link set_notify_transform} and {@link get_transform}.

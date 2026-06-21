@@ -93,11 +93,16 @@ declare class DirAccess extends RefCounted {
    */
   static get_drive_count(): int;
   /**
+   * On Windows, returns the label of the drive (partition) passed as an argument.
+   * On other platforms, or if the requested drive does not exist, returns an empty String.
+   */
+  static get_drive_label(idx: int): string;
+  /**
    * On Windows, returns the name of the drive (partition) passed as an argument (e.g. `C:`).
    * On macOS, returns the path to the mounted volume passed as an argument.
    * On Linux, returns the path to the mounted volume or GTK 3 bookmark passed as an argument.
    * On Android (API level 30+), returns the path to the mounted volume as an argument.
-   * On other platforms, or if the requested drive does not exist, the method returns an empty String.
+   * On other platforms, or if the requested drive does not exist, returns an empty String.
    */
   static get_drive_name(idx: int): string;
   /**

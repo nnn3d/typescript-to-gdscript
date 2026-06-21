@@ -17,10 +17,10 @@ declare class SpriteFrames extends Resource {
    * Duplicates the animation `anim_from` to a new animation named `anim_to`. Fails if `anim_to` already exists, or if `anim_from` does not exist.
    */
   duplicate_animation(anim_from: string, anim_to: string): void;
-  /**
-   * Returns `true` if the given animation is configured to loop when it finishes playing. Otherwise, returns `false`.
-   */
+  /** Returns `true` if `get_animation_loop_mode(anim) == LOOP_LINEAR`. Otherwise, returns `false`. */
   get_animation_loop(anim: string): boolean;
+  /** Returns the loop mode for the `anim` animation. */
+  get_animation_loop_mode(anim: string): int;
   /**
    * Returns an array containing the names associated to each animation. Values are placed in alphabetical order.
    */
@@ -45,13 +45,29 @@ declare class SpriteFrames extends Resource {
   /** Changes the `anim` animation's name to `newname`. */
   rename_animation(anim: string, newname: string): void;
   /**
-   * If `loop` is `true`, the `anim` animation will loop when it reaches the end, or the start if it is played in reverse.
+   * If `loop` is `false` equivalent to `set_animation_loop_mode(LOOP_NONE)`.
+   * If `loop` is `true` equivalent to `set_animation_loop_mode(LOOP_LINEAR)`.
    */
   set_animation_loop(anim: string, loop: boolean): void;
+  /** Sets the `loop_mode` for the `anim` animation. */
+  set_animation_loop_mode(anim: string, loop_mode: int): void;
   /** Sets the speed for the `anim` animation in frames per second. */
   set_animation_speed(anim: string, fps: float): void;
   /**
    * Sets the `texture` and the `duration` of the frame `idx` in the `anim` animation. `duration` specifies the relative duration, see {@link get_frame_duration} for details.
    */
   set_frame(anim: string, idx: int, texture: Texture2D, duration?: float): void;
+
+  // enum LoopMode
+  /** The animation plays once and stops when it reaches the end, or the start if played in reverse. */
+  static readonly LOOP_NONE: int;
+  /**
+   * The animation restarts from the beginning when it reaches the end, or from the end if played in reverse, repeating continuously.
+   */
+  static readonly LOOP_LINEAR: int;
+  /**
+   * The animation alternates direction each time it reaches the end or start, playing forward and then in reverse repeatedly.
+   * **Note:** Both {@link AnimatedSprite2D} and {@link AnimatedSprite3D} play the first/last frame for its duration only once at each end of the animation loop (instead of twice, once per forward/backward animation direction).
+   */
+  static readonly LOOP_PINGPONG: int;
 }

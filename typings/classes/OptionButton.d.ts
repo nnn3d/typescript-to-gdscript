@@ -16,6 +16,48 @@ declare class OptionButton extends Button {
   fit_to_longest_item: boolean;
   /** The number of items to select from. */
   item_count: int;
+  /**
+   * If `true`, the item at `index` is disabled.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/disabled': boolean;
+  /**
+   * The icon of the item at `index`.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/icon': Texture2D | null;
+  /**
+   * The ID of the item at `index`.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/id': int;
+  /**
+   * If `true`, the item at `index` is a separator.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/separator': boolean;
+  /**
+   * The text of the item at `index`.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/text': string;
+  /**
+   * If `true`, shows a search bar at the top of the {@link PopupMenu} for filtering items. See {@link search_bar_min_item_count} for dynamically controlling its visibility based on the number of items.
+   */
+  search_bar_enabled: boolean;
+  /**
+   * If `true`, enables fuzzy searching in the {@link PopupMenu} search bar. This allows the search results to include items that almost match the search query, as well items that match the individual characters of the search query, but not in sequence.
+   * Use {@link search_bar_fuzzy_search_max_misses} to set the maximum number of mismatches allowed in the search results.
+   */
+  search_bar_fuzzy_search_enabled: boolean;
+  /**
+   * Sets the maximum number of mismatches allowed in each search result when fuzzy searching is enabled for the {@link PopupMenu} search bar. Any item with more mismatches will be hidden from the search results.
+   */
+  search_bar_fuzzy_search_max_misses: int;
+  /**
+   * Sets the minimum number of items required for the {@link PopupMenu} search bar to be visible. {@link search_bar_enabled} must be `true` for this to have any effect.
+   */
+  search_bar_min_item_count: int;
   /** The index of the currently selected item, or `-1` if no item is selected. */
   selected: int;
   toggle_mode: boolean;
@@ -23,6 +65,14 @@ declare class OptionButton extends Button {
   is_fit_to_longest_item(): boolean;
   set_item_count(value: int): void;
   get_item_count(): int;
+  set_search_bar_enabled(value: boolean): void;
+  is_search_bar_enabled(): boolean;
+  set_search_bar_fuzzy_search_enabled(value: boolean): void;
+  is_search_bar_fuzzy_search_enabled(): boolean;
+  set_search_bar_fuzzy_search_max_misses(value: int): void;
+  get_search_bar_fuzzy_search_max_misses(): int;
+  set_search_bar_min_item_count(value: int): void;
+  get_search_bar_min_item_count(): int;
   _select_int(value: int): void;
   get_selected(): int;
 
@@ -119,7 +169,7 @@ declare class OptionButton extends Button {
   show_popup(): void;
 
   /**
-   * Emitted when the user navigates to an item using the {@link ProjectSettings.input/ui_up} or {@link ProjectSettings.input/ui_down} input actions. The index of the item selected is passed as argument.
+   * Emitted when the user navigates to an item using the {@link ProjectSettings.input/ui_up} or {@link ProjectSettings.input/ui_down} input actions. The index of the item focused is passed as argument.
    */
   item_focused: Signal<[int]>;
   /**

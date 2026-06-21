@@ -4,9 +4,10 @@
 /** Dockable container for the editor. */
 declare class EditorDock extends MarginContainer {
   /**
+   * <member name="available_layouts" type="int" setter="set_available_layouts" getter="get_available_layouts" enum="EditorDock.DockLayout" is_bitfield="true" default="5">
    * The available layouts for this dock, as a bitmask. By default, the dock allows vertical and floating layouts.
    */
-  available_layouts: int;
+  accessibility_region: boolean;
   /**
    * If `true`, the dock can be closed with the Close button in the context popup. Docks with {@link global} enabled are always closable.
    */
@@ -21,7 +22,7 @@ declare class EditorDock extends MarginContainer {
   /** The shortcut used to open the dock. */
   dock_shortcut: Shortcut | null;
   /**
-   * If `true`, the dock will always display an icon, regardless of {@link EditorSettings.interface/editor/dock_tab_style} or {@link EditorSettings.interface/editor/bottom_dock_tab_style}.
+   * If `true`, the dock will always display an icon, regardless of {@link EditorSettings.interface/editor/docks/dock_tab_style} or {@link EditorSettings.interface/editor/docks/bottom_dock_tab_style}.
    */
   force_show_icon: boolean;
   /**
@@ -46,8 +47,6 @@ declare class EditorDock extends MarginContainer {
    * If `true`, the dock is not automatically opened or closed when loading an editor layout, only moved. It also can't be opened using a shortcut. This is meant for docks that are opened and closed in specific cases, such as when selecting a {@link TileMap} or {@link AnimationTree} node.
    */
   transient: boolean;
-  set_available_layouts(value: int): void;
-  get_available_layouts(): int;
   set_closable(value: boolean): void;
   is_closable(): boolean;
   set_default_slot(value: int): void;
@@ -99,11 +98,13 @@ declare class EditorDock extends MarginContainer {
    * Emitted when the dock is closed with the Close button in the context popup, before it's removed from its parent. See {@link closable}.
    */
   closed: Signal<[]>;
+  /** Emitted when the dock is opened via the Editor > Editor Docks menu, before it's made visible. */
+  opened: Signal<[]>;
 
   // enum DockLayout
   /** Allows placing the dock in the vertical dock slots on either side of the editor. */
   static readonly DOCK_LAYOUT_VERTICAL: int;
-  /** Allows placing the dock in the editor's bottom panel. */
+  /** Allows placing the dock in the horizontal dock slots at the bottom. */
   static readonly DOCK_LAYOUT_HORIZONTAL: int;
   /** Allows making the dock floating (opened as a separate window). */
   static readonly DOCK_LAYOUT_FLOATING: int;
@@ -130,6 +131,10 @@ declare class EditorDock extends MarginContainer {
   static readonly DOCK_SLOT_RIGHT_BR: int;
   /** Bottom panel. */
   static readonly DOCK_SLOT_BOTTOM: int;
+  /** Dock slot at the bottom, below bottom panel, on the left side. */
+  static readonly DOCK_SLOT_BOTTOM_L: int;
+  /** Dock slot at the bottom, below bottom panel, on the right side. */
+  static readonly DOCK_SLOT_BOTTOM_R: int;
   /** Represents the size of the {@link DockSlot} enum. */
   static readonly DOCK_SLOT_MAX: int;
 }

@@ -101,7 +101,14 @@ declare class GPUParticles3D extends GeometryInstance3D {
    * The amount of time the particle's trail should represent (in seconds). Only effective if {@link trail_enabled} is `true`.
    */
   trail_lifetime: float;
+  /** The alignment of particles. Use this for billboarding and aligning to velocity. */
   transform_align: int;
+  /**
+   * When using transform align local billboard, which axis to use for the billboarding. Supports only X or Y.
+   */
+  transform_align_axis: int;
+  /** In the case of billboarded particles, which custom channel to read from to calculate their angle. */
+  transform_align_channel_filter: int;
   /**
    * If `true`, particles will use the same seed for every simulation using the seed defined in {@link seed}. This is useful for situations where the visual outcome should be consistent across replays, for example when using Movie Maker mode.
    */
@@ -160,6 +167,10 @@ declare class GPUParticles3D extends GeometryInstance3D {
   get_trail_lifetime(): float;
   set_transform_align(value: int): void;
   get_transform_align(): int;
+  set_transform_align_axis(value: int): void;
+  get_transform_align_axis(): int;
+  set_transform_align_channel_filter(value: int): void;
+  get_transform_align_channel_filter(): int;
   set_use_fixed_seed(value: boolean): void;
   get_use_fixed_seed(): boolean;
   set_visibility_aabb(value: AABB): void;
@@ -181,9 +192,9 @@ declare class GPUParticles3D extends GeometryInstance3D {
   get_draw_pass_mesh(pass: int): Mesh | null;
   /**
    * Requests the particles to process for extra process time during a single frame.
-   * Useful for particle playback, if used in combination with {@link use_fixed_seed} or by calling {@link restart} with parameter `keep_seed` set to `true`.
+   * `process_time` defines the time that the particles will process while emitting is on. `process_time_residual` defines the time that particles will process with emitting turned off for the simulation. When combined with {@link speed_scale} set to `0.0`, this is useful to be able to seek a particle system timeline.
    */
-  request_particles_process(process_time: float): void;
+  request_particles_process(process_time: float, process_time_residual?: float): void;
   /**
    * Restarts the particle emission cycle, clearing existing particles. To avoid particles vanishing from the viewport, wait for the {@link finished} signal before calling.
    * **Note:** The {@link finished} signal is only emitted by {@link one_shot} emitters.
@@ -225,10 +236,16 @@ declare class GPUParticles3D extends GeometryInstance3D {
   /** Particle starts with specified `CUSTOM` data. */
   static readonly EMIT_FLAG_CUSTOM: int;
   // enum TransformAlign
+  /** Do not align particle transforms relative to the camera or velocity. */
   static readonly TRANSFORM_ALIGN_DISABLED: int;
+  /** Align each particle's Z axis to face the camera. */
   static readonly TRANSFORM_ALIGN_Z_BILLBOARD: int;
+  /** Align each particle's Y axis to the velocity vector. */
   static readonly TRANSFORM_ALIGN_Y_TO_VELOCITY: int;
+  /** Align each particle's Z axis to face the camera and Y axis to the velocity vector. */
   static readonly TRANSFORM_ALIGN_Z_BILLBOARD_Y_TO_VELOCITY: int;
+  /** Align each particle's Z axis to face the camera, while preserving a given axis (X or Y). */
+  static readonly TRANSFORM_ALIGN_LOCAL_BILLBOARD: int;
 
   /** Maximum number of draw passes supported. */
   static readonly MAX_DRAW_PASSES: int;

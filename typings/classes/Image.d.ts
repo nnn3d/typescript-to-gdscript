@@ -210,6 +210,7 @@ declare class Image extends Resource {
   premultiply_alpha(): void;
   /**
    * Resizes the image to the given `width` and `height`. New pixels are calculated using the `interpolation` mode defined via {@link Interpolation} constants.
+   * **Note:** If the image's format is {@link FORMAT_RGBA4444}, {@link FORMAT_RGB565}, or {@link FORMAT_RGBE9995}, it will be temporarily converted to either {@link FORMAT_RGBA8} or {@link FORMAT_RGBAH}. This can affect the quality of the resized image.
    */
   resize(width: int, height: int, interpolation: int): void;
   /**
@@ -237,13 +238,15 @@ declare class Image extends Resource {
    */
   save_dds_to_buffer(): PackedByteArray;
   /**
-   * Saves the image as an EXR file to `path`. If `grayscale` is `true` and the image has only one channel, it will be saved explicitly as monochrome rather than one red channel. This function will return {@link ERR_UNAVAILABLE} if Godot was compiled without the TinyEXR module.
+   * Saves the image as an EXR file to `path`. If `grayscale` is `true` and the image has only one channel, it will be saved explicitly as monochrome rather than one red channel. Set `color_image` to `true` when saving a color image, such as a screenshot. Negative values will be included when `color_image` is `false`, which may be useful for saving raw floating point data such as a lightmap that includes negative light information. Color component values in the resulting EXR file will not exceed `max_linear_value` if `max_linear_value` is not negative. This function will return {@link ERR_UNAVAILABLE} if Godot was compiled without the TinyEXR module.
+   * When saving screenshots of a project that uses HDR output, use {@link Window.get_output_max_linear_value} for `max_linear_value`.
    */
-  save_exr(path: string | NodePath, grayscale?: boolean): int;
+  save_exr(path: string | NodePath, grayscale?: boolean, color_image?: boolean, max_linear_value?: float): int;
   /**
-   * Saves the image as an EXR file to a byte array. If `grayscale` is `true` and the image has only one channel, it will be saved explicitly as monochrome rather than one red channel. This function will return an empty byte array if Godot was compiled without the TinyEXR module.
+   * Saves the image as an EXR file to a byte array. If `grayscale` is `true` and the image has only one channel, it will be saved explicitly as monochrome rather than one red channel. Set `color_image` to `true` when saving a color image, such as a screenshot. Negative values will be included when `color_image` is `false`, which may be useful for saving raw floating point data such as a lightmap that includes negative light information. Color component values in the resulting EXR file will not exceed `max_linear_value` if `max_linear_value` is not negative. This function will return an empty byte array if Godot was compiled without the TinyEXR module.
+   * When saving screenshots of a project that uses HDR output, use {@link Window.get_output_max_linear_value} for `max_linear_value`.
    */
-  save_exr_to_buffer(grayscale?: boolean): PackedByteArray;
+  save_exr_to_buffer(grayscale?: boolean, color_image?: boolean, max_linear_value?: float): PackedByteArray;
   /**
    * Saves the image as a JPEG file to `path` with the specified `quality` between `0.01` and `1.0` (inclusive). Higher `quality` values result in better-looking output at the cost of larger file sizes. Recommended `quality` values are between `0.75` and `0.90`. Even at quality `1.00`, JPEG compression remains lossy.
    * **Note:** JPEG does not save an alpha channel. If the {@link Image} contains an alpha channel, the image will still be saved, but the resulting JPEG file won't contain the alpha channel.

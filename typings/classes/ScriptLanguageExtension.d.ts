@@ -55,7 +55,13 @@ declare class ScriptLanguageExtension extends ScriptLanguage {
   _profiling_start(): void;
   _profiling_stop(): void;
   _reload_all_scripts(): void;
+  /**
+   * Reloads all `scripts` from disk and the specifics of how that happens is {@link ScriptLanguageExtension} specific.
+   */
   _reload_scripts(scripts: Array<unknown> | PackedByteArray | PackedColorArray | PackedFloat32Array | PackedFloat64Array | PackedInt32Array | PackedInt64Array | PackedStringArray | PackedVector2Array | PackedVector3Array | PackedVector4Array, soft_reload: boolean): void;
+  /**
+   * Reloads the given `script` from disk and the specifics of how that happens is {@link ScriptLanguageExtension} specific.
+   */
   _reload_tool_script(script: Script, soft_reload: boolean): void;
   _remove_named_global_constant(name: string): void;
   _supports_builtin_mode(): boolean;
@@ -106,5 +112,6 @@ declare class ScriptLanguageExtension extends ScriptLanguage {
   static readonly CODE_COMPLETION_KIND_NODE_PATH: int;
   static readonly CODE_COMPLETION_KIND_FILE_PATH: int;
   static readonly CODE_COMPLETION_KIND_PLAIN_TEXT: int;
+  static readonly CODE_COMPLETION_KIND_KEYWORD: int;
   static readonly CODE_COMPLETION_KIND_MAX: int;
 }

@@ -47,7 +47,7 @@ declare interface Quaternion {
   get_axis(): Vector3;
   /**
    * Returns this quaternion's rotation as a {@link Vector3} of Euler angles (https://en.wikipedia.org/wiki/Euler_angles), in radians.
-   * The order of each consecutive rotation can be changed with `order` (see {@link EulerOrder} constants). By default, the YXZ convention is used ({@link EULER_ORDER_YXZ}): Z (roll) is calculated first, then X (pitch), and lastly Y (yaw). When using the opposite method {@link from_euler}, this order is reversed.
+   * The order of each consecutive rotation can be changed with `order` (see {@link EulerOrder} constants). In Godot, Euler angles always use intrinsic order. By default, the intrinsic YXZ convention is used ({@link EULER_ORDER_YXZ}): since we are decomposing, local Z (roll) is calculated first, then local X (pitch), and lastly local Y (yaw). When using the opposite method {@link from_euler} to compose a rotation, this order is reversed.
    */
   get_euler(order?: int): Vector3;
   /**
@@ -174,7 +174,7 @@ declare interface QuaternionConstructor {
    */
   (x: float, y: float, z: float, w: float): Quaternion;
   /**
-   * Constructs a new {@link Quaternion} from the given {@link Vector3} of Euler angles (https://en.wikipedia.org/wiki/Euler_angles), in radians. This method always uses the YXZ convention ({@link EULER_ORDER_YXZ}).
+   * Constructs a new {@link Quaternion} from the given {@link Vector3} of Euler angles (https://en.wikipedia.org/wiki/Euler_angles), in radians. In Godot, Euler angles always use intrinsic order. This method always uses the intrinsic YXZ convention ({@link EULER_ORDER_YXZ}).
    */
   from_euler(euler: Vector3 | Vector3i): Quaternion;
 

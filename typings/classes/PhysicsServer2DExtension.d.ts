@@ -93,10 +93,10 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /** Overridable version of {@link PhysicsServer2D.body_clear_shapes}. */
   _body_clear_shapes(body: RID): void;
   /**
-   * Given a `body`, a `shape`, and their respective parameters, this method should return `true` if a collision between the two would occur, with additional details passed in `results`.
+   * Given a `body`, a `shape`, and their respective parameters, this method should return `true` if a collision between the two would occur, with additional details passed in `r_results`.
    * Overridable version of {@link PhysicsServer2D}'s internal `shape_collide` method. Corresponds to {@link PhysicsDirectSpaceState2D.collide_shape}.
    */
-  _body_collide_shape(body: RID, body_shape: int, shape: RID, shape_xform: Transform2D, motion: Vector2 | Vector2i, results: void, result_max: int, result_count: int): boolean;
+  _body_collide_shape(body: RID, body_shape: int, shape: RID, shape_xform: Transform2D, motion: Vector2 | Vector2i, r_results: void, result_max: int, r_result_count: int): boolean;
   /** Overridable version of {@link PhysicsServer2D.body_create}. */
   _body_create(): RID;
   /** Overridable version of {@link PhysicsServer2D.body_get_canvas_instance_id}. */
@@ -188,7 +188,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /** Overridable version of {@link PhysicsServer2D.body_set_shape}. */
   _body_set_shape(body: RID, shape_idx: int, shape: RID): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_shape_as_one_way_collision}. */
-  _body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float): void;
+  _body_set_shape_as_one_way_collision(body: RID, shape_idx: int, enable: boolean, margin: float, direction: Vector2 | Vector2i): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_shape_disabled}. */
   _body_set_shape_disabled(body: RID, shape_idx: int, disabled: boolean): void;
   /** Overridable version of {@link PhysicsServer2D.body_set_shape_transform}. */
@@ -205,7 +205,7 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /**
    * Overridable version of {@link PhysicsServer2D.body_test_motion}. Unlike the exposed implementation, this method does not receive all of the arguments inside a {@link PhysicsTestMotionParameters2D}.
    */
-  _body_test_motion(body: RID, from_: Transform2D, motion: Vector2 | Vector2i, margin: float, collide_separation_ray: boolean, recovery_as_collision: boolean, result: unknown): boolean;
+  _body_test_motion(body: RID, from_: Transform2D, motion: Vector2 | Vector2i, margin: float, collide_separation_ray: boolean, recovery_as_collision: boolean, r_result: unknown): boolean;
   /** Overridable version of {@link PhysicsServer2D.capsule_shape_create}. */
   _capsule_shape_create(): RID;
   /** Overridable version of {@link PhysicsServer2D.circle_shape_create}. */
@@ -284,10 +284,10 @@ declare class PhysicsServer2DExtension extends PhysicsServer2D {
   /** Overridable version of {@link PhysicsServer2D.set_active}. */
   _set_active(active: boolean): void;
   /**
-   * Given two shapes and their parameters, should return `true` if a collision between the two would occur, with additional details passed in `results`.
+   * Given two shapes and their parameters, should return `true` if a collision between the two would occur, with additional details passed in `r_results`.
    * Overridable version of {@link PhysicsServer2D}'s internal `shape_collide` method. Corresponds to {@link PhysicsDirectSpaceState2D.collide_shape}.
    */
-  _shape_collide(shape_A: RID, xform_A: Transform2D, motion_A: Vector2 | Vector2i, shape_B: RID, xform_B: Transform2D, motion_B: Vector2 | Vector2i, results: void, result_max: int, result_count: int): boolean;
+  _shape_collide(shape_A: RID, xform_A: Transform2D, motion_A: Vector2 | Vector2i, shape_B: RID, xform_B: Transform2D, motion_B: Vector2 | Vector2i, r_results: void, result_max: int, r_result_count: int): boolean;
   /**
    * Should return the custom solver bias of the given `shape`, which defines how much bodies are forced to separate on contact when this shape is involved.
    * Overridable version of {@link PhysicsServer2D}'s internal `shape_get_custom_solver_bias` method. Corresponds to {@link Shape2D.custom_solver_bias}.

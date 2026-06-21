@@ -11,6 +11,41 @@ declare class MenuButton extends Button {
    */
   action_mode: int;
   /**
+   * The checkable item type of the item at `index`.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/checkable': int;
+  /**
+   * If `true`, the item at `index` is checked.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/checked': boolean;
+  /**
+   * If `true`, the item at `index` is disabled.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/disabled': boolean;
+  /**
+   * The icon of the item at `index`.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/icon': Texture2D | null;
+  /**
+   * The ID of the item at `index`.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/id': int;
+  /**
+   * If `true`, the item at `index` is a separator.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/separator': boolean;
+  /**
+   * The text of the item at `index`.
+   * **Note:** `index` is a value in the `0 .. item_count - 1` range.
+   */
+  'popup/item_{index}/text': string;
+  /**
    * If `true`, when the cursor hovers above another {@link MenuButton} within the same parent which also has {@link switch_on_hover} enabled, it will close the current {@link MenuButton} and open the other one.
    */
   switch_on_hover: boolean;

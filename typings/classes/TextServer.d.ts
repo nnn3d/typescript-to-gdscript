@@ -148,6 +148,20 @@ declare class TextServer extends RefCounted {
    * Returns oversampling factor override. If set to a positive value, overrides the oversampling factor of the viewport this font is used in. See {@link Viewport.oversampling}. This value doesn't override the [code skip-lint]oversampling[/code] parameter of [code skip-lint]draw_*[/code] methods. Used by dynamic fonts only.
    */
   font_get_oversampling(font_rid: RID): float;
+  /**
+   * Returns the array in the predefined color palette at `index`. Palette contains all colors used to render font glyphs. Each palette has the same number of colors. Colors can be overridden using {@link font_set_palette_custom_colors}.
+   */
+  font_get_palette_colors(font_rid: RID, index: int): PackedColorArray;
+  /**
+   * Returns the number of predefined color palettes. Palette contains all colors used to render font glyphs. Each palette has the same number of colors.
+   */
+  font_get_palette_count(font_rid: RID): int;
+  /** Returns array of custom colors to override predefined palette. */
+  font_get_palette_custom_colors(font_rid: RID): PackedColorArray;
+  /**
+   * Returns the name of the predefined color palette at `index`. Palette contains all colors used to render font glyphs. Each palette has the same number of colors.
+   */
+  font_get_palette_name(font_rid: RID, index: int): string;
   /** Returns scaling factor of the color bitmap font. */
   font_get_scale(font_rid: RID, size: int): float;
   /** Returns `true` if support override is enabled for the `script`. */
@@ -190,6 +204,8 @@ declare class TextServer extends RefCounted {
   font_get_underline_position(font_rid: RID, size: int): float;
   /** Returns thickness of the underline in pixels. */
   font_get_underline_thickness(font_rid: RID, size: int): float;
+  /** Returns used palette index. */
+  font_get_used_palette(font_rid: RID): int;
   /**
    * Returns variation coordinates for the specified font cache entry. See {@link font_supported_variation_list} for more info.
    */
@@ -302,7 +318,7 @@ declare class TextServer extends RefCounted {
   /**
    * If set to `true`, color modulation is applied when drawing colored glyphs, otherwise it's applied to the monochrome glyphs only.
    */
-  font_set_modulate_color_glyphs(font_rid: RID, force_autohinter: boolean): void;
+  font_set_modulate_color_glyphs(font_rid: RID, modulate: boolean): void;
   /**
    * Sets the width of the range around the shape between the minimum and maximum representable signed distance.
    */
@@ -322,6 +338,10 @@ declare class TextServer extends RefCounted {
    * If set to a positive value, overrides the oversampling factor of the viewport this font is used in. See {@link Viewport.oversampling}. This value doesn't override the [code skip-lint]oversampling[/code] parameter of [code skip-lint]draw_*[/code] methods. Used by dynamic fonts only.
    */
   font_set_oversampling(font_rid: RID, oversampling: float): void;
+  /**
+   * Sets array of custom colors to override predefined palette. Set to empty array to reset overrides. Use `Color(0, 0, 0, 0)`, to keep predefined palette color at specific position.
+   */
+  font_set_palette_custom_colors(font_rid: RID, colors: PackedColorArray | Array<unknown>): void;
   /** Sets scaling factor of the color bitmap font. */
   font_set_scale(font_rid: RID, size: int, scale: float): void;
   /** Adds override for {@link font_is_script_supported}. */
@@ -355,6 +375,8 @@ declare class TextServer extends RefCounted {
   font_set_underline_position(font_rid: RID, size: int, underline_position: float): void;
   /** Sets thickness of the underline in pixels. */
   font_set_underline_thickness(font_rid: RID, size: int, underline_thickness: float): void;
+  /** Sets used palette index. */
+  font_set_used_palette(font_rid: RID, index: int): void;
   /**
    * Sets variation coordinates for the specified font cache entry. See {@link font_supported_variation_list} for more info.
    */
@@ -451,6 +473,8 @@ declare class TextServer extends RefCounted {
   shaped_get_run_font_rid(shaped: RID, index: int): RID;
   /** Returns the font size of the `index` text run (in visual order). */
   shaped_get_run_font_size(shaped: RID, index: int): int;
+  /** Returns the glyph range of the `index` text run (in visual order). */
+  shaped_get_run_glyph_range(shaped: RID, index: int): Vector2i;
   /** Returns the language of the `index` text run (in visual order). */
   shaped_get_run_language(shaped: RID, index: int): string;
   /** Returns the embedded object of the `index` text run (in visual order). */

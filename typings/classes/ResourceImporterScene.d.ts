@@ -26,6 +26,10 @@ declare class ResourceImporterScene extends ResourceImporter {
    */
   'animation/trimming': boolean;
   /**
+   * If the 3D model file contains only one mesh, this option has no effect. If `true` and the 3D model file contains multiple meshes with the same surface names and formats, the surfaces will be merged together when the meshes are merged. This is useful for reducing the number of surfaces in the resulting mesh, and avoids duplicating materials. If `false` and the 3D model file contains multiple meshes, the surfaces will always be kept separate.
+   */
+  'array_mesh/deduplicate_surfaces': boolean;
+  /**
    * Path to an import script, which can run code after the import process has completed for custom processing. See Using import scripts for automation ($DOCS_URL/tutorials/assets_pipeline/importing_3d_scenes/import_configuration.html#using-import-scripts-for-automation) for more information.
    */
   'import_script/path': string;
@@ -46,11 +50,15 @@ declare class ResourceImporterScene extends ResourceImporter {
   /** Path extracted materials are saved to. If empty, source scene path is used. */
   'materials/extract_path': string;
   /**
+   * If `true`, the mesh names will be set to the names of the nodes in the 3D model file. If `false`, the mesh names will be set to the names of the meshes in the 3D model file. Enabling this is a common work-around when the author of the 3D model file did not properly set the mesh names in Blender or other 3D modeling apps. For example, a file may have a node named "Turret" with a mesh named "Cube.002", so enabling this option will set the mesh name to "Turret" instead of "Cube_002".
+   */
+  'mesh_library/use_node_names_as_mesh_names': boolean;
+  /**
    * If `true`, enables the generation of shadow meshes on import. This optimizes shadow rendering without reducing quality by welding vertices together when possible. This in turn reduces the memory bandwidth required to render shadows. Shadow mesh generation currently doesn't support using a lower detail level than the source mesh (but shadow rendering will make use of LODs when relevant).
    */
   'meshes/create_shadow_meshes': boolean;
   /**
-   * If `true`, generate vertex tangents using Mikktspace (http://www.mikktspace.com/) if the input meshes don't have tangent data. When possible, it's recommended to let the 3D modeling software generate tangents on export instead on relying on this option. Tangents are required for correct display of normal and height maps, along with any material/shader features that require tangents.
+   * If `true`, generate vertex tangents using Mikktspace (http://www.mikktspace.com/) if the input meshes don't have tangent data. When possible, it's recommended to let the 3D modeling software generate tangents on export instead of relying on this option. Tangents are required for correct display of normal and height maps, along with any material/shader features that require tangents.
    * If you don't need material features that require tangents, disabling this can reduce output file size and speed up importing if the source 3D file doesn't contain tangents.
    */
   'meshes/ensure_tangents': boolean;
@@ -105,9 +113,9 @@ declare class ResourceImporterScene extends ResourceImporter {
   'nodes/use_node_type_suffixes': boolean;
   /**
    * If checked, use named {@link Skin}s for animation. The {@link MeshInstance3D} node contains 3 properties of relevance here: a skeleton {@link NodePath} pointing to the {@link Skeleton3D} node (usually `..`), a mesh, and a skin:
-   * - The {@link Skeleton3D} node contains a list of bones with names, their pose and rest, a name and a parent bone.
+   * - The {@link Skeleton3D} node contains a list of bones with names, their pose and rest, a name, and a parent bone.
    * - The mesh is all of the raw vertex data needed to display a mesh. In terms of the mesh, it knows how vertices are weight-painted and uses some internal numbering often imported from 3D modeling software.
-   * - The skin contains the information necessary to bind this mesh onto this Skeleton3D. For every one of the internal bone IDs chosen by the 3D modeling software, it contains two things. Firstly, a matrix known as the Bind Pose Matrix, Inverse Bind Matrix, or IBM for short. Secondly, the {@link Skin} contains each bone's name (if {@link skins/use_named_skins} is `true`), or the bone's index within the {@link Skeleton3D} list (if {@link skins/use_named_skins} is `false`).
+   * - The skin contains the information necessary to bind this mesh onto this Skeleton3D. For each of the internal bone IDs chosen by the 3D modeling software, it contains two things. Firstly, a matrix known as the Bind Pose Matrix, Inverse Bind Matrix, or IBM for short. Secondly, the {@link Skin} contains each bone's name (if {@link skins/use_named_skins} is `true`), or the bone's index within the {@link Skeleton3D} list (if {@link skins/use_named_skins} is `false`).
    * Together, this information is enough to tell Godot how to use the bone poses in the {@link Skeleton3D} node to render the mesh from each {@link MeshInstance3D}. Note that each {@link MeshInstance3D} may share binds, as is common in models exported from Blender, or each {@link MeshInstance3D} may use a separate {@link Skin} object, as is common in models exported from other tools such as Maya.
    */
   'skins/use_named_skins': boolean;

@@ -58,6 +58,21 @@ declare class FileDialog extends ConfirmationDialog {
   mode_overrides_title: boolean;
   /** The number of additional {@link OptionButton}s and {@link CheckBox}es in the dialog. */
   option_count: int;
+  /**
+   * The default value for the option at `index`.
+   * **Note:** `index` is a value in the `0 .. option_count - 1` range.
+   */
+  'option_{index}/default': int;
+  /**
+   * The name of the option at `index`.
+   * **Note:** `index` is a value in the `0 .. option_count - 1` range.
+   */
+  'option_{index}/name': string;
+  /**
+   * The list of values for the option at `index`.
+   * **Note:** `index` is a value in the `0 .. option_count - 1` range.
+   */
+  'option_{index}/values': PackedStringArray;
   /** If `true`, the {@link FileDialog} will warn the user before overwriting files in save mode. */
   overwrite_warning_enabled: boolean;
   /** If `true`, shows the recent directories list on the left side of the dialog. */
@@ -76,7 +91,7 @@ declare class FileDialog extends ConfirmationDialog {
    * <member name="title" type="String" setter="set_title" getter="get_title" overrides="Window" default="&quot;Save a File&quot;" />
    * <member name="use_native_dialog" type="bool" setter="set_use_native_dialog" getter="get_use_native_dialog" default="false">
    * If `true`, and if supported by the current {@link DisplayServer}, OS native dialog will be used instead of custom one.
-   * **Note:** On Android, it is only supported for Android 10+ devices and when using {@link ACCESS_FILESYSTEM}. For access mode {@link ACCESS_RESOURCES} and {@link ACCESS_USERDATA}, the system will fall back to custom FileDialog.
+   * **Note:** On Android, it is only supported when using {@link ACCESS_FILESYSTEM}. For access mode {@link ACCESS_RESOURCES} and {@link ACCESS_USERDATA}, the system will fall back to custom FileDialog.
    * **Note:** On Linux and macOS, sandboxed apps always use native dialogs to access the host file system.
    * **Note:** On macOS, sandboxed apps will save security-scoped bookmarks to retain access to the opened folders across multiple sessions. Use {@link OS.get_granted_permissions} to get a list of saved bookmarks.
    * **Note:** Native dialogs are isolated from the base process, file dialog properties can't be modified once the dialog is shown.

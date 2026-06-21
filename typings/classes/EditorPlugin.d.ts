@@ -64,13 +64,13 @@ declare class EditorPlugin extends Node {
   _get_breakpoints(): PackedStringArray;
   /**
    * Override this method in your plugin to return a {@link Texture2D} in order to give it an icon.
-   * For main screen plugins, this appears at the top of the screen, to the right of the "2D", "3D", "Script", "Game", and "AssetLib" buttons.
+   * For main screen plugins, this appears at the top of the screen, to the right of the "2D", "3D", "Script", "Game", and "Asset Store" buttons.
    * Ideally, the plugin icon should be white with a transparent background and 16×16 pixels in size.
    */
   _get_plugin_icon(): Texture2D | null;
   /**
    * Override this method in your plugin to provide the name of the plugin when displayed in the Godot editor.
-   * For main screen plugins, this appears at the top of the screen, to the right of the "2D", "3D", "Script", "Game", and "AssetLib" buttons.
+   * For main screen plugins, this appears at the top of the screen, to the right of the "2D", "3D", "Script", "Game", and "Asset Store" buttons.
    */
   _get_plugin_name(): string;
   /**
@@ -98,7 +98,7 @@ declare class EditorPlugin extends Node {
    */
   _handles(object: GodotObject): boolean;
   /**
-   * Returns `true` if this is a main screen editor plugin (it goes in the workspace selector together with **2D**, **3D**, **Script**, **Game**, and **AssetLib**).
+   * Returns `true` if this is a main screen editor plugin (it goes in the workspace selector together with **2D**, **3D**, **Script**, **Game**, and **Asset Store**).
    * When the plugin's workspace is selected, other main screen plugins will be hidden, but your plugin will not appear automatically. It needs to be added as a child of {@link EditorInterface.get_editor_main_screen} and made visible inside {@link _make_visible}.
    * Use {@link _get_plugin_name} and {@link _get_plugin_icon} to customize the plugin button's appearance.
    */
@@ -308,7 +308,7 @@ declare class EditorPlugin extends Node {
   update_overlays(): int;
 
   /**
-   * Emitted when user changes the workspace (**2D**, **3D**, **Script**, **Game**, **AssetLib**). Also works with custom screens defined by plugins.
+   * Emitted when user changes the workspace (**2D**, **3D**, **Script**, **Game**, **Asset Store**). Also works with custom screens defined by plugins.
    */
   main_screen_changed: Signal<[string]>;
   /** Emitted when the given `resource` was saved on disc. See also {@link scene_saved}. */

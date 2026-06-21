@@ -43,7 +43,8 @@ declare class IterateIK3D extends ChainIK3D {
    * Returns the joint limitation rotation offset at `joint` in the bone chain's joint list.
    * Rotation is done in the local space which is constructed by the bone direction (in general parent to child) as the +Y axis and {@link get_joint_limitation_right_axis_vector} as the +X axis.
    * If the +X and +Y axes are not orthogonal, the +X axis is implicitly modified to make it orthogonal.
-   * Also, if the length of {@link get_joint_limitation_right_axis_vector} is zero, the space is created by rotating the bone rest using the shortest arc that rotates the +Y axis of the bone rest to match the bone direction.
+   * Also, if the length of {@link get_joint_limitation_right_axis_vector} is zero, the space is created by rotating the reference pose using the shortest arc that rotates the +Y axis of the reference pose to match the bone direction.
+   * In here, the reference pose is the bone pose immediately before processing IK.
    */
   get_joint_limitation_rotation_offset(index: int, joint: int): Quaternion;
   /** Returns the rotation axis at `joint` in the bone chain's joint list. */
@@ -65,12 +66,14 @@ declare class IterateIK3D extends ChainIK3D {
    * Sets the joint limitation rotation offset at `joint` in the bone chain's joint list.
    * Rotation is done in the local space which is constructed by the bone direction (in general parent to child) as the +Y axis and {@link get_joint_limitation_right_axis_vector} as the +X axis.
    * If the +X and +Y axes are not orthogonal, the +X axis is implicitly modified to make it orthogonal.
-   * Also, if the length of {@link get_joint_limitation_right_axis_vector} is zero, the space is created by rotating the bone rest using the shortest arc that rotates the +Y axis of the bone rest to match the bone direction.
+   * Also, if the length of {@link get_joint_limitation_right_axis_vector} is zero, the space is created by rotating the reference pose using the shortest arc that rotates the +Y axis of the reference pose to match the bone direction.
+   * In here, the reference pose is the bone pose immediately before processing IK.
    */
   set_joint_limitation_rotation_offset(index: int, joint: int, offset: Quaternion | Basis): void;
   /**
    * Sets the rotation axis at `joint` in the bone chain's joint list.
-   * The axes are based on the {@link Skeleton3D.get_bone_rest}'s space, if `axis` is {@link SkeletonModifier3D.ROTATION_AXIS_CUSTOM}, you can specify any axis.
+   * The axes are based on the reference pose's space, if `axis` is {@link SkeletonModifier3D.ROTATION_AXIS_CUSTOM}, you can specify any axis.
+   * In here, the reference pose is the bone pose immediately before processing IK.
    * **Note:** The rotation axis and the forward vector shouldn't be colinear to avoid unintended rotation since {@link ChainIK3D} does not factor in twisting forces.
    */
   set_joint_rotation_axis(index: int, joint: int, axis: int): void;

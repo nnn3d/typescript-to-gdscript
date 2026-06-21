@@ -209,6 +209,11 @@ declare class ParticleProcessMaterial extends Material {
   particle_flag_damping_as_friction: boolean;
   /** If `true`, particles will not move on the z axis. */
   particle_flag_disable_z: boolean;
+  /**
+   * If `true`, particles will inherit the scale of the emitter.
+   * **Note:** This has no effect when {@link GPUParticles3D.local_coords} is `true`, since particles in local space are already affected by the emitter's scale.
+   */
+  particle_flag_inherit_emitter_scale: boolean;
   /** If `true`, particles rotate around Y axis by {@link angle_min}. */
   particle_flag_rotate_y: boolean;
   /** Each particle's radial acceleration will vary along this {@link CurveTexture}. */
@@ -234,6 +239,32 @@ declare class ParticleProcessMaterial extends Material {
    * **Note:** Animated velocities will not be affected by damping, use {@link velocity_limit_curve} instead.
    */
   radial_velocity_min: float;
+  /** The maximum 3D orientation, in degrees. Works only in 3D and if {@link use_rotation_3d} is enabled. */
+  rotation_3d_max: Vector3;
+  /** The minimum 3D orientation, in degrees. Works only in 3D and if {@link use_rotation_3d} is enabled. */
+  rotation_3d_min: Vector3;
+  /**
+   * Rotation velocity curve over lifetime, per-axis. Enable {@link use_rotation_velocity_3d} to use this.
+   */
+  rotation_velocity_3d_curve: Texture2D | null;
+  /**
+   * Maximum 3D rotation velocity on the particle's local axis. Enable {@link use_rotation_velocity_3d} to use this.
+   */
+  rotation_velocity_3d_max: Vector3;
+  /**
+   * Minimum 3D rotation velocity on the particle's local axis. Enable {@link use_rotation_velocity_3d} to use this.
+   */
+  rotation_velocity_3d_min: Vector3;
+  /**
+   * The maximum value of the random scale vector for each particle.
+   * Works only if {@link use_scale_3d} is enabled.
+   */
+  scale_3d_max: Vector3;
+  /**
+   * The minimum value of the random scale vector for each particle.
+   * Works only if {@link use_scale_3d} is enabled.
+   */
+  scale_3d_min: Vector3;
   /**
    * Each particle's scale will vary along this {@link CurveTexture} over its lifetime. If a {@link CurveXYZTexture} is supplied instead, the scale will be separated per-axis.
    */
@@ -340,6 +371,12 @@ declare class ParticleProcessMaterial extends Material {
    * The turbulence noise strength. Increasing this will result in a stronger, more contrasting, flow pattern.
    */
   turbulence_noise_strength: float;
+  /** Enable the usage of {@link rotation_3d_min} and {@link rotation_3d_max}. */
+  use_rotation_3d: boolean;
+  /** Enable 3D rotation velocity. */
+  use_rotation_velocity_3d: boolean;
+  /** Enable the usage of {@link scale_3d_min} and {@link scale_3d_max}. */
+  use_scale_3d: boolean;
   /** A {@link CurveTexture} that defines the maximum velocity of a particle during its lifetime. */
   velocity_limit_curve: Texture2D | null;
   /** A pivot point used to calculate radial and orbital velocity of particles. */
@@ -402,6 +439,20 @@ declare class ParticleProcessMaterial extends Material {
   get_inherit_velocity_ratio(): float;
   set_lifetime_randomness(value: float): void;
   get_lifetime_randomness(): float;
+  set_rotation_3d_max(value: Vector3 | Vector3i): void;
+  get_rotation_3d_max(): Vector3;
+  set_rotation_3d_min(value: Vector3 | Vector3i): void;
+  get_rotation_3d_min(): Vector3;
+  set_rotation_velocity_3d_curve(value: Texture2D | null): void;
+  get_rotation_velocity_3d_curve(): Texture2D | null;
+  set_rotation_velocity_3d_max(value: Vector3 | Vector3i): void;
+  get_rotation_velocity_3d_max(): Vector3;
+  set_rotation_velocity_3d_min(value: Vector3 | Vector3i): void;
+  get_rotation_velocity_3d_min(): Vector3;
+  set_scale_3d_max(value: Vector3 | Vector3i): void;
+  get_scale_3d_max(): Vector3;
+  set_scale_3d_min(value: Vector3 | Vector3i): void;
+  get_scale_3d_min(): Vector3;
   set_spread(value: float): void;
   get_spread(): float;
   set_sub_emitter_amount_at_collision(value: int): void;
@@ -426,6 +477,12 @@ declare class ParticleProcessMaterial extends Material {
   get_turbulence_noise_speed_random(): float;
   set_turbulence_noise_strength(value: float): void;
   get_turbulence_noise_strength(): float;
+  set_use_rotation_3d(value: boolean): void;
+  is_using_rotation_3d(): boolean;
+  set_using_rotation_velocity_3d(value: boolean): void;
+  is_using_rotation_velocity_3d(): boolean;
+  set_use_scale_3d(value: boolean): void;
+  is_using_scale_3d(): boolean;
   set_velocity_limit_curve(value: Texture2D | null): void;
   get_velocity_limit_curve(): Texture2D | null;
   set_velocity_pivot(value: Vector3 | Vector3i): void;
@@ -545,6 +602,7 @@ declare class ParticleProcessMaterial extends Material {
   /** Use with {@link set_particle_flag} to set {@link particle_flag_disable_z}. */
   static readonly PARTICLE_FLAG_DISABLE_Z: int;
   static readonly PARTICLE_FLAG_DAMPING_AS_FRICTION: int;
+  static readonly PARTICLE_FLAG_INHERIT_EMITTER_SCALE: int;
   /** Represents the size of the {@link ParticleFlags} enum. */
   static readonly PARTICLE_FLAG_MAX: int;
   // enum EmissionShape
@@ -569,10 +627,15 @@ declare class ParticleProcessMaterial extends Material {
   /** Represents the size of the {@link EmissionShape} enum. */
   static readonly EMISSION_SHAPE_MAX: int;
   // enum SubEmitterMode
+  /** The subemitter is disabled. */
   static readonly SUB_EMITTER_DISABLED: int;
+  /** The submitter is emitted on the constant interval defined by {@link sub_emitter_frequency}. */
   static readonly SUB_EMITTER_CONSTANT: int;
+  /** The subemitter is emitted at the end of the particle's lifetime. */
   static readonly SUB_EMITTER_AT_END: int;
+  /** The subemitter is emitted when the particle collides. */
   static readonly SUB_EMITTER_AT_COLLISION: int;
+  /** The subemitter is emitted when the particle spawns. */
   static readonly SUB_EMITTER_AT_START: int;
   /** Represents the size of the {@link SubEmitterMode} enum. */
   static readonly SUB_EMITTER_MAX: int;

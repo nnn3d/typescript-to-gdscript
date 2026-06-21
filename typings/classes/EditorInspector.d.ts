@@ -10,11 +10,21 @@ declare class EditorInspector extends ScrollContainer {
   set_draw_focus_border(value: boolean): void;
   get_draw_focus_border(): boolean;
 
+  /** Collapses all foldable sections. */
+  collapse_all_folding(): void;
+  /**
+   * Creates an inspector with the same configuration as the one used in the editor's Inspector dock. When passing a {@link LineEdit} into `filter_line_edit`, the inspector will filter its properties based on {@link LineEdit.text} whenever {@link LineEdit.text_changed} is emitted.
+   */
+  static create_default_inspector(filter_line_edit?: LineEdit): EditorInspector | null;
   /**
    * Shows the properties of the given `object` in this inspector for editing. To clear the inspector, call this method with `null`.
    * **Note:** If you want to edit an object in the editor's main inspector, use the `edit_*` methods in {@link EditorInterface} instead.
    */
   edit(object: GodotObject): void;
+  /** Expands all foldable sections. */
+  expand_all_folding(): void;
+  /** Expands only the foldable sections that contain a revertable (i.e. non-default) property. */
+  expand_revertable(): void;
   /** Returns the object currently selected in this inspector. */
   get_edited_object(): GodotObject | null;
   /** Gets the path of the currently selected property. */

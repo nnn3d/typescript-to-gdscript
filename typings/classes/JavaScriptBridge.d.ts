@@ -34,7 +34,7 @@ declare interface JavaScriptBridge extends GodotObject {
    */
   get_interface(interface_: string | NodePath): JavaScriptObject | null;
   /**
-   * Returns `true` if the given `javascript_object` is of type `ArrayBuffer` (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer), `DataView` (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView), or one of the many typed array objects (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray).
+   * Returns `true` if the given `javascript_object` is of type ArrayBuffer (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer), DataView (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView), or one of the many typed array objects (https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypedArray).
    */
   is_js_buffer(javascript_object: JavaScriptObject): boolean;
   /**

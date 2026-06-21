@@ -70,6 +70,8 @@ declare class TileSet extends Resource {
   add_terrain_set(to_position?: int): void;
   /** Clears tile proxies pointing to invalid tiles. */
   cleanup_invalid_tile_proxies(): void;
+  /** Clears all terrain properties for the given terrain set. */
+  clear_terrains(terrain_set: int): void;
   /** Clears all tile proxies. */
   clear_tile_proxies(): void;
   /**
@@ -218,7 +220,7 @@ declare class TileSet extends Resource {
    * Creates a coordinates-level proxy for the given identifiers. A proxy will map set of tile identifiers to another set of identifiers. The alternative tile ID is kept the same when using coordinates-level proxies.
    * Proxied tiles can be automatically replaced in TileMapLayer nodes using the editor.
    */
-  set_coords_level_tile_proxy(p_source_from: int, coords_from: Vector2i | Vector2, source_to: int, coords_to: Vector2i | Vector2): void;
+  set_coords_level_tile_proxy(source_from: int, coords_from: Vector2i | Vector2, source_to: int, coords_to: Vector2i | Vector2): void;
   /**
    * Sets the name of the custom data layer identified by the given index. Names are identifiers of the layer therefore if the name is already taken it will fail and raise an error.
    */

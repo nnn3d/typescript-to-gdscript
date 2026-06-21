@@ -85,11 +85,11 @@ declare class TextEdit extends Control {
    */
   mouse_default_cursor_shape: int;
   /**
-   * If `true`, {@link TextEdit} will disable vertical scroll and fit minimum height to the number of visible lines. When both this property and {@link scroll_fit_content_width} are `true`, no scrollbars will be displayed.
+   * If `true`, {@link TextEdit} fits its minimum height to the number of visible lines instead of scrolling vertically. If a maximum height is set (for example via {@link Control.custom_maximum_size}) and content exceeds it, a vertical scrollbar is shown.
    */
   scroll_fit_content_height: boolean;
   /**
-   * If `true`, {@link TextEdit} will disable horizontal scroll and fit minimum width to the widest line in the text. When both this property and {@link scroll_fit_content_height} are `true`, no scrollbars will be displayed.
+   * If `true`, {@link TextEdit} fits its minimum width to the widest line instead of scrolling horizontally. If a maximum width is set (for example via {@link Control.custom_maximum_size}) and content exceeds it, a horizontal scrollbar is shown.
    */
   scroll_fit_content_width: boolean;
   /** If there is a horizontal scrollbar, this determines the current horizontal scroll value in pixels. */
@@ -538,6 +538,7 @@ declare class TextEdit extends Control {
   /**
    * Returns `true` if the caret is visible, `false` otherwise. A caret will be considered hidden if it is outside the scrollable area when scrolling is enabled.
    * **Note:** {@link is_caret_visible} does not account for a caret being off-screen if it is still within the scrollable area. It will return `true` even if the caret is off-screen as long as it meets {@link TextEdit}'s own conditions for being visible. This includes uses of {@link scroll_fit_content_width} and {@link scroll_fit_content_height} that cause the {@link TextEdit} to expand beyond the viewport's bounds.
+   * **Note:** This method does *not* guarantee an accurate visibility check immediately after setting the caret position. The correct value may only be available in the next frame after the {@link TextEdit} has finished drawing. This also applies to any operation that causes the {@link TextEdit} to change in size.
    */
   is_caret_visible(caret_index?: int): boolean;
   /** Returns `true` if the user is dragging their mouse for scrolling, selecting, or text dragging. */
@@ -558,6 +559,8 @@ declare class TextEdit extends Control {
    * Returns `true` if the gutter at the given index on the given line is clickable. See {@link set_line_gutter_clickable}.
    */
   is_line_gutter_clickable(line: int, gutter: int): boolean;
+  /** Returns `true` if the given line is within the scope of the scrollable area of the viewport. */
+  is_line_in_viewport(line: int): boolean;
   /** Returns if the given line is wrapped. */
   is_line_wrapped(line: int): boolean;
   /**

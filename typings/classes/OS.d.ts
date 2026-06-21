@@ -485,7 +485,7 @@ declare interface OS extends GodotObject {
    * - `OS.shell_open("C:\\Users\\name\\Downloads")` on Windows opens the file explorer at the user's Downloads folder.
    * - `OS.shell_open("C:/Users/name/Downloads")` also works on Windows and opens the file explorer at the user's Downloads folder.
    * - `OS.shell_open("https://godotengine.org")` opens the default web browser on the official Godot website.
-   * - `OS.shell_open("mailto:example@example.com")` opens the default email client with the "To" field set to `example@example.com`. See RFC 2368 - The `mailto` URL scheme (https://datatracker.ietf.org/doc/html/rfc2368) for a list of fields that can be added.
+   * - `OS.shell_open("mailto:example@example.com")` opens the default email client with the "To" field set to `example@example.com`. See RFC 2368 - The mailto URL scheme (https://datatracker.ietf.org/doc/html/rfc2368) for a list of fields that can be added.
    * Use {@link ProjectSettings.globalize_path} to convert a `res://` or `user://` project path into a system path for use with this method.
    * **Note:** Use {@link String.uri_encode} to encode characters within URLs in a URL-safe, portable way. This is especially required for line breaks. Otherwise, {@link shell_open} may not work correctly in a project exported to the Web platform.
    * **Note:** This method is implemented on Android, iOS, Web, Linux, macOS and Windows.
@@ -506,14 +506,14 @@ declare interface OS extends GodotObject {
 
   // enum RenderingDriver
   /**
-   * The Vulkan rendering driver. It requires Vulkan 1.0 support and automatically uses features from Vulkan 1.1 and 1.2 if available.
+   * The Vulkan rendering driver. It requires Vulkan 1.0 support and automatically uses features from Vulkan 1.1, 1.2, and 1.3 if available.
    */
   readonly RENDERING_DRIVER_VULKAN: int;
   /**
    * The OpenGL 3 rendering driver. It uses OpenGL 3.3 Core Profile on desktop platforms, OpenGL ES 3.0 on mobile devices, and WebGL 2.0 on Web.
    */
   readonly RENDERING_DRIVER_OPENGL3: int;
-  /** The Direct3D 12 rendering driver. */
+  /** The Direct3D 12 rendering driver. It requires the 12_0 feature level and Shader Model 6.0 support. */
   readonly RENDERING_DRIVER_D3D12: int;
   /** The Metal rendering driver. */
   readonly RENDERING_DRIVER_METAL: int;

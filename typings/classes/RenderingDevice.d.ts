@@ -5,6 +5,13 @@
 declare class RenderingDevice extends GodotObject {
   /** This method does nothing. */
   barrier(from_: int, to: int): void;
+  /** Builds the `blas`. */
+  blas_build(blas: RID): int;
+  /**
+   * Creates a new Bottom-Level Acceleration Structure (BLAS). It can be accessed with the RID that is returned.
+   * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
+   */
+  blas_create(geometries: Array<RDAccelerationStructureGeometry>, flags: int): RID;
   /**
    * Clears the contents of the `buffer`, clearing `size_bytes` bytes, starting at `offset`.
    * Prints an error if:
@@ -328,6 +335,44 @@ declare class RenderingDevice extends GodotObject {
   /** Returns `true` if the `feature` is supported by the GPU. */
   has_feature(feature: int): boolean;
   /**
+   * Creates a new hit shader binding table (SBT). It can be accessed with the RID that is returned.
+   * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
+   * This will be freed automatically when the `raytracing_pipeline` is freed.
+   * The hit SBT resizes itself as needed. `initial_hit_group_capacity` is used to allocate the initial backing memory.
+   */
+  hit_sbt_create(raytracing_pipeline: RID, initial_hit_group_capacity: int): RID;
+  /**
+   * Allocates a contiguous range of SBT entries from `hit_sbt`.
+   * The returned value should be assigned to {@link RDAccelerationStructureInstance.hit_sbt_range}.
+   * During ray traversal, hit group index is computed as:
+   * (geometry index in {@link RDAccelerationStructureInstance.blas})
+   * × (SBT stride used in `traceRayEXT`)
+   * + (SBT offset used in `traceRayEXT`)
+   * + (range offset)
+   * `hit_group_count` must be large enough to cover all SBT entries that may be indexed by this equation. This typically corresponds to:
+   * (geometry count in {@link RDAccelerationStructureInstance.blas})
+   * × (SBT stride used in `traceRayEXT`)
+   * The allocated range is uninitialized and must be filled using {@link hit_sbt_range_update}.
+   */
+  hit_sbt_range_alloc(hit_sbt: RID, hit_group_count: int): int;
+  /**
+   * Frees a hit SBT range previously allocated with {@link hit_sbt_range_alloc}.
+   * The range must not be in use by any acceleration structure after being freed.
+   */
+  hit_sbt_range_free(hit_sbt: RID, range: int): int;
+  /**
+   * Updates the contents of a hit SBT range.
+   * `hit_group_indices` specifies indices into the hit group array provided in {@link raytracing_pipeline_create}.
+   * The `offset` parameter specifies where within the allocated range the writing begins. This allows partial updates of a range. However, the complete range must be fully initialized before it is used in a raytracing dispatch.
+   */
+  hit_sbt_range_update(hit_sbt: RID, range: int, offset: int, hit_group_indices: PackedInt32Array | Array<unknown>): int;
+  /**
+   * Sets a new `raytracing_pipeline` for `hit_sbt`.
+   * The new pipeline must be a superset of the previous one. Existing hit groups must keep the same order and new hit groups should be appended to the end. This preserves existing SBT entries.
+   * The previous pipeline must remain valid during the call.
+   */
+  hit_sbt_set_pipeline(hit_sbt: RID, raytracing_pipeline: RID): int;
+  /**
    * Creates a new index array. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
    * This will be freed automatically when the `index_buffer` is freed.
@@ -343,6 +388,42 @@ declare class RenderingDevice extends GodotObject {
    * Limits for various graphics hardware can be found in the Vulkan Hardware Database (https://vulkan.gpuinfo.org/).
    */
   limit_get(limit: int): int;
+  /**
+   * Starts a list of raytracing commands. The returned value should be passed to other `raytracing_list_*` functions.
+   * Multiple raytracing lists cannot be created at the same time; you must finish the previous raytracing list first using {@link raytracing_list_end}.
+   * A simple raytracing operation might look like this (code is not a complete example):
+   */
+  raytracing_list_begin(): int;
+  /** Binds `raytracing_pipeline` to the specified `raytracing_list`. */
+  raytracing_list_bind_raytracing_pipeline(raytracing_list: int, raytracing_pipeline: RID): void;
+  /** Binds the `uniform_set` to this `raytracing_list`. */
+  raytracing_list_bind_uniform_set(raytracing_list: int, uniform_set: RID, set_index: int): void;
+  /** Finishes a list of raytracing commands created with the `raytracing_*` methods. */
+  raytracing_list_end(): void;
+  /**
+   * Sets the push constant data to `buffer` for the specified `raytracing_list`. The shader determines how this binary data is used. The buffer's size in bytes must also be specified in `size_bytes` (this can be obtained by calling the {@link PackedByteArray.size} method on the passed `buffer`).
+   */
+  raytracing_list_set_push_constant(raytracing_list: int, buffer: PackedByteArray | Array<unknown>, size_bytes: int): void;
+  /**
+   * Initializes a raytracing dispatch for `raytracing_list`, launching `width` × `height` × `depth` rays.
+   * `raygen_shader_index` selects the ray generation shader from the pipeline bound with {@link raytracing_list_bind_raytracing_pipeline}.
+   * `hit_sbt` must use the same pipeline bound to `raytracing_list`.
+   */
+  raytracing_list_trace_rays(raytracing_list: int, raygen_shader_index: int, hit_sbt: RID, width: int, height: int, depth: int): void;
+  /**
+   * Creates a new raytracing pipeline. It can be accessed with the RID that is returned.
+   * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
+   * Each shader must provide the required stage. All stages must use compatible pipeline layouts. The pipeline selects the required stage from each shader.
+   * Input order defines stable indices used by the API:
+   * - `raygen_shaders` is indexed in {@link raytracing_list_trace_rays}.
+   * - `miss_shaders` is indexed in `traceRayEXT`.
+   * - `hit_groups` is indexed in {@link hit_sbt_range_update}.
+   */
+  raytracing_pipeline_create(raygen_shaders: Array<RDPipelineShader>, miss_shaders: Array<RDPipelineShader>, hit_groups: Array<RDHitGroup>, max_trace_recursion_depth: int): RID;
+  /**
+   * Returns `true` if the raytracing pipeline specified by the `raytracing_pipeline` RID is valid, `false` otherwise.
+   */
+  raytracing_pipeline_is_valid(raytracing_pipeline: RID): boolean;
   /**
    * Creates a new render pipeline. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
@@ -438,7 +519,7 @@ declare class RenderingDevice extends GodotObject {
    */
   texture_clear(texture: RID, color: Color, base_mipmap: int, mipmap_count: int, base_layer: int, layer_count: int): int;
   /**
-   * Copies the `from_texture` to `to_texture` with the specified `from_pos`, `to_pos` and `size` coordinates. The Z axis of the `from_pos`, `to_pos` and `size` must be `0` for 2-dimensional textures. Source and destination mipmaps/layers must also be specified, with these parameters being `0` for textures without mipmaps or single-layer textures. Returns {@link @GlobalScope.OK} if the texture copy was successful or {@link @GlobalScope.ERR_INVALID_PARAMETER} otherwise.
+   * Copies the `from_texture` to `to_texture` with the specified `from_pos`, `to_pos` and `size` coordinates. For 2-dimensional textures, `from_pos` and `to_pos` must have a Z axis of `0`, and `size` must have a Z axis of `1`. Source and destination mipmaps/layers must also be specified, with these parameters being `0` for textures without mipmaps or single-layer textures. Returns {@link @GlobalScope.OK} if the texture copy was successful or {@link @GlobalScope.ERR_INVALID_PARAMETER} otherwise.
    * **Note:** `from_texture` texture can't be copied while a draw list that uses it as part of a framebuffer is being created. Ensure the draw list is finalized (and that the color/depth texture using it is not set to {@link FINAL_ACTION_CONTINUE}) to copy this texture.
    * **Note:** `from_texture` texture requires the {@link TEXTURE_USAGE_CAN_COPY_FROM_BIT} to be retrieved.
    * **Note:** `to_texture` can't be copied while a draw list that uses it as part of a framebuffer is being created. Ensure the draw list is finalized (and that the color/depth texture using it is not set to {@link FINAL_ACTION_CONTINUE}) to copy this texture.
@@ -525,6 +606,18 @@ declare class RenderingDevice extends GodotObject {
    * **Note:** The existing `texture` requires the {@link TEXTURE_USAGE_CAN_UPDATE_BIT} to be updatable.
    */
   texture_update(texture: RID, layer: int, data: PackedByteArray | Array<unknown>): int;
+  /**
+   * Builds the `tlas`. The contents of previous builds are discarded.
+   * Any BLAS provided through the {@link RDAccelerationStructureInstance.blas} member must already have been built using the {@link blas_build} method.
+   * The number of instances can be equal to or smaller than the maximum instance count provided in the {@link tlas_create} method.
+   * **Note:** Freeing or rebuilding any of the provided BLASes after this method invalidates the TLAS and requires it to be rebuilt.
+   */
+  tlas_build(tlas: RID, instances: Array<RDAccelerationStructureInstance>): int;
+  /**
+   * Creates a new Top-Level Acceleration Structure (TLAS). It can be accessed with the RID that is returned.
+   * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
+   */
+  tlas_create(max_instance_count: int, flags: int): RID;
   /**
    * Creates a new uniform buffer. It can be accessed with the RID that is returned.
    * Once finished with your RID, you will want to free the RID using the RenderingDevice's {@link free_rid} method.
@@ -1720,6 +1813,45 @@ declare class RenderingDevice extends GodotObject {
    * Set this flag so that it is created as storage. This is useful if Compute Shaders need access (for reading or writing) to the buffer, e.g. skeletal animations are processed in Compute Shaders which need access to vertex buffers, to be later consumed by vertex shaders as part of the regular rasterization pipeline.
    */
   static readonly BUFFER_CREATION_AS_STORAGE_BIT: int;
+  /**
+   * Allows usage of this buffer as input data for an acceleration structure build operation. You must first check that the GPU supports it:
+   */
+  static readonly BUFFER_CREATION_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT: int;
+  // enum AccelerationStructureFlagBits
+  /** Allows the acceleration structure to be updated after it has been built. */
+  static readonly ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT: int;
+  /** Allows the acceleration structure to be compacted to reduce memory usage after it has been built. */
+  static readonly ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT: int;
+  /**
+   * Prioritizes ray traversal performance over build performance when building the acceleration structure.
+   */
+  static readonly ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT: int;
+  /**
+   * Prioritizes build performance over ray traversal performance when building the acceleration structure.
+   */
+  static readonly ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT: int;
+  /**
+   * Reduces the memory usage of the acceleration structure, potentially at the cost of reduced ray traversal performance.
+   */
+  static readonly ACCELERATION_STRUCTURE_LOW_MEMORY_BIT: int;
+  // enum AccelerationStructureGeometryFlagBits
+  /** An opaque geometry does not invoke the any hit shaders. */
+  static readonly ACCELERATION_STRUCTURE_GEOMETRY_OPAQUE_BIT: int;
+  /** This geometry only calls the any hit shader a single time for each primitive. */
+  static readonly ACCELERATION_STRUCTURE_GEOMETRY_NO_DUPLICATE_ANY_HIT_INVOCATION_BIT: int;
+  // enum AccelerationStructureInstanceFlagBits
+  /** Disables triangle face culling for this instance during ray traversal. */
+  static readonly ACCELERATION_STRUCTURE_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT: int;
+  /** Flips the triangle facing direction for this instance during ray traversal. */
+  static readonly ACCELERATION_STRUCTURE_INSTANCE_TRIANGLE_FLIP_FACING_BIT: int;
+  /**
+   * Forces all geometries in this instance to be treated as opaque, preventing any hit shaders from being invoked.
+   */
+  static readonly ACCELERATION_STRUCTURE_INSTANCE_FORCE_OPAQUE_BIT: int;
+  /**
+   * Forces all geometries in this instance to be treated as non-opaque, allowing any hit shaders to be invoked.
+   */
+  static readonly ACCELERATION_STRUCTURE_INSTANCE_FORCE_NO_OPAQUE_BIT: int;
   // enum UniformType
   /** Sampler uniform. */
   static readonly UNIFORM_TYPE_SAMPLER: int;
@@ -1753,6 +1885,8 @@ declare class RenderingDevice extends GodotObject {
    * It's exposed in case GD users receive a buffer created with such flag from Godot.
    */
   static readonly UNIFORM_TYPE_STORAGE_BUFFER_DYNAMIC: int;
+  /** Acceleration structure uniform. */
+  static readonly UNIFORM_TYPE_ACCELERATION_STRUCTURE: int;
   /** Represents the size of the {@link UniformType} enum. */
   static readonly UNIFORM_TYPE_MAX: int;
   // enum RenderPrimitive
@@ -2018,6 +2152,24 @@ declare class RenderingDevice extends GodotObject {
    * Compute shader stage. This can be used to run arbitrary computing tasks in a shader, performing them on the GPU instead of the CPU.
    */
   static readonly SHADER_STAGE_COMPUTE: int;
+  /** Ray generation shader stage. This can be used to generate primary rays. */
+  static readonly SHADER_STAGE_RAYGEN: int;
+  /**
+   * Any hit shader stage. Invoked when ray intersections are not opaque. This can be used to specify what happens when a ray hits any of the geometry in the scene.
+   */
+  static readonly SHADER_STAGE_ANY_HIT: int;
+  /**
+   * Closest hit shader stage. This can be used to specify what happens when a ray hits the closest geometry in the scene.
+   */
+  static readonly SHADER_STAGE_CLOSEST_HIT: int;
+  /**
+   * Miss shader stage. This can be used to specify what happens if a ray does not hit anything in the scene.
+   */
+  static readonly SHADER_STAGE_MISS: int;
+  /**
+   * Intersection shader stage. The intersection shader for triangles is built-in. This can be used to compute ray intersections with primitives that are not triangles.
+   */
+  static readonly SHADER_STAGE_INTERSECTION: int;
   /** Represents the size of the {@link ShaderStage} enum. */
   static readonly SHADER_STAGE_MAX: int;
   /** Vertex shader stage bit (see also {@link SHADER_STAGE_VERTEX}). */
@@ -2030,6 +2182,16 @@ declare class RenderingDevice extends GodotObject {
   static readonly SHADER_STAGE_TESSELATION_EVALUATION_BIT: int;
   /** Compute shader stage bit (see also {@link SHADER_STAGE_COMPUTE}). */
   static readonly SHADER_STAGE_COMPUTE_BIT: int;
+  /** Ray generation shader stage bit (see also {@link SHADER_STAGE_RAYGEN}). */
+  static readonly SHADER_STAGE_RAYGEN_BIT: int;
+  /** Any hit shader stage bit (see also {@link SHADER_STAGE_ANY_HIT}). */
+  static readonly SHADER_STAGE_ANY_HIT_BIT: int;
+  /** Closest hit shader stage bit (see also {@link SHADER_STAGE_CLOSEST_HIT}). */
+  static readonly SHADER_STAGE_CLOSEST_HIT_BIT: int;
+  /** Miss shader stage bit (see also {@link SHADER_STAGE_MISS}). */
+  static readonly SHADER_STAGE_MISS_BIT: int;
+  /** Intersection shader stage bit (see also {@link SHADER_STAGE_INTERSECTION}). */
+  static readonly SHADER_STAGE_INTERSECTION_BIT: int;
   // enum ShaderLanguage
   /**
    * Khronos' GLSL shading language (used natively by OpenGL and Vulkan). This is the language used for core Godot shaders.
@@ -2055,6 +2217,18 @@ declare class RenderingDevice extends GodotObject {
   static readonly SUPPORTS_BUFFER_DEVICE_ADDRESS: int;
   /** Support for 32-bit image atomic operations. */
   static readonly SUPPORTS_IMAGE_ATOMIC_32_BIT: int;
+  /**
+   * Support for ray query extension.
+   * **Note:** This is currently only supported when using Vulkan. This is not supported on macOS and iOS (even on hardware supporting raytracing) due to MoltenVK limitations.
+   */
+  static readonly SUPPORTS_RAY_QUERY: int;
+  /**
+   * Support for raytracing pipeline extension.
+   * **Note:** This is currently only supported when using Vulkan. This is not supported on macOS and iOS (even on hardware supporting raytracing) due to MoltenVK limitations.
+   */
+  static readonly SUPPORTS_RAYTRACING_PIPELINE: int;
+  /** Support for high dynamic range (HDR) output. */
+  static readonly SUPPORTS_HDR_OUTPUT: int;
   // enum Limit
   /** Maximum number of uniform sets that can be bound at a given time. */
   static readonly LIMIT_MAX_BOUND_UNIFORM_SETS: int;

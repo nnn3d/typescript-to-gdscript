@@ -12,6 +12,8 @@ declare class MeshLibrary extends Resource {
   create_item(id: int): void;
   /** Returns the first item with the given name, or `-1` if no item is found. */
   find_item_by_name(name: string | NodePath): int;
+  /** Returns the number of items present in the library. */
+  get_item_count(): int;
   /** Returns the list of item IDs in use. */
   get_item_list(): PackedInt32Array;
   /** Returns the item's mesh. */

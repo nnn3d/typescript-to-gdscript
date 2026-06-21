@@ -6,9 +6,9 @@ declare class MultiplayerPeerExtension extends MultiplayerPeer {
   /** Called when the multiplayer peer should be immediately closed (see {@link MultiplayerPeer.close}). */
   _close(): void;
   /**
-   * Called when the connected `p_peer` should be forcibly disconnected (see {@link MultiplayerPeer.disconnect_peer}).
+   * Called when the connected `peer` should be forcibly disconnected (see {@link MultiplayerPeer.disconnect_peer}).
    */
-  _disconnect_peer(p_peer: int, p_force: boolean): void;
+  _disconnect_peer(peer: int, force: boolean): void;
   /** Called when the available packet count is internally requested by the {@link MultiplayerAPI}. */
   _get_available_packet_count(): int;
   /**
@@ -64,27 +64,27 @@ declare class MultiplayerPeerExtension extends MultiplayerPeer {
   /** Called when the {@link MultiplayerAPI} is polled. See {@link MultiplayerAPI.poll}. */
   _poll(): void;
   /**
-   * Called when a packet needs to be sent by the {@link MultiplayerAPI}, with `p_buffer_size` being the size of the binary `p_buffer` in bytes.
+   * Called when a packet needs to be sent by the {@link MultiplayerAPI}, with `buffer_size` being the size of the binary `buffer` in bytes.
    */
-  _put_packet(p_buffer: int, p_buffer_size: int): int;
+  _put_packet(buffer: int, buffer_size: int): int;
   /**
    * Called when a packet needs to be sent by the {@link MultiplayerAPI}, if {@link _put_packet} isn't implemented. Use this when extending this class via GDScript.
    */
-  _put_packet_script(p_buffer: PackedByteArray | Array<unknown>): int;
+  _put_packet_script(buffer: PackedByteArray | Array<unknown>): int;
   /**
    * Called when the "refuse new connections" status is set on this {@link MultiplayerPeer} (see {@link MultiplayerPeer.refuse_new_connections}).
    */
-  _set_refuse_new_connections(p_enable: boolean): void;
+  _set_refuse_new_connections(enable: boolean): void;
   /**
    * Called when the target peer to use is set for this {@link MultiplayerPeer} (see {@link MultiplayerPeer.set_target_peer}).
    */
-  _set_target_peer(p_peer: int): void;
+  _set_target_peer(peer: int): void;
   /**
    * Called when the channel to use is set for this {@link MultiplayerPeer} (see {@link MultiplayerPeer.transfer_channel}).
    */
-  _set_transfer_channel(p_channel: int): void;
+  _set_transfer_channel(channel: int): void;
   /**
    * Called when the transfer mode is set on this {@link MultiplayerPeer} (see {@link MultiplayerPeer.transfer_mode}).
    */
-  _set_transfer_mode(p_mode: int): void;
+  _set_transfer_mode(mode: int): void;
 }

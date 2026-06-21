@@ -18,8 +18,10 @@ declare class EditorExportPlatform extends RefCounted {
    * **Note:** `patches` is an optional override of the set of patches defined in the export preset. When empty the patches defined in the export preset will be used instead.
    */
   export_pack_patch(preset: EditorExportPreset, debug: boolean, path: string | NodePath, patches?: PackedStringArray | Array<unknown>, flags?: int): int;
-  /** Creates a full project at `path` for the specified `preset`. */
-  export_project(preset: EditorExportPreset, debug: boolean, path: string | NodePath, flags: int): int;
+  /**
+   * Creates a full project at `path` for the specified `preset`. If `notify` is `true`, plugins using {@link EditorExportPlugin._export_begin} will be called during the process.
+   */
+  export_project(preset: EditorExportPreset, debug: boolean, path: string | NodePath, flags: int, notify?: boolean): int;
   /**
    * Exports project files for the specified preset. This method can be used to implement custom export format, other than PCK and ZIP. One of the callbacks is called for each exported file.
    * `save_cb` is called for all exported files and have the following arguments: `file_path: String`, `file_data: PackedByteArray`, `file_index: int`, `file_count: int`, `encryption_include_filters: PackedStringArray`, `encryption_exclude_filters: PackedStringArray`, `encryption_key: PackedByteArray`.

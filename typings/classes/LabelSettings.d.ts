@@ -27,8 +27,33 @@ declare class LabelSettings extends Resource {
   shadow_size: int;
   /** The number of stacked outlines. */
   stacked_outline_count: int;
+  /**
+   * The color of the outline at `index`.
+   * **Note:** `index` is a value in the `0 .. stacked_outline_count - 1` range.
+   */
+  'stacked_outline_{index}/color': Color;
+  /**
+   * The size of the outline at `index`.
+   * **Note:** `index` is a value in the `0 .. stacked_outline_count - 1` range.
+   */
+  'stacked_outline_{index}/size': int;
   /** The number of stacked shadows. */
   stacked_shadow_count: int;
+  /**
+   * The color of the shadow at `index`.
+   * **Note:** `index` is a value in the `0 .. stacked_shadow_count - 1` range.
+   */
+  'stacked_shadow_{index}/color': Color;
+  /**
+   * The offset of the shadow at `index`.
+   * **Note:** `index` is a value in the `0 .. stacked_shadow_count - 1` range.
+   */
+  'stacked_shadow_{index}/offset': Vector2;
+  /**
+   * The size of the shadow outline at `index`.
+   * **Note:** `index` is a value in the `0 .. stacked_shadow_count - 1` range.
+   */
+  'stacked_shadow_{index}/outline_size': int;
   set_font(value: Font | null): void;
   get_font(): Font | null;
   set_font_color(value: Color): void;

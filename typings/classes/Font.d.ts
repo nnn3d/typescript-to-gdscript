@@ -42,9 +42,9 @@ declare class Font extends Resource {
    */
   draw_string_outline(canvas_item: RID, pos: Vector2 | Vector2i, text: string | NodePath, alignment: int, width?: float, font_size?: int, size?: int, modulate?: Color, justification_flags?: int, direction?: int, orientation?: int, oversampling?: float): void;
   /** Returns {@link TextServer} RID of the font cache for specific variation. */
-  find_variation(variation_coordinates: Dictionary, face_index?: int, strength?: float, transform?: Transform2D, spacing_top?: int, spacing_bottom?: int, spacing_space?: int, spacing_glyph?: int, baseline_offset?: float): RID;
+  find_variation(variation_coordinates: Dictionary, face_index?: int, strength?: float, transform?: Transform2D, spacing_top?: int, spacing_bottom?: int, spacing_space?: int, spacing_glyph?: int, baseline_offset?: float, palette_index?: int, custom_colors?: PackedColorArray | Array<unknown>): RID;
   /**
-   * Returns the average font ascent (number of pixels above the baseline).
+   * Returns the maximum font ascent (number of pixels above the baseline) of this font and all fallback fonts.
    * **Note:** Real ascent of the string is context-dependent and can be significantly different from the value returned by this function. Use it only as rough estimate (e.g. as the ascent of empty line).
    */
   get_ascent(font_size?: int): float;
@@ -54,7 +54,7 @@ declare class Font extends Resource {
    */
   get_char_size(char: int, font_size: int): Vector2;
   /**
-   * Returns the average font descent (number of pixels below the baseline).
+   * Returns the maximum font descent (number of pixels below the baseline) of this font and all fallback fonts.
    * **Note:** Real descent of the string is context-dependent and can be significantly different from the value returned by this function. Use it only as rough estimate (e.g. as the descent of empty line).
    */
   get_descent(font_size?: int): float;
@@ -92,6 +92,18 @@ declare class Font extends Resource {
    * Returns {@link Dictionary} with OpenType font name strings (localized font names, version, description, license information, sample text, etc.).
    */
   get_ot_name_strings(): Dictionary;
+  /**
+   * Returns the array in the predefined color palette at `index`. Palette contains all colors used to render font glyphs. Each palette has the same number of colors. Colors can be overridden using {@link FontVariation}.
+   */
+  get_palette_colors(index: int): PackedColorArray;
+  /**
+   * Returns the number of predefined color palettes. Palette contains all colors used to render font glyphs. Each palette has the same number of colors.
+   */
+  get_palette_count(): int;
+  /**
+   * Returns the name of the predefined color palette at `index`. Palette contains all colors used to render font glyphs. Each palette has the same number of colors.
+   */
+  get_palette_name(index: int): string;
   /**
    * Returns {@link Array} of valid {@link Font} {@link RID}s, which can be passed to the {@link TextServer} methods.
    */

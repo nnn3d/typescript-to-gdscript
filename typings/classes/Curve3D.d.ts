@@ -14,6 +14,26 @@ declare class Curve3D extends Resource {
   /** The number of points describing the curve. */
   point_count: int;
   /**
+   * The position of the control point leading to the vertex at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/in': Vector3;
+  /**
+   * The position of the control point leading out of the vertex at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/out': Vector3;
+  /**
+   * The position of for the vertex at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/position': Vector3;
+  /**
+   * The tilt angle in radians for the point at `index`.
+   * **Note:** `index` is a value in the `0 .. point_count - 1` range.
+   */
+  'point_{index}/tilt': float;
+  /**
    * If `true`, the curve will bake up vectors used for orientation. This is used when {@link PathFollow3D.rotation_mode} is set to {@link PathFollow3D.ROTATION_ORIENTED}. Changing it forces the cache to be recomputed.
    */
   up_vector_enabled: boolean;
