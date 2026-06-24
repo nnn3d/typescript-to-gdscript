@@ -4,6 +4,7 @@ import { isGlobalName } from './context.ts';
 import {
   inferExprType,
   selfClassNameIfMatches,
+  qualifyClassType,
   GD_OPS_MAP,
   NOT_LIFT_OPS,
   GD_IS_PRIMITIVE_TYPES,
@@ -260,14 +261,20 @@ export function emitCall(node: SyntaxNode, ctx: GdToTsContext): string {
     return `new ${ctx.className}(${args})`;
   }
 
-  // For bare identifier calls: add this. prefix for known class members
+  // For bare identifier calls: prefix known class members. Static members
+  // (static func / static var / const / enum / inner class) are accessed via
+  // the class name; instance members via `this.` — mirrors `emitExpr` and
+  // GDScript's own convention for reaching statics.
   if (
     callee.type === SyntaxType.Identifier &&
     !ctx.localVars.has(callee.text) &&
     !isGlobalName(callee.text, ctx)
   ) {
     if (ctx.classMembers.has(callee.text)) {
-      return `this.${callee.text}(${args})`;
+      const prefix = ctx.staticMembers.has(callee.text)
+        ? ctx.className
+        : 'this';
+      return `${prefix}.${callee.text}(${args})`;
     }
   }
 
@@ -327,13 +334,18 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
       const args = argsNode
         ? argsNode.namedChildren.map((a) => emitExpr(a, ctx)).join(', ')
         : '';
-      // .new() -> new ClassName(). When the receiver is the self class, use
-      // the emitted (possibly `_Foo`→`G_Foo` escaped) class name so the
-      // constructor reference matches the declared class.
+      // .new() -> new ClassName(). Resolve the receiver to the name that's
+      // actually in scope in the emitted TS:
+      //  - inner class / class enum → `ClassName.Inner` (lives in the paired
+      //    `namespace`, not visible bare from the class body) via qualifyClassType
+      //  - the self class → the emitted (possibly `_Foo`→`G_Foo` escaped) name
+      //  - anything else (Godot / other user class) → verbatim
       if (methodName === 'new') {
         const rawClassName = parts.join('.');
         const className =
-          selfClassNameIfMatches(rawClassName, ctx) ?? rawClassName;
+          qualifyClassType(rawClassName, ctx.classTypeNames, ctx.className) ??
+          selfClassNameIfMatches(rawClassName, ctx) ??
+          rawClassName;
         parts.length = 0;
         parts.push(`new ${className}(${args})`);
       } else {

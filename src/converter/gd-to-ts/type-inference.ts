@@ -5,6 +5,17 @@ import { escapeUnderscoreClassName } from '../common/index.ts';
 
 // ─── Type Inference (for gd.ops detection) ──────────────────
 
+/**
+ * True when a function/constructor definition carries the `static` keyword.
+ * tree-sitter-gdscript represents it as a `static_keyword` NAMED CHILD of the
+ * `FunctionDefinition` (unlike variable statements, which expose a `static`
+ * field), so `childForFieldName('static')` does NOT find it — we scan the
+ * named children instead.
+ */
+export function isStaticFunction(node: SyntaxNode): boolean {
+  return node.namedChildren.some((c) => c.type === SyntaxType.StaticKeyword);
+}
+
 /** Extract raw GD type name from a type node */
 export function extractGdTypeName(typeNode: SyntaxNode): string | null {
   if (typeNode.type === SyntaxType.Type) {

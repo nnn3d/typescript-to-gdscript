@@ -29,7 +29,11 @@
 
 import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
 import type { GdToTsContext } from './context.ts';
-import { extractGdTypeName, inferExprType } from './type-inference.ts';
+import {
+  extractGdTypeName,
+  inferExprType,
+  isStaticFunction,
+} from './type-inference.ts';
 
 export interface ClassScope {
   /** TS-side class name (already-escaped, e.g. `G_Foo` for a GD `_Foo`). */
@@ -118,9 +122,9 @@ function collectMember(
     const name = raw === '_init' ? 'constructor' : raw;
     scope.classMembers.add(name);
     // `static func foo()` → accessed as `ClassName.foo()` from
-    // instance methods, so tracked as static.
-    const isStatic = child.childForFieldName('static') !== null;
-    if (isStatic) scope.staticMembers.add(name);
+    // instance methods, so tracked as static. tree-sitter exposes the
+    // keyword as a `static_keyword` child, not a `static` field.
+    if (isStaticFunction(child)) scope.staticMembers.add(name);
     return;
   }
 

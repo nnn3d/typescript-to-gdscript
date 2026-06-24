@@ -6,6 +6,7 @@ import {
   extractGdTypeName,
   qualifyClassType,
   escapeSelfClassType,
+  isStaticFunction,
 } from './type-inference.ts';
 import { getAnnotations } from './members.ts';
 import { emitBody } from './statements.ts';
@@ -105,11 +106,16 @@ export function emitFunction(
   ctx.currentMethodName = savedMethodName;
 
   const asyncPrefix = isAsync ? 'async ' : '';
+  // GDScript `static func` → TS `static method()`. `static` precedes `async`
+  // (TS requires `static async`, not `async static`). Static methods are
+  // accessed as `ClassName.method()` (see `emitCall` / `emitExpr` static-member
+  // prefixing), so this keyword must be present for those calls to resolve.
+  const staticPrefix = isStaticFunction(node) ? 'static ' : '';
 
   if (body) {
-    return `  ${asyncPrefix}${name}(${params})${returnType} {\n${body}\n  }`;
+    return `  ${staticPrefix}${asyncPrefix}${name}(${params})${returnType} {\n${body}\n  }`;
   }
-  return `  ${asyncPrefix}${name}(${params})${returnType} {\n  }`;
+  return `  ${staticPrefix}${asyncPrefix}${name}(${params})${returnType} {\n  }`;
 }
 
 export function emitConstructor(node: SyntaxNode, ctx: GdToTsContext): string {
