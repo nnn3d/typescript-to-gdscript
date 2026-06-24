@@ -12,6 +12,7 @@ import { getAnnotations } from './members.ts';
 import { emitBody } from './statements.ts';
 import { emitExpr } from './expressions.ts';
 import { isReferenceType } from '../common/index.ts';
+import { escapeTsBindingName } from './identifiers.ts';
 
 /**
  * Widen a TS type for an IN position (function parameter, setter value,
@@ -192,6 +193,7 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
   let paramIndex = 0;
   for (const child of paramsNode.namedChildren) {
     if (child.type === SyntaxType.Identifier) {
+      const pname = escapeTsBindingName(child.text);
       // Untyped param — use signal handler type if available
       if (handlerInfo && paramIndex < handlerInfo.params.length) {
         const sigParam = handlerInfo.params[paramIndex]!;
@@ -200,15 +202,16 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
           gdTypeToTs(sigParam.gdType),
           ctx,
         );
-        params.push(tsType ? `${child.text}: ${tsType}` : child.text);
+        params.push(tsType ? `${pname}: ${tsType}` : pname);
       } else {
-        params.push(child.text);
+        params.push(pname);
       }
       paramIndex++;
     } else if (child.type === SyntaxType.TypedParameter) {
-      const name =
+      const name = escapeTsBindingName(
         child.namedChildren.find((c) => c.type === SyntaxType.Identifier)
-          ?.text ?? '';
+          ?.text ?? '',
+      );
       const typeNode = child.childForFieldName('type');
       const rawType = typeNode?.text ?? '';
       const baseType = escapeSelfClassType(
@@ -220,9 +223,10 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       params.push(tsType ? `${name}: ${tsType}` : name);
       paramIndex++;
     } else if (child.type === SyntaxType.DefaultParameter) {
-      const name =
+      const name = escapeTsBindingName(
         child.namedChildren.find((c) => c.type === SyntaxType.Identifier)
-          ?.text ?? '';
+          ?.text ?? '',
+      );
       const value = child.childForFieldName('value');
       const valueText = value?.text?.trim() ?? '';
       // `param = null` → `param: unknown = null` (or `any` with unsafe flag)
@@ -235,9 +239,10 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       }
       paramIndex++;
     } else if (child.type === SyntaxType.TypedDefaultParameter) {
-      const name =
+      const name = escapeTsBindingName(
         child.namedChildren.find((c) => c.type === SyntaxType.Identifier)
-          ?.text ?? '';
+          ?.text ?? '',
+      );
       const typeNode = child.childForFieldName('type');
       const value = child.childForFieldName('value');
       const rawType = typeNode?.text ?? '';
@@ -268,11 +273,12 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
           c.type === SyntaxType.TypedParameter,
       );
       if (inner?.type === SyntaxType.Identifier) {
-        params.push(`...${inner.text}: any[]`);
+        params.push(`...${escapeTsBindingName(inner.text)}: any[]`);
       } else if (inner?.type === SyntaxType.TypedParameter) {
-        const name =
+        const name = escapeTsBindingName(
           inner.namedChildren.find((c) => c.type === SyntaxType.Identifier)
-            ?.text ?? '';
+            ?.text ?? '',
+        );
         const typeNode = inner.childForFieldName('type');
         const rawType = typeNode?.text ?? '';
         const tsType = gdTypeToTs(rawType);

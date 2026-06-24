@@ -10,6 +10,7 @@ import {
   GD_IS_PRIMITIVE_TYPES,
 } from './type-inference.ts';
 import { emitLambda } from './functions.ts';
+import { escapeTsBindingName } from './identifiers.ts';
 
 // ─── Expressions ──────────────────────────────────────────────
 
@@ -30,6 +31,10 @@ export function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
     // Global enum constant → qualified name (e.g. KEY_F21 → Key.KEY_F21)
     const enumQualified = ctx.globalEnumMap.get(node.text);
     if (enumQualified) return enumQualified;
+    // Bare reference. Only a LOCAL binding (var / param / loop var) gets
+    // reserved-word escaping (GD `function` → TS `function_`); global names
+    // like the `typeof()` builtin must stay verbatim — they're not bindings.
+    if (ctx.localVars.has(node.text)) return escapeTsBindingName(node.text);
     return node.text;
   }
 
@@ -38,7 +43,19 @@ export function emitExpr(node: SyntaxNode, ctx: GdToTsContext): string {
   }
 
   if (node.type === SyntaxType.String) {
-    return node.text;
+    const text = node.text;
+    // GDScript triple-quoted (multi-line) string → TS template literal. The
+    // raw content keeps its escape sequences (\n, \t, \\, …) — those are valid
+    // in template literals too — so only backticks and `${` need escaping to
+    // avoid accidental TS interpolation / early termination.
+    if (text.startsWith('"""') || text.startsWith("'''")) {
+      const content = text
+        .slice(3, -3)
+        .replace(/`/g, '\\`')
+        .replace(/\$\{/g, '\\${');
+      return '`' + content + '`';
+    }
+    return text;
   }
 
   if (node.type === SyntaxType.True) return 'true';
@@ -359,8 +376,15 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
       const key = argsNode?.namedChildren[0];
       parts.push(`${attrName}[${key ? emitExpr(key, ctx) : ''}]`);
     } else if (child.type === SyntaxType.Identifier) {
-      // After self or for property access, use raw identifier (no this. prefix)
-      parts.push(child.text);
+      // The first chain element is the base expression — a bare local var /
+      // param needs reserved-word escaping (e.g. `function.x` → `function_.x`).
+      // Later elements are property names, which are NOT escaped (reserved
+      // words are legal as TS property names).
+      if (parts.length === 0 && ctx.localVars.has(child.text)) {
+        parts.push(escapeTsBindingName(child.text));
+      } else {
+        parts.push(child.text);
+      }
     } else {
       parts.push(emitExpr(child, ctx));
     }

@@ -6,6 +6,7 @@ import {
   emitCommentInline,
   emitLocalVariable,
 } from './members.ts';
+import { escapeTsBindingName } from './identifiers.ts';
 
 // ─── Body / Statements ────────────────────────────────────────
 
@@ -161,7 +162,11 @@ function emitForStatement(
   const right = node.childForFieldName('right');
   const body = node.childForFieldName('body');
 
-  const varName = left?.text ?? 'item';
+  // A typed loop var (`for x: T in …`) exposes only the identifier in `left`
+  // (TS for-of can't annotate the binding, so the type is naturally dropped).
+  // Escape the name if it collides with a TS reserved word (`function` → `function_`).
+  const gdVarName = left?.text ?? 'item';
+  const varName = escapeTsBindingName(gdVarName);
 
   // In `for x in a + b + c`, `+` is always array concatenation → gd.ops.add (recursive)
   function emitArrayConcat(node: SyntaxNode): string {
@@ -177,7 +182,13 @@ function emitForStatement(
   }
   const iterable = right ? emitArrayConcat(right) : '[]';
 
+  // Register the loop var as a local (under its GD name) for the body so its
+  // references resolve as locals (consistent escaping, no stray `this.` prefix
+  // if it shadows a member). Scoped to the loop body via save/restore.
+  const savedLocals = new Set(ctx.localVars);
+  ctx.localVars.add(gdVarName);
   const bodyStr = body ? emitBody(body, ctx, depth + 1) : '';
+  ctx.localVars = savedLocals;
 
   return `${indent}for (let ${varName} of ${iterable}) {\n${bodyStr}\n${indent}}`;
 }

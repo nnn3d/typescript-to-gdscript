@@ -10,6 +10,7 @@ import {
 import { emitExpr } from './expressions.ts';
 import { emitBody } from './statements.ts';
 import { widenInType } from './functions.ts';
+import { escapeTsBindingName } from './identifiers.ts';
 
 // ─── Comments ─────────────────────────────────────────────────
 
@@ -462,8 +463,12 @@ export function emitLocalVariable(
 
   const typeAnnotation = typeNode ? emitTypeAnnotation(typeNode, ctx) : '';
   const init = valueNode ? ` = ${emitExpr(valueNode, ctx)}` : '';
+  // Emit the binding under a TS-legal name if it collides with a reserved word
+  // (`localVars` stays keyed on the GD name so references resolve as locals;
+  // `emitExpr` re-applies the same deterministic escape at each reference).
+  const tsName = escapeTsBindingName(name);
 
-  return `${indent}let ${name}${typeAnnotation}${init};`;
+  return `${indent}let ${tsName}${typeAnnotation}${init};`;
 }
 
 // ─── Type Annotations ─────────────────────────────────────────
