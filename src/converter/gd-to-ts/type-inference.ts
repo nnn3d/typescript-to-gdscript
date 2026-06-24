@@ -164,6 +164,8 @@ export function gdTypeToTs(gdType: string): string | null {
       return 'boolean';
     case 'String':
       return 'string';
+    case 'StringName':
+      return 'string';
     case 'void':
       return 'void';
     case 'Array':
@@ -181,7 +183,38 @@ export function gdTypeToTs(gdType: string): string | null {
         const tsInner = gdTypeToTs(inner);
         return `Array<${tsInner ?? inner}>`;
       }
+      // Dictionary[K, V] -> Dictionary<K, V>
+      if (gdType.startsWith('Dictionary[')) {
+        const inner = gdType.slice(11, -1);
+        const [key, value] = splitTopLevelTypeArgs(inner);
+        const tsKey = key ? (gdTypeToTs(key) ?? key) : 'unknown';
+        const tsValue = value ? (gdTypeToTs(value) ?? value) : 'unknown';
+        return `Dictionary<${tsKey}, ${tsValue}>`;
+      }
       // Class type or unknown — keep as-is
       return gdType;
   }
+}
+
+/**
+ * Split a GDScript generic argument list (the text inside `[...]`) on its
+ * top-level commas, ignoring commas nested inside further `[...]` groups.
+ * E.g. `int, Dictionary[String, float]` → ['int', 'Dictionary[String, float]'].
+ */
+export function splitTopLevelTypeArgs(inner: string): string[] {
+  const args: string[] = [];
+  let depth = 0;
+  let current = '';
+  for (const ch of inner) {
+    if (ch === '[') depth++;
+    else if (ch === ']') depth--;
+    if (ch === ',' && depth === 0) {
+      args.push(current.trim());
+      current = '';
+    } else {
+      current += ch;
+    }
+  }
+  if (current.trim()) args.push(current.trim());
+  return args;
 }
