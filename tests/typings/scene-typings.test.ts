@@ -277,6 +277,12 @@ describe('Scene typings generation', () => {
     // .tres resources use gd_resource type header
     expect(all).toContain('"res://player_material.tres": ShaderMaterial;');
 
+    // uid:// keys mirror res:// keys in GodotResources (Godot 4.4+ UIDs).
+    // Resolved from the .tres/.tscn header and the Player.gd.uid sidecar.
+    expect(all).toContain('"uid://b5ws7ks5frcgv": ShaderMaterial;');                       // .tres header
+    expect(all).toContain('"uid://test_player_scene": PackedScene<_GDTreeNode<_PlayerTscn_Tree>>'); // .tscn header
+    expect(all).toContain('"uid://test_player_script": typeof Player;');                   // .gd.uid sidecar
+
     // Autoload singletons from project.godot
     const index = readOutput('_index.d.ts');
     expect(index).toContain('Autoload singletons from project.godot');

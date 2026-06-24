@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://test_player_scene"]
+[gd_scene format=3 uid="uid://test_anonym_scene"]
 
 [ext_resource type="Script" uid="uid://test_player_script" path="res://Anonym.gd" id="1"]
 

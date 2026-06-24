@@ -141,6 +141,7 @@ tests/
   - `GodotGroups` interface: per-group named interfaces (`__GodotGroup_X`) for typed `get_nodes_in_group()`, `get_first_node_in_group()`, group action methods
   - Sub-resource chain parsing for TileMap → TileSet → TileSetScenesCollectionSource
   - `GodotResources` interface: `.tscn` → `PackedScene<_GDTreeNode<Tree>>`, `.gd` → `typeof Class`, `.tres` → `gd_resource type` header
+  - `uid://` keys: every `GodotResources` entry is also emitted under the resource's Godot UID (same value), so `load`/`preload`/`change_scene_to_file` resolve uid paths to the exact type. UID resolved by `resolveResourceUid` (scene-utils.ts): `.uid` sidecar (scripts/shaders) → `.import` sidecar (imported assets) → `.tscn`/`.tres` header. No UID found → only the `res://` key is emitted (uid keys appear once Godot has imported the project). `GodotScripts`/`GodotSceneTrees` are left `res://`-only (internal parser lookup tables)
   - Asset resources bundled into single `_resources.d.ts` (not individual files) for faster TS parsing
   - `ScriptPaths` pre-computed type alias to avoid repeated `_GDGetTreePaths` evaluation
   - `StaticProps` (`Omit<typeof ScriptClass, 'prototype' | keyof Function>`) for static field access on instances

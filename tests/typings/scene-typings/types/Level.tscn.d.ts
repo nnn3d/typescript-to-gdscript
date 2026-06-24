@@ -82,6 +82,7 @@ declare global {
   }
   interface GodotResources {
     "res://Level.tscn": PackedScene<_GDTreeNode<_LevelTscn_Tree>>;
+    "uid://test_level_scene": PackedScene<_GDTreeNode<_LevelTscn_Tree>>;
   }
   interface __GodotGroup_entities {
     "res://Level.tscn": GodotSceneTrees["res://Player.tscn"] | GodotSceneTrees["res://Enemy.tscn"]

@@ -615,6 +615,47 @@ export function parseGdResourceType(filePath: string): string | undefined {
   }
 }
 
+/**
+ * Reads the `uid="uid://…"` attribute from a `.tscn`/`.tres` header
+ * (`[gd_scene …]` / `[gd_resource …]`). Returns undefined if absent.
+ */
+function parseGdResourceUidHeader(filePath: string): string | undefined {
+  const content = readFileSync(filePath, 'utf-8');
+  const root = resourceParser.parse(content);
+  for (const section of root.namedChildren) {
+    if (section.type !== SyntaxType.Section) continue;
+    const ident = section.namedChildren.find(c => c.type === SyntaxType.Identifier);
+    if (ident?.text !== 'gd_scene' && ident?.text !== 'gd_resource') continue;
+    return getSectionAttr(section, 'uid');
+  }
+  return undefined;
+}
+
+/**
+ * Resolves the Godot UID (`uid://…`) for a resource file, however it is
+ * stored: `.uid` sidecar (scripts/shaders, Godot 4.4+), `.import` sidecar
+ * (imported assets), or the `.tscn`/`.tres` header. Returns undefined when no
+ * uid is present (e.g. the project has not been imported by Godot yet) — the
+ * caller then emits only the `res://` key.
+ */
+export function resolveResourceUid(absPath: string): string | undefined {
+  try {
+    const sidecar = absPath + '.uid';
+    if (existsSync(sidecar)) {
+      const v = readFileSync(sidecar, 'utf-8').trim();
+      return v.startsWith('uid://') ? v : undefined;
+    }
+    const importFile = absPath + '.import';
+    if (existsSync(importFile)) {
+      const m = readFileSync(importFile, 'utf-8').match(/\buid="(uid:\/\/[^"]+)"/);
+      return m ? m[1] : undefined;
+    }
+    return parseGdResourceUidHeader(absPath);
+  } catch {
+    return undefined;
+  }
+}
+
 // ─── File Finding Utilities ─────────────────────────────────
 
 /** Known Godot asset extensions -> Godot resource type name */

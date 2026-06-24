@@ -34,6 +34,7 @@ export function generateSceneTypingContent(
   sceneData: ParseSceneResult,
   uniqueNameNodes: Set<string>,
   connections?: ResolvedConnection[],
+  uid?: string,
 ): string {
   const lines: string[] = [];
   lines.push('// AUTO-GENERATED — do not edit manually.\n');
@@ -252,6 +253,7 @@ export function generateSceneTypingContent(
   // GodotResources entry
   lines.push(`  interface GodotResources {`);
   lines.push(`    "${sceneResPath}": PackedScene<_GDTreeNode<${treeName}>>;`);
+  if (uid) lines.push(`    "${uid}": PackedScene<_GDTreeNode<${treeName}>>;`);
   lines.push(`  }`);
 
   // GodotGroups entries — per-group interfaces + GodotGroups mapping
@@ -329,6 +331,7 @@ export function generateScriptTypingContent(
    * Anonymous classes ignore this flag (they're always module-scoped).
    */
   generateGlobal: boolean = true,
+  uid?: string,
 ): string {
   const lines: string[] = [];
   lines.push('// AUTO-GENERATED — do not edit manually.\n');
@@ -448,6 +451,7 @@ export function generateScriptTypingContent(
     lines.push(`  }\n`);
     lines.push(`  interface GodotResources {`);
     lines.push(`    "${scriptResPath}": typeof ${scriptsHandle};`);
+    if (uid) lines.push(`    "${uid}": typeof ${scriptsHandle};`);
     lines.push(`  }`);
     lines.push(`}`);
   } else {
@@ -494,6 +498,7 @@ export function generateScriptTypingContent(
     lines.push(`  }\n`);
     lines.push(`  interface GodotResources {`);
     lines.push(`    "${scriptResPath}": typeof ${className};`);
+    if (uid) lines.push(`    "${uid}": typeof ${className};`);
     lines.push(`  }`);
     lines.push(`}`);
   }

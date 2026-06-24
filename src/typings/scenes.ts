@@ -24,6 +24,7 @@ import {
   findSceneFiles,
   findAssetFiles,
   parseGdResourceType,
+  resolveResourceUid,
   ASSET_EXTENSION_MAP,
   resolveSignalHandlers,
   collectAllSignalHandlers,
@@ -142,7 +143,9 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
     }
 
     const connections = resolveConnections(actualResPath, sceneData);
-    const content = generateSceneTypingContent(actualResPath, sceneData, uniqueNames, connections);
+    const content = generateSceneTypingContent(
+      actualResPath, sceneData, uniqueNames, connections, resolveResourceUid(sceneFile),
+    );
     mkdirSync(dirname(outputPath), { recursive: true });
     writeFileSync(outputPath, content);
     writtenFiles.push(outputPath);
@@ -170,6 +173,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
     // augmentation target needs to be the same bare form.
     const tsModulePath = tsImportPath;
 
+    const gdUid = resolveResourceUid(join(rootDir, scriptResPath.slice('res://'.length)));
     const content = generateScriptTypingContent(
       scriptResPath,
       classInfo.className,
@@ -180,6 +184,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       classInfo.innerClasses,
       classInfo.extendsNode,
       generateGlobal,
+      gdUid,
     );
 
     mkdirSync(dirname(outputPath), { recursive: true });
@@ -196,7 +201,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
 
   // 4. Generate bundled _resources.d.ts for all asset files
   const assetFiles = findAssetFiles(rootDir, rootDir, ignore);
-  const resourceEntries: Array<{ resPath: string; godotType: string }> = [];
+  const resourceEntries: Array<{ resPath: string; godotType: string; uid?: string }> = [];
   for (const assetFile of assetFiles) {
     const resPath = absPathToResPath(assetFile, rootDir);
     const ext = extname(assetFile).toLowerCase();
@@ -211,7 +216,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
       godotType = ASSET_EXTENSION_MAP[ext] ?? 'Resource';
     }
 
-    resourceEntries.push({ resPath, godotType });
+    resourceEntries.push({ resPath, godotType, uid: resolveResourceUid(assetFile) });
   }
 
   if (resourceEntries.length > 0) {
@@ -219,8 +224,9 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
     resLines.push('// AUTO-GENERATED — do not edit manually.\n');
     resLines.push('declare global {');
     resLines.push('  interface GodotResources {');
-    for (const { resPath, godotType } of resourceEntries) {
+    for (const { resPath, godotType, uid } of resourceEntries) {
       resLines.push(`    "${resPath}": ${godotType};`);
+      if (uid) resLines.push(`    "${uid}": ${godotType};`);
     }
     resLines.push('  }');
     resLines.push('}\n');
@@ -310,6 +316,7 @@ export function generateFileTypings(
       const tsImportPath = computeTsImport(outputDir, outputFile, classInfo.tsAbsPath);
       const tsModulePath = tsImportPath;
 
+      const gdUid = resolveResourceUid(join(rootDir, scriptResPath.slice('res://'.length)));
       const content = generateScriptTypingContent(
         scriptResPath,
         classInfo.className,
@@ -320,6 +327,7 @@ export function generateFileTypings(
         classInfo.innerClasses,
         classInfo.extendsNode,
         options.generateGlobalClassTypes ?? false,
+        gdUid,
       );
 
       const outputPath = resolve(outputDir, outputFile);
@@ -345,7 +353,9 @@ export function generateFileTypings(
       }
     }
 
-    const content = generateSceneTypingContent(actualResPath, sceneData, uniqueNames);
+    const content = generateSceneTypingContent(
+      actualResPath, sceneData, uniqueNames, undefined, resolveResourceUid(sceneFile),
+    );
     const outputFile = sceneResPathToOutputFile(actualResPath);
     const outputPath = resolve(outputDir, outputFile);
     mkdirSync(dirname(outputPath), { recursive: true });
@@ -357,7 +367,7 @@ export function generateFileTypings(
   // Regenerate _resources.d.ts if any resource/asset changed
   if (changedResources.length > 0) {
     const assetFiles = findAssetFiles(rootDir, rootDir, ignore);
-    const resourceEntries: Array<{ resPath: string; godotType: string }> = [];
+    const resourceEntries: Array<{ resPath: string; godotType: string; uid?: string }> = [];
     for (const assetFile of assetFiles) {
       const resPath = absPathToResPath(assetFile, rootDir);
       const ext = extname(assetFile).toLowerCase();
@@ -368,15 +378,16 @@ export function generateFileTypings(
       } else {
         godotType = ASSET_EXTENSION_MAP[ext] ?? 'Resource';
       }
-      resourceEntries.push({ resPath, godotType });
+      resourceEntries.push({ resPath, godotType, uid: resolveResourceUid(assetFile) });
     }
     if (resourceEntries.length > 0) {
       const resLines: string[] = [];
       resLines.push('// AUTO-GENERATED — do not edit manually.\n');
       resLines.push('declare global {');
       resLines.push('  interface GodotResources {');
-      for (const { resPath, godotType } of resourceEntries) {
+      for (const { resPath, godotType, uid } of resourceEntries) {
         resLines.push(`    "${resPath}": ${godotType};`);
+        if (uid) resLines.push(`    "${uid}": ${godotType};`);
       }
       resLines.push('  }');
       resLines.push('}\n');
@@ -510,6 +521,7 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
     const tsImportPath = computeTsImport(outputDir, outputFile, classInfo.tsAbsPath);
     const tsModulePath = tsImportPath;
 
+    const gdUid = resolveResourceUid(join(rootDir, scriptResPath.slice('res://'.length)));
     const content = generateScriptTypingContent(
       scriptResPath,
       classInfo.className,
@@ -520,6 +532,7 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
       classInfo.innerClasses,
       classInfo.extendsNode,
       true,
+      gdUid,
     );
 
     const outputPath = resolve(outputDir, outputFile);

@@ -48,6 +48,7 @@ declare global {
 
   interface GodotResources {
     "res://Player.gd": typeof Player;
+    "uid://test_player_script": typeof Player;
   }
 }
 

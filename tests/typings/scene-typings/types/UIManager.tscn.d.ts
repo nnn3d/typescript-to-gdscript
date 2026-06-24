@@ -27,6 +27,7 @@ declare global {
   }
   interface GodotResources {
     "res://UIManager.tscn": PackedScene<_GDTreeNode<_UIManagerTscn_Tree>>;
+    "uid://test_uimanager_scene": PackedScene<_GDTreeNode<_UIManagerTscn_Tree>>;
   }
 }
 

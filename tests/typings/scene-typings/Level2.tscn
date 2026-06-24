@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://test_level1_scene"]
+[gd_scene format=3 uid="uid://test_level2_scene"]
 
 [node name="Level" type="Node"]
 

@@ -89,6 +89,16 @@ const level_tree: GodotSceneTrees["res://Level.tscn"]   = /* ... */; // tree typ
 const enemies: GodotGroups["enemies"]["res://Level.tscn"] = /* ... */;
 ```
 
+### `uid://` paths
+
+Each `GodotResources` entry is also keyed by the resource's Godot UID, so `load("uid://…")`, `preload("uid://…")`, and `change_scene_to_file("uid://…")` resolve to the exact same type as their `res://` form:
+
+```typescript
+const player = preload('uid://test_player_scene'); // PackedScene<…>, same as preload("res://Player.tscn")
+```
+
+UIDs are read from Godot's own metadata — the `.tscn`/`.tres` header, the `.gd.uid` sidecar (scripts/shaders), or the `.import` sidecar (imported assets) — so a `uid://` key only appears once Godot has imported the project and written that metadata. Resources without a UID still resolve normally through their `res://` path.
+
 ### Scene typings features
 
 - **Typed `get_node()`**: autocomplete for node paths, returns exact node types

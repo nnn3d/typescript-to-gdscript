@@ -57,6 +57,7 @@ declare global {
   }
   interface GodotResources {
     "res://Enemy.tscn": PackedScene<_GDTreeNode<_EnemyTscn_Tree>>;
+    "uid://test_enemy_scene": PackedScene<_GDTreeNode<_EnemyTscn_Tree>>;
   }
 }
 

@@ -39,6 +39,7 @@ declare global {
   }
   interface GodotResources {
     "res://BallB.tscn": PackedScene<_GDTreeNode<_BallBTscn_Tree>>;
+    "uid://test_ball_b_scene": PackedScene<_GDTreeNode<_BallBTscn_Tree>>;
   }
 }
 
