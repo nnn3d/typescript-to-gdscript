@@ -5,6 +5,7 @@ import {
   containsAwait,
   extractGdTypeName,
   qualifyClassType,
+  escapeSelfClassType,
 } from './type-inference.ts';
 import { getAnnotations } from './members.ts';
 import { emitBody } from './statements.ts';
@@ -204,9 +205,11 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
           ?.text ?? '';
       const typeNode = child.childForFieldName('type');
       const rawType = typeNode?.text ?? '';
-      const baseType =
+      const baseType = escapeSelfClassType(
         qualifyClassType(rawType, ctx.classTypeNames, ctx.className) ??
-        (typeNode ? gdTypeToTs(rawType) : null);
+          (typeNode ? gdTypeToTs(rawType) : null),
+        ctx,
+      );
       const tsType = widenInType(rawType, baseType, ctx);
       params.push(tsType ? `${name}: ${tsType}` : name);
       paramIndex++;
@@ -232,9 +235,11 @@ export function emitParams(paramsNode: SyntaxNode, ctx: GdToTsContext): string {
       const typeNode = child.childForFieldName('type');
       const value = child.childForFieldName('value');
       const rawType = typeNode?.text ?? '';
-      const baseType =
+      const baseType = escapeSelfClassType(
         qualifyClassType(rawType, ctx.classTypeNames, ctx.className) ??
-        (typeNode ? gdTypeToTs(rawType) : null);
+          (typeNode ? gdTypeToTs(rawType) : null),
+        ctx,
+      );
       const valueText = value?.text?.trim() ?? '';
       // `param: Type = null` → `param: Type | null = null` (all types get
       // widened — see existing tests). For non-null defaults, widen only
@@ -294,14 +299,18 @@ export function emitReturnType(
   let tsType: string | null;
   if (typeNode.type === SyntaxType.Type) {
     const inner = typeNode.namedChildren[0]?.text ?? typeNode.text;
-    tsType =
+    tsType = escapeSelfClassType(
       qualifyClassType(inner, ctx.classTypeNames, ctx.className) ??
-      gdTypeToTs(inner);
+        gdTypeToTs(inner),
+      ctx,
+    );
   } else {
     const raw = typeNode.text;
-    tsType =
+    tsType = escapeSelfClassType(
       qualifyClassType(raw, ctx.classTypeNames, ctx.className) ??
-      gdTypeToTs(raw);
+        gdTypeToTs(raw),
+      ctx,
+    );
   }
   if (!tsType) return '';
   return isAsync ? `: Promise<${tsType}>` : `: ${tsType}`;

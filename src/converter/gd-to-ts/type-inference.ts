@@ -1,6 +1,7 @@
 import { SyntaxType, type SyntaxNode } from '../../parser/gdscript/types.ts';
 import type { GodotClassRegistry } from '../../typings/godot-registry.ts';
 import type { GdToTsContext } from './context.ts';
+import { escapeUnderscoreClassName } from '../common/index.ts';
 
 // ─── Type Inference (for gd.ops detection) ──────────────────
 
@@ -152,6 +153,43 @@ export function qualifyClassType(
     return `${enclosingClassName}.${raw}`;
   }
   return null;
+}
+
+/**
+ * If `raw` names the CURRENT class — accounting for the GD `_Foo` → TS
+ * `G_Foo` escape applied to the class declaration (`escapeUnderscoreClassName`,
+ * non-addon) — return the emitted TS class name (`ctx.className`). Otherwise
+ * `null`.
+ *
+ * Only the self class is matched here: other user classes are left verbatim so
+ * the batch import-injection pass (which keys on the un-escaped GD name) keeps
+ * resolving them. Anonymous (filename-derived) class names like `_Anonym` are
+ * never `G_`-escaped, so they only match via the exact-equality branch — a
+ * no-op — and qualified forms (`G_Foo.Inner`, `_Anonym.Mode`) never match.
+ */
+export function selfClassNameIfMatches(
+  raw: string,
+  ctx: GdToTsContext,
+): string | null {
+  if (!ctx.className || !raw) return null;
+  if (raw === ctx.className) return ctx.className;
+  if (!ctx.isAddon && escapeUnderscoreClassName(raw) === ctx.className) {
+    return ctx.className;
+  }
+  return null;
+}
+
+/**
+ * Escape an already-mapped TS type string when it refers to the self class
+ * (`_Foo` → `G_Foo`). No-op for primitives, Godot types, qualified
+ * enum/inner-class names, and other user classes.
+ */
+export function escapeSelfClassType(
+  tsType: string | null,
+  ctx: GdToTsContext,
+): string | null {
+  if (!tsType) return tsType;
+  return selfClassNameIfMatches(tsType, ctx) ?? tsType;
 }
 
 export function gdTypeToTs(gdType: string): string | null {

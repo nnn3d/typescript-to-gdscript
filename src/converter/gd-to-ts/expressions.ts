@@ -3,6 +3,7 @@ import type { GdToTsContext } from './context.ts';
 import { isGlobalName } from './context.ts';
 import {
   inferExprType,
+  selfClassNameIfMatches,
   GD_OPS_MAP,
   NOT_LIFT_OPS,
   GD_IS_PRIMITIVE_TYPES,
@@ -245,6 +246,20 @@ export function emitCall(node: SyntaxNode, ctx: GdToTsContext): string {
     return `super(${args})`;
   }
 
+  // Bare `new()` → self-class constructor `new ClassName()`. Every GDScript
+  // class exposes a hidden static `new()`; calling it unqualified instantiates
+  // the current class. `ctx.className` is the already-escaped TS class name and
+  // is swapped to the inner class inside `withClassScope`, so this resolves to
+  // the innermost enclosing class. Skipped when `new` is a local variable.
+  if (
+    callee.type === SyntaxType.Identifier &&
+    callee.text === 'new' &&
+    ctx.className &&
+    !ctx.localVars.has('new')
+  ) {
+    return `new ${ctx.className}(${args})`;
+  }
+
   // For bare identifier calls: add this. prefix for known class members
   if (
     callee.type === SyntaxType.Identifier &&
@@ -312,9 +327,13 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
       const args = argsNode
         ? argsNode.namedChildren.map((a) => emitExpr(a, ctx)).join(', ')
         : '';
-      // .new() -> new ClassName()
+      // .new() -> new ClassName(). When the receiver is the self class, use
+      // the emitted (possibly `_Foo`→`G_Foo` escaped) class name so the
+      // constructor reference matches the declared class.
       if (methodName === 'new') {
-        const className = parts.join('.');
+        const rawClassName = parts.join('.');
+        const className =
+          selfClassNameIfMatches(rawClassName, ctx) ?? rawClassName;
         parts.length = 0;
         parts.push(`new ${className}(${args})`);
       } else {

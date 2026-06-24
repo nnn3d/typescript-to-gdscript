@@ -5,6 +5,7 @@ import {
   extractGdTypeName,
   inferExprType,
   qualifyClassType,
+  escapeSelfClassType,
 } from './type-inference.ts';
 import { emitExpr } from './expressions.ts';
 import { emitBody } from './statements.ts';
@@ -84,7 +85,9 @@ export function emitSignalParamTypes(
     if (child.type === SyntaxType.TypedParameter) {
       const typeNode = child.childForFieldName('type');
       const rawType = typeNode?.text ?? '';
-      const baseType = typeNode ? gdTypeToTs(rawType) : 'any';
+      const baseType = typeNode
+        ? escapeSelfClassType(gdTypeToTs(rawType), ctx)
+        : 'any';
       const widened = widenInType(rawType, baseType, ctx);
       types.push(widened ?? 'any');
     } else if (child.type === SyntaxType.Identifier) {
@@ -253,7 +256,9 @@ function emitSetgetVariable(
   let tsType: string;
   if (typeNode) {
     const typeText = extractGdTypeName(typeNode) ?? 'Variant';
-    tsType = gdTypeToTs(typeText) ?? (ctx.unsafeUseAny ? 'any' : 'unknown');
+    tsType =
+      escapeSelfClassType(gdTypeToTs(typeText), ctx) ??
+      (ctx.unsafeUseAny ? 'any' : 'unknown');
   } else if (valueNode) {
     const typeofExpr = tryEmitTypeofValue(valueNode, ctx);
     tsType = typeofExpr ?? (ctx.unsafeUseAny ? 'any' : 'unknown');
@@ -481,13 +486,13 @@ export function emitTypeAnnotation(
       ctx.className,
     );
     if (qualified) return `: ${qualified}`;
-    const tsType = gdTypeToTs(inner);
+    const tsType = escapeSelfClassType(gdTypeToTs(inner), ctx);
     return tsType ? `: ${tsType}` : '';
   }
   const raw = typeNode.text;
   const qualified = qualifyClassType(raw, ctx.classTypeNames, ctx.className);
   if (qualified) return `: ${qualified}`;
-  const tsType = gdTypeToTs(raw);
+  const tsType = escapeSelfClassType(gdTypeToTs(raw), ctx);
   return tsType ? `: ${tsType}` : '';
 }
 
