@@ -43,11 +43,26 @@ import {
   loadGlobalOverrides,
   applyOverride,
   applyGlobalOverrides,
+  type ParsedOverride,
 } from './override-system.ts';
 
 // ─── Re-exports (public API) ─────────────────────────────────────
 
 export { godotTypeToTs } from './type-mapping.ts';
+
+/**
+ * Emit a standalone interface declaration from a parsed override (header +
+ * members + extras). Used for override-defined interfaces that aren't merged
+ * into a generated declaration (e.g. DictionaryKeyMethods, DictionaryConstructor,
+ * CallableFunction).
+ */
+function emitOverrideInterface(ov: ParsedOverride): string {
+  const lines = [(ov.header ?? '') + ' {'];
+  for (const [, text] of ov.members) lines.push(text);
+  for (const extra of ov.extras) lines.push(extra);
+  lines.push('}');
+  return lines.join('\n');
+}
 
 // ─── Types ───────────────────────────────────────────────────────
 
@@ -243,24 +258,43 @@ export function generateGodotDocsTypings(
           `type ${renamedName} = ${interfaceName};`,
         );
       }
-      // Dictionary → Object interface + Dictionary<K,V> from override + constructor
+      // Dictionary → Object interface + Dictionary<K,V> type alias + constructor
       if (name === 'Dictionary') {
-        const dictOverride = overrides.get('Dictionary');
-        if (dictOverride) {
-          // Emit Dictionary<K,V> interface from the override file
-          const dictHeader = dictOverride.header ?? 'interface Dictionary<K = unknown, V = unknown> extends Object';
-          fileLines.push(`${dictHeader} {`);
-          for (const [, text] of dictOverride.members) {
-            fileLines.push(text);
-          }
-          for (const extra of dictOverride.extras) {
-            fileLines.push(extra);
-          }
-          fileLines.push('}');
-        } else {
-          fileLines.push(`type Dictionary = Object;`);
+        // DictionaryTypedMethods (the typed method signatures) and
+        // DictionaryConstructor come from the override system
+        // (typings-overrides/dictionary.d.ts). DictionaryKeyMethods is derived
+        // mechanically from DictionaryTypedMethods, so it's generated here: it
+        // keeps the structural Object methods minus the typed ones and mixes the
+        // typed ones back in (single source of truth = DictionaryTypedMethods).
+        const dtmOverride = overrides.get('DictionaryTypedMethods');
+        if (dtmOverride) {
+          fileLines.push(emitOverrideInterface(dtmOverride));
         }
-        fileLines.push(generateConstructorInterface(cls, 'Dictionary', 'Dictionary', typeCtx));
+        fileLines.push(
+          'interface DictionaryKeyMethods<K = unknown, V = unknown>',
+        );
+        fileLines.push(
+          '  extends Omit<Object, keyof DictionaryTypedMethods>,',
+        );
+        fileLines.push('    DictionaryTypedMethods<K, V> {}');
+        // `Dictionary<K, V>` is a conditional type alias (type aliases aren't
+        // handled by the override system, so it stays here):
+        //  - string/number keys → a plain index-signature object, so object
+        //    literals (`{}`, `{ a: 1 }`) are assignable and `d[k]` is typed
+        //    (access methods come from the ambient `Object` `this: T` overrides,
+        //    see typings-overrides/object-dict.d.ts);
+        //  - any other key type → `DictionaryKeyMethods<K, V>` (typed
+        //    get/set/keys/... by K/V; a bare `Dictionary` is
+        //    `DictionaryKeyMethods<unknown, unknown>`, which still accepts `{}`).
+        fileLines.push('type Dictionary<K = unknown, V = unknown> =');
+        fileLines.push('  [K] extends [string | number]');
+        fileLines.push('    ? { [P in K & (string | number)]: V }');
+        fileLines.push('    : DictionaryKeyMethods<K, V>;');
+        const ctorOverride = overrides.get('DictionaryConstructor');
+        if (ctorOverride) {
+          fileLines.push(emitOverrideInterface(ctorOverride));
+        }
+        fileLines.push('declare const Dictionary: DictionaryConstructor;');
         fileLines.push('declare var Object: typeof GodotObject;');
       }
       // Callable → Function, keep Callable alias + constructor + CallableFunction/NewableFunction

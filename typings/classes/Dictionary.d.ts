@@ -1,7 +1,31 @@
 // AUTO-GENERATED from Godot class documentation.
 // Manual overrides applied from typings-overrides/*.d.ts
 
-/** A built-in data structure that holds key-value pairs. */
+/**
+ * Override: Object (the structural base every value/dictionary inherits) —
+ * `this: T` generic methods so plain object literals and typed Dictionaries
+ * get key/value-aware typing for the Dictionary access methods.
+ *
+ * The `this: T` parameter (à la CallableFunction.apply/bind) infers the actual
+ * receiver type at the call site, so `keyof this` resolves to the real keys
+ * instead of collapsing to `keyof Object`. Each method pairs a typed overload
+ * (literal/known keys → precise type) with a permissive fallback (`unknown`
+ * key/value) so dynamic runtime keys, `{}` literals, and untyped Dictionaries
+ * keep compiling — matching GDScript's Variant semantics where these methods
+ * accept/return Variant. The typed overload comes first so it wins for known
+ * literal keys.
+ *
+ * Value/key TYPE ENFORCEMENT for typed dictionaries comes from the index
+ * signature on `Dictionary<K, V>` via the `[]` operator (`d[k] = v`), not from
+ * these methods — the permissive fallback intentionally allows `.set()` etc.
+ * with any value.
+ *
+ *   const d: Dictionary<string, int> = { x: 1 };
+ *   d.get("x");          // int      (typed overload)
+ *   d.get(someStr);      // unknown  (fallback)
+ *   d.keys();            // Array<string>
+ *   d["x"] = "no";       // ERROR    (index signature enforces value type)
+ */
 declare interface Object {
   /**
    * Assigns elements of another `dictionary` into the dictionary. Resizes the dictionary to match `dictionary`. Performs type conversions if the dictionary is typed.
@@ -14,7 +38,7 @@ declare interface Object {
    * By default, a **shallow** copy is returned: all nested {@link Array}, {@link Dictionary}, and {@link Resource} keys and values are shared with the original dictionary. Modifying any of those in one dictionary will also affect them in the other.
    * If `deep` is `true`, a **deep** copy is returned: all nested arrays and dictionaries are also duplicated (recursively). Any {@link Resource} is still shared with the original dictionary, though.
    */
-  duplicate(deep?: boolean): Dictionary;
+  duplicate<T>(this: T, deep?: boolean): T;
   /**
    * Duplicates this dictionary, deeply, like {@link duplicate} when passing `true`, with extra control over how subresources are handled.
    * `deep_subresources_mode` must be one of the values from {@link Resource.DeepDuplicateMode}. By default, only internal resources will be duplicated (recursively).
@@ -24,20 +48,24 @@ declare interface Object {
    * Removes the dictionary entry by key, if it exists. Returns `true` if the given `key` existed in the dictionary, otherwise `false`.
    * **Note:** Do not erase entries while iterating over the dictionary. You can iterate over the {@link keys} array instead.
    */
+  erase<T, K extends keyof T>(this: T, key: K): boolean;
   erase(key: unknown): boolean;
   /**
    * Finds and returns the first key whose associated value is equal to `value`, or `null` if it is not found.
    * **Note:** `null` is also a valid key. If inside the dictionary, {@link find_key} may give misleading results.
    */
+  find_key<T>(this: T, value: T[keyof T]): keyof T | null;
   find_key(value: unknown): unknown;
   /**
    * Returns the corresponding value for the given `key` in the dictionary. If the `key` does not exist, returns `default`, or `null` if the parameter is omitted.
    * **Note:** If the `default` argument is computationally expensive or has unwanted side effects, consider using the {@link has} method instead:
    */
+  get<T, K extends keyof T>(this: T, key: K, default_?: T[K]): T[K];
   get(key: unknown, default_?: unknown): unknown;
   /**
    * Gets a value and ensures the key is set. If the `key` exists in the dictionary, this behaves like {@link get}. Otherwise, the `default` value is inserted into the dictionary and returned.
    */
+  get_or_add<T, K extends keyof T>(this: T, key: K, default_?: T[K]): T[K];
   get_or_add(key: unknown, default_?: unknown): unknown;
   /**
    * Returns the built-in {@link Variant} type of the typed dictionary's keys as a {@link Variant.Type} constant. If the keys are not typed, returns {@link TYPE_NIL}. See also {@link is_typed_key}.
@@ -68,6 +96,7 @@ declare interface Object {
    * In GDScript, this is equivalent to the `in` operator:
    * **Note:** This method returns `true` as long as the `key` exists, even if its corresponding value is `null`.
    */
+  has<T, K extends keyof T>(this: T, key: K): boolean;
   has(key: unknown): boolean;
   /** Returns `true` if the dictionary contains all keys in the given `keys` array. */
   has_all(keys: Array<unknown>): boolean;
@@ -98,7 +127,7 @@ declare interface Object {
   /** Returns `true` if the dictionary's values are typed. */
   is_typed_value(): boolean;
   /** Returns the list of keys in the dictionary. */
-  keys(): Array<unknown>;
+  keys<T>(this: T): Array<keyof T>;
   /**
    * Makes the dictionary read-only, i.e. disables modification of the dictionary's contents. Does not apply to nested content, e.g. content of nested dictionaries.
    */
@@ -112,7 +141,7 @@ declare interface Object {
    * Returns a copy of this dictionary merged with the other `dictionary`. By default, duplicate keys are not copied over, unless `overwrite` is `true`. See also {@link merge}.
    * This method is useful for quickly making dictionaries with default values:
    */
-  merged(dictionary: Dictionary, overwrite?: boolean): Dictionary;
+  merged<T>(this: T, dictionary: T, overwrite?: boolean): T;
   /**
    * Returns `true` if the two dictionaries contain the same keys and values, inner {@link Dictionary} and {@link Array} keys and values are compared recursively.
    */
@@ -120,6 +149,7 @@ declare interface Object {
   /**
    * Sets the value of the element at the given `key` to the given `value`. Returns `true` if the value is set successfully. Fails and returns `false` if the dictionary is read-only, or if `key` and `value` don't match the dictionary's types. This is the same as using the `[]` operator (`dict[key] = value`).
    */
+  set<T, K extends keyof T>(this: T, key: K, value: T[K]): boolean;
   set(key: unknown, value: unknown): boolean;
   /**
    * Returns the number of entries in the dictionary. Empty dictionaries (`{ }`) always return `0`. See also {@link is_empty}.
@@ -131,7 +161,7 @@ declare interface Object {
    */
   sort(): void;
   /** Returns the list of values in this dictionary. */
-  values(): Array<unknown>;
+  values<T>(this: T): Array<T[keyof T]>;
 
   // Operator overloads
   [__ops_ne]: { right: Dictionary; ret: boolean };
@@ -141,41 +171,56 @@ declare interface Object {
 }
 
 /**
- * Override: Dictionary<K, V> — typed key/value dictionary.
+ * Override: Dictionary typed surface.
  *
- * Extends the non-generic Object interface (which provides Dictionary methods
- * for {} literals) with generic overloads for typed dictionaries:
- *   var scores: Dictionary<string, int> = Dictionary();
- *   scores.set("player", 100);    // OK — key is string, value is int
- *   scores.get("player");         // returns int
- *   scores.keys();                // returns Array<string>
+ * `DictionaryTypedMethods<K, V>` is the single source of truth for the
+ * key/value-typed access methods. The generator derives `DictionaryKeyMethods`
+ * from it — `Omit<Object, keyof DictionaryTypedMethods> & DictionaryTypedMethods`
+ * — so the method-name list lives only here. Because the typed methods are
+ * all-`unknown` when K = V = unknown, a bare `Dictionary`
+ * (= DictionaryKeyMethods<unknown, unknown>) still accepts `{}` literals.
  */
-interface Dictionary<K = unknown, V = unknown> extends Object {
-  assign(dictionary: Dictionary<K, V>): void;
-  duplicate(deep?: boolean): Dictionary<K, V>;
-  duplicate_deep(deep_subresources_mode?: int): Dictionary<K, V>;
-  erase(key: K): boolean;
-  find_key(value: V): K | null;
+interface DictionaryTypedMethods<K = unknown, V = unknown> {
   get(key: K, default_?: V): V;
   get_or_add(key: K, default_?: V): V;
+  set(key: K, value: V): boolean;
   has(key: K): boolean;
   has_all(keys: Array<K>): boolean;
+  erase(key: K): boolean;
+  find_key(value: V): K | null;
   keys(): Array<K>;
+  values(): Array<V>;
+  assign(dictionary: Dictionary<K, V>): void;
   merge(dictionary: Dictionary<K, V>, overwrite?: boolean): void;
   merged(dictionary: Dictionary<K, V>, overwrite?: boolean): Dictionary<K, V>;
-  set(key: K, value: V): boolean;
-  values(): Array<V>;
+  duplicate(deep?: boolean): Dictionary<K, V>;
 }
+interface DictionaryKeyMethods<K = unknown, V = unknown>
+  extends Omit<Object, keyof DictionaryTypedMethods>,
+    DictionaryTypedMethods<K, V> {}
+type Dictionary<K = unknown, V = unknown> =
+  [K] extends [string | number]
+    ? { [P in K & (string | number)]: V }
+    : DictionaryKeyMethods<K, V>;
+/**
+ * Override: DictionaryConstructor — generic call signatures so
+ * `Dictionary<K, V>()` yields a typed dictionary. (Inference from a contextual
+ * type or a copy argument can't flow through the conditional `Dictionary` alias,
+ * so use explicit type arguments for a typed result.)
+ */
 declare interface DictionaryConstructor {
   readonly prototype: Dictionary;
-  /** Constructs an empty {@link Dictionary}. */
-  (): Dictionary;
-  /**
-   * Creates a typed dictionary from the `base` dictionary. A typed dictionary can only contain keys and values of the given types, or that inherit from the given classes, as described by this constructor's parameters.
-   */
-  (base: Dictionary, key_type: int, key_class_name: string, key_script: unknown, value_type: int, value_class_name: string, value_script: unknown): Dictionary;
-  /** Returns the same dictionary as `from`. If you need a copy of the dictionary, use {@link duplicate}. */
-  (from_: Dictionary): Dictionary;
+  <K = unknown, V = unknown>(): Dictionary<K, V>;
+  <K = unknown, V = unknown>(from_: Dictionary<K, V>): Dictionary<K, V>;
+  <K = unknown, V = unknown>(
+    base: Dictionary<K, V>,
+    key_type: int,
+    key_class_name: string,
+    key_script: unknown,
+    value_type: int,
+    value_class_name: string,
+    value_script: unknown,
+  ): Dictionary<K, V>;
 }
 declare const Dictionary: DictionaryConstructor;
 declare var Object: typeof GodotObject;

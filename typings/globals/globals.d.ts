@@ -58,6 +58,26 @@ type ConstructorParameters<T extends abstract new (...args: any) => any> =
   T extends abstract new (...args: infer P) => any ? P : never;
 type InstanceType<T extends abstract new (...args: any) => any> =
   T extends abstract new (...args: any) => infer R ? R : any;
+type ThisParameterType<T> = T extends (this: infer U, ...args: never) => any
+  ? U
+  : unknown;
+type OmitThisParameter<T> = unknown extends ThisParameterType<T>
+  ? T
+  : T extends (...args: infer A) => infer R
+    ? (...args: A) => R
+    : T;
+interface ThisType<T> {}
+type Awaited<T> = T extends null | undefined
+  ? T
+  : T extends object & { then(onfulfilled: infer F, ...args: infer _): any }
+    ? F extends (value: infer V, ...args: infer _) => any
+      ? Awaited<V>
+      : never
+    : T;
+type Uppercase<S extends string> = intrinsic;
+type Lowercase<S extends string> = intrinsic;
+type Capitalize<S extends string> = intrinsic;
+type Uncapitalize<S extends string> = intrinsic;
 type NoInfer<T> = intrinsic;
 type IsAny<T> = boolean extends (T extends never ? true : false) ? true : false;
 

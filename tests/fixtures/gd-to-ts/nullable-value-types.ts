@@ -16,7 +16,7 @@ export class NullableValueTypes extends RefCounted {
   take_rid(r: RID): void {
   }
 
-  take_stringname(n: StringName): void {
+  take_stringname(n: string): void {
   }
 
   take_nodepath(p: NodePath): void {

@@ -81,11 +81,11 @@ class DictionaryTest extends Node {
     let hasPlayer: boolean = scores.has("player");
     scores.erase("player");
 
-    // @ts-expect-error — value must be int, not string
-    scores.set("player", "not a number");
-
-    // @ts-expect-error — key must be string, not int
-    scores.set(42, 100);
+    // `.set()` is permissive (Variant semantics) — value-type enforcement is
+    // via index assignment on the typed Dictionary, not the method:
+    scores.set("player", "not a number"); // allowed (permissive method)
+    // @ts-expect-error — index assignment enforces the value type
+    scores["player"] = "not a number";
 
     // Typed methods return typed results
     let found: string | null = scores.find_key(100);

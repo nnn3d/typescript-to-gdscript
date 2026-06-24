@@ -104,6 +104,15 @@ function loadOverridesFromDir(overrideDir: string): Map<string, ParsedOverride> 
           // Index signatures like [index: number]: T
           extras.push('  ' + member.getText(sourceFile));
           continue;
+        } else if (
+          ts.isCallSignatureDeclaration(member) ||
+          ts.isConstructSignatureDeclaration(member)
+        ) {
+          // Anonymous call/construct signatures (e.g. DictionaryConstructor's
+          // `<K, V>(): Dictionary<K, V>`) — keep verbatim as extras since they
+          // have no member name to key/merge on.
+          extras.push('  ' + member.getText(sourceFile));
+          continue;
         }
 
         if (memberName) {
