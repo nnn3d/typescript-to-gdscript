@@ -74,24 +74,24 @@ export function scriptResPathToOutputFile(resPath: string): string {
   return resPath.replace(/^res:\/\//, '') + '.d.ts';
 }
 
+function normalizePathTypeName(path: string): string {
+  return path.replaceAll(/[^\w\d_]/g, '_');
+}
+
 /** Derive scene tree interface name from scene res:// path, e.g. "res://Player.tscn" -> "_PlayerTscn_Tree" */
 export function sceneResPathToTreeName(resPath: string): string {
   const base = resPath
     .replace(/^res:\/\//, '')
-    .replace(/\.tscn$/, '')
-    .replaceAll('/', '_')
-    .replaceAll(' ', '_');
-  return `_${base}Tscn_Tree`;
+    .replace(/\.tscn$/, '');
+  return normalizePathTypeName(`_${base}Tscn_Tree`);
 }
 
 /** Derive __Trees interface name from script res:// path, e.g. "res://Player.gd" -> "__PlayerGd__Trees" */
 export function scriptResPathToTreesInterfaceName(resPath: string): string {
   const base = resPath
     .replace(/^res:\/\//, '')
-    .replace(/\.gd$/, '')
-    .replaceAll('/', '_')
-    .replaceAll(' ', '_');
-  return `__${base}Gd__Trees`;
+    .replace(/\.gd$/, '');
+  return normalizePathTypeName(`__${base}Gd__Trees`);
 }
 
 /** Derive __Parents interface name from scene res:// path, e.g. "res://Player.tscn" -> "__PlayerTscn__Parents" */
