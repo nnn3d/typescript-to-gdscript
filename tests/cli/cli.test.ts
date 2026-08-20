@@ -135,6 +135,85 @@ describe('CLI: convert (TS → GD)', () => {
     expect(result.stdout).not.toContain('Converting');
     expect(result.stdout).not.toContain('Written:');
   });
+
+  it('should compile a reachable TypeScript package into the Godot project', async () => {
+    tmpDir = makeTmpDir();
+    const tsDir = join(tmpDir, 'src');
+    const gdDir = join(tmpDir, 'scripts');
+    const packageDir = join(tmpDir, 'node_modules/@scope/shared');
+    const input = join(tsDir, 'main.ts');
+    const tsConfig = join(tmpDir, 'tsconfig.json');
+
+    mkdirSync(join(packageDir, 'src'), { recursive: true });
+    mkdirSync(tsDir, { recursive: true });
+    writeFileSync(
+      join(packageDir, 'package.json'),
+      JSON.stringify({
+        name: '@scope/shared',
+        version: '1.2.3',
+        exports: './src/index.ts',
+      }),
+    );
+    writeFileSync(
+      join(packageDir, 'src/index.ts'),
+      [
+        "import { _Base } from './base';",
+        'export class _Shared extends _Base {}',
+        '',
+      ].join('\n'),
+    );
+    writeFileSync(
+      join(packageDir, 'src/base.ts'),
+      'export class _Base extends Object {}\n',
+    );
+    writeFileSync(
+      input,
+      [
+        "import { _Shared as Shared } from '@scope/shared';",
+        'export class Main extends Shared {}',
+        '',
+      ].join('\n'),
+    );
+    writeFileSync(
+      tsConfig,
+      JSON.stringify({
+        compilerOptions: {
+          module: 'esnext',
+          moduleResolution: 'bundler',
+          noEmit: true,
+        },
+        include: ['src/main.ts'],
+      }),
+    );
+
+    await runCli([
+      'convert',
+      input,
+      '--ts-dir',
+      tsDir,
+      '--gd-dir',
+      gdDir,
+      '--root-dir',
+      tmpDir,
+      '--tsconfig',
+      tsConfig,
+      '--no-check',
+    ]);
+
+    const packageOutput = join(
+      tmpDir,
+      '.tstogd_modules/@scope/shared/1.2.3/src/index.gd',
+    );
+    expect(existsSync(packageOutput)).toBe(true);
+    expect(
+      existsSync(
+        join(tmpDir, '.tstogd_modules/@scope/shared/1.2.3/src/base.gd'),
+      ),
+    ).toBe(true);
+    expect(readFileSync(join(gdDir, 'main.gd'), 'utf-8')).toContain(
+      'preload("res://.tstogd_modules/@scope/shared/1.2.3/src/index.gd")',
+    );
+  });
 });
 
 describe('CLI: convert cache modes', () => {

@@ -58,7 +58,7 @@
     "test:gd-registry": "vitest run tests/typings/gd-to-ts-registry.test.ts",
     "test:typecheck": "vitest run tests/typecheck.test.ts",
     "test:cli": "vitest run tests/cli/cli.test.ts",
-    "prepare": "husky"
+    "prepare": "tsc && husky"
   },
   "prettier": {
     "trailingComma": "all",

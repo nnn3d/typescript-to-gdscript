@@ -1,7 +1,12 @@
 import type { Command } from 'commander';
 import { writeFileSync, mkdirSync } from 'fs';
-import { resolve, dirname, relative } from 'path';
+import { resolve, dirname } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
+import {
+  collectRuntimeModules,
+  gdImportOutputPath,
+  gdOutputPath,
+} from '../converter/ts-to-gd/modules.ts';
 import { createTsProgram } from '../parser/typescript/index.ts';
 import { resolveConfig, resolveGodotPath } from '../config/index.ts';
 import { ProjectCache } from '../cache/index.ts';
@@ -99,18 +104,30 @@ export function registerConvertCommand(program: Command): void {
         files: resolvedFiles.filter((f) => !f.endsWith('.d.ts')),
         tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
       });
+      const runtimeFiles = collectRuntimeModules(resolvedFiles, sharedProgram);
+      const entryFiles = new Set(resolvedFiles.map((file) => resolve(file)));
 
       let hasErrors = false;
       let skipped = 0;
 
       if (!noEmit) {
         // ── Write mode ───────────────────────────────────��─────
-        for (const filePath of resolvedFiles) {
-          const relPath = relative(cfg.tsDir, filePath);
-          const outputPath = resolve(
-            cfg.gdDir,
-            relPath.replace(/\.ts$/, '.gd'),
-          );
+        for (const filePath of runtimeFiles) {
+          const outputOptions = {
+            tsDir: cfg.tsDir,
+            gdDir: cfg.gdDir,
+            projectRoot: cfg.rootDir,
+          };
+          const outputPath = entryFiles.has(filePath)
+            ? gdOutputPath(filePath, outputOptions)
+            : gdImportOutputPath(filePath, outputOptions);
+          if (!outputPath) {
+            console.error(
+              `Cannot stage runtime module without package.json: ${filePath}`,
+            );
+            hasErrors = true;
+            continue;
+          }
 
           if (useCacheReads && cache?.isTsToGdFresh(filePath, outputPath)) {
             debugLog(`Skipped (cache): ${outputPath}`);
@@ -180,7 +197,7 @@ export function registerConvertCommand(program: Command): void {
 
         if (cache) {
           const currentFiles = new Set(
-            resolvedFiles.map((f) => f.replace(/\\/g, '/')),
+            runtimeFiles.map((f) => f.replace(/\\/g, '/')),
           );
           cache.cleanStale(currentFiles);
           cache.save();
@@ -211,7 +228,8 @@ export function registerConvertCommand(program: Command): void {
           tsDir: cfg.tsDir,
           gdDir: cfg.gdDir,
           projectRoot,
-          tsFiles: resolvedFiles.filter((f) => !f.endsWith('.d.ts')),
+          tsFiles: runtimeFiles,
+          entryFiles: resolvedFiles,
           tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
           cache,
           godotPath,

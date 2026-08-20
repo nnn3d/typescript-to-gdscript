@@ -759,18 +759,21 @@ The TS → GD converter preserves source order for class members (fields, method
 
 ## Imports → preload
 
-| TS                                       | GD                                                 |
-| ---------------------------------------- | -------------------------------------------------- |
-| `import { Foo } from './foo.ts'`         | _(skipped — `Foo` is global via `class_name Foo`)_ |
-| `import { Foo as Bar } from './foo.ts'`  | `const Bar = preload("res://foo.gd")`              |
-| `import { _Anon } from './anon.ts'`      | `const _Anon = preload("res://anon.gd")`           |
-| `extends _Anon` (after the import above) | `extends "res://anon.gd"`                          |
-| `extends preload("res://some.gd")`       | `extends "res://some.gd"`                          |
-| `import type { ... } from '...'`         | _(erased — type-only)_                             |
-| `import Foo from '...'` (default)        | **error** — no GD equivalent                       |
-| `import * as ns from '...'` (namespace)  | **error** — no GD equivalent                       |
+| TS                                       | GD                                                        |
+| ---------------------------------------- | --------------------------------------------------------- |
+| `import { Foo } from './foo.ts'`         | _(skipped — `Foo` is global via `class_name Foo`)_        |
+| `import { Foo as Bar } from './foo.ts'`  | `const Bar = preload("res://foo.gd")`                     |
+| `import { _Anon } from './anon.ts'`      | `const _Anon = preload("res://anon.gd")`                  |
+| `extends _Anon` (after the import above) | `extends "res://anon.gd"`                                 |
+| `extends preload("res://some.gd")`       | `extends "res://some.gd"`                                 |
+| `import type { ... } from '...'`         | _(erased — type-only)_                                    |
+| `import { _Foo } from '@scope/pkg'`      | `preload("res://.tstogd_modules/@scope/pkg/<version>/…")` |
+| `import Foo from '...'` (default)        | **error** — no GD equivalent                              |
+| `import * as ns from '...'` (namespace)  | **error** — no GD equivalent                              |
 
 A field name that collides with an imported local is a hard error (the emitted `const` would shadow the field).
+
+`convert` and `watch` follow reachable value imports that TypeScript resolves to `.ts` source files. Package sources are compiled directly into `.tstogd_modules/` inside the Godot project; their TypeScript is never copied. A package whose export resolves to JavaScript or declarations only is not a runtime GDScript dependency and produces an error when value-imported.
 
 ## Restrictions — unsupported TypeScript features
 

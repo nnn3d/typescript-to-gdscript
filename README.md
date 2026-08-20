@@ -27,6 +27,7 @@ The output is clean, idiomatic `.gd` you can read and ship — TypeScript is the
 - **Scene and path typings** — `get_node()`, `get_parent()`, `get_child()`, `load()`, `preload()` and group queries typed from your project files
 - **`gd` namespace** — strongly-typed helpers for GDScript-only constructs (signals, decorators, match, operator overloading)
 - **Addons supported** — typings for third-party GDScript addons, consumable from TypeScript
+- **TypeScript package sources** — reachable workspace and npm package sources compile into the Godot project without copying their `.ts` files
 - **GD → TS migration** — one-shot bulk converter for existing projects
 
 ### Showcase

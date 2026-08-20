@@ -32,12 +32,16 @@
  */
 
 import ts from 'typescript';
-import { dirname, relative, resolve } from 'path';
 import {
   isAnonymousClassName,
   type TransformContext,
   type TransformDiagnostic,
 } from '../common/index.ts';
+import {
+  gdResourcePath,
+  hasRuntimeImport,
+  resolveImportSource,
+} from './modules.ts';
 
 /**
  * One entry per LOCAL name in the importing file's scope. Keyed by the
@@ -123,14 +127,35 @@ export function processImports(
     // Resolve the import specifier to an absolute `.ts` path.
     const specifier = stmt.moduleSpecifier;
     if (!ts.isStringLiteral(specifier)) continue;
-    const targetTsPath = resolveImportToTsPath(
+    const targetTsPath = resolveImportSource(
       specifier.text,
-      sourceFile.fileName,
+      sourceFile,
+      ctx.program,
     );
-    if (!targetTsPath) continue; // Bare module / unresolvable — type-only assumption.
+    if (!targetTsPath) {
+      if (hasRuntimeImport(stmt)) {
+        errors.push(
+          diagOf(
+            ctx,
+            specifier,
+            `Runtime import ${JSON.stringify(specifier.text)} must resolve to a TypeScript source file.`,
+          ),
+        );
+      }
+      continue;
+    }
 
-    // Compute the corresponding `.gd` path and `res://` form.
-    const resPath = computeResPath(targetTsPath, ctx);
+    const resPath = gdResourcePath(targetTsPath, ctx);
+    if (!resPath) {
+      errors.push(
+        diagOf(
+          ctx,
+          specifier,
+          `Runtime import ${JSON.stringify(specifier.text)} is outside tsDir and has no package.json for staging.`,
+        ),
+      );
+      continue;
+    }
 
     for (const element of clause.namedBindings.elements) {
       // Per-binding `import { type Foo, Bar }` — skip the type-only one.
@@ -160,51 +185,6 @@ export function processImports(
   }
 
   return { consts, importMap, errors };
-}
-
-// ─── Path helpers ───────────────────────────────────────────────
-
-/**
- * Resolve an import specifier (`'./foo.ts'`, `'./foo'`, `'../bar'`) to
- * an absolute `.ts` file path. Returns `undefined` for bare module
- * specifiers (`'react'`, `'@scope/pkg'`) — those can't represent a TS
- * file in this project so we silently ignore them (the TS type checker
- * will catch any actual misuse).
- */
-function resolveImportToTsPath(
-  specifier: string,
-  fromFilePath: string,
-): string | undefined {
-  if (!specifier.startsWith('.') && !specifier.startsWith('/')) {
-    return undefined;
-  }
-  const fromDir = dirname(fromFilePath);
-  const abs = resolve(fromDir, specifier);
-  // Strip a `.js` extension (TS NodeNext prefers `.js` in imports for `.ts` files).
-  if (abs.endsWith('.js')) return abs.slice(0, -3) + '.ts';
-  if (abs.endsWith('.ts')) return abs;
-  return abs + '.ts';
-}
-
-/**
- * Convert an absolute `.ts` path into a `res://`-prefixed forward-slash
- * path pointing at the corresponding `.gd` file. Path mirrors the
- * relative tree from {@link TransformContext.tsDir} to
- * {@link TransformContext.gdDir} and is then taken relative to
- * {@link TransformContext.projectRoot}.
- *
- * When `tsDir`/`gdDir` are the same directory, this collapses to a
- * trivial `.ts` → `.gd` extension swap.
- */
-function computeResPath(targetTsPath: string, ctx: TransformContext): string {
-  // 1. relative from tsDir → mirror under gdDir
-  const relTs = relative(ctx.tsDir, targetTsPath).replace(/\\/g, '/');
-  const relGd = relTs.replace(/\.ts$/, '.gd');
-  const absGd = resolve(ctx.gdDir, relGd);
-
-  // 2. relative from projectRoot → res://...
-  const relFromProject = relative(ctx.projectRoot, absGd).replace(/\\/g, '/');
-  return `res://${relFromProject}`;
 }
 
 // ─── Diagnostic helper ──────────────────────────────────────────

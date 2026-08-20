@@ -90,6 +90,9 @@ describe('Watcher + cache: updated-file re-conversion', () => {
     expect(firstFound).toBeTruthy();
     expect(firstFound as string).toContain('return 1');
 
+    // Wait until chokidar has settled its initial native subscriptions.
+    await sleep(100);
+
     // Cache should record fresh state for the pair.
     const cache = new ProjectCache(cacheDir);
     expect(cache.isTsToGdFresh(tsPath, gdPath)).toBe(true);
@@ -177,5 +180,66 @@ describe('Watcher + cache: updated-file re-conversion', () => {
     // Cache remains fresh.
     const cache2 = new ProjectCache(cacheDir);
     expect(cache2.isTsToGdFresh(tsPath, gdPath)).toBe(true);
+  }, 15000);
+
+  it('compiles reachable TypeScript package sources into the Godot project', async () => {
+    tmpDir = makeTmpDir('watcher-package');
+    const tsDir = join(tmpDir, 'src');
+    const gdDir = join(tmpDir, 'out');
+    const cacheDir = join(tmpDir, 'cache');
+    const packageDir = join(tmpDir, 'node_modules/@scope/shared');
+    const tsConfigPath = join(tmpDir, 'tsconfig.json');
+    mkdirSync(join(packageDir, 'src'), { recursive: true });
+    mkdirSync(tsDir, { recursive: true });
+
+    writeFileSync(
+      join(packageDir, 'package.json'),
+      JSON.stringify({
+        name: '@scope/shared',
+        version: '1.2.3',
+        exports: './src/index.ts',
+      }),
+    );
+    writeFileSync(
+      join(packageDir, 'src/index.ts'),
+      'export class _Shared extends Object {}\n',
+    );
+    writeFileSync(
+      join(tsDir, 'Main.ts'),
+      [
+        "import { _Shared as Shared } from '@scope/shared';",
+        'export class Main extends Shared {}',
+        '',
+      ].join('\n'),
+    );
+    writeFileSync(
+      tsConfigPath,
+      JSON.stringify({
+        compilerOptions: {
+          module: 'esnext',
+          moduleResolution: 'bundler',
+          noEmit: true,
+        },
+        include: ['src/Main.ts'],
+      }),
+    );
+
+    watcher = new Watcher({
+      rootDir: tmpDir,
+      tsDir,
+      gdDir,
+      cacheDir,
+      tsConfigPath,
+    });
+    watcher.start();
+
+    const packageGdPath = join(
+      tmpDir,
+      '.tstogd_modules/@scope/shared/1.2.3/src/index.gd',
+    );
+    expect(await waitFor(() => existsSync(packageGdPath), 5000)).toBe(true);
+    expect(readFileSync(join(gdDir, 'Main.gd'), 'utf-8')).toContain(
+      'preload("res://.tstogd_modules/@scope/shared/1.2.3/src/index.gd")',
+    );
   }, 15000);
 });
