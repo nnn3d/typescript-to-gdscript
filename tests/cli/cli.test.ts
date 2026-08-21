@@ -138,11 +138,13 @@ describe('CLI: convert (TS → GD)', () => {
 
   it('should compile a reachable TypeScript package into the Godot project', async () => {
     tmpDir = makeTmpDir();
-    const tsDir = join(tmpDir, 'src');
-    const gdDir = join(tmpDir, 'scripts');
-    const packageDir = join(tmpDir, 'node_modules/@scope/shared');
+    const sourceRoot = join(tmpDir, 'typescript');
+    const projectRoot = join(tmpDir, 'godot');
+    const tsDir = join(sourceRoot, 'src');
+    const gdDir = join(projectRoot, 'scripts');
+    const packageDir = join(sourceRoot, 'node_modules/@scope/shared');
     const input = join(tsDir, 'main.ts');
-    const tsConfig = join(tmpDir, 'tsconfig.json');
+    const tsConfig = join(sourceRoot, 'tsconfig.json');
 
     mkdirSync(join(packageDir, 'src'), { recursive: true });
     mkdirSync(tsDir, { recursive: true });
@@ -194,20 +196,22 @@ describe('CLI: convert (TS → GD)', () => {
       '--gd-dir',
       gdDir,
       '--root-dir',
-      tmpDir,
+      sourceRoot,
+      '--project-root',
+      projectRoot,
       '--tsconfig',
       tsConfig,
       '--no-check',
     ]);
 
     const packageOutput = join(
-      tmpDir,
+      projectRoot,
       '.tstogd_modules/@scope/shared/1.2.3/src/index.gd',
     );
     expect(existsSync(packageOutput)).toBe(true);
     expect(
       existsSync(
-        join(tmpDir, '.tstogd_modules/@scope/shared/1.2.3/src/base.gd'),
+        join(projectRoot, '.tstogd_modules/@scope/shared/1.2.3/src/base.gd'),
       ),
     ).toBe(true);
     expect(readFileSync(join(gdDir, 'main.gd'), 'utf-8')).toContain(

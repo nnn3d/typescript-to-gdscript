@@ -20,7 +20,10 @@ export function registerWatchCommand(program: Command): void {
       '--godot-path <path>',
       'Path to Godot executable (enables GD validation after conversion)',
     )
-    .option('--project-root <dir>', 'Godot project root for validation')
+    .option(
+      '--project-root <dir>',
+      'Godot project root for external module staging and validation',
+    )
     .option(
       '--emit-on-error',
       'Emit output files even when conversion errors occur',
@@ -33,6 +36,7 @@ export function registerWatchCommand(program: Command): void {
           rootDir: opts.rootDir,
           tsDir: opts.tsDir,
           gdDir: opts.gdDir,
+          projectRoot: opts.projectRoot,
           typingsDir: opts.typingsDir,
           tsconfig: opts.tsconfig,
           godotPath: opts.godotPath,
@@ -55,7 +59,7 @@ export function registerWatchCommand(program: Command): void {
         ignore: cfg.ignore,
         projectFile: cfg.projectFile,
         godotPath,
-        projectRoot: opts.projectRoot ? resolve(opts.projectRoot) : undefined,
+        projectRoot: cfg.projectRoot,
         emitOnError: opts.emitOnError,
         noCheck: opts.check === false,
         debug: isDebugEnabled(),
