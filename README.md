@@ -399,6 +399,7 @@ Destructuring, `for...in`, `??`, `?.`, spread in calls, top-level `let`/`const`,
 ## Documentation
 
 - [Configuration](docs/configuration.md) — full `tstogd.json` and `tsconfig.json` reference, advanced anonymous-class details
+- [Library API](docs/library-api.md) — embed single-file or runtime-module conversion in another TypeScript tool
 - [Transform rules](docs/transform-rules.md) — primitive types, operators, comments, async / Promise, Callables, constants & statics, enums, inner classes, decorators / `@exports`, abstract classes, signals, GD-side shorthand literals (`$`, `%`, `&`, `^`), `super`, member ordering, logical operators, anonymous classes, imports, **restrictions / unsupported TS features**
 - [CLI reference](docs/cli.md) — every command and every flag
 - [`gd` namespace](docs/gd-helpers.md) — full helper API and rules
