@@ -213,7 +213,6 @@ export function registerConvertCommand(program: Command): void {
           gdDir: cfg.gdDir,
           projectRoot: cfg.projectRoot,
           tsFiles: runtimeFiles,
-          entryFiles: resolvedFiles,
           tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
           cache,
           godotPath,

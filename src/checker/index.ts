@@ -3,10 +3,7 @@ import { readFileSync, existsSync } from 'fs';
 import type ts from 'typescript';
 import { createTsProgram } from '../parser/typescript/index.ts';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
-import {
-  gdImportOutputPath,
-  gdOutputPath,
-} from '../converter/ts-to-gd/modules.ts';
+import { gdOutputPath } from '../converter/ts-to-gd/modules.ts';
 import { collectTsDiagnostics } from './ts-diagnostics.ts';
 import { runGodotProjectCheck } from './godot-project.ts';
 import type { TransformDiagnostic } from '../converter/common/index.ts';
@@ -17,8 +14,6 @@ export interface CheckOptions {
   gdDir: string;
   projectRoot: string;
   tsFiles: string[];
-  /** Source files passed to the converter, rather than reached through imports. */
-  entryFiles?: string[];
   tsConfigPath?: string;
   cache: ProjectCache | null;
   godotPath?: string;
@@ -56,10 +51,6 @@ export async function collectProjectDiagnostics(
     onDebug,
   } = opts;
   const debug = (msg: string): void => onDebug?.(`[checker] ${msg}`);
-  const entryFiles = new Set(
-    (opts.entryFiles ?? tsFiles).map((file) => resolve(file)),
-  );
-
   debug(`Starting (${tsFiles.length} file(s), noEmit=${noEmit})`);
 
   // Reuse the caller's program when provided (e.g. watcher's cachedProgram
@@ -90,9 +81,7 @@ export async function collectProjectDiagnostics(
     if (tsFile.endsWith('.d.ts')) continue;
 
     const outputOptions = { tsDir, gdDir, projectRoot };
-    const gdPath = entryFiles.has(resolve(tsFile))
-      ? gdOutputPath(tsFile, outputOptions)
-      : gdImportOutputPath(tsFile, outputOptions);
+    const gdPath = gdOutputPath(tsFile, outputOptions);
     if (!gdPath) {
       converterDiagnostics.push({
         message:

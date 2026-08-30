@@ -6,7 +6,6 @@ import ts from 'typescript';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import {
   collectRuntimeModules,
-  gdImportOutputPath,
   gdOutputPath,
 } from '../converter/ts-to-gd/modules.ts';
 import { createTsProgram } from '../parser/typescript/index.ts';
@@ -309,7 +308,6 @@ export class Watcher {
     });
     this.cachedProgram = program;
     const runtimeFiles = collectRuntimeModules(filePaths, program);
-    const entryFiles = new Set(filePaths.map((file) => resolve(file)));
 
     // Separate cached vs. stale files
     const toConvert: Array<{ filePath: string; outputPath: string }> = [];
@@ -319,9 +317,7 @@ export class Watcher {
         gdDir: this.gdDir,
         projectRoot: this.options.projectRoot ?? this.options.rootDir,
       };
-      const outputPath = entryFiles.has(filePath)
-        ? gdOutputPath(filePath, outputOptions)
-        : gdImportOutputPath(filePath, outputOptions);
+      const outputPath = gdOutputPath(filePath, outputOptions);
       if (!outputPath) {
         this.log(
           filePath,

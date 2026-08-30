@@ -3,11 +3,7 @@ import ts from 'typescript';
 import { createTsProgram } from '../../parser/typescript/index.ts';
 import type { TransformResult } from '../common/index.ts';
 import { convertTsToGd, type ConvertOptions } from './index.ts';
-import {
-  collectRuntimeModules,
-  gdImportOutputPath,
-  gdOutputPath,
-} from './modules.ts';
+import { collectRuntimeModules, gdOutputPath } from './modules.ts';
 
 /** Options for converting entry files and every runtime module they import. */
 export interface ConvertRuntimeModulesOptions extends Omit<
@@ -50,13 +46,10 @@ export function convertRuntimeModules(
       files: entryFiles,
       tsConfigPath: options.tsConfigPath,
     });
-  const entryFileSet = new Set(entryFiles);
   const outputOptions = { tsDir, gdDir, projectRoot };
 
   return collectRuntimeModules(entryFiles, program).map((sourcePath) => {
-    const outputPath = entryFileSet.has(sourcePath)
-      ? gdOutputPath(sourcePath, outputOptions)
-      : gdImportOutputPath(sourcePath, outputOptions);
+    const outputPath = gdOutputPath(sourcePath, outputOptions);
     if (!outputPath) {
       throw new Error(
         `Cannot determine a GDScript destination for runtime module: ${sourcePath}`,
