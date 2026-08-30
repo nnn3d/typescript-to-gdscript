@@ -287,7 +287,7 @@ export function createLintOverlay(deps: LintOverlayDeps): LintOverlay {
         rootDir: cfg.tsDir,
         tsDir: cfg.tsDir,
         gdDir: cfg.gdDir,
-        projectRoot: cfg.rootDir,
+        projectRoot: cfg.projectRoot,
         sourceMap: true,
         program,
       });
@@ -393,7 +393,7 @@ export function createLintOverlay(deps: LintOverlayDeps): LintOverlay {
       return;
     }
 
-    const projectRoot = cfg.rootDir;
+    const projectRoot = cfg.projectRoot;
     let godotPath: string;
     try {
       godotPath = resolveGodotPath({ godotPath: cfg.godotPath });

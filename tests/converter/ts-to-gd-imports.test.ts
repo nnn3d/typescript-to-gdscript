@@ -14,8 +14,8 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { mkdirSync, rmSync, writeFileSync } from 'fs';
-import { join, resolve } from 'path';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs';
+import { dirname, join, resolve } from 'path';
 import { tmpdir } from 'os';
 import { randomBytes } from 'crypto';
 import { convertTsToGd } from '../../src/converter/ts-to-gd/index.ts';
@@ -48,12 +48,18 @@ beforeEach(() => {
     dir,
     write(relPath, content) {
       const abs = resolve(dir, relPath);
+      mkdirSync(dirname(abs), { recursive: true });
       writeFileSync(abs, content);
       if (relPath.endsWith('.ts')) written.push(abs);
       return abs;
     },
     convert(entryRel) {
-      const program = createTsProgram({ rootDir: dir, files: written });
+      const tsConfigPath = join(dir, 'tsconfig.json');
+      const program = createTsProgram({
+        rootDir: dir,
+        files: written,
+        tsConfigPath: existsSync(tsConfigPath) ? tsConfigPath : undefined,
+      });
       return convertTsToGd({
         filePath: resolve(dir, entryRel),
         rootDir: dir,
@@ -200,6 +206,54 @@ describe('TS→GD imports — happy path', () => {
         ].join('\n'),
       ),
     );
+  });
+
+  it('resolves source-distributed packages and stages them in the Godot project', () => {
+    project.write(
+      'tsconfig.json',
+      JSON.stringify({
+        compilerOptions: {
+          module: 'esnext',
+          moduleResolution: 'bundler',
+          noEmit: true,
+        },
+        include: ['main.ts', 'globals.d.ts'],
+      }),
+    );
+    project.write(
+      'node_modules/@scope/shared/package.json',
+      JSON.stringify({
+        name: '@scope/shared',
+        version: '1.2.3',
+        exports: './src/index.ts',
+      }),
+    );
+    project.write(
+      'node_modules/@scope/shared/src/index.ts',
+      'export class _Shared extends Node {}\n',
+    );
+    project.write(
+      'main.ts',
+      [
+        "import { _Shared as Shared } from '@scope/shared';",
+        'export class Main extends Shared {}',
+        '',
+      ].join('\n'),
+    );
+
+    const result = project.convert('main.ts');
+    expect(normalize(result.code)).toBe(
+      normalize(
+        [
+          'extends "res://.tstogd_modules/@scope/shared/1.2.3/src/index.gd"',
+          'class_name Main',
+          '',
+          'const Shared = preload("res://.tstogd_modules/@scope/shared/1.2.3/src/index.gd")',
+          '',
+        ].join('\n'),
+      ),
+    );
+    expect(result.diagnostics).toHaveLength(0);
   });
 });
 

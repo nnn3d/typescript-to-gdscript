@@ -83,7 +83,7 @@ Extra flags:
 - `--no-emit` — Dry-run: convert in memory, report stale `.gd` outputs, do not write files. Godot validates existing `.gd` files on disk. Note: for files flagged as stale, Godot errors are reported at `.gd` positions (no source-map remap to `.ts` — the in-memory map doesn't match what's on disk).
 - `--no-check` — Skip the post-convert diagnostic check entirely (write files only)
 - `--godot-path <path>` — Path to Godot executable (enables GDScript validation)
-- `--project-root <dir>` — Godot project root for validation
+- `--project-root <dir>` — Godot project root for external module staging and validation
 
 ```bash
 # Normal convert + full check
@@ -116,7 +116,7 @@ Options:
 - `--tsconfig <path>` — Path to tsconfig.json
 - `--typings-dir <path>` — Directory for all generated typings (overrides `typingsDir` from `tstogd.json`; relative to `rootDir`)
 - `--godot-path <path>` — Path to Godot executable (enables GD validation after conversion)
-- `--project-root <dir>` — Godot project root for validation
+- `--project-root <dir>` — Godot project root for external module staging and validation
 - `--emit-on-error` — Emit output files even when conversion errors occur
 - `--no-check` — Disable the debounced full-project diagnostic check
 
