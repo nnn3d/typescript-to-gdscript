@@ -1,7 +1,14 @@
 import { describe, it, expect, afterEach } from 'vitest';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
-import { mkdirSync, rmSync, existsSync, writeFileSync, readFileSync } from 'fs';
+import {
+  mkdirSync,
+  rmSync,
+  existsSync,
+  writeFileSync,
+  readFileSync,
+  lstatSync,
+} from 'fs';
 import { join, resolve, basename } from 'path';
 import { tmpdir } from 'os';
 import { randomBytes } from 'crypto';
@@ -149,6 +156,71 @@ describe('CLI: convert (TS → GD)', () => {
     ]);
     expect(result.stdout).not.toContain('Converting');
     expect(result.stdout).not.toContain('Written:');
+  });
+
+  it('links declared tstogd libraries before conversion', async () => {
+    tmpDir = makeTmpDir();
+    const sourceDir = join(tmpDir, 'src');
+    const outputDir = join(tmpDir, 'scripts');
+    const packageRoot = join(tmpDir, 'node_modules/@scope/shared');
+    mkdirSync(sourceDir, { recursive: true });
+    mkdirSync(join(packageRoot, 'src'), { recursive: true });
+    mkdirSync(join(packageRoot, 'scripts'), { recursive: true });
+    writeFileSync(
+      join(tmpDir, 'package.json'),
+      JSON.stringify({ dependencies: { '@scope/shared': '1.0.0' } }),
+    );
+    writeFileSync(
+      join(tmpDir, 'tstogd.json'),
+      JSON.stringify({ tsDir: 'src', gdDir: 'scripts' }),
+    );
+    writeFileSync(
+      join(tmpDir, 'tsconfig.json'),
+      JSON.stringify({
+        compilerOptions: {
+          target: 'es2022',
+          module: 'node16',
+          moduleResolution: 'node16',
+          noEmit: true,
+        },
+        include: ['src/**/*.ts', 'globals.d.ts'],
+      }),
+    );
+    writeFileSync(join(tmpDir, 'globals.d.ts'), 'declare class Node {}\n');
+    writeFileSync(
+      join(sourceDir, 'main.ts'),
+      "import { _Foo } from '@scope/shared/src/foo';\nexport class Main extends Node { foo: _Foo | null = null; }\n",
+    );
+    writeFileSync(
+      join(packageRoot, 'package.json'),
+      JSON.stringify({ name: '@scope/shared', version: '1.0.0' }),
+    );
+    writeFileSync(
+      join(packageRoot, 'tstogd.json'),
+      JSON.stringify({ lib: true, tsDir: 'src', gdDir: 'scripts' }),
+    );
+    writeFileSync(
+      join(packageRoot, 'src/foo.ts'),
+      'export class _Foo extends Node {}\n',
+    );
+    writeFileSync(join(packageRoot, 'scripts/foo.gd'), 'extends Node\n');
+
+    const result = await runCliRaw([
+      'convert',
+      '--root-dir',
+      tmpDir,
+      '--tsconfig',
+      join(tmpDir, 'tsconfig.json'),
+      '--no-check',
+    ]);
+
+    expect(result.exitCode, result.stderr).toBe(0);
+    expect(
+      lstatSync(join(tmpDir, 'tstogd_modules/@scope/shared')).isSymbolicLink(),
+    ).toBe(true);
+    expect(readFileSync(join(outputDir, 'main.gd'), 'utf-8')).toContain(
+      'preload("res://tstogd_modules/@scope/shared/scripts/foo.gd")',
+    );
   });
 });
 

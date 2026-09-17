@@ -62,5 +62,50 @@ Create a `tstogd.json` in your project root to configure the converter. Paths ar
 | `cacheDir`         | `string`   | Cache directory (source maps and diagnostics stored inline). Default: `<rootDir>/node_modules/.cache/typescript-to-gdscript` when `node_modules` exists, otherwise an OS temp dir.                                                                                                                                             |
 | `godotTypingsDir`  | `string`   | Override path to Godot engine typings (classes, gd-helpers, globals). Default: the bundled `node_modules/typescript-to-gdscript/typings`.                                                                                                                                                                                      |
 | `converterOptions` | `object`   | Converter behavior tweaks. Currently: `{ "generateGlobalClassTypes": boolean }` — when `true`, non-anonymous classes are emitted into `declare global` so consumers can use them without `import`. When `false` (default), classes are module-scoped and must be imported. Addons always emit globals regardless of this flag. |
+| `lib`              | `boolean`  | Marks this project as a shared tstogd library. Library imports use relative GDScript paths. Defaults to `false`.                                                                                                                                                                                                               |
+| `externalPackages` | `object[]` | Adds shared tstogd folders or changes their mount names. Each item has `from` and optional `to` fields.                                                                                                                                                                                                                        |
 
 > **GD→TS conversion helpers are always-on.** Older revisions of this doc mentioned a `helpers.signalHandler` toggle — it doesn't exist in the source. See [GD-to-TS migration](gd-to-ts-migration.md) for the full helper set; the only user-facing toggle is `--unsafe-use-any` on `initial-convert-gd-to-ts`.
+
+## Shared packages
+
+A shared package builds its own complete Godot content. Set `lib: true` in the package configuration:
+
+```json
+{
+  "lib": true,
+  "tsDir": "src",
+  "gdDir": "dist/godot"
+}
+```
+
+Library imports use relative `preload()` paths. A consumer can mount the package at a different project location.
+
+Publish the TypeScript source, `tstogd.json`, generated GDScript, scenes, resources, and Godot UID files. Godot creates the UIDs during its normal scan.
+
+Keep the UID files stable between releases. This prevents broken resource references after a package update.
+
+`tstogd convert` and `tstogd watch` scan the project dependencies. They link each dependency with `lib: true` into `tstogd_modules/<package-name>`.
+
+The consumer does not convert the dependency. Godot scans the complete linked package, including files that no TypeScript import uses.
+
+Use `externalPackages` for a plain folder or a custom mount name:
+
+```json
+{
+  "externalPackages": [
+    { "from": "../shared-gameplay", "to": "gameplay" },
+    { "from": "@scope/shared", "to": "shared-v2" }
+  ]
+}
+```
+
+`from` accepts a package name or a path relative to `rootDir`. `to` names a path below `tstogd_modules`.
+
+Each external package must contain `tstogd.json` with `lib: true`. Its `tsDir` and `gdDir` must stay inside the linked package root.
+
+tstogd always excludes `tstogd_modules` from conversion and typing scans. Add `tstogd_modules/` to the project `.gitignore` because tstogd recreates these links.
+
+The link step also creates `node_modules/.gdignore` when it links an npm package. This marker prevents Godot from scanning the same package twice.
+
+For UID behavior after resource moves, see the [Godot ResourceUID reference](https://docs.godotengine.org/en/stable/classes/class_resourceuid.html).

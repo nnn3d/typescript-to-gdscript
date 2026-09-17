@@ -4,6 +4,7 @@ import { resolveRegistry } from '../../config/index.ts';
 import type { TransformResult } from '../common/index.ts';
 import { TsToGdTransformer } from './transformer.ts';
 import { buildDiagnosticsTypeInfo } from './diagnostics.ts';
+import type { ResolvedExternalPackage } from '../../external-packages/index.ts';
 
 export interface ConvertOptions {
   /** Path to the TypeScript file */
@@ -28,6 +29,10 @@ export interface ConvertOptions {
    * to `rootDir`.
    */
   projectRoot?: string;
+  /** Emit imports within this project as relative GDScript paths. */
+  lib?: boolean;
+  /** Shared packages mounted below projectRoot/tstogd_modules. */
+  externalPackages?: ResolvedExternalPackage[];
   /** Path to tsconfig.json */
   tsConfigPath?: string;
   /** Whether to generate source maps */
@@ -82,6 +87,8 @@ export function convertTsToGd(options: ConvertOptions): TransformResult {
       tsDir: options.tsDir ?? options.rootDir,
       gdDir: options.gdDir ?? options.rootDir,
       projectRoot: options.projectRoot ?? options.rootDir,
+      lib: options.lib ?? false,
+      externalPackages: options.externalPackages ?? [],
     },
     {
       sourceMap: options.sourceMap ?? false,

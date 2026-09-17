@@ -864,6 +864,20 @@ The TS → GD converter preserves source order for class members (fields, method
 
 A field name that collides with an imported local is a hard error (the emitted `const` would shadow the field).
 
+Projects use absolute `res://` paths by default. A project with `lib: true` uses relative paths for imports inside its own source tree:
+
+```gdscript
+const _Anon = preload("./anon.gd")
+```
+
+Imports from a linked library use its fixed consumer mount:
+
+```gdscript
+const _Anon = preload("res://tstogd_modules/@scope/shared/scripts/anon.gd")
+```
+
+The linked library maps its TypeScript target through its own `tsDir` and `gdDir`. tstogd reports an error when an import that needs `preload()` has no valid source mapping.
+
 ## Restrictions — unsupported TypeScript features
 
 The converter rejects TS features that have no faithful GDScript equivalent. Each appears as a converter error (TS → GD) and a squiggle in the IDE plugin.

@@ -98,6 +98,14 @@ For day-to-day work, run **`tstogd watch`**: it auto-converts on save, watches y
 
 Setup `tstogd.json` and `tsconfig.json` in your project - for full template and field reference see [docs/configuration.md](docs/configuration.md).
 
+### Shared packages
+
+Set `lib: true` when a package builds reusable Godot content. tstogd then emits relative paths for imports inside that package.
+
+Consumers add the package as a normal npm dependency. `convert` and `watch` link it into `tstogd_modules`, where Godot scans the complete package.
+
+Use `externalPackages` for plain folders or custom mount names. See [Shared packages](docs/configuration.md#shared-packages) for the package layout and UID requirements.
+
 ### Migration from existing GDScript
 
 Have an existing GDScript project? Bulk-convert it to TypeScript with [tstogd initial-convert-gd-to-ts](docs/gd-to-ts-migration.md).

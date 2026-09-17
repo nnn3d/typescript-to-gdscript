@@ -34,6 +34,10 @@ import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
 import type { TransformDiagnostic } from '../converter/common/index.ts';
 import { LRU } from './lru.ts';
+import {
+  resolveExternalPackages,
+  type ResolvedExternalPackage,
+} from '../external-packages/index.ts';
 
 type TS = typeof tsModule;
 type LS = tsModule.LanguageService;
@@ -62,6 +66,18 @@ export interface LintOverlay {
 
 export function createLintOverlay(deps: LintOverlayDeps): LintOverlay {
   const { ts, info, ls, cfg, cache, log, trace } = deps;
+  let externalPackages: ResolvedExternalPackage[] = [];
+  try {
+    externalPackages = resolveExternalPackages({
+      rootDir: cfg.rootDir,
+      projectRoot: cfg.rootDir,
+      externalPackages: cfg.externalPackages,
+    });
+  } catch (error) {
+    log(
+      `external package resolution failed: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  }
 
   /**
    * Per-file memo of converter + Godot diagnostics, keyed by fileName.
@@ -288,6 +304,8 @@ export function createLintOverlay(deps: LintOverlayDeps): LintOverlay {
         tsDir: cfg.tsDir,
         gdDir: cfg.gdDir,
         projectRoot: cfg.rootDir,
+        lib: cfg.lib,
+        externalPackages,
         sourceMap: true,
         program,
       });

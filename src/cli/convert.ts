@@ -13,6 +13,10 @@ import {
   summarizeDiagnostics,
   hasReportableErrors,
 } from '../checker/index.ts';
+import {
+  linkExternalPackages,
+  resolveExternalPackages,
+} from '../external-packages/index.ts';
 
 export function registerConvertCommand(program: Command): void {
   program
@@ -61,6 +65,20 @@ export function registerConvertCommand(program: Command): void {
           godotPath: opts.godotPath,
         },
       });
+      const projectRoot = opts.projectRoot
+        ? resolve(opts.projectRoot)
+        : cfg.rootDir;
+      // commander: --no-emit sets opts.emit = false, --no-check sets opts.check = false
+      const noEmit: boolean = opts.emit === false;
+      const noCheck: boolean = opts.check === false;
+      const packageOptions = {
+        rootDir: cfg.rootDir,
+        projectRoot,
+        externalPackages: cfg.externalPackages,
+      };
+      const externalPackages = noEmit
+        ? resolveExternalPackages(packageOptions)
+        : linkExternalPackages(packageOptions);
 
       const resolvedFiles = resolveFiles(
         files.length > 0 ? files : undefined,
@@ -75,9 +93,6 @@ export function registerConvertCommand(program: Command): void {
         return;
       }
 
-      // commander: --no-emit sets opts.emit = false, --no-check sets opts.check = false
-      const noEmit: boolean = opts.emit === false;
-      const noCheck: boolean = opts.check === false;
       // Cache is write-only by default: every run converts fresh (correct even
       // when types in OTHER files changed — content hashes can't see that),
       // but results are still recorded so the watcher / ts-plugin / check
@@ -132,7 +147,9 @@ export function registerConvertCommand(program: Command): void {
             rootDir: cfg.tsDir,
             tsDir: cfg.tsDir,
             gdDir: cfg.gdDir,
-            projectRoot: cfg.rootDir,
+            projectRoot,
+            lib: cfg.lib,
+            externalPackages,
             tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
             sourceMap: true,
             program: sharedProgram,
@@ -200,9 +217,6 @@ export function registerConvertCommand(program: Command): void {
             // godotPath unavailable — Godot check skipped
           }
         }
-        const projectRoot = opts.projectRoot
-          ? resolve(opts.projectRoot)
-          : cfg.rootDir;
         debugLog(
           `Diagnostic check: godotPath=${godotPath ?? '(skipped)'}, tsConfig=${cfg.tsconfig ?? '(none)'}, projectRoot=${projectRoot}`,
         );
@@ -211,6 +225,8 @@ export function registerConvertCommand(program: Command): void {
           tsDir: cfg.tsDir,
           gdDir: cfg.gdDir,
           projectRoot,
+          lib: cfg.lib,
+          externalPackages,
           tsFiles: resolvedFiles.filter((f) => !f.endsWith('.d.ts')),
           tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
           cache,

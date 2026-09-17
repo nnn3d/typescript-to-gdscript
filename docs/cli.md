@@ -47,6 +47,8 @@ Each step is skipped if its target file already exists (the existing file is pre
 
 Convert TypeScript files to GDScript. A full `tstogd convert` run is self-contained: it converts, **regenerates all scene/script/resource/addon typings** (the same output as `generate-typings` + `generate-addon-typings`), and then runs the diagnostic check described below. You do not need to call the typings commands separately.
 
+Before conversion, the command synchronizes shared-package links in `tstogd_modules`. See [Shared packages](configuration.md#shared-packages).
+
 ```bash
 tstogd convert src/Player.ts --gd-dir scripts/
 ```
@@ -83,7 +85,7 @@ Extra flags:
 - `--no-emit` — Dry-run: convert in memory, report stale `.gd` outputs, do not write files. Godot validates existing `.gd` files on disk. Note: for files flagged as stale, Godot errors are reported at `.gd` positions (no source-map remap to `.ts` — the in-memory map doesn't match what's on disk).
 - `--no-check` — Skip the post-convert diagnostic check entirely (write files only)
 - `--godot-path <path>` — Path to Godot executable (enables GDScript validation)
-- `--project-root <dir>` — Godot project root for validation
+- `--project-root <dir>` — Godot project root for shared-package links and validation
 
 ```bash
 # Normal convert + full check
@@ -99,6 +101,8 @@ tstogd convert --no-check
 ## `tstogd watch`
 
 The long-running version of `convert`, and the only command most projects keep running. It watches not just `.ts` files but also `.tscn` scenes, `.tres`/`.res` resources, common asset files, and `project.godot` — so editing your scene tree in Godot **regenerates the affected scene typings live**. Each changed `.ts` is reconverted (with source maps and typings updated incrementally); after the batch settles (~1s debounce) it runs a full diagnostic check and clears the console before printing results.
+
+The command synchronizes shared-package links before it starts the watcher. The watcher always ignores `tstogd_modules` as input.
 
 ```bash
 tstogd watch --ts-dir src --gd-dir scripts
@@ -116,7 +120,7 @@ Options:
 - `--tsconfig <path>` — Path to tsconfig.json
 - `--typings-dir <path>` — Directory for all generated typings (overrides `typingsDir` from `tstogd.json`; relative to `rootDir`)
 - `--godot-path <path>` — Path to Godot executable (enables GD validation after conversion)
-- `--project-root <dir>` — Godot project root for validation
+- `--project-root <dir>` — Godot project root for shared-package links and validation
 - `--emit-on-error` — Emit output files even when conversion errors occur
 - `--no-check` — Disable the debounced full-project diagnostic check
 

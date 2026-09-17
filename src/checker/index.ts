@@ -7,11 +7,14 @@ import { collectTsDiagnostics } from './ts-diagnostics.ts';
 import { runGodotProjectCheck } from './godot-project.ts';
 import type { TransformDiagnostic } from '../converter/common/index.ts';
 import type { ProjectCache } from '../cache/index.ts';
+import type { ResolvedExternalPackage } from '../external-packages/index.ts';
 
 export interface CheckOptions {
   tsDir: string;
   gdDir: string;
   projectRoot: string;
+  lib?: boolean;
+  externalPackages?: ResolvedExternalPackage[];
   tsFiles: string[];
   tsConfigPath?: string;
   cache: ProjectCache | null;
@@ -101,6 +104,8 @@ export async function collectProjectDiagnostics(
       tsDir,
       gdDir,
       projectRoot,
+      lib: opts.lib,
+      externalPackages: opts.externalPackages,
       tsConfigPath: opts.tsConfigPath,
       sourceMap: true,
       program,

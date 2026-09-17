@@ -22,6 +22,7 @@ import { dirname, relative, resolve } from 'path';
 import type ts from 'typescript';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { isConversionErrorSeverity } from '../converter/common/index.ts';
+import type { ResolvedExternalPackage } from '../external-packages/index.ts';
 import type { TransformDiagnostic } from '../converter/common/index.ts';
 import type { CheckResult } from '../checker/index.ts';
 import type { ProjectCache } from '../cache/index.ts';
@@ -102,6 +103,8 @@ export interface HealOptions {
   tsDir: string;
   gdDir: string;
   projectRoot: string;
+  lib?: boolean;
+  externalPackages?: ResolvedExternalPackage[];
   tsConfigPath?: string;
   emitOnError?: boolean;
   onLog?: (file: string, message: string) => void;
@@ -126,6 +129,8 @@ export function healFiles(options: HealOptions): { rewrote: string[] } {
       tsDir: options.tsDir,
       gdDir: options.gdDir,
       projectRoot: options.projectRoot,
+      lib: options.lib,
+      externalPackages: options.externalPackages,
       tsConfigPath: options.tsConfigPath,
       sourceMap: true,
       program: options.program,

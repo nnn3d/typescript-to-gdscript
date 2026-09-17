@@ -18,6 +18,7 @@ import {
   type CheckResult,
 } from '../checker/index.ts';
 import type { ProjectCache } from '../cache/index.ts';
+import type { ResolvedExternalPackage } from '../external-packages/index.ts';
 import {
   diagnosticSignatures,
   computeSuspects,
@@ -29,6 +30,8 @@ export interface CheckRunnerDeps {
   tsDir: string;
   gdDir: string;
   projectRoot: string;
+  lib?: boolean;
+  externalPackages?: ResolvedExternalPackage[];
   cacheDir?: string;
   tsConfigPath?: string;
   godotPath?: string;
@@ -168,6 +171,8 @@ export class CheckRunner {
       tsDir: this.deps.tsDir,
       gdDir: this.deps.gdDir,
       projectRoot: this.deps.projectRoot,
+      lib: this.deps.lib,
+      externalPackages: this.deps.externalPackages,
       tsFiles,
       tsConfigPath: this.deps.tsConfigPath,
       cache: this.deps.cache,
@@ -238,6 +243,8 @@ export class CheckRunner {
         tsDir: this.deps.tsDir,
         gdDir: this.deps.gdDir,
         projectRoot: this.deps.projectRoot,
+        lib: this.deps.lib,
+        externalPackages: this.deps.externalPackages,
         tsConfigPath: this.deps.tsConfigPath,
         emitOnError: this.deps.emitOnError,
         onLog: (file, msg) => this.deps.log(file, msg, 'info'),

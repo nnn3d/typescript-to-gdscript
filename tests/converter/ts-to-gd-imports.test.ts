@@ -14,11 +14,18 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { mkdirSync, rmSync, writeFileSync } from 'fs';
-import { join, resolve } from 'path';
+import {
+  mkdirSync,
+  realpathSync,
+  rmSync,
+  symlinkSync,
+  writeFileSync,
+} from 'fs';
+import { dirname, join, resolve } from 'path';
 import { tmpdir } from 'os';
 import { randomBytes } from 'crypto';
 import { convertTsToGd } from '../../src/converter/ts-to-gd/index.ts';
+import type { ConvertOptions } from '../../src/converter/ts-to-gd/index.ts';
 import { createTsProgram } from '../../src/parser/typescript/index.ts';
 
 interface Project {
@@ -26,7 +33,10 @@ interface Project {
   /** Write a TS source file relative to the project root. */
   write(relPath: string, content: string): string;
   /** Convert the entry file with all written `.ts` files in scope. */
-  convert(entryRel: string): ReturnType<typeof convertTsToGd>;
+  convert(
+    entryRel: string,
+    options?: Partial<ConvertOptions>,
+  ): ReturnType<typeof convertTsToGd>;
 }
 
 const GLOBALS_STUB =
@@ -48,11 +58,12 @@ beforeEach(() => {
     dir,
     write(relPath, content) {
       const abs = resolve(dir, relPath);
+      mkdirSync(dirname(abs), { recursive: true });
       writeFileSync(abs, content);
       if (relPath.endsWith('.ts')) written.push(abs);
       return abs;
     },
-    convert(entryRel) {
+    convert(entryRel, options = {}) {
       const program = createTsProgram({ rootDir: dir, files: written });
       return convertTsToGd({
         filePath: resolve(dir, entryRel),
@@ -61,6 +72,7 @@ beforeEach(() => {
         gdDir: dir,
         projectRoot: dir,
         program,
+        ...options,
       });
     },
   };
@@ -156,6 +168,73 @@ describe('TS→GD imports — happy path', () => {
     );
   });
 
+  it('emits relative preload paths inside a library', () => {
+    project.write('shared/foo.ts', 'export class _Foo extends Node {}\n');
+    project.write(
+      'shared/nested/main.ts',
+      "import { _Foo } from '../foo.ts';\nexport class Main extends Node {}\n",
+    );
+    const result = project.convert('shared/nested/main.ts', {
+      tsDir: resolve(project.dir, 'shared'),
+      gdDir: resolve(project.dir, 'dist/godot'),
+      lib: true,
+    });
+    expect(result.code).toContain('const _Foo = preload("../foo.gd")');
+  });
+
+  it('maps linked package imports through the package tsDir and gdDir', () => {
+    const packageRoot = resolve(project.dir, 'shared-package');
+    const packageSource = project.write(
+      'shared-package/src/foo.ts',
+      'export class _Foo extends Node {}\n',
+    );
+    const installedPackage = resolve(project.dir, 'app/shared-link');
+    mkdirSync(dirname(installedPackage), { recursive: true });
+    symlinkSync(
+      packageRoot,
+      installedPackage,
+      process.platform === 'win32' ? 'junction' : 'dir',
+    );
+    project.write(
+      'app/src/main.ts',
+      "import { _Foo } from '../shared-link/src/foo.ts';\nexport class Main extends Node {}\n",
+    );
+    const realPackageRoot = realpathSync(packageRoot);
+
+    const result = project.convert('app/src/main.ts', {
+      tsDir: resolve(project.dir, 'app/src'),
+      gdDir: resolve(project.dir, 'app/scripts'),
+      projectRoot: resolve(project.dir, 'app'),
+      externalPackages: [
+        {
+          rootDir: realPackageRoot,
+          tsDir: resolve(realPackageRoot, 'src'),
+          gdDir: resolve(realPackageRoot, 'dist/godot'),
+          mountName: '@scope/shared',
+        },
+      ],
+    });
+
+    expect(packageSource).toBe(resolve(packageRoot, 'src/foo.ts'));
+    expect(result.code, JSON.stringify(result.diagnostics)).toContain(
+      'const _Foo = preload("res://tstogd_modules/@scope/shared/dist/godot/foo.gd")',
+    );
+  });
+
+  it('does not resolve regular global class imports that need no preload', () => {
+    project.write(
+      'main.ts',
+      "import { SharedClass } from '@scope/shared';\nexport class Main extends Node {}\n",
+    );
+
+    const result = project.convert('main.ts');
+
+    expect(result.code).not.toContain('preload(');
+    expect(
+      result.diagnostics.find((diagnostic) => diagnostic.severity === 'error'),
+    ).toBeUndefined();
+  });
+
   it('silently drops whole-statement type-only imports', () => {
     project.write('foo.ts', 'export class _Foo extends Node {}\n');
     project.write(
@@ -204,6 +283,23 @@ describe('TS→GD imports — happy path', () => {
 });
 
 describe('TS→GD imports — errors', () => {
+  it('errors when an anonymous import cannot resolve to source', () => {
+    project.write(
+      'main.ts',
+      "import { _Shared } from '@scope/shared';\nexport class Main extends Node {}\n",
+    );
+
+    const result = project.convert('main.ts');
+
+    expect(
+      result.diagnostics.find(
+        (diagnostic) =>
+          diagnostic.severity === 'error' &&
+          diagnostic.message.includes('must resolve to a TypeScript source'),
+      ),
+    ).toBeDefined();
+  });
+
   it('errors when a class field name collides with an imported local', () => {
     project.write('foo.ts', 'export class _Foo extends Node {}\n');
     project.write(

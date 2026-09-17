@@ -4,6 +4,7 @@ import { tmpdir } from 'os';
 import { fileURLToPath } from 'url';
 import { minimatch } from 'minimatch';
 import { GodotClassRegistry } from '../typings/godot-registry.ts';
+import { TSTOGD_MODULES_DIR } from '../external-packages/index.ts';
 
 // ─── Config Types ─────────────────────────────────────────────
 
@@ -34,6 +35,17 @@ export interface TsToGdConfig {
   godotTypingsDir?: string;
   /** Converter behavior tweaks. */
   converterOptions?: ConverterOptions;
+  /** Build this project as a reusable package with relative GDScript imports. */
+  lib?: boolean;
+  /** Shared tstogd projects that need an explicit source path or mount name. */
+  externalPackages?: ExternalPackageConfig[];
+}
+
+export interface ExternalPackageConfig {
+  /** npm package name or path to a tstogd library. */
+  from: string;
+  /** Optional path below tstogd_modules. Defaults to the package name. */
+  to?: string;
 }
 
 /**
@@ -75,6 +87,10 @@ export interface ResolvedConfig {
   projectFile: string;
   /** Disable Godot executable validation. */
   disableGodotLint: boolean;
+  /** Build this project as a reusable package with relative imports. */
+  lib: boolean;
+  /** Explicit shared package mappings. */
+  externalPackages: ExternalPackageConfig[];
   /** Absolute path to cache directory. */
   cacheDir: string;
   /** Absolute path to Godot engine typings directory. */
@@ -160,6 +176,9 @@ export function resolveConfig(options?: {
         : undefined),
     godotPath: overrides.godotPath ?? config?.godotPath,
     disableGodotLint: config?.disableGodotLint ?? false,
+    lib: overrides.lib ?? config?.lib ?? false,
+    externalPackages:
+      overrides.externalPackages ?? config?.externalPackages ?? [],
     cacheDir,
     godotTypingsDir,
     converterOptions: {
@@ -182,8 +201,11 @@ export function shouldIgnore(
   rootDir: string,
   patterns: string[],
 ): boolean {
-  if (patterns.length === 0) return false;
   const rel = relative(rootDir, filePath).replace(/\\/g, '/');
+  if (rel === TSTOGD_MODULES_DIR || rel.startsWith(`${TSTOGD_MODULES_DIR}/`)) {
+    return true;
+  }
+  if (patterns.length === 0) return false;
   return patterns.some((pattern) => minimatch(rel, pattern, { dot: true }));
 }
 
