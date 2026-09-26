@@ -393,13 +393,17 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
       //  - inner class / class enum → `ClassName.Inner` (lives in the paired
       //    `namespace`, not visible bare from the class body) via qualifyClassType
       //  - the self class → the emitted (possibly `_Foo`→`G_Foo` escaped) name
+      //  - a class member holding a script (`const Helper = preload(...)`)
+      //    → qualified like any other member reference, `ClassName.Helper`.
+      //    This branch replaces `parts` wholesale, so the member
+      //    qualification at the end of the function never sees it.
       //  - anything else (Godot / other user class) → verbatim
       if (methodName === 'new') {
         const rawClassName = parts.join('.');
         const className =
           qualifyClassType(rawClassName, ctx.classTypeNames, ctx.className) ??
           selfClassNameIfMatches(rawClassName, ctx) ??
-          rawClassName;
+          qualifyMemberHead(parts, selfSeen, ctx).join('.');
         parts.length = 0;
         parts.push(`new ${className}(${args})`);
       } else {
@@ -427,21 +431,32 @@ export function emitAttribute(node: SyntaxNode, ctx: GdToTsContext): string {
     }
   }
 
-  // If the first part is a known class member, not shadowed by a
-  // local variable, and no self was used, prefix with `this` (instance
-  // member) or `ClassName` (static member — matches GDScript's
-  // convention of accessing statics via the class name).
-  if (
-    !selfSeen &&
-    parts.length >= 1 &&
-    ctx.classMembers.has(parts[0]!) &&
-    !ctx.localVars.has(parts[0]!)
-  ) {
-    const prefix = ctx.staticMembers.has(parts[0]!) ? ctx.className : 'this';
-    parts.unshift(prefix);
-  }
+  return qualifyMemberHead(parts, selfSeen, ctx).join('.');
+}
 
-  return parts.join('.');
+/**
+ * If the first part of an attribute chain is a known class member, not
+ * shadowed by a local variable, and no `self` was used, prefix it with
+ * `this` (instance member) or `ClassName` (static member — matches
+ * GDScript's convention of accessing statics via the class name).
+ * Returns a new array; `parts` is left alone.
+ */
+function qualifyMemberHead(
+  parts: readonly string[],
+  selfSeen: boolean,
+  ctx: GdToTsContext,
+): string[] {
+  const head = parts[0];
+  if (
+    selfSeen ||
+    head === undefined ||
+    !ctx.classMembers.has(head) ||
+    ctx.localVars.has(head)
+  ) {
+    return [...parts];
+  }
+  const prefix = ctx.staticMembers.has(head) ? ctx.className : 'this';
+  return [prefix, ...parts];
 }
 
 // ─── Binary / Unary Operators ─────────────────────────────────
