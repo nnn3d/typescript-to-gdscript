@@ -5,6 +5,7 @@ import { readFileSync, readdirSync } from 'fs';
 import { join, basename } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { normalizeFixtureText } from '../helpers/fixture-text.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -40,22 +41,6 @@ if (
       'them every engine name resolves to nothing and the fixtures only ' +
       'test half of each checker-driven branch.',
   );
-}
-
-/**
- * Normalize generated GDScript for comparison:
- * - Trim trailing whitespace per line
- * - Remove trailing empty lines
- * - Normalize line endings
- */
-function normalize(code: string): string {
-  return code
-    .replace(/\r\n/g, '\n')
-    .split('\n')
-    .map((line) => line.trimEnd())
-    .join('\n')
-    .replace(/\n+$/, '')
-    .trim();
 }
 
 // Discover all fixture pairs: *.ts files that have a matching *.gd file
@@ -108,8 +93,8 @@ describe('TS to GD: Fixture-based tests', () => {
         expect(rendered, `${fixtureName} converted with diagnostics`).toBe('');
       }
 
-      const normalizedActual = normalize(result.code);
-      const normalizedExpected = normalize(expectedGd);
+      const normalizedActual = normalizeFixtureText(result.code);
+      const normalizedExpected = normalizeFixtureText(expectedGd);
 
       // Compare line by line for better error messages
       const actualLines = normalizedActual.split('\n');

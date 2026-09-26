@@ -116,6 +116,7 @@ tests/
   watcher/               # watcher-cache.test.ts (updated-file re-conversion through cache)
   typings/               # godot-registry, gd-to-ts-registry, godot-docs, godot-validate (CLI integration, autoload/duplicate-class filters),
                          # module-scoped-typings, scene-typings, ts-to-gd-sourcemap, type-checks
+  helpers/               # fixture-text.ts — `normalizeFixtureText`, shared by the fixture-comparing runners
   ts-plugin/             # ts-plugin.test.ts + harness.ts — real `ts.LanguageService` wrapped with the plugin;
                          # exercises fixture parity, cache write-through, async Godot pipeline. `lru.test.ts` unit-tests the LRU independently of the LS
   typecheck.test.ts      # `tsc` no-error check on src/

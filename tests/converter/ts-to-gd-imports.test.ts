@@ -27,6 +27,7 @@ import { randomBytes } from 'crypto';
 import { convertTsToGd } from '../../src/converter/ts-to-gd/index.ts';
 import type { ConvertOptions } from '../../src/converter/ts-to-gd/index.ts';
 import { createTsProgram } from '../../src/parser/typescript/index.ts';
+import { normalizeFixtureText } from '../helpers/fixture-text.ts';
 
 interface Project {
   dir: string;
@@ -86,16 +87,6 @@ afterEach(() => {
   }
 });
 
-function normalize(code: string): string {
-  return code
-    .replace(/\r\n/g, '\n')
-    .split('\n')
-    .map((line) => line.trimEnd())
-    .join('\n')
-    .replace(/\n+$/, '')
-    .trim();
-}
-
 describe('TS→GD imports — happy path', () => {
   it('skips non-anonymous + non-renamed imports (already global in GD)', () => {
     project.write('foo.ts', 'export class Foo extends Node {}\n');
@@ -104,8 +95,10 @@ describe('TS→GD imports — happy path', () => {
       "import { Foo } from './foo.ts';\nexport class Main extends Node {\n  fooRef: Foo | null = null;\n}\n",
     );
     const result = project.convert('main.ts');
-    expect(normalize(result.code)).toBe(
-      normalize('extends Node\nclass_name Main\n\nvar fooRef: Foo = null\n'),
+    expect(normalizeFixtureText(result.code)).toBe(
+      normalizeFixtureText(
+        'extends Node\nclass_name Main\n\nvar fooRef: Foo = null\n',
+      ),
     );
   });
 
@@ -116,8 +109,8 @@ describe('TS→GD imports — happy path', () => {
       "import { Foo as Alias } from './foo.ts';\nexport class Main extends Node {\n  ref: Alias | null = null;\n}\n",
     );
     const result = project.convert('main.ts');
-    expect(normalize(result.code)).toBe(
-      normalize(
+    expect(normalizeFixtureText(result.code)).toBe(
+      normalizeFixtureText(
         'extends Node\nclass_name Main\n\nconst Alias = preload("res://foo.gd")\n\nvar ref: Alias = null\n',
       ),
     );
@@ -138,8 +131,8 @@ describe('TS→GD imports — happy path', () => {
       ].join('\n'),
     );
     const result = project.convert('main.ts');
-    expect(normalize(result.code)).toBe(
-      normalize(
+    expect(normalizeFixtureText(result.code)).toBe(
+      normalizeFixtureText(
         [
           'extends Node',
           'class_name Main',
@@ -161,8 +154,8 @@ describe('TS→GD imports — happy path', () => {
       "import { _Base } from './base.ts';\nexport class Derived extends _Base {}\n",
     );
     const result = project.convert('derived.ts');
-    expect(normalize(result.code)).toBe(
-      normalize(
+    expect(normalizeFixtureText(result.code)).toBe(
+      normalizeFixtureText(
         'extends "res://base.gd"\nclass_name Derived\n\nconst _Base = preload("res://base.gd")\n',
       ),
     );
@@ -242,8 +235,10 @@ describe('TS→GD imports — happy path', () => {
       "import type { _Foo } from './foo.ts';\nexport class Main extends Node {\n  ref: _Foo | null = null;\n}\n",
     );
     const result = project.convert('main.ts');
-    expect(normalize(result.code)).toBe(
-      normalize('extends Node\nclass_name Main\n\nvar ref: _Foo = null\n'),
+    expect(normalizeFixtureText(result.code)).toBe(
+      normalizeFixtureText(
+        'extends Node\nclass_name Main\n\nvar ref: _Foo = null\n',
+      ),
     );
     expect(
       result.diagnostics.find((d) => d.severity === 'error'),
@@ -266,8 +261,8 @@ describe('TS→GD imports — happy path', () => {
       ].join('\n'),
     );
     const result = project.convert('main.ts');
-    expect(normalize(result.code)).toBe(
-      normalize(
+    expect(normalizeFixtureText(result.code)).toBe(
+      normalizeFixtureText(
         [
           'extends Node',
           'class_name Main',
