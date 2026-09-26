@@ -160,7 +160,7 @@ UIDs are read from Godot's own metadata — the `.tscn`/`.tres` header, the `.gd
 
 ## `tstogd generate-addon-typings`
 
-Generate TypeScript typings for GDScript addon files in `addons/`. Converts each `.gd` file to `.ts` (via GD-to-TS), then generates `.gd.d.ts` scene typings with global class declarations, `GodotScripts`/`GodotResources` entries, and namespace enums.
+Generate TypeScript typings for GDScript addon files in `addons/`. Each `.gd` file is converted to TypeScript (via GD-to-TS), and a declaration is emitted from it alongside the `.gd.d.ts` typings with global class declarations, `GodotScripts`/`GodotResources` entries, and namespace enums.
 
 ```bash
 tstogd generate-addon-typings
@@ -176,11 +176,21 @@ Output structure preserves the addon directory layout:
 ```
 ts/_typings/
   addons/MyAddon/
-    my_script.ts          ← converted from GDScript
+    my_script.d.ts        ← declarations for the addon's classes
     my_script.gd.d.ts     ← typings (global class, GodotScripts, enums)
 ```
 
-This command is automatically called by `initial-convert-gd-to-ts` and `watch` (on first run). It can also be run standalone.
+Only declarations are written — the converted TypeScript is an intermediate step and never lands in your typings folder. Your editor loads signatures instead of addon bodies, so there's nothing to exclude from `tsconfig.json` and nothing for the type checker to re-check on every project load.
+
+Dropping the bodies doesn't cost you types: a GDScript function with no return annotation still gets one, inferred from what its body returns. Only parameters fall back to `any`, and only where GDScript left them untyped — the same as before. A function that returns a value on only some paths is typed `T | null`, because on the others GDScript returns `null`.
+
+Stale files in the addon typings folder are removed on every run — declarations for addons you deleted or excluded, and the converted `.ts` that earlier versions of `tstogd` wrote there. The latter matters when upgrading: a leftover `my_script.ts` takes priority over `my_script.d.ts` in module resolution, so leaving it would keep your editor on the old types with nothing to show for it. Only files that start with a header tstogd writes are ever removed, so a file you write yourself is never deleted — though one at the path of an addon that is still generated is overwritten on the next run. To keep hand-fixed typings for an addon, exclude it first (see the [FAQ](../README.md)).
+
+Problems in the generated declarations are reported under an `ADDON` heading as warnings and never fail the run: addon code is third-party, and one malformed addon shouldn't block your build. A warning is shown again on later runs that reuse the cached result, so it doesn't disappear just because nothing changed.
+
+This command is run automatically by `convert` (every run), `watch` (first run) and `initial-convert-gd-to-ts`. It can also be run standalone.
+
+> Addon typings are cached by the contents of the addon files alone. When something outside `addons/` that an addon's types depend on changes — your Godot typings (after `generate-gdscript-global-typings`), a project script the addon extends or uses, your `tsconfig.json` — run `tstogd clear-cache`, or `convert --no-cache` once, so the addon declarations are rebuilt against it.
 
 ## `tstogd generate-gdscript-global-typings`
 

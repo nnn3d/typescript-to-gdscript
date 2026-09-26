@@ -241,19 +241,19 @@ describe('addon freshness', () => {
     tmpDir = makeTmpDir();
     const cache = new ProjectCache(join(tmpDir, 'cache'));
     const gd = writeFile(tmpDir, 'addon.gd', 'gd');
-    const ts = writeFile(tmpDir, 'addon.ts', 'ts');
-    const dts = writeFile(tmpDir, 'addon.d.ts', 'dts');
-    expect(cache.isAddonFresh(gd, ts, dts)).toBe(false);
+    const decl = writeFile(tmpDir, 'addon.d.ts', 'decl');
+    const dts = writeFile(tmpDir, 'addon.gd.d.ts', 'dts');
+    expect(cache.isAddonFresh(gd, decl, dts)).toBe(false);
   });
 
   it('returns true after update with unchanged files', () => {
     tmpDir = makeTmpDir();
     const cache = new ProjectCache(join(tmpDir, 'cache'));
     const gd = writeFile(tmpDir, 'addon.gd', 'gd code');
-    const ts = writeFile(tmpDir, 'addon.ts', 'ts code');
-    const dts = writeFile(tmpDir, 'addon.d.ts', 'dts code');
-    cache.updateAddon(gd, ts, dts);
-    expect(cache.isAddonFresh(gd, ts, dts)).toBe(true);
+    const decl = writeFile(tmpDir, 'addon.d.ts', 'decl code');
+    const dts = writeFile(tmpDir, 'addon.gd.d.ts', 'dts code');
+    cache.updateAddon(gd, decl, dts);
+    expect(cache.isAddonFresh(gd, decl, dts)).toBe(true);
   });
 
   it('returns false when any of the three files changes', () => {
@@ -261,19 +261,36 @@ describe('addon freshness', () => {
     const cache = new ProjectCache(join(tmpDir, 'cache'));
 
     const gd = writeFile(tmpDir, 'a.gd', 'gd');
-    const ts = writeFile(tmpDir, 'a.ts', 'ts');
-    const dts = writeFile(tmpDir, 'a.d.ts', 'dts');
-    cache.updateAddon(gd, ts, dts);
+    const decl = writeFile(tmpDir, 'a.d.ts', 'decl');
+    const dts = writeFile(tmpDir, 'a.gd.d.ts', 'dts');
+    cache.updateAddon(gd, decl, dts);
     writeFileSync(gd, 'gd modified');
-    expect(cache.isAddonFresh(gd, ts, dts)).toBe(false);
+    expect(cache.isAddonFresh(gd, decl, dts)).toBe(false);
 
-    cache.updateAddon(gd, ts, dts);
-    writeFileSync(ts, 'ts modified');
-    expect(cache.isAddonFresh(gd, ts, dts)).toBe(false);
+    cache.updateAddon(gd, decl, dts);
+    writeFileSync(decl, 'decl modified');
+    expect(cache.isAddonFresh(gd, decl, dts)).toBe(false);
 
-    cache.updateAddon(gd, ts, dts);
+    cache.updateAddon(gd, decl, dts);
     writeFileSync(dts, 'dts modified');
-    expect(cache.isAddonFresh(gd, ts, dts)).toBe(false);
+    expect(cache.isAddonFresh(gd, decl, dts)).toBe(false);
+  });
+
+  it('records a script with no declaration as fresh while both files stay absent', () => {
+    // A script TypeScript wrote no declaration for — an error in its own
+    // code — must be cacheable, or one such addon disables the cache.
+    tmpDir = makeTmpDir();
+    const cache = new ProjectCache(join(tmpDir, 'cache'));
+    const gd = writeFile(tmpDir, 'b.gd', 'gd');
+    const decl = join(tmpDir, 'b.d.ts');
+    const dts = join(tmpDir, 'b.gd.d.ts');
+
+    cache.updateAddon(gd, null, null);
+    expect(cache.isAddonFresh(gd, decl, dts)).toBe(true);
+
+    // A declaration appearing where none was recorded means it's stale.
+    writeFileSync(decl, 'decl');
+    expect(cache.isAddonFresh(gd, decl, dts)).toBe(false);
   });
 });
 

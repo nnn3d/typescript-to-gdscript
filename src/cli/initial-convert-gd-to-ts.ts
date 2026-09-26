@@ -7,6 +7,7 @@ import { runTsHelpers } from '../converter/gd-to-ts/ts-helpers.ts';
 import { collectAllSignalHandlers, findSceneFiles } from '../typings/scenes.ts';
 import { resolveConfig, resolveRegistry } from '../config/index.ts';
 import { debugLog, resolveFiles, generateAllTypings } from './helpers.ts';
+import { printDiagnostics } from '../checker/index.ts';
 
 export function registerInitialConvertGdToTsCommand(program: Command): void {
   program
@@ -154,10 +155,11 @@ export function registerInitialConvertGdToTsCommand(program: Command): void {
       });
 
       // Generate class typings + scene typings + addon typings from the converted TS files
-      generateAllTypings({
+      const addonDiagnostics = generateAllTypings({
         ...cfg,
         tsFiles: tsOutputFiles,
       });
+      printDiagnostics(addonDiagnostics, 'ADDON');
 
       // Run TS-based post-processing helpers.
       if (tsOutputFiles.length > 0) {

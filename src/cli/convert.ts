@@ -6,6 +6,7 @@ import { createTsProgram } from '../parser/typescript/index.ts';
 import { resolveConfig, resolveGodotPath } from '../config/index.ts';
 import { ProjectCache } from '../cache/index.ts';
 import { isConversionErrorSeverity } from '../converter/common/index.ts';
+import type { TransformDiagnostic } from '../converter/common/index.ts';
 import { debugLog, resolveFiles, generateAllTypings } from './helpers.ts';
 import {
   collectProjectDiagnostics,
@@ -117,6 +118,7 @@ export function registerConvertCommand(program: Command): void {
 
       let hasErrors = false;
       let skipped = 0;
+      let addonDiagnostics: TransformDiagnostic[] = [];
 
       if (!noEmit) {
         // ── Write mode ───────────────────────────────────��─────
@@ -203,7 +205,14 @@ export function registerConvertCommand(program: Command): void {
           cache.save();
         }
 
-        generateAllTypings({ ...cfg, tsFiles: resolvedFiles });
+        // `--no-cache` means no reads and no writes for typings too — the
+        // addon cache in particular, since cached addon declarations don't
+        // see changes outside `addons/` and `--no-cache` is the way around it.
+        addonDiagnostics = generateAllTypings({
+          ...cfg,
+          tsFiles: resolvedFiles,
+          cacheDir: cache ? cfg.cacheDir : undefined,
+        });
       }
 
       // ── Diagnostic check ────────────────────────────────────
@@ -240,16 +249,24 @@ export function registerConvertCommand(program: Command): void {
         printDiagnostics(checkResult.tsDiagnostics, 'TS');
         printDiagnostics(checkResult.converterDiagnostics, 'CONV');
         printDiagnostics(checkResult.godotDiagnostics, 'GD');
+        printDiagnostics(addonDiagnostics, 'ADDON');
 
+        // Addon diagnostics deliberately don't feed `hasReportableErrors`:
+        // they're always warnings, because the user can't fix third-party
+        // addon code and a broken one shouldn't block their build.
         if (hasReportableErrors(checkResult)) hasErrors = true;
 
-        const summary = summarizeDiagnostics(checkResult);
+        const summary = summarizeDiagnostics(checkResult, addonDiagnostics);
         if (summary) {
           console.log('\nCheck complete:');
           console.log(summary);
         } else {
           console.log('\nCheck complete: no issues found.');
         }
+      } else {
+        // Addon diagnostics come from typings generation, not the check
+        // phase, so `--no-check` must not swallow them along with it.
+        printDiagnostics(addonDiagnostics, 'ADDON');
       }
 
       if (hasErrors) process.exit(1);

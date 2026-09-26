@@ -118,12 +118,16 @@ export function resourceResPathToOutputFile(resPath: string): string {
  * `.ts` and emit no extension at all. Callers that need the original
  * `.ts` form (for `declare module "<path>"`) can re-append it; see
  * `tsModulePath` in `src/typings/scenes.ts`.
+ *
+ * `.d.ts` is stripped too: addon typings point at emitted declarations
+ * rather than at converted sources, and the same extensionless
+ * specifier has to resolve to either form.
  */
 export function computeTsImport(outputDir: string, fromOutputFile: string, tsAbsPath: string): string {
   const fromAbsDir = resolve(outputDir, dirname(fromOutputFile));
   let rel = relative(fromAbsDir, tsAbsPath).replace(/\\/g, '/');
   if (!rel.startsWith('.')) rel = './' + rel;
-  return rel.replace(/\.ts$/, '');
+  return rel.replace(/\.(d\.)?ts$/, '');
 }
 
 /** Convert an absolute file path to a res:// path relative to rootDir */

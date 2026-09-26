@@ -195,7 +195,12 @@ export async function collectProjectDiagnostics(
 
 // ─── Output helpers ───────────────────────────────────────────
 
-export type DiagnosticSource = 'TS' | 'CONV' | 'GD';
+/**
+ * `ADDON` covers the generated addon declarations. Its diagnostics are
+ * always warnings: addon code is third-party, so a broken addon reports
+ * but does not fail the build — see `hasReportableErrors`.
+ */
+export type DiagnosticSource = 'TS' | 'CONV' | 'GD' | 'ADDON';
 
 /** Indent each line of `message` with `prefix`, preserving line breaks. */
 function indentMessage(message: string, prefix: string): string {
@@ -236,19 +241,29 @@ function formatCounts(c: DiagnosticCounts): string {
  * everything is clean (caller decides what to print in that case).
  *
  * Example output:
- *   TS:   2 error(s), 1 warning(s)
- *   CONV: 1 error(s), 2 type-error(s)
- *   GD:   2 error(s)
+ *   TS   : 2 error(s), 1 warning(s)
+ *   CONV : 1 error(s), 2 type-error(s)
+ *   GD   : 2 error(s)
+ *   ADDON: 1 warning(s)
+ *
+ * Addon diagnostics are passed separately: they come from typings
+ * generation, which runs before the check phase and so isn't part of
+ * `CheckResult`.
  */
-export function summarizeDiagnostics(result: CheckResult): string | null {
+export function summarizeDiagnostics(
+  result: CheckResult,
+  addonDiagnostics: TransformDiagnostic[] = [],
+): string | null {
   const ts = countByseverity(result.tsDiagnostics);
   const conv = countByseverity(result.converterDiagnostics);
   const gd = countByseverity(result.godotDiagnostics);
+  const addon = countByseverity(addonDiagnostics);
 
   const groups: Array<{ label: string; counts: DiagnosticCounts }> = [
-    { label: 'TS  ', counts: ts },
-    { label: 'CONV', counts: conv },
-    { label: 'GD  ', counts: gd },
+    { label: 'TS   ', counts: ts },
+    { label: 'CONV ', counts: conv },
+    { label: 'GD   ', counts: gd },
+    { label: 'ADDON', counts: addon },
   ];
 
   const visible = groups.filter(

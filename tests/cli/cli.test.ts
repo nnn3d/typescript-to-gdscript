@@ -264,9 +264,9 @@ describe('CLI: convert cache modes', () => {
 
   /**
    * Keys of the `tsToGd` section of cache.json, or [] when the manifest
-   * doesn't exist. NB: cache.json itself is written unconditionally by
-   * typings generation (it has its own cache section), so tests must
-   * assert on `tsToGd` entries — not on the file's existence.
+   * doesn't exist. NB: cache.json is also written by typings generation
+   * (it has its own cache section) whenever the cache is on, so tests of
+   * the conversion cache assert on `tsToGd` entries, not on the file.
    */
   function tsToGdCacheKeys(): string[] {
     const manifest = join(cacheDir, 'cache.json');
@@ -305,10 +305,17 @@ describe('CLI: convert cache modes', () => {
 
   it('--no-cache: nothing written to cache dir', async () => {
     const { input } = setup();
+    // An addon, so typings generation has something to cache too.
+    mkdirSync(join(tmpDir, 'addons', 'Demo'), { recursive: true });
+    writeFileSync(
+      join(tmpDir, 'addons', 'Demo', 'widget.gd'),
+      'extends Node\nclass_name Widget\n\nvar hp: int = 1\n',
+    );
 
     const result = await runCliRaw(convertArgs(input, '--no-cache'));
     expect(result.exitCode).toBe(0);
-    expect(tsToGdCacheKeys().some((k) => k.endsWith('/valid.ts'))).toBe(false);
+    // Not even the typings sections: no manifest at all.
+    expect(existsSync(join(cacheDir, 'cache.json'))).toBe(false);
   }, 60000);
 });
 

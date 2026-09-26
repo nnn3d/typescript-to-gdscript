@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import { resolve } from 'path';
-import { collectProjectDiagnostics } from '../../src/checker/index.ts';
+import {
+  collectProjectDiagnostics,
+  summarizeDiagnostics,
+} from '../../src/checker/index.ts';
+import type { CheckResult } from '../../src/checker/index.ts';
 import { mkdtempSync, rmSync, writeFileSync, mkdirSync } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
@@ -62,5 +66,32 @@ describe('collectProjectDiagnostics', () => {
     } finally {
       rmSync(tmp, { recursive: true, force: true });
     }
+  });
+});
+
+describe('summarizeDiagnostics', () => {
+  const warning = (file: string) => ({
+    message: 'TS2507: not a constructor',
+    severity: 'warning' as const,
+    file,
+    line: 0,
+    column: 0,
+  });
+  const empty: CheckResult = {
+    tsDiagnostics: [],
+    converterDiagnostics: [],
+    godotDiagnostics: [],
+    staleFiles: [],
+  };
+
+  it('counts addon diagnostics in their own group', () => {
+    const summary = summarizeDiagnostics(empty, [warning('child.d.ts')]);
+    expect(summary).toContain('ADDON');
+    expect(summary).toContain('1 warning(s)');
+  });
+
+  it('stays clean when there are no addon diagnostics either', () => {
+    expect(summarizeDiagnostics(empty)).toBeNull();
+    expect(summarizeDiagnostics(empty, [])).toBeNull();
   });
 });

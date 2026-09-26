@@ -8,6 +8,7 @@ import ts from 'typescript';
 import type { GodotClassRegistry } from '../../../typings/godot-registry.ts';
 import type { SourceFix } from '../ts-helpers.ts';
 import { findNodeAt } from './explicit-convert.ts';
+import { typeTextForSource } from './type-text.ts';
 
 /**
  * TS error codes for class properties that need type/initializer fixes.
@@ -85,7 +86,8 @@ export function inferTypeFromExpression(
   // their general type rather than pinning to the specific literal value.
   let type = checker.getTypeAtLocation(expr);
   type = checker.getBaseTypeOfLiteralType(type);
-  return checker.typeToString(
+  return typeTextForSource(
+    checker,
     type,
     expr,
     ts.TypeFormatFlags.NoTruncation | ts.TypeFormatFlags.UseFullyQualifiedType,

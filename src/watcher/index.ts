@@ -6,11 +6,8 @@ import ts from 'typescript';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { createTsProgram } from '../parser/typescript/index.ts';
 import { validateGdFiles } from '../godot-validate/index.ts';
-import {
-  generateTypings,
-  generateAddonTypings,
-  generateFileTypings,
-} from '../typings/scenes.ts';
+import { generateTypings, generateFileTypings } from '../typings/scenes.ts';
+import { generateAddonTypings } from '../typings/addons.ts';
 import { shouldIgnore } from '../config/index.ts';
 import { ProjectCache } from '../cache/index.ts';
 import { isConversionErrorSeverity } from '../converter/common/index.ts';
@@ -442,13 +439,23 @@ export class Watcher {
         godotTypingsDir: this.options.godotTypingsDir,
         generateGlobalClassTypes: this.options.generateGlobalClassTypes,
       });
-      generateAddonTypings({
+      const addonResult = generateAddonTypings({
         rootDir: this.options.rootDir,
         outputDir: typingsDir,
         ignore: this.options.ignore,
         cache: this.cache,
         onDebug,
+        tsConfigPath: this.options.tsConfigPath,
       });
+      // Addon problems go through the watcher's own log rather than the
+      // CLI's `printDiagnostics`, and stay warnings — a third-party addon
+      // the user can't fix must not look like a failure of their build.
+      for (const d of addonResult.diagnostics) {
+        // Position as the other watcher messages give it, when there is
+        // one: a diagnostic mapped back to the addon's `.gd` has none.
+        const at = d.line > 0 ? ` (${d.line}:${d.column})` : '';
+        this.log(d.file, `[ADDON] ${d.message}${at}`, d.severity);
+      }
       return;
     }
 

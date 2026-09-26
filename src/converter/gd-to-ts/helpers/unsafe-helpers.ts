@@ -9,6 +9,7 @@ import ts from 'typescript';
 import type { SourceFix } from '../ts-helpers.ts';
 import { findNodeAt } from './explicit-convert.ts';
 import { findEnclosingClass } from './ready-field-types.ts';
+import { typeTextForSource } from './type-text.ts';
 
 // ─── Extends Type Helper ─────────────────────────────────────
 
@@ -134,7 +135,8 @@ export function collectExtendsTypeFixes(
           parentParam,
           parentParamDecl,
         );
-        typeText = checker.typeToString(
+        typeText = typeTextForSource(
+          checker,
           parentType,
           method,
           ts.TypeFormatFlags.NoTruncation |

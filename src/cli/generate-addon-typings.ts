@@ -1,8 +1,9 @@
 import type { Command } from 'commander';
 import { resolve } from 'path';
-import { generateAddonTypings } from '../typings/scenes.ts';
+import { generateAddonTypings } from '../typings/addons.ts';
 import { resolveConfig } from '../config/index.ts';
 import { ProjectCache } from '../cache/index.ts';
+import { printDiagnostics } from '../checker/index.ts';
 import { debugLog } from './helpers.ts';
 
 export function registerGenerateAddonTypingsCommand(program: Command): void {
@@ -23,7 +24,7 @@ export function registerGenerateAddonTypingsCommand(program: Command): void {
       const outputDir = opts.output ? resolve(opts.output) : cfg.typingsDir;
       const cache = new ProjectCache(cfg.cacheDir);
 
-      const writtenFiles = generateAddonTypings({
+      const { writtenFiles, diagnostics } = generateAddonTypings({
         rootDir: cfg.rootDir,
         outputDir,
         ignore: cfg.ignore,
@@ -31,6 +32,7 @@ export function registerGenerateAddonTypingsCommand(program: Command): void {
         onDebug: debugLog,
         tsConfigPath: cfg.tsconfig ? resolve(cfg.tsconfig) : undefined,
       });
+      printDiagnostics(diagnostics, 'ADDON');
       debugLog(
         `Generated ${writtenFiles.length} addon typings files in ${outputDir}`,
       );

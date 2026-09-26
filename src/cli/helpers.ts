@@ -5,9 +5,11 @@
 import { readdirSync, statSync, existsSync, writeFileSync, globSync } from 'fs';
 import { join, resolve } from 'path';
 import { shouldIgnore } from '../config/index.ts';
-import { generateTypings, generateAddonTypings } from '../typings/scenes.ts';
+import { generateTypings } from '../typings/scenes.ts';
+import { generateAddonTypings } from '../typings/addons.ts';
 import { ProjectCache } from '../cache/index.ts';
 import { TSTOGD_MODULES_DIR } from '../external-packages/index.ts';
+import type { TransformDiagnostic } from '../converter/common/index.ts';
 
 /**
  * CLI-scoped debug flag. Set once at CLI startup by the `preAction` hook in
@@ -177,10 +179,10 @@ export function generateAllTypings(cfg: {
   godotTypingsDir?: string;
   /** See `ConverterOptions.generateGlobalClassTypes`. */
   converterOptions?: { generateGlobalClassTypes?: boolean };
-}): void {
+}): TransformDiagnostic[] {
   const tsFiles =
     cfg.tsFiles ?? findTsFiles(cfg.tsDir, cfg.rootDir, cfg.ignore);
-  if (tsFiles.length === 0) return;
+  if (tsFiles.length === 0) return [];
 
   const cache = cfg.cacheDir ? new ProjectCache(cfg.cacheDir) : undefined;
 
@@ -200,7 +202,7 @@ export function generateAllTypings(cfg: {
     generateGlobalClassTypes: cfg.converterOptions?.generateGlobalClassTypes,
   });
 
-  const addonFiles = generateAddonTypings({
+  const addonResult = generateAddonTypings({
     rootDir: cfg.rootDir,
     outputDir: cfg.typingsDir,
     ignore: cfg.ignore,
@@ -210,8 +212,10 @@ export function generateAllTypings(cfg: {
   });
 
   debugLog(
-    `Generated ${writtenFiles.length + addonFiles.length} typings files in ${cfg.typingsDir}`,
+    `Generated ${writtenFiles.length + addonResult.writtenFiles.length} typings files in ${cfg.typingsDir}`,
   );
+
+  return addonResult.diagnostics;
 }
 
 /** Helper functions for generate-gdscript-global-typings command */

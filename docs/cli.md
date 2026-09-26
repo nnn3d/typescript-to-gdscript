@@ -72,18 +72,19 @@ Options:
 
 ### Diagnostic modes
 
-After converting, `convert` runs a full three-source diagnostic check unless disabled:
+After converting, `convert` runs a full three-source diagnostic check unless disabled, and also reports problems found while generating addon typings:
 
 | Source     | Label             | Notes                                                                                        |
 | ---------- | ----------------- | -------------------------------------------------------------------------------------------- |
 | TypeScript | `[TS:severity]`   | Semantic + syntactic errors (requires `--tsconfig`; noise codes TS2434/2435/2449 suppressed) |
 | Converter  | `[CONV:severity]` | Errors and warnings from the TS→GD transformer                                               |
 | Godot      | `[GD:severity]`   | Full-project `godot --check-only` (requires `--godot-path` and `project.godot`)              |
+| Addons     | `[ADDON:warning]` | Problems in the generated addon typings — always warnings, never fail the run                |
 
 Extra flags:
 
 - `--no-emit` — Dry-run: convert in memory, report stale `.gd` outputs, do not write files. Godot validates existing `.gd` files on disk. Note: for files flagged as stale, Godot errors are reported at `.gd` positions (no source-map remap to `.ts` — the in-memory map doesn't match what's on disk).
-- `--no-check` — Skip the post-convert diagnostic check entirely (write files only)
+- `--no-check` — Skip the post-convert diagnostic check (write files only). Addon warnings still print: they come from typings generation, not the check.
 - `--godot-path <path>` — Path to Godot executable (enables GDScript validation)
 - `--project-root <dir>` — Godot project root for shared-package links and validation
 
@@ -220,7 +221,7 @@ Details in [Typings](typings.md#tstogd-generate-gdscript-global-typings).
 
 ## `tstogd generate-addon-typings`
 
-Generate typings for third-party GDScript addons under `addons/`. Converts each addon `.gd` to `.ts`, then emits `.gd.d.ts` with global class declarations so addon classes are usable from your TypeScript.
+Generate typings for third-party GDScript addons under `addons/`. Writes a declaration (`.d.ts`) for each addon `.gd`, plus a `.gd.d.ts` with global class declarations so addon classes are usable from your TypeScript. Details in [Typings](typings.md#tstogd-generate-addon-typings).
 
 ```bash
 tstogd generate-addon-typings

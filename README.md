@@ -433,9 +433,9 @@ Either way, **please open a GitHub issue** with a small before/after example —
 
 Addon typings are produced by automatic GD→TS conversion, which can't always get a third-party addon perfect. To fix it:
 
-1. Move that addon's generated typings **out of** the auto-generated typings folder (so a re-run won't regenerate over your edits).
-2. Fix the `.ts` / `.d.ts` by hand.
-3. Add the addon to `exclude` in `tstogd.json` so it's skipped on future runs.
+1. Stop `watch` if it's running — make both changes below before tstogd runs again.
+2. Add the addon to `exclude` in `tstogd.json`, so its typings are no longer regenerated over your edits.
+3. Fix its typings by hand. Each script has two files in the typings folder — `<name>.d.ts` and `<name>.gd.d.ts` — and you need both. Delete the `// AUTO-GENERATED` line at the top of each: tstogd never deletes a file without it, while one that still has it is removed as stale once the addon is excluded.
 
 And again — **open a GitHub issue** so the addon-conversion path can be improved for your case.
 

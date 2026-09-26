@@ -21,6 +21,7 @@ import {
   collectUnsafeNonNullFixes,
 } from './helpers/unsafe-helpers.ts';
 import { collectNullableFixes } from './helpers/nullable.ts';
+import { collectImplicitNullReturnFixes } from './helpers/implicit-null-return.ts';
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -46,6 +47,16 @@ export interface TsHelperOptions {
    * internals we can't type-check for null flow.
    */
   addonMode?: boolean;
+  /**
+   * Extra program inputs that are type-checked against but never fixed —
+   * in addon mode, the generated `.gd.d.ts` that declare the addon classes
+   * globally. Without them a reference from one addon to another resolves
+   * to whatever an earlier run left in the typings folder (or to nothing on
+   * a first run), and the same input yields different signatures run to run.
+   */
+  extraFiles?: string[];
+  /** Narrows the roots taken from the tsconfig; see `createTsProgram`. */
+  filterConfigRoots?: (file: string) => boolean;
 }
 
 export interface TsHelperResult {
@@ -117,7 +128,19 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
   /** Run a set of fix collectors in a multi-pass loop until convergence. */
   const runFixLoop = (collectors: NamedCollector[], label?: string) => {
     for (let pass = 0; pass < MAX_FIX_PASSES; pass++) {
-      const program = createTsProgram({ rootDir, files, tsConfigPath });
+      // Addon sources sit in a temp dir outside the project, so the
+      // tsconfig's own file set can't reach them — they have to be added
+      // as roots or every fix collector silently sees nothing. The same
+      // goes for `extraFiles` in any mode: asking for them and getting a
+      // program without them would be a silent no-op.
+      const extraFiles = options.extraFiles ?? [];
+      const program = createTsProgram({
+        rootDir,
+        files: [...files, ...extraFiles],
+        tsConfigPath,
+        includeFilesAsRoots: addonMode || extraFiles.length > 0,
+        filterConfigRoots: options.filterConfigRoots,
+      });
 
       const filePaths = new Set<string>();
       for (const sf of program.getSourceFiles()) {
@@ -211,6 +234,19 @@ export function runTsHelpers(options: TsHelperOptions): TsHelperResult {
             name: 'nullable',
             collect: (program: ts.Program, filePaths: Set<string>) =>
               collectNullableFixes(program, filePaths, registry, { addonMode }),
+          },
+        ]
+      : []),
+    // Addon mode only, for now: the annotation it writes is what reaches
+    // the addon's declaration, and addon `.ts` never goes back through
+    // TS→GD. In migrated user code it would — and TS→GD currently renders
+    // `number | null` as `-> float`, which Godot rejects on the `null` path.
+    ...(addonMode
+      ? [
+          {
+            name: 'implicit-null-return',
+            collect: (program: ts.Program, filePaths: Set<string>) =>
+              collectImplicitNullReturnFixes(program, filePaths),
           },
         ]
       : []),

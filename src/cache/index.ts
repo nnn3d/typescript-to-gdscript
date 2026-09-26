@@ -79,8 +79,24 @@ interface TsToGdEntry {
 
 interface AddonEntry {
   gdHash: string;
-  tsHash: string;
-  dtsHash: string;
+  /**
+   * Hash of the emitted `<name>.d.ts`. The converted `.ts` it used to
+   * track never reaches the typings tree any more — it lives and dies in
+   * a temp dir — so the declaration is what freshness is measured against.
+   *
+   * `null` for both hashes records that no declaration was written for the
+   * script (an error in its own code blocks it) and that the `.gd.d.ts` was
+   * withheld with it. Fresh then means both files are still absent.
+   */
+  declHash: string | null;
+  dtsHash: string | null;
+  /**
+   * Warnings the run reported for this addon script, replayed on a cache
+   * hit. A third-party addon's warning never goes away, and it must not
+   * vanish from the output just because the result was cached. Optional:
+   * absent means none.
+   */
+  diagnostics?: CachedDiagnostic[];
 }
 
 interface TypingsEntry {
@@ -507,32 +523,57 @@ export class ProjectCache {
 
   // ── Addons (GD→TS) ────────────────────────────────────────
 
-  /** Check if an addon file conversion is fresh (gd, ts, d.ts hashes match). */
-  isAddonFresh(gdPath: string, tsPath: string, dtsPath: string): boolean {
+  /** Check if an addon file conversion is fresh (gd, declaration, .gd.d.ts hashes match). */
+  isAddonFresh(gdPath: string, declPath: string, dtsPath: string): boolean {
     const key = this.normKey(gdPath);
     const entry = this.data.addons[key];
     if (!entry) return false;
+    const matches = (path: string, hash: string | null): boolean =>
+      hash === null
+        ? !existsSync(path)
+        : existsSync(path) && hashFile(path) === hash;
     try {
       return (
         hashFile(gdPath) === entry.gdHash &&
-        existsSync(tsPath) &&
-        hashFile(tsPath) === entry.tsHash &&
-        existsSync(dtsPath) &&
-        hashFile(dtsPath) === entry.dtsHash
+        matches(declPath, entry.declHash) &&
+        matches(dtsPath, entry.dtsHash)
       );
     } catch {
       return false;
     }
   }
 
-  /** Update addon cache entry after full pipeline (convert + ts-helpers). */
-  updateAddon(gdPath: string, tsPath: string, dtsPath: string): void {
+  /**
+   * Whether the cache holds addon entries for `.gd` files outside
+   * `current` — i.e. an addon was removed or excluded since the last run.
+   * Addon freshness is all-or-nothing because one addon's types can depend
+   * on another's, and a removal changes that resolution exactly as an
+   * addition does; per-file hashes of the survivors can't see it.
+   */
+  hasAddonEntriesOutside(current: Iterable<string>): boolean {
+    const keys = new Set([...current].map((p) => this.normKey(p)));
+    return Object.keys(this.data.addons).some((key) => !keys.has(key));
+  }
+
+  /** Update addon cache entry after full pipeline (convert + ts-helpers + declaration emit). */
+  updateAddon(
+    gdPath: string,
+    declPath: string | null,
+    dtsPath: string | null,
+    diagnostics: CachedDiagnostic[] = [],
+  ): void {
     const key = this.normKey(gdPath);
     this.data.addons[key] = {
       gdHash: hashFile(gdPath),
-      tsHash: hashFile(tsPath),
-      dtsHash: hashFile(dtsPath),
+      declHash: declPath === null ? null : hashFile(declPath),
+      dtsHash: dtsPath === null ? null : hashFile(dtsPath),
+      ...(diagnostics.length > 0 ? { diagnostics } : {}),
     };
+  }
+
+  /** Warnings recorded for an addon script by the run that produced its cached output. */
+  getAddonDiagnostics(gdPath: string): CachedDiagnostic[] {
+    return this.data.addons[this.normKey(gdPath)]?.diagnostics ?? [];
   }
 
   // ── Typings ────────────────────────────────────────────────

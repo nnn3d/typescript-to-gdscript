@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { execSync } from 'child_process';
 import { join, resolve } from 'path';
 import { readFileSync, globSync } from 'fs';
-import { generateTypings, generateAddonTypings } from '../../src/typings/scenes.js';
+import { generateTypings } from '../../src/typings/scenes.js';
+import { generateAddonTypings } from '../../src/typings/addons.js';
 
 const SCENE_DIR = join(__dirname, 'scene-typings');
 const TYPES_DIR = join(SCENE_DIR, 'types');
@@ -33,7 +34,11 @@ function generateAddons() {
   return generateAddonTypings({
     rootDir: SCENE_DIR,
     outputDir: TYPES_DIR,
-  });
+    // Without this the program has no Godot typings, every reference type
+    // in the declarations degrades to `any`, and the fixtures would pin
+    // that degraded output as if it were correct.
+    tsConfigPath: TSCONFIG_PATH,
+  }).writtenFiles;
 }
 
 /** Read a generated file from the output directory */
@@ -303,13 +308,14 @@ describe('Scene typings generation', () => {
     expect(index).toContain('type GodotConnectionSceneName = keyof GodotConnections;');
   });
 
-  it('should generate addon .ts and .gd.d.ts from addons/ GDScript', () => {
+  it('should generate addon .d.ts and .gd.d.ts from addons/ GDScript', () => {
     const files = generateAddons();
 
-    // Should generate .ts (converted source) and .gd.d.ts (typings) for each addon file
-    expect(files.some(f => f.endsWith('test_addon.ts') && !f.endsWith('.d.ts'))).toBe(true);
+    // Declarations, not sources — `addon-declarations.test.ts` checks that
+    // no converted `.ts` reaches the typings tree.
+    expect(files.some(f => f.endsWith('test_addon.d.ts') && !f.endsWith('.gd.d.ts'))).toBe(true);
     expect(files.some(f => f.endsWith('test_addon.gd.d.ts'))).toBe(true);
-    expect(files.some(f => f.endsWith('addon_helper.ts') && !f.endsWith('.d.ts'))).toBe(true);
+    expect(files.some(f => f.endsWith('addon_helper.d.ts') && !f.endsWith('.gd.d.ts'))).toBe(true);
     expect(files.some(f => f.endsWith('addon_helper.gd.d.ts'))).toBe(true);
 
     // Named addon class should have global class declaration.
@@ -339,19 +345,21 @@ describe('Scene typings generation', () => {
     expect(helperScript).toContain('import type { _$CLASS$_ as ScriptClass } from "./addon_helper"');
     expect(helperScript).toContain('interface _$CLASS$_ extends StaticProps');
 
-    // Converted .ts should have a valid class plus a file-scope native
-    // enum (the new lifted form replaces the legacy `static AddonState
-    // = gd.enum(...)` class member).
-    const addonTs = readOutput('addons/TestAddon/test_addon.ts');
-    expect(addonTs).toContain('export class TestAddon extends Node');
-    expect(addonTs).toContain('enum AddonState { IDLE, RUNNING, STOPPED }');
+    // The emitted declaration carries the class and the file-scope
+    // native enum (the lifted form that replaced the legacy
+    // `static AddonState = gd.enum(...)` class member).
+    const addonDecl = readOutput('addons/TestAddon/test_addon.d.ts');
+    expect(addonDecl).toContain('declare class TestAddon extends Node');
+    expect(addonDecl).toContain('enum AddonState');
+    // Bodies are gone — that's the whole point of shipping declarations.
+    expect(addonDecl).not.toContain('@ts-nocheck');
 
     // The anonymous addon helper exports under the `_$CLASS$_` sentinel.
-    const helperTs = readOutput('addons/TestAddon/addon_helper.ts');
-    expect(helperTs).toContain('export class _$CLASS$_ extends RefCounted');
-    expect(helperTs).not.toContain('export class _AddonHelper');
-    // Cross-file references: addon_helper.ts should reference TestAddon
-    expect(helperTs).toContain('TestAddon');
+    const helperDecl = readOutput('addons/TestAddon/addon_helper.d.ts');
+    expect(helperDecl).toContain('class _$CLASS$_ extends RefCounted');
+    expect(helperDecl).not.toContain('class _AddonHelper');
+    // Cross-file references: addon_helper should reference TestAddon
+    expect(helperDecl).toContain('TestAddon');
   });
 
   it('preserves addon class_name with a leading underscore verbatim and treats it as global', () => {
@@ -366,13 +374,13 @@ describe('Scene typings generation', () => {
     // still applies (covered by the converter unit tests).
     const files = generateAddons();
 
-    expect(files.some(f => f.endsWith('underscore_addon.ts') && !f.endsWith('.d.ts'))).toBe(true);
+    expect(files.some(f => f.endsWith('underscore_addon.d.ts') && !f.endsWith('.gd.d.ts'))).toBe(true);
     expect(files.some(f => f.endsWith('underscore_addon.gd.d.ts'))).toBe(true);
 
-    const ts = readOutput('addons/TestAddon/underscore_addon.ts');
-    expect(ts).toContain('export class _Foo extends RefCounted');
-    expect(ts).not.toContain('G_Foo');
-    expect(ts).not.toContain('_$CLASS$_');
+    const decl = readOutput('addons/TestAddon/underscore_addon.d.ts');
+    expect(decl).toContain('class _Foo extends RefCounted');
+    expect(decl).not.toContain('G_Foo');
+    expect(decl).not.toContain('_$CLASS$_');
 
     const dts = readOutput('addons/TestAddon/underscore_addon.gd.d.ts');
     // Named class — uses the `declare global` path with the original

@@ -14,7 +14,7 @@ import type { TransformDiagnostic } from '../converter/common/index.ts';
  */
 export const NOISE_CODES = new Set([2434, 2435, 2449]);
 
-function flattenDiagnosticMessage(
+export function flattenDiagnosticMessage(
   msg: string | ts.DiagnosticMessageChain,
 ): string {
   if (typeof msg === 'string') return msg;
