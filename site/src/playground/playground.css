@@ -1,8 +1,11 @@
-/* A full-height workspace below the site header, like the TypeScript playground. */
+/* A full-height workspace below the site header, like the TypeScript playground.
+   The height leaves room for the content panel's padding; the zero margin undoes
+   the gap Starlight puts before content, which would make the page scroll. */
 .pg-root {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  margin-top: 0;
   height: calc(100dvh - var(--sl-nav-height) - 1rem);
   min-height: 24rem;
 }
