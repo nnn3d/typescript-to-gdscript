@@ -57,7 +57,7 @@ tstogd generate-typings
 This generates in your `typingsDir`:
 
 - **`.tscn.d.ts`** — Tree type structure for each scene (node types, parent/child relationships, flat paths)
-- **`.gd.d.ts`** — Module augmentation per script with typed `get_node()` overloads
+- **`.gd.d.ts`** — Module augmentation per script with typed `get_node()` overloads. A script is keyed by the `res://` path of the `.gd` that `convert` writes under `gdDir`, the path your scenes attach.
 - **`_resources.d.ts`** — Bundled `GodotResources` entries for all asset files
 - **`_index.d.ts`** — Empty global interfaces (`GodotScripts`, `GodotSceneTrees`, `GodotScenes`, `GodotResources`, `GodotGroups`, `GodotConnections`), the six `keyof` aliases (`GodotResourceName`, `GodotSceneName`, `GodotSceneTreeName`, `GodotScriptName`, `GodotGroupName`, `GodotConnectionSceneName`), and autoload singleton declarations
 

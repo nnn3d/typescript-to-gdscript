@@ -20,6 +20,7 @@ import {
   scriptResPathToOutputFile,
   computeTsImport,
   scanTsFilesForClasses,
+  tsScriptResPath,
   parseAutoloads,
   findSceneFiles,
   findAssetFiles,
@@ -111,7 +112,13 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
 
   let registry;
   try { registry = resolveRegistry({ registryPath: options.registryPath }); } catch { /* optional */ }
-  scanTsFilesForClasses(program, options.files, tsDir, scriptClassMap, registry);
+  scanTsFilesForClasses(
+    program,
+    options.files,
+    (f) => tsScriptResPath(f, { rootDir, tsDir, gdDir: options.gdDir }),
+    scriptClassMap,
+    registry,
+  );
 
   // 2. Find and process all .tscn files
   const sceneFiles = findSceneFiles(scenesDir, rootDir, ignore);
@@ -260,6 +267,8 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
 export interface GenerateFileTypingsOptions {
   rootDir: string;
   tsDir: string;
+  /** GDScript output directory */
+  gdDir: string;
   outputDir: string;
   tsConfigPath?: string;
   scenesDir?: string;
@@ -283,7 +292,7 @@ export function generateFileTypings(
   allTsFiles: string[],
   options: GenerateFileTypingsOptions,
 ): string[] {
-  const { rootDir, tsDir, outputDir, ignore = [], cache } = options;
+  const { rootDir, tsDir, gdDir, outputDir, ignore = [], cache } = options;
   const writtenFiles: string[] = [];
 
   mkdirSync(outputDir, { recursive: true });
@@ -309,7 +318,13 @@ export function generateFileTypings(
     const scriptClassMap = new Map<string, ScriptInfo>();
     let fileRegistry;
     try { fileRegistry = resolveRegistry(); } catch { /* optional */ }
-    scanTsFilesForClasses(program, changedTs, tsDir, scriptClassMap, fileRegistry);
+    scanTsFilesForClasses(
+      program,
+      changedTs,
+      (f) => tsScriptResPath(f, { rootDir, tsDir, gdDir }),
+      scriptClassMap,
+      fileRegistry,
+    );
 
     for (const [scriptResPath, classInfo] of scriptClassMap) {
       const outputFile = scriptResPathToOutputFile(scriptResPath);
@@ -510,7 +525,14 @@ export function generateAddonTypings(options: GenerateAddonTypingsOptions): stri
   // Pass 2: Create TS program from addon .ts files, scan for classes
   const scriptClassMap = new Map<string, ScriptInfo>();
   const addonProgram = createTsProgram({ rootDir: outputDir, files: addonTsPaths });
-  scanTsFilesForClasses(addonProgram, addonTsPaths, outputDir, scriptClassMap, registry, true);
+  scanTsFilesForClasses(
+    addonProgram,
+    addonTsPaths,
+    (f) => absPathToResPath(f.replace(/\.ts$/, '.gd'), outputDir),
+    scriptClassMap,
+    registry,
+    true,
+  );
 
   // Pass 3: Generate .gd.d.ts for each addon script. Addons always opt
   // into `declare global` so their classes are usable in the consuming

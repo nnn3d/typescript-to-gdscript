@@ -456,6 +456,7 @@ export class Watcher {
     generateFileTypings(changedFiles, [...this.tsFiles], {
       rootDir: this.options.rootDir,
       tsDir: this.tsDir,
+      gdDir: this.gdDir,
       outputDir: typingsDir,
       tsConfigPath: this.options.tsConfigPath,
       scenesDir: this.options.scenesDir ?? this.options.rootDir,

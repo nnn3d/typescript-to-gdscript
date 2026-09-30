@@ -131,6 +131,19 @@ export function absPathToResPath(absPath: string, rootDir: string): string {
   return 'res://' + relative(rootDir, absPath).replace(/\\/g, '/');
 }
 
+/**
+ * The res:// path of the `.gd` a project `.ts` converts to: `convert` writes
+ * it under `gdDir` at the path the `.ts` has under `tsDir`. Scenes attach
+ * that path, so the script's typings must be keyed by it.
+ */
+export function tsScriptResPath(
+  tsPath: string,
+  dirs: { rootDir: string; tsDir: string; gdDir: string },
+): string {
+  const gdPath = resolve(dirs.gdDir, relative(dirs.tsDir, tsPath).replace(/\.ts$/, '.gd'));
+  return absPathToResPath(gdPath, dirs.rootDir);
+}
+
 // ─── Signal Handler Resolution ──────────────────────────────
 
 /**
@@ -491,7 +504,8 @@ function registryExtendsNode(name: string, registry: GodotClassRegistry): boolea
 export function scanTsFilesForClasses(
   program: ts.Program,
   files: string[],
-  baseDir: string,
+  /** The res:// path of the `.gd` script a scanned `.ts` file stands for. */
+  scriptResPathOf: (tsPath: string) => string,
   scriptClassMap: Map<string, ScriptInfo>,
   registry?: GodotClassRegistry,
   /**
@@ -565,8 +579,7 @@ export function scanTsFilesForClasses(
       const enums = fileScopeEnums;
       const innerClasses = fileScopeInnerClasses;
 
-      const relPath = relative(baseDir, filePath).replace(/\\/g, '/');
-      const scriptResPath = 'res://' + relPath.replace(/\.ts$/, '.gd');
+      const scriptResPath = scriptResPathOf(filePath);
 
       scriptClassMap.set(scriptResPath, {
         className,
