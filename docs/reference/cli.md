@@ -1,4 +1,4 @@
-[← Back to README](../README.md)
+[← Back to README](../../README.md)
 
 > Brief: full reference for every `tstogd` CLI command and its flags.
 
@@ -177,7 +177,7 @@ Arguments / options:
 - `--emit-on-error` — Write output files even when conversion errors occur (errors inlined as comments).
 - `-f, --force` — Overwrite existing `.ts` outputs. Without it, files whose `.ts` already exists are skipped and the command exits non-zero.
 
-**Where files come from and go:** input is resolved relative to `gdDir`; each `<gdDir>/path/to/x.gd` is written to `<tsDir>/path/to/x.ts`. Full details + the post-conversion helpers in [GD-to-TS migration](gd-to-ts-migration.md#tstogd-initial-convert-gd-to-ts).
+**Where files come from and go:** input is resolved relative to `gdDir`; each `<gdDir>/path/to/x.gd` is written to `<tsDir>/path/to/x.ts`. Full details + the post-conversion helpers in [GD-to-TS migration](../guide/migrating-from-gdscript.md).
 
 ## `tstogd generate-typings`
 
@@ -255,6 +255,6 @@ Godot editor-settings configuration and per-editor command examples in [IDE inte
 
 ## See also
 
-- [GD-to-TS migration](gd-to-ts-migration.md) — `initial-convert-gd-to-ts` and the post-conversion helpers
+- [GD-to-TS migration](../guide/migrating-from-gdscript.md) — `initial-convert-gd-to-ts` and the post-conversion helpers
 - [Typings](typings.md) — `generate-typings`, `generate-gdscript-global-typings`, `generate-addon-typings`
 - [IDE integration](ide-integration.md) — `open-editor` and editor configuration

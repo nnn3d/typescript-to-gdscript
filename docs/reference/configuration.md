@@ -1,4 +1,4 @@
-[← Back to README](../README.md)
+[← Back to README](../../README.md)
 
 > Brief: full `tstogd.json` and `tsconfig.json` reference. For the quick-start setup, `tstogd init` generates both files for you — see [CLI reference](cli.md#tstogd-init).
 
@@ -66,7 +66,7 @@ Create a `tstogd.json` in your project root to configure the converter. Paths ar
 | `lib`              | `boolean`  | Marks this project as a shared tstogd library. Library imports use relative GDScript paths. Defaults to `false`.                                                                                                                                                                                                               |
 | `externalPackages` | `object[]` | Adds shared tstogd folders or changes their mount names. Each item has `from` and optional `to` fields.                                                                                                                                                                                                                        |
 
-> **GD→TS conversion helpers are always-on.** Older revisions of this doc mentioned a `helpers.signalHandler` toggle — it doesn't exist in the source. See [GD-to-TS migration](gd-to-ts-migration.md) for the full helper set; the only user-facing toggle is `--unsafe-use-any` on `initial-convert-gd-to-ts`.
+> **GD→TS conversion helpers are always-on.** Older revisions of this doc mentioned a `helpers.signalHandler` toggle — it doesn't exist in the source. See [GD-to-TS migration](../guide/migrating-from-gdscript.md) for the full helper set; the only user-facing toggle is `--unsafe-use-any` on `initial-convert-gd-to-ts`.
 
 ## Shared packages
 

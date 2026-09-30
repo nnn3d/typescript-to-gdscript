@@ -1,6 +1,6 @@
-[← Back to README](../README.md)
+[← Back to README](../../README.md)
 
-> Brief: detailed transform rules — every TS construct's GDScript mapping. The [README cheat sheet](../README.md#cheat-sheet) covers the must-haves; the [full cheat sheet](#full-cheat-sheet) below adds every advanced helper (`gd.dict`, `gd.getset`, `gd.match`, `gd.eval`, Callable rewrite, …). The sections after that drill into individual rules.
+> Brief: detailed transform rules — every TS construct's GDScript mapping. The [guides](../guide/getting-started.md) cover everyday use; the [full cheat sheet](#full-cheat-sheet) below adds every advanced helper (`gd.dict`, `gd.getset`, `gd.match`, `gd.eval`, Callable rewrite, …). The sections after that drill into individual rules.
 
 # Transform rules
 
@@ -406,14 +406,14 @@ hp: int = 0; // a value type: write the default GDScript uses anyway
 cached: Node | null = null; // may really be absent
 ```
 
-The `!` is TypeScript-only and disappears from the `.gd`. The `@onready` line type-checks as written only with [scene typings](./typings.md), which type `get_node('Sprite2D')` from the scene as a `Sprite2D`. Without them `get_node` returns `Node | null`, which a `Sprite2D` field rejects under `strict`. These are the forms [GD → TS migration](./gd-to-ts-migration.md) produces too, so hand-written and migrated code read alike.
+The `!` is TypeScript-only and disappears from the `.gd`. The `@onready` line type-checks as written only with [scene typings](./typings.md), which type `get_node('Sprite2D')` from the scene as a `Sprite2D`. Without them `get_node` returns `Node | null`, which a `Sprite2D` field rejects under `strict`. These are the forms [GD → TS migration](../guide/migrating-from-gdscript.md) produces too, so hand-written and migrated code read alike.
 
 ## Operators
 
 | TS                                | GD                   | Notes                                                                                                                                                    |
 | --------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `===` / `!==`                     | `==` / `!=`          | TS loose `==` / `!=` are also accepted and emit the same GD operators — GDScript has no coercion-vs-identity distinction. Prefer strict on the TS side.  |
-| `&&` / `\|\|` / `!`               | `and` / `or` / `not` | See [Logical operators](#logical-operators--) for the value-vs-bool nuance.                                                                              |
+| `&&` / `\|\|` / `!`               | `and` / `or` / `not` | See [Logical operators](#logical-operators---) for the value-vs-bool nuance.                                                                             |
 | `**`                              | `**`                 | GDScript also has `**` (power).                                                                                                                          |
 | `\|=` `&=` `^=` `<<=` `>>=` `**=` | the same             | Every compound assignment GDScript has converts as written.                                                                                              |
 | `x++` / `++x` / `x--` / `--x`     | `x += 1` / `x -= 1`  | Only where the value is discarded — a statement, or a `for` incrementor. GDScript's `+=` is a statement, so reading the result is an error.              |
@@ -834,7 +834,7 @@ A `.gd` file with no `class_name` declaration has no global identifier in Godot.
 
 The leading underscore is the marker. A TS class named `_Foo` produces a `.gd` file with no `class_name`.
 
-For addon-mode behaviour (the `_$CLASS$_` sentinel) and the `_Foo` → `G_Foo` escape used when migrating GDScript files that already declare `class_name _Foo`, see [docs/configuration.md](configuration.md#anonymous-classes--advanced-details).
+Addon typings use the `_$CLASS$_` placeholder name instead. When migrating, a GDScript file that already declares `class_name _Foo` gets the TypeScript name `G_Foo`, so the leading underscore keeps meaning "anonymous".
 
 ## Strings and template literals
 
@@ -990,4 +990,4 @@ Use `gd.dict()` when you need a Dictionary with non-string keys (variables, comp
 - **Cannot mix** inline arrow-function bodies with the function-reference form (`get: this.get_x`) in a single call. GDScript itself rejects mixing `get:` bodies with `get = fn_name`.
 - A `value:` default is only valid alongside inline bodies, not the function-reference form.
 
-Full helper reference: [docs/gd-helpers.md](gd-helpers.md#getters-and-setters).
+Full helper reference: [`gd` namespace](gd-helpers.md#getters-and-setters).

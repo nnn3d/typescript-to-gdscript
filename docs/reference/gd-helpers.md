@@ -1,4 +1,4 @@
-[← Back to README](../README.md)
+[← Back to README](../../README.md)
 
 > Brief: complete reference for the `gd` namespace — every helper, its semantics, and its edge cases.
 

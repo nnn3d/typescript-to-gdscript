@@ -4,19 +4,22 @@ Detailed project layout, implementation status, conversion rules, and edge cases
 
 ## Documentation Layout
 
-User-facing docs are split between `README.md` and `docs/`:
+User-facing docs have three layers. All of `docs/` except `docs/superpowers/` is synced to the site (`site/scripts/sync-docs.ts`); the sidebar order is in `site/sidebar.ts`.
 
-- `README.md` — quick-start: tagline + before/after snippet, why-use-it, install + `tstogd init`, manual config pointer, essential CLI, brief transform rules (one class per file, types, imports), `gd` helpers cheat sheet. Designed so a new user doesn't need to open `docs/` to ship a working project.
-- `docs/configuration.md` — full `tstogd.json` + `tsconfig.json` reference, shared-package linking, and addon naming rules
-- `docs/transform-rules.md` — every TS-construct → GDScript mapping: primitive type case mapping, operators, comments (incl. `/* */` → `"""..."""`), constructor, async + `Promise<T>` return unwrapping, Callable `.call()` rewrite, `this`/`self`, constants & static fields, enums (file-scope + class-scope via namespace), inner classes (namespace merging), decorators / annotations (bare + `@gd.*` forms, `@exports` plural rule), abstract classes, signal named-tuple labels, strings & template literals, GD-side shorthand literals (`&`, `^`, `$`, `%`, `:=`), `super` calls, GD→TS implicit `this.` insertion, member ordering, logical operators (both directions), anonymous-class convention, imports → preload, **Restrictions section** (destructuring, for...in, `??`/`?.`, spread, `var`, file-scope decls, multiple classes, missing extends, default/namespace imports, `undefined` type, string enums, Promise misuse, `in` on value/packed types, `gd.dict` / `gd.getset` constraints)
-- `docs/cli.md` — every CLI command and every flag (`init`, `convert`, `watch`, `clear-cache`, diagnostic modes); links to specialized commands in their own files
-- `docs/gd-helpers.md` — full `gd` namespace reference (semantics, rules, edge cases for every helper)
-- `docs/gd-to-ts-migration.md` — `initial-convert-gd-to-ts` + the 5 conversion helpers (signal handler, operator fix, explicit convert, extends type, nullable, ready field types)
-- `docs/typings.md` — `generate-typings`, `generate-gdscript-global-typings`, `generate-addon-typings` + typings tree layout + scene typings features + nullable reference types. (No `generate-class-typings` command exists — global class declarations are produced by `generate-typings` via `converterOptions.generateGlobalClassTypes`.)
-- `docs/ide-integration.md` — TypeScript language service plugin + `tstogd open-editor` + Godot external-editor configuration
-- `docs/development.md` — contributor info: prerequisites, test scripts, regenerating Godot typings, docs site + playground
+- `README.md` — front page on GitHub: pitch, Features, Showcase, one "A taste" TS → GD example, quick start, links into the guides and the reference. Hand-written; the site landing (`site/content/index.mdx`) is hand-written separately, so the pitch and the example exist in both.
+- `docs/guide/` — task-oriented guides, written from GDScript habits, without edge cases that matter to fewer than one project in ten. Basics (`getting-started`, `how-it-works`, `editor-setup`), Writing scripts (`scripts-and-classes`, `variables-and-types`, `functions-and-lambdas`, `signals`, `nodes-and-scenes`, `exports-and-annotations`, `coroutines`, `math-and-value-types`, `arrays-and-dictionaries`, `enums-constants-inner-classes`), Going further (`migrating-from-gdscript`, `shared-packages`, `addons`, `custom-godot-builds`, `escape-hatches`, `caveats`, `faq`).
+- `docs/reference/` — the specification:
+  - `transform-rules.md` — every TS construct → GDScript mapping, plus the Restrictions section (unsupported TS features and why)
+  - `gd-helpers.md` — the full `gd` namespace (semantics, rules, edge cases for every helper)
+  - `cli.md` — every command and flag
+  - `configuration.md` — `tstogd.json` + `tsconfig.json` fields, shared-package linking
+  - `typings.md` — the `generate-*` typings commands, typings tree layout, scene typings, nullable reference types. (No `generate-class-typings` command exists — global class declarations come from `generate-typings` via `converterOptions.generateGlobalClassTypes`.)
+  - `ide-integration.md` — the TypeScript language service plugin, `tstogd open-editor`, Godot external-editor configuration
+- `docs/development.md` — contributors: prerequisites, test scripts, regenerating Godot typings, docs site + playground.
 
-When adding a new feature or CLI flag, update the corresponding `docs/*.md` file (and the README if the feature is user-essential).
+Guide examples written as a ` ```ts ` block directly followed by a ` ```gdscript ` block are converted and compared by `tests/site/doc-examples.test.ts` (`nocheck` in the ts fence opts out); `tests/site/doc-links.test.ts` checks every relative link and `#anchor` in `README.md` and `docs/`.
+
+When adding a new feature or CLI flag, update the matching `docs/reference/` page, and a `docs/guide/` page when users need it in everyday work.
 
 ## Tech Stack
 

@@ -1,4 +1,4 @@
-[← Back to README](../README.md)
+[← Back to README](../../README.md)
 
 > Brief: hook up your editor — the TypeScript language service plugin for live diagnostics, and `tstogd open-editor` for Godot's external-editor integration.
 
