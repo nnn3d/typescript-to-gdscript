@@ -1,4 +1,4 @@
-[← Back to README](../README.md)
+[← Back to README](../../README.md)
 
 > Brief: complete reference for the `gd` namespace — every helper, its semantics, and its edge cases.
 
@@ -14,7 +14,7 @@ class Player extends CharacterBody2D {
 }
 ```
 
-Tuple **element labels** (TypeScript named tuple syntax) become signal argument names in the generated GDScript. Unlabelled tuple elements fall back to `arg1`, `arg2`, …. Always prefer labelled tuples — they give readable signatures in both IDE autocomplete (via TS) and the Godot editor (via GD).
+Tuple **element labels** (TypeScript named tuple syntax) become signal argument names in the generated GDScript. Unlabelled tuple elements fall back to `arg1`, `arg2`, …. Always prefer labelled tuples — they give readable signatures in both IDE autocomplete (via TS) and the Godot editor (via GD). Without a type argument the signal has no arguments (`T` defaults to `[]`), so `emit(42)` or a handler that expects a value is a type error, as it would be in GDScript.
 
 Emitting and connecting:
 
@@ -68,6 +68,8 @@ var dict = {
 ```
 
 The key and value types come from where the result goes, whatever the key type, and the entries are checked against them. `let d: Dictionary<Node, int> = gd.dict([[node, 1]])` is typed, and a string value there is an error; `Dictionary<string, int>` and `Dictionary<int, V>` destinations work the same way. That also makes `gd.dict([])` the empty dictionary for a class key, where `{}` does not type-check: an object literal only fits a dictionary whose keys are strings or numbers. Where nothing typed receives it, the result is an untyped `Dictionary`, so mixed keys work as before.
+
+The key and value types can also be given in the call: `gd.dict<Vector2, int>([[Vector2.ZERO, 1]])` is a `Dictionary<Vector2, int>` wherever it goes, and a key or value of another type is an error. The type arguments leave the GDScript output unchanged.
 
 Constraints (enforced by the converter):
 
@@ -352,7 +354,7 @@ let np = NodePath('Path/To/Node');
 
 ## Promise — GDScript coroutine rules
 
-GDScript has no `Promise` type. `async` / `await` map directly to GDScript's coroutine `await`, but the chained-callback API has no equivalent. The bundled typings mark `Promise.then`, `Promise.catch`, and `Promise.finally` as **`@deprecated`** so your IDE shows a strikethrough as you type, and the converter raises a `type-error` if you call them.
+GDScript has no `Promise` type. `async` / `await` map directly to GDScript's coroutine `await`, but the chained-callback API has no equivalent. The bundled typings mark `Promise.then`, `Promise.catch`, and `Promise.finally` as **`@deprecated`** so your IDE shows a strikethrough as you type, and the converter raises a `type-error` if you call them. There is no `Promise` object either: `new Promise(...)` and `Promise.all(...)` are TypeScript errors.
 
 ```typescript
 async load(): Promise<int> { return 42; }

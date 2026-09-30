@@ -126,7 +126,7 @@ describe('isPlainObjectType — without registry (degraded mode)', () => {
     // Vector2 is a `declare interface` in the real typings; without the
     // registry there is no way to tell it from a user interface, and
     // `vec.get("x")` on a value type crashes at runtime. Correctness
-    // over completeness (AGENTS rule 11): drop the rewrite.
+    // over completeness (AGENTS rule 10): drop the rewrite.
     expect(isPlainObjectType(typeOf('vec'), checker, undefined)).toBe(false);
     expect(isPlainObjectType(typeOf('cfg'), checker, undefined)).toBe(false);
     expect(isPlainObjectType(typeOf('dict'), checker, undefined)).toBe(false);

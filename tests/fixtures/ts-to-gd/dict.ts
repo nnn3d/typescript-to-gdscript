@@ -11,6 +11,12 @@ export class MyClass extends Node {
       ['key', 'value'],
     ]);
 
+    // Explicit key and value types convert to the same literal.
+    let scores = gd.dict<Vector2, int>([
+      [key2, 1],
+      [Vector2.UP, 2],
+    ]);
+
     let dict2 = {
       [key1]: 'value',
       key2: 'value',

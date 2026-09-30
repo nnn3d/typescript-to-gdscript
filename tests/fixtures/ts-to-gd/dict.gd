@@ -11,6 +11,11 @@ func test_dict():
 		key3: "value",
 		"key": "value",
 	}
+	# Explicit key and value types convert to the same literal.
+	var scores = {
+		key2: 1,
+		Vector2.UP: 2,
+	}
 	var dict2 = {
 		key1: "value",
 		"key2": "value",

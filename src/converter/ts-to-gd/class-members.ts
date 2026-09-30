@@ -370,7 +370,7 @@ export function visitMethodDeclaration(
  * `Variant` is what an untyped GDScript variable already is (Godot's
  * own error text for `@export_multiline var x` names the type as
  * "Variant"), so filling it in changes nothing about the program and
- * is not the kind of guess {@link ../../AGENTS.md} rule 11 warns
+ * is not the kind of guess {@link ../../AGENTS.md} rule 10 warns
  * against — it is the only spelling that keeps the file loadable.
  */
 function needsVariantForExport(

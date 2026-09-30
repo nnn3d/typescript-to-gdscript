@@ -16,17 +16,18 @@ import { execSync } from 'child_process';
 // IDE live converter + Godot diagnostics (squiggles on save) and
 // bridges go-to-def / find-usages between the generated shadow classes
 // in `*.gd.d.ts` and their real TypeScript sources.
-// `module: esnext` + `moduleResolution: classic` lets users (and the
+// `module: esnext` + `moduleResolution: bundler` lets users (and the
 // auto-generated typings/imports) write extension-less specifiers like
-// `import { Foo } from "./foo"`. NodeNext's mandatory `.js` extension
-// rule made the generated GD→TS imports awkward (the actual on-disk
-// file is `.ts`, not `.js`), so the project standardizes on classic
-// resolution for the simpler look.
+// `import { Foo } from "./foo"`, and import a shared package by name from
+// `node_modules` (`import { X } from "@acme/pkg/src/x"`). NodeNext's
+// mandatory `.js` extension rule made the generated GD→TS imports awkward
+// (the actual on-disk file is `.ts`, not `.js`); `classic` keeps the
+// extension-less form but never looks into `node_modules`.
 const TSCONFIG_TEMPLATE = `{
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "classic",
+    "moduleResolution": "bundler",
     "noLib": true,
     "strict": true,
     "noEmit": true,
@@ -84,7 +85,9 @@ async function stepTstogdJson(
 
   if (existsSync(configPath)) {
     console.log('\n✓ tstogd.json already exists.');
-    console.log('  See README.md for available configuration options.\n');
+    console.log(
+      '  See https://nnn3d.github.io/typescript-to-gdscript/reference/configuration/ for available configuration options.\n',
+    );
     try {
       const existing = JSON.parse(readFileSync(configPath, 'utf-8'));
       return {
@@ -130,7 +133,9 @@ async function stepTsconfig(
 
   if (existsSync(tsconfigPath)) {
     console.log('\n✓ tsconfig.json already exists.');
-    console.log('  See README.md for recommended TypeScript settings.\n');
+    console.log(
+      '  See https://nnn3d.github.io/typescript-to-gdscript/reference/configuration/ for recommended TypeScript settings.\n',
+    );
     return;
   }
 
@@ -293,9 +298,11 @@ export async function runInit(): Promise<void> {
     console.log('');
     console.log('Next steps:');
     console.log('  1. Create TypeScript files in your source directory');
-    console.log('  2. Run `tstogd convert` to convert TS → GDScript');
-    console.log('  3. Run `tstogd watch` for auto-conversion on save');
-    console.log('  4. See README.md for full documentation');
+    console.log('  2. Run `npx tstogd convert` to convert TS → GDScript');
+    console.log('  3. Run `npx tstogd watch` for auto-conversion on save');
+    console.log(
+      '  4. See https://nnn3d.github.io/typescript-to-gdscript/ for full documentation',
+    );
     console.log('');
   } finally {
     rl.close();

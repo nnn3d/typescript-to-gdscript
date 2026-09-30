@@ -1,0 +1,5 @@
+[
+  { "message": "`in` on an array checks for an index or property in TypeScript", "severity": "error", "line": 7 },
+  { "message": "`in` on an array checks for an index or property in TypeScript", "severity": "error", "line": 10 },
+  { "message": "`in` on an array checks for an index or property in TypeScript", "severity": "error", "line": 13 }
+]

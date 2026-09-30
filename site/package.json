@@ -1,0 +1,26 @@
+{
+  "name": "typescript-to-gdscript-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "tsx scripts/sync-docs.ts && tsx scripts/bundle-typings.ts",
+    "predev": "yarn sync",
+    "dev": "astro dev",
+    "prebuild": "yarn sync",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/preact": "^6.0.5",
+    "@astrojs/starlight": "^0.42.4",
+    "astro": "^7.3.5",
+    "lz-string": "^1.5.0",
+    "monaco-editor": "0.52.2",
+    "path-browserify": "^1.0.1",
+    "preact": "^10.29.8"
+  },
+  "devDependencies": {
+    "@types/path-browserify": "^1.0.3",
+    "tsx": "^4.23.15"
+  }
+}

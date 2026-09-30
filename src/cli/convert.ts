@@ -3,7 +3,7 @@ import { writeFileSync, mkdirSync } from 'fs';
 import { resolve, dirname, relative } from 'path';
 import { convertTsToGd } from '../converter/ts-to-gd/index.ts';
 import { createTsProgram } from '../parser/typescript/index.ts';
-import { resolveConfig, resolveGodotPath } from '../config/index.ts';
+import { resolveConfig, resolveLintGodotPath } from '../config/index.ts';
 import { ProjectCache } from '../cache/index.ts';
 import { isConversionErrorSeverity } from '../converter/common/index.ts';
 import { debugLog, resolveFiles, generateAllTypings } from './helpers.ts';
@@ -34,7 +34,7 @@ export function registerConvertCommand(program: Command): void {
     .option('--tsconfig <path>', 'Path to tsconfig.json')
     .option(
       '--godot-path <path>',
-      'Path to Godot executable (enables GDScript validation)',
+      'Path to Godot executable (default: godotPath, GODOT_PATH, then godot on PATH)',
     )
     .option('--project-root <dir>', 'Godot project root for validation')
     .option(
@@ -209,14 +209,7 @@ export function registerConvertCommand(program: Command): void {
       // ── Diagnostic check ────────────────────────────────────
       if (!noCheck) {
         debugLog('Starting diagnostic check phase');
-        let godotPath: string | undefined;
-        if (!cfg.disableGodotLint) {
-          try {
-            godotPath = resolveGodotPath({ godotPath: cfg.godotPath });
-          } catch {
-            // godotPath unavailable — Godot check skipped
-          }
-        }
+        const godotPath = resolveLintGodotPath(cfg);
         debugLog(
           `Diagnostic check: godotPath=${godotPath ?? '(skipped)'}, tsConfig=${cfg.tsconfig ?? '(none)'}, projectRoot=${projectRoot}`,
         );

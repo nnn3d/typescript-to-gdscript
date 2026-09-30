@@ -168,7 +168,7 @@ export function generateTypings(options: GenerateTypingsOptions): string[] {
 
     const tsImportPath = computeTsImport(outputDir, outputFile, classInfo.tsAbsPath);
     // `declare module "<path>"` matches the user's TS module specifier
-    // exactly. Under `moduleResolution: "classic"` (project default),
+    // exactly. Under `moduleResolution: "bundler"` (project default),
     // user code writes `import "./foo"` (no extension) — so the
     // augmentation target needs to be the same bare form.
     const tsModulePath = tsImportPath;

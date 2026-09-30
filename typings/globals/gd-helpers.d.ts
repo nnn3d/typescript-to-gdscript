@@ -88,8 +88,12 @@ type _ExtractUnaryRet<U> = U extends { ret: infer Ret } ? Ret : never;
 type UnaryOpResult<S extends symbol, L> = _ExtractUnaryRet<OpEntries<S, L>>;
 
 declare const gd: {
-  /** Create a signal. Transforms to `signal name` in GDScript. */
-  readonly signal: <T extends unknown[] = unknown[]>() => Signal<T>;
+  /**
+   * Create a signal. Transforms to `signal name(args)` in GDScript. The type
+   * argument is the argument list as a labelled tuple; without one the
+   * signal has no arguments, like a bare `signal name`.
+   */
+  readonly signal: <T extends unknown[] = []>() => Signal<T>;
 
   /**
    * Godot getter/setter helper. `get` and `set` are required keys — pass
@@ -122,10 +126,15 @@ declare const gd: {
    * from the entries: a key typed `this` or a subclass would make a
    * dictionary TypeScript refuses as `Dictionary<Node, int>` (its key is
    * invariant). With nowhere typed to go, the result is untyped.
+   *
+   * Or name the key and value types in the call: `gd.dict<Vector2, int>([...])`
+   * is a `Dictionary<Vector2, int>` wherever it goes. (Two type arguments
+   * select the second signature; a call without them keeps the first.)
    */
-  readonly dict: <D = Dictionary>(
-    entries: NoInfer<GdDictEntry<NonNullable<D>>>[],
-  ) => D;
+  readonly dict: {
+    <D = Dictionary>(entries: NoInfer<GdDictEntry<NonNullable<D>>>[]): D;
+    <K, V>(entries: [NoInfer<K>, NoInfer<V>][]): Dictionary<K, V>;
+  };
 
   /**
    * GDScript `match` statement. Transforms to `match value:` with pattern cases in GDScript.

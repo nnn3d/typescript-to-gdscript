@@ -11,3 +11,11 @@ export_presets.cfg
 
 # Generated files
 *.generated.d.ts
+
+# Local design/plan docs (never committed)
+docs/superpowers/
+
+# Docs site: generated content and build caches
+site/.astro/
+site/src/content/docs/
+site/src/generated/

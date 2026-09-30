@@ -1,4 +1,4 @@
-[← Back to README](../README.md)
+[← Back to README](../../README.md)
 
 > Brief: hook up your editor — the TypeScript language service plugin for live diagnostics, and `tstogd open-editor` for Godot's external-editor integration.
 
@@ -22,7 +22,7 @@ typescript-to-gdscript ships a TypeScript language service plugin that runs insi
   - `undefined` in function parameter type annotations
   - Argument that may be `undefined`
   - `||`/`&&` used as a non-boolean value
-  - `x in y` where `y` is a value-type primitive (Vector2, Color, Transform2D, etc.), an array (`Array<T>`, `T[]`, `Packed*Array`), a number, or a boolean — GDScript only supports `in` on `Dictionary` and `String`
+  - `x in y` where `y` is a value-type primitive (Vector2, Color, Transform2D, etc.), an array (`Array<T>`, `T[]`, a tuple, `Packed*Array`), a number, or a boolean — only a dictionary keeps `in`'s meaning; on an array use `.has(value)`
   - Call returning `Promise<T>` used as a value without `await` (assigned, passed as argument, returned, etc.) — GDScript has no Promise; an unawaited coroutine resolves to a `GDScriptFunctionState` at runtime
 - **Godot validation errors** (when Godot is available on `PATH`) — type mismatches, unknown functions/methods, parse errors in the generated GDScript. These fire asynchronously ~300–500ms after the converter diagnostics and are merged into the IDE's diagnostic list via an internal tsserver refresh.
 

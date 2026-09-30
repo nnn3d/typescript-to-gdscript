@@ -5,20 +5,32 @@ import type { DiagnosticsTypeInfo } from '../common/index.ts';
 export type { DiagnosticsTypeInfo };
 
 /**
- * Container types that DO support the `in` operator in GDScript. Everything
+ * Container types that support the `in` operator in GDScript. Everything
  * else in the registry's `constructors` list (all Godot variant/value types)
  * is considered banned for use with `in`.
  *
- * `Dictionary` supports `in` (checks key presence).
- * `Array` supports `in` (checks value presence).
+ * `Dictionary` supports `in` (checks key presence, as TS does).
+ * `Array` supports `in`, but it checks for an ELEMENT, where TS checks for an
+ * index or property — rejected separately, see {@link isArrayLikeType}.
  * `Packed*Array` types do NOT support `in`.
- * `String` supports `in` (substring check) but is mapped to `string` primitive.
  */
 const GD_IN_ALLOWED_CONTAINER_TYPES = new Set([
   'Dictionary',
   'Array',
   'ReadonlyArray',
 ]);
+
+const ARRAY_TYPE_NAMES = new Set(['Array', 'ReadonlyArray']);
+
+/** `Array<T>`, `T[]` or a tuple — anything that becomes a GDScript `Array`. */
+export function isArrayLikeType(
+  type: ts.Type,
+  checker: ts.TypeChecker,
+): boolean {
+  const name = (type.getSymbol() ?? type.aliasSymbol)?.getName();
+  if (name && ARRAY_TYPE_NAMES.has(name)) return true;
+  return !!(checker.isArrayType?.(type) || checker.isTupleType?.(type));
+}
 
 /** GDScript primitive types that don't need type annotation on `= null` optional params. */
 const GD_PRIMITIVE_TYPES = new Set(['int', 'float', 'bool', 'String', 'void']);

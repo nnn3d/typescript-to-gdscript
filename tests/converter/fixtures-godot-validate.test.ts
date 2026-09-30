@@ -62,7 +62,7 @@ const SKIP = new Map<string, string>([
  * directions. Unlike SKIP, these fixtures ARE validated: each pins output
  * the converter passes through on purpose, because Godot reports it at
  * parse time and a converter rule would only duplicate that (AGENTS.md
- * rule 11) — so the test asserts Godot does report it, and nothing else.
+ * rule 10) — so the test asserts Godot does report it, and nothing else.
  */
 const EXPECTED_ERRORS = new Map<string, string[]>([
   [

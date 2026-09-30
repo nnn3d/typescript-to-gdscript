@@ -16,4 +16,12 @@ declare class Signal<T extends any[] = any[]> {
   connect(callable: (...args: T) => void, flags?: int): int;
   disconnect(callable: (...args: T) => void): void;
   is_connected(callable: (...args: T) => void): boolean;
+  /**
+   * Types `await signal` only: GDScript signals have no `then`, and being
+   * private keeps a call to it a type error. Godot returns `null` with no
+   * arguments, the value itself with one, and an Array of them with more,
+   * counting the arguments the emit actually passed; see `_GDSignalAwaited`
+   * in `globals/globals.d.ts`.
+   */
+  private then(onfulfilled: (value: _GDSignalAwaited<T>) => void): void;
 }

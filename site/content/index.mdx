@@ -1,0 +1,61 @@
+---
+title: typescript-to-gdscript
+description: Write Godot 4 scripts in TypeScript and convert them to GDScript, with Godot typings and live diagnostics.
+template: splash
+editUrl: false
+hero:
+  tagline: Write Godot 4 scripts in TypeScript. Get plain GDScript out, with full Godot typings, editor autocomplete and converter diagnostics.
+  actions:
+    - text: Try the playground
+      link: /typescript-to-gdscript/playground/
+      icon: right-arrow
+    - text: Get started
+      link: /typescript-to-gdscript/guide/getting-started/
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## TypeScript in, GDScript out
+
+```ts title="TypeScript"
+export class Health extends Node {
+  health_changed = gd.signal<[old_value: int, new_value: int]>();
+
+  @exports max_health: int = 100;
+  health: int = 100;
+}
+```
+
+```gdscript title="GDScript"
+class_name Health
+extends Node
+
+signal health_changed(old_value: int, new_value: int)
+@export
+var max_health: int = 100
+var health: int = 100
+```
+
+<CardGrid>
+  <Card title="Godot typings" icon="seti:typescript">
+    Every Godot class, method and signal is typed, so your editor autocompletes
+    the engine API.
+  </Card>
+  <Card title="Readable output" icon="document">
+    The generated GDScript looks hand-written: one class per file, your comments
+    kept.
+  </Card>
+  <Card title="Live diagnostics" icon="warning">
+    Constructs with no clean GDScript equivalent are reported in your editor,
+    not at runtime.
+  </Card>
+  <Card title="Works with GDScript addons" icon="puzzle">
+    Addons from the Asset Library can stay in GDScript. typescript-to-gdscript
+    generates typings for them, so you can use their classes from TypeScript.
+  </Card>
+</CardGrid>
+
+Already have a GDScript project? You can
+[migrate it to TypeScript](/typescript-to-gdscript/guide/migrating-from-gdscript/)
+with the GD-to-TS converter.

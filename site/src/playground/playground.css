@@ -1,0 +1,199 @@
+/* A full-height workspace below the site header, like the TypeScript playground.
+   The height leaves room for the content panel's padding; the zero margin undoes
+   the gap Starlight puts before content, which would make the page scroll. */
+.pg-root {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0;
+  height: calc(100dvh - var(--sl-nav-height) - 1rem);
+  min-height: 24rem;
+}
+.pg-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: var(--sl-text-sm);
+}
+.pg-toolbar select,
+.pg-toolbar button,
+.pg-fatal button {
+  font: inherit;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--sl-color-gray-4);
+  border-radius: 0.375rem;
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+  cursor: pointer;
+}
+.pg-status {
+  margin-left: auto;
+  color: var(--sl-color-gray-3);
+}
+.pg-panes {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, var(--pg-split, 50%)) 0.5rem minmax(0, 1fr);
+}
+.pg-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+.pg-pane-bar {
+  display: flex;
+  align-items: stretch;
+  min-height: 2rem;
+  background: var(--sl-color-gray-6);
+  border-bottom: 1px solid var(--sl-color-gray-5);
+  font-size: var(--sl-text-sm);
+}
+.pg-pane-title {
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  font-weight: 600;
+}
+.pg-tabs button {
+  font: inherit;
+  padding: 0 0.75rem;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--sl-color-gray-2);
+  cursor: pointer;
+}
+.pg-tabs button[aria-selected='true'] {
+  color: var(--sl-color-white);
+  border-bottom-color: var(--sl-color-accent);
+}
+.pg-count {
+  margin-left: 0.375rem;
+  padding: 0 0.375rem;
+  border-radius: 999px;
+  font-size: var(--sl-text-xs);
+  background: var(--sl-color-red-low);
+  color: var(--sl-color-red-high);
+}
+.pg-out-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.pg-out-panel[hidden] {
+  display: none;
+}
+.pg-divider {
+  cursor: col-resize;
+  touch-action: none;
+  position: relative;
+}
+.pg-divider::after {
+  content: '';
+  position: absolute;
+  inset: 0.5rem auto 0.5rem 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  border-radius: 1px;
+  background: transparent;
+}
+.pg-divider:hover::after,
+.pg-divider:focus-visible::after {
+  background: var(--sl-color-accent);
+}
+.pg-editor {
+  flex: 1;
+  min-height: 0;
+}
+.pg-placeholder {
+  display: grid;
+  place-items: center;
+  color: var(--sl-color-gray-3);
+}
+.pg-dimmed {
+  opacity: 0.5;
+}
+.pg-fatal {
+  padding: 1rem;
+  overflow: auto;
+}
+.pg-fatal pre {
+  white-space: pre-wrap;
+  font-size: var(--sl-text-xs);
+}
+.pg-sides {
+  display: none;
+}
+.pg-out-problems {
+  overflow: auto;
+  padding: 0.25rem 0.75rem;
+}
+.pg-diagnostics {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--sl-text-sm);
+}
+.pg-diagnostics-empty {
+  color: var(--sl-color-gray-3);
+  padding: 0.5rem 0;
+}
+.pg-diag {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: baseline;
+  padding: 0.375rem 0;
+  border-bottom: 1px solid var(--sl-color-gray-6);
+}
+.pg-diag-pos {
+  font-family: var(--sl-font-mono);
+  background: none;
+  border: none;
+  color: var(--sl-color-text-accent);
+  cursor: pointer;
+  padding: 0;
+}
+.pg-diag-tag {
+  font-size: var(--sl-text-xs);
+  padding: 0 0.375rem;
+  border-radius: 0.25rem;
+  background: var(--sl-color-gray-5);
+}
+.pg-diag-error .pg-diag-tag,
+.pg-diag-type-error .pg-diag-tag {
+  background: var(--sl-color-red-low);
+  color: var(--sl-color-red-high);
+}
+.pg-diag-warning .pg-diag-tag {
+  background: var(--sl-color-orange-low);
+  color: var(--sl-color-orange-high);
+}
+.pg-diag-msg {
+  flex: 1;
+  min-width: 12rem;
+}
+@media (max-width: 899px) {
+  .pg-panes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .pg-divider {
+    display: none;
+  }
+  .pg-sides {
+    display: flex;
+    gap: 0.25rem;
+    min-height: 2rem;
+  }
+  .pg-root[data-side='ts'] .pg-pane-output,
+  .pg-root[data-side='output'] .pg-pane-ts {
+    display: none;
+  }
+}

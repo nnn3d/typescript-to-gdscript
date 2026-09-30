@@ -1,4 +1,4 @@
-[← Back to README](../README.md)
+[← Back to README](../../README.md)
 
 > Brief: full `tstogd.json` and `tsconfig.json` reference. For the quick-start setup, `tstogd init` generates both files for you — see [CLI reference](cli.md#tstogd-init).
 
@@ -11,6 +11,9 @@
 ```json
 {
   "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "noLib": true,
     "strict": true,
     "noEmit": true,
@@ -26,6 +29,7 @@
 
 - `noLib: true` disables the standard TypeScript libs — GDScript has a different runtime, so DOM / Node / ES libs would lie to you.
 - `types: []` prevents stray `@types/*` packages from leaking in.
+- `moduleResolution: "bundler"` allows imports without an extension (`./player`) and finds [shared packages](../guide/shared-packages.md#use-a-package) in `node_modules` by name. `"classic"`, which older versions of `tstogd init` wrote, keeps extension-less imports but never looks into `node_modules`.
 - `strict: true` includes `strictBindCallApply`, and the typings rely on it: it gives `call`, `bind` and `callv` on a function value Godot's semantics with the function's own types, so `lam.call(x)` checks `x` and returns what `lam` returns, and `bind` binds from the end. If you turn `strict` off, keep `"strictBindCallApply": true`. Without it TypeScript falls back to the untyped `Callable` surface, and `lam.call(x)` returns `unknown`.
 - The `include` array must reference the package typings directory so Godot classes, global functions, and `gd` helpers resolve.
 - Adjust `src/**/*.ts` to match your `tsDir`, and the `*.d.ts` glob to match your `typingsDir` — **these two must point at the same directory** or your generated scene typings won't be picked up. (`tstogd init` keeps them in sync for you; the value shown here, `src/_typings`, is what `init` writes.)
@@ -59,14 +63,14 @@ Create a `tstogd.json` in your project root to configure the converter. Paths ar
 | `tsconfig`         | `string`   | Path to `tsconfig.json`. Defaults to `rootDir/tsconfig.json` if present.                                                                                                                                                                                                                                                       |
 | `godotPath`        | `string`   | Path to the Godot executable. Falls back to the `GODOT_PATH` env var or `godot` on `PATH`.                                                                                                                                                                                                                                     |
 | `exclude`          | `string[]` | Glob patterns (relative to `rootDir`) for files/folders to exclude from all CLI commands (e.g. `["test/**", "**/*.test.ts"]`). Uses [minimatch](https://github.com/isaacs/minimatch) syntax.                                                                                                                                   |
-| `disableGodotLint` | `boolean`  | Disable Godot CLI validation in `convert`'s post-write check and in the ts-plugin's async Godot pass. Defaults to `false`.                                                                                                                                                                                                     |
+| `disableGodotLint` | `boolean`  | Disable Godot CLI validation in `convert`'s and `watch`'s checks and in the ts-plugin's async Godot pass. Defaults to `false`.                                                                                                                                                                                                 |
 | `cacheDir`         | `string`   | Cache directory (source maps and diagnostics stored inline). Default: `<rootDir>/node_modules/.cache/typescript-to-gdscript` when `node_modules` exists, otherwise an OS temp dir.                                                                                                                                             |
 | `godotTypingsDir`  | `string`   | Override path to Godot engine typings (classes, gd-helpers, globals). Default: the bundled `node_modules/typescript-to-gdscript/typings`.                                                                                                                                                                                      |
 | `converterOptions` | `object`   | Converter behavior tweaks. Currently: `{ "generateGlobalClassTypes": boolean }` — when `true`, non-anonymous classes are emitted into `declare global` so consumers can use them without `import`. When `false` (default), classes are module-scoped and must be imported. Addons always emit globals regardless of this flag. |
 | `lib`              | `boolean`  | Marks this project as a shared tstogd library. Library imports use relative GDScript paths. Defaults to `false`.                                                                                                                                                                                                               |
 | `externalPackages` | `object[]` | Adds shared tstogd folders or changes their mount names. Each item has `from` and optional `to` fields.                                                                                                                                                                                                                        |
 
-> **GD→TS conversion helpers are always-on.** Older revisions of this doc mentioned a `helpers.signalHandler` toggle — it doesn't exist in the source. See [GD-to-TS migration](gd-to-ts-migration.md) for the full helper set; the only user-facing toggle is `--unsafe-use-any` on `initial-convert-gd-to-ts`.
+> **GD→TS conversion helpers are always-on.** Older revisions of this doc mentioned a `helpers.signalHandler` toggle — it doesn't exist in the source. See [GD-to-TS migration](../guide/migrating-from-gdscript.md) for the full helper set; the only user-facing toggle is `--unsafe-use-any` on `initial-convert-gd-to-ts`.
 
 ## Shared packages
 

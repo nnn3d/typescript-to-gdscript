@@ -1,6 +1,6 @@
-[← Back to README](../README.md)
+[← Back to README](../../README.md)
 
-> Brief: detailed transform rules — every TS construct's GDScript mapping. The [README cheat sheet](../README.md#cheat-sheet) covers the must-haves; the [full cheat sheet](#full-cheat-sheet) below adds every advanced helper (`gd.dict`, `gd.getset`, `gd.match`, `gd.eval`, Callable rewrite, …). The sections after that drill into individual rules.
+> Brief: detailed transform rules — every TS construct's GDScript mapping. The [guides](../guide/getting-started.md) cover everyday use; the [full cheat sheet](#full-cheat-sheet) below adds every advanced helper (`gd.dict`, `gd.getset`, `gd.match`, `gd.eval`, Callable rewrite, …). The sections after that drill into individual rules.
 
 # Transform rules
 
@@ -138,7 +138,7 @@ export abstract class Player extends CharacterBody2D {
     let stats = { name: 'Hero', hp: 100 }; // string keys — plain object literal
     // Non-string keys → use gd.dict():
     let key = Vector2.DOWN;
-    let directions = gd.dict([[key, 'down']]);
+    let directions = gd.dict<Vector2, string>([[key, 'down']]); // key and value types are optional
 
     // Plain TS objects (interfaces, object literals) are Dictionaries
     // in GDScript, so reads convert to .get() — it returns null for a
@@ -386,17 +386,18 @@ Converting GDScript to TypeScript does the reverse: every `Object` in a type pos
 
 A type annotation (`x: T`, `func f() -> T`, `var x: T`) is only emitted when `T` is something GDScript actually has. The converter classifies the referenced type and **drops the annotation** (emitting the bare, untyped `var x` / `func f(x)` form) for anything without a GD equivalent:
 
-| TS type                                              | GD annotation | Notes                                                                                                                                                                                                                                                                                   |
-| ---------------------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Godot class (`Node`, `Node2D`, …)                    | emitted       | Recognised by name from the class registry.                                                                                                                                                                                                                                             |
-| Godot value type (`Vector2`, `Color`, …)             | emitted       | Registry constructor / global-enum names.                                                                                                                                                                                                                                               |
-| User `class_name` class (`class Foo`)                | emitted       | Resolved via the TS checker — incl. classes imported from another file.                                                                                                                                                                                                                 |
-| `enum` that resolves to an enum decl                 | emitted       | TS `enum E`, Godot global enums (`Key`), and inner enums the checker resolves to a declaration.                                                                                                                                                                                         |
-| `object`, an `interface`, a `type` alias             | **omitted**   | No GDScript equivalent — these became bogus `: object` / `: MyInterface` annotations before. A name the typings declare is the exception: `bool`, `Callable` and `StringName` are aliases on the TS side but real GD types, so they are emitted. Your own `type Color = …` still drops. |
-| Dotted ref that doesn't resolve (`Node.ProcessMode`) | **omitted**   | The checker returns no declaration for Godot class-scoped enums and the name isn't in the registry — can't verify it's a real GD type, so it's dropped rather than risk an invalid annotation.                                                                                          |
-| Unknown / unresolved name (typo, bad import)         | **omitted**   | Names that don't resolve to any declaration are no longer leaked into the `.gd` output.                                                                                                                                                                                                 |
-| `any`, `unknown`                                     | **omitted**   | The bare untyped form is the idiomatic GD equivalent.                                                                                                                                                                                                                                   |
-| `TSOnly<T>`                                          | **omitted**   | Explicit opt-out — keeps the type on the TS side and out of the `.gd`.                                                                                                                                                                                                                  |
+| TS type                                                                                   | GD annotation | Notes                                                                                                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Godot class (`Node`, `Node2D`, …)                                                         | emitted       | Recognised by name from the class registry.                                                                                                                                                                                                                                             |
+| Godot value type (`Vector2`, `Color`, …)                                                  | emitted       | Registry constructor / global-enum names.                                                                                                                                                                                                                                               |
+| User `class_name` class (`class Foo`)                                                     | emitted       | Resolved via the TS checker — incl. classes imported from another file.                                                                                                                                                                                                                 |
+| `enum` that resolves to an enum decl                                                      | emitted       | TS `enum E`, Godot global enums (`Key`), and inner enums the checker resolves to a declaration.                                                                                                                                                                                         |
+| `object`, an `interface`, a `type` alias                                                  | **omitted**   | No GDScript equivalent — these became bogus `: object` / `: MyInterface` annotations before. A name the typings declare is the exception: `bool`, `Callable` and `StringName` are aliases on the TS side but real GD types, so they are emitted. Your own `type Color = …` still drops. |
+| Dotted ref that doesn't resolve (`Node.ProcessMode`)                                      | **omitted**   | The checker returns no declaration for Godot class-scoped enums and the name isn't in the registry — can't verify it's a real GD type, so it's dropped rather than risk an invalid annotation.                                                                                          |
+| Unknown / unresolved name (typo, bad import)                                              | **omitted**   | Names that don't resolve to any declaration are no longer leaked into the `.gd` output.                                                                                                                                                                                                 |
+| `T \| null` where `T` is not a class (`int`, `String`, `Vector2`, a typed array, an enum) | **omitted**   | Only an object-typed GDScript variable accepts `null` (verified with Godot 4.7: `var a: int = null` is a parse error). `Node \| null` keeps `: Node`.                                                                                                                                   |
+| `any`, `unknown`                                                                          | **omitted**   | The bare untyped form is the idiomatic GD equivalent.                                                                                                                                                                                                                                   |
+| `TSOnly<T>`                                                                               | **omitted**   | Explicit opt-out — keeps the type on the TS side and out of the `.gd`.                                                                                                                                                                                                                  |
 
 The guiding principle: GD type hints are **optional**, so the converter only emits a type it can prove is valid GDScript and drops anything it can't — dropping a type is always safe, emitting a wrong one breaks the `.gd`. Godot built-ins are matched by **name** against the class registry (so they keep their annotation even when the Godot `.d.ts` typings aren't loaded); user types are classified by resolving their declaration through the TS checker.
 
@@ -411,14 +412,14 @@ hp: int = 0; // a value type: write the default GDScript uses anyway
 cached: Node | null = null; // may really be absent
 ```
 
-The `!` is TypeScript-only and disappears from the `.gd`. The `@onready` line type-checks as written only with [scene typings](./typings.md), which type `get_node('Sprite2D')` from the scene as a `Sprite2D`. Without them `get_node` returns `Node | null`, which a `Sprite2D` field rejects under `strict`. These are the forms [GD → TS migration](./gd-to-ts-migration.md) produces too, so hand-written and migrated code read alike.
+The `!` is TypeScript-only and disappears from the `.gd`. The `@onready` line type-checks as written only with [scene typings](./typings.md), which type `get_node('Sprite2D')` from the scene as a `Sprite2D`. Without them `get_node` returns `Node | null`, which a `Sprite2D` field rejects under `strict`. These are the forms [GD → TS migration](../guide/migrating-from-gdscript.md) produces too, so hand-written and migrated code read alike.
 
 ## Operators
 
 | TS                                | GD                   | Notes                                                                                                                                                    |
 | --------------------------------- | -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `===` / `!==`                     | `==` / `!=`          | TS loose `==` / `!=` are also accepted and emit the same GD operators — GDScript has no coercion-vs-identity distinction. Prefer strict on the TS side.  |
-| `&&` / `\|\|` / `!`               | `and` / `or` / `not` | See [Logical operators](#logical-operators--) for the value-vs-bool nuance.                                                                              |
+| `&&` / `\|\|` / `!`               | `and` / `or` / `not` | See [Logical operators](#logical-operators---) for the value-vs-bool nuance.                                                                             |
 | `**`                              | `**`                 | GDScript also has `**` (power).                                                                                                                          |
 | `\|=` `&=` `^=` `<<=` `>>=` `**=` | the same             | Every compound assignment GDScript has converts as written.                                                                                              |
 | `x++` / `++x` / `x--` / `--x`     | `x += 1` / `x -= 1`  | Only where the value is discarded — a statement, or a `for` incrementor. GDScript's `+=` is a statement, so reading the result is an error.              |
@@ -474,7 +475,7 @@ TypeScript `constructor()` maps to GDScript `_init()`.
 
 The `async` keyword is stripped — GDScript coroutines use `await` without an `async` marker on the function. The `await` expression itself is preserved.
 
-A return type of `Promise<T>` is unwrapped to a plain `T` annotation on the generated `func` (`Promise<void>` drops the annotation entirely). Writing `Promise<T>` is only meaningful as the **return type of an `async` method**:
+A return type of `Promise<T>` is unwrapped to a plain `T` annotation on the generated `func` (`Promise<void>` drops the annotation entirely). The return type may also be left out, and TypeScript infers it. Writing `Promise<T>` is only meaningful as the **return type of an `async` method**:
 
 ```typescript
 async long_task(): Promise<int> { return 42; }
@@ -490,6 +491,19 @@ func void_task():
 ```
 
 Using `Promise<T>` anywhere else (a field, a parameter, a `let` annotation) is a converter error — there's no GDScript runtime type to map it to. The runtime "promise" is just an unresolved coroutine, and treating it as a value (passing it around, calling `.then` / `.catch` / `.finally`, returning it without `await`) is rejected.
+
+`await` on a signal returns what the signal was emitted with, and the typings say so: `null` for a signal with no arguments, the value itself for one argument, and an `Array` (typed as a tuple) for more. Godot counts the arguments the emit actually passed, so optional ones give a union: `gd.signal<[when?: int]>()` awaits to `int | null`. A `gd.signal()` without a type argument has no arguments and awaits to `null`; only an array type such as `gd.signal<unknown[]>()`, whose arguments aren't known, gives `unknown`.
+
+```typescript
+damaged = gd.signal<[amount: int]>();
+
+async wait_for_damage(): Promise<int> {
+  let amount = await this.damaged; // int
+  return amount;
+}
+```
+
+One case the types get wrong: a coroutine that **returns** a signal. `await` on it is typed as the signal's value, but if the coroutine paused before returning, Godot gives the `Signal` object itself. TypeScript can't express the difference. If you need the `Signal` itself, store it in a field instead of returning it.
 
 ## Arrow functions → lambdas
 
@@ -826,7 +840,7 @@ A `.gd` file with no `class_name` declaration has no global identifier in Godot.
 
 The leading underscore is the marker. A TS class named `_Foo` produces a `.gd` file with no `class_name`.
 
-For addon-mode behaviour (the `_$CLASS$_` sentinel) and the `_Foo` → `G_Foo` escape used when migrating GDScript files that already declare `class_name _Foo`, see [docs/configuration.md](configuration.md#anonymous-classes--advanced-details).
+Addon typings use the `_$CLASS$_` placeholder name instead. When migrating, a GDScript file that already declares `class_name _Foo` gets the TypeScript name `G_Foo`, so the leading underscore keeps meaning "anonymous".
 
 ## Strings and template literals
 
@@ -958,14 +972,15 @@ The converter rejects TS features that have no faithful GDScript equivalent. Eac
 | **Promise value used without `await`**                                                                 | Storing or passing a coroutine result as a value has no GDScript equivalent.               |
 | **`Promise.then` / `.catch` / `.finally`**                                                             | No GDScript equivalent — use `await` and try/catch-like flow.                              |
 
-### `in` operator (Godot CLI surfaces these)
+### `in` operator
 
-GDScript's `in` operator is supported on `Array`, `Dictionary`, and `String`. It does **not** work on:
+`in` is allowed on a dictionary (an object literal, an object type, `Dictionary`): it checks for a key in TypeScript and in GDScript alike. Everywhere else it is flagged:
 
-- Value types like `Vector2`, `Color`, `Transform2D` — components are accessed by name (`.x`, `.r`).
-- `Packed*Array` types (e.g. `PackedColorArray`, `PackedByteArray`) — use `.has(value)` instead.
+- **Arrays** (`Array<T>`, `T[]`, tuples) — a converter **error**. TypeScript's `in` checks for an index or a property, GDScript's checks for an element, so the same line would silently mean something else. Use `.has(value)` to check for an element.
+- **Value types** like `Vector2`, `Color`, `Transform2D` — components are accessed by name (`.x`, `.r`).
+- **`Packed*Array` types** (e.g. `PackedColorArray`, `PackedByteArray`) — use `.has(value)` instead.
 
-The TypeScript plugin and Godot CLI both flag these as errors so the diagnostic surfaces in your editor.
+The TypeScript plugin shows these in your editor; Godot rejects the value-type and `Packed*Array` cases too.
 
 ### `gd.dict([...])` constraints
 
@@ -982,4 +997,4 @@ Use `gd.dict()` when you need a Dictionary with non-string keys (variables, comp
 - **Cannot mix** inline arrow-function bodies with the function-reference form (`get: this.get_x`) in a single call. GDScript itself rejects mixing `get:` bodies with `get = fn_name`.
 - A `value:` default is only valid alongside inline bodies, not the function-reference form.
 
-Full helper reference: [docs/gd-helpers.md](gd-helpers.md#getters-and-setters).
+Full helper reference: [`gd` namespace](gd-helpers.md#getters-and-setters).

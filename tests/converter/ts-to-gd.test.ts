@@ -6,10 +6,16 @@ import {
   NOISE_CODES,
   collectTsDiagnostics,
 } from '../../src/checker/ts-diagnostics.js';
-import { readFileSync, readdirSync } from 'fs';
+import { readFileSync } from 'fs';
 import { join, basename, resolve } from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import {
+  FIXTURES_EXPECTING_DIAGNOSTICS,
+  isProblemDiagnostic,
+  listFixtures,
+  normalize,
+} from './fixture-harness.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -47,37 +53,7 @@ if (
   );
 }
 
-/**
- * Normalize generated GDScript for comparison:
- * - Trim trailing whitespace per line
- * - Remove trailing empty lines
- * - Normalize line endings
- */
-function normalize(code: string): string {
-  return code
-    .replace(/\r\n/g, '\n')
-    .split('\n')
-    .map((line) => line.trimEnd())
-    .join('\n')
-    .replace(/\n+$/, '')
-    .trim();
-}
-
-// Discover all fixture pairs: *.ts files that have a matching *.gd file
-const fixtureFiles = readdirSync(FIXTURES_DIR)
-  .filter((f) => f.endsWith('.ts'))
-  .filter((f) => {
-    const gdFile = f.replace(/\.ts$/, '.gd');
-    return readdirSync(FIXTURES_DIR).includes(gdFile);
-  })
-  .map((f) => f.replace(/\.ts$/, ''));
-
-/**
- * Fixtures whose whole point is a construct the converter rejects —
- * they pin what the `--emit-on-error` output looks like. Every other
- * fixture must convert without an error or a warning.
- */
-const FIXTURES_EXPECTING_DIAGNOSTICS = new Set(['unsupported-body']);
+const fixtureFiles = listFixtures(FIXTURES_DIR);
 
 /**
  * The TypeScript diagnostics of each fixture's INPUT, keyed by file.
@@ -164,14 +140,8 @@ describe('TS to GD: Fixture-based tests', () => {
         program,
       });
 
-      // A fixture converts cleanly unless it exists precisely to show
-      // what a rejected construct emits. Logging an error and carrying
-      // on let a fixture start reporting one without anything noticing
-      // — `converter-diag` fixtures are where diagnostics get asserted
-      // in detail, so here it is only the clean/not-clean split.
-      const errors = result.diagnostics.filter(
-        (d) => d.severity === 'error' || d.severity === 'warning',
-      );
+      // Clean/not-clean split only; see isProblemDiagnostic.
+      const errors = result.diagnostics.filter(isProblemDiagnostic);
       const rendered = errors
         .map((d) => `  [${d.severity}] ${d.message} (${d.line}:${d.column})`)
         .join('\n');

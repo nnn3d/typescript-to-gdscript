@@ -134,11 +134,7 @@ export function processImports(
     // Resolve the import specifier to an absolute `.ts` path.
     const specifier = stmt.moduleSpecifier;
     if (!ts.isStringLiteral(specifier)) continue;
-    const targetTsPath = resolveImportToTsPath(
-      specifier.text,
-      sourceFile,
-      ctx.program,
-    );
+    const targetTsPath = resolveImportToTsPath(specifier, ctx.program);
     if (!targetTsPath) {
       errors.push(
         diagOf(
@@ -186,21 +182,20 @@ export function processImports(
 // ─── Path helpers ───────────────────────────────────────────────
 
 /**
- * Resolve an import with the active TypeScript program and compiler options.
+ * Resolve an import through the active program's checker, so it follows
+ * the program's compiler options and host (no `ts.sys`, which a browser
+ * lacks) and only sees files the program holds.
  */
 function resolveImportToTsPath(
-  specifier: string,
-  sourceFile: ts.SourceFile,
+  specifier: ts.StringLiteral,
   program: ts.Program,
 ): string | undefined {
-  const resolved = ts.resolveModuleName(
-    specifier,
-    sourceFile.fileName,
-    program.getCompilerOptions(),
-    ts.sys,
-  ).resolvedModule;
-  if (!resolved) return undefined;
-  const path = resolve(resolved.resolvedFileName);
+  const target = program
+    .getTypeChecker()
+    .getSymbolAtLocation(specifier)
+    ?.declarations?.find(ts.isSourceFile)?.fileName;
+  if (!target) return undefined;
+  const path = resolve(target);
   if (!path.endsWith('.ts') || path.endsWith('.d.ts')) return undefined;
   return path;
 }

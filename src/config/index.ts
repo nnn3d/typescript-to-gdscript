@@ -316,6 +316,19 @@ export function resolveGodotPath(options?: ResolveGodotPathOptions): string {
   return 'godot';
 }
 
+/**
+ * The Godot executable for the Godot check that follows a conversion, or
+ * `undefined` when the project turned the check off (`disableGodotLint`).
+ * `convert` and `watch` both use it, so the two never find Godot differently.
+ */
+export function resolveLintGodotPath(
+  cfg: Pick<ResolvedConfig, 'godotPath' | 'disableGodotLint'>,
+): string | undefined {
+  return cfg.disableGodotLint
+    ? undefined
+    : resolveGodotPath({ godotPath: cfg.godotPath });
+}
+
 // ─── Registry Resolution ──────────────────────────────────────
 
 export interface ResolveRegistryOptions {

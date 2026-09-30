@@ -31,5 +31,6 @@ describe('Typings: type checks', () => {
     expect(files).toContain('classes');
     expect(files).toContain('corner-cases');
     expect(files).toContain('singletons');
+    expect(files).toContain('signals');
   });
 });
