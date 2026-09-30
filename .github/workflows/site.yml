@@ -1,0 +1,82 @@
+name: Site
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - 'src/**'
+      - 'typings/**'
+      - 'docs/**'
+      - 'site/**'
+      - 'package.json'
+      - 'yarn.lock'
+      - '.github/workflows/site.yml'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'typings/**'
+      - 'docs/**'
+      - 'site/**'
+      - 'package.json'
+      - 'yarn.lock'
+      - '.github/workflows/site.yml'
+  workflow_dispatch:
+
+# PR builds may be superseded; a deploy to Pages must never be cut off mid-way.
+concurrency:
+  group: site-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+env:
+  HUSKY: 0
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: |
+            yarn.lock
+            site/yarn.lock
+
+      - name: Install converter dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Install site dependencies
+        run: yarn install --frozen-lockfile
+        working-directory: site
+
+      - name: Build site
+        run: yarn build
+        working-directory: site
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/dist
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
