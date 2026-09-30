@@ -1,4 +1,6 @@
 export class MyClass extends Node {
+  damaged = gd.signal<[amount: int]>();
+
   async do_something() {
     print("Start");
     await this.get_tree().create_timer(1.0).timeout;
@@ -17,6 +19,12 @@ export class MyClass extends Node {
 
   async void_task(): Promise<void> {
     await this.get_tree().create_timer(1.0).timeout;
+  }
+
+  // Awaiting a one-argument signal yields that argument.
+  async wait_for_damage(): Promise<int> {
+    let amount = await this.damaged;
+    return amount;
   }
 
   // Calls coroutines whose return type TS has to infer.

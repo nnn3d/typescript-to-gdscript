@@ -163,6 +163,33 @@ interface PromiseConstructor {
 /** @deprecated GDScript has no Promise object. Use `await` instead. */
 declare var Promise: PromiseConstructor;
 
+// ─── await signal ───────────────────────────────────────────
+
+/**
+ * Every argument list a signal can be emitted with: required elements are
+ * always present, optional ones may stop anywhere. `[a: int, b?: String]`
+ * gives `[int] | [int, String]`.
+ */
+type _GDSignalEmits<T extends any[]> = T extends []
+  ? []
+  : T extends [infer H, ...infer R]
+    ? [H, ..._GDSignalEmits<R>]
+    : // An optional head: everything after it is optional too.
+      Required<T> extends [infer H, ...infer R]
+      ? [] | [H, ..._GDSignalEmits<Partial<R>>]
+      : T;
+
+/** What Godot's `await` returns for one emit: null, the value, or an Array. */
+type _GDSignalAwaitOne<E> = E extends [] ? null : E extends [infer A] ? A : E;
+
+/**
+ * The value of `await signal`, used by `Signal.then`. A signal of unknown
+ * arity (an array rather than a tuple, e.g. `gd.signal()`) gives `unknown`.
+ */
+type _GDSignalAwaited<T extends any[]> = any[] extends T
+  ? unknown
+  : _GDSignalAwaitOne<_GDSignalEmits<T>>;
+
 // ─── Decorator context types (required for TS decorators) ───
 
 interface ClassDecoratorContext {

@@ -486,6 +486,19 @@ func void_task():
 
 Using `Promise<T>` anywhere else (a field, a parameter, a `let` annotation) is a converter error — there's no GDScript runtime type to map it to. The runtime "promise" is just an unresolved coroutine, and treating it as a value (passing it around, calling `.then` / `.catch` / `.finally`, returning it without `await`) is rejected.
 
+`await` on a signal returns what the signal was emitted with, and the typings say so: `null` for a signal with no arguments, the value itself for one argument, and an `Array` (typed as a tuple) for more. Godot counts the arguments the emit actually passed, so optional ones give a union: `gd.signal<[when?: int]>()` awaits to `int | null`. A `gd.signal()` without a type argument gives `unknown`, because its arguments aren't known.
+
+```typescript
+damaged = gd.signal<[amount: int]>();
+
+async wait_for_damage(): Promise<int> {
+  let amount = await this.damaged; // int
+  return amount;
+}
+```
+
+One case the types get wrong: a coroutine that **returns** a signal. `await` on it is typed as the signal's value, but if the coroutine paused before returning, Godot gives the `Signal` object itself. TypeScript can't express the difference. If you need the `Signal` itself, store it in a field instead of returning it.
+
 ## Arrow functions → lambdas
 
 An arrow function becomes a GDScript lambda, and carries its body wherever it appears — a call argument, an array element, a dictionary value, a `return`, a default parameter value, another lambda's body. A `{ … }` body keeps its statements on lines of their own, and whatever followed the arrow moves to the line after them:
