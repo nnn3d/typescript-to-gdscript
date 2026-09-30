@@ -186,6 +186,9 @@ export function emitExpression(
         }
         const value = t.emitExpression(p.initializer);
         entries.push(`${key}: ${value}`);
+      } else if (ts.isShorthandPropertyAssignment(p)) {
+        const key = t.escapeGdString(p.name.text);
+        entries.push(`"${key}": ${t.emitExpression(p.name)}`);
       }
     }
     if (entries.length === 0) return '{}';

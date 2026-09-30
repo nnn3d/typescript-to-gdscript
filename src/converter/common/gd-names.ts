@@ -173,7 +173,12 @@ export function resolvedDeclarations(
   checker: ts.TypeChecker,
   node: ts.Node,
 ): readonly ts.Declaration[] {
-  let symbol = checker.getSymbolAtLocation(node);
+  let symbol =
+    node.parent &&
+    ts.isShorthandPropertyAssignment(node.parent) &&
+    node.parent.name === node
+      ? checker.getShorthandAssignmentValueSymbol(node.parent)
+      : checker.getSymbolAtLocation(node);
   if (symbol && symbol.flags & ts.SymbolFlags.Alias) {
     symbol = checker.getAliasedSymbol(symbol);
   }

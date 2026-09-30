@@ -353,6 +353,11 @@ func die():
 
 The remaining sections cover the same rules in tables / prose form so individual features can be looked up by name.
 
+## Object literals → Dictionary
+
+Object literals become GDScript dictionaries. Shorthand properties keep the same key and value as their explicit form.
+`{ foo }` and `{ foo: foo }` both become `{"foo": foo}`.
+
 ## Primitive types — case mapping
 
 Lowercase TypeScript primitive names map to GDScript's PascalCase value-type names. The aliases live in the `gd` global typings — you just write the lowercase form in TS.
