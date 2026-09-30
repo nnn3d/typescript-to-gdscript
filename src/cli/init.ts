@@ -298,8 +298,8 @@ export async function runInit(): Promise<void> {
     console.log('');
     console.log('Next steps:');
     console.log('  1. Create TypeScript files in your source directory');
-    console.log('  2. Run `tstogd convert` to convert TS → GDScript');
-    console.log('  3. Run `tstogd watch` for auto-conversion on save');
+    console.log('  2. Run `npx tstogd convert` to convert TS → GDScript');
+    console.log('  3. Run `npx tstogd watch` for auto-conversion on save');
     console.log(
       '  4. See https://nnn3d.github.io/typescript-to-gdscript/ for full documentation',
     );
