@@ -69,7 +69,7 @@ var dict = {
 
 The key and value types come from where the result goes, whatever the key type, and the entries are checked against them. `let d: Dictionary<Node, int> = gd.dict([[node, 1]])` is typed, and a string value there is an error; `Dictionary<string, int>` and `Dictionary<int, V>` destinations work the same way. That also makes `gd.dict([])` the empty dictionary for a class key, where `{}` does not type-check: an object literal only fits a dictionary whose keys are strings or numbers. Where nothing typed receives it, the result is an untyped `Dictionary`, so mixed keys work as before.
 
-The key and value types can also be given in the call: `gd.dict<Vector2, int>([[Vector2.ZERO, 1]])` is a `Dictionary<Vector2, int>` wherever it goes, and a key or value of another type is an error. The type arguments leave the GDScript output unchanged.
+The key and value types can also be given in the call: `gd.dict<Vector2, int>([[Vector2.ZERO, 1]])` is a `Dictionary<Vector2, int>` wherever it goes, and a key or value of another type is an error. The type arguments leave the GDScript output unchanged. For an empty dictionary, `Dictionary<Vector2, int>()` does the same and becomes `Dictionary()`.
 
 Constraints (enforced by the converter):
 

@@ -110,11 +110,11 @@ func add(player: String, points: int):
 
 ## Keys that aren't strings
 
-TypeScript turns every key of an object literal into a string, so a `Vector2i` or a node can't be a key there. Build such a dictionary with `gd.dict`, from a list of `[key, value]` pairs. Read and write it with `get` and `set`: TypeScript only allows strings and numbers inside `[]`.
+TypeScript turns every key of an object literal into a string, so a `Vector2i` or a node can't be a key there. Build such a dictionary with `gd.dict`, from a list of `[key, value]` pairs, or start an empty one with `Dictionary<K, V>()`. Read and write it with `get` and `set`: TypeScript only allows strings and numbers inside `[]`.
 
 ```ts
 export class Board extends Node2D {
-  pieces: Dictionary<Vector2i, Node2D> = gd.dict([]);
+  pieces = Dictionary<Vector2i, Node2D>();
 
   _ready() {
     let names = gd.dict<Vector2i, string>([
@@ -131,7 +131,7 @@ export class Board extends Node2D {
 class_name Board
 extends Node2D
 
-var pieces: Dictionary = {}
+var pieces = Dictionary()
 
 func _ready():
 	var names = {
@@ -142,7 +142,7 @@ func _ready():
 	self.pieces.set(Vector2i(0, 0), self)
 ```
 
-The dictionary gets its key and value types from the field or variable it goes into, like `pieces`, or from the type arguments, like `names`; TypeScript then checks every pair. Each key in `gd.dict` must be a variable, a literal or a member like `Vector2i.LEFT`. Compute anything else into a variable first.
+The type arguments, like those of `pieces` and `names`, set the key and value types, and TypeScript checks every pair against them. Without them, `gd.dict` takes the types from the field or variable it goes into. Each key in `gd.dict` must be a variable, a literal or a member like `Vector2i.LEFT`. Compute anything else into a variable first.
 
 ## Details
 
