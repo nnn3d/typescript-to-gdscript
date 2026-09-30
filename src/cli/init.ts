@@ -84,7 +84,9 @@ async function stepTstogdJson(
 
   if (existsSync(configPath)) {
     console.log('\n✓ tstogd.json already exists.');
-    console.log('  See README.md for available configuration options.\n');
+    console.log(
+      '  See https://nnn3d.github.io/typescript-to-gdscript/reference/configuration/ for available configuration options.\n',
+    );
     try {
       const existing = JSON.parse(readFileSync(configPath, 'utf-8'));
       return {
@@ -130,7 +132,9 @@ async function stepTsconfig(
 
   if (existsSync(tsconfigPath)) {
     console.log('\n✓ tsconfig.json already exists.');
-    console.log('  See README.md for recommended TypeScript settings.\n');
+    console.log(
+      '  See https://nnn3d.github.io/typescript-to-gdscript/reference/configuration/ for recommended TypeScript settings.\n',
+    );
     return;
   }
 
@@ -295,7 +299,9 @@ export async function runInit(): Promise<void> {
     console.log('  1. Create TypeScript files in your source directory');
     console.log('  2. Run `tstogd convert` to convert TS → GDScript');
     console.log('  3. Run `tstogd watch` for auto-conversion on save');
-    console.log('  4. See README.md for full documentation');
+    console.log(
+      '  4. See https://nnn3d.github.io/typescript-to-gdscript/ for full documentation',
+    );
     console.log('');
   } finally {
     rl.close();
