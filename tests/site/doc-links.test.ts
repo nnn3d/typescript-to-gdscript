@@ -2,17 +2,20 @@ import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
 import { dirname, join, relative, resolve, sep } from 'path';
 import { fileURLToPath } from 'url';
+import { BASE, SITE_ORIGIN } from '../../site/constants.js';
 
 /**
  * Every relative link in the user docs must reach an existing file, and an
  * `#anchor` must match a heading there. The docs are read on GitHub and on
- * the site, and both render a dead link silently.
+ * the site, and both render a dead link silently. Links to the site itself
+ * (the README's documentation links) are checked against the page's source.
  */
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const DOCS = join(ROOT, 'docs');
 /** Working notes, never published. */
 const SKIPPED_DIRS = new Set([join(DOCS, 'superpowers')]);
+const SITE_URL = `${SITE_ORIGIN}${BASE}/`;
 
 function markdownFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -71,15 +74,40 @@ function linksOf(file: string): string[] {
   return links;
 }
 
+/** The file a site page is built from: a synced doc or one of the site's own pages. */
+function sitePageSource(route: string): string | undefined {
+  const path = route.replace(/\/$/, '');
+  return [
+    join(DOCS, `${path}.md`),
+    join(DOCS, path, 'index.md'),
+    join(ROOT, 'site', 'src', 'pages', `${path}.astro`),
+    join(ROOT, 'site', 'content', `${path || 'index'}.mdx`),
+  ].find((candidate) => existsSync(candidate));
+}
+
 function brokenLinks(file: string): string[] {
   const broken: string[] = [];
   for (const target of linksOf(file)) {
-    if (/^[a-z][a-z0-9+.-]*:/i.test(target)) continue; // external
-    const [path, anchor] = target.split('#');
-    const resolved = path ? resolve(dirname(file), path) : file;
-    if (!existsSync(resolved)) {
-      broken.push(`${target} (no such file)`);
-      continue;
+    let resolved: string | undefined;
+    let anchor: string | undefined;
+    if (target.startsWith(SITE_URL)) {
+      let route: string;
+      [route, anchor] = target.slice(SITE_URL.length).split('#');
+      resolved = sitePageSource(route);
+      if (!resolved) {
+        broken.push(`${target} (no such page)`);
+        continue;
+      }
+    } else if (/^[a-z][a-z0-9+.-]*:/i.test(target)) {
+      continue; // external
+    } else {
+      let path: string;
+      [path, anchor] = target.split('#');
+      resolved = path ? resolve(dirname(file), path) : file;
+      if (!existsSync(resolved)) {
+        broken.push(`${target} (no such file)`);
+        continue;
+      }
     }
     if (anchor !== undefined && resolved.endsWith('.md')) {
       if (!anchorsOf(resolved).has(anchor)) {

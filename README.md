@@ -14,7 +14,7 @@ GDScript is great for getting things on screen, but its type system and tooling 
 - **The whole Godot API, typed.** Accurate completions and docs for every class, method, property and signal, plus node paths and resource paths typed from your project.
 - **Safe refactoring.** Rename a method or change a signature, and your editor updates every use.
 
-You still write GDScript, just in TypeScript syntax: Godot's API (`append`, not `push`), Godot's semantics, and an error for any TypeScript feature GDScript can't express. [Caveats](docs/guide/caveats.md) lists them.
+You still write GDScript, just in TypeScript syntax: Godot's API (`append`, not `push`), Godot's semantics, and an error for any TypeScript feature GDScript can't express. [Caveats](https://nnn3d.github.io/typescript-to-gdscript/guide/caveats/) lists them.
 
 The output is ordinary GDScript you can read and ship. TypeScript is only how you write it, not something Godot runs.
 
@@ -129,21 +129,21 @@ npm install --save-dev typescript-to-gdscript
 npx tstogd init
 ```
 
-Then write `.ts` files in `src/`, run `npx tstogd watch`, and attach the generated `.gd` files from `scripts/` in Godot. The [Getting started](docs/guide/getting-started.md) guide walks through it step by step.
+Then write `.ts` files in `src/`, run `npx tstogd watch`, and attach the generated `.gd` files from `scripts/` in Godot. The [Getting started](https://nnn3d.github.io/typescript-to-gdscript/guide/getting-started/) guide walks through it step by step.
 
 ## Documentation
 
-**Basics:** [Getting started](docs/guide/getting-started.md) · [How it works](docs/guide/how-it-works.md) · [Editor setup](docs/guide/editor-setup.md)
+**Basics:** [Getting started](https://nnn3d.github.io/typescript-to-gdscript/guide/getting-started/) · [How it works](https://nnn3d.github.io/typescript-to-gdscript/guide/how-it-works/) · [Editor setup](https://nnn3d.github.io/typescript-to-gdscript/guide/editor-setup/)
 
-**Writing scripts:** [Scripts and classes](docs/guide/scripts-and-classes.md) · [Variables and types](docs/guide/variables-and-types.md) · [Functions and lambdas](docs/guide/functions-and-lambdas.md) · [Signals](docs/guide/signals.md) · [Nodes and scenes](docs/guide/nodes-and-scenes.md) · [Exports and annotations](docs/guide/exports-and-annotations.md) · [Coroutines](docs/guide/coroutines.md) · [Math and value types](docs/guide/math-and-value-types.md) · [Arrays and dictionaries](docs/guide/arrays-and-dictionaries.md) · [Enums, constants and inner classes](docs/guide/enums-constants-inner-classes.md)
+**Writing scripts:** [Scripts and classes](https://nnn3d.github.io/typescript-to-gdscript/guide/scripts-and-classes/) · [Variables and types](https://nnn3d.github.io/typescript-to-gdscript/guide/variables-and-types/) · [Functions and lambdas](https://nnn3d.github.io/typescript-to-gdscript/guide/functions-and-lambdas/) · [Signals](https://nnn3d.github.io/typescript-to-gdscript/guide/signals/) · [Nodes and scenes](https://nnn3d.github.io/typescript-to-gdscript/guide/nodes-and-scenes/) · [Exports and annotations](https://nnn3d.github.io/typescript-to-gdscript/guide/exports-and-annotations/) · [Coroutines](https://nnn3d.github.io/typescript-to-gdscript/guide/coroutines/) · [Math and value types](https://nnn3d.github.io/typescript-to-gdscript/guide/math-and-value-types/) · [Arrays and dictionaries](https://nnn3d.github.io/typescript-to-gdscript/guide/arrays-and-dictionaries/) · [Enums, constants and inner classes](https://nnn3d.github.io/typescript-to-gdscript/guide/enums-constants-inner-classes/)
 
-**Going further:** [Migrating from GDScript](docs/guide/migrating-from-gdscript.md) · [Shared packages](docs/guide/shared-packages.md) · [Addons](docs/guide/addons.md) · [Custom Godot builds](docs/guide/custom-godot-builds.md) · [Escape hatches](docs/guide/escape-hatches.md) · [Caveats](docs/guide/caveats.md) · [FAQ](docs/guide/faq.md)
+**Going further:** [Migrating from GDScript](https://nnn3d.github.io/typescript-to-gdscript/guide/migrating-from-gdscript/) · [Shared packages](https://nnn3d.github.io/typescript-to-gdscript/guide/shared-packages/) · [Addons](https://nnn3d.github.io/typescript-to-gdscript/guide/addons/) · [Custom Godot builds](https://nnn3d.github.io/typescript-to-gdscript/guide/custom-godot-builds/) · [Escape hatches](https://nnn3d.github.io/typescript-to-gdscript/guide/escape-hatches/) · [Caveats](https://nnn3d.github.io/typescript-to-gdscript/guide/caveats/) · [FAQ](https://nnn3d.github.io/typescript-to-gdscript/guide/faq/)
 
-**Reference:** [Conversion rules](docs/reference/transform-rules.md) · [`gd` namespace](docs/reference/gd-helpers.md) · [CLI](docs/reference/cli.md) · [Configuration](docs/reference/configuration.md) · [Typings](docs/reference/typings.md) · [IDE integration](docs/reference/ide-integration.md)
+**Reference:** [Conversion rules](https://nnn3d.github.io/typescript-to-gdscript/reference/transform-rules/) · [`gd` namespace](https://nnn3d.github.io/typescript-to-gdscript/reference/gd-helpers/) · [CLI](https://nnn3d.github.io/typescript-to-gdscript/reference/cli/) · [Configuration](https://nnn3d.github.io/typescript-to-gdscript/reference/configuration/) · [Typings](https://nnn3d.github.io/typescript-to-gdscript/reference/typings/) · [IDE integration](https://nnn3d.github.io/typescript-to-gdscript/reference/ide-integration/)
 
 ## Contributing
 
-Bug reports and ideas are welcome in [GitHub issues](https://github.com/nnn3d/typescript-to-gdscript/issues), and pull requests too. To set up a development environment, see [Development](docs/development.md).
+Bug reports and ideas are welcome in [GitHub issues](https://github.com/nnn3d/typescript-to-gdscript/issues), and pull requests too. To set up a development environment, see [Development](https://nnn3d.github.io/typescript-to-gdscript/development/).
 
 ## License
 
