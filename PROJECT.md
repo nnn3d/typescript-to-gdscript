@@ -53,6 +53,11 @@ typings-overrides/       # Manual type overrides applied during typings generati
 
 src/
   config/index.ts        # tstogd.json loader (paths, library settings, lint/cache options), registry resolver
+                         # fixture-harness.ts — normalize, fixture listing, expected-diagnostics list and the
+                         # error/warning predicate, shared by ts-to-gd.test.ts and the browser parity test
+  browser/               # browser converter: memory-host, registry option, in-memory import resolution, and
+                         # parity (every single-file ts-to-gd fixture through createBrowserConverter; playground
+                         # examples must convert with zero diagnostics)
   external-packages/     # lib discovery, tstogd_modules links, package tsDir → gdDir mappings
   converter/
     ts-to-gd/            # transformer.ts (AST visitor), emitter.ts (line/col + sourcemap), index.ts, switch.ts (`switch` → `match`), statement-body.ts (break targets, `pass` fallback), gd-match.ts (`gd.match` + shared pattern emitter, split from gd-helpers.ts for the 500-line cap), gd-cast.ts (`gd.as` / `gd.is` and operand grouping), operator-tokens.ts (TS operator → GD spelling, `++`/`--`)
@@ -66,6 +71,7 @@ src/
     gdscript/            # GDScriptParser class + AUTO-GENERATED types.ts (SyntaxType, typed nodes)
     godot-resource/      # GodotResourceParser class + AUTO-GENERATED types.ts
     typescript/index.ts  # createTsProgram, getTypeChecker, getSourceFile
+  browser/               # Single-file TS→GD conversion from in-memory typings, for the playground (`index.ts` createBrowserConverter, `bundle.ts` TypingsBundle type; `read-typings.ts` is Node-only)
   sourcemap/index.ts     # SourceMapper (write) + SourceMapReader (read/verify)
   typings/
     godot-registry.ts    # GodotClassRegistry + XML parsing + version detection

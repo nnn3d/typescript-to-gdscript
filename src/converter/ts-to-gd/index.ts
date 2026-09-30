@@ -5,6 +5,7 @@ import type { TransformResult } from '../common/index.ts';
 import { TsToGdTransformer } from './transformer.ts';
 import { buildDiagnosticsTypeInfo } from './diagnostics.ts';
 import type { ResolvedExternalPackage } from '../../external-packages/index.ts';
+import type { GodotClassRegistry } from '../../typings/godot-registry.ts';
 
 export interface ConvertOptions {
   /** Path to the TypeScript file */
@@ -39,6 +40,11 @@ export interface ConvertOptions {
   sourceMap?: boolean;
   /** Pre-created TypeScript program (for batch mode) */
   program?: ts.Program;
+  /**
+   * Godot class registry. Resolved from the bundled typings when absent;
+   * the browser playground passes one because it has no filesystem.
+   */
+  registry?: GodotClassRegistry;
 }
 
 export function convertTsToGd(options: ConvertOptions): TransformResult {
@@ -67,11 +73,13 @@ export function convertTsToGd(options: ConvertOptions): TransformResult {
   }
 
   // Registry is optional — if unavailable, diagnostics fall back to primitive checks only.
-  let registry;
-  try {
-    registry = resolveRegistry();
-  } catch {
-    /* registry unavailable */
+  let registry = options.registry;
+  if (!registry) {
+    try {
+      registry = resolveRegistry();
+    } catch {
+      /* registry unavailable */
+    }
   }
   const diagInfo = buildDiagnosticsTypeInfo(registry);
 
