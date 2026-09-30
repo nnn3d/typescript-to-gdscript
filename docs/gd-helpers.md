@@ -352,7 +352,7 @@ let np = NodePath('Path/To/Node');
 
 ## Promise — GDScript coroutine rules
 
-GDScript has no `Promise` type. `async` / `await` map directly to GDScript's coroutine `await`, but the chained-callback API has no equivalent. The bundled typings mark `Promise.then`, `Promise.catch`, and `Promise.finally` as **`@deprecated`** so your IDE shows a strikethrough as you type, and the converter raises a `type-error` if you call them.
+GDScript has no `Promise` type. `async` / `await` map directly to GDScript's coroutine `await`, but the chained-callback API has no equivalent. The bundled typings mark `Promise.then`, `Promise.catch`, and `Promise.finally` as **`@deprecated`** so your IDE shows a strikethrough as you type, and the converter raises a `type-error` if you call them. There is no `Promise` object either: `new Promise(...)` and `Promise.all(...)` are TypeScript errors.
 
 ```typescript
 async load(): Promise<int> { return 42; }

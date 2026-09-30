@@ -42,7 +42,7 @@ scripts/
 typings/                 # Godot typings (committed to git, used as TS lib)
   index.d.ts             # Entry point: references globals/globals.d.ts, globals/gd-helpers.d.ts, classes/
   globals/               # Static (hand-written, NOT regenerated from Godot docs) global stubs
-    globals.d.ts         # noLib stubs for Boolean/Number/RegExp/etc.
+    globals.d.ts         # noLib stubs for Boolean/Number/RegExp/etc. + an empty `Promise` value so TS can infer `async` return types
     gd-helpers.d.ts      # gd namespace type defs (signal, getset, dict, as, is, typeof, eval, match, ops) + int/float/bool casts
   godot-class-registry.json  # Class hierarchy JSON (1076 classes)
   classes/               # Per-class .d.ts files (1076 classes)

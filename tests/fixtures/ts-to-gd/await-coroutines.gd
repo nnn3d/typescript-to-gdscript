@@ -16,3 +16,8 @@ func long_task() -> int:
 
 func void_task():
 	await self.get_tree().create_timer(1.0).timeout
+
+# Calls coroutines whose return type TS has to infer.
+func run_all():
+	self.do_something()
+	await self.complex_async()

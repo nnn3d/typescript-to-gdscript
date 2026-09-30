@@ -18,4 +18,10 @@ export class MyClass extends Node {
   async void_task(): Promise<void> {
     await this.get_tree().create_timer(1.0).timeout;
   }
+
+  // Calls coroutines whose return type TS has to infer.
+  async run_all() {
+    this.do_something();
+    await this.complex_async();
+  }
 }

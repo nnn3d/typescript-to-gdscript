@@ -152,6 +152,17 @@ interface Promise<T> {
   ): Promise<T | TResult>;
 }
 
+// TypeScript needs a global `Promise` VALUE to infer an `async` function's
+// return type (TS2468 / TS2705 without it). Kept empty on purpose: GDScript
+// has no Promise object, so `new Promise(...)` and `Promise.all(...)` stay
+// type errors.
+/** @deprecated GDScript has no Promise object. Use `await` instead. */
+interface PromiseConstructor {
+  readonly prototype: Promise<any>;
+}
+/** @deprecated GDScript has no Promise object. Use `await` instead. */
+declare var Promise: PromiseConstructor;
+
 // ─── Decorator context types (required for TS decorators) ───
 
 interface ClassDecoratorContext {

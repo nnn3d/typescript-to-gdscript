@@ -469,7 +469,7 @@ TypeScript `constructor()` maps to GDScript `_init()`.
 
 The `async` keyword is stripped — GDScript coroutines use `await` without an `async` marker on the function. The `await` expression itself is preserved.
 
-A return type of `Promise<T>` is unwrapped to a plain `T` annotation on the generated `func` (`Promise<void>` drops the annotation entirely). Writing `Promise<T>` is only meaningful as the **return type of an `async` method**:
+A return type of `Promise<T>` is unwrapped to a plain `T` annotation on the generated `func` (`Promise<void>` drops the annotation entirely). The return type may also be left out, and TypeScript infers it. Writing `Promise<T>` is only meaningful as the **return type of an `async` method**:
 
 ```typescript
 async long_task(): Promise<int> { return 42; }
