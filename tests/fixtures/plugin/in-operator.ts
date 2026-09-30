@@ -6,9 +6,12 @@ export class __CLASS__ extends Node {
     let b = 0 in Color(0, 0, 0);
     let c = "r" in Transform2D();
 
-    // ✅ OK — `in` on Array (allowed in GDScript)
+    // ❌ Error — `in` on an array: TS checks an index or property, GDScript
+    // checks for an element, so the meaning would silently change
     let arr: Array<int> = [];
     let d = 1 in arr;
+    let list: int[] = [];
+    let g = 1 in list;
 
     // ❌ Error — `in` on PackedColorArray (not allowed)
     let packed: PackedColorArray = PackedColorArray();

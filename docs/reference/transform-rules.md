@@ -967,14 +967,15 @@ The converter rejects TS features that have no faithful GDScript equivalent. Eac
 | **Promise value used without `await`**                                                                 | Storing or passing a coroutine result as a value has no GDScript equivalent.               |
 | **`Promise.then` / `.catch` / `.finally`**                                                             | No GDScript equivalent — use `await` and try/catch-like flow.                              |
 
-### `in` operator (Godot CLI surfaces these)
+### `in` operator
 
-GDScript's `in` operator is supported on `Array`, `Dictionary`, and `String`. It does **not** work on:
+`in` is allowed on a dictionary (an object literal, an object type, `Dictionary`): it checks for a key in TypeScript and in GDScript alike. Everywhere else it is flagged:
 
-- Value types like `Vector2`, `Color`, `Transform2D` — components are accessed by name (`.x`, `.r`).
-- `Packed*Array` types (e.g. `PackedColorArray`, `PackedByteArray`) — use `.has(value)` instead.
+- **Arrays** (`Array<T>`, `T[]`, tuples) — a converter **error**. TypeScript's `in` checks for an index or a property, GDScript's checks for an element, so the same line would silently mean something else. Use `.has(value)` to check for an element.
+- **Value types** like `Vector2`, `Color`, `Transform2D` — components are accessed by name (`.x`, `.r`).
+- **`Packed*Array` types** (e.g. `PackedColorArray`, `PackedByteArray`) — use `.has(value)` instead.
 
-The TypeScript plugin and Godot CLI both flag these as errors so the diagnostic surfaces in your editor.
+The TypeScript plugin shows these in your editor; Godot rejects the value-type and `Packed*Array` cases too.
 
 ### `gd.dict([...])` constraints
 

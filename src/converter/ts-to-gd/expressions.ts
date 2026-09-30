@@ -1,5 +1,5 @@
 import ts from 'typescript';
-import { classifyInRhsType } from './diagnostics.ts';
+import { classifyInRhsType, isArrayLikeType } from './diagnostics.ts';
 import { tryEmitGdAs, tryEmitGdIs } from './gd-cast.ts';
 import {
   tryEmitGdUnspellableGlobal,
@@ -836,10 +836,12 @@ export function emitBinaryExpression(
 }
 
 /**
- * Report an error if the right-hand side of a `x in y` expression resolves
- * to a type that GDScript doesn't support with `in`. Only `Dictionary`
- * (object-like types) and `String` are valid; arrays, Packed*Array, and
- * value types like `Vector2`/`Color` are rejected.
+ * Report the right-hand side of a `x in y` expression when GDScript can't
+ * take it. Only a dictionary (an object-like type) keeps its meaning: `in`
+ * checks for a key on both sides. On an array GDScript checks for an element
+ * where TypeScript checks for an index or property — the same line would mean
+ * something else, so that is an `error`. `Packed*Array` and value types like
+ * `Vector2` / `Color` don't support `in` in GDScript at all.
  */
 function checkInOperatorRhs(
   t: TransformerDelegate,
@@ -858,13 +860,22 @@ function checkInOperatorRhs(
     : [type];
 
   for (const bt of baseTypes) {
+    if (isArrayLikeType(bt, checker)) {
+      t.addDiagnostic(
+        node,
+        'error',
+        '`in` on an array checks for an index or property in TypeScript, ' +
+          'but for an element in GDScript. Use `.has(value)` to check for an element.',
+      );
+      return;
+    }
     const banned = classifyInRhsType(bt, checker, t.ctx.diagInfo);
     if (banned) {
       t.addDiagnostic(
         node,
         'type-error',
         `The \`in\` operator cannot be used with ${banned} in GDScript. ` +
-          `Only Dictionary and String support \`in\`.`,
+          `Only a dictionary supports \`in\`.`,
       );
       return;
     }

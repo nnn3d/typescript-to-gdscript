@@ -8,6 +8,7 @@ The converter reports everything under "Unsupported syntax" as an error, in your
 
 - **Destructuring**, such as `let [a, b] = pair` or `let { x } = point`. GDScript has none. Assign each value on its own line.
 - **`for...in`**. It walks keys in TypeScript, while GDScript's `for x in` walks values. Use `for...of`, and `dict.keys()` for a dictionary's keys.
+- **`x in array`**. It checks for an index in TypeScript, while GDScript's `in` checks for an element. Use `array.has(x)`. `in` on a dictionary checks for a key in both and is fine.
 - **`??` and `??=`**. GDScript has no such operator. Use a ternary: `x !== null ? x : fallback`.
 - **Optional chaining `?.`**. GDScript has no short-circuiting member access. Check for `null` first; a dictionary read already gives `null` for a missing key.
 - **Spread**, `f(...args)` and `[...list]`. A call can't take a variable number of arguments in GDScript. Pass the values one by one, and join arrays with `gd.ops.add(a, b)`. A rest parameter in a declaration (`f(...args: int[])`) is fine.
