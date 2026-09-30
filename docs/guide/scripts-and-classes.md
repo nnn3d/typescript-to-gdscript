@@ -61,6 +61,42 @@ Godot's `Object` is called `GodotObject` in TypeScript, because `Object` already
 
 > **Note:** A field can't reuse the name of an inherited property. `name: string` on a `Node` type-checks, but Godot refuses the script (`Member "name" redefined`). Pick another name. Overriding inherited methods is fine.
 
+## Types next to the class
+
+Types don't count toward the one class. Declare `type` aliases and `interface`s at the top level of the file and export them as usual; they only exist for TypeScript and leave nothing in the `.gd`:
+
+```ts
+export type DamageKind = 'fire' | 'ice' | 'physical';
+
+export interface Hit {
+  damage: int;
+  kind: DamageKind;
+}
+
+export class Weapon extends Node2D {
+  damage: int = 10;
+
+  strike(kind: DamageKind): Hit {
+    return { damage: this.damage, kind: kind };
+  }
+}
+```
+
+```gdscript
+class_name Weapon
+extends Node2D
+
+var damage: int = 10
+
+func strike(kind):
+	return {
+		"damage": self.damage,
+		"kind": kind,
+	}
+```
+
+Other scripts import them like any TypeScript type, `import type { Hit } from './weapon'`, and the import adds nothing to their `.gd` either. An object type such as `Hit` is a dictionary in GDScript; see [Arrays and dictionaries](./arrays-and-dictionaries.md).
+
 ## `this` and static members
 
 TypeScript needs `this.` in front of every member, even where GDScript lets you write the bare name. It always converts to `self.`.
