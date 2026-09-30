@@ -14,3 +14,8 @@ export_presets.cfg
 
 # Local design/plan docs (never committed)
 docs/superpowers/
+
+# Docs site: generated content and build caches
+site/.astro/
+site/src/content/docs/
+site/src/generated/

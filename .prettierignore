@@ -24,3 +24,6 @@ CHANGELOG.md
 
 # Lockfile
 yarn.lock
+
+# Playground examples are hand-formatted demo content
+site/src/playground/examples

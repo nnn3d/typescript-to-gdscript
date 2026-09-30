@@ -14,7 +14,7 @@ User-facing docs are split between `README.md` and `docs/`:
 - `docs/gd-to-ts-migration.md` — `initial-convert-gd-to-ts` + the 5 conversion helpers (signal handler, operator fix, explicit convert, extends type, nullable, ready field types)
 - `docs/typings.md` — `generate-typings`, `generate-gdscript-global-typings`, `generate-addon-typings` + typings tree layout + scene typings features + nullable reference types. (No `generate-class-typings` command exists — global class declarations are produced by `generate-typings` via `converterOptions.generateGlobalClassTypes`.)
 - `docs/ide-integration.md` — TypeScript language service plugin + `tstogd open-editor` + Godot external-editor configuration
-- `docs/development.md` — contributor info: prerequisites, test scripts, regenerating Godot typings
+- `docs/development.md` — contributor info: prerequisites, test scripts, regenerating Godot typings, docs site + playground
 
 When adding a new feature or CLI flag, update the corresponding `docs/*.md` file (and the README if the feature is user-essential).
 
@@ -53,11 +53,6 @@ typings-overrides/       # Manual type overrides applied during typings generati
 
 src/
   config/index.ts        # tstogd.json loader (paths, library settings, lint/cache options), registry resolver
-                         # fixture-harness.ts — normalize, fixture listing, expected-diagnostics list and the
-                         # error/warning predicate, shared by ts-to-gd.test.ts and the browser parity test
-  browser/               # browser converter: memory-host, registry option, in-memory import resolution, and
-                         # parity (every single-file ts-to-gd fixture through createBrowserConverter; playground
-                         # examples must convert with zero diagnostics)
   external-packages/     # lib discovery, tstogd_modules links, package tsDir → gdDir mappings
   converter/
     ts-to-gd/            # transformer.ts (AST visitor), emitter.ts (line/col + sourcemap), index.ts, switch.ts (`switch` → `match`), statement-body.ts (break targets, `pass` fallback), gd-match.ts (`gd.match` + shared pattern emitter, split from gd-helpers.ts for the 500-line cap), gd-cast.ts (`gd.as` / `gd.is` and operand grouping), operator-tokens.ts (TS operator → GD spelling, `++`/`--`)
@@ -93,6 +88,8 @@ src/
   cli/index.ts           # Commander CLI
   utils/package-version.ts # getPackageVersion() — reads `version` from the package's own package.json (cached); throws a descriptive error if the file is missing/unparsable or has no `version` — no silent fallback, an unknown version would silently mis-key the cache manifest. Shared by the CLI `--version` flag and the cache manifest version
 
+site/                    # Astro Starlight docs site + playground; generated from `docs/` (`yarn sync`), deployed by `.github/workflows/site.yml`; own package.json
+
 tests/
   fixtures/
     ts-to-gd/            # paired .ts/.gd fixture files (TS→GD conversion)
@@ -117,6 +114,12 @@ tests/
                          # Each failure names its fixture INSIDE the compared value: vitest collapses failure
                          # blocks whose rendered error is identical and prints only one, silently attributing one
                          # fixture's error to another)
+                         # fixture-harness.ts — normalize, fixture listing, expected-diagnostics list and the
+                         # error/warning predicate, shared by ts-to-gd.test.ts and the browser parity test
+  browser/               # browser converter: memory-host, registry option, in-memory import resolution, and
+                         # parity (every single-file ts-to-gd fixture through createBrowserConverter; playground
+                         # examples must convert with zero diagnostics)
+  site/                  # docs-transform.test.ts — the docs → site page transform (titles, briefs, link rewriting)
   external-packages/     # library discovery, link lifecycle, and mount validation
   cache/                 # cache.test.ts — ProjectCache (freshness, sourcemap storage, addon/typings entries, version mismatch, atomic writes, gd-output mirror, saveAsync, watch mode, clear() propagation to a watching instance)
   checker/               # checker.test.ts (collectProjectDiagnostics, stale-detection), ts-diagnostics.test.ts (filters)

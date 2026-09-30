@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { readFileSync } from 'fs';
+import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import { createBrowserConverter } from '../../src/browser/index.js';
@@ -99,4 +99,29 @@ describe('createBrowserConverter', () => {
       /no \/typings\/index\.d\.ts/,
     );
   });
+});
+
+const EXAMPLES_DIR = join(ROOT, 'site', 'src', 'playground', 'examples');
+
+describe('playground examples convert cleanly', () => {
+  const examples = existsSync(EXAMPLES_DIR)
+    ? readdirSync(EXAMPLES_DIR).filter((f) => f.endsWith('.ts'))
+    : [];
+
+  it('has examples', () => {
+    expect(examples.length).toBeGreaterThan(0);
+  });
+
+  for (const file of examples) {
+    it(file, () => {
+      const result = converter.convert(
+        readFileSync(join(EXAMPLES_DIR, file), 'utf-8'),
+        `/src/${file}`,
+      );
+      expect(render(result.diagnostics), `${file} reported diagnostics`).toBe(
+        '',
+      );
+      expect(result.code.trim()).not.toBe('');
+    });
+  }
 });

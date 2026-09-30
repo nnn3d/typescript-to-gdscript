@@ -43,6 +43,20 @@ git submodule update --init
 yarn generate:godot-typings
 ```
 
+## Docs site and playground
+
+The site in `site/` renders `docs/` with Astro Starlight and hosts the in-browser playground. It has its own dependencies:
+
+```bash
+yarn install          # the converter, once
+cd site && yarn install
+yarn dev              # http://localhost:4321/typescript-to-gdscript/
+```
+
+`yarn dev` and `yarn build` first copy `docs/` into the site and bundle `typings/` for the playground. Edit pages in `docs/`, not in `site/src/content/docs/` (generated). The dev server copies `docs/` only at startup, so restart it after editing `docs/`. A new top-level page needs a slug in `site/sidebar.ts`; a new folder under `docs/` shows up in the sidebar on its own.
+
+Pushes to `master` deploy the site to GitHub Pages.
+
 ## Version requirements
 
 - Node.js >= 22 (see Prerequisites above for the reason)

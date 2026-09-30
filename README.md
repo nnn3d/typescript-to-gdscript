@@ -1,5 +1,7 @@
 # typescript-to-gdscript
 
+**[Documentation & playground](https://nnn3d.github.io/typescript-to-gdscript/)**
+
 Write Godot 4 scripts in TypeScript. Get autocomplete and type-checking for the full Godot API, live IDE squiggles from the converter and Godot CLI, and clean `.gd` output with source maps so stack traces still point at your `.ts`.
 
 ![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/convert.webp)

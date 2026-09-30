@@ -1,0 +1,50 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import { Playground } from '../playground/Playground.tsx';
+---
+
+<StarlightPage
+  frontmatter={{
+    title: 'Playground',
+    description: 'Convert TypeScript to GDScript in your browser.',
+    template: 'splash',
+    tableOfContents: false,
+    editUrl: false,
+    pagefind: false,
+    prev: false,
+    next: false,
+  }}
+>
+  <div class="pg-page">
+    <Playground client:only="preact">
+      <p slot="fallback">Loading playground…</p>
+    </Playground>
+  </div>
+</StarlightPage>
+
+<style is:global>
+  /* An app-like workspace: full window width, no page title band, minimal padding.
+     The title stays in the page for screen readers and search engines. */
+  main:has(.pg-page) {
+    --sl-content-width: 100%;
+    padding-bottom: 0;
+  }
+  main:has(.pg-page) .content-panel:has(.pg-page) {
+    padding: 0.5rem 1rem;
+  }
+  main:has(.pg-page) footer {
+    display: none;
+  }
+  main:has(.pg-page) .content-panel:not(:has(.pg-page)) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    padding: 0;
+    border: 0;
+  }
+  main:has(.pg-page) .content-panel + .content-panel {
+    border-top: none;
+  }
+</style>
