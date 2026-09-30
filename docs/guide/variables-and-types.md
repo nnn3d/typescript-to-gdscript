@@ -59,6 +59,8 @@ A type hint goes into the `.gd` only when GDScript has that type: Godot classes 
 
 GDScript has only `null`, so `undefined` is an error. Mark a value that may be empty with `| null` and give it `null`, like `weapon` above. For an optional parameter, write `who: Node | null = null` rather than `who?: Node`.
 
+In GDScript only objects (nodes, resources, your classes) can be `null`. So `count: int | null = null` becomes an untyped `var count = null`: an `int`, `String`, `Vector2`, typed array or enum variable can't hold `null`.
+
 ## Fields without an initializer
 
 GDScript starts every `var` with a value: `null` for an object, `0` or `Vector2()` for a value type. TypeScript's `strict` mode flags a field with no initializer, so write the form that says what really happens:

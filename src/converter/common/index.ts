@@ -346,21 +346,31 @@ export function tsTypeNodeToGdType(
     return 'Callable';
   }
 
-  // Union types: GDScript has no union syntax, but every typed
-  // variable in GD already accepts `null` implicitly, so a TS union of
-  // the form `T | null` (or `null | T`) collapses cleanly to `T`.
-  // Anything more complex than that — multiple non-null members,
-  // intersections, etc. — has no GD equivalent and is omitted.
+  // Union types: GDScript has no union syntax. `T | null` (or `null | T`)
+  // keeps `T` only when `T` is a reference type — a class (Node, Resource, a
+  // user class), the only kind of typed GDScript variable that accepts null.
+  // A value type (int, String, Vector2, a typed Array, an enum, …) rejects
+  // null, so its annotation is dropped and the untyped variable holds the
+  // null. Without a registry the two can't be told apart: dropped too.
+  // Anything more complex — multiple non-null members, intersections — has
+  // no GD equivalent and is omitted.
   if (ts.isUnionTypeNode(typeNode)) {
     const nonNull = typeNode.types.filter((t) => !isNullLiteralTypeNode(t));
     if (nonNull.length === 1 && nonNull.length !== typeNode.types.length) {
-      return tsTypeNodeToGdType(
-        nonNull[0]!,
+      const member = nonNull[0]!;
+      const gdType = tsTypeNodeToGdType(
+        member,
         checker,
         sourceFile,
         className,
         registry,
       );
+      const isEnum = !!(
+        checker.getTypeFromTypeNode(member).flags & ts.TypeFlags.EnumLike
+      );
+      return gdType && registry && !isEnum && isReferenceType(gdType, registry)
+        ? gdType
+        : null;
     }
     return null;
   }
@@ -421,6 +431,8 @@ export function isReferenceType(
   // separately by callers that have class-scope context.
   if (cleaned.includes('.')) return false;
   if (registry.isConstructor(cleaned)) return false;
+  // A global enum (`Key`, `Error`, …) is an int in GDScript.
+  if (registry.isGlobalEnum(cleaned)) return false;
 
   return true;
 }

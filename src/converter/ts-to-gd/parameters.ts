@@ -74,47 +74,15 @@ export function emitParameters(
 
       const isNullDefault = p.initializer?.kind === ts.SyntaxKind.NullKeyword;
 
-      // Check if the type is a union containing null (e.g. `Node | null`, `null | Node2D`)
-      const isNullableUnion =
-        p.type &&
-        ts.isUnionTypeNode(p.type) &&
-        p.type.types.some(
-          (u) =>
-            u.kind === ts.SyntaxKind.NullKeyword ||
-            (ts.isLiteralTypeNode(u) &&
-              u.literal.kind === ts.SyntaxKind.NullKeyword),
-        );
-
-      // For nullable unions, strip `| null` and use the base type
-      let gdType: string | null = null;
-      if (p.type && isNullableUnion) {
-        const nonNullTypes = (p.type as ts.UnionTypeNode).types.filter(
-          (u) =>
-            u.kind !== ts.SyntaxKind.NullKeyword &&
-            !(
-              ts.isLiteralTypeNode(u) &&
-              u.literal.kind === ts.SyntaxKind.NullKeyword
-            ),
-        );
-        if (nonNullTypes.length === 1) {
-          gdType = tsTypeNodeToGdType(
-            nonNullTypes[0]!,
-            t.ctx.checker,
-            t.ctx.sourceFile,
-            t.currentClassName,
-            t.ctx.registry,
-          );
-        }
-        // Multi-type union (e.g. Node | Node2D | null) -- can't express in GD
-      } else {
-        gdType = tsTypeNodeToGdType(
-          p.type,
-          t.ctx.checker,
-          t.ctx.sourceFile,
-          t.currentClassName,
-          t.ctx.registry,
-        );
-      }
+      // A `T | null` union keeps `T` only for a reference type, the same rule
+      // as fields and return types (see `tsTypeNodeToGdType`).
+      const gdType = tsTypeNodeToGdType(
+        p.type,
+        t.ctx.checker,
+        t.ctx.sourceFile,
+        t.currentClassName,
+        t.ctx.registry,
+      );
 
       // Nullable param with `?` or `= null` -> `= null` in GDScript.
       // Add type annotation only for class types (not primitives/variant types).
