@@ -1,3 +1,31 @@
+## [0.1.10](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.9...v0.1.10) (2026-09-30)
+
+### ⚠ BREAKING CHANGES
+
+* **typings:** a gd.signal() that is emitted with arguments needs its argument
+tuple, e.g. gd.signal<[amount: int]>(); gd.signal<unknown[]>() keeps any arguments.
+
+### Features
+
+* **browser:** convert a single file from in-memory typings ([667d13d](https://github.com/nnn3d/typescript-to-gdscript/commit/667d13de7f982571fa0a53e60f939f9c8fa4e928))
+* **cli:** write bundler module resolution in the init tsconfig ([ef84c21](https://github.com/nnn3d/typescript-to-gdscript/commit/ef84c213dcced50b4258edab1d0934ceaeb285ce))
+* **site:** add the docs site and the playground ([833a1d0](https://github.com/nnn3d/typescript-to-gdscript/commit/833a1d07e53c447ed6580ca6fc407abf760cd305))
+* **site:** describe guide pages by their first paragraph ([239313e](https://github.com/nnn3d/typescript-to-gdscript/commit/239313e012b02496a1eecd282de58ed9d395c246))
+* **site:** open the github link in a new tab ([3fced5f](https://github.com/nnn3d/typescript-to-gdscript/commit/3fced5f9de0a5e247f47f7ca0f4a27f1eac381ee))
+* **site:** title and colour typescript and gdscript code blocks ([e6efd87](https://github.com/nnn3d/typescript-to-gdscript/commit/e6efd8787808b7ab6fcf15a99dfa6cf4916c3a30))
+* **typings:** accept explicit key and value types in gd.dict ([4166c73](https://github.com/nnn3d/typescript-to-gdscript/commit/4166c7320e27572afafd0e8358ae3354e5491fe4))
+* **typings:** make gd.signal() without a type argument take no arguments ([e2a09c1](https://github.com/nnn3d/typescript-to-gdscript/commit/e2a09c13e52fc3de135ec6a308cc1b4c2f4f6b60))
+* **typings:** type the result of awaiting a signal ([028d79c](https://github.com/nnn3d/typescript-to-gdscript/commit/028d79c35dc634bf934a2a57abfc1fbffadae0af))
+
+### Bug Fixes
+
+* **cli:** find godot in watch the same way as convert ([bb12c6f](https://github.com/nnn3d/typescript-to-gdscript/commit/bb12c6fb4856b19febe0b878c0812af7421b293c))
+* **cli:** point init messages to the docs site ([89ff36d](https://github.com/nnn3d/typescript-to-gdscript/commit/89ff36d983dd1ee42483daff59c600dcef9cb683))
+* **cli:** suggest npx in the init next steps ([89c7f69](https://github.com/nnn3d/typescript-to-gdscript/commit/89c7f6983409bd30880611467ce96ff1146f229a))
+* **site:** fit the playground to the window height ([090ee59](https://github.com/nnn3d/typescript-to-gdscript/commit/090ee59addfd04bbac3ca2bad743f907b3058725))
+* **ts-to-gd:** drop the type of a nullable value type ([998d0dd](https://github.com/nnn3d/typescript-to-gdscript/commit/998d0dd0a8d800a8f49e405b0442a3d9632ab756))
+* **ts-to-gd:** reject the in operator on arrays ([20ad4f3](https://github.com/nnn3d/typescript-to-gdscript/commit/20ad4f3651076933ca941fc566040aa92c93dca2))
+* **typings:** let typescript infer async return types ([b3939dc](https://github.com/nnn3d/typescript-to-gdscript/commit/b3939dc97a6d99e6d0c73b827a239ff1661f2daf))
 ## [0.1.9](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.7...v0.1.9) (2026-09-30)
 
 ### Features
