@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import preact from '@astrojs/preact';
 import { browserShims } from './vite/browser-shims.ts';
-import { BASE, REPO_URL, SITE_ORIGIN } from './constants.ts';
+import { BASE, SITE_ORIGIN } from './constants.ts';
 import { buildSidebar, DOCS_DIR } from './sidebar.ts';
 
 /** Paste the Google Search Console verification token here to emit the meta tag. */
@@ -20,13 +20,7 @@ export default defineConfig({
       logo: { src: './src/assets/logo.png', alt: '' },
       favicon: '/favicon.png',
       customCss: ['./src/styles/code-frames.css'],
-      social: [
-        {
-          icon: 'github',
-          label: 'GitHub',
-          href: REPO_URL,
-        },
-      ],
+      components: { SocialIcons: './src/components/SocialIcons.astro' },
       sidebar: buildSidebar(DOCS_DIR),
       head: [
         {

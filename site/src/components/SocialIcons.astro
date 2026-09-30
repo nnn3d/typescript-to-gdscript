@@ -1,0 +1,24 @@
+---
+// Replaces Starlight's social icons so the GitHub link opens in a new tab,
+// leaving the docs (and a half-written playground) open in this one.
+import { Icon } from '@astrojs/starlight/components';
+import { REPO_URL } from '../../constants.ts';
+---
+
+<a href={REPO_URL} target="_blank" rel="me noopener" class="sl-flex">
+  <span class="sr-only">GitHub</span>
+  <Icon name="github" />
+</a>
+
+<style>
+  @layer starlight.core {
+    a {
+      color: var(--sl-color-text-accent);
+      padding: 0.5em;
+      margin: -0.5em;
+    }
+    a:hover {
+      color: var(--sl-color-white);
+    }
+  }
+</style>
