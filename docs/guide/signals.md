@@ -7,7 +7,7 @@ In GDScript you declare a signal with `signal name(args)`. In TypeScript a signa
 ```ts
 export class Player extends CharacterBody2D {
   health_changed = gd.signal<[old_value: int, new_value: int]>();
-  died = gd.signal<[]>();
+  died = gd.signal();
 }
 ```
 
@@ -19,7 +19,7 @@ signal health_changed(old_value: int, new_value: int)
 signal died
 ```
 
-The labels in the tuple (`old_value`, `new_value`) become the argument names in GDScript. For a signal with no arguments, write `gd.signal<[]>()`. Plain `gd.signal()` also works, but TypeScript then accepts any arguments.
+The labels in the tuple (`old_value`, `new_value`) become the argument names in GDScript. Leave the type argument out for a signal with no arguments.
 
 > **Note:** Always label the tuple elements. Without labels (`gd.signal<[int, int]>()`) the arguments are named `arg1`, `arg2`, which is what the Godot editor then shows when you connect the signal.
 
@@ -30,7 +30,7 @@ Call `emit` with the arguments. TypeScript checks them against the tuple, so a w
 ```ts
 export class Health extends Node {
   health_changed = gd.signal<[old_value: int, new_value: int]>();
-  died = gd.signal<[]>();
+  died = gd.signal();
 
   health: int = 100;
 
@@ -114,7 +114,7 @@ Engine signals (`timeout`, `pressed`, `body_entered`, …) are typed from the Go
 
 ```ts
 export class Door extends Node3D {
-  opened = gd.signal<[]>();
+  opened = gd.signal();
   unlocked = gd.signal<[by: Node]>();
 
   async open_when_unlocked() {

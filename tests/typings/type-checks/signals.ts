@@ -16,8 +16,10 @@ class SignalAwaitTest extends Node {
   maybe = gd.signal<[when?: int]>();
   tail = gd.signal<[a: int, b?: string]>();
   tails = gd.signal<[a: int, b?: string, c?: bool]>();
-  // No type argument: the arity is unknown.
-  untyped = gd.signal();
+  // No type argument: no arguments, like `signal name` in GDScript.
+  bare = gd.signal();
+  // An array rather than a tuple: the arity is unknown.
+  untyped = gd.signal<unknown[]>();
 
   async run() {
     let none = await this.none;
@@ -39,6 +41,9 @@ class SignalAwaitTest extends Node {
     expectSignalAwait<
       SignalAwaitSame<typeof tails, int | [int, string] | [int, string, bool]>
     >();
+
+    let bare = await this.bare;
+    expectSignalAwait<SignalAwaitSame<typeof bare, null>>();
 
     let untyped = await this.untyped;
     expectSignalAwait<SignalAwaitSame<typeof untyped, unknown>>();

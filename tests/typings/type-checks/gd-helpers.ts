@@ -22,9 +22,13 @@ class SignalTest extends Node {
     // Connect with typed callback
     this.health_changed.connect((old_hp: int, new_hp: int) => {});
 
-    // Simple signal with default type accepts any args (Signal defaults to any[])
+    // No type argument means no arguments, as `signal name` in GDScript
     this.simple_signal.emit();
+    // @ts-expect-error — the signal has no arguments
     this.simple_signal.emit(42);
+    this.simple_signal.connect(() => {});
+    // @ts-expect-error — the handler expects an argument the signal never sends
+    this.simple_signal.connect((value: int) => {});
   }
 }
 

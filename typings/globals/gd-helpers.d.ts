@@ -88,8 +88,12 @@ type _ExtractUnaryRet<U> = U extends { ret: infer Ret } ? Ret : never;
 type UnaryOpResult<S extends symbol, L> = _ExtractUnaryRet<OpEntries<S, L>>;
 
 declare const gd: {
-  /** Create a signal. Transforms to `signal name` in GDScript. */
-  readonly signal: <T extends unknown[] = unknown[]>() => Signal<T>;
+  /**
+   * Create a signal. Transforms to `signal name(args)` in GDScript. The type
+   * argument is the argument list as a labelled tuple; without one the
+   * signal has no arguments, like a bare `signal name`.
+   */
+  readonly signal: <T extends unknown[] = []>() => Signal<T>;
 
   /**
    * Godot getter/setter helper. `get` and `set` are required keys — pass

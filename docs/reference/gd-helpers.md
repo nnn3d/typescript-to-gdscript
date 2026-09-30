@@ -14,7 +14,7 @@ class Player extends CharacterBody2D {
 }
 ```
 
-Tuple **element labels** (TypeScript named tuple syntax) become signal argument names in the generated GDScript. Unlabelled tuple elements fall back to `arg1`, `arg2`, …. Always prefer labelled tuples — they give readable signatures in both IDE autocomplete (via TS) and the Godot editor (via GD).
+Tuple **element labels** (TypeScript named tuple syntax) become signal argument names in the generated GDScript. Unlabelled tuple elements fall back to `arg1`, `arg2`, …. Always prefer labelled tuples — they give readable signatures in both IDE autocomplete (via TS) and the Godot editor (via GD). Without a type argument the signal has no arguments (`T` defaults to `[]`), so `emit(42)` or a handler that expects a value is a type error, as it would be in GDScript.
 
 Emitting and connecting:
 

@@ -486,7 +486,7 @@ func void_task():
 
 Using `Promise<T>` anywhere else (a field, a parameter, a `let` annotation) is a converter error — there's no GDScript runtime type to map it to. The runtime "promise" is just an unresolved coroutine, and treating it as a value (passing it around, calling `.then` / `.catch` / `.finally`, returning it without `await`) is rejected.
 
-`await` on a signal returns what the signal was emitted with, and the typings say so: `null` for a signal with no arguments, the value itself for one argument, and an `Array` (typed as a tuple) for more. Godot counts the arguments the emit actually passed, so optional ones give a union: `gd.signal<[when?: int]>()` awaits to `int | null`. A `gd.signal()` without a type argument gives `unknown`, because its arguments aren't known.
+`await` on a signal returns what the signal was emitted with, and the typings say so: `null` for a signal with no arguments, the value itself for one argument, and an `Array` (typed as a tuple) for more. Godot counts the arguments the emit actually passed, so optional ones give a union: `gd.signal<[when?: int]>()` awaits to `int | null`. A `gd.signal()` without a type argument has no arguments and awaits to `null`; only an array type such as `gd.signal<unknown[]>()`, whose arguments aren't known, gives `unknown`.
 
 ```typescript
 damaged = gd.signal<[amount: int]>();
