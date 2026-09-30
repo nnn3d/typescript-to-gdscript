@@ -126,10 +126,15 @@ declare const gd: {
    * from the entries: a key typed `this` or a subclass would make a
    * dictionary TypeScript refuses as `Dictionary<Node, int>` (its key is
    * invariant). With nowhere typed to go, the result is untyped.
+   *
+   * Or name the key and value types in the call: `gd.dict<Vector2, int>([...])`
+   * is a `Dictionary<Vector2, int>` wherever it goes. (Two type arguments
+   * select the second signature; a call without them keeps the first.)
    */
-  readonly dict: <D = Dictionary>(
-    entries: NoInfer<GdDictEntry<NonNullable<D>>>[],
-  ) => D;
+  readonly dict: {
+    <D = Dictionary>(entries: NoInfer<GdDictEntry<NonNullable<D>>>[]): D;
+    <K, V>(entries: [NoInfer<K>, NoInfer<V>][]): Dictionary<K, V>;
+  };
 
   /**
    * GDScript `match` statement. Transforms to `match value:` with pattern cases in GDScript.

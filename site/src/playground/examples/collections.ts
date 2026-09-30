@@ -12,10 +12,10 @@ export class Collections extends Node {
     let mana = stats.mana;
     stats.hp -= 10;
 
-    // Non-string keys go through `gd.dict`.
+    // Non-string keys go through `gd.dict`, optionally with key and value types.
     let home = Vector2i(0, 0);
     let lake = Vector2i(1, 0);
-    let cells = gd.dict([
+    let cells = gd.dict<Vector2i, string>([
       [home, 'grass'],
       [lake, 'water'],
     ]);

@@ -117,7 +117,7 @@ export class Board extends Node2D {
   pieces: Dictionary<Vector2i, Node2D> = gd.dict([]);
 
   _ready() {
-    let names = gd.dict([
+    let names = gd.dict<Vector2i, string>([
       [Vector2i.LEFT, 'west'],
       [Vector2i.RIGHT, 'east'],
     ]);
@@ -142,7 +142,7 @@ func _ready():
 	self.pieces.set(Vector2i(0, 0), self)
 ```
 
-Each key in `gd.dict` must be a variable, a literal or a member like `Vector2i.LEFT`. Compute anything else into a variable first.
+The dictionary gets its key and value types from the field or variable it goes into, like `pieces`, or from the type arguments, like `names`; TypeScript then checks every pair. Each key in `gd.dict` must be a variable, a literal or a member like `Vector2i.LEFT`. Compute anything else into a variable first.
 
 ## Details
 

@@ -248,6 +248,21 @@ class TypeDictTest extends Node {
     const wrong: Dictionary<Node, int> = gd.dict([[node, 'x']]);
     // @ts-expect-error — `{}` has no typed find_key for a class key
     const literal: Dictionary<Node, int> = {};
+    // Or name the key and value types right in the call.
+    const explicit = gd.dict<Vector2, int>([
+      [Vector2.ZERO, 1],
+      [Vector2.ONE, 2],
+    ]);
+    const explicit_value: int = explicit.get(Vector2.ZERO);
+    const explicit_named = gd.dict<string, int>([['hp', 1]]);
+    const explicit_hp: int = explicit_named['hp'];
+    const explicit_typed: Dictionary<Node, int> = gd.dict<Node, int>([
+      [node, 1],
+    ]);
+    // @ts-expect-error — a value of the wrong type
+    gd.dict<Vector2, int>([[Vector2.ZERO, 'x']]);
+    // @ts-expect-error — a key of the wrong type
+    gd.dict<Vector2, int>([['a', 1]]);
     // With nothing typed to go to, it stays untyped — mixed keys included.
     const loose = gd.dict([]);
     loose.set(node, 1);

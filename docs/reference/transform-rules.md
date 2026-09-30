@@ -138,7 +138,7 @@ export abstract class Player extends CharacterBody2D {
     let stats = { name: 'Hero', hp: 100 }; // string keys — plain object literal
     // Non-string keys → use gd.dict():
     let key = Vector2.DOWN;
-    let directions = gd.dict([[key, 'down']]);
+    let directions = gd.dict<Vector2, string>([[key, 'down']]); // key and value types are optional
 
     // Plain TS objects (interfaces, object literals) are Dictionaries
     // in GDScript, so reads convert to .get() — it returns null for a
