@@ -40,6 +40,34 @@ describe('transformDoc', () => {
     ).toBe(true);
   });
 
+  it('takes the description from the first paragraph when there is no brief', () => {
+    const guide = transformDoc(
+      '# Signals\n\nIn GDScript you declare a [signal](../x.md) with\n`signal name(args)`.\n\n## Declaring\n\nMore.',
+      'guide/signals.md',
+      OPTS,
+    );
+    expect(guide).toContain(
+      'description: "In GDScript you declare a signal with signal name(args)."',
+    );
+  });
+
+  it('shortens a long first paragraph at a word boundary', () => {
+    const long = 'word '.repeat(60).trim();
+    const guide = transformDoc(`# T\n\n${long}`, 'guide/t.md', OPTS);
+    const description = /description: "(.*)"/.exec(guide)![1];
+    expect(description.length).toBeLessThanOrEqual(160);
+    expect(description.endsWith('word…')).toBe(true);
+  });
+
+  it('gives no description when the page starts with a code block', () => {
+    const guide = transformDoc(
+      '# T\n\n```ts\nlet x = 1;\n```',
+      'guide/t.md',
+      OPTS,
+    );
+    expect(guide).not.toContain('description:');
+  });
+
   it('drops the back link and the heading but keeps the brief', () => {
     expect(out).not.toContain('Back to README');
     expect(out).not.toContain('# CLI Reference');

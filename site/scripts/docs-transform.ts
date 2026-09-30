@@ -67,6 +67,7 @@ export function transformDoc(
     throw new Error(`${docPath}: no "# Title" heading outside code fences`);
   }
   while (body.length && body[0].trim() === '') body.shift();
+  description ??= firstParagraph(body);
 
   const front = [
     '---',
@@ -77,6 +78,29 @@ export function transformDoc(
     '',
   ];
   return `${front.join('\n')}\n${body.join('\n')}`;
+}
+
+/** Search engines show about this much of a description. */
+const DESCRIPTION_MAX = 160;
+
+/**
+ * The page's opening paragraph as plain text, for pages without a `> Brief:`
+ * line (the guides). None when the page opens with something other than
+ * prose — code, a list, a quote, a table or a heading.
+ */
+function firstParagraph(body: string[]): string | undefined {
+  const lines: string[] = [];
+  for (const line of body) {
+    if (line.trim() === '') break;
+    lines.push(line.trim());
+  }
+  if (!lines.length || /^([#>|<!-]|```|~~~|\d+\.\s|\*\s)/.test(lines[0])) {
+    return undefined;
+  }
+  const text = plainText(lines.join(' '));
+  if (text.length <= DESCRIPTION_MAX) return text;
+  const cut = text.slice(0, DESCRIPTION_MAX - 1);
+  return `${cut.slice(0, cut.lastIndexOf(' '))}…`;
 }
 
 function plainText(markdown: string): string {
