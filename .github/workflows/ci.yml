@@ -38,6 +38,9 @@ jobs:
         with:
           node-version: 22
           cache: yarn
+          cache-dependency-path: |
+            yarn.lock
+            site/yarn.lock
 
       - name: Install Godot ${{ env.GODOT_VERSION }} (headless)
         run: |
@@ -55,6 +58,12 @@ jobs:
 
       - name: Install dependencies
         run: yarn install --frozen-lockfile
+
+      # tests/site imports the docs sync script, which Vite compiles against
+      # site/tsconfig.json, and that extends a config from the site's packages.
+      - name: Install site dependencies
+        run: yarn install --frozen-lockfile
+        working-directory: site
 
       - name: Type-check & build
         run: yarn build

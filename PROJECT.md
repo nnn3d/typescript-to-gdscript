@@ -17,7 +17,7 @@ User-facing docs have three layers. All of `docs/` except `docs/superpowers/` is
   - `ide-integration.md` — the TypeScript language service plugin, `tstogd open-editor`, Godot external-editor configuration
 - `docs/development.md` — contributors: prerequisites, test scripts, regenerating Godot typings, docs site + playground.
 
-Guide examples written as a ` ```ts ` block directly followed by a ` ```gdscript ` block are converted and compared by `tests/site/doc-examples.test.ts` (`nocheck` in the ts fence opts out); `tests/site/doc-links.test.ts` checks every relative link and `#anchor` in `README.md` and `docs/`.
+Guide examples written as a ` ```ts ` block directly followed by a ` ```gdscript ` block are converted and compared by `tests/site/doc-examples.test.ts` (`nocheck` in the ts fence opts out); `tests/site/doc-links.test.ts` checks every relative link and `#anchor` in `README.md` and `docs/`. `tests/site/docs-transform.test.ts` imports `site/scripts/docs-transform.ts`, which Vite compiles against `site/tsconfig.json` (`extends: astro/tsconfigs/strict`), so the root suite needs the site's dependencies installed; the CI test job installs them.
 
 When adding a new feature or CLI flag, update the matching `docs/reference/` page, and a `docs/guide/` page when users need it in everyday work.
 

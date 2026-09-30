@@ -6,6 +6,7 @@
 
 ```bash
 yarn install
+(cd site && yarn install)
 yarn build
 yarn test:run
 ```
@@ -14,6 +15,7 @@ yarn test:run
 
 - **Node.js 22+** — the plugin uses `require(esm)` semantics (no top-level await in the plugin itself, but earlier Node versions refuse ESM via `require`).
 - **Godot** on `PATH`, or reachable via `godotPath` / `GODOT_PATH` — required to run the test suite. Tests that exercise the Godot CLI integration (converter-round-trip validation, ts-plugin async Godot diagnostics, etc.) fail loudly when Godot is not resolvable; they are **not** skipped. If you need to develop without Godot installed, run just the subset of scripts that don't touch it (`yarn test:tstogd`, `yarn test:gdtots`, `yarn test:diag`, `yarn test:sourcemap`, `yarn test:godot-registry`, `yarn test:typecheck`, `yarn test:cli`) — the rest will fail with a spawn error.
+- **Site dependencies** (`cd site && yarn install`) — `tests/site` also tests the script that syncs `docs/` into the site, and Vite compiles it with the site's `tsconfig.json`, which extends a config from the site's packages. Without them that test fails to load.
 
 ## Test scripts
 
