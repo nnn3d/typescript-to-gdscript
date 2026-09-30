@@ -53,7 +53,7 @@ func heal(amount: int) -> int:
 
 `int` and `float` are both `number` to TypeScript, so `7 / 2` between two `int`s is `3`, as in GDScript; see [Math and value types](./math-and-value-types.md#int-and-float).
 
-A type hint goes into the `.gd` only when GDScript has that type: Godot classes and value types, your own classes, enums. An `interface`, a `type` alias, a union of several classes, `any` and `unknown` have no GDScript type, so the variable is left untyped, which is always valid GDScript. TypeScript still checks it.
+A type hint goes into the `.gd` only when GDScript has that type: Godot classes and value types, your own classes, enums. String literal types such as `'fire' | 'ice'` become `String`, and `true` / `false` become `bool`. An `interface`, an object `type` alias, a union of several classes, `any` and `unknown` have no GDScript type, so the variable is left untyped, which is always valid GDScript. TypeScript still checks it.
 
 ## `null`, not `undefined`
 

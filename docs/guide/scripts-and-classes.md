@@ -88,7 +88,7 @@ extends Node2D
 
 var damage: int = 10
 
-func strike(kind):
+func strike(kind: String):
 	return {
 		"damage": self.damage,
 		"kind": kind,

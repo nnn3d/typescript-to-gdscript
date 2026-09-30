@@ -315,7 +315,10 @@ export function tsTypeNodeToGdType(
       if (arg.kind === ts.SyntaxKind.VoidKeyword) return null;
       return tsTypeNodeToGdType(arg, checker, sourceFile, className, registry);
     }
-    return classifyTypeReferenceName(typeNode, name, checker, registry);
+    return (
+      classifyTypeReferenceName(typeNode, name, checker, registry) ??
+      literalBaseGdType(checker.getTypeFromTypeNode(typeNode))
+    );
   }
 
   // Keyword types
@@ -355,6 +358,14 @@ export function tsTypeNodeToGdType(
   // Anything more complex — multiple non-null members, intersections — has
   // no GD equivalent and is omitted.
   if (ts.isUnionTypeNode(typeNode)) {
+    const nullable = typeNode.types.some(
+      (t) =>
+        isNullLiteralTypeNode(t) || t.kind === ts.SyntaxKind.UndefinedKeyword,
+    );
+    const base = nullable
+      ? null
+      : literalBaseGdType(checker.getTypeFromTypeNode(typeNode));
+    if (base) return base;
     const nonNull = typeNode.types.filter((t) => !isNullLiteralTypeNode(t));
     if (nonNull.length === 1 && nonNull.length !== typeNode.types.length) {
       const member = nonNull[0]!;
@@ -378,6 +389,23 @@ export function tsTypeNodeToGdType(
     return null;
   }
 
+  // Literal types, template literals, `keyof`, `typeof`: typed as their base.
+  return literalBaseGdType(checker.getTypeFromTypeNode(typeNode));
+}
+
+/**
+ * `String` for a type made only of strings, `bool` for one made only of
+ * booleans: literals (`'a'`, `true`), unions and aliases of them, template
+ * literals, `keyof`. GDScript types such a value as its base type. Number
+ * literals get nothing, since `1 | 2` doesn't say whether it is an int or a
+ * float, and a string enum is an enum, not a String.
+ */
+function literalBaseGdType(type: ts.Type): 'String' | 'bool' | null {
+  const parts = type.isUnion() ? type.types : [type];
+  const all = (flag: ts.TypeFlags) =>
+    parts.every((t) => t.flags & flag && !(t.flags & ts.TypeFlags.EnumLike));
+  if (all(ts.TypeFlags.StringLike)) return 'String';
+  if (all(ts.TypeFlags.BooleanLike)) return 'bool';
   return null;
 }
 
