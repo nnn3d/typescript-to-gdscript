@@ -1,0 +1,29 @@
+/*
+ * TypeScript and GDScript examples sit next to each other on almost every
+ * page. The sync titles their frames (`site/scripts/docs-transform.ts`);
+ * the colours here make the two tell apart at a glance: the tab and the
+ * left edge of each frame take its language's colour.
+ */
+.expressive-code .frame:has(pre[data-language='ts']),
+.expressive-code .frame:has(pre[data-language='typescript']) {
+  --tstogd-lang: #3178c6;
+}
+
+.expressive-code .frame:has(pre[data-language='gdscript']) {
+  --tstogd-lang: #3f9e6f;
+}
+
+.expressive-code .frame:has(pre[data-language='ts']),
+.expressive-code .frame:has(pre[data-language='typescript']),
+.expressive-code .frame:has(pre[data-language='gdscript']) {
+  --ec-frm-edActTabIndTopCol: var(--tstogd-lang);
+  --ec-frm-edActTabIndHt: 3px;
+  --ec-frm-edActTabFg: var(--tstogd-lang);
+  box-shadow: inset 3px 0 0 var(--tstogd-lang);
+}
+
+.expressive-code .frame:has(pre[data-language='ts']) .title,
+.expressive-code .frame:has(pre[data-language='typescript']) .title,
+.expressive-code .frame:has(pre[data-language='gdscript']) .title {
+  font-weight: 600;
+}

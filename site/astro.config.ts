@@ -19,6 +19,7 @@ export default defineConfig({
         'Write Godot 4 scripts in TypeScript and convert them to GDScript.',
       logo: { src: './src/assets/logo.png', alt: '' },
       favicon: '/favicon.png',
+      customCss: ['./src/styles/code-frames.css'],
       social: [
         {
           icon: 'github',

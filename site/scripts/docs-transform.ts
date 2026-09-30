@@ -16,13 +16,24 @@ const BACK_LINK = /^\[← Back to README\]\([^)]*\)\s*$/;
 const BRIEF = /^>\s*Brief:\s*(.*)$/;
 const FENCE = /^\s*(```|~~~)/;
 const LINK = /(!?\[[^\]]*\]\()([^)\s]+)(\))/g;
+/** An opening fence and its language: `  ```ts nocheck` → `ts`. */
+const FENCE_LANG = /^\s*(?:```|~~~)(\w+)/;
+/**
+ * The frame title shown for a language, so the TypeScript and the GDScript
+ * of an example read apart at a glance.
+ */
+const LANGUAGE_TITLES: Record<string, string> = {
+  ts: 'TypeScript',
+  typescript: 'TypeScript',
+  gdscript: 'GDScript',
+};
 
 /**
  * Turn a `docs/` Markdown file into a Starlight page. The `# Title` becomes
  * frontmatter; the `> Brief:` line feeds the description and stays in the
  * body; the "Back to README" link is dropped (the site navigation replaces
  * it); relative links are rewritten to site routes or, when they leave
- * `docs/`, to GitHub.
+ * `docs/`, to GitHub; TypeScript and GDScript code blocks get a titled frame.
  *
  * `docPath` is the file's path relative to `docs/`, with `/` separators.
  */
@@ -38,7 +49,13 @@ export function transformDoc(
   const body: string[] = [];
 
   lines.forEach((line, index) => {
-    if (FENCE.test(line)) inFence = !inFence;
+    if (FENCE.test(line)) {
+      inFence = !inFence;
+      if (inFence) {
+        body.push(titledFence(line));
+        return;
+      }
+    }
     if (!inFence) {
       if (index === 0 && BACK_LINK.test(line)) return;
       const brief = title === undefined ? BRIEF.exec(line) : null;
@@ -78,6 +95,14 @@ export function transformDoc(
     '',
   ];
   return `${front.join('\n')}\n${body.join('\n')}`;
+}
+
+/** An opening fence with a `title="…"` added for its language, if it has none. */
+function titledFence(line: string): string {
+  const lang = FENCE_LANG.exec(line)?.[1];
+  const title = lang ? LANGUAGE_TITLES[lang] : undefined;
+  if (!title || /\btitle=/.test(line)) return line;
+  return `${line.trimEnd()} title="${title}"`;
 }
 
 /** Search engines show about this much of a description. */

@@ -68,6 +68,51 @@ describe('transformDoc', () => {
     expect(guide).not.toContain('description:');
   });
 
+  it('titles TypeScript and GDScript code blocks so the two are easy to tell apart', () => {
+    const page = transformDoc(
+      [
+        '# T',
+        '',
+        '```ts',
+        'let a = 1;',
+        '```',
+        '',
+        '```gdscript',
+        'var a = 1',
+        '```',
+        '',
+        '```typescript nocheck',
+        'let b;',
+        '```',
+        '',
+        '- item',
+        '',
+        '  ```ts',
+        '  let c = 1;',
+        '  ```',
+        '',
+        '```ts title="player.ts"',
+        'let d = 1;',
+        '```',
+        '',
+        '```bash',
+        'tstogd convert',
+        '```',
+      ].join('\n'),
+      'guide/t.md',
+      OPTS,
+    );
+    expect(page).toContain('```ts title="TypeScript"\nlet a = 1;');
+    expect(page).toContain('```gdscript title="GDScript"\nvar a = 1');
+    expect(page).toContain('```typescript nocheck title="TypeScript"\n');
+    expect(page).toContain('  ```ts title="TypeScript"\n  let c = 1;');
+    // An explicit title is kept, and other languages get none.
+    expect(page).toContain('```ts title="player.ts"\n');
+    expect(page).toContain('```bash\ntstogd convert');
+    // Closing fences stay bare.
+    expect(page).not.toMatch(/^\s*``` title=/m);
+  });
+
   it('drops the back link and the heading but keeps the brief', () => {
     expect(out).not.toContain('Back to README');
     expect(out).not.toContain('# CLI Reference');

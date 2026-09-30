@@ -18,7 +18,7 @@ import { Card, CardGrid } from '@astrojs/starlight/components';
 
 ## TypeScript in, GDScript out
 
-```ts
+```ts title="TypeScript"
 export class Health extends Node {
   health_changed = gd.signal<[old_value: int, new_value: int]>();
 
@@ -27,7 +27,7 @@ export class Health extends Node {
 }
 ```
 
-```gdscript
+```gdscript title="GDScript"
 class_name Health
 extends Node
 
