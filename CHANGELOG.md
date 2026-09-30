@@ -1,3 +1,8 @@
+## [0.1.9](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.7...v0.1.9) (2026-09-30)
+
+### Features
+
+* **ts-to-gd:** support shorthand property assignment ([5e91a07](https://github.com/nnn3d/typescript-to-gdscript/commit/5e91a07dc76f00845a55e8d8b9072026f3292e40))
 ## [0.1.8](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.7...v0.1.8) (2026-09-30)
 ## [0.1.7](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.6...v0.1.7) (2026-09-28)
 
