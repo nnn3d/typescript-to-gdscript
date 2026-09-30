@@ -7,7 +7,7 @@ import { BASE, SITE_ORIGIN } from './constants.ts';
 import { buildSidebar, DOCS_DIR } from './sidebar.ts';
 
 /** Paste the Google Search Console verification token here to emit the meta tag. */
-const googleSiteVerification = '';
+const googleSiteVerification = '6S4CIbn8V8PV_gO7Yz-BTPqBL_C-8NsI0IKFPqiGPAM';
 
 export default defineConfig({
   site: SITE_ORIGIN,
