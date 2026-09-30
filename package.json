@@ -1,6 +1,6 @@
 {
   "name": "typescript-to-gdscript",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "Convert TypeScript to GDScript for Godot game engine",
   "type": "module",
   "main": "dist/index.js",
