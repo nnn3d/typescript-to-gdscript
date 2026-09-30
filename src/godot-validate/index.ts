@@ -77,6 +77,45 @@ export interface GodotValidateResult {
   godotAvailable: boolean;
 }
 
+// ─── Godot availability ─────────────────────────────────────
+
+/**
+ * Whether `godotPath` runs. The headless args are mandatory: on Windows, a
+ * bare `godot --version` pops the "couldn't detect mode" GUI dialog because
+ * Godot briefly initializes its display server before reading `--version`.
+ */
+export async function isGodotAvailable(
+  godotPath: string,
+  signal?: AbortSignal,
+): Promise<boolean> {
+  try {
+    await execFileAsync(godotPath, ['--headless', '--version'], {
+      timeout: 10000,
+      signal,
+    });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function godotNotFound(godotPath: string): GodotValidateResult {
+  return {
+    diagnostics: [
+      {
+        message:
+          `Godot executable not found at "${godotPath}". ` +
+          'Set --godot-path, godotPath in tstogd.json, or GODOT_PATH env variable.',
+        severity: 'warning',
+        file: '',
+        line: 0,
+        column: 0,
+      },
+    ],
+    godotAvailable: false,
+  };
+}
+
 // ─── Main Validation ─────────────────────────────────────────
 
 /**
@@ -94,35 +133,13 @@ export async function validateGdFiles(
     return { diagnostics: [], godotAvailable: true };
   }
 
-  // Check Godot availability. The headless args are mandatory: on Windows,
-  // a bare `godot --version` pops the "couldn't detect mode" GUI dialog
-  // because Godot briefly initializes its display server before reading
-  // the `--version` argument.
-  try {
-    await execFileAsync(options.godotPath, ['--headless', '--version'], {
-      timeout: 10000,
-      signal,
-    });
-  } catch {
+  if (!(await isGodotAvailable(options.godotPath, signal))) {
     // Abort during the --version probe: treat like a no-op, caller's
     // signal.aborted check will gate downstream work.
     if (signal?.aborted) {
       return { diagnostics: [], godotAvailable: true };
     }
-    return {
-      diagnostics: [
-        {
-          message:
-            `Godot executable not found at "${options.godotPath}". ` +
-            'Set --godot-path, godotPath in tstogd.json, or GODOT_PATH env variable.',
-          severity: 'warning',
-          file: '',
-          line: 0,
-          column: 0,
-        },
-      ],
-      godotAvailable: false,
-    };
+    return godotNotFound(options.godotPath);
   }
 
   // Collect autoload names to filter false-positive errors (Godot bug #80319)
@@ -315,29 +332,9 @@ export async function validateGdProject(
     };
   }
 
-  try {
-    // See note above on the headless args — needed to suppress the GUI
-    // mode-detection dialog on Windows.
-    await execFileAsync(options.godotPath, ['--headless', '--version'], {
-      timeout: 10000,
-      signal,
-    });
-  } catch {
+  if (!(await isGodotAvailable(options.godotPath, signal))) {
     if (signal?.aborted) return { diagnostics: [], godotAvailable: true };
-    return {
-      diagnostics: [
-        {
-          message:
-            `Godot executable not found at "${options.godotPath}". ` +
-            'Set --godot-path, godotPath in tstogd.json, or GODOT_PATH env variable.',
-          severity: 'warning',
-          file: '',
-          line: 0,
-          column: 0,
-        },
-      ],
-      godotAvailable: false,
-    };
+    return godotNotFound(options.godotPath);
   }
 
   if (signal?.aborted) return { diagnostics: [], godotAvailable: true };

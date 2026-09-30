@@ -1,7 +1,8 @@
 import type { Command } from 'commander';
 import { resolve } from 'path';
 import { Watcher } from '../watcher/index.ts';
-import { resolveConfig, resolveGodotPath } from '../config/index.ts';
+import { isGodotAvailable } from '../godot-validate/index.ts';
+import { resolveConfig, resolveLintGodotPath } from '../config/index.ts';
 import { isDebugEnabled } from './helpers.ts';
 import { linkExternalPackages } from '../external-packages/index.ts';
 
@@ -19,7 +20,7 @@ export function registerWatchCommand(program: Command): void {
     )
     .option(
       '--godot-path <path>',
-      'Path to Godot executable (enables GD validation after conversion)',
+      'Path to Godot executable (default: godotPath, GODOT_PATH, then godot on PATH)',
     )
     .option('--project-root <dir>', 'Godot project root for validation')
     .option(
@@ -28,7 +29,7 @@ export function registerWatchCommand(program: Command): void {
       false,
     )
     .option('--no-check', 'Disable the debounced full-project diagnostic check')
-    .action((opts) => {
+    .action(async (opts) => {
       const cfg = resolveConfig({
         overrides: {
           rootDir: opts.rootDir,
@@ -39,9 +40,16 @@ export function registerWatchCommand(program: Command): void {
           godotPath: opts.godotPath,
         },
       });
-      const godotPath = cfg.godotPath
-        ? resolveGodotPath({ godotPath: cfg.godotPath })
-        : undefined;
+      let godotPath = resolveLintGodotPath(cfg);
+      // Probed once here: the watcher checks after every save, and a missing
+      // Godot would otherwise warn on each one.
+      if (godotPath && !(await isGodotAvailable(godotPath))) {
+        console.warn(
+          `  Godot not found at "${godotPath}"; the Godot check is off. ` +
+            'Set godotPath in tstogd.json or the GODOT_PATH env variable.\n',
+        );
+        godotPath = undefined;
+      }
       const projectRoot = opts.projectRoot
         ? resolve(opts.projectRoot)
         : cfg.rootDir;

@@ -78,13 +78,13 @@ After converting, `convert` runs a full three-source diagnostic check unless dis
 | ---------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
 | TypeScript | `[TS:severity]`   | Semantic + syntactic errors (requires `--tsconfig`; noise codes TS2434/2435/2449 and the super-call codes TS2377/17009 suppressed) |
 | Converter  | `[CONV:severity]` | Errors and warnings from the TS→GD transformer                                                                                     |
-| Godot      | `[GD:severity]`   | Full-project `godot --check-only` (requires `--godot-path` and `project.godot`)                                                    |
+| Godot      | `[GD:severity]`   | Full-project `godot --check-only` (Godot from `godotPath`, `GODOT_PATH` or `PATH`; needs `project.godot`)                          |
 
 Extra flags:
 
 - `--no-emit` — Dry-run: convert in memory, report stale `.gd` outputs, do not write files. Godot validates existing `.gd` files on disk. Note: for files flagged as stale, Godot errors are reported at `.gd` positions (no source-map remap to `.ts` — the in-memory map doesn't match what's on disk).
 - `--no-check` — Skip the post-convert diagnostic check entirely (write files only)
-- `--godot-path <path>` — Path to Godot executable (enables GDScript validation)
+- `--godot-path <path>` — Path to Godot executable (default: `godotPath`, then `GODOT_PATH`, then `godot` on `PATH`)
 - `--project-root <dir>` — Godot project root for shared-package links and validation
 
 ```bash
@@ -119,7 +119,7 @@ Options:
 - `--gd-dir <dir>` — GDScript output directory (overrides `gdDir` from `tstogd.json`)
 - `--tsconfig <path>` — Path to tsconfig.json
 - `--typings-dir <path>` — Directory for all generated typings (overrides `typingsDir` from `tstogd.json`; relative to `rootDir`)
-- `--godot-path <path>` — Path to Godot executable (enables GD validation after conversion)
+- `--godot-path <path>` — Path to Godot executable (default: `godotPath`, then `GODOT_PATH`, then `godot` on `PATH`)
 - `--project-root <dir>` — Godot project root for shared-package links and validation
 - `--emit-on-error` — Emit output files even when conversion errors occur
 - `--no-check` — Disable the debounced full-project diagnostic check

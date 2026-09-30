@@ -22,7 +22,7 @@ The output is ordinary GDScript you can read and ship. TypeScript is only how yo
 
 - **Type-safe Godot API** — all 900+ engine classes generated as `.d.ts` from the official Godot XML docs, with nullable reference types where appropriate
 - **Live IDE diagnostics** — TypeScript language service plugin surfaces converter and Godot CLI errors as squiggles, on unsaved buffers
-- **Watch mode** — auto-convert on save and keep typings in sync (it watches your `.tscn` scenes and assets too), then run a debounced full-project check (TypeScript + converter, and Godot when `godotPath` is set)
+- **Watch mode** — auto-convert on save and keep typings in sync (it watches your `.tscn` scenes and assets too), then run a debounced full-project check (TypeScript + converter + Godot CLI)
 - **Source maps** — Godot script parse errors, runtime errors and stack traces map back to your TypeScript line/column
 - **Scene and path typings** — `get_node()`, `get_parent()`, `get_child()`, `load()`, `preload()` and group queries typed from your project files
 - **`gd` namespace** — strongly-typed helpers for GDScript-only constructs (signals, `match` patterns, getters/setters, operator overloading, raw GDScript)

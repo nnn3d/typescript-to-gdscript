@@ -7,7 +7,7 @@ It assumes you know Godot and GDScript. If TypeScript is new to you, skim the [T
 ## Requirements
 
 - **Node.js 22** or newer.
-- **Godot 4.** Set `"godotPath"` in `tstogd.json` to your Godot executable so tstogd can check the generated scripts with Godot itself. (`convert` and the TypeScript plugin also find `godot` on your `PATH`; `watch` needs `godotPath`.)
+- **Godot 4.** Put the `godot` executable on your `PATH`, set `GODOT_PATH`, or set `"godotPath"` in `tstogd.json`, so tstogd can check the generated scripts with Godot itself.
 - **TypeScript**, installed by `tstogd init`.
 - An editor with TypeScript support: VS Code, WebStorm, Rider, and so on.
 

@@ -58,11 +58,9 @@ npx tstogd watch
 
 ## The Godot check
 
-`convert` runs Godot in check-only mode on the generated scripts, so you see Godot's parse and type errors without opening the editor. It finds Godot through `godotPath` in `tstogd.json`, then the `GODOT_PATH` environment variable, then `godot` on your `PATH`.
+`convert` and `watch` run Godot in check-only mode on the generated scripts, so you see Godot's parse and type errors without opening the editor. They find Godot through `godotPath` in `tstogd.json`, then the `GODOT_PATH` environment variable, then `godot` on your `PATH`. If Godot isn't found, the check is skipped with a warning.
 
-> **Note:** `watch` runs the Godot check only when it is told where Godot is: set `godotPath` in `tstogd.json`, or pass `--godot-path`. It doesn't look at `GODOT_PATH` or your `PATH`.
-
-To turn the Godot check off, set `"disableGodotLint": true` in `tstogd.json`. That covers `convert` and the [TypeScript plugin](./editor-setup.md); `watch` doesn't read it, and skips the check only when `godotPath` isn't set. To skip the whole check for one run, use `tstogd convert --no-check`.
+To turn the Godot check off, set `"disableGodotLint": true` in `tstogd.json`. That covers `convert`, `watch` and the [TypeScript plugin](./editor-setup.md). To skip the whole check for one run, use `tstogd convert --no-check`.
 
 ## The cache
 
