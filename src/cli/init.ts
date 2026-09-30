@@ -16,17 +16,18 @@ import { execSync } from 'child_process';
 // IDE live converter + Godot diagnostics (squiggles on save) and
 // bridges go-to-def / find-usages between the generated shadow classes
 // in `*.gd.d.ts` and their real TypeScript sources.
-// `module: esnext` + `moduleResolution: classic` lets users (and the
+// `module: esnext` + `moduleResolution: bundler` lets users (and the
 // auto-generated typings/imports) write extension-less specifiers like
-// `import { Foo } from "./foo"`. NodeNext's mandatory `.js` extension
-// rule made the generated GD→TS imports awkward (the actual on-disk
-// file is `.ts`, not `.js`), so the project standardizes on classic
-// resolution for the simpler look.
+// `import { Foo } from "./foo"`, and import a shared package by name from
+// `node_modules` (`import { X } from "@acme/pkg/src/x"`). NodeNext's
+// mandatory `.js` extension rule made the generated GD→TS imports awkward
+// (the actual on-disk file is `.ts`, not `.js`); `classic` keeps the
+// extension-less form but never looks into `node_modules`.
 const TSCONFIG_TEMPLATE = `{
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "classic",
+    "moduleResolution": "bundler",
     "noLib": true,
     "strict": true,
     "noEmit": true,

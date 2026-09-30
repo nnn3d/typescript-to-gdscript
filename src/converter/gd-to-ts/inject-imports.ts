@@ -167,7 +167,7 @@ function collectMissingClassNames(
 /**
  * Build the import specifier for `import { X } from "..."` referencing
  * `targetTs` from `currentTs`. Project default is
- * `moduleResolution: "classic"` (set by the `tstogd init` template),
+ * `moduleResolution: "bundler"` (set by the `tstogd init` template),
  * which resolves bare-name specifiers via the `.ts` extension search
  * order — so we strip the trailing `.ts` and emit no extension at all.
  * `relative()` returns a bare filename for siblings, so we also force

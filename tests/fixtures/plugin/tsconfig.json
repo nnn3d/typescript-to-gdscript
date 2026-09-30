@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
-    "moduleResolution": "classic",
+    "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "noLib": true,
     "strict": true,

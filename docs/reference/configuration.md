@@ -11,6 +11,9 @@
 ```json
 {
   "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "noLib": true,
     "strict": true,
     "noEmit": true,
@@ -26,6 +29,7 @@
 
 - `noLib: true` disables the standard TypeScript libs — GDScript has a different runtime, so DOM / Node / ES libs would lie to you.
 - `types: []` prevents stray `@types/*` packages from leaking in.
+- `moduleResolution: "bundler"` allows imports without an extension (`./player`) and finds [shared packages](../guide/shared-packages.md#use-a-package) in `node_modules` by name. `"classic"`, which older versions of `tstogd init` wrote, keeps extension-less imports but never looks into `node_modules`.
 - `strict: true` includes `strictBindCallApply`, and the typings rely on it: it gives `call`, `bind` and `callv` on a function value Godot's semantics with the function's own types, so `lam.call(x)` checks `x` and returns what `lam` returns, and `bind` binds from the end. If you turn `strict` off, keep `"strictBindCallApply": true`. Without it TypeScript falls back to the untyped `Callable` surface, and `lam.call(x)` returns `unknown`.
 - The `include` array must reference the package typings directory so Godot classes, global functions, and `gd` helpers resolve.
 - Adjust `src/**/*.ts` to match your `tsDir`, and the `*.d.ts` glob to match your `typingsDir` — **these two must point at the same directory** or your generated scene typings won't be picked up. (`tstogd init` keeps them in sync for you; the value shown here, `src/_typings`, is what `init` writes.)

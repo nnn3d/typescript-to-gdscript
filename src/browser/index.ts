@@ -28,7 +28,7 @@ export const DEFAULT_FILE = '/src/main.ts';
 export const COMPILER_OPTIONS: ts.CompilerOptions = {
   target: ts.ScriptTarget.ESNext,
   module: ts.ModuleKind.ESNext,
-  moduleResolution: ts.ModuleResolutionKind.Classic,
+  moduleResolution: ts.ModuleResolutionKind.Bundler,
   noLib: true,
   strict: true,
   noEmit: true,

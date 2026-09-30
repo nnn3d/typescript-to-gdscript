@@ -112,7 +112,7 @@ export function resourceResPathToOutputFile(resPath: string): string {
 
 /**
  * Compute a relative import path from an output file to a TS source
- * file. The project default is `moduleResolution: "classic"` (set by
+ * file. The project default is `moduleResolution: "bundler"` (set by
  * the `tstogd init` template), which resolves bare-name specifiers
  * via the `.ts` extension search order — so we strip the trailing
  * `.ts` and emit no extension at all. Callers that need the original

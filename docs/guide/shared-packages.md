@@ -41,12 +41,12 @@ npm install @acme/inventory
 
 Add `tstogd_modules/` to your `.gitignore`. tstogd recreates the links on every run.
 
-In TypeScript, import the package's classes from its source inside `tstogd_modules`, with a path relative to your file:
+In TypeScript, import the package's classes by the package name, from its source files:
 
 ```ts nocheck
 // src/shop.ts
-import { Inventory } from '../tstogd_modules/@acme/inventory/src/inventory';
-import { _Slot } from '../tstogd_modules/@acme/inventory/src/slot';
+import { Inventory } from '@acme/inventory/src/inventory';
+import { _Slot } from '@acme/inventory/src/slot';
 
 export class Shop extends Node {
   inventory: Inventory = new Inventory();
@@ -66,7 +66,7 @@ var featured: _Slot = _Slot.new()
 
 `Inventory` has a `class_name`, so Godot knows it everywhere and no `preload()` is needed. `_Slot` has none, so it is preloaded from where the package is linked.
 
-> **Note:** An import straight from the package name, such as `'@acme/inventory/src/inventory'`, isn't found with the `tsconfig.json` that `tstogd init` writes, because its module resolution doesn't look into `node_modules`. Go through `tstogd_modules` as above.
+> **Note:** Importing by package name needs `"moduleResolution": "bundler"` in `tsconfig.json`, which `tstogd init` writes. A project set up before that has `"classic"`, which doesn't look into `node_modules`: change it to `"bundler"`.
 
 ## Folders and custom names
 
@@ -82,6 +82,39 @@ var featured: _Slot = _Slot.new()
 ```
 
 `from` is a package name or a path relative to your project. `to` is the folder name under `tstogd_modules`; without it, the package name is used. Each folder needs a `tstogd.json` with `lib: true`.
+
+A folder isn't in `node_modules`, so import it through `tstogd_modules`. A path alias in `tsconfig.json` keeps those imports short:
+
+```json
+{
+  "compilerOptions": {
+    "paths": { "@modules/*": ["./tstogd_modules/*"] }
+  }
+}
+```
+
+```ts nocheck
+// src/fighter.ts
+import { Health } from '@modules/gameplay/src/health';
+import { _Damage } from '@modules/gameplay/src/damage';
+
+export class Fighter extends Node {
+  health: Health = new Health();
+  last_hit: _Damage = new _Damage();
+}
+```
+
+```gdscript
+class_name Fighter
+extends Node
+
+const _Damage = preload("res://tstogd_modules/gameplay/gd/damage.gd")
+
+var health: Health = Health.new()
+var last_hit: _Damage = _Damage.new()
+```
+
+Here `../shared-gameplay` has `"gdDir": "gd"`. The alias works once `tstogd_modules` exists, so run `tstogd convert` or `tstogd watch` once after adding the folder, before your editor can find the imports.
 
 A built package reaches its own shared dependencies through fixed `res://tstogd_modules/<package-name>/...` paths, so don't rename a package with `to` when another package imports it.
 

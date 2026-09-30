@@ -134,7 +134,7 @@ describe('GD → TS: the converted fixture project type-checks', () => {
         compilerOptions: {
           target: 'esnext',
           module: 'esnext',
-          moduleResolution: 'classic',
+          moduleResolution: 'bundler',
           allowImportingTsExtensions: true,
           noLib: true,
           strict: false,
