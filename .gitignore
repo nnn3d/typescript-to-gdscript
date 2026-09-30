@@ -11,3 +11,6 @@ export_presets.cfg
 
 # Generated files
 *.generated.d.ts
+
+# Local design/plan docs (never committed)
+docs/superpowers/

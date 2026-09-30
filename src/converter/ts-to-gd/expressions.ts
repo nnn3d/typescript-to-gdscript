@@ -36,7 +36,7 @@ export function emitExpression(
   // receiver position, and it goes out as written — a bare `super()`
   // included. Whether anything answers it (a parent `_init`, a method
   // rather than an engine virtual) is Godot's to report, and it does so
-  // when it parses the script (AGENTS.md rule 11).
+  // when it parses the script (AGENTS.md rule 10).
   if (node.kind === ts.SyntaxKind.SuperKeyword) return 'super';
 
   // Identifiers
