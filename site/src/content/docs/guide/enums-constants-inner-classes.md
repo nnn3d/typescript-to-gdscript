@@ -129,7 +129,7 @@ func _physics_process(delta: float):
 	self.move_and_slide()
 ```
 
-A `switch` becomes a `match`, the usual shape of a state machine in GDScript. A `match` branch never falls through, so write each `case` without `break`; a `break` that leaves the `switch` is an error. Empty cases stacked above another share its body, and `default` becomes `_`, always the last branch. Keep `noFallthroughCasesInSwitch` off in `tsconfig.json` (it is off by default), or TypeScript flags every case. For array, dictionary and guard patterns, use [`gd.match`](/typescript-to-gdscript/reference/gd-helpers/#match-statement).
+A `switch` becomes a `match`, the usual shape of a state machine in GDScript. A `match` branch never falls through, so write each `case` without `break`; a `break` that leaves the `switch` is an error. Empty cases stacked above another share its body, and `default` becomes `_`, always the last branch. Keep `noFallthroughCasesInSwitch` off in `tsconfig.json` (it is off by default), or TypeScript flags every case. Switching on numbers rather than an enum? A `match` never matches a float against a whole-number case: see [the caveat](/typescript-to-gdscript/guide/caveats/#switch-becomes-match). For array, dictionary and guard patterns, use [`gd.match`](/typescript-to-gdscript/reference/gd-helpers/#match-statement).
 
 ## Inner classes
 

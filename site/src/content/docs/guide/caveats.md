@@ -36,6 +36,12 @@ In TypeScript `a || b` gives one of the operands. GDScript's `or` and `and` alwa
 
 `match` branches never fall through, so write each `case` without `break`. A `break` that leaves the `switch` is an error. Empty cases stacked above another share its body, as in TypeScript. `default` becomes `_` and always goes last. See [`switch` on an enum](/typescript-to-gdscript/guide/enums-constants-inner-classes/#switch-on-an-enum).
 
+:::caution[Whole numbers and fractions don't match each other]
+`match` compares numbers by type as well as by value: a float `1.0` doesn't match `case 1:`, and an int `1` doesn't match `case 1.0:`. A `number` becomes a `float` in GDScript, so with `n: number`, `switch (n) { case 1: }` never takes that branch, and no error tells you.
+
+Type the value you switch on as `int` when the cases are whole numbers, or compare with `if (n == 1)`, since `==` compares numbers by value. Enums and strings are safe: an enum value is always an int, and a `StringName` matches a string case.
+:::
+
 ### `==` and `===` are the same
 
 Both become GDScript `==`. It compares vectors, colors, arrays and dictionaries by their contents, not by identity: two separate arrays `[1, 2]` are equal. Use `is_same(a, b)` to check whether two values are the same object.

@@ -457,6 +457,8 @@ Migrating code written with `break;` in every case? Remove them — the trailing
 
 A comment sitting between two cases is kept, above the branch it was written above; one after the last case stays in that branch, and travels with it if the branch moves. A `/* */` written there comes out as `#` lines rather than the usual `"""..."""` — a bare string between two branches would read as a pattern, not a comment.
 
+**Numbers are matched by type.** GDScript's `match` compares a number's type as well as its value, unlike `===`: a float `1.0` doesn't match the pattern `1`, and an int `1` doesn't match `1.0` (a pattern list `1, 1.0` matches both). Since `number` becomes `float`, a `switch` on a `number` value with whole-number cases never takes those branches, silently. The converter can't fix this for you: TypeScript can't tell an `int` value from a `number` one (`int` is an alias of `number`), and a case written as a named constant (`case LIMIT:`) can't be given a float twin. Switch on an `int`-typed value when the cases are whole numbers, or use `if` / `==`, which compares numbers by value. Enum values are ints, so a `switch` on an enum is safe, and so are strings: a `StringName` matches a string pattern.
+
 `case undefined:` is an error, like `undefined` anywhere else — write `case null:`. (`gd.match` spells its wildcard `undefined`; a `switch` label does not, or the branch would quietly become a catch-all.)
 
 For patterns `switch` cannot express — arrays, dictionaries, bindings, guards — use [`gd.match()`](/typescript-to-gdscript/reference/gd-helpers/).
