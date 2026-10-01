@@ -4,22 +4,22 @@ Detailed project layout, implementation status, conversion rules, and edge cases
 
 ## Documentation Layout
 
-User-facing docs have three layers. All of `docs/` except `docs/superpowers/` is synced to the site (`site/scripts/sync-docs.ts`); the sidebar order is in `site/sidebar.ts`.
+User-facing docs have three layers. The docs are the site's own pages, Starlight Markdown under `site/src/content/docs/` (frontmatter `title` / `description`, links as site paths under `/typescript-to-gdscript/`); the sidebar order is in `site/sidebar.ts`. Screenshots live in `site/src/assets/`, which the README embeds by raw GitHub URL. A TypeScript or GDScript code block gets its frame title from the Expressive Code plugin `site/plugins/code-titles.ts`. `docs/superpowers/` holds local planning notes only (gitignored).
 
-- `README.md` — front page on GitHub: pitch, Features, Showcase, one "A taste" TS → GD example, quick start, links into the guides and the reference. Hand-written; the site landing (`site/content/index.mdx`) is hand-written separately, so the pitch and the example exist in both.
-- `docs/guide/` — task-oriented guides, written from GDScript habits, without edge cases that matter to fewer than one project in ten. Basics (`getting-started`, `how-it-works`, `editor-setup`), Writing scripts (`scripts-and-classes`, `variables-and-types`, `functions-and-lambdas`, `signals`, `nodes-and-scenes`, `exports-and-annotations`, `coroutines`, `math-and-value-types`, `arrays-and-dictionaries`, `enums-constants-inner-classes`), Going further (`migrating-from-gdscript`, `shared-packages`, `addons`, `custom-godot-builds`, `escape-hatches`, `caveats`, `faq`).
-- `docs/reference/` — the specification:
+- `README.md` — front page on GitHub: pitch, Features, Showcase, one "A taste" TS → GD example, quick start, links into the guides and the reference. Hand-written; the site landing (`site/src/content/docs/index.mdx`) is hand-written separately, so the pitch and the example exist in both.
+- `guide/` — task-oriented guides, written from GDScript habits, without edge cases that matter to fewer than one project in ten. Basics (`getting-started`, `how-it-works`, `editor-setup`), Writing scripts (`scripts-and-classes`, `variables-and-types`, `functions-and-lambdas`, `signals`, `nodes-and-scenes`, `exports-and-annotations`, `coroutines`, `math-and-value-types`, `arrays-and-dictionaries`, `enums-constants-inner-classes`), Going further (`migrating-from-gdscript`, `shared-packages`, `addons`, `custom-godot-builds`, `escape-hatches`, `caveats`, `faq`).
+- `reference/` — the specification:
   - `transform-rules.md` — every TS construct → GDScript mapping, plus the Restrictions section (unsupported TS features and why)
   - `gd-helpers.md` — the full `gd` namespace (semantics, rules, edge cases for every helper)
   - `cli.md` — every command and flag
   - `configuration.md` — `tstogd.json` + `tsconfig.json` fields, shared-package linking
   - `typings.md` — the `generate-*` typings commands, typings tree layout, scene typings, nullable reference types. (No `generate-class-typings` command exists — global class declarations come from `generate-typings` via `converterOptions.generateGlobalClassTypes`.)
   - `ide-integration.md` — the TypeScript language service plugin, `tstogd open-editor`, Godot external-editor configuration
-- `docs/development.md` — contributors: prerequisites, test scripts, regenerating Godot typings, docs site + playground.
+- `development.md` — contributors: prerequisites, test scripts, regenerating Godot typings, docs site + playground.
 
-Guide examples written as a ` ```ts ` block directly followed by a ` ```gdscript ` block are converted and compared by `tests/site/doc-examples.test.ts`, and so is the site's landing page (`site/content/index.mdx`) (`nocheck` in the ts fence opts out; `scene` marks an example that reads nodes from a scene the test lacks: its `Node | null` error from `get_node()` is allowed and the output is still compared); `tests/site/doc-links.test.ts` checks every relative link and `#anchor` in `README.md` and `docs/`, and every link to the site against the page's source (a synced doc, `site/src/pages/*.astro` or `site/content/*.mdx`). The README links docs pages through the site rather than relative paths, so its links also work on npm. `tests/site/docs-transform.test.ts` imports `site/scripts/docs-transform.ts`, which Vite compiles against `site/tsconfig.json` (`extends: astro/tsconfigs/strict`), so the root suite needs the site's dependencies installed; the CI test job installs them.
+Guide examples written as a ` ```ts ` block directly followed by a ` ```gdscript ` block are converted and compared by `tests/site/doc-examples.test.ts`, and so is the site's landing page (`index.mdx`) (`nocheck` in the ts fence opts out; `scene` marks an example that reads nodes from a scene the test lacks: its `Node | null` error from `get_node()` is allowed and the output is still compared); `tests/site/doc-links.test.ts` checks every link and `#anchor` in `README.md` and the pages: a site link, full URL or base path, against the page's source (a page under `site/src/content/docs/` or `site/src/pages/*.astro`), any other relative link against the file. The README links docs pages through the site rather than relative paths, so its links also work on npm. `tests/site` imports site modules (`site/constants.ts`, `site/plugins/code-titles.ts`), which Vite compiles against `site/tsconfig.json` (`extends: astro/tsconfigs/strict`), so the root suite needs the site's dependencies installed; the CI test job installs them.
 
-When adding a new feature or CLI flag, update the matching `docs/reference/` page, and a `docs/guide/` page when users need it in everyday work.
+When adding a new feature or CLI flag, update the matching `reference/` page, and a `guide/` page when users need it in everyday work.
 
 ## Tech Stack
 
@@ -91,7 +91,7 @@ src/
   cli/index.ts           # Commander CLI
   utils/package-version.ts # getPackageVersion() — reads `version` from the package's own package.json (cached); throws a descriptive error if the file is missing/unparsable or has no `version` — no silent fallback, an unknown version would silently mis-key the cache manifest. Shared by the CLI `--version` flag and the cache manifest version
 
-site/                    # Astro Starlight docs site + playground; generated from `docs/` (`yarn sync`), deployed by `.github/workflows/site.yml`; own package.json
+site/                    # Astro Starlight docs site + playground; pages in `src/content/docs/`, deployed by `.github/workflows/site.yml`; own package.json
 
 tests/
   fixtures/
@@ -122,7 +122,7 @@ tests/
   browser/               # browser converter: memory-host, registry option, in-memory import resolution, and
                          # parity (every single-file ts-to-gd fixture through createBrowserConverter; playground
                          # examples must convert with zero diagnostics)
-  site/                  # docs-transform.test.ts — the docs → site page transform (titles, briefs, link rewriting)
+  site/                  # doc-examples (TS → GD pairs on the pages convert as shown), doc-links (links and anchors), code-titles (the frame-title plugin)
   external-packages/     # library discovery, link lifecycle, and mount validation
   cache/                 # cache.test.ts — ProjectCache (freshness, sourcemap storage, addon/typings entries, version mismatch, atomic writes, gd-output mirror, saveAsync, watch mode, clear() propagation to a watching instance)
   checker/               # checker.test.ts (collectProjectDiagnostics, stale-detection), ts-diagnostics.test.ts (filters)

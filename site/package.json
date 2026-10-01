@@ -3,10 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "sync": "tsx scripts/sync-docs.ts && tsx scripts/bundle-typings.ts",
-    "predev": "yarn sync",
+    "bundle-typings": "tsx scripts/bundle-typings.ts",
+    "predev": "yarn bundle-typings",
     "dev": "astro dev",
-    "prebuild": "yarn sync",
+    "prebuild": "yarn bundle-typings",
     "build": "astro build",
     "preview": "astro preview"
   },

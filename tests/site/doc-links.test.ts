@@ -5,25 +5,23 @@ import { fileURLToPath } from 'url';
 import { BASE, SITE_ORIGIN } from '../../site/constants.js';
 
 /**
- * Every relative link in the user docs must reach an existing file, and an
- * `#anchor` must match a heading there. The docs are read on GitHub and on
- * the site, and both render a dead link silently. Links to the site itself
- * (the README's documentation links) are checked against the page's source.
+ * Every link in the user docs, the README and the site's pages, must reach
+ * an existing page or file, and an `#anchor` must match a heading there: the
+ * site renders a dead link silently. A link to the site, whether the full
+ * URL (the README) or a path under the base (`/typescript-to-gdscript/…`,
+ * the pages), is checked against the page's source.
  */
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const DOCS = join(ROOT, 'docs');
-/** Working notes, never published. */
-const SKIPPED_DIRS = new Set([join(DOCS, 'superpowers')]);
+const PAGES = join(ROOT, 'site', 'src', 'content', 'docs');
 const SITE_URL = `${SITE_ORIGIN}${BASE}/`;
+const SITE_PATH = `${BASE}/`;
 
 function markdownFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
     const full = join(dir, name);
-    if (statSync(full).isDirectory()) {
-      return SKIPPED_DIRS.has(full) ? [] : markdownFiles(full);
-    }
-    return name.endsWith('.md') ? [full] : [];
+    if (statSync(full).isDirectory()) return markdownFiles(full);
+    return /\.mdx?$/.test(name) ? [full] : [];
   });
 }
 
@@ -74,14 +72,15 @@ function linksOf(file: string): string[] {
   return links;
 }
 
-/** The file a site page is built from: a synced doc or one of the site's own pages. */
+/** The file a site page is built from: a docs page or a custom Astro page. */
 function sitePageSource(route: string): string | undefined {
   const path = route.replace(/\/$/, '');
   return [
-    join(DOCS, `${path}.md`),
-    join(DOCS, path, 'index.md'),
+    join(PAGES, `${path}.md`),
+    join(PAGES, `${path}.mdx`),
+    join(PAGES, path, 'index.md'),
+    join(PAGES, path, 'index.mdx'),
     join(ROOT, 'site', 'src', 'pages', `${path}.astro`),
-    join(ROOT, 'site', 'content', `${path || 'index'}.mdx`),
   ].find((candidate) => existsSync(candidate));
 }
 
@@ -90,9 +89,10 @@ function brokenLinks(file: string): string[] {
   for (const target of linksOf(file)) {
     let resolved: string | undefined;
     let anchor: string | undefined;
-    if (target.startsWith(SITE_URL)) {
+    const site = [SITE_URL, SITE_PATH].find((p) => target.startsWith(p));
+    if (site) {
       let route: string;
-      [route, anchor] = target.slice(SITE_URL.length).split('#');
+      [route, anchor] = target.slice(site.length).split('#');
       resolved = sitePageSource(route);
       if (!resolved) {
         broken.push(`${target} (no such page)`);
@@ -109,7 +109,7 @@ function brokenLinks(file: string): string[] {
         continue;
       }
     }
-    if (anchor !== undefined && resolved.endsWith('.md')) {
+    if (anchor !== undefined && /\.mdx?$/.test(resolved)) {
       if (!anchorsOf(resolved).has(anchor)) {
         broken.push(`${target} (no heading "#${anchor}")`);
       }
@@ -118,7 +118,7 @@ function brokenLinks(file: string): string[] {
   return broken;
 }
 
-const FILES = [join(ROOT, 'README.md'), ...markdownFiles(DOCS)];
+const FILES = [join(ROOT, 'README.md'), ...markdownFiles(PAGES)];
 
 describe('doc links', () => {
   it('finds the docs', () => {

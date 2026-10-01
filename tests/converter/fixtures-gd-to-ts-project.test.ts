@@ -15,7 +15,7 @@
  * a conversion TypeScript cannot make sense of at all — the
  * `constructor(...)` without `super()` that TS rejected on every
  * converted class, or a base class left without its import.
- * `strictBindCallApply` stays on, as docs/reference/configuration.md asks of a
+ * `strictBindCallApply` stays on, as site/src/content/docs/reference/configuration.md asks of a
  * non-strict project: without it the typings' Godot `call` / `bind` on
  * a lambda turn untyped, and `lam.call(x)` returns `unknown`.
  *

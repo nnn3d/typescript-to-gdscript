@@ -21,7 +21,8 @@ import { normalize } from '../converter/fixture-harness.js';
  */
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const GUIDE_DIR = join(ROOT, 'docs', 'guide');
+const PAGES_DIR = join(ROOT, 'site', 'src', 'content', 'docs');
+const GUIDE_DIR = join(PAGES_DIR, 'guide');
 
 interface Fence {
   lang: string;
@@ -93,7 +94,7 @@ function pairs(text: string): Pair[] {
 const pages = [
   join(ROOT, 'README.md'),
   // The site's landing page, which opens with an example of its own.
-  join(ROOT, 'site', 'content', 'index.mdx'),
+  join(PAGES_DIR, 'index.mdx'),
   ...(existsSync(GUIDE_DIR)
     ? readdirSync(GUIDE_DIR)
         .filter((f) => f.endsWith('.md'))

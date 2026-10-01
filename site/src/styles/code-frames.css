@@ -1,6 +1,6 @@
 /*
  * TypeScript and GDScript examples sit next to each other on almost every
- * page. The sync titles their frames (`site/scripts/docs-transform.ts`);
+ * page. A plugin titles their frames (`site/plugins/code-titles.ts`);
  * the colours here make the two tell apart at a glance: the tab and the
  * left edge of each frame take its language's colour.
  */

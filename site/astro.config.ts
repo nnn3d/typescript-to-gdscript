@@ -3,8 +3,9 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import preact from '@astrojs/preact';
 import { browserShims } from './vite/browser-shims.ts';
-import { BASE, SITE_ORIGIN } from './constants.ts';
+import { BASE, REPO_EDIT_URL, SITE_ORIGIN } from './constants.ts';
 import { buildSidebar, DOCS_DIR } from './sidebar.ts';
+import { codeTitles } from './plugins/code-titles.ts';
 
 /** Paste the Google Search Console verification token here to emit the meta tag. */
 const googleSiteVerification = '6S4CIbn8V8PV_gO7Yz-BTPqBL_C-8NsI0IKFPqiGPAM';
@@ -20,7 +21,10 @@ export default defineConfig({
       logo: { src: './src/assets/logo.png', alt: '' },
       favicon: '/favicon.png',
       customCss: ['./src/styles/code-frames.css'],
+      expressiveCode: { plugins: [codeTitles] },
       components: { SocialIcons: './src/components/SocialIcons.astro' },
+      // Pages live in site/src/content/docs, and Starlight appends that path.
+      editLink: { baseUrl: `${REPO_EDIT_URL}/site/` },
       sidebar: buildSidebar(DOCS_DIR),
       head: [
         {

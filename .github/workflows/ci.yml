@@ -59,7 +59,7 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
-      # tests/site imports the docs sync script, which Vite compiles against
+      # tests/site imports site modules, which Vite compiles against
       # site/tsconfig.json, and that extends a config from the site's packages.
       - name: Install site dependencies
         run: yarn install --frozen-lockfile

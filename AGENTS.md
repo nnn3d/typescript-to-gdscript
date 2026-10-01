@@ -8,14 +8,14 @@ This project converts TypeScript code to GDScript for the Godot game engine, wit
 
 ## Core Rules (must follow)
 
-1. **Keep `PROJECT.md` in sync with all user-facing docs.** The user-facing docs are `README.md` and everything under `docs/` except `docs/superpowers/` (see rule 5 for which part is which); `PROJECT.md` plus the subsystem `AGENTS.md` files are the internal mirror. Whenever you add or change any of:
+1. **Keep `PROJECT.md` in sync with all user-facing docs.** The user-facing docs are `README.md` and the site's pages under `site/src/content/docs/` (see rule 5 for which part is which); `PROJECT.md` plus the subsystem `AGENTS.md` files are the internal mirror. Whenever you add or change any of:
    - Features (user-facing or internal)
    - CLI flags or commands
    - Type helpers (gd namespace, symbols, etc.)
    - Conversion rules (TS ↔ GDScript mappings)
    - Known edge cases or workarounds
 
-   update the internal notes (`PROJECT.md` for structure and status, the subsystem `AGENTS.md` for its edge cases) **and** the right user doc(s) so they stay consistent. A user-facing change always goes into the matching `docs/reference/` page, and also into a `docs/guide/` page when users need it in everyday work. **If the best place is unclear, ask the user before writing.** Do this as part of completing the work — not as a follow-up task, and not only when asked.
+   update the internal notes (`PROJECT.md` for structure and status, the subsystem `AGENTS.md` for its edge cases) **and** the right user doc(s) so they stay consistent. A user-facing change always goes into the matching `reference/` page, and also into a `guide/` page when users need it in everyday work. **If the best place is unclear, ask the user before writing.** Do this as part of completing the work — not as a follow-up task, and not only when asked.
 
 2. **Ask the user** if you find transformation cases with problems or ambiguous semantics. Don't guess silently.
 
@@ -30,14 +30,15 @@ This project converts TypeScript code to GDScript for the Godot game engine, wit
 
 5. **Documentation split**:
    - `README.md` — front page: pitch, showcase, a short example, quick start, links (what users see first on GitHub)
-   - `docs/guide/` — task-oriented guides (getting started, writing scripts, going further); what 90% of users need, from GDScript habits
-   - `docs/reference/` — the specification: every conversion rule, `gd` helper, CLI flag and config field
-   - `docs/development.md` — contributors
+   - `site/src/content/docs/` — the docs site's pages (Starlight Markdown: frontmatter `title` and `description`, links as site paths like `/typescript-to-gdscript/guide/signals/`):
+     - `guide/` — task-oriented guides (getting started, writing scripts, going further); what 90% of users need, from GDScript habits
+     - `reference/` — the specification: every conversion rule, `gd` helper, CLI flag and config field
+     - `development.md` — contributors
    - `PROJECT.md` — internal architecture, structure, implementation status (mirrors the user docs above)
    - `src/**/AGENTS.md`, `tests/AGENTS.md` — internal edge cases per subsystem; the `CLAUDE.md` beside each only imports it
    - `AGENTS.md` — this file, rules only
 
-   **User-doc writing style** (README + `docs/*`): describe behavior simply and briefly — a few short sentences, not exhaustive mechanics. When a conversion or behavior isn't self-evident, add a one-line _why_ (e.g. "`.get()` returns `null` for a missing key instead of crashing"). Don't enumerate every skip-condition, edge case, or internal mechanism — that detail belongs in `PROJECT.md` only. Guides go further: no edge cases that matter to fewer than one project in ten — link to the reference instead. A guide example written as a `ts` code block directly followed by a `gdscript` code block is checked by `tests/site/doc-examples.test.ts`, so it must be the converter's real output.
+   **User-doc writing style** (README + the site's pages): describe behavior simply and briefly — a few short sentences, not exhaustive mechanics. When a conversion or behavior isn't self-evident, add a one-line _why_ (e.g. "`.get()` returns `null` for a missing key instead of crashing"). Don't enumerate every skip-condition, edge case, or internal mechanism — that detail belongs in `PROJECT.md` only. Guides go further: no edge cases that matter to fewer than one project in ten — link to the reference instead. A guide example written as a `ts` code block directly followed by a `gdscript` code block is checked by `tests/site/doc-examples.test.ts`, so it must be the converter's real output.
 
 6. **ALL temporary directories MUST live under the OS temp dir** (`os.tmpdir()` from Node's `node:os` module). Never create tmp dirs inside the project tree (e.g. `.tmp-*` in tests, `.tstogd-cache` at the repo root, etc.). Use `join(tmpdir(), 'tstogd-<label>-<random>')` or similar. This applies to:
    - Test fixtures that need scratch files

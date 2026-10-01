@@ -4,7 +4,7 @@
 
 Write Godot 4 scripts in TypeScript. You get autocomplete and type-checking for the whole Godot API, errors in your editor as you type, and clean `.gd` files that Godot runs as usual.
 
-![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/convert.webp)
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/site/src/assets/convert.webp)
 
 ## Why
 
@@ -36,23 +36,23 @@ The output is ordinary GDScript you can read and ship. TypeScript is only how yo
 
 Given this scene structure:
 
-![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_scene.png)
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/site/src/assets/showcase_scene.png)
 
 You get type hints for this:
 
-![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_hint_1.png)
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/site/src/assets/showcase_hint_1.png)
 
 …or this:
 
-![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_hint_2.png)
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/site/src/assets/showcase_hint_2.png)
 
 …or even this:
 
-![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_hint_3.png)
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/site/src/assets/showcase_hint_3.png)
 
 `preload()` is typed too:
 
-![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_preload.png)
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/site/src/assets/showcase_preload.png)
 
 </details>
 
@@ -61,11 +61,11 @@ You get type hints for this:
 
 GDScript doesn't allow a static and an instance member to share the same name — though TypeScript does. Your IDE surfaces the GDScript error at the exact spot in your `.ts`:
 
-![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_gdscript_error.png)
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/site/src/assets/showcase_gdscript_error.png)
 
 For edge cases — like using the result of `&&` as a value — you get a converter error instead, because logical operations in GDScript always return a boolean:
 
-![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/docs/assets/showcase_converter_error.png)
+![](https://raw.githubusercontent.com/nnn3d/typescript-to-gdscript/HEAD/site/src/assets/showcase_converter_error.png)
 
 You also get all of these errors (along with the TypeScript errors themselves) from the `convert` CLI command.
 

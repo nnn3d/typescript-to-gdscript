@@ -3,7 +3,6 @@ import { readdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type starlight from '@astrojs/starlight';
-import { SIDEBAR_HIDDEN_DIRS } from './constants.ts';
 
 type SidebarItem = NonNullable<
   Parameters<typeof starlight>[0]['sidebar']
@@ -68,17 +67,15 @@ const GROUPS: { label: string; items: Entry[] }[] = [
 const slugOf = (entry: Entry) =>
   typeof entry === 'string' ? entry : entry.slug;
 
-/** Every Markdown page under `docs/`, as a slug (`guide/signals`). */
+/** Every page of the docs collection, as a slug (`guide/signals`). */
 function allSlugs(dir: string, prefix = ''): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
     if (entry.isDirectory()) {
-      return SIDEBAR_HIDDEN_DIRS.has(entry.name)
-        ? []
-        : allSlugs(join(dir, entry.name), `${prefix}${entry.name}/`);
+      return allSlugs(join(dir, entry.name), `${prefix}${entry.name}/`);
     }
-    return entry.name.endsWith('.md')
-      ? [`${prefix}${entry.name.slice(0, -'.md'.length)}`]
-      : [];
+    const slug = `${prefix}${entry.name.replace(/\.mdx?$/, '')}`;
+    // The landing page is the site's home, not a sidebar entry.
+    return /\.mdx?$/.test(entry.name) && slug !== 'index' ? [slug] : [];
   });
 }
 
@@ -102,6 +99,7 @@ function toItem(entry: Entry): SidebarItem {
 // `import.meta.dirname` is not reliable when Astro bundles its config.
 export const DOCS_DIR = join(
   dirname(fileURLToPath(import.meta.url)),
-  '..',
+  'src',
+  'content',
   'docs',
 );

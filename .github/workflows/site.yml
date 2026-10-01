@@ -6,7 +6,6 @@ on:
     paths:
       - 'src/**'
       - 'typings/**'
-      - 'docs/**'
       - 'site/**'
       - 'package.json'
       - 'yarn.lock'
@@ -15,7 +14,6 @@ on:
     paths:
       - 'src/**'
       - 'typings/**'
-      - 'docs/**'
       - 'site/**'
       - 'package.json'
       - 'yarn.lock'
