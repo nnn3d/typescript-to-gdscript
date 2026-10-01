@@ -1,3 +1,13 @@
+## [0.1.11](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.10...v0.1.11) (2026-10-01)
+
+### Features
+
+* **ts-to-gd:** type string and boolean literal types as their base type ([7c21336](https://github.com/nnn3d/typescript-to-gdscript/commit/7c213360f433b0a95f9603c682749f1bdc304960))
+
+### Bug Fixes
+
+* **godot-validate:** compile converted scripts instead of starting the project ([5f5fec6](https://github.com/nnn3d/typescript-to-gdscript/commit/5f5fec66b95c8fcb941de113535d4305f7ed9a79))
+* **typings:** key script typings by the res path convert writes ([d5942df](https://github.com/nnn3d/typescript-to-gdscript/commit/d5942df8f9ecf3aa9c61be3640f0175e554e6a08))
 ## [0.1.10](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.9...v0.1.10) (2026-09-30)
 
 ### ⚠ BREAKING CHANGES
