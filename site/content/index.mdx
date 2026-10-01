@@ -1,10 +1,10 @@
 ---
 title: typescript-to-gdscript
-description: Write Godot 4 scripts in TypeScript and convert them to GDScript, with Godot typings and live diagnostics.
+description: Write Godot 4 scripts in TypeScript, with interfaces, union types and generics, and convert them to plain GDScript.
 template: splash
 editUrl: false
 hero:
-  tagline: Write Godot 4 scripts in TypeScript. Get plain GDScript out, with full Godot typings, editor autocomplete and converter diagnostics.
+  tagline: Write Godot 4 scripts in TypeScript, with interfaces, union types and generics checked as you type. Get plain GDScript out, with the whole Godot API typed.
   actions:
     - text: Try the playground
       link: /typescript-to-gdscript/playground/
@@ -16,14 +16,33 @@ hero:
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
 
-## TypeScript in, GDScript out
+## TypeScript types in, readable GDScript out
 
-```ts title="TypeScript"
+```ts scene title="TypeScript"
+export type Element = 'fire' | 'ice' | 'poison';
+
+export interface Hit {
+  damage: int;
+  element: Element;
+}
+
 export class Health extends Node {
-  health_changed = gd.signal<[old_value: int, new_value: int]>();
+  health_changed = gd.signal<[new_health: int, element: Element]>();
 
-  @exports max_health: int = 100;
-  health: int = 100;
+  @exports weakness: Element = 'fire';
+  @exports health: int = 100;
+  @onready label: Label = this.get_node('%Label');
+
+  take_hit(hit: Hit) {
+    let damage = hit.damage;
+    // A weak spot takes double damage.
+    if (hit.element == this.weakness) {
+      damage *= 2;
+    }
+    this.health = maxi(this.health - damage, 0);
+    this.label.text = `HP: ${this.health}`;
+    this.health_changed.emit(this.health, hit.element);
+  }
 }
 ```
 
@@ -31,20 +50,32 @@ export class Health extends Node {
 class_name Health
 extends Node
 
-signal health_changed(old_value: int, new_value: int)
+signal health_changed(new_health: int, element: String)
 @export
-var max_health: int = 100
+var weakness: String = "fire"
+@export
 var health: int = 100
+@onready
+var label: Label = self.get_node("%Label")
+
+func take_hit(hit):
+	var damage = hit.get("damage")
+	# A weak spot takes double damage.
+	if hit.get("element") == self.weakness:
+		damage *= 2
+	self.health = maxi(self.health - damage, 0)
+	self.label.text = "HP: " + str(self.health)
+	self.health_changed.emit(self.health, hit.get("element"))
 ```
 
 <CardGrid>
-  <Card title="Godot typings" icon="seti:typescript">
+  <Card title="Your own types" icon="seti:typescript">
+    Describe your data with interfaces, union types and generics. TypeScript
+    checks every use, and Godot gets plain dictionaries and values.
+  </Card>
+  <Card title="Godot typings" icon="open-book">
     Every Godot class, method and signal is typed, so your editor autocompletes
     the engine API.
-  </Card>
-  <Card title="Readable output" icon="document">
-    The generated GDScript looks hand-written: one class per file, your comments
-    kept.
   </Card>
   <Card title="Live diagnostics" icon="warning">
     Constructs with no clean GDScript equivalent are reported in your editor,
