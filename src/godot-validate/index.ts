@@ -1,7 +1,7 @@
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { existsSync } from 'fs';
-import { resolve, relative, normalize } from 'path';
+import { resolve, relative, normalize, isAbsolute } from 'path';
 import type { TransformDiagnostic } from '../converter/common/index.ts';
 
 import {
@@ -15,6 +15,7 @@ import {
   isUnderScratchDir,
 } from './error-parser.ts';
 import { remapError, remapErrorSync } from './source-map-remap.ts';
+import { compileGdScripts } from './project-check.ts';
 
 // Re-export everything that external consumers need
 export {
@@ -301,9 +302,10 @@ export interface GodotValidateProjectOptions {
 }
 
 /**
- * Run `godot --headless --check-only --path PROJECT` (no --script) to validate
- * the entire project at once. Errors are filtered to files under `gdDir` and
- * remapped to TypeScript positions via the provided source-map table.
+ * Validate every converted script in one Godot run — the `.gd` files in
+ * `sourceMapTable` that exist under the project — and remap the errors
+ * under `gdDir` to TypeScript positions. Godot compiles the scripts through a
+ * checker script (`project-check.ts`) rather than starting the project.
  */
 export async function validateGdProject(
   options: GodotValidateProjectOptions,
@@ -342,46 +344,36 @@ export async function validateGdProject(
   const autoloadNames = getAutoloadNames(options.projectRoot);
   const { cacheDir } = options;
   const resolvedGdDir = normalize(resolve(options.gdDir));
-  // See the note in `validateGdFiles` — `--check-only` never populates
-  // Godot's global class cache, so a script naming its own class reads
-  // as an unknown identifier until the editor imports.
+  // See the note in `validateGdFiles` — a run outside the editor never
+  // populates Godot's global class cache, so a script naming its own class
+  // reads as an unknown identifier until the editor imports.
   const declaredClassNames = collectDeclaredClassNamesUnder(resolvedGdDir);
 
-  // `--check-only` without `--script` enters the SceneTree main loop with
-  // no script to call quit(), so on Windows it hangs forever. `--quit-after 1`
-  // forces Godot to quit after one main-loop tick — all scripts have already
-  // been parsed by then, so syntax errors still surface in the output.
-  //
-  // IMPORTANT: with `--quit-after 1`, Godot exits with code 0 even when
-  // there are script errors (the quit succeeded, that's all `--quit-after`
-  // tracks). So we MUST always parse stdout+stderr — never short-circuit
-  // on a successful exit.
+  // Only scripts inside the project have a res:// path Godot can load.
+  const resPaths: string[] = [];
+  for (const gdFile of options.sourceMapTable.keys()) {
+    const rel = relative(options.projectRoot, gdFile).replace(/\\/g, '/');
+    if (rel.startsWith('../') || isAbsolute(rel) || !existsSync(gdFile)) {
+      continue;
+    }
+    resPaths.push(`res://${rel}`);
+  }
+  if (resPaths.length === 0) return { diagnostics: [], godotAvailable: true };
+
+  // The checker quits with code 0 whatever it finds, so the output is always
+  // parsed.
   let output: string;
   try {
-    const result = await execFileAsync(
+    output = await compileGdScripts(
       options.godotPath,
-      [
-        '--headless',
-        '--check-only',
-        '--path',
-        options.projectRoot,
-        '--quit-after',
-        '1',
-      ],
-      {
-        timeout: 60000,
-        cwd: options.projectRoot,
-        signal,
-        windowsHide: true,
-        maxBuffer: 50 * 1024 * 1024,
-      },
+      options.projectRoot,
+      resPaths,
+      signal,
     );
-    output = (result.stderr ?? '') + '\n' + (result.stdout ?? '');
-  } catch (err: any) {
+  } catch (err) {
+    // An abort means the caller moved on; anything else is a real failure.
     if (signal?.aborted) return { diagnostics: [], godotAvailable: true };
-    const stderr: string = err.stderr ?? '';
-    const stdout: string = err.stdout ?? '';
-    output = stderr + '\n' + stdout;
+    throw err;
   }
 
   // Exit code 0 with no parseable errors → all good.

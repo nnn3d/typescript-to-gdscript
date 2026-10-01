@@ -75,11 +75,11 @@ Options:
 
 After converting, `convert` runs a full three-source diagnostic check unless disabled:
 
-| Source     | Label             | Notes                                                                                                                              |
-| ---------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| TypeScript | `[TS:severity]`   | Semantic + syntactic errors (requires `--tsconfig`; noise codes TS2434/2435/2449 and the super-call codes TS2377/17009 suppressed) |
-| Converter  | `[CONV:severity]` | Errors and warnings from the TS→GD transformer                                                                                     |
-| Godot      | `[GD:severity]`   | Full-project `godot --check-only` (Godot from `godotPath`, `GODOT_PATH` or `PATH`; needs `project.godot`)                          |
+| Source     | Label             | Notes                                                                                                                                                             |
+| ---------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TypeScript | `[TS:severity]`   | Semantic + syntactic errors (requires `--tsconfig`; noise codes TS2434/2435/2449 and the super-call codes TS2377/17009 suppressed)                                |
+| Converter  | `[CONV:severity]` | Errors and warnings from the TS→GD transformer                                                                                                                    |
+| Godot      | `[GD:severity]`   | Every generated script, compiled in one headless Godot run that doesn't start the project (Godot from `godotPath`, `GODOT_PATH` or `PATH`; needs `project.godot`) |
 
 Extra flags:
 
