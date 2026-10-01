@@ -13,8 +13,11 @@ import { normalize } from '../converter/fixture-harness.js';
  * The TypeScript must also convert without a single diagnostic.
  *
  * A block opened as ```ts nocheck is skipped: an intentional error, or a
- * fragment that is not a whole script. A TypeScript block with no GDScript
- * block right after it is not a pair and is not checked.
+ * fragment that is not a whole script. A block opened as ```ts scene reads
+ * nodes from a scene this test doesn't have, so `get_node()` is `Node | null`
+ * to TypeScript here: that one error is allowed, and the output is still
+ * compared. A TypeScript block with no GDScript block right after it is not a
+ * pair and is not checked.
  */
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
@@ -55,7 +58,13 @@ interface Pair {
   gd: string;
   /** 1-based line of the TypeScript fence, for the test name. */
   line: number;
+  /** Opened as ```ts scene: its nodes come from a scene the test lacks. */
+  scene: boolean;
 }
+
+/** The error a node read gets without its scene: `Node | null` for `Label`. */
+const NO_SCENE =
+  /^TS2322: Type 'Node \| null' is not assignable to type '\w+'\./;
 
 function pairs(text: string): Pair[] {
   const lines = text.split(/\r?\n/);
@@ -71,13 +80,20 @@ function pairs(text: string): Pair[] {
     // Only blank lines may separate the two blocks.
     const between = lines.slice(ts.end + 1, gd.start);
     if (between.some((l) => l.trim() !== '')) continue;
-    found.push({ ts: ts.body, gd: gd.body, line: ts.start + 1 });
+    found.push({
+      ts: ts.body,
+      gd: gd.body,
+      line: ts.start + 1,
+      scene: /\bscene\b/.test(ts.meta),
+    });
   }
   return found;
 }
 
 const pages = [
   join(ROOT, 'README.md'),
+  // The site's landing page, which opens with an example of its own.
+  join(ROOT, 'site', 'content', 'index.mdx'),
   ...(existsSync(GUIDE_DIR)
     ? readdirSync(GUIDE_DIR)
         .filter((f) => f.endsWith('.md'))
@@ -101,10 +117,12 @@ describe('doc examples convert as shown', () => {
       it(`${name}:${pair.line}`, () => {
         const slug = name.replace(/[^\w]+/g, '-');
         const result = converter.convert(pair.ts, `/src/${slug}-${index}.ts`);
-        const problems = result.diagnostics.map(
-          (d) =>
-            `[${d.source}/${d.severity}] ${d.message} (${d.line}:${d.column})`,
-        );
+        const problems = result.diagnostics
+          .filter((d) => !(pair.scene && NO_SCENE.test(d.message)))
+          .map(
+            (d) =>
+              `[${d.source}/${d.severity}] ${d.message} (${d.line}:${d.column})`,
+          );
         expect(problems, `${name}:${pair.line} reported diagnostics`).toEqual(
           [],
         );
