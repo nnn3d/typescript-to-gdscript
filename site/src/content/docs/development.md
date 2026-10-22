@@ -12,6 +12,8 @@ yarn build
 yarn test:run
 ```
 
+`yarn install` already builds `dist/` through the `prepare` script, which is what makes an install from a git URL work; `yarn build` rebuilds it after an edit.
+
 ## Prerequisites
 
 - **Node.js 22+** — the plugin uses `require(esm)` semantics (no top-level await in the plugin itself, but earlier Node versions refuse ESM via `require`).
