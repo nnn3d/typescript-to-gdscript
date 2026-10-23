@@ -38,7 +38,7 @@ The command will:
 
 1. **Create `tstogd.json`** — asks for TypeScript source directory, GDScript output directory, and typings directory. `gdDir` is written only when it differs from `tsDir`.
 2. **Create `tsconfig.json`** (optional, asks first) — from a template with proper settings for Godot development (`noLib`, strict mode, typings reference, `typescript-to-gdscript/ts-plugin` enabled under `compilerOptions.plugins` for live IDE diagnostics)
-3. **Install npm packages** (optional, asks first) — TypeScript as a dev dependency via `npm install --save-dev`. If `package.json` doesn't exist, offers to create a minimal one.
+3. **Install npm packages** (optional, asks first) — TypeScript as a dev dependency via `npm install --save-dev`, limited to the supported range (`>=5.5.0 <6`), since a bare `typescript` would install the latest major. If `package.json` doesn't exist, offers to create a minimal one.
 4. **Create `node_modules/.gdignore`** (optional, asks first) — to exclude node_modules from Godot's file scanner. Only offered when `node_modules` already exists.
 5. **Add `node_modules/` to `.gitignore`** (optional, asks first) — creates the file or appends to it if the rule isn't already present.
 

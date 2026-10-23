@@ -100,7 +100,7 @@
     "tree-sitter-godot-resource": "^0.7.0"
   },
   "peerDependencies": {
-    "typescript": ">=5.5.0"
+    "typescript": ">=5.5.0 <6"
   },
   "devDependencies": {
     "@asgerf/dts-tree-sitter": "^0.21.0",

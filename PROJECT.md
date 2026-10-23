@@ -95,7 +95,7 @@ src/
   watcher/heal.ts        # Error-driven self-heal primitives (diagnostic signatures, suspects, healFiles)
   cli/index.ts           # Commander CLI
   utils/path-key.ts      # `pathKey` / `isInside`: one path-comparison rule (absolute, forward slashes, lower-cased on win32; directory prefixes end in `/` so `addons-extra` isn't inside `addons`)
-  utils/package-version.ts # getPackageVersion() — reads `version` from the package's own package.json (cached); throws a descriptive error if the file is missing/unparsable or has no `version` — no silent fallback, an unknown version would silently mis-key the cache manifest. Shared by the CLI `--version` flag and the cache manifest version
+  utils/package-version.ts # getPackageVersion() — reads `version` from the package's own package.json (cached); throws a descriptive error if the file is missing/unparsable or has no `version` — no silent fallback, an unknown version would silently mis-key the cache manifest. Shared by the CLI `--version` flag and the cache manifest version. getTypescriptPeerRange() reads `peerDependencies.typescript` the same way; `tstogd init` installs `typescript@<range>`, since a bare `typescript` resolves to 7.x, which has no JS compiler API. The range stops below 6: TS 6 at least starts, but neither the suite nor the plugin is tested on it
 
 site/                    # Astro Starlight docs site + playground; pages in `src/content/docs/`, deployed by `.github/workflows/site.yml`; own package.json
 

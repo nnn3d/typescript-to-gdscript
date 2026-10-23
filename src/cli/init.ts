@@ -9,6 +9,7 @@ import { stdin, stdout } from 'node:process';
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join, basename } from 'path';
 import { execSync } from 'child_process';
+import { getTypescriptPeerRange } from '../utils/package-version.ts';
 
 // ─── Embedded Templates ──────────────────────────────────────
 
@@ -154,7 +155,9 @@ async function stepTsconfig(
   // Ask to install TypeScript
   const installTs = await askYesNo(rl, 'Install TypeScript?');
   if (installTs) {
-    packagesToInstall.push('typescript');
+    // A bare `typescript` resolves to the latest major, which may lie outside
+    // the peer range (TypeScript 7 has no JS compiler API at all).
+    packagesToInstall.push(`typescript@${getTypescriptPeerRange()}`);
   }
 }
 
@@ -187,16 +190,18 @@ async function stepInstallPackages(
     console.log('  ✓ Created package.json');
   }
 
+  // Quoted: a version range like `>=5.5.0 <6` holds shell metacharacters.
+  const installCommand = `npm install --save-dev ${packagesToInstall.map((p) => `"${p}"`).join(' ')}`;
   console.log(`  Installing ${packagesToInstall.join(', ')}...`);
   try {
-    execSync(`npm install --save-dev ${packagesToInstall.join(' ')}`, {
+    execSync(installCommand, {
       cwd,
       stdio: 'inherit',
     });
     console.log('  ✓ Packages installed');
   } catch {
     console.error('  ⚠ npm install failed. Please install packages manually:');
-    console.error(`    npm install --save-dev ${packagesToInstall.join(' ')}`);
+    console.error(`    ${installCommand}`);
   }
 }
 
