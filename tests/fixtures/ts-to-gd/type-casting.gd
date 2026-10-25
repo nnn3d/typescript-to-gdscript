@@ -22,8 +22,9 @@ func test_as_grouping(node: Node, count: int, total: int, c: bool, w: float, v: 
 	var same = (node as Sprite2D) == null
 
 # Delimited on both sides — the cast stays bare.
-func test_as_bare(node: Node):
+func test_as_bare(node: Node, path: NodePath):
 	var sprite = node as Sprite2D
+	var text = path as String
 	print(node as Sprite2D)
 	var list = [node as Sprite2D]
 

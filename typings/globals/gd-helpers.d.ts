@@ -213,6 +213,7 @@ declare const gd: {
   as(value: unknown, type: typeof int): int;
   as(value: unknown, type: typeof float): float;
   as(value: unknown, type: typeof bool): boolean;
+  as(value: unknown, type: typeof String): string;
   as(value: unknown, type: typeof StringName): StringName;
   /**
    * Cast to a class. `abstract new` rather than `new` so the target may

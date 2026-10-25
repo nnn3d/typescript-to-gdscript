@@ -24,8 +24,9 @@ export class MyClass extends Node {
   }
 
   // Delimited on both sides — the cast stays bare.
-  test_as_bare(node: Node) {
+  test_as_bare(node: Node, path: NodePath) {
     let sprite = gd.as(node, Sprite2D);
+    let text = gd.as(path, String);
     print(gd.as(node, Sprite2D));
     let list = [gd.as(node, Sprite2D)];
   }

@@ -109,7 +109,7 @@ let arr: Array<Color> = gd.as(packed, Array); // element type inferred from iter
 let ratio = count / gd.as(total, float); // count / (total as float)
 ```
 
-The target can be a scalar (`int`, `float`, `bool`, `StringName`) or an abstract class of your own. The converter adds parentheses wherever GDScript would otherwise read the cast differently — `as` binds looser than almost everything, so `count / total as float` would cast the quotient.
+The target can be a scalar (`int`, `float`, `bool`, `String`, `StringName`) or an abstract class of your own. The converter adds parentheses wherever GDScript would otherwise read the cast differently — `as` binds looser than almost everything, so `count / total as float` would cast the quotient.
 
 Variant conversion is enabled via `[__variant_converts]` symbol on each value-type interface. The symbol's type is a union of types that the target's constructor accepts as single "from" parameters. For `Array`-like conversions, the element type is inferred via `[Symbol.iterator]: IterableIterator<T>` on the source interface.
 

@@ -188,6 +188,11 @@ export function collectExplicitConvertFixes(
       const source = simplifyTypeName(types.source);
       const target = simplifyTypeName(types.target);
       if (source === target) continue;
+      // `int` and `float` both reach TypeScript as `number`, so a number
+      // target names no single Godot type: casting to `float` on its way into
+      // an `int` slot would convert to the wrong type. The error is left for
+      // the user to resolve.
+      if (target === 'number') continue;
 
       // Both must be variant types and target must accept source as a variant convert.
       // Map TS primitive names back to Godot names for registry lookup.
@@ -204,7 +209,9 @@ export function collectExplicitConvertFixes(
       if (overlapsExisting(start, end)) continue;
 
       const valueText = node.getText(sourceFile);
-      const replacement = `gd.as(${valueText}, ${target})`;
+      // The cast names the Godot type (`bool`, `String`), not the TypeScript
+      // one (`boolean`, `string`), which is no value `gd.as` can take.
+      const replacement = `gd.as(${valueText}, ${gdTarget})`;
 
       let fixes = fixesByFile.get(fileName);
       if (!fixes) {

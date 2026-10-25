@@ -55,6 +55,7 @@ class AsTest extends Node {
     let i: int = gd.as(value, int);
     let f: float = gd.as(value, float);
     let b: boolean = gd.as(value, bool);
+    let s: string = gd.as(value, String);
     let sn: StringName = gd.as(value, StringName);
   }
 
