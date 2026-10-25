@@ -6,7 +6,7 @@ export class GodotObjectTypes extends Node {
   // TypeScript already owns `Object`, so the typings call Godot's base class
   // `GodotObject`. TS's own `Object` type is the plain-object interface, so
   // every type position has to say `GodotObject`.
-  got = gd.signal<[GodotObject | null]>();
+  got = gd.signal<[o: GodotObject | null]>();
   held: GodotObject = null;
   many: Array<GodotObject> = [];
   by_name: Dictionary<string, GodotObject> = {};

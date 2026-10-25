@@ -1,5 +1,5 @@
 export class DictGenerics extends Node {
-  data_ready = gd.signal<[Dictionary<string, int>]>();
+  data_ready = gd.signal<[payload: Dictionary<string, int>]>();
   untyped: Dictionary = {};
   simple: Dictionary<string, int> = {};
   name_keys: Dictionary<string, Node2D> = {};

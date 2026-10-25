@@ -56,7 +56,7 @@ export namespace Player {
 }
 
 export class Player extends CharacterBody2D {
-  health_changed = gd.signal<[int, int]>();
+  health_changed = gd.signal<[old_value: int, new_value: int]>();
   @exports
   max_health: int = 100;
   health: int = 100;
@@ -75,9 +75,8 @@ The constant moved into a namespace, `delta` got its type from the engine's `_ph
 ## Check the result
 
 1. Open the project in your editor and work through the TypeScript errors. The files are written even when they have type errors, so nothing blocks you; the errors are there for you to fix with real types.
-2. Put the signal argument names back. The migration drops them: `health_changed` above became `gd.signal<[int, int]>()`, which converts back to `signal health_changed(arg1: int, arg2: int)`. Write `gd.signal<[old_value: int, new_value: int]>()` instead. See [Signals](/typescript-to-gdscript/guide/signals/).
-3. Run `npx tstogd convert`. It writes the new `.gd` files over your originals and reports what is still wrong. `git diff` on your scripts shows how they changed.
-4. Run the game.
+2. Run `npx tstogd convert`. It writes the new `.gd` files over your originals and reports what is still wrong. `git diff` on your scripts shows how they changed.
+3. Run the game.
 
 ## What the migration fixes for you
 

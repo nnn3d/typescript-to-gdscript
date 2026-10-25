@@ -82,9 +82,15 @@ export function emitSignalParamTypes(
   paramsNode: SyntaxNode,
   ctx: GdToTsContext,
 ): string {
+  // Each element carries the parameter's name as its tuple label: TS→GD
+  // reads the labels back as the signal's parameter names, so without them
+  // `signal hit(amount: int)` returned as `signal hit(arg1: int)`.
   const types: string[] = [];
   for (const child of paramsNode.namedChildren) {
     if (child.type === SyntaxType.TypedParameter) {
+      const name =
+        child.namedChildren.find((c) => c.type === SyntaxType.Identifier)
+          ?.text ?? '';
       const typeNode = child.childForFieldName('type');
       const rawType = typeNode ? typeSourceText(typeNode) : '';
       const baseType = typeNode
@@ -94,9 +100,9 @@ export function emitSignalParamTypes(
           )
         : 'any';
       const widened = widenInType(rawType, baseType, ctx);
-      types.push(widened ?? 'any');
+      types.push(`${escapeTsBindingName(name)}: ${widened ?? 'any'}`);
     } else if (child.type === SyntaxType.Identifier) {
-      types.push('any');
+      types.push(`${escapeTsBindingName(child.text)}: any`);
     }
   }
   return types.join(', ');

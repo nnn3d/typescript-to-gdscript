@@ -1,5 +1,5 @@
 export class NullableValueTypes extends RefCounted {
-  changed = gd.signal<[Vector2, Color, PackedInt32Array]>();
+  changed = gd.signal<[v: Vector2, c: Color, arr: PackedInt32Array]>();
 
   take_vector(v: Vector2): void {
   }

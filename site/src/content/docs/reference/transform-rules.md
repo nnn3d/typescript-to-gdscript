@@ -807,6 +807,8 @@ signal game_over
 
 When the tuple elements are unlabelled, GDScript args fall back to `arg1`, `arg2`, …. Always prefer named tuples — they give readable signal signatures both in IDE autocomplete (via TS) and in the Godot editor (via GD).
 
+GD → TS writes the labels from the GDScript argument names, so a signal keeps them through a round trip. A name TypeScript reserves (`default`, `in`) gets a trailing `_`, the same as a parameter.
+
 ## Logical operators (`||` / `&&`)
 
 GDScript `or` / `and` always return `bool`, unlike JS/TS where `||` / `&&` return one of the operands. The converter handles this asymmetry in both directions.
