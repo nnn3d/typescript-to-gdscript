@@ -203,7 +203,7 @@ tests/
   - `[__variant_converts]` on value-type instance interfaces: union of types accepted by single-parameter "from" constructors (e.g. `Vector2[__variant_converts]: Vector2 | Vector2i`). Enables `gd.as(val, Target)` type narrowing
   - `readonly prototype: ClassName` on `*Constructor` interfaces enables `v instanceof Vector2` type narrowing
   - Packed array types get `[Symbol.iterator](): IterableIterator<ItemType>` (item type inferred from `append(value: T)` method signature) for typed `for (const x of arr)` loops
-  - `Array` interface: `[__variant_converts]` includes all Packed array types (from XML constructors); `ArrayConstructor` has `<T>(from_: PackedXArray): Array<T>` call signatures (no `new`)
+  - `Array` interface: `[__variant_converts]` includes all Packed array types (from XML constructors); `ArrayConstructor` has `<T>(from_: PackedXArray): Array<T>` call signatures (no `new`) and its own `readonly prototype: Array<unknown>`, written by the `Array` branch of `godot-docs.ts`, which builds this constructor interface by hand, so `value instanceof Array` narrows like the other value types instead of leaving `{}` — pinned by `test_instanceof_narrowing` in `tests/typings/type-checks/arrays.ts`
   - `GodotArray` removed (use `Array()` call syntax instead of `new GodotArray()`)
   - `Dictionary<K, V>` generics: typed `get()`, `set()`, `keys()`, `values()`, etc. via override file. Untyped `Dictionary` defaults to `<unknown, unknown>`. `{}` literals keep Dictionary methods via `Object` interface
   - `Dictionary` and `Callable` constructors and static methods generated from Godot XML docs via shared `generateConstructorInterface()` — call syntax (no `new`)

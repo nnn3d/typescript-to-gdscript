@@ -285,6 +285,7 @@ declare interface Array<T = unknown> {
 }
 
 declare interface ArrayConstructor {
+  readonly prototype: Array<unknown>;
   <T>(): Array<T>;
   <T>(...items: T[]): Array<T>;
   <T>(from_: PackedByteArray): Array<T>;

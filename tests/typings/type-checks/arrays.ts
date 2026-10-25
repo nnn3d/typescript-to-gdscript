@@ -91,4 +91,13 @@ class ArrayTest extends Node {
     let node: Node = nodes[0];
   }
 
+  // `instanceof Array` narrows through the constructor's `prototype`.
+  test_instanceof_narrowing(value: unknown) {
+    if (!(value instanceof Array)) return;
+    let list: Array = value;
+    for (const entry of gd.as(value, Array)) {
+      print(entry);
+    }
+  }
+
 }
