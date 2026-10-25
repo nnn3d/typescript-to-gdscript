@@ -22,8 +22,12 @@ script = ExtResource("1")
 script = ExtResource("6")
 
 [node name="ScoreLabel" type="Label" parent="UI"]
+unique_name_in_owner = true
 
 [node name="ScoreSprite" type="Sprite2D" parent="UI/ScoreLabel"]
+
+[node name="HealthBar" type="Label" parent="UI"]
+unique_name_in_owner = true
 
 [node name="TilesetObjectsMap" parent="." instance=ExtResource("4")]
 

@@ -136,7 +136,7 @@ UIDs are read from Godot's own metadata — the `.tscn`/`.tres` header, the `.gd
   let health: ProgressBar = this.get_node('%HealthBar');
   ```
 
-- **Typed `get_parent()`**: resolves to parent scene's script class
+- **Typed `get_parent()`**: resolves to the parent's type in the same scene, including the parent of an instanced scene seen from the scene that instances it. A scene's root node gets `Node`: which scene holds it isn't part of its own scene, and it can be added anywhere at runtime. Pass a type when you know it: `get_parent<Level>()`.
 
 - **Typed `get_child(idx)`**: resolves to child node type by index
 

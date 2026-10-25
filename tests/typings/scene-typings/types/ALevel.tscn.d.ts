@@ -11,7 +11,8 @@ type _ALevelTscn_Tree = {
   [__node_extends]: GodotSceneTrees["res://Level.tscn"];
   [__node_root]: "ALevel";
   [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://ALevel.gd">;
-  [__node_parent]: _GDGetInterfaceParent<__ALevelTscn__Parents>;
+  [__node_parent]: null;
+  [__node_instancers]: _GDGetInterfaceParent<__ALevelTscn__Parents>;
   [__node_children]: [_ALevelTscn_ExtraNode];
 
   "ExtraNode": _ALevelTscn_ExtraNode;

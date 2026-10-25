@@ -1,5 +1,5 @@
 import type { ParseSceneResult } from './scene-parser.ts';
-import { nodePathToTypeName, sceneResPathToTreeName } from './scene-utils.ts';
+import { nodePathToTypeName } from './scene-utils.ts';
 
 // ─── Tree Node Structure ────────────────────────────────────
 
@@ -123,24 +123,13 @@ export function buildNodeTree(
 export function collectDescendantPaths(
   node: TreeNodeInfo,
   sceneAlias: string,
-  instancedSceneTreeNames: Map<string, string>,
-  extendedInstancedNodes: Set<string>,
 ): Array<{ relativePath: string; typeName: string }> {
   const paths: Array<{ relativePath: string; typeName: string }> = [];
 
   function walk(current: TreeNodeInfo, prefix: string) {
     for (const child of current.children) {
       const childRelPath = prefix ? `${prefix}/${child.name}` : child.name;
-      let typeName: string;
-      if (child.isInstanced && child.instanceSceneResPath) {
-        if (extendedInstancedNodes.has(child.fullPath)) {
-          typeName = nodePathToTypeName(sceneAlias, child.fullPath);
-        } else {
-          typeName = instancedSceneTreeNames.get(child.instanceSceneResPath) ?? sceneResPathToTreeName(child.instanceSceneResPath);
-        }
-      } else {
-        typeName = nodePathToTypeName(sceneAlias, child.fullPath);
-      }
+      const typeName = nodePathToTypeName(sceneAlias, child.fullPath);
       paths.push({ relativePath: childRelPath, typeName });
 
       // Don't recurse into instanced scenes (they handle their own subtrees via __node_extends)

@@ -1,59 +1,111 @@
 // AUTO-GENERATED — do not edit manually.
 
+type _LevelTscn_UniqueNodes = {
+  "%ScoreLabel": _LevelTscn_UI_ScoreLabel;
+  "%HealthBar": _LevelTscn_UI_HealthBar;
+};
+
+type _LevelTscn_Player = {
+  [__node_extends]: GodotSceneTrees["res://Player.tscn"];
+  [__node_root]: "Player";
+  [__node_type]: _GDTreeGetType<GodotSceneTrees["res://Player.tscn"]>;
+  [__node_parent]: _LevelTscn_Tree;
+  [__node_children]: [];
+  [__node_unique]: _GDInstanceUnique<GodotSceneTrees["res://Player.tscn"], _LevelTscn_UniqueNodes>;
+};
+
+type _LevelTscn_Enemy = {
+  [__node_extends]: GodotSceneTrees["res://Enemy.tscn"];
+  [__node_root]: "Enemy";
+  [__node_type]: _GDTreeGetType<GodotSceneTrees["res://Enemy.tscn"]>;
+  [__node_parent]: _LevelTscn_Tree;
+  [__node_children]: [];
+  [__node_unique]: _GDInstanceUnique<GodotSceneTrees["res://Enemy.tscn"], _LevelTscn_UniqueNodes>;
+};
+
+type _LevelTscn_TilesetObjects = {
+  [__node_extends]: GodotSceneTrees["res://TilesetObjects.tscn"];
+  [__node_root]: "TilesetObjects";
+  [__node_type]: _GDTreeGetType<GodotSceneTrees["res://TilesetObjects.tscn"]>;
+  [__node_parent]: _LevelTscn_Tree;
+  [__node_children]: [];
+  [__node_unique]: _GDInstanceUnique<GodotSceneTrees["res://TilesetObjects.tscn"], _LevelTscn_UniqueNodes>;
+};
+
 type _LevelTscn_Background = {
   [__node_type]: Sprite2D;
   [__node_parent]: _LevelTscn_Tree;
   [__node_children]: [];
-
+  [__node_unique]: _LevelTscn_UniqueNodes;
 };
 
 type _LevelTscn_UI_ScoreLabel_ScoreSprite = {
   [__node_type]: Sprite2D;
   [__node_parent]: _LevelTscn_UI_ScoreLabel;
   [__node_children]: [];
-
+  [__node_unique]: _LevelTscn_UniqueNodes;
 };
 
 type _LevelTscn_UI_ScoreLabel = {
   [__node_type]: Label;
   [__node_parent]: _LevelTscn_UI;
   [__node_children]: [_LevelTscn_UI_ScoreLabel_ScoreSprite];
-
+  [__node_unique]: _LevelTscn_UniqueNodes;
   "ScoreSprite": _LevelTscn_UI_ScoreLabel_ScoreSprite;
+};
+
+type _LevelTscn_UI_HealthBar = {
+  [__node_type]: Label;
+  [__node_parent]: _LevelTscn_UI;
+  [__node_children]: [];
+  [__node_unique]: _LevelTscn_UniqueNodes;
 };
 
 type _LevelTscn_UI = {
   [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://LevelUI.gd">;
   [__node_parent]: _LevelTscn_Tree;
-  [__node_children]: [_LevelTscn_UI_ScoreLabel];
-
+  [__node_children]: [_LevelTscn_UI_ScoreLabel, _LevelTscn_UI_HealthBar];
+  [__node_unique]: _LevelTscn_UniqueNodes;
   "ScoreLabel": _LevelTscn_UI_ScoreLabel;
   "ScoreLabel/ScoreSprite": _LevelTscn_UI_ScoreLabel_ScoreSprite;
+  "HealthBar": _LevelTscn_UI_HealthBar;
 };
 
-type _PlayerTscn_Tree = GodotSceneTrees["res://Player.tscn"];
+type _LevelTscn_TilesetObjectsMap = {
+  [__node_extends]: GodotSceneTrees["res://TilesetObjects.tscn"];
+  [__node_root]: "TilesetObjectsMap";
+  [__node_type]: _GDTreeGetType<GodotSceneTrees["res://TilesetObjects.tscn"]>;
+  [__node_parent]: _LevelTscn_Tree;
+  [__node_children]: [];
+  [__node_unique]: _GDInstanceUnique<GodotSceneTrees["res://TilesetObjects.tscn"], _LevelTscn_UniqueNodes>;
+};
 
-type _EnemyTscn_Tree = GodotSceneTrees["res://Enemy.tscn"];
-
-type _TilesetObjectsTscn_Tree = GodotSceneTrees["res://TilesetObjects.tscn"];
-
-type _Level2Tscn_Tree = GodotSceneTrees["res://Level2.tscn"];
+type _LevelTscn_Level2 = {
+  [__node_extends]: GodotSceneTrees["res://Level2.tscn"];
+  [__node_root]: "Level2";
+  [__node_type]: _GDTreeGetType<GodotSceneTrees["res://Level2.tscn"]>;
+  [__node_parent]: _LevelTscn_Tree;
+  [__node_children]: [];
+  [__node_unique]: _GDInstanceUnique<GodotSceneTrees["res://Level2.tscn"], _LevelTscn_UniqueNodes>;
+};
 
 type _LevelTscn_Tree = {
   [__node_root]: "Level";
   [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://Level.gd">;
-  [__node_parent]: _GDGetInterfaceParent<__LevelTscn__Parents>;
-  [__node_children]: [_PlayerTscn_Tree, _EnemyTscn_Tree, _TilesetObjectsTscn_Tree, _LevelTscn_Background, _LevelTscn_UI, _TilesetObjectsTscn_Tree, _Level2Tscn_Tree];
-
-  "Player": _PlayerTscn_Tree;
-  "Enemy": _EnemyTscn_Tree;
-  "TilesetObjects": _TilesetObjectsTscn_Tree;
+  [__node_parent]: null;
+  [__node_instancers]: _GDGetInterfaceParent<__LevelTscn__Parents>;
+  [__node_children]: [_LevelTscn_Player, _LevelTscn_Enemy, _LevelTscn_TilesetObjects, _LevelTscn_Background, _LevelTscn_UI, _LevelTscn_TilesetObjectsMap, _LevelTscn_Level2];
+  [__node_unique]: _LevelTscn_UniqueNodes;
+  "Player": _LevelTscn_Player;
+  "Enemy": _LevelTscn_Enemy;
+  "TilesetObjects": _LevelTscn_TilesetObjects;
   "Background": _LevelTscn_Background;
   "UI": _LevelTscn_UI;
   "UI/ScoreLabel": _LevelTscn_UI_ScoreLabel;
   "UI/ScoreLabel/ScoreSprite": _LevelTscn_UI_ScoreLabel_ScoreSprite;
-  "TilesetObjectsMap": _TilesetObjectsTscn_Tree;
-  "Level2": _Level2Tscn_Tree;
+  "UI/HealthBar": _LevelTscn_UI_HealthBar;
+  "TilesetObjectsMap": _LevelTscn_TilesetObjectsMap;
+  "Level2": _LevelTscn_Level2;
 };
 
 declare global {

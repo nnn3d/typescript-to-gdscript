@@ -30,6 +30,12 @@ export class Level extends Node2D {
     let playerParent = player.get_parent();
     let _playerParentCheck: Level = playerParent;
 
+    // `%HealthBar` is unique in both scenes. From the Player instance, Godot
+    // looks in Player's own names first; Level's are the fallback.
+    let playerHealth: ProgressBar = player.get_node('%HealthBar');
+    let levelHealth: Label = this.get_node('%HealthBar');
+    let levelFromPlayer: Label = player.get_node('%ScoreLabel');
+
     // get_parent() on a Godot built-in child resolves to script class via [__parent]
     let bgParent = bg.get_parent();
     let _levelRef: Level = bgParent;
@@ -41,11 +47,14 @@ export class Level extends Node2D {
     let level2Scene = preload('res://Level2.tscn');
     let level2 = level2Scene.instantiate();
     let _level2Sprite: Sprite2D = level2.get_node('ExtraSprite');
-    let _level2Level: Level = level2.get_parent();
+    // A fresh instance has no parent until it is added, so none is claimed.
+    let level2Parent = level2.get_parent();
+    // @ts-expect-error — not typed as the scene that instances Level2.tscn
+    let _level2Level: Level = level2Parent;
 
     let tileMapScene = preload('res://TilesetObjects.tscn');
     let tileMap = tileMapScene.instantiate();
-    let _tileMapLevel: Level = tileMap.get_parent();
+    let _tileMapParent: Node = tileMap.get_parent();
 
     // Deep path through scriptless scene: Level2/ExtraSprite → Sprite2D
     let deepChildSceneNode = this.get_node('Level2/ExtraSprite');

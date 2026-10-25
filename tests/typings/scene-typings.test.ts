@@ -103,7 +103,9 @@ describe('Scene typings generation', () => {
     expect(playerScene).toContain('type _PlayerTscn_Tree = {');
     expect(playerScene).toContain('[__node_root]: "Player";');
     expect(playerScene).toContain('[__node_type]: _GDGetInterfaceNode<GodotScripts, "res://Player.gd">;');
-    expect(playerScene).toContain('[__node_parent]: _GDGetInterfaceParent<__PlayerTscn__Parents>;');
+    // A scene root names no parent; its instancers only serve `/root/...` paths
+    expect(playerScene).toMatch(/type _PlayerTscn_Tree = \{[^}]*\[__node_parent\]: null;/);
+    expect(playerScene).toContain('[__node_instancers]: _GDGetInterfaceParent<__PlayerTscn__Parents>;');
 
     // Flat paths on root
     expect(playerScene).toContain('"Sprite2D": _PlayerTscn_Sprite2D;');
@@ -200,21 +202,22 @@ describe('Scene typings generation', () => {
     expect(anonymScript).not.toMatch(/class Anonym extends/);
   });
 
-  it('should resolve instanced scenes via GodotSceneTrees lookup', () => {
+  it('should type instanced scenes as local nodes that extend their tree', () => {
     generate();
     const levelScene = readOutput('Level.tscn.d.ts');
 
-    // Instanced scene tree type aliases via GodotSceneTrees lookup
-    expect(levelScene).toContain('type _PlayerTscn_Tree = GodotSceneTrees["res://Player.tscn"];');
-    expect(levelScene).toContain('type _EnemyTscn_Tree = GodotSceneTrees["res://Enemy.tscn"];');
-    expect(levelScene).toContain('type _TilesetObjectsTscn_Tree = GodotSceneTrees["res://TilesetObjects.tscn"];');
-    expect(levelScene).toContain('type _Level2Tscn_Tree = GodotSceneTrees["res://Level2.tscn"];');
+    // Each instance is a node of THIS scene: it extends the instanced tree and
+    // names its parent here, which the instanced scene itself cannot know
+    expect(levelScene).toMatch(
+      /type _LevelTscn_Player = \{\s*\[__node_extends\]: GodotSceneTrees\["res:\/\/Player\.tscn"\];[^}]*\[__node_parent\]: _LevelTscn_Tree;/,
+    );
+    expect(levelScene).not.toContain('= GodotSceneTrees["res://Player.tscn"];');
 
     // Instanced scenes in root tree
-    expect(levelScene).toContain('"Player": _PlayerTscn_Tree;');
-    expect(levelScene).toContain('"Enemy": _EnemyTscn_Tree;');
-    expect(levelScene).toContain('"TilesetObjects": _TilesetObjectsTscn_Tree;');
-    expect(levelScene).toContain('"Level2": _Level2Tscn_Tree;');
+    expect(levelScene).toContain('"Player": _LevelTscn_Player;');
+    expect(levelScene).toContain('"Enemy": _LevelTscn_Enemy;');
+    expect(levelScene).toContain('"TilesetObjects": _LevelTscn_TilesetObjects;');
+    expect(levelScene).toContain('"Level2": _LevelTscn_Level2;');
 
     // Non-instanced children use scene-local type aliases
     expect(levelScene).toContain('"Background": _LevelTscn_Background;');

@@ -50,7 +50,7 @@ The editor suggests every path in the scene as you type:
 
 ![Path completion in get_node](../../../assets/showcase_hint_1.png)
 
-A path that isn't in the scene gives `Node | null`, so a typo shows up as a type error on the line that uses it. `get_node_or_null()` works the same way and adds `| null`. `get_parent()` and `get_child(index)` are typed from the scene too.
+A path that isn't in the scene gives `Node | null`, so a typo shows up as a type error on the line that uses it. `get_node_or_null()` works the same way and adds `| null`. `get_parent()` and `get_child(index)` are typed from the scene too. The root node of a scene gets a plain `Node` from `get_parent()`, because the scene doesn't say where it will be added.
 
 ## Nodes without a scene
 

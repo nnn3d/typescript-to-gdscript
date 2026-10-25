@@ -21,9 +21,9 @@ export class __CLASS__ extends Node {
     // Unknown path for get_node returns Node | null
     let unknown: Node | null = this.get_node('Unknown');
 
-    let parent = this.get_parent();
-
-    let levels: Level = parent.get_parent();
+    // A scene root's parent belongs to whichever scene instances it (here a
+    // TileMap's tile set), which this scene does not know.
+    let parent: Node = this.get_parent();
 
     // File-scope enum: bare reference inside the script's own file.
     // (`this.X` works only with the plugin loaded.)

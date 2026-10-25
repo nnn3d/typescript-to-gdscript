@@ -278,10 +278,19 @@ type _GDTreeGetType<T> = T extends {[__node_type]: infer R extends Node} ? R : N
 
 type _GDTreeGetParent<T> = T extends {[__node_parent]: infer R} ? R : null;
 
+type _GDTreeGetInstancers<T> = T extends {[__node_instancers]: infer R} ? R : null;
+
 type _GDTreeGetChildren<T> = T extends {[__node_children]: infer R extends any[]} ? R : [];
 
 /** Extract unique name nodes object from a tree, or `never` if none. */
 type _GDTreeGetUnique<T> = T extends {[__node_unique]: infer U extends object} ? U : never;
+
+/** Unique names as an instance root sees them: Godot looks in the instanced
+ *  scene's own names first, and only then in the instancing scene's. */
+type _GDInstanceUnique<Base, Outer> =
+  [_GDTreeGetUnique<Base>] extends [never]
+    ? Outer
+    : Omit<Outer, keyof _GDTreeGetUnique<Base>> & _GDTreeGetUnique<Base>;
 
 /** Extract the base tree from an extended scene tree, or `never` if not extended. */
 type _GDTreeGetExtends<T> = T extends {[__node_extends]: infer E extends object} ? E : never;
@@ -447,10 +456,15 @@ type _GDGetNodeByPath<Tree, Path extends string> =
       : _GDTreeNode<_GDGetTreeByPath<Tree, Path>>)
   | _GDGetNullByPath<Tree, Path>;
 
-/** Walk up __node_parent chain to find the root scene tree (where parent is null). */
+/** Walk up the __node_parent chain, and from a scene root on through the scenes
+ *  that instance it (__node_instancers), to find the root scene tree. */
 type _GDFindRootTree<Tree> =
   [_GDTreeGetParent<Tree>] extends [null]
-    ? Tree
+    ? [_GDTreeGetInstancers<Tree>] extends [null]
+      ? Tree
+      : _GDTreeGetInstancers<Tree> extends object
+        ? _GDFindRootTree<_GDTreeGetInstancers<Tree>>
+        : never
     : _GDTreeGetParent<Tree> extends object
       ? _GDFindRootTree<_GDTreeGetParent<Tree>>
       : never;
@@ -496,8 +510,8 @@ type _GDGetChild<Tree, Idx extends number> =
         : Node
     : never;
 
-/** Resolve get_parent return type from declaration-merged _XParents interface.
- *  Empty interface (no parents) → Node; otherwise union of all parent types. */
+/** Resolve get_parent return type: the parent the current scene proves, or Node.
+ *  A scene root has none (`[__node_parent]: null`), so its parent is Node. */
 type _GDParentType<Tree> =
   Tree extends any // distributive over union trees
     ? IsAny<Tree> extends true

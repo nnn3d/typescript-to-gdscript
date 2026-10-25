@@ -3,7 +3,8 @@
 type _TilesetObjectsTscn_Tree = {
   [__node_root]: "tileset_objects";
   [__node_type]: TileMap;
-  [__node_parent]: _GDGetInterfaceParent<__TilesetObjectsTscn__Parents>;
+  [__node_parent]: null;
+  [__node_instancers]: _GDGetInterfaceParent<__TilesetObjectsTscn__Parents>;
   [__node_children]: [];
 
 };

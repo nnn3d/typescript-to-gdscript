@@ -60,6 +60,12 @@ export class Player extends BaseCharacter {
     let animParent = anim.get_parent();
     let _animParentCheck: Sprite2D = animParent;
 
+    // The scene root's own parent is not part of this scene: that Level.tscn
+    // instances Player.tscn is Level's fact, and Player may be added anywhere.
+    let ownParent = this.get_parent();
+    // @ts-expect-error — not typed as the scene that instances this one
+    let _ownParentLevel: Level = ownParent;
+
     this.get_tree().change_scene_to_file('res://Anonym.tscn');
 
     // Autoload global singleton — GameManager is declared globally from project.godot [autoload]

@@ -11,7 +11,8 @@ type _Level1Tscn_Tree = {
   [__node_extends]: GodotSceneTrees["res://Level.tscn"];
   [__node_root]: "Level";
   [__node_type]: _GDTreeGetType<GodotSceneTrees["res://Level.tscn"]>;
-  [__node_parent]: _GDGetInterfaceParent<__Level1Tscn__Parents>;
+  [__node_parent]: null;
+  [__node_instancers]: _GDGetInterfaceParent<__Level1Tscn__Parents>;
   [__node_children]: [_Level1Tscn_ExtraSprite];
 
   "ExtraSprite": _Level1Tscn_ExtraSprite;

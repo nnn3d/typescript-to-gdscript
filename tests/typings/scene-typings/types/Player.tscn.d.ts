@@ -58,7 +58,8 @@ type _PlayerTscn_HitArea = {
 type _PlayerTscn_Tree = {
   [__node_root]: "Player";
   [__node_type]: _GDGetInterfaceNode<GodotScripts, "res://Player.gd">;
-  [__node_parent]: _GDGetInterfaceParent<__PlayerTscn__Parents>;
+  [__node_parent]: null;
+  [__node_instancers]: _GDGetInterfaceParent<__PlayerTscn__Parents>;
   [__node_children]: [_PlayerTscn_Sprite2D, _PlayerTscn_CollisionShape2D, _PlayerTscn_HealthBar, _PlayerTscn_AttackTimer, _PlayerTscn_HitArea];
   [__node_unique]: _PlayerTscn_UniqueNodes;
   "Sprite2D": _PlayerTscn_Sprite2D;
