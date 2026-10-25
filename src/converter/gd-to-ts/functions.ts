@@ -9,7 +9,7 @@ import {
   isStaticFunction,
 } from './type-inference.ts';
 import { getAnnotations } from './members.ts';
-import { emitBody } from './statements.ts';
+import { emitBody, emitStatementExpression } from './statements.ts';
 import { emitExpr } from './expressions.ts';
 import { isReferenceType } from '../common/index.ts';
 import { escapeTsBindingName } from './identifiers.ts';
@@ -387,7 +387,7 @@ export function emitLambda(node: SyntaxNode, ctx: GdToTsContext): string {
       stmt.namedChildren.length > 0
     ) {
       const expr = stmt.namedChildren[0]!;
-      result = `${asyncPrefix}(${params})${returnType} => { ${emitExpr(expr, ctx)}; }`;
+      result = `${asyncPrefix}(${params})${returnType} => { ${emitStatementExpression(expr, ctx)}; }`;
     } else {
       const body = bodyNode ? emitBody(bodyNode, ctx, 2) : '';
       result = `${asyncPrefix}(${params})${returnType} => {\n${body}\n  }`;

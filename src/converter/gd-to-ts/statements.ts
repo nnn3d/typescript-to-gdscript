@@ -73,13 +73,7 @@ export function emitBody(
           lines.push(emitBlockComment(expr.text, indent));
           continue;
         }
-        if (expr.type === SyntaxType.Assignment) {
-          lines.push(`${indent}${emitAssignment(expr, ctx)};`);
-        } else if (expr.type === SyntaxType.AugmentedAssignment) {
-          lines.push(`${indent}${emitAugmentedAssignment(expr, ctx)};`);
-        } else {
-          lines.push(`${indent}${emitExpr(expr, ctx)};`);
-        }
+        lines.push(`${indent}${emitStatementExpression(expr, ctx)};`);
       }
       continue;
     }
@@ -275,6 +269,22 @@ function emitWhileStatement(
 }
 
 // ─── Assignment ───────────────────────────────────────────────
+
+/**
+ * The value of an expression statement. An assignment is a GDScript
+ * statement, not an expression, so `emitExpr` has no case for it; every
+ * place that emits a statement's value (a body, a one-line lambda) goes
+ * through here.
+ */
+export function emitStatementExpression(
+  expr: SyntaxNode,
+  ctx: GdToTsContext,
+): string {
+  if (expr.type === SyntaxType.Assignment) return emitAssignment(expr, ctx);
+  if (expr.type === SyntaxType.AugmentedAssignment)
+    return emitAugmentedAssignment(expr, ctx);
+  return emitExpr(expr, ctx);
+}
 
 export function emitAssignment(node: SyntaxNode, ctx: GdToTsContext): string {
   const left = node.childForFieldName('left');
