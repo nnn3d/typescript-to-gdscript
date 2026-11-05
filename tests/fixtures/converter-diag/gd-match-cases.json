@@ -1,0 +1,19 @@
+[
+  { "message": "`gd.match` takes an inline array of cases", "severity": "error", "line": 7, "column": 5 },
+  { "message": "`gd.match` takes an inline array of cases", "severity": "error", "line": 8, "column": 5 },
+  { "message": "`gd.match` takes an inline array of cases", "severity": "error", "line": 13, "column": 7 },
+  { "message": "`gd.match` takes an inline array of cases", "severity": "error", "line": 14, "column": 7 },
+  { "message": "`gd.match` takes an inline array of cases", "severity": "error", "line": 15, "column": 7 },
+  { "message": "A `gd.match` case holds only", "severity": "error", "line": 23, "column": 9 },
+  { "message": "A `gd.match` case needs either", "severity": "error", "line": 23, "column": 7 },
+  { "message": "A `gd.match` case holds only", "severity": "error", "line": 24, "column": 9 },
+  { "message": "A `gd.match` case holds only", "severity": "error", "line": 25, "column": 19 },
+  { "message": "A `gd.match` case needs either", "severity": "error", "line": 31, "column": 7 },
+  { "message": "A `gd.match` case needs either", "severity": "error", "line": 32, "column": 7 },
+  { "message": "A `gd.match` case needs either", "severity": "error", "line": 33, "column": 7 },
+  { "message": "`do` must be an inline arrow function or method", "severity": "error", "line": 39, "column": 7 },
+  { "message": "`do` must be an inline arrow function or method", "severity": "error", "line": 40, "column": 19 },
+  { "message": "`do` must be an inline arrow function or method", "severity": "error", "line": 41, "column": 19 },
+  { "message": "`do` must be an inline arrow function or method", "severity": "error", "line": 42, "column": 19 },
+  { "message": "`do` must be an inline arrow function or method", "severity": "error", "line": 43, "column": 32 }
+]

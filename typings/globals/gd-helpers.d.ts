@@ -153,6 +153,7 @@ declare const gd: {
    * Arrow function parameters become `var name` pattern bindings.
    * Spread `...[]` in arrays and `...{}` in dicts map to `..` (open-ended).
    * Uses arrow functions (`do: () => {}`) to preserve `this` context.
+   * `do` must be written inline: its body becomes the branch, and what it returns is discarded.
    *
    * @example
    * gd.match(this.x, [
@@ -174,10 +175,12 @@ declare const gd: {
     cases: Array<
       | {
           match: unknown;
+          when?: unknown;
           do: () => void;
         }
       | {
           matchMany: unknown[];
+          when?: unknown;
           do: () => void;
         }
       | ((...args: unknown[]) => {

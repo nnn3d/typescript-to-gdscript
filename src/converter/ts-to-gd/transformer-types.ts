@@ -17,6 +17,7 @@ export interface TransformerDelegate {
   // ── Expression / statement visitors ─────────────────────────
   emitExpression(node: ts.Expression): string;
   visitStatement(node: ts.Statement): void;
+  emitExpressionAsStatement(expr: ts.Expression): void;
   visitBlock(block: ts.Block): void;
   visitVariableStatement(node: ts.VariableStatement): void;
 

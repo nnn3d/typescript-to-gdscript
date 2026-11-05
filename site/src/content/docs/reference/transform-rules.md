@@ -328,11 +328,11 @@ func _process(delta: float):
 	# Match — advanced patterns (arrays/dicts/bindings/guards) → gd.match
 	match stats:
 		{"name": "Hero", ..}:
-			pass
+			print("the hero")
 		var n when n > 10:
-			pass
+			print("big")
 		[1, 2, ..]:
-			pass
+			print("starts 1,2")
 	# Escape hatch — raw GDScript
 	var raw = 10
 	@warning_ignore("integer_division")  ← magic comment for statements

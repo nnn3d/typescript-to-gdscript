@@ -7,6 +7,7 @@
  * rather than rewriting a single expression.
  */
 import ts from 'typescript';
+import { withoutOuterWrappers } from './operator-tokens.ts';
 import type { TransformerDelegate } from './transformer-types.ts';
 
 // ---- gd.match() -> match ----
@@ -22,163 +23,145 @@ export function isGdMatchCall(node: ts.Expression): boolean {
   );
 }
 
+const CASES_ERROR =
+  '`gd.match` takes an inline array of cases: objects, or arrow functions returning one';
+const CASE_MEMBER_ERROR =
+  'A `gd.match` case holds only `match`, `matchMany`, `when` and `do`, written out as `key: value`';
+const CASE_PATTERN_ERROR =
+  'A `gd.match` case needs either `match: pattern` or `matchMany: [patterns]`';
+const CASE_DO_ERROR =
+  '`do` must be an inline arrow function or method. Wrap a callback: `do: () => handler()`';
+
 export function visitGdMatchStatement(
   t: TransformerDelegate,
   node: ts.CallExpression,
 ): void {
-  if (node.arguments.length < 2) return;
-  const pos = t.getLineAndCol(node);
-  const valueExpr = node.arguments[0]!;
-  const casesExpr = node.arguments[1]!;
+  const [valueExpr, casesExpr] = node.arguments;
+  if (!valueExpr || !casesExpr || !ts.isArrayLiteralExpression(casesExpr)) {
+    t.addDiagnostic(node, 'error', CASES_ERROR);
+    return;
+  }
 
+  const pos = t.getLineAndCol(node);
   t.emitter.writeLine(
     `match ${t.emitExpression(valueExpr)}:`,
     pos.line,
     pos.col,
   );
   t.emitter.indent();
-
-  if (ts.isArrayLiteralExpression(casesExpr)) {
-    for (const caseElement of casesExpr.elements) {
-      if (ts.isObjectLiteralExpression(caseElement)) {
-        emitGdMatchCase(t, caseElement);
-      } else if (ts.isArrowFunction(caseElement)) {
-        emitGdMatchArrowCase(t, caseElement);
-      } else if (ts.isParenthesizedExpression(caseElement)) {
-        // (x, y) => ({...}) sometimes parenthesized
-        const inner = caseElement.expression;
-        if (ts.isArrowFunction(inner)) {
-          emitGdMatchArrowCase(t, inner);
-        }
-      }
-    }
-  }
-
+  for (const element of casesExpr.elements) emitGdMatchCase(t, element);
   t.emitter.dedent();
 }
 
-/** Emit a plain object case: { match: ..., do() { ... } } or { matchMany: [...], do() { ... } } */
-function emitGdMatchCase(
-  t: TransformerDelegate,
-  obj: ts.ObjectLiteralExpression,
-): void {
-  let matchExpr: ts.Expression | undefined;
-  let matchManyExpr: ts.Expression | undefined;
-  let doBody: ts.Block | undefined;
+/** What a case object says, whichever form it was written in. */
+interface GdMatchCase {
+  match?: ts.Expression;
+  matchMany?: ts.Expression;
+  when?: ts.Expression;
+  doMember?: ts.Node;
+  body?: ts.ConciseBody;
+}
 
-  for (const prop of obj.properties) {
-    if (!ts.isPropertyAssignment(prop) && !ts.isMethodDeclaration(prop))
-      continue;
-    const name = prop.name?.getText(t.ctx.sourceFile);
-    if (name === 'match' && ts.isPropertyAssignment(prop)) {
-      matchExpr = prop.initializer;
-    } else if (name === 'matchMany' && ts.isPropertyAssignment(prop)) {
-      matchManyExpr = prop.initializer;
-    } else if (name === 'do' && ts.isMethodDeclaration(prop) && prop.body) {
-      doBody = prop.body;
-    } else if (name === 'do' && ts.isPropertyAssignment(prop)) {
-      // do: () => { ... } (arrow function variant preserving `this`)
-      const init = prop.initializer;
-      if (ts.isArrowFunction(init) && ts.isBlock(init.body)) {
-        doBody = init.body;
-      }
-    }
-  }
-
-  const casePos = t.getLineAndCol(obj);
-  if (matchManyExpr && ts.isArrayLiteralExpression(matchManyExpr)) {
-    // Multiple patterns: 1, 2, 3:
-    const patterns = matchManyExpr.elements.map((e) =>
-      emitMatchPatternExpr(t, e),
-    );
-    t.emitter.writeLine(`${patterns.join(', ')}:`, casePos.line, casePos.col);
-  } else if (matchExpr) {
-    const pattern = emitMatchPatternExpr(t, matchExpr);
-    t.emitter.writeLine(`${pattern}:`, casePos.line, casePos.col);
-  } else {
+/**
+ * Emit one branch: `{ match, do }`, or `(bindings) => ({ match, when, do })`
+ * for pattern bindings. A case either goes out whole or is reported: a
+ * branch that vanishes, or keeps only part of itself, matches differently
+ * and Godot accepts the result.
+ */
+function emitGdMatchCase(t: TransformerDelegate, element: ts.Expression): void {
+  const inner = withoutOuterWrappers(element);
+  const arrow = ts.isArrowFunction(inner) ? inner : undefined;
+  const source = arrow ? arrow.body : inner;
+  const obj = ts.isBlock(source) ? source : withoutOuterWrappers(source);
+  if (!ts.isObjectLiteralExpression(obj)) {
+    t.addDiagnostic(element, 'error', CASES_ERROR);
     return;
   }
 
-  t.emitter.indent();
-  if (doBody) {
-    // `visitBlock` drops statements that emit nothing and falls back
-    // to `pass`, so the branch always has a body.
-    t.visitBlock(doBody);
-  } else {
-    t.emitter.writeLine('pass', casePos.line, casePos.col);
+  const parts = readGdMatchCase(t, obj);
+  const bindings =
+    arrow &&
+    new Set(arrow.parameters.map((p) => p.name.getText(t.ctx.sourceFile)));
+  const patterns = emitCasePatterns(t, parts, bindings);
+  if (patterns === null) {
+    t.addDiagnostic(obj, 'error', CASE_PATTERN_ERROR);
+    return;
   }
+
+  const pos = t.getLineAndCol(element);
+  const guard = parts.when ? ` when ${t.emitExpression(parts.when)}` : '';
+  t.emitter.writeLine(`${patterns}${guard}:`, pos.line, pos.col);
+  t.emitter.indent();
+  emitCaseBody(t, parts, obj, pos);
   t.emitter.dedent();
 }
 
-/** Emit an arrow function case: (bindings...) => ({ match: ..., when?: ..., do() { ... } }) */
-function emitGdMatchArrowCase(
+function readGdMatchCase(
   t: TransformerDelegate,
-  arrow: ts.ArrowFunction,
-): void {
-  // Extract parameter names (bindings)
-  const bindings = arrow.parameters.map((p) =>
-    p.name.getText(t.ctx.sourceFile),
-  );
-
-  // Get the object literal from body
-  let obj: ts.ObjectLiteralExpression | undefined;
-  if (ts.isParenthesizedExpression(arrow.body)) {
-    const inner = arrow.body.expression;
-    if (ts.isObjectLiteralExpression(inner)) obj = inner;
-  } else if (ts.isObjectLiteralExpression(arrow.body)) {
-    obj = arrow.body;
-  }
-  if (!obj) return;
-
-  let matchExpr: ts.Expression | undefined;
-  let whenExpr: ts.Expression | undefined;
-  let doBody: ts.Block | undefined;
-
+  obj: ts.ObjectLiteralExpression,
+): GdMatchCase {
+  const parts: GdMatchCase = {};
   for (const prop of obj.properties) {
-    if (!ts.isPropertyAssignment(prop) && !ts.isMethodDeclaration(prop))
-      continue;
     const name = prop.name?.getText(t.ctx.sourceFile);
-    if (name === 'match' && ts.isPropertyAssignment(prop)) {
-      matchExpr = prop.initializer;
-    } else if (name === 'when' && ts.isPropertyAssignment(prop)) {
-      whenExpr = prop.initializer;
-    } else if (name === 'do' && ts.isMethodDeclaration(prop) && prop.body) {
-      doBody = prop.body;
-    } else if (name === 'do' && ts.isPropertyAssignment(prop)) {
-      // do: () => { ... } (arrow function variant preserving `this`)
-      const init = prop.initializer;
-      if (ts.isArrowFunction(init) && ts.isBlock(init.body)) {
-        doBody = init.body;
-      }
+    if (ts.isMethodDeclaration(prop) && name === 'do') {
+      parts.doMember = prop;
+      parts.body = prop.body;
+    } else if (!ts.isPropertyAssignment(prop)) {
+      t.addDiagnostic(prop, 'error', CASE_MEMBER_ERROR);
+    } else if (name === 'do') {
+      parts.doMember = prop;
+      const fn = withoutOuterWrappers(prop.initializer);
+      if (ts.isArrowFunction(fn)) parts.body = fn.body;
+    } else if (name === 'match') {
+      parts.match = prop.initializer;
+    } else if (name === 'matchMany') {
+      parts.matchMany = prop.initializer;
+    } else if (name === 'when') {
+      parts.when = prop.initializer;
+    } else {
+      t.addDiagnostic(prop, 'error', CASE_MEMBER_ERROR);
     }
   }
+  return parts;
+}
 
-  if (!matchExpr) return;
+/** The branch's pattern list, or null when the case doesn't name one. */
+function emitCasePatterns(
+  t: TransformerDelegate,
+  parts: GdMatchCase,
+  bindings: Set<string> | undefined,
+): string | null {
+  if (parts.match && parts.matchMany) return null;
+  if (parts.match) return emitMatchPatternExpr(t, parts.match, bindings);
+  const many = parts.matchMany && withoutOuterWrappers(parts.matchMany);
+  if (!many || !ts.isArrayLiteralExpression(many)) return null;
+  return many.elements
+    .map((e) => emitMatchPatternExpr(t, e, bindings))
+    .join(', ');
+}
 
-  const arrowPos = t.getLineAndCol(arrow);
-  // Build the pattern, replacing binding names with `var name`
-  const bindingSet = new Set(bindings);
-  const pattern = emitMatchPatternExpr(t, matchExpr, bindingSet);
-
-  if (whenExpr) {
-    t.emitter.writeLine(
-      `${pattern} when ${t.emitExpression(whenExpr)}:`,
-      arrowPos.line,
-      arrowPos.col,
-    );
+/**
+ * An expression body becomes the branch's statement: `gd.match` discards
+ * what `do` returns, so `do: () => f()` is `f()` and takes no `return`.
+ * A `do` that is not written inline has no body to put here.
+ */
+function emitCaseBody(
+  t: TransformerDelegate,
+  parts: GdMatchCase,
+  obj: ts.ObjectLiteralExpression,
+  pos: { line: number; col: number },
+): void {
+  const mark = t.emitter.mark();
+  if (!parts.body) {
+    t.addDiagnostic(parts.doMember ?? obj, 'error', CASE_DO_ERROR);
+  } else if (ts.isBlock(parts.body)) {
+    t.visitBlock(parts.body);
   } else {
-    t.emitter.writeLine(`${pattern}:`, arrowPos.line, arrowPos.col);
+    t.emitExpressionAsStatement(parts.body);
   }
-
-  t.emitter.indent();
-  if (doBody) {
-    // `visitBlock` drops statements that emit nothing and falls back
-    // to `pass`, so the branch always has a body.
-    t.visitBlock(doBody);
-  } else {
-    t.emitter.writeLine('pass', arrowPos.line, arrowPos.col);
+  if (!t.emitter.hasCodeSince(mark)) {
+    t.emitter.writeLine('pass', pos.line, pos.col);
   }
-  t.emitter.dedent();
 }
 
 /**

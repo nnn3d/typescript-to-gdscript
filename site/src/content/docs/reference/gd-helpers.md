@@ -237,6 +237,12 @@ gd.match(this.x, [
 ]);
 ```
 
+`do` is written inline, as an arrow function or a method, because its body becomes the branch. `do: () => print('x')` is `print("x")`, and what `do` returns is discarded. A callback is an error, since a branch has nowhere to keep one: wrap it as `do: () => handler()`.
+
+`when` also works without bindings: `{ match: 1, when: this.ready, do: () => {} }` is `1 when self.ready:`.
+
+A case that can't go out whole is an error rather than a smaller branch: a shorthand or spread in the case, an unknown key, or a `matchMany` that isn't an array literal.
+
 Referring to one of your own fields as a pattern (`match: this.TYPE_FLOAT`) emits the bare name — Godot accepts a plain identifier as a pattern but only accepts `self.X` / `MyClass.X` when it resolves to a constant. Enum members and `const`s keep their qualified form.
 
 ## Getters and setters

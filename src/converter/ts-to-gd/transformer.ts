@@ -11,6 +11,7 @@ import { emitClassHeader, emitClassMembers } from './class-body.ts';
 import { collectLiftedNames, emitFileScopeNamespace } from './file-scope.ts';
 import { emitParameters as emitParametersImpl } from './parameters.ts';
 import {
+  emitExpressionAsStatement as emitExpressionAsStatementImpl,
   visitBlock as visitBlockImpl,
   visitStatement as visitStatementImpl,
   visitVariableStatement as visitVariableStatementImpl,
@@ -144,6 +145,10 @@ export class TsToGdTransformer implements TransformerDelegate {
 
   visitStatement(node: ts.Statement): void {
     visitStatementImpl(this, node);
+  }
+
+  emitExpressionAsStatement(expr: ts.Expression): void {
+    emitExpressionAsStatementImpl(this, expr);
   }
 
   visitBlock(block: ts.Block): void {

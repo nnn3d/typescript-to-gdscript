@@ -35,6 +35,27 @@ export function visitBlock(t: TransformerDelegate, block: ts.Block): void {
   );
 }
 
+/** An expression whose value is discarded, on a line (or lines) of its own. */
+export function emitExpressionAsStatement(
+  t: TransformerDelegate,
+  expr: ts.Expression,
+): void {
+  const pos = t.getLineAndCol(expr);
+  if (isGdEvalCall(expr)) {
+    emitGdEval(t, expr as ts.CallExpression, pos);
+  } else if (isGdMatchCall(expr)) {
+    visitGdMatchStatement(t, expr as ts.CallExpression);
+  } else {
+    // Parentheses around a whole statement mean nothing in GDScript,
+    // and around an assignment they are an error (`withoutOuterWrappers`).
+    // An expression that emits nothing leaves no statement behind;
+    // `emitStatements` turns a body that ends up empty into `pass`, so
+    // there is nothing to hold the line open for.
+    const text = t.emitExpression(withoutOuterWrappers(expr));
+    if (text !== '') t.emitter.writeLine(text, pos.line, pos.col);
+  }
+}
+
 export function visitStatement(
   t: TransformerDelegate,
   node: ts.Statement,
@@ -44,19 +65,7 @@ export function visitStatement(
   if (ts.isVariableStatement(node)) {
     visitVariableStatement(t, node);
   } else if (ts.isExpressionStatement(node)) {
-    if (isGdEvalCall(node.expression)) {
-      emitGdEval(t, node.expression as ts.CallExpression, pos);
-    } else if (isGdMatchCall(node.expression)) {
-      visitGdMatchStatement(t, node.expression as ts.CallExpression);
-    } else {
-      // Parentheses around a whole statement mean nothing in GDScript,
-      // and around an assignment they are an error (`withoutOuterWrappers`).
-      // An expression that emits nothing leaves no statement behind;
-      // `emitStatements` turns a body that ends up empty into `pass`, so
-      // there is nothing to hold the line open for.
-      const text = t.emitExpression(withoutOuterWrappers(node.expression));
-      if (text !== '') t.emitter.writeLine(text, pos.line, pos.col);
-    }
+    emitExpressionAsStatement(t, node.expression);
   } else if (ts.isReturnStatement(node)) {
     if (node.expression && isVoidExpression(t, node.expression)) {
       // GDScript refuses to take the value of a call that returns
