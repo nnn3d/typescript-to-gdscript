@@ -1,3 +1,16 @@
+## [0.1.13](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.12...v0.1.13) (2026-11-05)
+
+### Bug Fixes
+
+* build dist in prepare so installs from a git url work ([f893334](https://github.com/nnn3d/typescript-to-gdscript/commit/f893334350aedb4455fd1f0a6edd020ce8971b16))
+* **gd-to-ts:** emit a one-line lambda assignment body as a statement ([3244430](https://github.com/nnn3d/typescript-to-gdscript/commit/32444306122a99b1a334030f710d00f43155f41e))
+* **gd-to-ts:** keep signal argument names as tuple labels ([bdfe3a7](https://github.com/nnn3d/typescript-to-gdscript/commit/bdfe3a7f9a6081c4b2039cff19af61745f3566f3))
+* **gd-to-ts:** name the godot type in an explicit-convert cast ([54cb5c5](https://github.com/nnn3d/typescript-to-gdscript/commit/54cb5c532db4f36834bc30d5b984d80de54eb143))
+* limit the typescript peer range to 5.x ([a700f1e](https://github.com/nnn3d/typescript-to-gdscript/commit/a700f1e6f531ff1997b6fb2d4c7be668a93b02d0))
+* **ts-to-gd:** emit every gd.match case whole or report it ([f2e9a49](https://github.com/nnn3d/typescript-to-gdscript/commit/f2e9a49c5993dd55f266c0204e3a81af076a6167))
+* **ts-to-gd:** reject object literal members a dictionary cannot hold ([2ab2ea3](https://github.com/nnn3d/typescript-to-gdscript/commit/2ab2ea3e57b5ccfa4a822bc12d2ba84ce26fc10c))
+* **typings:** declare ArrayConstructor's prototype so instanceof narrows ([a39ccf5](https://github.com/nnn3d/typescript-to-gdscript/commit/a39ccf54bba788438e48052765a31ce13ae2e5cf))
+* **typings:** type get_parent() only from the current scene ([4fc1d00](https://github.com/nnn3d/typescript-to-gdscript/commit/4fc1d0046c0edccc539d2504c776944aff4ff6b9))
 ## [0.1.12](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.11...v0.1.12) (2026-10-17)
 
 ### Features
