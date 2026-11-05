@@ -248,6 +248,13 @@ export function emitMatchPatternExpr(
         } else {
           entries.push(`${key}: ${val}`);
         }
+      } else {
+        // Dropping a member would widen what the pattern matches.
+        t.addDiagnostic(
+          prop,
+          'error',
+          'Only `key: pattern` and `...` can go in a dictionary pattern',
+        );
       }
     }
     if (hasSpread) {

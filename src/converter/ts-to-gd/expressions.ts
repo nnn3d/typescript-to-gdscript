@@ -189,6 +189,13 @@ export function emitExpression(
       } else if (ts.isShorthandPropertyAssignment(p)) {
         const key = t.escapeGdString(p.name.text);
         entries.push(`"${key}": ${t.emitExpression(p.name)}`);
+      } else {
+        // Spread, method, accessor: dropping one ships a smaller Dictionary.
+        t.addDiagnostic(
+          p,
+          'error',
+          'Only `key: value` and shorthand properties can go in a Dictionary',
+        );
       }
     }
     if (entries.length === 0) return '{}';

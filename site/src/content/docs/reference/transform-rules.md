@@ -359,6 +359,8 @@ The remaining sections cover the same rules in tables / prose form so individual
 Object literals become GDScript dictionaries. Shorthand properties keep the same key and value as their explicit form.
 `{ foo }` and `{ foo: foo }` both become `{"foo": foo}`.
 
+Spread, methods and accessors are errors: a dictionary has no form for them, and dropping one would leave it short of keys. To merge, call `merged()` on a `Dictionary`. To store a function, write `{ m: () => 1 }`.
+
 ## Primitive types — case mapping
 
 Lowercase TypeScript primitive names map to GDScript's PascalCase value-type names. The aliases live in the `gd` global typings — you just write the lowercase form in TS.
@@ -956,7 +958,8 @@ The converter rejects TS features that have no faithful GDScript equivalent. Eac
 | **Nullish coalescing** — `??` / `??=`                                                                                     | GDScript distinguishes `null` from default values differently; no direct equivalent.                                                                         |
 | **Operators with no GDScript counterpart** — `>>>`, `&&=`, `\|\|=`, the comma operator, and `x++` / `++x` used as a value | GDScript has no unsigned shift, no logical assignment and no comma operator, and its `+= 1` is a statement, not a value.                                     |
 | **Optional chaining** — `?.`                                                                                              | GDScript has no `?.` short-circuit. Use explicit `null` checks or `obj.get("key")` for Dictionary access.                                                    |
-| **Spread** — `f(...args)` / `[...arr]`                                                                                    | Variadic call sites can't be desugared to GDScript. Function declarations may use `...rest` (rest parameters).                                               |
+| **Spread** — `f(...args)` / `[...arr]` / `{ ...obj }`                                                                     | Variadic call sites can't be desugared to GDScript. Function declarations may use `...rest` (rest parameters).                                               |
+| **Methods and accessors in an object literal** — `{ m() {} }` / `{ get g() {} }`                                          | A dictionary only holds `key: value` entries. Store a function as `{ m: () => 1 }`.                                                                          |
 | **`void` operator** — `void f()`                                                                                          | Its result is `undefined`, which has no GDScript equivalent. Drop it — an arrow whose body returns nothing already converts without a `return`.              |
 | **`var` keyword** — function-scoped `var x`                                                                               | Warning (not error). Use `let` or `const`; both convert to GDScript `var`. GD `var` ≈ TS `let`.                                                              |
 | **File-scope `const`/`let`/`var`**                                                                                        | GDScript doesn't allow top-level mutable bindings outside a class. Wrap in a class.                                                                          |

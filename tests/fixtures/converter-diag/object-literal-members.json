@@ -1,0 +1,50 @@
+[
+  {
+    "message": "Only `key: value` and shorthand properties can go in a Dictionary",
+    "severity": "error",
+    "line": 5,
+    "column": 14
+  },
+  {
+    "message": "Only `key: value` and shorthand properties can go in a Dictionary",
+    "severity": "error",
+    "line": 9,
+    "column": 14
+  },
+  {
+    "message": "Only `key: value` and shorthand properties can go in a Dictionary",
+    "severity": "error",
+    "line": 14,
+    "column": 7
+  },
+  {
+    "message": "Only `key: value` and shorthand properties can go in a Dictionary",
+    "severity": "error",
+    "line": 23,
+    "column": 7
+  },
+  {
+    "message": "Only `key: value` and shorthand properties can go in a Dictionary",
+    "severity": "error",
+    "line": 32,
+    "column": 7
+  },
+  {
+    "message": "Only `key: value` and shorthand properties can go in a Dictionary",
+    "severity": "error",
+    "line": 38,
+    "column": 23
+  },
+  {
+    "message": "Only `key: pattern` and `...` can go in a dictionary pattern",
+    "severity": "error",
+    "line": 44,
+    "column": 18
+  },
+  {
+    "message": "Only `key: pattern` and `...` can go in a dictionary pattern",
+    "severity": "error",
+    "line": 56,
+    "column": 11
+  }
+]
