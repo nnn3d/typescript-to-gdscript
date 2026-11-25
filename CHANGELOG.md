@@ -1,3 +1,12 @@
+## [0.1.14](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.13...v0.1.14) (2026-11-25)
+
+### Features
+
+* **cli:** ship SYNTAX.md for AI agents and link it from AGENTS.md in init ([a02df5b](https://github.com/nnn3d/typescript-to-gdscript/commit/a02df5bfa5df3da062651a10f2b8fe267302be47))
+
+### Bug Fixes
+
+* **ts-to-gd:** stop converting loops, class members and optional fields to something else ([dda35a7](https://github.com/nnn3d/typescript-to-gdscript/commit/dda35a7dc22de03e7e73c7b3c0c35fc3d5062dd6))
 ## [0.1.13](https://github.com/nnn3d/typescript-to-gdscript/compare/v0.1.12...v0.1.13) (2026-11-05)
 
 ### Bug Fixes
