@@ -304,13 +304,25 @@ export class TsToGdTransformer implements TransformerDelegate {
     // `line:col` display and what IDEs/editors expect). Add 1 on
     // the way into the diagnostic, leaving the source-map write
     // below untouched.
-    this.ctx.diagnostics.push({
-      message,
-      severity,
-      file: this.ctx.filePath,
-      line,
-      column: col + 1,
-    });
+    const column = col + 1;
+    // A node can be emitted more than once (the step of a C-style `for`), and
+    // is still one problem.
+    const reported = this.ctx.diagnostics.some(
+      (d) =>
+        d.message === message &&
+        d.severity === severity &&
+        d.line === line &&
+        d.column === column,
+    );
+    if (!reported) {
+      this.ctx.diagnostics.push({
+        message,
+        severity,
+        file: this.ctx.filePath,
+        line,
+        column,
+      });
+    }
     // Emit inline error comment in output for --emit-on-error visibility
     if (severity === 'error') {
       this.emitter.writeLine(`# ERROR: ${message}`, line, col);

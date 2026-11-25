@@ -17,6 +17,16 @@ export class NullableTypes extends Node {
   mode: NullableTypes.Mode | null = null;
   target: Node2D | null = null;
 
+  // An optional field starts empty, so it follows the same rule.
+  opt_count?: int;
+  opt_label?: 'a' | 'b';
+  opt_mode?: NullableTypes.Mode;
+  opt_scores?: int[];
+  opt_target?: Node2D;
+  opt_nullable?: Node2D | null;
+  @exports opt_exported?: int;
+  static opt_shared?: Vector2;
+
   pick(amount: int | null, node: Node | null): int | null {
     if (node === null) {
       return amount;

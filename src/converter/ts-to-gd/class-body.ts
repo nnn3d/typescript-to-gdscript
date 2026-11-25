@@ -296,7 +296,15 @@ export function emitClassMembers(
         member.name && ts.isIdentifier(member.name)
           ? member.name.text
           : undefined;
-      if (!name) continue;
+      if (!name) {
+        t.addDiagnostic(
+          member,
+          'error',
+          'Accessor names must be plain identifiers: the accessor becomes a ' +
+            'GDScript `var`',
+        );
+        continue;
+      }
       const existing = orderedMembers.find(
         (e) => e.kind === 'accessor' && e.name === name,
       ) as
@@ -320,6 +328,13 @@ export function emitClassMembers(
           node: member,
         } as OrderedMember);
       }
+    } else if (ts.isClassStaticBlockDeclaration(member)) {
+      t.addDiagnostic(
+        member,
+        'error',
+        'Static blocks are not supported in GDScript; write a ' +
+          '`static _static_init()` method instead',
+      );
     }
   }
 

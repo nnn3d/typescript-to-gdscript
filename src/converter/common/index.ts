@@ -3,6 +3,9 @@ import ts from 'typescript';
 import type { GodotClassRegistry } from '../../typings/godot-registry.ts';
 import type { ResolvedExternalPackage } from '../../external-packages/index.ts';
 import { classifyTypeReferenceName } from './gd-names.ts';
+import { isReferenceType } from './reference-type.ts';
+
+export { isReferenceType };
 
 /**
  * Pre-derived lookup sets for `in`-operator diagnostics and variant/class type
@@ -361,13 +364,8 @@ export function tsTypeNodeToGdType(
   }
 
   // Union types: GDScript has no union syntax. `T | null` (or `null | T`)
-  // keeps `T` only when `T` is a reference type — a class (Node, Resource, a
-  // user class), the only kind of typed GDScript variable that accepts null.
-  // A value type (int, String, Vector2, a typed Array, an enum, …) rejects
-  // null, so its annotation is dropped and the untyped variable holds the
-  // null. Without a registry the two can't be told apart: dropped too.
-  // Anything more complex — multiple non-null members, intersections — has
-  // no GD equivalent and is omitted.
+  // is `nullableGdType`. Anything more complex — multiple non-null members,
+  // intersections — has no GD equivalent and is omitted.
   if (ts.isUnionTypeNode(typeNode)) {
     const nullable = typeNode.types.some(
       (t) =>
@@ -379,20 +377,13 @@ export function tsTypeNodeToGdType(
     if (base) return base;
     const nonNull = typeNode.types.filter((t) => !isNullLiteralTypeNode(t));
     if (nonNull.length === 1 && nonNull.length !== typeNode.types.length) {
-      const member = nonNull[0]!;
-      const gdType = tsTypeNodeToGdType(
-        member,
+      return nullableGdType(
+        nonNull[0],
         checker,
         sourceFile,
         className,
         registry,
       );
-      const isEnum = !!(
-        checker.getTypeFromTypeNode(member).flags & ts.TypeFlags.EnumLike
-      );
-      return gdType && registry && !isEnum && isReferenceType(gdType, registry)
-        ? gdType
-        : null;
     }
     return null;
   }
@@ -402,6 +393,37 @@ export function tsTypeNodeToGdType(
 
   // Literal types, template literals, `keyof`, `typeof`: typed as their base.
   return literalBaseGdType(checker.getTypeFromTypeNode(typeNode));
+}
+
+/**
+ * The type of a variable that holds a `T` or `null`: `T` only when it is a
+ * reference type — a class (Node, Resource, a user class), the only kind of
+ * typed GDScript variable that accepts null. A value type (int, String,
+ * Vector2, a typed Array, an enum, …) rejects null, so its annotation is
+ * dropped and the untyped variable holds the null. Without a registry the two
+ * can't be told apart: dropped too.
+ */
+export function nullableGdType(
+  typeNode: ts.TypeNode | undefined,
+  checker: ts.TypeChecker,
+  sourceFile: ts.SourceFile,
+  className?: string,
+  registry?: GodotClassRegistry,
+): string | null {
+  if (!typeNode) return null;
+  const gdType = tsTypeNodeToGdType(
+    typeNode,
+    checker,
+    sourceFile,
+    className,
+    registry,
+  );
+  const isEnum = !!(
+    checker.getTypeFromTypeNode(typeNode).flags & ts.TypeFlags.EnumLike
+  );
+  return gdType && registry && !isEnum && isReferenceType(gdType, registry)
+    ? gdType
+    : null;
 }
 
 /** `Array[T]` for an element type GDScript can name, else a plain `Array`. */
@@ -444,52 +466,4 @@ function isNullLiteralTypeNode(node: ts.TypeNode): boolean {
     ts.isLiteralTypeNode(node) &&
     node.literal.kind === ts.SyntaxKind.NullKeyword
   );
-}
-
-// ─── Reference-type classification ────────────────────────────────
-
-/**
- * True when `gdType` refers to a Godot class (Node, Resource, Material, user
- * class, ...) — a type that can legitimately hold `null` in GDScript. False
- * for primitives (int, float, bool, String), variant/value types (Vector2,
- * Color, Packed*Array, Dictionary, Callable, Signal, StringName, NodePath, ...),
- * typed array/dictionary syntax, enum references, and special markers
- * (`void`, `Nil`, `Variant`, `any`, `unknown`).
- *
- * Reference types are candidates for `T | null` widening in the GD-to-TS
- * converter. Value types are not — Godot does not permit assigning null to
- * them.
- */
-export function isReferenceType(
-  gdType: string,
-  registry: GodotClassRegistry,
-): boolean {
-  const cleaned = gdType.trim();
-
-  if (
-    cleaned === '' ||
-    cleaned === 'Nil' ||
-    cleaned === 'Variant' ||
-    cleaned === 'void'
-  ) {
-    return false;
-  }
-  if (cleaned === 'any' || cleaned === 'unknown') return false;
-  if (
-    cleaned.endsWith('[]') ||
-    cleaned.startsWith('Array[') ||
-    cleaned.startsWith('Dictionary[')
-  ) {
-    return false;
-  }
-  // Dotted names are always Godot class enum refs (e.g. `Node.ProcessMode`).
-  // GDScript has no syntax for dotted inner-class type references in its own
-  // source, so any `.` here is an enum. TS-side dotted references are handled
-  // separately by callers that have class-scope context.
-  if (cleaned.includes('.')) return false;
-  if (registry.isConstructor(cleaned)) return false;
-  // A global enum (`Key`, `Error`, …) is an int in GDScript.
-  if (registry.isGlobalEnum(cleaned)) return false;
-
-  return true;
 }

@@ -43,6 +43,55 @@ func test_break_continue():
 			break
 		print(i)
 
+# The `while` a C-style `for` becomes has its step at the end of the body,
+# so a `continue` runs the step itself before it jumps past it.
+func test_for_step():
+	var i: int = 0
+	while i < 10:
+		if i == 5:
+			i += 1
+			continue
+		match i:
+			1:
+				i += 1
+				continue
+			_:
+				print(i)
+		i += 1
+
+# Each `continue` takes the step of its own loop, and only that.
+func test_for_step_nested(items: Array[int]):
+	var j: int = 0
+	while j < 3:
+		for item in items:
+			if item == j:
+				continue
+			print(item)
+		var k: int = 3
+		while k > 0:
+			if k == j:
+				k -= 1
+				continue
+			print(k)
+			k -= 1
+		var n: int = 0
+		while n < 3:
+			n += 1
+			if n == j:
+				continue
+			print(n)
+		if j == 1:
+			j += 1
+			continue
+		print(j)
+		j += 1
+	var m: int = 0
+	while m < 3:
+		m += 1
+		if m == 1:
+			continue
+		print(m)
+
 func test_is(x):
 	if x is Node2D:
 		print(x, "is Node2D")

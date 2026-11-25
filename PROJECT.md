@@ -64,7 +64,8 @@ src/
     gd-to-ts/operators.ts  # emitBinaryOp / emitUnaryOp and the `%Unique/Child` path check (split out of expressions.ts for the 500-line cap)
     gd-to-ts/syntax-children.ts  # firstSyntaxChild() / syntaxChildren(): named children without the grammar's extras (`\` continuations, comments)
     gd-to-ts/ts-helpers.ts  # TS-based post-processing (operator fix, explicit convert, ready field types, extends type)
-    common/index.ts      # TransformContext, TransformDiagnostic, TransformResult, tsTypeToGdType()
+    common/index.ts      # TransformContext, TransformDiagnostic, TransformResult, tsTypeToGdType(), nullableGdType()
+    common/reference-type.ts  # isReferenceType(): a GD type that can hold null
   parser/
     gdscript/            # GDScriptParser class + AUTO-GENERATED types.ts (SyntaxType, typed nodes)
     godot-resource/      # GodotResourceParser class + AUTO-GENERATED types.ts

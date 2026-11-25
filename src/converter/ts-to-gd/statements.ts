@@ -7,6 +7,7 @@ import type { TransformerDelegate } from './transformer-types.ts';
 import { isVoidExpression } from './void-value.ts';
 import { SWITCH_BREAK_ERROR, visitSwitchStatement } from './switch.ts';
 import {
+  continueTarget,
   emitStatements,
   isLabeledJump,
   isSwitchBreak,
@@ -128,6 +129,9 @@ export function visitStatement(
       t.emitter.writeLine('break', pos.line, pos.col);
     }
   } else if (ts.isContinueStatement(node)) {
+    // It would jump past the step at the end of the `while` body.
+    const loop = continueTarget(node);
+    if (loop && ts.isForStatement(loop)) emitForStep(t, loop);
     t.emitter.writeLine('continue', pos.line, pos.col);
   } else if (ts.isLabeledStatement(node)) {
     // The label carries the whole meaning — a `break`/`continue` naming
@@ -335,15 +339,22 @@ export function visitForStatement(
   t.emitter.writeLine(`while ${condition}:`, pos.line, pos.col);
   t.emitter.indent();
   visitStatementBody(t, node.statement);
-  if (node.incrementor) {
-    const incPos = t.getLineAndCol(node.incrementor);
-    t.emitter.writeLine(
-      t.emitExpression(withoutOuterWrappers(node.incrementor)),
-      incPos.line,
-      incPos.col,
-    );
-  }
+  emitForStep(t, node);
   t.emitter.dedent();
+}
+
+/**
+ * The step of a C-style `for`. GDScript has no such loop, so it is a `while`
+ * whose body ends with the step, and each `continue` takes the step itself.
+ */
+function emitForStep(t: TransformerDelegate, node: ts.ForStatement): void {
+  if (!node.incrementor) return;
+  const pos = t.getLineAndCol(node.incrementor);
+  t.emitter.writeLine(
+    t.emitExpression(withoutOuterWrappers(node.incrementor)),
+    pos.line,
+    pos.col,
+  );
 }
 
 // ---- While Statement ----

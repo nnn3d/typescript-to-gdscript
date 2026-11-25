@@ -4,9 +4,10 @@
  * inner classes, constructors, methods, and decorators.
  */
 import ts from 'typescript';
-import { tsTypeNodeToGdType } from '../common/index.ts';
+import { nullableGdType, tsTypeNodeToGdType } from '../common/index.ts';
 import type { TransformerDelegate } from './transformer-types.ts';
 import { visitGdGetsetProperty } from './gd-getset.ts';
+import { GENERATOR_ERROR } from './lambda.ts';
 
 // ── Signals ──────────────────────────────────────────────────
 
@@ -144,7 +145,9 @@ export function visitPropertyDeclaration(
   // are declared via a paired `namespace ClassName { export const X = ... }`
   // block instead — that lifts into `const X = ...` inside the GD class.
 
-  const gdType = tsTypeNodeToGdType(
+  // `x?: T` starts empty, like `x: T | null = null`.
+  const toGdType = node.questionToken ? nullableGdType : tsTypeNodeToGdType;
+  const gdType = toGdType(
     node.type,
     t.ctx.checker,
     t.ctx.sourceFile,
@@ -344,6 +347,9 @@ export function visitMethodDeclaration(
     pos.col,
   );
   t.emitter.indent();
+  if (node.asteriskToken) {
+    t.addDiagnostic(node.asteriskToken, 'error', GENERATOR_ERROR);
+  }
   if (node.body) {
     t.visitBlock(node.body);
   } else {

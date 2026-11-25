@@ -3,6 +3,10 @@ import { tsTypeNodeToGdType } from '../common/index.ts';
 import type { TransformerDelegate } from './transformer-types.ts';
 import { isVoidExpression } from './void-value.ts';
 
+export const GENERATOR_ERROR =
+  'Generators are not supported in GDScript; return an array, or use a ' +
+  'signal or a coroutine';
+
 /**
  * Arrow function / function expression -> GDScript lambda.
  *
@@ -19,6 +23,9 @@ export function emitLambda(
   t: TransformerDelegate,
   node: ts.ArrowFunction | ts.FunctionExpression,
 ): string {
+  if (node.asteriskToken) {
+    t.addDiagnostic(node.asteriskToken, 'error', GENERATOR_ERROR);
+  }
   const params = t.emitParameters(node.parameters);
 
   // Return type

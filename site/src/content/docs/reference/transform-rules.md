@@ -417,6 +417,8 @@ hp: int = 0; // a value type: write the default GDScript uses anyway
 cached: Node | null = null; // may really be absent
 ```
 
+An optional field (`x?: T`) starts as `null`, so it keeps its type only when `T` is a class: `target?: Node2D` becomes `var target: Node2D`, `count?: int` an untyped `var count`.
+
 The `!` is TypeScript-only and disappears from the `.gd`. The `@onready` line type-checks as written only with [scene typings](/typescript-to-gdscript/reference/typings/), which type `get_node('Sprite2D')` from the scene as a `Sprite2D`. Without them `get_node` returns `Node | null`, which a `Sprite2D` field rejects under `strict`. These are the forms [GD → TS migration](/typescript-to-gdscript/guide/migrating-from-gdscript/) produces too, so hand-written and migrated code read alike.
 
 ## Operators
@@ -465,6 +467,29 @@ A comment sitting between two cases is kept, above the branch it was written abo
 `case undefined:` is an error, like `undefined` anywhere else — write `case null:`. (`gd.match` spells its wildcard `undefined`; a `switch` label does not, or the branch would quietly become a catch-all.)
 
 For patterns `switch` cannot express — arrays, dictionaries, bindings, guards — use [`gd.match()`](/typescript-to-gdscript/reference/gd-helpers/).
+
+## `for` loops
+
+`for (let x of list)` becomes `for x in list:`. GDScript has no C-style `for`, so that one becomes a `while` with the step at the end of its body. A `continue` would skip the step there, so the step is repeated before it:
+
+```ts
+for (let i = 0; i < 10; i++) {
+  if (i === 5) continue;
+  print(i);
+}
+```
+
+```gdscript
+var i = 0
+while i < 10:
+	if i == 5:
+		i += 1
+		continue
+	print(i)
+	i += 1
+```
+
+The variable then belongs to the block around the loop, so two such loops in one block can't both declare `i`. `for (let i of range(10))` has no such limit.
 
 ## Comments
 
@@ -954,6 +979,9 @@ The converter rejects TS features that have no faithful GDScript equivalent. Eac
 | **Destructuring** — `let [a, b] = ...` / `[a, b] = arr` / `({a} = obj)`                                                   | GDScript has no destructuring (declaration or assignment form). Assign each binding manually.                                                                |
 | **Parameter properties** — `constructor(public x: int)`                                                                   | GDScript has no parameter properties. Declare `x` as a class field and assign it in the constructor (`this.x = x;`).                                         |
 | **`for...in`**                                                                                                            | GDScript `for in` always iterates **values** (TS `for...of` semantics). Use `for...of` to avoid confusion.                                                   |
+| **Generators** — `*items() {}`, `yield`                                                                                   | GDScript has none, and dropping the `*` would leave an ordinary function. Return an array, or use a signal or a coroutine.                                   |
+| **Static blocks** — `static { ... }`                                                                                      | GDScript has `static func _static_init()` for this. Write a `static _static_init()` method.                                                                  |
+| **Accessor with a computed or quoted name** — `get 'x'()`                                                                 | The accessor becomes a `var`, which needs a plain name.                                                                                                      |
 | **Labels** — `outer:` and `break`/`continue` naming one                                                                   | GDScript has no labels, and a labelled jump emitted bare would bind to the nearest loop instead. Use an early `return`, or a flag the loop condition checks. |
 | **Nullish coalescing** — `??` / `??=`                                                                                     | GDScript distinguishes `null` from default values differently; no direct equivalent.                                                                         |
 | **Operators with no GDScript counterpart** — `>>>`, `&&=`, `\|\|=`, the comma operator, and `x++` / `++x` used as a value | GDScript has no unsigned shift, no logical assignment and no comma operator, and its `+= 1` is a statement, not a value.                                     |

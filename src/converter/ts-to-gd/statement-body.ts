@@ -29,6 +29,22 @@ export function unlabeledBreakTarget(
 }
 
 /**
+ * The loop an unlabeled `continue` goes on with: the nearest enclosing one,
+ * through any `switch`. TypeScript guarantees there is one, in the same
+ * function.
+ */
+export function continueTarget(
+  node: ts.ContinueStatement,
+): ts.IterationStatement | undefined {
+  let parent: ts.Node | undefined = node.parent;
+  while (parent && !ts.isFunctionLike(parent)) {
+    if (ts.isIterationStatement(parent, false)) return parent;
+    parent = parent.parent;
+  }
+  return undefined;
+}
+
+/**
  * True for a `break` or `continue` that names a label.
  *
  * Checked on its own rather than read off {@link unlabeledBreakTarget},

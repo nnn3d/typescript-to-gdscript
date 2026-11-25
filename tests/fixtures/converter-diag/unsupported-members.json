@@ -1,0 +1,27 @@
+[
+  {
+    "message": "_static_init",
+    "severity": "error",
+    "line": 3
+  },
+  {
+    "message": "_static_init",
+    "severity": "error",
+    "line": 13
+  },
+  {
+    "message": "Generators are not supported",
+    "severity": "error",
+    "line": 17
+  },
+  {
+    "message": "Generators are not supported",
+    "severity": "error",
+    "line": 22
+  },
+  {
+    "message": "Accessor names must be plain identifiers",
+    "severity": "error",
+    "line": 26
+  }
+]
