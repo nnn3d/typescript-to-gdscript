@@ -28,7 +28,7 @@ The package adds a `tstogd` command; run it with `npx tstogd …` or from npm sc
 - `tstogd.json` — where your TypeScript lives (default `src/`) and where the `.gd` files go (default `scripts/`);
 - `tsconfig.json` — TypeScript settings for Godot, with the TypeScript plugin enabled.
 
-It also offers to install TypeScript and to hide `node_modules` from Godot's file scanner. Say yes to both.
+It also offers to install TypeScript and to hide `node_modules` from Godot's file scanner. Say yes to both. If you use AI agents, let it add a section to `AGENTS.md` too: it points them to a short guide in the package, so they don't write regular TypeScript.
 
 ## Your first script
 

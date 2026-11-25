@@ -28,6 +28,7 @@ The output is ordinary GDScript you can read and ship. TypeScript is only how yo
 - **`gd` namespace** — strongly-typed helpers for GDScript-only constructs (signals, `match` patterns, getters/setters, operator overloading, raw GDScript)
 - **Addons supported** — typings for third-party GDScript addons, consumable from TypeScript
 - **GD → TS migration** — one-shot bulk converter for existing projects
+- **AI agents** — the package ships [SYNTAX.md](https://github.com/nnn3d/typescript-to-gdscript/blob/HEAD/SYNTAX.md), a compact guide for coding agents, and `tstogd init` can link it from your `AGENTS.md`
 
 ### Showcase
 

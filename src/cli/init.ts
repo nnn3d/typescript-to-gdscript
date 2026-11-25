@@ -1,6 +1,7 @@
 /**
  * `tstogd init` — Interactive project initialization.
- * Walks through config creation, tsconfig, npm install, and .gdignore setup.
+ * Walks through config creation, tsconfig, npm install, .gdignore, .gitignore
+ * and AGENTS.md setup.
  */
 
 import type { Command } from 'commander';
@@ -39,6 +40,17 @@ const TSCONFIG_TEMPLATE = `{
   },
   "include": ["node_modules/typescript-to-gdscript/typings", "{{tsDir}}/**/*.ts", "{{typingsDir}}/**/*.d.ts"]
 }
+`;
+
+// Says nothing about the project's folders: they differ, and tstogd.json can
+// change after init. SYNTAX.md explains how to read it, and being in the
+// package it always matches the installed version.
+const AGENT_GUIDE_PATH = 'node_modules/typescript-to-gdscript/SYNTAX.md';
+const AGENT_INSTRUCTIONS = `## tstogd (TypeScript → GDScript)
+
+This Godot project's scripts are written in TypeScript and converted to GDScript by \`tstogd\`; see \`tstogd.json\` for which. This is GDScript in TypeScript syntax, not regular TypeScript, and the \`.gd\` files it generates must not be edited.
+
+Before you read, write or debug any script (\`.ts\` or \`.gd\`), read \`${AGENT_GUIDE_PATH}\`.
 `;
 
 // ─── Prompt Helpers ──────────────────────────────────────────
@@ -111,11 +123,7 @@ async function stepTstogdJson(
     defaults.typingsDir,
   );
 
-  const config: Record<string, unknown> = {};
-  config.tsDir = tsDir;
-  if (gdDir !== tsDir) config.gdDir = gdDir;
-  config.typingsDir = typingsDir;
-
+  const config: InitConfig = { tsDir, gdDir, typingsDir };
   writeFileSync(configPath, JSON.stringify(config, null, 2) + '\n');
   console.log('\n  ✓ Created tstogd.json');
 
@@ -270,6 +278,48 @@ async function stepGitignore(
   );
 }
 
+// ─── Step: AGENTS.md ─────────────────────────────────────────
+
+/**
+ * `content` (of AGENTS.md, empty when there is none) with the tstogd section
+ * added, or `null` when it already points to the guide.
+ */
+export function withAgentInstructions(content: string): string | null {
+  if (content.includes(AGENT_GUIDE_PATH)) return null;
+  const before = content.trimEnd();
+  return before ? `${before}\n\n${AGENT_INSTRUCTIONS}` : AGENT_INSTRUCTIONS;
+}
+
+async function stepAgentsMd(
+  rl: readline.Interface,
+  cwd: string,
+): Promise<void> {
+  const agentsPath = join(cwd, 'AGENTS.md');
+  const hasAgents = existsSync(agentsPath);
+  const newContent = withAgentInstructions(
+    hasAgents ? readFileSync(agentsPath, 'utf-8') : '',
+  );
+
+  if (newContent === null) {
+    console.log('\n✓ AGENTS.md already has the tstogd instructions.');
+    return;
+  }
+
+  console.log('');
+  const add = await askYesNo(
+    rl,
+    'Add tstogd instructions for AI agents to AGENTS.md?',
+  );
+  if (!add) return;
+
+  writeFileSync(agentsPath, newContent);
+  console.log(
+    hasAgents
+      ? '  ✓ Added tstogd instructions to AGENTS.md'
+      : '  ✓ Created AGENTS.md with tstogd instructions',
+  );
+}
+
 // ─── Main ────────────────────────────────────────────────────
 
 export async function runInit(): Promise<void> {
@@ -297,6 +347,9 @@ export async function runInit(): Promise<void> {
 
     // Step 5: .gitignore
     await stepGitignore(rl, cwd);
+
+    // Step 6: AGENTS.md
+    await stepAgentsMd(rl, cwd);
 
     // Done
     console.log('\n✅ Initialization complete!');

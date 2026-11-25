@@ -13,7 +13,8 @@
     "dist",
     "ts-plugin",
     "typings",
-    "typings-overrides"
+    "typings-overrides",
+    "SYNTAX.md"
   ],
   "packageManager": "yarn@1.22.22",
   "typesVersions": {

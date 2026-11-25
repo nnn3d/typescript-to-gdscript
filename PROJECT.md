@@ -4,9 +4,10 @@ Detailed project layout, implementation status, conversion rules, and edge cases
 
 ## Documentation Layout
 
-User-facing docs have three layers. The docs are the site's own pages, Starlight Markdown under `site/src/content/docs/` (frontmatter `title` / `description`, links as site paths under `/typescript-to-gdscript/`); the sidebar order is in `site/sidebar.ts`. Screenshots live in `site/src/assets/`, which the README embeds by raw GitHub URL. A TypeScript or GDScript code block gets its frame title from the Expressive Code plugin `site/plugins/code-titles.ts`. `docs/superpowers/` holds local planning notes only (gitignored).
+User-facing docs have four layers. The docs are the site's own pages, Starlight Markdown under `site/src/content/docs/` (frontmatter `title` / `description`, links as site paths under `/typescript-to-gdscript/`); the sidebar order is in `site/sidebar.ts`. Screenshots live in `site/src/assets/`, which the README embeds by raw GitHub URL. A TypeScript or GDScript code block gets its frame title from the Expressive Code plugin `site/plugins/code-titles.ts`. `docs/superpowers/` holds local planning notes only (gitignored).
 
 - `README.md` — front page on GitHub: pitch, Features, Showcase, one "A taste" TS → GD example, quick start, links into the guides and the reference. Hand-written; the site landing (`site/src/content/docs/index.mdx`) is hand-written separately, so the pitch and the example exist in both.
+- `SYNTAX.md` — the guide for AI agents writing tstogd code, shipped in the npm package (`files` in `package.json`) and linked from a consumer's `AGENTS.md` by `tstogd init`. `tests/site/syntax-md.test.ts` converts its example and checks every `// → …` comment against the output.
 - `guide/` — task-oriented guides, written from GDScript habits, without edge cases that matter to fewer than one project in ten. Basics (`getting-started`, `how-it-works`, `editor-setup`), Writing scripts (`scripts-and-classes`, `variables-and-types`, `functions-and-lambdas`, `signals`, `nodes-and-scenes`, `exports-and-annotations`, `coroutines`, `math-and-value-types`, `arrays-and-dictionaries`, `enums-constants-inner-classes`), Going further (`migrating-from-gdscript`, `shared-packages`, `addons`, `custom-godot-builds`, `escape-hatches`, `caveats`, `faq`).
 - `reference/` — the specification:
   - `transform-rules.md` — every TS construct → GDScript mapping, plus the Restrictions section (unsupported TS features and why)
@@ -131,11 +132,11 @@ tests/
   browser/               # browser converter: memory-host, registry option, in-memory import resolution, and
                          # parity (every single-file ts-to-gd fixture through createBrowserConverter; playground
                          # examples must convert with zero diagnostics)
-  site/                  # doc-examples (TS → GD pairs on the pages convert as shown), doc-links (links and anchors), code-titles (the frame-title plugin)
+  site/                  # doc-examples (TS → GD pairs on the pages convert as shown), doc-links (links and anchors), syntax-md (the SYNTAX.md example), code-titles (the frame-title plugin)
   external-packages/     # library discovery, link lifecycle, and mount validation
   cache/                 # cache.test.ts — ProjectCache (freshness, sourcemap storage, addon/typings entries, version mismatch, atomic writes, gd-output mirror, saveAsync, watch mode, clear() propagation to a watching instance)
   checker/               # checker.test.ts (collectProjectDiagnostics, stale-detection), ts-diagnostics.test.ts (filters)
-  cli/                   # cli.test.ts (convert + initial-convert-gd-to-ts exit codes, --force, --debug)
+  cli/                   # cli.test.ts (convert + initial-convert-gd-to-ts exit codes, --force, --debug), init.test.ts (tstogd.json and the AGENTS.md section)
   watcher/               # watcher-cache.test.ts (updated-file re-conversion through cache)
   typings/               # godot-registry, gd-to-ts-registry, godot-docs, godot-validate (CLI integration, autoload/duplicate-class filters),
                          # module-scoped-typings, scene-typings, ts-to-gd-sourcemap, type-checks,
@@ -150,7 +151,7 @@ tests/
 
 ## CLI Commands (binary: `tstogd`)
 
-- `tstogd init` — Interactive project initialization (tstogd.json, tsconfig.json with ts-plugin enabled and `moduleResolution: "bundler"` — extension-less imports plus shared packages by name from `node_modules`; `classic`, the earlier default, never looks there — npm install, .gdignore)
+- `tstogd init` — Interactive project initialization (tstogd.json, tsconfig.json with ts-plugin enabled and `moduleResolution: "bundler"` — extension-less imports plus shared packages by name from `node_modules`; `classic`, the earlier default, never looks there — npm install, .gdignore, .gitignore, and a section in AGENTS.md that points AI agents to the package's SYNTAX.md: `withAgentInstructions`, deliberately free of project paths, since `tstogd.json` can change later)
 - Global flag: `--debug` (placed before any subcommand) enables verbose info/debug messages via `setDebugEnabled(true)` in the `preAction` hook.
 - Global flag: `-V` / `--version` prints the package version, read from `package.json` via `getPackageVersion()` (`src/utils/package-version.ts`) — the same helper the cache uses for its manifest version, so the two can never drift.
 - `tstogd convert <files...>` — Synchronize shared-package links, **regenerate all scene + addon typings** (`generateAllTypings` → `generateTypings` + `generateAddonTypings`, every run), build the shared `ts.Program`, convert TS to GD, then run full 3-source diagnostic check (`[TS]`/`[CONV]`/`[GD]` prefixes); problems in the generated addon typings print as `[ADDON:warning]`, also under `--no-check`. Self-contained: no separate `generate-typings` step needed. Flags: `--ts-dir`, `--gd-dir`, `--root-dir`, `--tsconfig`, `--godot-path`, `--project-root`, `--use-cache` (enable read-side cache skip — fast but content-hash freshness can serve stale output when outer types changed), `--no-cache` (disable cache entirely, no reads/no writes — typings generation included: `convert` passes no `cache` to `generateAllTypings` then; with the cache on it passes its OWN instance, since `ProjectCache.save()` writes the whole manifest and a second instance over the same dir would drop the other's entries), `--emit-on-error`, `--no-emit` (dry-run + stale-check, no writes), `--no-check` (skip diagnostic pipeline). Default cache mode is **write-only**: every run converts fresh (correct w.r.t. cross-file type changes) but records results for reuse by `watch` / ts-plugin / the check phase. Source maps stored in cache dir. Requires `--tsconfig` for TS diagnostics; requires `--godot-path` + `project.godot` for Godot check.
